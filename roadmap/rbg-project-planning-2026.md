@@ -2,40 +2,58 @@
 
 > 基于 110 个研究智能体、27 个信源、131 条声明提取、19 条对抗验证确认的深度研究。
 >
-> 生成日期：2026-06-29
+> 生成日期：2026-06-29 | 最后更新：2026-06-29
+
+## 进度总览
+
+| 状态 | 数量 | 说明 |
+|:---:|:---:|:---|
+| KEP + PoC 完成 | 2 | 拓扑感知调度、端口模板化服务发现 |
+| 待规划 | 23 | 其余 action 待 KEP 设计 |
+
+> **开发流程**：每个 action 遵循 KEP → 评审 → 正式实现 → E2E 测试 → 文档 的流程。
+> PoC 代码仅作为设计验证参考，正式实现需根据 KEP 评审反馈调整。
 
 ## 详细行动计划索引
 
 ### Phase 0: 紧急行动（0-3 个月）
-- [Action 0.1: 推进社区治理中立化](phase-0-emergency/00-governance-neutrality.md)
-- [Action 0.2: v1alpha2 → v1beta1 API 稳定化](phase-0-emergency/01-api-v1beta1.md)
-- [Action 0.3: 建立产业联盟](phase-0-emergency/02-industry-alliance.md)
-- [Action 0.4: 发布 Benchmark 和对比报告](phase-0-emergency/03-benchmark-report.md)
+- [ ] [Action 0.1: 推进社区治理中立化](phase-0-emergency/00-governance-neutrality.md)
+- [ ] [Action 0.2: v1alpha2 → v1beta1 API 稳定化](phase-0-emergency/01-api-v1beta1.md)
+- [ ] [Action 0.3: 建立产业联盟](phase-0-emergency/02-industry-alliance.md)
+- [ ] [Action 0.4: 发布 Benchmark 和对比报告](phase-0-emergency/03-benchmark-report.md)
 
 ### Phase 1: 短期（3-6 个月）
-- [Action 1.1: E/P/D 三阶段原生支持](phase-1-short-term/01-epd-three-stage.md)
-- [Action 1.2: Gateway API Inference Extension 集成](phase-1-short-term/02-gateway-api-integration.md)
-- [Action 1.3: 拓扑感知调度（基础版）](phase-1-short-term/03-topology-aware-scheduling.md)
-- [Action 1.4: llm-d 互补集成探索](phase-1-short-term/04-llmd-integration.md)
-- [Action 1.5: Warmup Phase 2](phase-1-short-term/05-warmup-phase2.md)
-- [Action 1.6: TensorRT-LLM 引擎支持](phase-1-short-term/06-trtllm-support.md)
+- [ ] [Action 1.1: E/P/D 三阶段原生支持](phase-1-short-term/01-epd-three-stage.md)
+- [ ] [Action 1.2: Gateway API Inference Extension 集成](phase-1-short-term/02-gateway-api-integration.md)
+- [x] [Action 1.3: 拓扑感知调度（基础版）](phase-1-short-term/03-topology-aware-scheduling.md) — KEP + PoC 完成，待评审
+- [ ] [Action 1.4: llm-d 互补集成探索](phase-1-short-term/04-llmd-integration.md)
+- [ ] [Action 1.5: Warmup Phase 2](phase-1-short-term/05-warmup-phase2.md)
+- [ ] [Action 1.6: TensorRT-LLM 引擎支持](phase-1-short-term/06-trtllm-support.md)
+- [x] [Action 1.7: 端口模板化服务发现](phase-1-short-term/07-port-template-discovery.md) — KEP + PoC 完成，待评审
 
 ### Phase 2: 中期（6-12 个月）
-- [Action 2.1: 自适应角色分配](phase-2-mid-term/01-adaptive-role-allocation.md)
-- [Action 2.2: KV 缓存感知路由](phase-2-mid-term/02-kv-cache-aware-routing.md)
-- [Action 2.3: 高级拓扑感知调度](phase-2-mid-term/03-advanced-topology.md)
-- [Action 2.4: 冷启动加速集成](phase-2-mid-term/04-cold-start-acceleration.md)
-- [Action 2.5: 多级自动扩缩](phase-2-mid-term/05-multi-level-autoscaling.md)
-- [Action 2.6: 跨角色协调滚动更新增强](phase-2-mid-term/06-coordinated-rolling-update.md)
-- [Action 2.7: Agentic 推理编排优化](phase-2-mid-term/07-agentic-inference.md)
+- [ ] [Action 2.1: 自适应角色分配](phase-2-mid-term/01-adaptive-role-allocation.md)
+- [ ] [Action 2.2: KV 缓存感知路由](phase-2-mid-term/02-kv-cache-aware-routing.md)
+- [ ] [Action 2.3: 高级拓扑感知调度](phase-2-mid-term/03-advanced-topology.md)
+- [ ] [Action 2.4: 冷启动加速集成](phase-2-mid-term/04-cold-start-acceleration.md)
+- [ ] [Action 2.5: 多级自动扩缩](phase-2-mid-term/05-multi-level-autoscaling.md)
+- [ ] [Action 2.6: 跨角色协调滚动更新增强](phase-2-mid-term/06-coordinated-rolling-update.md)
+- [ ] [Action 2.7: Agentic 推理编排优化](phase-2-mid-term/07-agentic-inference.md)
 
 ### Phase 3: 长期（12-24 个月）
-- [Action 3.1: 声明式推理服务规范标准化](phase-3-long-term/01-inference-service-spec.md)
-- [Action 3.2: 跨集群推理编排](phase-3-long-term/02-cross-cluster.md)
-- [Action 3.3: Checkpoint/Restore 系统集成](phase-3-long-term/03-checkpoint-restore.md)
-- [Action 3.4: 模型权重 P2P 加速](phase-3-long-term/04-weight-p2p.md)
-- [Action 3.5: AI 推理可观测性平台](phase-3-long-term/05-observability.md)
-- [Action 3.6: 多模型调度](phase-3-long-term/06-multi-model.md)
+- [ ] [Action 3.1: 声明式推理服务规范标准化](phase-3-long-term/01-inference-service-spec.md)
+- [ ] [Action 3.2: 跨集群推理编排](phase-3-long-term/02-cross-cluster.md)
+- [ ] [Action 3.3: Checkpoint/Restore 系统集成](phase-3-long-term/03-checkpoint-restore.md)
+- [ ] [Action 3.4: 模型权重 P2P 加速](phase-3-long-term/04-weight-p2p.md)
+- [ ] [Action 3.5: AI 推理可观测性平台](phase-3-long-term/05-observability.md)
+- [ ] [Action 3.6: 多模型调度](phase-3-long-term/06-multi-model.md)
+
+### KEP 索引
+
+| KEP | Action | 状态 | 文档 |
+|:---|:---|:---:|:---|
+| topology-aware-scheduling | 1.3 | KEP + PoC 完成 | [KEP](../keps/topology-aware-scheduling/README.md) |
+| port-template-discovery | 1.7 | KEP + PoC 完成 | [KEP](../keps/port-template-discovery/README.md) |
 
 ---
 
@@ -125,13 +143,14 @@
 
 ### 3.2 需要弥补的短板
 
-| 短板 | 竞品对标 | 优先级 |
-|:---:|:---|:---:|
-| **社区治理和中立性** | llm-d (CNCF)、KServe (CNCF) | P0 |
-| **产业联盟** | llm-d (Red Hat+Google+IBM+NVIDIA) | P0 |
-| **拓扑感知调度** | Grove (NVLink/NVSwitch 感知) | P1 |
-| **路由和 KV 缓存管理** | llm-d (前缀缓存路由、KV 卸载) | P1 |
-| **冷启动加速** | Dynamo Snapshot (21x)、vLLM Sleep | P2 |
+| 短板 | 竞品对标 | 优先级 | 状态 |
+|:---:|:---|:---:|:---:|
+| **社区治理和中立性** | llm-d (CNCF)、KServe (CNCF) | P0 | 待启动 |
+| **产业联盟** | llm-d (Red Hat+Google+IBM+NVIDIA) | P0 | 待启动 |
+| **拓扑感知调度** | Grove (NVLink/NVSwitch 感知) | P1 | KEP + PoC 完成 |
+| **跨角色服务发现（hostNetwork 端口）** | hostNetwork PD 分离刚需 | P1 | KEP + PoC 完成 |
+| **路由和 KV 缓存管理** | llm-d (前缀缓存路由、KV 卸载) | P1 | 待规划 |
+| **冷启动加速** | Dynamo Snapshot (21x)、vLLM Sleep | P2 | 待规划 |
 
 ---
 
@@ -154,12 +173,15 @@
 
 | # | 特性 | 说明 | 竞品对标 |
 |:---:|:---|:---|:---|
-| 1.1 | **E/P/D 三阶段原生支持** | 在角色模型中内置 Encode 角色模板，支持多模态推理的三阶段分离拓扑 | Dynamo v1.0 E/P/D, EPD 论文 |
-| 1.2 | **Gateway API Inference Extension 集成** | 与 K8s WG-AI-Gateway 对接，提供标准化推理网关集成 | llm-d 路由层, KServe |
-| 1.3 | **拓扑感知调度（基础版）** | 利用 K8s v1.35/v1.36 的工作负载感知调度和 DRA，实现基础 GPU 拓扑感知 | Grove 拓扑感知 |
-| 1.4 | **llm-d 互补集成探索** | 探索 RBG（工作负载编排） + llm-d（路由/缓存）的集成路径 | 变竞争为互补 |
-| 1.5 | **Warmup Phase 2** | 完善 RBG Warmup，支持 CUDA Graph 缓存共享、DeepGEMM 预编译 | 引擎层优化（路线 C） |
-| 1.6 | **TRT-LLM 引擎支持** | Patio 增加 TRT-LLM 后端支持 | Grove/Dynamo 原生支持 |
+| # | 特性 | 说明 | 竞品对标 | 状态 |
+|:---:|:---|:---|:---|:---:|
+| 1.1 | **E/P/D 三阶段原生支持** | 在角色模型中内置 Encode 角色模板，支持多模态推理的三阶段分离拓扑 | Dynamo v1.0 E/P/D, EPD 论文 | 待规划 |
+| 1.2 | **Gateway API Inference Extension 集成** | 与 K8s WG-AI-Gateway 对接，提供标准化推理网关集成 | llm-d 路由层, KServe | 待规划 |
+| 1.3 | **拓扑感知调度（基础版）** | intra-role / inter-role 拓扑亲和，通过标准 Pod Affinity 实现 | Grove 拓扑感知 | **KEP + PoC 完成** |
+| 1.4 | **llm-d 互补集成探索** | 探索 RBG（工作负载编排） + llm-d（路由/缓存）的集成路径 | 变竞争为互补 | 待规划 |
+| 1.5 | **Warmup Phase 2** | 完善 RBG Warmup，支持 CUDA Graph 缓存共享、DeepGEMM 预编译 | 引擎层优化（路线 C） | 待规划 |
+| 1.6 | **TRT-LLM 引擎支持** | Patio 增加 TRT-LLM 后端支持 | Grove/Dynamo 原生支持 | 待规划 |
+| 1.7 | **端口模板化服务发现** | Role 级随机 base + Pod 级顺序递增，ConfigMap portTemplates 跨角色端口推导 | hostNetwork PD 分离刚需 | **KEP + PoC 完成** |
 
 ### Phase 2: 中期（6-12 个月, 2027 H1）
 

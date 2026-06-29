@@ -3,6 +3,20 @@
 > 时间线：3-6 个月 (2026 Q3-Q4)
 > 优先级：P1
 > 依赖：无
+> KEP：[keps/topology-aware-scheduling](../../keps/topology-aware-scheduling/README.md)
+> PoC：已完成（`plan` 分支，commit `ca43813d`）
+
+## 当前状态
+
+| 阶段 | 状态 | 产出 |
+|------|------|------|
+| KEP 设计文档 | ✅ 完成 | `keps/topology-aware-scheduling/README.md` |
+| PoC 实现 | ✅ 完成 | `pkg/reconciler/pod_reconciler.go`（intra/inter-role affinity 注入）|
+| 单元测试 | ✅ 完成 | 8 个测试通过 |
+| KEP 评审 | ❌ 待评审 | — |
+| 正式实现 | ❌ 待 KEP 批准后开始 | — |
+| E2E 测试 | ❌ 待实现 | — |
+| 文档 | ✅ 草稿 | `doc/features/topology-aware-scheduling.md` |
 
 ## 问题陈述
 
