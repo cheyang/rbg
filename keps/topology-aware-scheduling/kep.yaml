@@ -1,0 +1,15 @@
+title: Topology-Aware Scheduling
+kep-number: TBD
+authors:
+  - "@cheyang"
+status: provisional
+creation-date: 2026-06-29
+reviewers:
+approvers:
+
+stage: alpha
+
+latest-milestone: "v0.8.0"
+
+milestone:
+  alpha: "v0.8.0"
