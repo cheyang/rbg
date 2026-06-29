@@ -489,6 +489,8 @@ func (r *RoleInstanceSetReconciler) CleanupOrphanedWorkloads(
 }
 
 // allocateRoleScopedPortAnnotations allocates or copies RoleScoped port annotations for all components.
+// It also allocates portTemplate base ports for PodScoped allocations (one random base per portName,
+// subsequent pods derive ports via base + instanceIndex * stride + podIndex).
 // This function should only be called when the port allocator is enabled.
 func allocateRoleScopedPortAnnotations(
 	components []workloadsv1alpha2client.RoleInstanceComponentApplyConfiguration,
@@ -515,11 +517,30 @@ func allocateRoleScopedPortAnnotations(
 			for k, v := range portAnnotations {
 				annotations[k] = v
 			}
+
+			// Allocate portTemplate base ports for PodScoped allocations.
+			var stride int32 = 1
+			if component.Size != nil && *component.Size > 0 {
+				stride = *component.Size
+			}
+			templateAnnotations, err := portallocator.AllocateBasePort(config, *component.Name, stride)
+			if err != nil {
+				return fmt.Errorf("failed to allocate port template for component %s: %w", *component.Name, err)
+			}
+			for k, v := range templateAnnotations {
+				annotations[k] = v
+			}
 		} else {
 			// Directly copy from old roleInstanceSet annotations to avoid reallocating.
 			portAnnotations := portallocator.CollectRoleScopedPortsFromInstanceSet(old.Annotations, *component.Name, config)
 			for k, v := range portAnnotations {
 				annotations[k] = v
+			}
+			// Copy portTemplate annotations from old RoleInstanceSet.
+			for k, v := range old.Annotations {
+				if portallocator.IsPortTemplateKey(k) {
+					annotations[k] = v
+				}
 			}
 		}
 	}

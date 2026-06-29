@@ -25,6 +25,7 @@ import (
 	"github.com/google/go-cmp/cmp/cmpopts"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	portallocator "sigs.k8s.io/rbgs/pkg/port-allocator"
 	"sigs.k8s.io/rbgs/pkg/utils"
 
 	"sigs.k8s.io/yaml"
@@ -37,6 +38,9 @@ type ConfigBuilder struct {
 	client client.Client
 	rbg    *workloadsv1alpha2.RoleBasedGroup
 	role   *workloadsv1alpha2.RoleSpec
+	// roleInstanceSetAnnotations maps role name → RoleInstanceSet annotations.
+	// Used to extract portTemplate entries for the ConfigMap.
+	roleInstanceSetAnnotations map[string]map[string]string
 }
 
 func NewConfigBuilder(
@@ -49,6 +53,12 @@ func NewConfigBuilder(
 		rbg:    rbg,
 		role:   role,
 	}
+}
+
+// SetRoleInstanceSetAnnotations provides per-role RoleInstanceSet annotations
+// to the ConfigBuilder so it can extract portTemplate entries.
+func (b *ConfigBuilder) SetRoleInstanceSetAnnotations(annotations map[string]map[string]string) {
+	b.roleInstanceSetAnnotations = annotations
 }
 
 type ClusterConfig struct {
@@ -65,8 +75,9 @@ type GroupInfo struct {
 type RolesInfo map[string]RoleInstances
 
 type RoleInstances struct {
-	Size      int        `json:"size"`
-	Instances []Instance `json:"instances"`
+	Size          int                                        `json:"size"`
+	Instances     []Instance                                 `json:"instances"`
+	PortTemplates map[string]portallocator.PortTemplateInfo   `json:"portTemplates,omitempty" yaml:"portTemplates,omitempty"`
 }
 
 type Instance struct {
@@ -106,10 +117,19 @@ func (b *ConfigBuilder) buildRolesInfo() (RolesInfo, error) {
 		if err != nil {
 			return nil, err
 		}
-		roles[role.Name] = RoleInstances{
+		ri := RoleInstances{
 			Size:      int(*role.Replicas),
 			Instances: instances,
 		}
+		// Extract portTemplates from RoleInstanceSet annotations if available.
+		if b.roleInstanceSetAnnotations != nil {
+			if annots, ok := b.roleInstanceSetAnnotations[role.Name]; ok {
+				if templates := portallocator.CollectPortTemplates(annots); len(templates) > 0 {
+					ri.PortTemplates = templates
+				}
+			}
+		}
+		roles[role.Name] = ri
 	}
 	return roles, nil
 }

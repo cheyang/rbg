@@ -417,6 +417,19 @@ func (r *RoleBasedGroupReconciler) reconcileRefinedDiscoveryConfigMap(
 	}
 
 	builder := discovery.NewConfigBuilder(r.client, statefulOnlyRBG, nil)
+
+	// Collect RoleInstanceSet annotations for portTemplate discovery.
+	risAnnotations := make(map[string]map[string]string)
+	for i := range statefulOnlyRBG.Spec.Roles {
+		role := &statefulOnlyRBG.Spec.Roles[i]
+		ris := &workloadsv1alpha2.RoleInstanceSet{}
+		risName := types.NamespacedName{Name: rbg.GetWorkloadName(role), Namespace: rbg.Namespace}
+		if err := r.client.Get(ctx, risName, ris); err == nil {
+			risAnnotations[role.Name] = ris.Annotations
+		}
+	}
+	builder.SetRoleInstanceSetAnnotations(risAnnotations)
+
 	configData, err := builder.Build()
 	if err != nil {
 		return err

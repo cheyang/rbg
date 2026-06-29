@@ -55,3 +55,12 @@ type PortReference struct {
 	// From specifies the name of the port to be referenced
 	From string `json:"from"`
 }
+
+// PortTemplateInfo describes a deterministic port allocation template.
+// All pods within a role derive their ports from:
+//
+//	port = Base + instanceIndex * Stride + podIndex
+type PortTemplateInfo struct {
+	Base   int32 `json:"base" yaml:"base"`
+	Stride int32 `json:"stride" yaml:"stride"`
+}
