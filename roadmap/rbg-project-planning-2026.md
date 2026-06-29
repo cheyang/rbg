@@ -9,7 +9,8 @@
 | 状态 | 数量 | 说明 |
 |:---:|:---:|:---|
 | KEP + PoC 完成 | 2 | 拓扑感知调度、端口模板化服务发现 |
-| 待规划 | 23 | 其余 action 待 KEP 设计 |
+| Action 已定义，待 KEP | 1 | 滚动更新 Pod 复用优化 |
+| 待规划 | 22 | 其余 action 待 KEP 设计 |
 
 > **开发流程**：每个 action 遵循 KEP → 评审 → 正式实现 → E2E 测试 → 文档 的流程。
 > PoC 代码仅作为设计验证参考，正式实现需根据 KEP 评审反馈调整。
@@ -30,6 +31,7 @@
 - [ ] [Action 1.5: Warmup Phase 2](phase-1-short-term/05-warmup-phase2.md)
 - [ ] [Action 1.6: TensorRT-LLM 引擎支持](phase-1-short-term/06-trtllm-support.md)
 - [x] [Action 1.7: 端口模板化服务发现](phase-1-short-term/07-port-template-discovery.md) — KEP + PoC 完成，待评审
+- [ ] [Action 1.8: 滚动更新 Pod 复用优化](phase-1-short-term/08-rolling-update-pod-reuse.md) — 语义等价检测避免不必要的删除重建
 
 ### Phase 2: 中期（6-12 个月）
 - [ ] [Action 2.1: 自适应角色分配](phase-2-mid-term/01-adaptive-role-allocation.md)
@@ -54,6 +56,7 @@
 |:---|:---|:---:|:---|
 | topology-aware-scheduling | 1.3 | KEP + PoC 完成 | [KEP](../keps/topology-aware-scheduling/README.md) |
 | port-template-discovery | 1.7 | KEP + PoC 完成 | [KEP](../keps/port-template-discovery/README.md) |
+| rolling-update-pod-reuse | 1.8 | 待 KEP | [Action](phase-1-short-term/08-rolling-update-pod-reuse.md) |
 
 ---
 
@@ -182,6 +185,7 @@
 | 1.5 | **Warmup Phase 2** | 完善 RBG Warmup，支持 CUDA Graph 缓存共享、DeepGEMM 预编译 | 引擎层优化（路线 C） | 待规划 |
 | 1.6 | **TRT-LLM 引擎支持** | Patio 增加 TRT-LLM 后端支持 | Grove/Dynamo 原生支持 | 待规划 |
 | 1.7 | **端口模板化服务发现** | Role 级随机 base + Pod 级顺序递增，ConfigMap portTemplates 跨角色端口推导 | hostNetwork PD 分离刚需 | **KEP + PoC 完成** |
+| 1.8 | **滚动更新 Pod 复用** | 语义等价检测：revision hash 不同但 spec 实质相同的 Pod 不删除重建，直接 adopt | 推理场景重建代价极高（分钟级权重加载） | 待 KEP |
 
 ### Phase 2: 中期（6-12 个月, 2027 H1）
 
