@@ -164,6 +164,51 @@ const (
 	RestartTriggerPolicyIgnore = "Ignore"
 )
 
+// Topology-aware scheduling annotations
+const (
+	// IntraRoleTopologyKey specifies a topology key for intra-role Pod affinity.
+	// Pods of the same role will have a scheduling term to land on the same
+	// topology domain. The policy (Preferred/Required) is controlled by
+	// IntraRoleTopologyPolicyKey.
+	// This is a role-level annotation set in role.Annotations.
+	// Example: rbg.workloads.x-k8s.io/role-intra-topology: "nvidia.com/nvswitch-domain"
+	IntraRoleTopologyKey = RBGPrefix + "role-intra-topology"
+
+	// IntraRoleTopologyPolicyKey specifies the scheduling policy for intra-role
+	// topology affinity. Valid values: "Preferred" (default), "Required".
+	// This is a role-level annotation set in role.Annotations.
+	// Example: rbg.workloads.x-k8s.io/role-intra-topology-policy: "Required"
+	IntraRoleTopologyPolicyKey = RBGPrefix + "role-intra-topology-policy"
+
+	// InterRoleTopologyKey specifies a topology key for inter-role Pod affinity.
+	// Pods of participating roles will have a scheduling term to land on the
+	// same topology domain, e.g. Prefill and Decode in the same zone to reduce
+	// KV Cache transfer latency. Set on the RBG metadata.annotations.
+	// Example: rbg.workloads.x-k8s.io/group-inter-role-topology: "topology.kubernetes.io/zone"
+	InterRoleTopologyKey = RBGPrefix + "group-inter-role-topology"
+
+	// InterRoleTopologyPolicyKey specifies the scheduling policy for inter-role
+	// topology affinity. Valid values: "Preferred" (default), "Required".
+	// Set on the RBG metadata.annotations.
+	// Example: rbg.workloads.x-k8s.io/group-inter-role-topology-policy: "Preferred"
+	InterRoleTopologyPolicyKey = RBGPrefix + "group-inter-role-topology-policy"
+
+	// InterRoleTopologyRolesKey specifies which roles participate in inter-role
+	// topology affinity as a comma-separated list. If not set, all roles participate.
+	// Set on the RBG metadata.annotations.
+	// Example: rbg.workloads.x-k8s.io/group-inter-role-topology-roles: "prefill,decode"
+	InterRoleTopologyRolesKey = RBGPrefix + "group-inter-role-topology-roles"
+)
+
+// Topology policy values
+const (
+	// TopologyPolicyPreferred uses PreferredDuringSchedulingIgnoredDuringExecution.
+	TopologyPolicyPreferred = "Preferred"
+
+	// TopologyPolicyRequired uses RequiredDuringSchedulingIgnoredDuringExecution.
+	TopologyPolicyRequired = "Required"
+)
+
 // Inplace scheduling annotations and values.
 const (
 	// RoleInplaceSchedulingAnnotationKey enables in-place scheduling for a role.

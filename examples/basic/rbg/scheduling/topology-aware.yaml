@@ -1,0 +1,75 @@
+# Example: RoleBasedGroup with topology-aware scheduling (v1alpha2)
+#
+# This example demonstrates two topology-aware scheduling features:
+#
+# 1. Intra-role topology affinity (role-level annotation):
+#    Pods of the same role prefer the same NVSwitch domain for fast interconnect.
+#
+# 2. Inter-role topology affinity (group-level annotation):
+#    Prefill and Decode roles prefer the same availability zone
+#    to reduce KV Cache transfer latency.
+#
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: pd-topology-aware
+  namespace: default
+  annotations:
+    # Inter-role: Prefill and Decode prefer the same zone
+    rbg.workloads.x-k8s.io/group-inter-role-topology: "topology.kubernetes.io/zone"
+    rbg.workloads.x-k8s.io/group-inter-role-topology-policy: "Preferred"
+    rbg.workloads.x-k8s.io/group-inter-role-topology-roles: "prefill,decode"
+spec:
+  roles:
+    - name: prefill
+      replicas: 2
+      dependencies: []
+      annotations:
+        # Intra-role: Prefill pods prefer the same NVSwitch domain
+        rbg.workloads.x-k8s.io/role-intra-topology: "nvidia.com/nvswitch-domain"
+        rbg.workloads.x-k8s.io/role-intra-topology-policy: "Preferred"
+      leaderWorkerPattern:
+        size: 2
+        template:
+          spec:
+            containers:
+              - name: engine
+                image: sglang:latest
+                ports:
+                  - containerPort: 8000
+                resources:
+                  limits:
+                    nvidia.com/gpu: "1"
+
+    - name: decode
+      replicas: 4
+      dependencies: ["prefill"]
+      annotations:
+        # Intra-role: Decode pods prefer the same NVSwitch domain
+        rbg.workloads.x-k8s.io/role-intra-topology: "nvidia.com/nvswitch-domain"
+        rbg.workloads.x-k8s.io/role-intra-topology-policy: "Preferred"
+      standalonePattern:
+        template:
+          spec:
+            containers:
+              - name: engine
+                image: sglang:latest
+                ports:
+                  - containerPort: 8000
+                resources:
+                  limits:
+                    nvidia.com/gpu: "1"
+
+    - name: router
+      replicas: 1
+      dependencies: ["prefill", "decode"]
+      # Router does NOT participate in inter-role topology (not listed in roles)
+      # and does NOT need intra-role topology (no GPU interconnect concern)
+      standalonePattern:
+        template:
+          spec:
+            containers:
+              - name: router
+                image: inference-router:latest
+                ports:
+                  - containerPort: 8080

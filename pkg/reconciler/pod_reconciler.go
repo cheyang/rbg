@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
+	"strings"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -111,8 +112,10 @@ func (r *PodReconciler) ConstructPodTemplateSpecApplyConfiguration(
 	}
 
 	// Set Exclusive topology
+	exclusiveTopologyKey := ""
 	if topologyKey, found := rbg.GetExclusiveKey(); found {
 		if podAnnotations[constants.DisableExclusiveKeyAnnotationKey] == "" {
+			exclusiveTopologyKey = topologyKey
 			podAnnotations[constants.GroupExclusiveTopologyKey] = topologyKey
 			uniqueKey := rbg.GenGroupUniqueKey()
 			err := setExclusiveAffinities(
@@ -121,6 +124,23 @@ func (r *PodReconciler) ConstructPodTemplateSpecApplyConfiguration(
 			if err != nil {
 				return nil, err
 			}
+		}
+	}
+
+	// Set intra-role topology affinity
+	if topoKey := role.Annotations[constants.IntraRoleTopologyKey]; topoKey != "" {
+		// Skip if exclusive topology already covers this key (it implies a stronger constraint)
+		if topoKey != exclusiveTopologyKey {
+			policy := role.Annotations[constants.IntraRoleTopologyPolicyKey]
+			setIntraRoleTopologyAffinity(&podTemplateSpec, rbg, role, topoKey, policy)
+		}
+	}
+
+	// Set inter-role topology affinity
+	if topoKey := rbg.Annotations[constants.InterRoleTopologyKey]; topoKey != "" {
+		if shouldApplyInterRoleTopology(role.Name, rbg.Annotations[constants.InterRoleTopologyRolesKey]) {
+			policy := rbg.Annotations[constants.InterRoleTopologyPolicyKey]
+			setInterRoleTopologyAffinity(&podTemplateSpec, rbg, topoKey, policy)
 		}
 	}
 
@@ -238,6 +258,110 @@ func exclusiveAffinityApplied(podTemplateSpec corev1.PodTemplateSpec, topologyKe
 		}
 	}
 	return hasAffinity && hasAntiAffinity
+}
+
+// setIntraRoleTopologyAffinity injects PodAffinity so that Pods of the same
+// role prefer (or require) landing on the same topology domain. This is useful
+// for keeping multi-GPU workers on the same NVSwitch domain.
+func setIntraRoleTopologyAffinity(
+	pod *corev1.PodTemplateSpec,
+	rbg *workloadsv1alpha2.RoleBasedGroup,
+	role *workloadsv1alpha2.RoleSpec,
+	topologyKey, policy string,
+) {
+	if pod.Spec.Affinity == nil {
+		pod.Spec.Affinity = &corev1.Affinity{}
+	}
+	if pod.Spec.Affinity.PodAffinity == nil {
+		pod.Spec.Affinity.PodAffinity = &corev1.PodAffinity{}
+	}
+
+	labelSelector := &metav1.LabelSelector{
+		MatchLabels: map[string]string{
+			constants.GroupNameLabelKey: rbg.Name,
+			constants.RoleNameLabelKey: role.Name,
+		},
+	}
+
+	if policy == constants.TopologyPolicyRequired {
+		pod.Spec.Affinity.PodAffinity.RequiredDuringSchedulingIgnoredDuringExecution = append(
+			pod.Spec.Affinity.PodAffinity.RequiredDuringSchedulingIgnoredDuringExecution,
+			corev1.PodAffinityTerm{
+				LabelSelector: labelSelector,
+				TopologyKey:   topologyKey,
+			},
+		)
+	} else {
+		pod.Spec.Affinity.PodAffinity.PreferredDuringSchedulingIgnoredDuringExecution = append(
+			pod.Spec.Affinity.PodAffinity.PreferredDuringSchedulingIgnoredDuringExecution,
+			corev1.WeightedPodAffinityTerm{
+				Weight: 80,
+				PodAffinityTerm: corev1.PodAffinityTerm{
+					LabelSelector: labelSelector,
+					TopologyKey:   topologyKey,
+				},
+			},
+		)
+	}
+}
+
+// setInterRoleTopologyAffinity injects PodAffinity so that Pods of different
+// roles within the same RBG prefer (or require) landing on the same topology
+// domain. This reduces cross-role communication latency, e.g. KV Cache
+// transfer between Prefill and Decode roles.
+func setInterRoleTopologyAffinity(
+	pod *corev1.PodTemplateSpec,
+	rbg *workloadsv1alpha2.RoleBasedGroup,
+	topologyKey, policy string,
+) {
+	if pod.Spec.Affinity == nil {
+		pod.Spec.Affinity = &corev1.Affinity{}
+	}
+	if pod.Spec.Affinity.PodAffinity == nil {
+		pod.Spec.Affinity.PodAffinity = &corev1.PodAffinity{}
+	}
+
+	labelSelector := &metav1.LabelSelector{
+		MatchLabels: map[string]string{
+			constants.GroupNameLabelKey: rbg.Name,
+		},
+	}
+
+	if policy == constants.TopologyPolicyRequired {
+		pod.Spec.Affinity.PodAffinity.RequiredDuringSchedulingIgnoredDuringExecution = append(
+			pod.Spec.Affinity.PodAffinity.RequiredDuringSchedulingIgnoredDuringExecution,
+			corev1.PodAffinityTerm{
+				LabelSelector: labelSelector,
+				TopologyKey:   topologyKey,
+			},
+		)
+	} else {
+		pod.Spec.Affinity.PodAffinity.PreferredDuringSchedulingIgnoredDuringExecution = append(
+			pod.Spec.Affinity.PodAffinity.PreferredDuringSchedulingIgnoredDuringExecution,
+			corev1.WeightedPodAffinityTerm{
+				Weight: 60,
+				PodAffinityTerm: corev1.PodAffinityTerm{
+					LabelSelector: labelSelector,
+					TopologyKey:   topologyKey,
+				},
+			},
+		)
+	}
+}
+
+// shouldApplyInterRoleTopology checks whether the given role should participate
+// in inter-role topology affinity. If rolesCSV is empty, all roles participate.
+// Otherwise, only roles listed in the comma-separated value participate.
+func shouldApplyInterRoleTopology(roleName, rolesCSV string) bool {
+	if rolesCSV == "" {
+		return true
+	}
+	for _, r := range strings.Split(rolesCSV, ",") {
+		if strings.TrimSpace(r) == roleName {
+			return true
+		}
+	}
+	return false
 }
 
 func objectMetaEqual(meta1, meta2 metav1.ObjectMeta) (bool, error) {

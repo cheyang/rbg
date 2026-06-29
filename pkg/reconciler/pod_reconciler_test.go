@@ -1101,3 +1101,84 @@ func Test_applyStrategicMergePatch(t *testing.T) {
 		})
 	}
 }
+
+func Test_setIntraRoleTopologyAffinity(t *testing.T) {
+	rbg := &workloadsv1alpha2.RoleBasedGroup{
+		ObjectMeta: metav1.ObjectMeta{Name: "test-rbg", Namespace: "default"},
+	}
+	role := &workloadsv1alpha2.RoleSpec{Name: "decode"}
+
+	t.Run("preferred mode", func(t *testing.T) {
+		pod := &corev1.PodTemplateSpec{}
+		setIntraRoleTopologyAffinity(pod, rbg, role, "nvidia.com/nvswitch-domain", "")
+		assert.NotNil(t, pod.Spec.Affinity)
+		assert.NotNil(t, pod.Spec.Affinity.PodAffinity)
+		preferred := pod.Spec.Affinity.PodAffinity.PreferredDuringSchedulingIgnoredDuringExecution
+		assert.Len(t, preferred, 1)
+		assert.Equal(t, int32(80), preferred[0].Weight)
+		assert.Equal(t, "nvidia.com/nvswitch-domain", preferred[0].PodAffinityTerm.TopologyKey)
+		assert.Equal(t, "test-rbg", preferred[0].PodAffinityTerm.LabelSelector.MatchLabels[constants.GroupNameLabelKey])
+		assert.Equal(t, "decode", preferred[0].PodAffinityTerm.LabelSelector.MatchLabels[constants.RoleNameLabelKey])
+	})
+
+	t.Run("required mode", func(t *testing.T) {
+		pod := &corev1.PodTemplateSpec{}
+		setIntraRoleTopologyAffinity(pod, rbg, role, "nvidia.com/nvswitch-domain", constants.TopologyPolicyRequired)
+		assert.NotNil(t, pod.Spec.Affinity)
+		assert.NotNil(t, pod.Spec.Affinity.PodAffinity)
+		required := pod.Spec.Affinity.PodAffinity.RequiredDuringSchedulingIgnoredDuringExecution
+		assert.Len(t, required, 1)
+		assert.Equal(t, "nvidia.com/nvswitch-domain", required[0].TopologyKey)
+		assert.Equal(t, "test-rbg", required[0].LabelSelector.MatchLabels[constants.GroupNameLabelKey])
+		assert.Equal(t, "decode", required[0].LabelSelector.MatchLabels[constants.RoleNameLabelKey])
+	})
+}
+
+func Test_setInterRoleTopologyAffinity(t *testing.T) {
+	rbg := &workloadsv1alpha2.RoleBasedGroup{
+		ObjectMeta: metav1.ObjectMeta{Name: "test-rbg", Namespace: "default"},
+	}
+
+	t.Run("preferred mode", func(t *testing.T) {
+		pod := &corev1.PodTemplateSpec{}
+		setInterRoleTopologyAffinity(pod, rbg, "topology.kubernetes.io/zone", "")
+		assert.NotNil(t, pod.Spec.Affinity)
+		preferred := pod.Spec.Affinity.PodAffinity.PreferredDuringSchedulingIgnoredDuringExecution
+		assert.Len(t, preferred, 1)
+		assert.Equal(t, int32(60), preferred[0].Weight)
+		assert.Equal(t, "topology.kubernetes.io/zone", preferred[0].PodAffinityTerm.TopologyKey)
+		assert.Equal(t, "test-rbg", preferred[0].PodAffinityTerm.LabelSelector.MatchLabels[constants.GroupNameLabelKey])
+		_, hasRoleName := preferred[0].PodAffinityTerm.LabelSelector.MatchLabels[constants.RoleNameLabelKey]
+		assert.False(t, hasRoleName)
+	})
+
+	t.Run("required mode", func(t *testing.T) {
+		pod := &corev1.PodTemplateSpec{}
+		setInterRoleTopologyAffinity(pod, rbg, "topology.kubernetes.io/zone", constants.TopologyPolicyRequired)
+		required := pod.Spec.Affinity.PodAffinity.RequiredDuringSchedulingIgnoredDuringExecution
+		assert.Len(t, required, 1)
+		assert.Equal(t, "topology.kubernetes.io/zone", required[0].TopologyKey)
+	})
+}
+
+func Test_shouldApplyInterRoleTopology(t *testing.T) {
+	tests := []struct {
+		name     string
+		roleName string
+		rolesCSV string
+		want     bool
+	}{
+		{"empty roles means all participate", "decode", "", true},
+		{"role in list", "prefill", "prefill,decode", true},
+		{"role not in list", "router", "prefill,decode", false},
+		{"single role in list", "decode", "decode", true},
+		{"spaces in csv", "decode", "prefill, decode , router", true},
+		{"role not matching with spaces", "cache", " prefill , decode ", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := shouldApplyInterRoleTopology(tt.roleName, tt.rolesCSV)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
