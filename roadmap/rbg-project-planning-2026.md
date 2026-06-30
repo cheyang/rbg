@@ -58,6 +58,12 @@
 | port-template-discovery | 1.7 | KEP + PoC 完成 | [KEP](../keps/port-template-discovery/README.md) |
 | rolling-update-pod-reuse | 1.8 | 待 KEP | [Action](phase-1-short-term/08-rolling-update-pod-reuse.md) |
 
+### 研究报告
+
+| 主题 | 结论 | 文档 |
+|:---|:---|:---|
+| RBG 支持 RL 训练 | 结构匹配、生态空白确认；推荐选项 C（推理侧 RL 辅助）| [研究报告](research/rbg-for-rl-training.md) |
+
 ---
 
 ## 一、竞争格局分析
