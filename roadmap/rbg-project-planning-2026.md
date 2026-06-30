@@ -64,6 +64,7 @@
 |:---|:---|:---|
 | RBG 支持 RL 训练 | 结构匹配、生态空白确认；推荐选项 C（推理侧 RL 辅助）| [可行性报告](research/rbg-for-rl-training.md) |
 | 选项 C 详细设计 | Patio 权重 API、ConfigMap 扩展、YAML 示例、实现路线 | [设计报告](research/rbg-rl-rollout-orchestrator-design.md) |
+| RL for LLM 入门 | What/How/Why：5 个角色、PPO/GRPO/DPO 算法、训练-推理循环 | [入门指南](research/rl-for-llm-explained.md) |
 
 ---
 
