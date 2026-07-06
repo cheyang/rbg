@@ -23,7 +23,11 @@ import (
 	"github.com/stretchr/testify/assert"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/tools/record"
 	"k8s.io/utils/ptr"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"sigs.k8s.io/rbgs/api/workloads/constants"
 	workloadsv1alpha2 "sigs.k8s.io/rbgs/api/workloads/v1alpha2"
 )
@@ -2285,4 +2289,141 @@ func TestIsContainerRestartExpected(t *testing.T) {
 			assert.Equal(t, tt.expected, result)
 		})
 	}
+}
+
+// ---------------------------------------------------------------------------
+// preserve faulty pod for debugging (issue #363)
+// ---------------------------------------------------------------------------
+
+func preservedPod(name string) *corev1.Pod {
+	return &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        name,
+			Annotations: map[string]string{constants.RestartPreservedAnnotationKey: constants.RestartPreservedValue},
+		},
+		Status: corev1.PodStatus{Phase: corev1.PodFailed},
+	}
+}
+
+func TestIsPreserved(t *testing.T) {
+	assert.False(t, isPreserved(&corev1.Pod{}), "pod without annotations is not preserved")
+	assert.False(t, isPreserved(&corev1.Pod{ObjectMeta: metav1.ObjectMeta{
+		Annotations: map[string]string{constants.RestartPreservedAnnotationKey: "false"},
+	}}), "wrong value is not preserved")
+	assert.True(t, isPreserved(preservedPod("pod-0")), "correct marker value is preserved")
+}
+
+func TestHasPreservedPod(t *testing.T) {
+	pods := []*corev1.Pod{
+		{Status: corev1.PodStatus{Phase: corev1.PodRunning}},
+	}
+	assert.False(t, hasPreservedPod(pods))
+	pods = append(pods, preservedPod("pod-1"))
+	assert.True(t, hasPreservedPod(pods))
+}
+
+func TestIsFaultyPod(t *testing.T) {
+	now := metav1.Now()
+	tests := []struct {
+		name      string
+		pod       *corev1.Pod
+		baselines map[string]map[string]workloadsv1alpha2.ContainerUpdateBaseline
+		expected  bool
+	}{
+		{
+			name:     "Failed phase is faulty",
+			pod:      &corev1.Pod{Status: corev1.PodStatus{Phase: corev1.PodFailed}},
+			expected: true,
+		},
+		{
+			name:     "Failed but being deleted is not faulty",
+			pod:      &corev1.Pod{ObjectMeta: metav1.ObjectMeta{DeletionTimestamp: &now}, Status: corev1.PodStatus{Phase: corev1.PodFailed}},
+			expected: false,
+		},
+		{
+			name: "Container restarted is faulty",
+			pod: &corev1.Pod{Status: corev1.PodStatus{
+				Phase:             corev1.PodRunning,
+				ContainerStatuses: []corev1.ContainerStatus{{Name: "main", RestartCount: 1}},
+			}},
+			expected: true,
+		},
+		{
+			name: "Running with no restarts is healthy",
+			pod: &corev1.Pod{Status: corev1.PodStatus{
+				Phase:             corev1.PodRunning,
+				ContainerStatuses: []corev1.ContainerStatus{{Name: "main", RestartCount: 0}},
+			}},
+			expected: false,
+		},
+		{
+			name: "Ignore trigger policy is never faulty",
+			pod: &corev1.Pod{
+				ObjectMeta: metav1.ObjectMeta{Annotations: map[string]string{constants.RestartTriggerPolicyAnnotationKey: constants.RestartTriggerPolicyIgnore}},
+				Status:     corev1.PodStatus{Phase: corev1.PodFailed},
+			},
+			expected: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.expected, isFaultyPod(tt.pod, tt.baselines))
+		})
+	}
+}
+
+// TestShouldRecreateInstancePreservedPodHold verifies that once a faulty pod has been
+// preserved for debugging, the instance is held and no further recreation is triggered,
+// even if another pod is faulty.
+func TestShouldRecreateInstancePreservedPodHold(t *testing.T) {
+	instance := &workloadsv1alpha2.RoleInstance{
+		ObjectMeta: metav1.ObjectMeta{Name: "test-instance", Generation: 1},
+		Spec: workloadsv1alpha2.RoleInstanceSpec{
+			RestartPolicy: workloadsv1alpha2.RecreateRoleInstanceOnPodRestart,
+			Components:    []workloadsv1alpha2.RoleInstanceComponent{{Size: ptr.To[int32](2)}},
+		},
+		Status: workloadsv1alpha2.RoleInstanceStatus{
+			ObservedGeneration: 1,
+			Conditions: []workloadsv1alpha2.RoleInstanceCondition{
+				{Type: workloadsv1alpha2.RoleInstanceReady, Status: corev1.ConditionTrue},
+			},
+		},
+	}
+	pods := []*corev1.Pod{
+		// A faulty pod that would normally trigger recreation.
+		{Status: corev1.PodStatus{
+			Phase:             corev1.PodRunning,
+			ContainerStatuses: []corev1.ContainerStatus{{Name: "main", RestartCount: 1}},
+		}},
+		// An already-preserved faulty pod that holds the instance.
+		preservedPod("pod-1"),
+	}
+	assert.False(t, shouldRecreateInstance(instance, pods, nil),
+		"a preserved pod should hold the instance and suppress further recreation")
+}
+
+// TestMarkPodsPreserved verifies that faulty pods get the preserved marker patched onto
+// them and that already-preserved pods are left untouched.
+func TestMarkPodsPreserved(t *testing.T) {
+	scheme := runtime.NewScheme()
+	_ = corev1.AddToScheme(scheme)
+
+	faulty := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{Name: "pod-0", Namespace: "default"},
+		Status:     corev1.PodStatus{Phase: corev1.PodFailed},
+	}
+	already := preservedPod("pod-1")
+	already.Namespace = "default"
+
+	fakeClient := fake.NewClientBuilder().WithScheme(scheme).WithObjects(faulty, already).Build()
+	ctrl := &realControl{Client: fakeClient, recorder: record.NewFakeRecorder(10)}
+
+	instance := &workloadsv1alpha2.RoleInstance{ObjectMeta: metav1.ObjectMeta{Name: "test-instance", Namespace: "default"}}
+	err := ctrl.markPodsPreserved(context.Background(), instance, []*corev1.Pod{faulty, already})
+	assert.NoError(t, err)
+
+	got := &corev1.Pod{}
+	assert.NoError(t, fakeClient.Get(context.Background(), client.ObjectKeyFromObject(faulty), got))
+	assert.Equal(t, constants.RestartPreservedValue, got.Annotations[constants.RestartPreservedAnnotationKey],
+		"faulty pod should be marked preserved")
 }

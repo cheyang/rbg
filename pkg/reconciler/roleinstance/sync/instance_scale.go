@@ -85,9 +85,27 @@ func (c *realControl) calculateDiffsWithExpectation(ctx context.Context, updateI
 	if c.shouldRecreateInstanceGuarded(ctx, updateInstance, allPods, updateInstance.Status.InPlaceUpdateContainerBaselines) {
 		// Mark instance as restarting to prevent cascading re-triggers
 		setRestartingCondition(updateInstance)
+		// Preserve the faulty pods (Failed phase or unexpected container restart) instead
+		// of deleting them, so operators can inspect the crash (kubectl logs -p / describe),
+		// and recreate only the other pods of the instance. The preserved pods carry a
+		// marker annotation that keeps the instance in a debug hold (see shouldRecreateInstance)
+		// until they are manually deleted, at which point the instance recreates normally.
+		baselines := updateInstance.Status.InPlaceUpdateContainerBaselines
+		var faulty, healthy []*v1.Pod
+		for _, p := range allPods {
+			if isFaultyPod(p, baselines) {
+				faulty = append(faulty, p)
+			} else {
+				healthy = append(healthy, p)
+			}
+		}
+		if err := c.markPodsPreserved(ctx, updateInstance, faulty); err != nil {
+			return nil, err
+		}
 		c.recorder.Event(updateInstance, v1.EventTypeNormal, "ReCreateInstance",
-			fmt.Sprintf("RestartPolicy is RecreateInstanceOnPodRestart, recreate all pods of instance: %v", klog.KObj(updateInstance)))
-		return &expectationDiff{toDeleteNum: len(allPods), toDeletePod: allPods}, nil
+			fmt.Sprintf("RestartPolicy is RecreateInstanceOnPodRestart: preserving %d faulty pod(s) for debugging (kubectl logs -p), recreating %d other pod(s) of instance: %v",
+				len(faulty), len(healthy), klog.KObj(updateInstance)))
+		return &expectationDiff{toDeleteNum: len(healthy), toDeletePod: healthy}, nil
 	}
 
 	if isGangSchedulingEnabled(updateInstance) {
@@ -117,7 +135,11 @@ func (c *realControl) calculateDiffsWithExpectation(ctx context.Context, updateI
 
 	// Delete inactive (Failed) pods so that replacements can be created on next reconcile.
 	// Failed pods block replacement creation because hasOrphanPod detects the same-name pod still exists.
+	// Preserved faulty pods are intentionally kept for debugging and must not be deleted here.
 	for _, p := range inactivePods {
+		if isPreserved(p) {
+			continue
+		}
 		if p.Status.Phase == v1.PodFailed && p.DeletionTimestamp == nil {
 			toDeleteNum++
 			toDeletePods = append(toDeletePods, p)
@@ -360,6 +382,15 @@ func shouldRecreateInstance(instance *workloadsv1alpha2.RoleInstance, pods []*v1
 		return false
 	}
 
+	// If a faulty pod is already preserved for debugging, the instance is in a debug
+	// hold: do not trigger another recreation. This prevents cascading recreation of the
+	// healthy pods and avoids re-triggering if the preserved pod's container later recovers
+	// to Ready (its RestartCount stays > 0 because the pod is never recreated).
+	// The hold is released when the preserved pod is manually deleted.
+	if hasPreservedPod(pods) {
+		return false
+	}
+
 	// Only trigger when Instance was previously Ready (stable state)
 	// and is NOT in the middle of any update.
 	// This avoids triggering recreate during initial creation, scaling up, or rolling/in-place updates.
@@ -374,27 +405,78 @@ func shouldRecreateInstance(instance *workloadsv1alpha2.RoleInstance, pods []*v1
 	}
 
 	for _, p := range pods {
-		if hasTriggerPolicyIgnore(p) {
-			continue
-		}
-		// If this pod is currently undergoing an in-place update, skip it.
-		// The container restart is expected and should not trigger instance recreation.
-		// We continue checking other pods so that a genuine PodFailed on a sibling
-		// is not masked by one pod's in-place update state.
-		if isPodInPlaceUpdating(p) {
-			continue
-		}
-		// Check if any Pod is in Failed phase (excluding pods being deleted)
-		if p.Status.Phase == v1.PodFailed && p.DeletionTimestamp == nil {
-			return true
-		}
-		// Check if any container has restarted beyond what's expected from in-place updates.
-		if containerRestarted(p) && !isContainerRestartExpected(p, baselines) {
+		if isFaultyPod(p, baselines) {
 			return true
 		}
 	}
 
 	return false
+}
+
+// isFaultyPod reports whether a pod is in the state that triggers restart-policy
+// recreation: it is in Failed phase (and not already being deleted), or one of its
+// containers restarted beyond what an in-place update accounts for.
+//
+// Pods excluded from triggering the policy are never considered faulty:
+//   - pods whose component sets restart-trigger-policy=Ignore (auxiliary sidecars), and
+//   - pods currently undergoing an in-place update (their container restart is expected).
+func isFaultyPod(pod *v1.Pod, baselines map[string]map[string]workloadsv1alpha2.ContainerUpdateBaseline) bool {
+	if hasTriggerPolicyIgnore(pod) {
+		return false
+	}
+	// If this pod is currently undergoing an in-place update, skip it.
+	// The container restart is expected and should not trigger instance recreation.
+	if isPodInPlaceUpdating(pod) {
+		return false
+	}
+	// Check if the Pod is in Failed phase (excluding pods being deleted).
+	if pod.Status.Phase == v1.PodFailed && pod.DeletionTimestamp == nil {
+		return true
+	}
+	// Check if any container has restarted beyond what's expected from in-place updates.
+	if containerRestarted(pod) && !isContainerRestartExpected(pod, baselines) {
+		return true
+	}
+	return false
+}
+
+// isPreserved reports whether a pod carries the restart-preserved marker, meaning the
+// restart policy has intentionally kept it for debugging instead of recreating it.
+func isPreserved(pod *v1.Pod) bool {
+	return pod.Annotations != nil && pod.Annotations[constants.RestartPreservedAnnotationKey] == constants.RestartPreservedValue
+}
+
+// hasPreservedPod reports whether any pod in the set is preserved for debugging.
+func hasPreservedPod(pods []*v1.Pod) bool {
+	for _, p := range pods {
+		if isPreserved(p) {
+			return true
+		}
+	}
+	return false
+}
+
+// markPodsPreserved patches the given faulty pods with the restart-preserved marker so
+// they are kept for debugging (kubectl logs -p / describe) and skipped by future
+// restart-policy recreations. Pods already marked are left untouched.
+func (c *realControl) markPodsPreserved(ctx context.Context, instance *workloadsv1alpha2.RoleInstance, pods []*v1.Pod) error {
+	for _, pod := range pods {
+		if isPreserved(pod) {
+			continue
+		}
+		patch := client.MergeFrom(pod.DeepCopy())
+		if pod.Annotations == nil {
+			pod.Annotations = map[string]string{}
+		}
+		pod.Annotations[constants.RestartPreservedAnnotationKey] = constants.RestartPreservedValue
+		if err := c.Patch(ctx, pod, patch); err != nil {
+			c.recorder.Eventf(instance, v1.EventTypeWarning, "FailedPreserve", "failed to mark faulty pod %s preserved: %v", pod.Name, err)
+			return err
+		}
+		c.recorder.Eventf(instance, v1.EventTypeNormal, "PreservedFaultyPod",
+			"preserved faulty pod %s for debugging (kubectl logs -p %s)", pod.Name, pod.Name)
+	}
+	return nil
 }
 
 // containerRestarted checks if any container in the pod has been restarted.

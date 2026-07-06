@@ -28,14 +28,20 @@ This KEP addresses two distinct levels of handling when a Pod enters Failed stat
 | **Why delete first** | `hasOrphanPod` blocks creation when same-name pod still exists |
 | **Key point** | This follows native K8s StatefulSet behavior - Failed Pods with fixed names must be deleted before replacement |
 
-### Level 2: Recreate Entire Instance (RecreateRoleInstanceOnPodRestart only)
+### Level 2: Recreate Instance, Preserving the Faulty Pod (RecreateRoleInstanceOnPodRestart only)
 
 | Aspect | Description |
 |--------|-------------|
-| **Trigger** | Pod enters Failed state AND restartPolicy=`RecreateRoleInstanceOnPodRestart` |
+| **Trigger** | A pod in a previously-Ready Instance faults (Failed phase, or an unexpected container restart) AND restartPolicy=`RecreateRoleInstanceOnPodRestart` |
 | **Handler** | RoleInstance Controller (`instance_scale.go` → `shouldRecreateInstance`) |
-| **Behavior** | Delete ALL pods (active + inactive) → recreate entire Instance |
-| **Key point** | Maintains Instance-level consistency; only the affected Instance is recreated |
+| **Behavior** | **Preserve** the faulty pod(s) for debugging (mark with `rbg.workloads.x-k8s.io/restart-preserved: "true"`, do NOT delete) → delete and recreate only the **other** pods of the Instance |
+| **Key point** | The crashed pod is kept so operators can run `kubectl logs -p` / `kubectl describe`; the associated pods are still restarted for consistency |
+
+> **Behavior change (issue #363).** Previously Level 2 deleted **all** pods and recreated the entire Instance. That destroyed crash evidence (the faulty pod vanished before it could be inspected) and, because each recreation reset the container `RestartCount` to 0, it bypassed the kubelet's CrashLoopBackOff and produced an unthrottled recreate loop that `kubectl get pod` masked as "Running". Level 2 now preserves the faulty pod instead.
+>
+> **Debug hold and recovery.** A preserved pod keeps the Instance out of Ready, and the presence of any preserved pod suppresses further restart-policy recreation (see `hasPreservedPod` in `shouldRecreateInstance`) — this both stops the infinite loop and prevents re-triggering if the preserved pod's container later recovers (its `RestartCount` stays > 0 because it is never recreated). Recovery is manual: an operator deletes the preserved pod once done debugging, and the Instance then recreates the missing pod normally. There is no automatic recovery.
+>
+> **Trade-off.** The preserved pod continues to hold its resources (e.g. GPUs) until it is manually deleted. This is the intentional cost of keeping the crash site available for inspection.
 
 ### Container Restart Handling
 
@@ -108,15 +114,16 @@ The RBG project has deficiencies in handling Pod abnormal states (e.g., Evicted,
 - Failed pod is deleted, replacement pod created on next reconcile
 - Active replica count restored automatically
 
-#### Story 2: Failed Pod Triggers Instance Recreation
+#### Story 2: Faulty Pod Preserved, Other Pods Recreated
 
-> As an operator with `RecreateRoleInstanceOnPodRestart` policy, when a Pod enters Failed state, I want the entire RoleInstance to be recreated for consistency.
+> As an operator with `RecreateRoleInstanceOnPodRestart` policy, when a Pod faults, I want the crashed Pod kept so I can run `kubectl logs -p` to debug it, while the other associated Pods of the Instance are restarted.
 
 **Expected Behavior**:
-- Pod enters Failed state (e.g., Evicted, Error)
-- `shouldRecreateInstance` detects Failed pod with RecreateRoleInstanceOnPodRestart policy
-- All pods in the affected Instance are deleted and recreated together
-- Only the affected Instance is recreated; other Instances remain untouched
+- A pod faults (Failed phase, e.g. Evicted/Error, or an unexpected container restart)
+- `shouldRecreateInstance` detects it with RecreateRoleInstanceOnPodRestart policy
+- The faulty pod is marked `rbg.workloads.x-k8s.io/restart-preserved: "true"` and **kept** (not deleted)
+- The other pods of the affected Instance are deleted and recreated
+- The Instance stays in a debug hold (no further recreation) until the preserved pod is manually deleted; other Instances remain untouched
 
 #### Story 3: RestartPolicy=None Creates Replacement Pod
 
@@ -341,7 +348,7 @@ func (c *realControl) Scale(...) (bool, error) {
 | RestartPolicy | Pod Failed Behavior |
 |--------------|---------------------|
 | `None` | Delete Failed pod → next reconcile creates replacement (pod-level) |
-| `RecreateRoleInstanceOnPodRestart` | `shouldRecreateInstance` triggers → delete ALL Instance pods → recreate all (Instance-level) |
+| `RecreateRoleInstanceOnPodRestart` | `shouldRecreateInstance` triggers → **preserve** faulty pod for debugging → delete & recreate only the **other** Instance pods (Instance-level, faulty pod held) |
 
 #### Container Restart
 
@@ -355,7 +362,7 @@ func (c *realControl) Scale(...) (bool, error) {
 | Scenario | Handler | Action |
 |----------|---------|--------|
 | Pod Failed + `None` | RoleInstance Controller | Delete Failed pod, create replacement |
-| Pod Failed + `RecreateRoleInstanceOnPodRestart` | RoleInstance Controller | Recreate entire Instance |
+| Pod Failed + `RecreateRoleInstanceOnPodRestart` | RoleInstance Controller | Preserve faulty pod, recreate other Instance pods |
 | Container restart + `None` | None (K8s default) | Let container restart |
 | Container restart + `RecreateRoleInstanceOnPodRestart` | LWS Controller | Recreate RoleInstance |
 
@@ -448,6 +455,12 @@ func GetActivePodCount(ctx context.Context, rclient client.Client, namespace, rb
   - RoleInstance Controller handles both Level 1 (delete Failed pod) and Level 2 (recreate Instance)
   - Removed `ContainerRestarted` check from `shouldRecreateInstance` (handled by LWS controller)
 
+- 2026-07-06: Level 2 now preserves the faulty pod instead of deleting all pods (issue #363)
+  - Added `RestartPreservedAnnotationKey` (`rbg.workloads.x-k8s.io/restart-preserved`) in `api/workloads/constants/annotation.go`
+  - `instance_scale.go`: on recreation, mark faulty pods preserved and delete only the other pods; skip preserved pods in Level-1 Failed deletion; `shouldRecreateInstance` short-circuits when a preserved pod exists (debug hold + stops the infinite recreate loop)
+  - Recovery is manual (delete the preserved pod); no automatic recovery
+  - Added unit tests for `isFaultyPod`, `isPreserved`, `hasPreservedPod`, `markPodsPreserved`, and the preserved-pod hold
+
 - 2026-05-18: Updated after upstream #340 removed Pod Controller
   - Removed Pod Controller references (deprecated by upstream #340)
   - Removed `RecreateRBGOnPodRestart` references (deprecated by upstream #340)
@@ -458,6 +471,7 @@ func GetActivePodCount(ctx context.Context, rclient client.Client, namespace, rb
 
 | File | Change Type |
 |------|-------------|
+| `api/workloads/constants/annotation.go` | Added `RestartPreservedAnnotationKey` |
 | `pkg/utils/pod_utils.go` | Added/modified functions |
 | `pkg/utils/pod_utils_test.go` | Added tests |
 | `pkg/reconciler/roleinstance/sync/instance_scale.go` | Modified: two-level Failed pod handling |

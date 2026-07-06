@@ -164,6 +164,23 @@ const (
 	RestartTriggerPolicyIgnore = "Ignore"
 )
 
+// Restart-policy pod annotations.
+const (
+	// RestartPreservedAnnotationKey marks a faulty pod that the restart policy
+	// (RecreateRoleInstanceOnPodRestart) has intentionally preserved for debugging
+	// instead of recreating. When a pod inside a Ready instance faults (Failed phase
+	// or an unexpected container restart), the controller keeps that pod (so operators
+	// can run `kubectl logs -p` / `kubectl describe` on the crashed container) and only
+	// recreates the other pods of the instance. The presence of a preserved pod also
+	// suppresses further restart-policy recreations, so the instance stays in a debug
+	// hold until the pod is manually deleted.
+	// Value is "true".
+	RestartPreservedAnnotationKey = RBGPrefix + "restart-preserved"
+
+	// RestartPreservedValue is the value set on RestartPreservedAnnotationKey.
+	RestartPreservedValue = "true"
+)
+
 // Inplace scheduling annotations and values.
 const (
 	// RoleInplaceSchedulingAnnotationKey enables in-place scheduling for a role.
