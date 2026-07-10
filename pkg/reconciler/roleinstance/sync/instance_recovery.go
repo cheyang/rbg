@@ -83,8 +83,9 @@ func (c *realControl) reconcileRestartPolicy(instance *workloadsv1alpha2.RoleIns
 		if _, held := restartingCache.Load(instanceKey(instance)); held {
 			return &expectationDiff{requeueAfter: delay}
 		}
-		c.maybeResetConsecutiveRestarts(instance, delay)
 		if len(crashers) == 0 {
+			// Healthy: reset the loop counter once the instance has been Ready and stable.
+			maybeResetConsecutiveRestarts(instance, delay)
 			return nil
 		}
 		if !meetsRecreatePreconditions(instance, allPods) {
@@ -156,7 +157,7 @@ func (c *realControl) executeRebuild(instance *workloadsv1alpha2.RoleInstance, a
 // instance has been Ready and stable for longer than the stability window. The window
 // hysteresis prevents a crashloop that briefly flips Ready from perpetually resetting
 // the counter and defeating the loop breaker.
-func (c *realControl) maybeResetConsecutiveRestarts(instance *workloadsv1alpha2.RoleInstance, delay time.Duration) {
+func maybeResetConsecutiveRestarts(instance *workloadsv1alpha2.RoleInstance, delay time.Duration) {
 	if instance.Status.ConsecutiveRestarts == 0 {
 		return
 	}
@@ -167,11 +168,14 @@ func (c *realControl) maybeResetConsecutiveRestarts(instance *workloadsv1alpha2.
 	if window < minStabilitySeconds*time.Second {
 		window = minStabilitySeconds * time.Second
 	}
-	if instance.Status.LastRestartTime != nil && time.Since(instance.Status.LastRestartTime.Time) < window {
+	// Require a known, sufficiently old last-restart time before trusting stability.
+	if instance.Status.LastRestartTime == nil || time.Since(instance.Status.LastRestartTime.Time) < window {
 		return
 	}
 	instance.Status.ConsecutiveRestarts = 0
-	clearBackoffExhausted(instance)
+	if isBackoffExhausted(instance) {
+		clearBackoffExhausted(instance)
+	}
 }
 
 // findCrashers returns the pods whose failure should trigger a whole-group rebuild,
