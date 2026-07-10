@@ -34,6 +34,11 @@ type RoleInstanceSpec struct {
 	// RestartPolicy defines the restart policy for all pods within the RoleInstance.
 	RestartPolicy RestartPolicyType `json:"restartPolicy,omitempty"`
 
+	// RestartPolicyConfig tunes the RecreateRoleInstanceOnPodRestart behavior
+	// (diagnosis delay and consecutive-rebuild limit). Ignored when RestartPolicy is None.
+	// +optional
+	RestartPolicyConfig *RestartPolicyConfig `json:"restartPolicyConfig,omitempty"`
+
 	// ReadinessGates is an optional list of PodReadinessGates for the whole RoleInstance.
 	ReadinessGates []RoleInstanceReadinessGate `json:"readinessGates,omitempty"`
 }
@@ -125,6 +130,60 @@ type RoleInstanceStatus struct {
 	// (from in-place image changes) from real crashes.
 	// +optional
 	InPlaceUpdateContainerBaselines map[string]map[string]ContainerUpdateBaseline `json:"inPlaceUpdateContainerBaselines,omitempty"`
+
+	// ConsecutiveRestarts counts whole-group rebuilds triggered by the restart policy
+	// that have not yet been followed by a sustained-Ready instance. It is reset to 0
+	// after the instance stays Ready past the stability window, and it drives the
+	// MaxConsecutiveRebuilds loop breaker.
+	// +optional
+	ConsecutiveRestarts int32 `json:"consecutiveRestarts,omitempty"`
+
+	// LastRestartTime is when the most recent restart-policy whole-group rebuild was executed.
+	// +optional
+	LastRestartTime *metav1.Time `json:"lastRestartTime,omitempty"`
+
+	// LastCrashInfo records evidence about the crash(es) that triggered the most recent
+	// rebuild, for post-hoc diagnosis. It survives pod deletion.
+	// +optional
+	LastCrashInfo *RoleInstanceCrashInfo `json:"lastCrashInfo,omitempty"`
+}
+
+// RoleInstanceCrashInfo captures the crash evidence that triggered a restart-policy rebuild.
+type RoleInstanceCrashInfo struct {
+	// ObservedTime is when the controller recorded this crash info.
+	ObservedTime metav1.Time `json:"observedTime"`
+
+	// Pods is the list of crashed pods that triggered the rebuild, sorted by
+	// termination time (earliest first).
+	// +optional
+	Pods []CrashedPod `json:"pods,omitempty"`
+}
+
+// CrashedPod records the diagnostic details of a single crashed pod.
+type CrashedPod struct {
+	// PodName is the name of the crashed pod.
+	PodName string `json:"podName"`
+	// NodeName is the node the crashed pod was scheduled on.
+	// +optional
+	NodeName string `json:"nodeName,omitempty"`
+	// Container is the name of the container whose termination was recorded.
+	// +optional
+	Container string `json:"container,omitempty"`
+	// ExitCode is the exit code of the terminated container.
+	// +optional
+	ExitCode int32 `json:"exitCode,omitempty"`
+	// Reason is the termination reason of the container (e.g. Error, OOMKilled).
+	// +optional
+	Reason string `json:"reason,omitempty"`
+	// FinishedAt is when the container terminated.
+	// +optional
+	FinishedAt *metav1.Time `json:"finishedAt,omitempty"`
+	// RestartCount is the container RestartCount observed at capture time.
+	// +optional
+	RestartCount int32 `json:"restartCount,omitempty"`
+	// LikelyRootCause marks the earliest-terminated crasher. Best-effort, not a guarantee.
+	// +optional
+	LikelyRootCause bool `json:"likelyRootCause,omitempty"`
 }
 
 // ContainerUpdateBaseline records the pre-update state of a container for
@@ -188,6 +247,12 @@ const (
 	// While this condition is True, further restart-policy recreations are suppressed to
 	// prevent cascading restart loops.
 	RoleInstanceRestarting RoleInstanceConditionType = "Restarting"
+
+	// RoleInstanceRestartBackoffExhausted indicates the restart-policy loop breaker has
+	// tripped: the instance was rebuilt MaxConsecutiveRebuilds times without reaching a
+	// sustained-Ready state, so the controller has stopped rebuilding and is waiting for
+	// human/higher-level intervention.
+	RoleInstanceRestartBackoffExhausted RoleInstanceConditionType = "RestartBackoffExhausted"
 )
 
 // RoleInstanceCondition describes the state of a RoleInstance at a certain point.

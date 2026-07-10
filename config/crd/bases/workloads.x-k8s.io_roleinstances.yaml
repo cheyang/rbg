@@ -118,6 +118,28 @@ spec:
                 description: RestartPolicy defines the restart policy for all pods
                   within the RoleInstance.
                 type: string
+              restartPolicyConfig:
+                description: |-
+                  RestartPolicyConfig tunes the RecreateRoleInstanceOnPodRestart behavior
+                  (diagnosis delay and consecutive-rebuild limit). Ignored when RestartPolicy is None.
+                properties:
+                  maxConsecutiveRebuilds:
+                    description: |-
+                      MaxConsecutiveRebuilds is the number of consecutive whole-group rebuilds tolerated
+                      before the controller stops and marks the instance with RestartBackoffExhausted.
+                      0 means unlimited (legacy behavior).
+                    format: int32
+                    minimum: 0
+                    type: integer
+                  rebuildDelaySeconds:
+                    description: |-
+                      RebuildDelaySeconds is the delay between detecting a pod crash and recreating
+                      the whole RoleInstance. During this window the crashed pod is preserved so
+                      operators can inspect it (e.g.
+                    format: int32
+                    minimum: 0
+                    type: integer
+                type: object
             required:
             - components
             type: object
@@ -206,6 +228,12 @@ spec:
                   - type
                   type: object
                 type: array
+              consecutiveRestarts:
+                description: |-
+                  ConsecutiveRestarts counts whole-group rebuilds triggered by the restart policy
+                  that have not yet been followed by a sustained-Ready instance.
+                format: int32
+                type: integer
               currentRevision:
                 description: CurrentRevision is a hash value that changes when the
                   spec is changed.
@@ -239,6 +267,69 @@ spec:
               labelSelector:
                 description: LabelSelector of a RoleInstance is a label query over
                   Pods that should match the RoleInstance.
+                type: string
+              lastCrashInfo:
+                description: |-
+                  LastCrashInfo records evidence about the crash(es) that triggered the most recent
+                  rebuild, for post-hoc diagnosis. It survives pod deletion.
+                properties:
+                  observedTime:
+                    description: ObservedTime is when the controller recorded this
+                      crash info.
+                    format: date-time
+                    type: string
+                  pods:
+                    description: |-
+                      Pods is the list of crashed pods that triggered the rebuild, sorted by
+                      termination time (earliest first).
+                    items:
+                      description: CrashedPod records the diagnostic details of a
+                        single crashed pod.
+                      properties:
+                        container:
+                          description: Container is the name of the container whose
+                            termination was recorded.
+                          type: string
+                        exitCode:
+                          description: ExitCode is the exit code of the terminated
+                            container.
+                          format: int32
+                          type: integer
+                        finishedAt:
+                          description: FinishedAt is when the container terminated.
+                          format: date-time
+                          type: string
+                        likelyRootCause:
+                          description: LikelyRootCause marks the earliest-terminated
+                            crasher. Best-effort, not a guarantee.
+                          type: boolean
+                        nodeName:
+                          description: NodeName is the node the crashed pod was scheduled
+                            on.
+                          type: string
+                        podName:
+                          description: PodName is the name of the crashed pod.
+                          type: string
+                        reason:
+                          description: Reason is the termination reason of the container
+                            (e.g. Error, OOMKilled).
+                          type: string
+                        restartCount:
+                          description: RestartCount is the container RestartCount
+                            observed at capture time.
+                          format: int32
+                          type: integer
+                      required:
+                      - podName
+                      type: object
+                    type: array
+                required:
+                - observedTime
+                type: object
+              lastRestartTime:
+                description: LastRestartTime is when the most recent restart-policy
+                  whole-group rebuild was executed.
+                format: date-time
                 type: string
               observedGeneration:
                 description: |-
