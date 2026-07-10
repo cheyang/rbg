@@ -72,8 +72,13 @@ free crash-forensics event:
 | Lever | Field | Default | Solves |
 |---|---|---|---|
 | **Diagnosis window** | `rebuildDelaySeconds` | `15` | observability (live) |
-| **Loop breaker** | `maxConsecutiveRebuilds` | `10` (`0` = unlimited) | infinite loop |
+| **Loop breaker** | `maxConsecutiveRebuilds` | `0` = unlimited (opt-in) | infinite loop |
 | **Forensics event** | — (always on) | — | observability (unattended) |
+
+> **Default is infinite rebuild.** The loop breaker defaults to off
+> (`maxConsecutiveRebuilds=0`) to preserve the existing "rebuild forever" behavior;
+> operators opt in by setting a positive limit. The only default behavior change is the
+> 15s diagnosis window plus the always-on crash-forensics event.
 
 - **Diagnosis window.** When a crash is detected, wait `rebuildDelaySeconds` before deleting
   and recreating the group. During this window the crashed pod object still exists, so
@@ -119,7 +124,7 @@ selection problem disappears because we record *information about all crashers* 
    for the next crash, and has 25 minutes to `kubectl logs -p` / `describe` the crashed pod
    before the group is rebuilt. Reverts to default afterward.
 2. *Persistent misconfiguration.* A bad image crashes on startup every time. After
-   `maxConsecutiveRebuilds` (default 10) rebuilds, the controller stops, sets
+   `maxConsecutiveRebuilds` (opt-in; e.g. set to 10) rebuilds, the controller stops, sets
    `RestartBackoffExhausted`, and emits an event. The operator is alerted instead of the
    cluster silently thrashing GPUs forever.
 3. *Unattended night failure.* A pod OOMs at 3am. Nobody is watching; the diagnosis window
@@ -152,7 +157,7 @@ type RestartPolicyConfig struct {
     // Ready for a stability window.
     // +kubebuilder:validation:Minimum=0
     // +optional
-    MaxConsecutiveRebuilds *int32 `json:"maxConsecutiveRebuilds,omitempty"` // default 10
+    MaxConsecutiveRebuilds *int32 `json:"maxConsecutiveRebuilds,omitempty"` // default 0 (unlimited)
 }
 ```
 
@@ -283,11 +288,12 @@ finishedAt and sorts by `FinishedAt`.
 - `RestartPolicy` field type is unchanged → no break for typed/generated Go clients, no
   conversion changes for v1alpha1↔v1alpha2.
 - `RestartPolicyConfig` is optional; when absent, defaults apply:
-  `rebuildDelaySeconds=15`, `maxConsecutiveRebuilds=10`.
-- The only observable default change is (a) a 15s delay before rebuild (down from immediate),
-  and (b) rebuilds stop after 10 consecutive failures instead of looping forever — both are
-  improvements. Users who want the exact legacy loop-forever behavior set
-  `maxConsecutiveRebuilds: 0`.
+  `rebuildDelaySeconds=15`, `maxConsecutiveRebuilds=0` (unlimited).
+- The default keeps infinite rebuild. The only observable default change is the 15s
+  diagnosis window before each rebuild (down from immediate) plus the always-on
+  crash-forensics event. The loop breaker is opt-in: set `maxConsecutiveRebuilds` to a
+  positive value to bound retries. Users who want the exact pre-existing timing can also
+  set `rebuildDelaySeconds: 0`.
 
 ### Test Plan
 

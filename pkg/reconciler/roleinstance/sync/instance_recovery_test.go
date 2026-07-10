@@ -179,6 +179,22 @@ func TestRecovery_LoopBreaker_Unlimited(t *testing.T) {
 	assert.NotNil(t, getCond(inst, workloadsv1alpha2.RoleInstanceRestarting))
 }
 
+func TestRecovery_DefaultConfig_InfiniteRebuild(t *testing.T) {
+	// nil config => default maxConsecutiveRebuilds=0 (unlimited): the loop breaker must
+	// never trip regardless of how many rebuilds have happened.
+	inst := readyRecreateInstance("default-infinite", nil)
+	inst.Status.ConsecutiveRestarts = 1000
+	defer restartingCache.Delete(instanceKey(inst))
+	pods := []*corev1.Pod{crashedPod("default-infinite-worker-0", 5)}
+
+	diff := testControl().reconcileRestartPolicy(inst, pods, nil)
+
+	assert.NotNil(t, diff)
+	assert.Nil(t, getCond(inst, workloadsv1alpha2.RoleInstanceRestartBackoffExhausted),
+		"default config must not trip the loop breaker (infinite rebuild)")
+	assert.NotNil(t, getCond(inst, workloadsv1alpha2.RoleInstanceRestarting))
+}
+
 func TestRecovery_BackoffExhausted_ShortCircuitsUntilSpecChange(t *testing.T) {
 	inst := readyRecreateInstance("stuck", nil)
 	inst.Status.ConsecutiveRestarts = 10

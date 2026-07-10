@@ -163,9 +163,9 @@ const (
 const (
 	// DefaultRebuildDelaySeconds is the default delay before a whole-group rebuild.
 	DefaultRebuildDelaySeconds int32 = 15
-	// DefaultMaxConsecutiveRebuilds is the default number of consecutive rebuilds
-	// tolerated before the loop breaker trips.
-	DefaultMaxConsecutiveRebuilds int32 = 10
+	// DefaultMaxConsecutiveRebuilds is the default consecutive-rebuild limit. It is 0,
+	// meaning unlimited (infinite rebuild) — the loop breaker is opt-in.
+	DefaultMaxConsecutiveRebuilds int32 = 0
 )
 
 // RestartPolicyConfig tunes the RecreateRoleInstanceOnPodRestart behavior.
@@ -181,8 +181,9 @@ type RestartPolicyConfig struct {
 
 	// MaxConsecutiveRebuilds is the number of consecutive whole-group rebuilds tolerated
 	// before the controller stops and marks the instance with RestartBackoffExhausted.
-	// 0 means unlimited (legacy behavior). The counter resets after the instance has been
-	// Ready for a stability window. Defaults to 10.
+	// 0 means unlimited (infinite rebuild). The counter resets after the instance has been
+	// Ready for a stability window. Defaults to 0 (unlimited); set a positive value to
+	// opt in to the loop breaker.
 	// +kubebuilder:validation:Minimum=0
 	// +optional
 	MaxConsecutiveRebuilds *int32 `json:"maxConsecutiveRebuilds,omitempty"`

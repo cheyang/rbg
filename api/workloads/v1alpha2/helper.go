@@ -310,8 +310,8 @@ func (c *RestartPolicyConfig) GetRebuildDelaySeconds() int32 {
 	return *c.RebuildDelaySeconds
 }
 
-// GetMaxConsecutiveRebuilds returns the configured loop-breaker limit, or the default.
-// A return value of 0 means unlimited.
+// GetMaxConsecutiveRebuilds returns the configured loop-breaker limit, or the default (0).
+// A return value of 0 means unlimited (infinite rebuild); the loop breaker is opt-in.
 func (c *RestartPolicyConfig) GetMaxConsecutiveRebuilds() int32 {
 	if c == nil || c.MaxConsecutiveRebuilds == nil {
 		return DefaultMaxConsecutiveRebuilds
