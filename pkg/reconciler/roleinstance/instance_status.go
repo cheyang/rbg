@@ -196,13 +196,13 @@ func (r *realStatusUpdater) setInstanceConditions(instance *workloadsv1alpha2.Ro
 	}
 	conditions = append(conditions, customInstanceConditions...)
 
-	// Clear the recovery conditions (Restarting / RestartBackoffExhausted) once the
-	// instance is Ready again, regardless of which source they came from.
+	// Clear the give-up condition once the instance is Ready again. The Restarting
+	// condition itself is owned by the restart-policy state machine (it must survive a
+	// hold even while the crashed pod still reports Ready), so it is not cleared here.
 	if instanceReady {
 		filtered := conditions[:0]
 		for _, c := range conditions {
-			if c.Type == workloadsv1alpha2.RoleInstanceRestarting ||
-				c.Type == workloadsv1alpha2.RoleInstanceRestartBackoffExhausted {
+			if c.Type == workloadsv1alpha2.RoleInstanceRestartBackoffExhausted {
 				continue
 			}
 			filtered = append(filtered, c)

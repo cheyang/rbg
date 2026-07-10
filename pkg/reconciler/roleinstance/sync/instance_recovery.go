@@ -107,7 +107,13 @@ func (c *realControl) reconcileRestartPolicy(instance *workloadsv1alpha2.RoleIns
 	// POST-REBUILD WAIT phase.
 	if len(crashers) == 0 {
 		// Fresh pods are starting/recovering; let normal scaling recreate any missing
-		// pods. Ready will clear the Restarting condition via the status updater.
+		// pods. Once the instance is Ready again the recovery cycle is complete — clear
+		// the Restarting marker (the state machine owns this condition).
+		if wasInstanceReady(instance) {
+			setCondition(instance, workloadsv1alpha2.RoleInstanceRestarting, v1.ConditionFalse,
+				"Recovered", "instance recovered after whole-group rebuild")
+			c.ClearRestarting(instance)
+		}
 		return nil
 	}
 	if !meetsRecreatePreconditions(instance, allPods) {

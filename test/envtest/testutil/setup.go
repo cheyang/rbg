@@ -272,6 +272,23 @@ func SetPodContainerRestarted(pod *corev1.Pod, containerName string, restartCoun
 	}
 }
 
+// SetPodContainerLastTerminated records a previous-termination state on a container so
+// that crash forensics (exit code / reason / finish time) can be exercised.
+func SetPodContainerLastTerminated(pod *corev1.Pod, containerName string, exitCode int32, reason string) {
+	for i := range pod.Status.ContainerStatuses {
+		if pod.Status.ContainerStatuses[i].Name == containerName {
+			pod.Status.ContainerStatuses[i].LastTerminationState = corev1.ContainerState{
+				Terminated: &corev1.ContainerStateTerminated{
+					ExitCode:   exitCode,
+					Reason:     reason,
+					FinishedAt: metav1.Now(),
+				},
+			}
+			return
+		}
+	}
+}
+
 func boolPtr(b bool) *bool {
 	return &b
 }
