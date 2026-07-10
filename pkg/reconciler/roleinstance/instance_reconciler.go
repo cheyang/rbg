@@ -172,7 +172,8 @@ func (r *reconciler) syncInstance(ctx context.Context, instance *workloadsv1alph
 		requeueDuration time.Duration
 	)
 
-	scaling, podsScaleErr = r.syncControl.Scale(ctx, updateInstance, currentRevision, updateRevision, revisions, filteredPods, inactivePods)
+	var scaleRequeue time.Duration
+	scaling, scaleRequeue, podsScaleErr = r.syncControl.Scale(ctx, updateInstance, currentRevision, updateRevision, revisions, filteredPods, inactivePods)
 	if podsScaleErr != nil {
 		newStatus.Conditions = append(newStatus.Conditions, workloadsv1alpha2.RoleInstanceCondition{
 			Type:               workloadsv1alpha2.RoleInstanceFailedScale,
@@ -181,18 +182,25 @@ func (r *reconciler) syncInstance(ctx context.Context, instance *workloadsv1alph
 			Message:            podsScaleErr.Error(),
 		})
 	}
-	if scaling {
-		// Propagate Restarting condition only when scaling is active (restart-policy
-		// triggered deletion or pod creation is still in progress). Once scaling
-		// completes (scaling=false), the condition is no longer propagated so that
-		// setInstanceConditions can clear it when the instance becomes Ready.
-		for _, cond := range updateInstance.Status.Conditions {
-			if cond.Type == workloadsv1alpha2.RoleInstanceRestarting && cond.Status == v1.ConditionTrue {
-				newStatus.Conditions = append(newStatus.Conditions, cond)
-				break
-			}
+
+	// Persist restart-policy recovery bookkeeping produced by the state machine. These
+	// fields are not recomputed from pods by the status updater, so they must be carried
+	// forward from the (mutated) working copy on every reconcile.
+	newStatus.ConsecutiveRestarts = updateInstance.Status.ConsecutiveRestarts
+	newStatus.LastRestartTime = updateInstance.Status.LastRestartTime
+	newStatus.LastCrashInfo = updateInstance.Status.LastCrashInfo
+	// Propagate the recovery conditions (Restarting / RestartBackoffExhausted) so a hold
+	// entered without any scaling still persists. setInstanceConditions clears both when
+	// the instance becomes Ready.
+	for _, cond := range updateInstance.Status.Conditions {
+		if cond.Type == workloadsv1alpha2.RoleInstanceRestarting ||
+			cond.Type == workloadsv1alpha2.RoleInstanceRestartBackoffExhausted {
+			newStatus.Conditions = append(newStatus.Conditions, cond)
 		}
-		return syncResult{err: podsScaleErr}
+	}
+
+	if scaling {
+		return syncResult{requeue: scaleRequeue, err: podsScaleErr}
 	}
 
 	requeueDuration, podsUpdateErr = r.syncControl.Update(ctx, instance, newStatus, currentRevision, updateRevision, revisions, filteredPods)
@@ -205,8 +213,14 @@ func (r *reconciler) syncInstance(ctx context.Context, instance *workloadsv1alph
 		})
 	}
 
+	// Honor the earliest non-zero requeue between the scale (diagnosis window) and update paths.
+	requeue := scaleRequeue
+	if requeue == 0 || (requeueDuration > 0 && requeueDuration < requeue) {
+		requeue = requeueDuration
+	}
+
 	return syncResult{
-		requeue: requeueDuration,
+		requeue: requeue,
 		err: utilerrors.NewAggregate([]error{
 			podsScaleErr, podsUpdateErr,
 		}),

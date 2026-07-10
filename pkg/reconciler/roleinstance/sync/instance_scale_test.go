@@ -17,7 +17,6 @@ limitations under the License.
 package sync
 
 import (
-	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -1612,55 +1611,6 @@ func TestShouldRecreateInstance(t *testing.T) {
 			assert.Equal(t, tt.expected, result, tt.desc)
 		})
 	}
-}
-
-// TestRestartingCachePreventsRecreation tests that the in-memory restarting cache
-// prevents shouldRecreateInstanceGuarded from triggering when the instance is already restarting.
-func TestRestartingCachePreventsRecreation(t *testing.T) {
-	instance := &workloadsv1alpha2.RoleInstance{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:       "test-instance",
-			Namespace:  "default",
-			Generation: 1,
-		},
-		Spec: workloadsv1alpha2.RoleInstanceSpec{
-			RestartPolicy: workloadsv1alpha2.RecreateRoleInstanceOnPodRestart,
-			Components: []workloadsv1alpha2.RoleInstanceComponent{
-				{Size: ptr.To[int32](2)},
-			},
-		},
-		Status: workloadsv1alpha2.RoleInstanceStatus{
-			ObservedGeneration: 1,
-			Conditions: []workloadsv1alpha2.RoleInstanceCondition{
-				{
-					Type:   workloadsv1alpha2.RoleInstanceReady,
-					Status: corev1.ConditionTrue,
-				},
-			},
-		},
-	}
-	pods := []*corev1.Pod{
-		{
-			Status: corev1.PodStatus{
-				Phase: corev1.PodRunning,
-				ContainerStatuses: []corev1.ContainerStatus{
-					{Name: "main", RestartCount: 1},
-				},
-			},
-		},
-	}
-
-	// Without cache: shouldRecreateInstance returns true
-	assert.True(t, shouldRecreateInstance(instance, pods, nil))
-
-	// Set the in-memory cache to mark instance as restarting
-	restartingCache.Store(instanceKey(instance), true)
-	defer restartingCache.Delete(instanceKey(instance))
-
-	// The guarded version with a nil apiReader (cache hit means no API call needed)
-	ctrl := &realControl{}
-	result := ctrl.shouldRecreateInstanceGuarded(context.Background(), instance, pods, nil)
-	assert.False(t, result, "should not recreate when instance is in restarting cache")
 }
 
 // TestIsInstanceRestarting tests the isInstanceRestarting helper function
