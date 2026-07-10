@@ -159,6 +159,36 @@ const (
 	RecreateRoleInstanceOnPodRestart RestartPolicyType = "RecreateRoleInstanceOnPodRestart"
 )
 
+// Defaults for RestartPolicyConfig.
+const (
+	// DefaultRebuildDelaySeconds is the default delay before a whole-group rebuild.
+	DefaultRebuildDelaySeconds int32 = 15
+	// DefaultMaxConsecutiveRebuilds is the default consecutive-rebuild limit. It is 0,
+	// meaning unlimited (infinite rebuild) — the loop breaker is opt-in.
+	DefaultMaxConsecutiveRebuilds int32 = 0
+)
+
+// RestartPolicyConfig tunes the RecreateRoleInstanceOnPodRestart behavior.
+// It has no effect when RestartPolicy is None.
+type RestartPolicyConfig struct {
+	// RebuildDelaySeconds is the delay between detecting a pod crash and recreating
+	// the whole RoleInstance. During this window the crashed pod is preserved so
+	// operators can inspect it (e.g. kubectl logs -p). Larger values act as a
+	// hold-for-debug. Defaults to 15.
+	// +kubebuilder:validation:Minimum=0
+	// +optional
+	RebuildDelaySeconds *int32 `json:"rebuildDelaySeconds,omitempty"`
+
+	// MaxConsecutiveRebuilds is the number of consecutive whole-group rebuilds tolerated
+	// before the controller stops and marks the instance with RestartBackoffExhausted.
+	// 0 means unlimited (infinite rebuild). The counter resets after the instance has been
+	// Ready for a stability window. Defaults to 0 (unlimited); set a positive value to
+	// opt in to the loop breaker.
+	// +kubebuilder:validation:Minimum=0
+	// +optional
+	MaxConsecutiveRebuilds *int32 `json:"maxConsecutiveRebuilds,omitempty"`
+}
+
 // SharedServiceSelectionPolicy defines the service policy of service per role
 type SharedServiceSelectionPolicy string
 
@@ -338,6 +368,11 @@ type LeaderWorkerPattern struct {
 	// +kubebuilder:validation:Enum={None,RecreateRoleInstanceOnPodRestart}
 	// +optional
 	RestartPolicy RestartPolicyType `json:"restartPolicy,omitempty"`
+
+	// RestartPolicyConfig tunes the RecreateRoleInstanceOnPodRestart behavior
+	// (diagnosis delay and consecutive-rebuild limit). Ignored when RestartPolicy is None.
+	// +optional
+	RestartPolicyConfig *RestartPolicyConfig `json:"restartPolicyConfig,omitempty"`
 }
 
 type CustomComponentsPattern struct {
@@ -349,6 +384,11 @@ type CustomComponentsPattern struct {
 	// +kubebuilder:validation:Enum={None,RecreateRoleInstanceOnPodRestart}
 	// +optional
 	RestartPolicy RestartPolicyType `json:"restartPolicy,omitempty"`
+
+	// RestartPolicyConfig tunes the RecreateRoleInstanceOnPodRestart behavior
+	// (diagnosis delay and consecutive-rebuild limit). Ignored when RestartPolicy is None.
+	// +optional
+	RestartPolicyConfig *RestartPolicyConfig `json:"restartPolicyConfig,omitempty"`
 }
 
 type WorkloadSpec struct {

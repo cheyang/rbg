@@ -289,6 +289,36 @@ func (r *RoleSpec) GetRestartPolicy() RestartPolicyType {
 	return RestartPolicyNone
 }
 
+// GetRestartPolicyConfig returns the effective RestartPolicyConfig for this role based on
+// its pattern, or nil if none is set (callers should fall back to defaults via the
+// RestartPolicyConfig accessors).
+func (r *RoleSpec) GetRestartPolicyConfig() *RestartPolicyConfig {
+	if r.LeaderWorkerPattern != nil {
+		return r.LeaderWorkerPattern.RestartPolicyConfig
+	}
+	if r.CustomComponentsPattern != nil {
+		return r.CustomComponentsPattern.RestartPolicyConfig
+	}
+	return nil
+}
+
+// GetRebuildDelaySeconds returns the configured diagnosis-window delay, or the default.
+func (c *RestartPolicyConfig) GetRebuildDelaySeconds() int32 {
+	if c == nil || c.RebuildDelaySeconds == nil {
+		return DefaultRebuildDelaySeconds
+	}
+	return *c.RebuildDelaySeconds
+}
+
+// GetMaxConsecutiveRebuilds returns the configured loop-breaker limit, or the default (0).
+// A return value of 0 means unlimited (infinite rebuild); the loop breaker is opt-in.
+func (c *RestartPolicyConfig) GetMaxConsecutiveRebuilds() int32 {
+	if c == nil || c.MaxConsecutiveRebuilds == nil {
+		return DefaultMaxConsecutiveRebuilds
+	}
+	return *c.MaxConsecutiveRebuilds
+}
+
 // GetLeaderWorkerSize returns the size of the leader-worker group.
 // Returns nil if not using LeaderWorkerPattern.
 func (r *RoleSpec) GetLeaderWorkerSize() *int32 {

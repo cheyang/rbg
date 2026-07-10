@@ -174,6 +174,11 @@ func (rw *LeaderWorkerRoleWrapper) WithRestartPolicy(rp workloadsv1alpha2.Restar
 	return rw
 }
 
+func (rw *LeaderWorkerRoleWrapper) WithRestartPolicyConfig(cfg *workloadsv1alpha2.RestartPolicyConfig) *LeaderWorkerRoleWrapper {
+	rw.LeaderWorkerPattern.RestartPolicyConfig = cfg
+	return rw
+}
+
 func (rw *LeaderWorkerRoleWrapper) WithSize(size int32) *LeaderWorkerRoleWrapper {
 	rw.LeaderWorkerPattern.Size = ptr.To(size)
 	return rw

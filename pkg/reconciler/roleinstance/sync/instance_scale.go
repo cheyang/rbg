@@ -20,6 +20,7 @@ import (
 	"context"
 	"fmt"
 	"sync/atomic"
+	"time"
 
 	apps "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
@@ -43,22 +44,24 @@ const (
 )
 
 func (c *realControl) Scale(ctx context.Context, updateInstance *workloadsv1alpha2.RoleInstance, currentRevision, updateRevision *apps.ControllerRevision,
-	revisions []*apps.ControllerRevision, pods []*v1.Pod, inactivePods []*v1.Pod) (bool, error) {
+	revisions []*apps.ControllerRevision, pods []*v1.Pod, inactivePods []*v1.Pod) (bool, time.Duration, error) {
 	// Record node bindings for in-place scheduling.
 	// Piggybacks on the already-fetched pods — no additional API calls.
 	RecordNodeBindings(c.bindings, updateInstance, pods)
 
 	diffRes, err := c.calculateDiffsWithExpectation(ctx, updateInstance, currentRevision, updateRevision, revisions, pods, inactivePods)
 	if err != nil {
-		return true, err
+		return true, 0, err
 	}
 	if diffRes.toDeleteNum > 0 {
-		return c.deletePods(ctx, updateInstance, diffRes.toDeletePod)
+		scaling, derr := c.deletePods(ctx, updateInstance, diffRes.toDeletePod)
+		return scaling, diffRes.requeueAfter, derr
 	}
 	if diffRes.toScaleNum > 0 {
-		return c.createPods(ctx, updateInstance, diffRes.toScaleRoleIDS, updateRevision.Name)
+		scaling, cerr := c.createPods(ctx, updateInstance, diffRes.toScaleRoleIDS, updateRevision.Name)
+		return scaling, diffRes.requeueAfter, cerr
 	}
-	return false, nil
+	return false, diffRes.requeueAfter, nil
 }
 
 type expectationDiff struct {
@@ -67,6 +70,11 @@ type expectationDiff struct {
 
 	toScaleNum     int
 	toScaleRoleIDS map[string]sets.Set[int32]
+
+	// requeueAfter, when > 0, asks the reconciler to re-reconcile after this delay.
+	// Used by the restart-policy diagnosis window to rebuild once the hold elapses,
+	// even in the absence of pod events (e.g. a terminal Failed pod).
+	requeueAfter time.Duration
 }
 
 func (c *realControl) calculateDiffsWithExpectation(ctx context.Context, updateInstance *workloadsv1alpha2.RoleInstance,
@@ -82,12 +90,10 @@ func (c *realControl) calculateDiffsWithExpectation(ctx context.Context, updateI
 	allPods := make([]*v1.Pod, 0, len(pods)+len(inactivePods))
 	allPods = append(allPods, pods...)
 	allPods = append(allPods, inactivePods...)
-	if c.shouldRecreateInstanceGuarded(ctx, updateInstance, allPods, updateInstance.Status.InPlaceUpdateContainerBaselines) {
-		// Mark instance as restarting to prevent cascading re-triggers
-		setRestartingCondition(updateInstance)
-		c.recorder.Event(updateInstance, v1.EventTypeNormal, "ReCreateInstance",
-			fmt.Sprintf("RestartPolicy is RecreateInstanceOnPodRestart, recreate all pods of instance: %v", klog.KObj(updateInstance)))
-		return &expectationDiff{toDeleteNum: len(allPods), toDeletePod: allPods}, nil
+	// Run the restart-policy recovery state machine (diagnosis window + loop breaker).
+	// A non-nil diff short-circuits normal reconciliation (hold, rebuild, or give up).
+	if diff := c.reconcileRestartPolicy(updateInstance, allPods, updateInstance.Status.InPlaceUpdateContainerBaselines); diff != nil {
+		return diff, nil
 	}
 
 	if isGangSchedulingEnabled(updateInstance) {
@@ -304,36 +310,6 @@ func (c *realControl) createOnePod(ctx context.Context, instance *workloadsv1alp
 	return nil
 }
 
-// shouldRecreateInstanceGuarded wraps shouldRecreateInstance with a deferred guard:
-// when the core logic decides to recreate, a final check ensures the instance isn't
-// already in a restart cycle. This uses an in-memory LRU cache (instant, no informer lag)
-// with a fallback to a direct API server read for the persisted Restarting condition
-// (survives controller restarts).
-func (c *realControl) shouldRecreateInstanceGuarded(ctx context.Context, instance *workloadsv1alpha2.RoleInstance, pods []*v1.Pod, baselines map[string]map[string]workloadsv1alpha2.ContainerUpdateBaseline) (recreate bool) {
-	defer func() {
-		if recreate && c.isAlreadyRestarting(ctx, instance) {
-			recreate = false
-		}
-	}()
-	return shouldRecreateInstance(instance, pods, baselines)
-}
-
-// isAlreadyRestarting checks whether the instance is already undergoing a restart-policy
-// recreation. It first checks the in-memory cache (zero latency, immune to informer lag),
-// then falls back to a direct API server read to check the persisted Restarting condition.
-func (c *realControl) isAlreadyRestarting(ctx context.Context, instance *workloadsv1alpha2.RoleInstance) bool {
-	// Fast path: check in-memory cache
-	if _, ok := restartingCache.Load(instanceKey(instance)); ok {
-		return true
-	}
-	// Slow path: read fresh from API server (bypasses informer cache)
-	fresh := &workloadsv1alpha2.RoleInstance{}
-	if err := c.apiReader.Get(ctx, client.ObjectKeyFromObject(instance), fresh); err != nil {
-		return false
-	}
-	return isInstanceRestarting(fresh)
-}
-
 // shouldRecreateInstance checks if the instance should be recreated (all pods deleted then recreated).
 // This applies when restartPolicy = RecreateRoleInstanceOnPodRestart AND:
 //   - Any Pod is in Failed phase, OR
@@ -349,49 +325,19 @@ func (c *realControl) isAlreadyRestarting(ctx context.Context, instance *workloa
 //
 // Per KEP Non-Goals: Succeeded pods are NOT handled here - they represent normal completion
 // and should not trigger Instance recreation.
+//
+// It shares its detection semantics with the restart-policy recovery state machine via
+// meetsRecreatePreconditions and findCrashers.
 func shouldRecreateInstance(instance *workloadsv1alpha2.RoleInstance, pods []*v1.Pod, baselines map[string]map[string]workloadsv1alpha2.ContainerUpdateBaseline) bool {
 	// Only apply when restartPolicy is RecreateRoleInstanceOnPodRestart
 	if instance.Spec.RestartPolicy != workloadsv1alpha2.RecreateRoleInstanceOnPodRestart {
 		return false
 	}
-
-	// If no pods exist yet (initial creation), don't trigger recreate
-	if len(pods) == 0 {
+	if !meetsRecreatePreconditions(instance, pods) {
 		return false
 	}
-
-	// Only trigger when Instance was previously Ready (stable state)
-	// and is NOT in the middle of any update.
-	// This avoids triggering recreate during initial creation, scaling up, or rolling/in-place updates.
-	if !wasInstanceReady(instance) || instance.Generation != instance.Status.ObservedGeneration {
-		return false
-	}
-	// CurrentRevision != UpdateRevision means a rolling update is in progress
-	// (not all pods have converged to the target revision yet). Container restarts
-	// during this window are from the update process, not unexpected failures.
-	if instance.Status.CurrentRevision != instance.Status.UpdateRevision {
-		return false
-	}
-
-	for _, p := range pods {
-		if hasTriggerPolicyIgnore(p) {
-			continue
-		}
-		// If this pod is currently undergoing an in-place update, skip it.
-		// The container restart is expected and should not trigger instance recreation.
-		// We continue checking other pods so that a genuine PodFailed on a sibling
-		// is not masked by one pod's in-place update state.
-		if isPodInPlaceUpdating(p) {
-			continue
-		}
-		// Check if any Pod is in Failed phase (excluding pods being deleted)
-		if p.Status.Phase == v1.PodFailed && p.DeletionTimestamp == nil {
-			return true
-		}
-		// Check if any container has restarted beyond what's expected from in-place updates.
-		if containerRestarted(p) && !isContainerRestartExpected(p, baselines) {
-			return true
-		}
+	if len(findCrashers(pods, baselines)) > 0 {
+		return true
 	}
 
 	return false

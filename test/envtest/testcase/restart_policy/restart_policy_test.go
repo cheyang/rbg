@@ -806,4 +806,214 @@ var _ = Describe("RestartPolicy Controller Integration", func() {
 				"instance should be stable after recovery from restart")
 		})
 	})
+
+	// Helpers scoped to the recovery-config tests below.
+
+	// getRestartCond returns a specific recovery condition from the RoleInstance, or nil.
+	getRestartCond := func(rbgName, roleName string, t workloadsv1alpha2.RoleInstanceConditionType) *workloadsv1alpha2.RoleInstanceCondition {
+		ri := getRoleInstance(rbgName, roleName)
+		if ri == nil {
+			return nil
+		}
+		for i := range ri.Status.Conditions {
+			if ri.Status.Conditions[i].Type == t {
+				return &ri.Status.Conditions[i]
+			}
+		}
+		return nil
+	}
+
+	// presetConsecutiveRestarts patches the RoleInstance status counter (retrying on
+	// conflict) to simulate having already rebuilt N times.
+	presetConsecutiveRestarts := func(rbgName, roleName string, n int32) {
+		Eventually(func() error {
+			ri := getRoleInstance(rbgName, roleName)
+			if ri == nil {
+				return fmt.Errorf("no role instance yet")
+			}
+			ri.Status.ConsecutiveRestarts = n
+			return testutil.K8sClient.Status().Update(testutil.Ctx, ri)
+		}, timeout, interval).Should(Succeed())
+	}
+
+	Context("Diagnosis window (rebuildDelaySeconds)", func() {
+		It("should preserve the crashed pod and record crash info during the hold", func() {
+			rbgName := "test-diag-window"
+			roleName := defaultRoleName
+
+			rbg := wrappersv2.BuildBasicRoleBasedGroup(rbgName, testNs).WithRoles(
+				[]workloadsv1alpha2.RoleSpec{
+					wrappersv2.BuildLeaderWorkerRole(roleName).
+						WithReplicas(1).
+						WithSize(2).
+						WithRestartPolicy(workloadsv1alpha2.RecreateRoleInstanceOnPodRestart).
+						WithRestartPolicyConfig(&workloadsv1alpha2.RestartPolicyConfig{
+							RebuildDelaySeconds: ptrInt32(30),
+						}).Obj(),
+				}).Obj()
+
+			Expect(testutil.K8sClient.Create(testutil.Ctx, rbg)).Should(Succeed())
+
+			waitForPods(rbgName, roleName, 2)
+			makePodsReady(rbgName, roleName)
+			waitForRoleInstanceReady(rbgName, roleName)
+
+			// Pick the worker pod and simulate an in-place container restart with a
+			// recorded previous termination (exit code / reason).
+			podList := listRolePods(rbgName, roleName)
+			var worker *corev1.Pod
+			for i := range podList.Items {
+				if podList.Items[i].Labels[constants.ComponentNameLabelKey] == "worker" {
+					worker = &podList.Items[i]
+					break
+				}
+			}
+			if worker == nil {
+				worker = &podList.Items[1]
+			}
+			workerName := worker.Name
+			workerUID := worker.UID
+
+			fresh := &corev1.Pod{}
+			Expect(testutil.K8sClient.Get(testutil.Ctx, client.ObjectKeyFromObject(worker), fresh)).Should(Succeed())
+			testutil.SetPodContainerRestarted(fresh, "nginx", 1)
+			testutil.SetPodContainerLastTerminated(fresh, "nginx", 137, "OOMKilled")
+			Expect(testutil.K8sClient.Status().Update(testutil.Ctx, fresh)).Should(Succeed())
+
+			// The controller should enter the hold: set Restarting and record crash info.
+			Eventually(func() bool {
+				info := getRoleInstance(rbgName, roleName).Status.LastCrashInfo
+				return info != nil && len(info.Pods) > 0
+			}, timeout, interval).Should(BeTrue(), "LastCrashInfo should be recorded on crash")
+
+			ri := getRoleInstance(rbgName, roleName)
+			Expect(ri.Status.LastCrashInfo.Pods[0].PodName).Should(Equal(workerName))
+			Expect(ri.Status.LastCrashInfo.Pods[0].ExitCode).Should(Equal(int32(137)))
+			Expect(ri.Status.LastCrashInfo.Pods[0].Reason).Should(Equal("OOMKilled"))
+			Expect(ri.Status.LastCrashInfo.Pods[0].LikelyRootCause).Should(BeTrue())
+
+			restarting := getRestartCond(rbgName, roleName, workloadsv1alpha2.RoleInstanceRestarting)
+			Expect(restarting).ShouldNot(BeNil())
+			Expect(restarting.Status).Should(Equal(corev1.ConditionTrue))
+
+			// During the 30s diagnosis window the crashed pod must be preserved.
+			Consistently(func() types.UID {
+				pod := &corev1.Pod{}
+				if err := testutil.K8sClient.Get(testutil.Ctx,
+					types.NamespacedName{Name: workerName, Namespace: testNs}, pod); err != nil {
+					return ""
+				}
+				return pod.UID
+			}, 8*time.Second, interval).Should(Equal(workerUID),
+				"crashed pod must be preserved for inspection during the diagnosis window")
+		})
+	})
+
+	Context("Loop breaker (maxConsecutiveRebuilds)", func() {
+		It("should stop rebuilding and set RestartBackoffExhausted at the limit", func() {
+			rbgName := "test-loop-breaker"
+			roleName := defaultRoleName
+
+			rbg := wrappersv2.BuildBasicRoleBasedGroup(rbgName, testNs).WithRoles(
+				[]workloadsv1alpha2.RoleSpec{
+					wrappersv2.BuildLeaderWorkerRole(roleName).
+						WithReplicas(1).
+						WithSize(2).
+						WithRestartPolicy(workloadsv1alpha2.RecreateRoleInstanceOnPodRestart).
+						WithRestartPolicyConfig(&workloadsv1alpha2.RestartPolicyConfig{
+							RebuildDelaySeconds:    ptrInt32(1),
+							MaxConsecutiveRebuilds: ptrInt32(2),
+						}).Obj(),
+				}).Obj()
+
+			Expect(testutil.K8sClient.Create(testutil.Ctx, rbg)).Should(Succeed())
+
+			waitForPods(rbgName, roleName, 2)
+			makePodsReady(rbgName, roleName)
+			waitForRoleInstanceReady(rbgName, roleName)
+
+			// Simulate having already rebuilt up to the limit.
+			presetConsecutiveRestarts(rbgName, roleName, 2)
+
+			originalUIDs := getPodUIDs(listRolePods(rbgName, roleName))
+
+			// Fail a pod — the loop breaker should trip instead of rebuilding.
+			podList := listRolePods(rbgName, roleName)
+			fresh := &corev1.Pod{}
+			Expect(testutil.K8sClient.Get(testutil.Ctx,
+				client.ObjectKeyFromObject(&podList.Items[0]), fresh)).Should(Succeed())
+			fresh.Status.Phase = corev1.PodFailed
+			Expect(testutil.K8sClient.Status().Update(testutil.Ctx, fresh)).Should(Succeed())
+
+			Eventually(func() bool {
+				cond := getRestartCond(rbgName, roleName, workloadsv1alpha2.RoleInstanceRestartBackoffExhausted)
+				return cond != nil && cond.Status == corev1.ConditionTrue
+			}, timeout, interval).Should(BeTrue(),
+				"RestartBackoffExhausted should be set once the rebuild limit is reached")
+
+			// The surviving (non-failed) pod must NOT be recreated — the loop breaker stops rebuilds.
+			survivorName := podList.Items[1].Name
+			survivorUID := originalUIDs[survivorName]
+			Consistently(func() types.UID {
+				pod := &corev1.Pod{}
+				if err := testutil.K8sClient.Get(testutil.Ctx,
+					types.NamespacedName{Name: survivorName, Namespace: testNs}, pod); err != nil {
+					return ""
+				}
+				return pod.UID
+			}, 8*time.Second, interval).Should(Equal(survivorUID),
+				"loop breaker should stop rebuilding the instance")
+		})
+
+		It("should rebuild without limit when maxConsecutiveRebuilds is 0", func() {
+			rbgName := "test-loop-unlimited"
+			roleName := defaultRoleName
+
+			rbg := wrappersv2.BuildBasicRoleBasedGroup(rbgName, testNs).WithRoles(
+				[]workloadsv1alpha2.RoleSpec{
+					wrappersv2.BuildLeaderWorkerRole(roleName).
+						WithReplicas(1).
+						WithSize(1).
+						WithRestartPolicy(workloadsv1alpha2.RecreateRoleInstanceOnPodRestart).
+						WithRestartPolicyConfig(&workloadsv1alpha2.RestartPolicyConfig{
+							RebuildDelaySeconds:    ptrInt32(1),
+							MaxConsecutiveRebuilds: ptrInt32(0),
+						}).Obj(),
+				}).Obj()
+
+			Expect(testutil.K8sClient.Create(testutil.Ctx, rbg)).Should(Succeed())
+
+			waitForPods(rbgName, roleName, 1)
+			makePodsReady(rbgName, roleName)
+			waitForRoleInstanceReady(rbgName, roleName)
+
+			// Even with a very high prior count, unlimited mode must still rebuild.
+			presetConsecutiveRestarts(rbgName, roleName, 50)
+
+			originalUID := listRolePods(rbgName, roleName).Items[0].UID
+
+			podList := listRolePods(rbgName, roleName)
+			fresh := &corev1.Pod{}
+			Expect(testutil.K8sClient.Get(testutil.Ctx,
+				client.ObjectKeyFromObject(&podList.Items[0]), fresh)).Should(Succeed())
+			fresh.Status.Phase = corev1.PodFailed
+			Expect(testutil.K8sClient.Status().Update(testutil.Ctx, fresh)).Should(Succeed())
+
+			Eventually(func() bool {
+				active := getActivePods(listRolePods(rbgName, roleName))
+				for _, p := range active {
+					if p.UID == originalUID {
+						return false
+					}
+				}
+				return len(active) >= 1
+			}, timeout, interval).Should(BeTrue(),
+				"unlimited mode (max=0) should keep rebuilding regardless of the counter")
+
+			Expect(getRestartCond(rbgName, roleName, workloadsv1alpha2.RoleInstanceRestartBackoffExhausted)).Should(BeNil(),
+				"RestartBackoffExhausted must never be set when max=0")
+		})
+	})
 })
+
+func ptrInt32(v int32) *int32 { return &v }

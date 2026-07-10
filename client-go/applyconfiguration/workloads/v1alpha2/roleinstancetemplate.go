@@ -62,6 +62,14 @@ func (b *RoleInstanceTemplateApplyConfiguration) WithRestartPolicy(value workloa
 	return b
 }
 
+// WithRestartPolicyConfig sets the RestartPolicyConfig field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the RestartPolicyConfig field is set to the value of the last call.
+func (b *RoleInstanceTemplateApplyConfiguration) WithRestartPolicyConfig(value *RestartPolicyConfigApplyConfiguration) *RoleInstanceTemplateApplyConfiguration {
+	b.RoleInstanceSpecApplyConfiguration.RestartPolicyConfig = value
+	return b
+}
+
 // WithReadinessGates adds the given value to the ReadinessGates field in the declarative configuration
 // and returns the receiver, so that objects can be build by chaining "With" function invocations.
 // If called multiple times, values provided by each call will be appended to the ReadinessGates field.

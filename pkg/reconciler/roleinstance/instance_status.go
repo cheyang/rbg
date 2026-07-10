@@ -94,6 +94,7 @@ func controllerOwnedConditionTypes() sets.Set[workloadsv1alpha2.RoleInstanceCond
 		workloadsv1alpha2.RoleInstanceFailedScale,
 		workloadsv1alpha2.RoleInstanceFailedUpdate,
 		workloadsv1alpha2.RoleInstanceRestarting,
+		workloadsv1alpha2.RoleInstanceRestartBackoffExhausted,
 		// Written externally but always copied into newStatus by setInstanceConditions,
 		// so they are already present and must not be appended again from the live clone.
 		workloadsv1alpha2.RoleInstanceInPlaceUpdateReady,
@@ -190,14 +191,24 @@ func (r *realStatusUpdater) setInstanceConditions(instance *workloadsv1alpha2.Ro
 	var customInstanceConditions []workloadsv1alpha2.RoleInstanceCondition
 	for _, c := range instance.Status.Conditions {
 		if !innerConditionTypes.Has(c.Type) {
-			// Clear Restarting condition when instance becomes Ready
-			if c.Type == workloadsv1alpha2.RoleInstanceRestarting && instanceReady {
-				continue
-			}
 			customInstanceConditions = append(customInstanceConditions, c)
 		}
 	}
 	conditions = append(conditions, customInstanceConditions...)
+
+	// Clear the give-up condition once the instance is Ready again. The Restarting
+	// condition itself is owned by the restart-policy state machine (it must survive a
+	// hold even while the crashed pod still reports Ready), so it is not cleared here.
+	if instanceReady {
+		filtered := conditions[:0]
+		for _, c := range conditions {
+			if c.Type == workloadsv1alpha2.RoleInstanceRestartBackoffExhausted {
+				continue
+			}
+			filtered = append(filtered, c)
+		}
+		conditions = filtered
+	}
 	newStatus.Conditions = conditions
 }
 

@@ -32,6 +32,7 @@ type LeaderWorkerPatternApplyConfiguration struct {
 	WorkerTemplatePatch              *runtime.RawExtension                           `json:"workerTemplatePatch,omitempty"`
 	SharedServiceSelection           *workloadsv1alpha2.SharedServiceSelectionPolicy `json:"sharedServiceSelection,omitempty"`
 	RestartPolicy                    *workloadsv1alpha2.RestartPolicyType            `json:"restartPolicy,omitempty"`
+	RestartPolicyConfig              *RestartPolicyConfigApplyConfiguration          `json:"restartPolicyConfig,omitempty"`
 }
 
 // LeaderWorkerPatternApplyConfiguration constructs a declarative configuration of the LeaderWorkerPattern type for use with
@@ -93,5 +94,13 @@ func (b *LeaderWorkerPatternApplyConfiguration) WithSharedServiceSelection(value
 // If called multiple times, the RestartPolicy field is set to the value of the last call.
 func (b *LeaderWorkerPatternApplyConfiguration) WithRestartPolicy(value workloadsv1alpha2.RestartPolicyType) *LeaderWorkerPatternApplyConfiguration {
 	b.RestartPolicy = &value
+	return b
+}
+
+// WithRestartPolicyConfig sets the RestartPolicyConfig field in the declarative configuration to the given value
+// and returns the receiver, so that objects can be built by chaining "With" function invocations.
+// If called multiple times, the RestartPolicyConfig field is set to the value of the last call.
+func (b *LeaderWorkerPatternApplyConfiguration) WithRestartPolicyConfig(value *RestartPolicyConfigApplyConfiguration) *LeaderWorkerPatternApplyConfiguration {
+	b.RestartPolicyConfig = value
 	return b
 }

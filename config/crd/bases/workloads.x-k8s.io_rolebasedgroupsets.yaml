@@ -24453,6 +24453,28 @@ spec:
                                   - None
                                   - RecreateRoleInstanceOnPodRestart
                                   type: string
+                                restartPolicyConfig:
+                                  description: |-
+                                    RestartPolicyConfig tunes the RecreateRoleInstanceOnPodRestart behavior
+                                    (diagnosis delay and consecutive-rebuild limit). Ignored when RestartPolicy is None.
+                                  properties:
+                                    maxConsecutiveRebuilds:
+                                      description: |-
+                                        MaxConsecutiveRebuilds is the number of consecutive whole-group rebuilds tolerated
+                                        before the controller stops and marks the instance with RestartBackoffExhausted.
+                                        0 means unlimited (legacy behavior).
+                                      format: int32
+                                      minimum: 0
+                                      type: integer
+                                    rebuildDelaySeconds:
+                                      description: |-
+                                        RebuildDelaySeconds is the delay between detecting a pod crash and recreating
+                                        the whole RoleInstance. During this window the crashed pod is preserved so
+                                        operators can inspect it (e.g.
+                                      format: int32
+                                      minimum: 0
+                                      type: integer
+                                  type: object
                               type: object
                             dependencies:
                               description: Dependencies of the role
@@ -25898,6 +25920,28 @@ spec:
                                   - None
                                   - RecreateRoleInstanceOnPodRestart
                                   type: string
+                                restartPolicyConfig:
+                                  description: |-
+                                    RestartPolicyConfig tunes the RecreateRoleInstanceOnPodRestart behavior
+                                    (diagnosis delay and consecutive-rebuild limit). Ignored when RestartPolicy is None.
+                                  properties:
+                                    maxConsecutiveRebuilds:
+                                      description: |-
+                                        MaxConsecutiveRebuilds is the number of consecutive whole-group rebuilds tolerated
+                                        before the controller stops and marks the instance with RestartBackoffExhausted.
+                                        0 means unlimited (legacy behavior).
+                                      format: int32
+                                      minimum: 0
+                                      type: integer
+                                    rebuildDelaySeconds:
+                                      description: |-
+                                        RebuildDelaySeconds is the delay between detecting a pod crash and recreating
+                                        the whole RoleInstance. During this window the crashed pod is preserved so
+                                        operators can inspect it (e.g.
+                                      format: int32
+                                      minimum: 0
+                                      type: integer
+                                  type: object
                                 sharedServiceSelection:
                                   description: SharedServiceSelection indicates the
                                     service policy of the role

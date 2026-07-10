@@ -149,6 +149,8 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 		return &workloadsv1alpha2.CoordinatedPolicyStatusApplyConfiguration{}
 	case v1alpha2.SchemeGroupVersion.WithKind("CoordinatedPolicyStrategy"):
 		return &workloadsv1alpha2.CoordinatedPolicyStrategyApplyConfiguration{}
+	case v1alpha2.SchemeGroupVersion.WithKind("CrashedPod"):
+		return &workloadsv1alpha2.CrashedPodApplyConfiguration{}
 	case v1alpha2.SchemeGroupVersion.WithKind("CustomComponentsPattern"):
 		return &workloadsv1alpha2.CustomComponentsPatternApplyConfiguration{}
 	case v1alpha2.SchemeGroupVersion.WithKind("EngineRuntime"):
@@ -161,6 +163,8 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 		return &workloadsv1alpha2.LeaderWorkerPatternApplyConfiguration{}
 	case v1alpha2.SchemeGroupVersion.WithKind("Pattern"):
 		return &workloadsv1alpha2.PatternApplyConfiguration{}
+	case v1alpha2.SchemeGroupVersion.WithKind("RestartPolicyConfig"):
+		return &workloadsv1alpha2.RestartPolicyConfigApplyConfiguration{}
 	case v1alpha2.SchemeGroupVersion.WithKind("RoleBasedGroup"):
 		return &workloadsv1alpha2.RoleBasedGroupApplyConfiguration{}
 	case v1alpha2.SchemeGroupVersion.WithKind("RoleBasedGroupScalingAdapter"):
@@ -189,6 +193,8 @@ func ForKind(kind schema.GroupVersionKind) interface{} {
 		return &workloadsv1alpha2.RoleInstanceComponentStatusApplyConfiguration{}
 	case v1alpha2.SchemeGroupVersion.WithKind("RoleInstanceCondition"):
 		return &workloadsv1alpha2.RoleInstanceConditionApplyConfiguration{}
+	case v1alpha2.SchemeGroupVersion.WithKind("RoleInstanceCrashInfo"):
+		return &workloadsv1alpha2.RoleInstanceCrashInfoApplyConfiguration{}
 	case v1alpha2.SchemeGroupVersion.WithKind("RoleInstanceReadinessGate"):
 		return &workloadsv1alpha2.RoleInstanceReadinessGateApplyConfiguration{}
 	case v1alpha2.SchemeGroupVersion.WithKind("RoleInstanceSet"):
