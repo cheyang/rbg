@@ -61,6 +61,14 @@ fi
 [ -f "$MANIFEST" ] || { echo "re-verify: manifest not found ($MANIFEST)" >&2; exit 2; }
 echo "re-verify: manifest = $MANIFEST"
 
+# The manifest and results live under the harness dir, which `git checkout -f`
+# will wipe (the fixed ref has no harness). Copy them to a temp dir outside the
+# repo so they survive the checkout; keep MANIFEST_ORIG for in-repo paths.
+MANIFEST_ORIG="$MANIFEST"
+RUNTIME_DIR="$(mktemp -d)"
+cp "$MANIFEST" "$RUNTIME_DIR/manifest.json"
+MANIFEST="$RUNTIME_DIR/manifest.json"
+
 # Auto-discover the current PR head when no <fixed-ref> was given, using
 # manifest.prHeadFetch = { "remote": "...", "ref": "pull/<n>/head" }. This means
 # the caller only needs the PR, not a sha.
@@ -82,7 +90,7 @@ fi
 # Resolve the last-reviewed marker (for the reviewer's incremental diff); not used
 # by the layers themselves. Priority: .last-reviewed file next to the manifest,
 # else merge-base with the default branch. Printed for the caller/agent to use.
-LAST_REVIEWED_FILE="$(dirname "$MANIFEST")/.last-reviewed"
+LAST_REVIEWED_FILE="$(dirname "$MANIFEST_ORIG")/.last-reviewed"
 if [ -s "$LAST_REVIEWED_FILE" ]; then
   LAST_REVIEWED="$(tr -d '[:space:]' < "$LAST_REVIEWED_FILE")"
 else
@@ -90,17 +98,16 @@ else
 fi
 echo "re-verify: last-reviewed = ${LAST_REVIEWED:-<none>}  (review delta = ${LAST_REVIEWED:-base}..$FIXED_REF)"
 
-RESULTS_DIR="$(dirname "$MANIFEST")/results/reverify"
+# Results in the temp dir (absolute, outside the repo) so `git checkout -f` never
+# touches them and the ginkgo report path resolves regardless of test cwd.
+RESULTS_DIR="$RUNTIME_DIR/results"
 mkdir -p "$RESULTS_DIR"
-# Absolutize: the ginkgo report is written by the test binary whose cwd is the
-# package dir, not the repo root — a relative path would land nowhere findable.
-RESULTS_DIR="$(cd "$RESULTS_DIR" && pwd)"
 export GINKGO_REPORT="$RESULTS_DIR/ginkgo-report.json"
 
 # capture current position (must hold the harness) and restore on exit
 ORIG_REF="$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)"
 HARNESS_SRC="$(git rev-parse HEAD)"
-cleanup() { git checkout -f "$ORIG_REF" >/dev/null 2>&1 || true; }
+cleanup() { git checkout -f "$ORIG_REF" >/dev/null 2>&1 || true; rm -rf "$RUNTIME_DIR" 2>/dev/null || true; }
 trap cleanup EXIT
 
 echo "re-verify: fixed-ref=$FIXED_REF  harness-from=$ORIG_REF"
@@ -189,8 +196,12 @@ done
 
 LIVE="$(jq -r '.liveNote // empty' "$MANIFEST")"
 [ -n "$LIVE" ] && printf '\nLive layer (manual): %s\n' "$LIVE"
+# persist raw output into the (restored-after-cleanup) in-repo results dir for inspection
+PERSIST="$(dirname "$MANIFEST_ORIG")/results/reverify"
+mkdir -p "$PERSIST" 2>/dev/null && cp -f "$RESULTS_DIR"/*.out "$RESULTS_DIR"/*.parsed "$RESULTS_DIR"/*.json "$PERSIST"/ 2>/dev/null || true
+
 printf '\nReminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its\n'
-printf 'assertion (or promote the new behavior to a contract test). Raw output: %s\n' "$RESULTS_DIR"
+printf 'assertion (or promote the new behavior to a contract test). Raw output: %s\n' "$PERSIST"
 printf '\nReview delta this round: %s..%s\n' "${LAST_REVIEWED:-base}" "$FIXED_REF"
 printf 'After reviewing that delta, advance the marker for the next round:\n'
 printf '  echo %s > %s && git add %s && git commit -m "review: advance last-reviewed"\n' \
