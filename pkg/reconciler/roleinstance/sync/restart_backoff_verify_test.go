@@ -48,7 +48,12 @@ func TestRestartBackoffVerify_B1_Overflow(t *testing.T) {
 
 	// Every count >= 5 already reaches the cap with base=30/max=600, so the
 	// correct result is exactly max for all of these.
-	counts := []int32{5, 27, 50, 58, 59, 60, 63, 64, 100}
+	// NOTE (round 2): PR head ad7cd462 added a guard `if restartCount >= 62`, but
+	// for base=30 the multiply `int64(base)<<restartCount` overflows int64 at
+	// restartCount 59/60/61 — BELOW the guard — and truncates back to 0. So the
+	// overflow window [59,61] is still live. 62/63/64/100 are now handled by the
+	// guard. These counts pin both the fixed region and the surviving hole.
+	counts := []int32{5, 27, 50, 58, 59, 60, 61, 62, 63, 64, 100}
 
 	for _, rc := range counts {
 		got := calculateRestartDelay(base, max, rc)
@@ -150,9 +155,13 @@ func TestRestartBackoffVerify_B4_NegativeDelayBypass(t *testing.T) {
 		return &workloadsv1alpha2.RoleInstance{
 			ObjectMeta: metav1.ObjectMeta{Name: "ri", Namespace: "default", Generation: 1},
 			Spec: workloadsv1alpha2.RoleInstanceSpec{
-				RestartPolicy:    workloadsv1alpha2.RecreateRoleInstanceOnPodRestart,
-				BaseDelaySeconds: ptr.To(base),
-				MaxDelaySeconds:  ptr.To(int32(600)),
+				// PR #394 refactored the backoff knobs into RestartPolicyConfig
+				// (RoleInstanceSpec.BaseDelaySeconds/MaxDelaySeconds removed).
+				RestartPolicy: workloadsv1alpha2.RestartPolicyConfig{
+					Type:             workloadsv1alpha2.RecreateRoleInstanceOnPodRestart,
+					BaseDelaySeconds: ptr.To(base),
+					MaxDelaySeconds:  ptr.To(int32(600)),
+				},
 				Components: []workloadsv1alpha2.RoleInstanceComponent{
 					{Name: "main", Size: ptr.To(int32(1))},
 				},

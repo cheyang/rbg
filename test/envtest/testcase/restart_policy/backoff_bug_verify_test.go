@@ -232,9 +232,14 @@ var _ = Describe("PR394 Restart Backoff Bug Verification", func() {
 		badRI := &workloadsv1alpha2.RoleInstance{
 			ObjectMeta: metav1.ObjectMeta{Name: "b4-ri", Namespace: testNs},
 			Spec: workloadsv1alpha2.RoleInstanceSpec{
-				RestartPolicy:    workloadsv1alpha2.RecreateRoleInstanceOnPodRestart,
-				BaseDelaySeconds: ptr.To(int32(-30)),
-				MaxDelaySeconds:  ptr.To(int32(600)),
+				// PR #394 refactored the backoff knobs into RestartPolicyConfig,
+				// which now carries +kubebuilder:validation:Minimum=0 and is shared
+				// by RoleInstanceSpec — so this create is now expected to be REJECTED.
+				RestartPolicy: workloadsv1alpha2.RestartPolicyConfig{
+					Type:             workloadsv1alpha2.RecreateRoleInstanceOnPodRestart,
+					BaseDelaySeconds: ptr.To(int32(-30)),
+					MaxDelaySeconds:  ptr.To(int32(600)),
+				},
 				Components: []workloadsv1alpha2.RoleInstanceComponent{
 					{
 						Name: "main",
