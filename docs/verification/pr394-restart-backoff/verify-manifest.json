@@ -1,5 +1,6 @@
 {
   "topic": "pr394-restart-backoff",
+  "pr": "https://github.com/sgl-project/rbg/pull/394",
   "prHeadFetch": { "remote": "new-origin", "ref": "pull/394/head" },
   "harnessPaths": [
     "docs/verification/pr394-restart-backoff",

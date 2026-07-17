@@ -69,22 +69,42 @@ RUNTIME_DIR="$(mktemp -d)"
 cp "$MANIFEST" "$RUNTIME_DIR/manifest.json"
 MANIFEST="$RUNTIME_DIR/manifest.json"
 
-# Auto-discover the current PR head when no <fixed-ref> was given, using
-# manifest.prHeadFetch = { "remote": "...", "ref": "pull/<n>/head" }. This means
-# the caller only needs the PR, not a sha.
+# Auto-discover the current PR head when no <fixed-ref> was given. Prefer a
+# machine-independent source so this works on any machine/clone:
+#   1) manifest.pr = "https://<host>/<owner>/<repo>/pull/<n>"  -> fetch the PR
+#      head directly from the repo URL (no local remote name needed; works for
+#      fork PRs and enterprise hosts).
+#   2) manifest.prHeadFetch = { "remote": "<local-remote>", "ref": "pull/<n>/head" }
+#      -> fallback that depends on a remote named on THIS machine.
 if [ -z "$FIXED_REF" ]; then
-  PREMOTE="$(jq -r '.prHeadFetch.remote // empty' "$MANIFEST")"
-  PREF="$(jq -r '.prHeadFetch.ref // empty' "$MANIFEST")"
-  if [ -n "$PREMOTE" ] && [ -n "$PREF" ]; then
-    echo "re-verify: resolving current PR head via 'git fetch $PREMOTE $PREF'"
-    git fetch --quiet "$PREMOTE" "$PREF" || { echo "re-verify: fetch of PR head failed" >&2; exit 2; }
-    FIXED_REF="$(git rev-parse FETCH_HEAD)"
-    echo "re-verify: current head = $FIXED_REF"
+  PR_URL="$(jq -r '.pr // empty' "$MANIFEST")"
+  if [ -n "$PR_URL" ]; then
+    rest="${PR_URL#*://}"; host="${rest%%/*}"; path="${rest#*/}"
+    owner="$(printf '%s' "$path" | cut -d/ -f1)"
+    repo="$(printf '%s' "$path" | cut -d/ -f2)"
+    num="$(printf '%s' "$path" | sed -E 's#.*/pull/([0-9]+).*#\1#')"
+    if [ -n "$owner" ] && [ -n "$repo" ] && [ -n "$num" ]; then
+      cloneurl="https://$host/$owner/$repo.git"
+      echo "re-verify: resolving PR head via 'git fetch $cloneurl pull/$num/head' (machine-independent)"
+      git fetch --quiet "$cloneurl" "pull/$num/head" || { echo "re-verify: fetch of PR head failed" >&2; exit 2; }
+      FIXED_REF="$(git rev-parse FETCH_HEAD)"
+    else
+      echo "re-verify: could not parse owner/repo/number from pr URL: $PR_URL" >&2; exit 2
+    fi
   else
-    echo "usage: re-verify.sh <fixed-ref> [--manifest p] [--layers ...]" >&2
-    echo "       (or add prHeadFetch{remote,ref} to the manifest to auto-discover the PR head)" >&2
-    exit 2
+    PREMOTE="$(jq -r '.prHeadFetch.remote // empty' "$MANIFEST")"
+    PREF="$(jq -r '.prHeadFetch.ref // empty' "$MANIFEST")"
+    if [ -n "$PREMOTE" ] && [ -n "$PREF" ]; then
+      echo "re-verify: resolving PR head via 'git fetch $PREMOTE $PREF' (local remote fallback)"
+      git fetch --quiet "$PREMOTE" "$PREF" || { echo "re-verify: fetch of PR head failed" >&2; exit 2; }
+      FIXED_REF="$(git rev-parse FETCH_HEAD)"
+    else
+      echo "usage: re-verify.sh <fixed-ref> [--manifest p] [--layers ...]" >&2
+      echo "       (or set manifest.pr to the PR URL — machine-independent — to auto-discover the head)" >&2
+      exit 2
+    fi
   fi
+  echo "re-verify: current head = $FIXED_REF"
 fi
 
 # Resolve the last-reviewed marker (for the reviewer's incremental diff); not used
