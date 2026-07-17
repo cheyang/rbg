@@ -42,7 +42,6 @@ while [ $# -gt 0 ]; do
     *) [ -z "$FIXED_REF" ] && FIXED_REF="$1" && shift || { echo "unexpected arg: $1" >&2; exit 2; };;
   esac
 done
-[ -n "$FIXED_REF" ] || { echo "usage: re-verify.sh <fixed-ref> [--manifest p] [--layers unit,integration]" >&2; exit 2; }
 command -v jq >/dev/null || { echo "re-verify: jq is required" >&2; exit 2; }
 git rev-parse --git-dir >/dev/null 2>&1 || { echo "re-verify: not a git repo" >&2; exit 2; }
 # This script does `git checkout -f`, which discards uncommitted changes to TRACKED
@@ -61,6 +60,35 @@ if [ -z "$MANIFEST" ]; then
 fi
 [ -f "$MANIFEST" ] || { echo "re-verify: manifest not found ($MANIFEST)" >&2; exit 2; }
 echo "re-verify: manifest = $MANIFEST"
+
+# Auto-discover the current PR head when no <fixed-ref> was given, using
+# manifest.prHeadFetch = { "remote": "...", "ref": "pull/<n>/head" }. This means
+# the caller only needs the PR, not a sha.
+if [ -z "$FIXED_REF" ]; then
+  PREMOTE="$(jq -r '.prHeadFetch.remote // empty' "$MANIFEST")"
+  PREF="$(jq -r '.prHeadFetch.ref // empty' "$MANIFEST")"
+  if [ -n "$PREMOTE" ] && [ -n "$PREF" ]; then
+    echo "re-verify: resolving current PR head via 'git fetch $PREMOTE $PREF'"
+    git fetch --quiet "$PREMOTE" "$PREF" || { echo "re-verify: fetch of PR head failed" >&2; exit 2; }
+    FIXED_REF="$(git rev-parse FETCH_HEAD)"
+    echo "re-verify: current head = $FIXED_REF"
+  else
+    echo "usage: re-verify.sh <fixed-ref> [--manifest p] [--layers ...]" >&2
+    echo "       (or add prHeadFetch{remote,ref} to the manifest to auto-discover the PR head)" >&2
+    exit 2
+  fi
+fi
+
+# Resolve the last-reviewed marker (for the reviewer's incremental diff); not used
+# by the layers themselves. Priority: .last-reviewed file next to the manifest,
+# else merge-base with the default branch. Printed for the caller/agent to use.
+LAST_REVIEWED_FILE="$(dirname "$MANIFEST")/.last-reviewed"
+if [ -s "$LAST_REVIEWED_FILE" ]; then
+  LAST_REVIEWED="$(tr -d '[:space:]' < "$LAST_REVIEWED_FILE")"
+else
+  LAST_REVIEWED="$(git merge-base origin/main "$FIXED_REF" 2>/dev/null || git merge-base main "$FIXED_REF" 2>/dev/null || echo '')"
+fi
+echo "re-verify: last-reviewed = ${LAST_REVIEWED:-<none>}  (review delta = ${LAST_REVIEWED:-base}..$FIXED_REF)"
 
 RESULTS_DIR="$(dirname "$MANIFEST")/results/reverify"
 mkdir -p "$RESULTS_DIR"
@@ -163,4 +191,8 @@ LIVE="$(jq -r '.liveNote // empty' "$MANIFEST")"
 [ -n "$LIVE" ] && printf '\nLive layer (manual): %s\n' "$LIVE"
 printf '\nReminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its\n'
 printf 'assertion (or promote the new behavior to a contract test). Raw output: %s\n' "$RESULTS_DIR"
+printf '\nReview delta this round: %s..%s\n' "${LAST_REVIEWED:-base}" "$FIXED_REF"
+printf 'After reviewing that delta, advance the marker for the next round:\n'
+printf '  echo %s > %s && git add %s && git commit -m "review: advance last-reviewed"\n' \
+       "$FIXED_REF" "$LAST_REVIEWED_FILE" "$LAST_REVIEWED_FILE"
 [ "$ALL_FIXED" -eq 1 ] && { echo "RESULT: all findings fixed."; exit 0; } || { echo "RESULT: not all findings fixed."; exit 1; }

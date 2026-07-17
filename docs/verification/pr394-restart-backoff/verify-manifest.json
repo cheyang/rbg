@@ -1,5 +1,6 @@
 {
   "topic": "pr394-restart-backoff",
+  "prHeadFetch": { "remote": "new-origin", "ref": "pull/394/head" },
   "harnessPaths": [
     "docs/verification/pr394-restart-backoff",
     "pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go",
