@@ -125,6 +125,21 @@ The harness lives on the branch `verify/pr394-restart-backoff` (pushed to the
 `cheyang/rbg` fork). Production code is untouched by it, so it grafts cleanly onto
 whatever the fixed code is.
 
+### 0. One-command re-verify (recommended)
+
+From a **clean** checkout of this branch (the script runs `git checkout -f`, so commit or
+stash first):
+```bash
+bash docs/verification/pr394-restart-backoff/scripts/re-verify.sh <fixed-ref>
+```
+It grafts the harness onto `<fixed-ref>`, runs the unit + integration layers, and prints a
+verdict per finding — **Fixed / Still-broken / Partial / Harness-update** — driven by
+`verify-manifest.json` (finding → tests → polarity). A bug-canary (B5) is reported *Fixed only
+when it flips to fail*. Exit code 0 iff all findings are fixed, so it drops into `/loop` or CI.
+Validated against the buggy `pr-394`: it reports B1/B4a/B2/B4b STILL-BROKEN and B5
+STILL-PRESENT — i.e. it still bites. The live layer (L3) stays manual; see `liveNote` in the
+manifest. Steps 1–5 below are the manual equivalent and cover the live layer.
+
 ### 1. Get the harness onto the fixed code
 
 ```bash
