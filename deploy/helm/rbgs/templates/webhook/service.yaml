@@ -5,6 +5,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     control-plane: rbgs-controller
+    app.kubernetes.io/name: rbgs
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
   ports:
     - port: 443
