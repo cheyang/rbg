@@ -1,0 +1,31 @@
+# B2 root-cause trace (round 2, PR head ad7cd462) — instrumented envtest run.
+# Temporary klog.Infof probes added in a throwaway worktree at:
+#   - instance_scale.go: DEBUG-RECREATE (recreation branch), DEBUG-URT (updateRestartTracking enter/exit)
+#   - instance_status.go: DEBUG-US (updateStatus: newStatus/instance/liveClone counts + isReset + final)
+# Scenario: seed RestartCount=5, LastRestartTime=11min ago (>10min stable threshold), then crash a pod.
+# Intended: counter resets to 1. Observed: transiently persists 1, then a stale-cache reconcile
+# clobbers it back to 5 permanently (read-modify-write race).
+
+I0717 16:47:41.131300 instance_scale.go:114] DEBUG-RECREATE guarded=true count=5
+I0717 16:47:41.131309 instance_scale.go:702] DEBUG-URT enter count=5 lrt=2026-07-17 16:36:41 +0800 CST
+I0717 16:47:41.131320 instance_scale.go:717] DEBUG-URT exit count=1                # reset 5->1 WORKS
+I0717 16:47:41.133201 instance_status.go:440] DEBUG-US newStatus.count=1 instance.count=5 liveClone.count=5 isReset=true
+I0717 16:47:41.133207 instance_status.go:460] DEBUG-US final clone.count=1         # reset PERSISTED to API (isReset fix works here)
+I0717 16:47:41.138943 instance_status.go:440] DEBUG-US newStatus.count=5 instance.count=5 liveClone.count=1 isReset=false
+I0717 16:47:41.138952 instance_status.go:460] DEBUG-US final clone.count=5         # <-- BUG: stale newStatus=5 (informer lag) overwrites fresh API liveClone=1
+I0717 16:47:41.144798 instance_status.go:440] DEBUG-US newStatus.count=1 instance.count=1 liveClone.count=5 isReset=false
+I0717 16:47:41.144806 instance_status.go:460] DEBUG-US final clone.count=5
+I0717 16:47:41.648135 instance_status.go:440] DEBUG-US newStatus.count=5 instance.count=5 liveClone.count=5 isReset=false
+I0717 16:47:41.648149 instance_status.go:460] DEBUG-US final clone.count=5         # count=5 steady-state forever
+
+# Analysis:
+# The reset (5->1) fires and IS persisted (t=133ms, isReset=true). But ~6ms later a
+# concurrent reconcile whose precomputed newStatus still carries the pre-reset count
+# (5, read from a lagging informer) reaches updateStatus. There:
+#   isReset := newStatus.RestartCount(5) < instance.Status.RestartCount(5)  => false
+#   clone.Status = *newStatus            # blindly copies stale 5 over fresh API value...
+#   if !isReset && liveRestartCount(1) > newStatus(5)  => 1>5 false, so the fresh
+#     liveClone.count=1 is NOT preserved either.
+# Net: the freshly-persisted reset (API=1) is overwritten by a stale-cache write of 5.
+# The isReset guard only protects the rollback direction (stale-low over fresh-high);
+# it does not protect a reset (fresh-low) from being overwritten by a stale-high newStatus.

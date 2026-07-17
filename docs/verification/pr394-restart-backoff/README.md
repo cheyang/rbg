@@ -4,6 +4,45 @@ Reproducible evidence for the suspected bugs raised while reviewing
 [sgl-project/rbg#394](https://github.com/sgl-project/rbg/pull/394)
 ("feat: add exponential backoff for restart policy").
 
+## Round 2 re-verification (PR head `ad7cd462`, 2026-07-17)
+
+Between round 1 (`0c0fcc11`) and round 2 (`ad7cd462`) the author refactored the
+backoff knobs into a shared `RestartPolicyConfig` struct (`RestartPolicy` is now a
+config, not a bare `RestartPolicyType`; `RoleInstanceSpec.BaseDelaySeconds` /
+`MaxDelaySeconds` removed) and made three fix attempts (B1 overflow guard, B2
+`isReset` guard, B4 CRD `Minimum=0`). The harness was adapted to the new API
+(commit `0f6c7fa6`) and re-run via `scripts/re-verify.sh`.
+
+| ID | Finding | Polarity | Round 1 | Round 2 verdict | Observed on `ad7cd462` | Expected (fixed) |
+|----|---------|----------|---------|-----------------|------------------------|------------------|
+| **B1** | int64 overflow disables backoff | contract (unit) | broken | **Partial / STILL-BROKEN** | guard `restartCount>=62` added, but `base·2^rc` overflows int64 *below* the guard: `calc(30,600,{59,60,61})=0`; `calc(10,0,60)=0` | all `rc≥5` → `600` (cap) |
+| **B2** | stable-period reset clobbered | contract (envtest) | broken | **STILL-BROKEN** | reset 5→1 fires & persists, then a stale-informer reconcile overwrites API `1` with stale `newStatus=5` (~6 ms later) → stuck at **5** for full 60 s | resets to `1` and stays |
+| **B4a** | negative delay bypasses backoff *in code* | contract (unit) | broken | **STILL-BROKEN (code) / mitigated** | `checkRestartBackoff(base=-30) ⇒ 0s`; code still doesn't clamp negatives | clamp negatives **or** rely on B4b |
+| **B4b** | apiserver accepts `-30` on RoleInstance | contract (envtest) | broken | **FIXED** ✅ | RoleInstance now rejected: `spec.restartPolicy.baseDelaySeconds ... should be greater than or equal to 0` (shared `RestartPolicyConfig` carries `Minimum=0`) | rejected |
+| **B5** | first realized backoff is `2×base` | canary (unit) | present | **STILL-PRESENT** | `updateRestartTracking` still `++` before the first check → `calc(base,max,1)=2×base`; canary passes (not flipped) | first delay = `base` (canary flips) |
+
+Net: **1 of 5 fixed (B4b).** B1 is a *partial* fix (guard at the wrong threshold —
+see below); B2's `isReset` fix is defeated by a read-modify-write race; B4a is
+superseded by B4b's CRD validation (the unit code-guard assertion can be retired
+if the team accepts API-only validation); B5 is unchanged.
+
+Round-2 raw output: `results/reverify/` (unit.out, integration.parsed, ginkgo-report.json);
+B2 instrumented root-cause trace: `results/b2-clobber-race-trace.log`.
+
+### B1 — why the `restartCount>=62` guard is insufficient
+
+The guard assumes "with a positive `maxDelay` the cap triggers before overflow, so
+this branch is only reachable when `maxDelay==0`." That's false: the cap check
+(`delay > maxDelay`) requires `delay` to still be *positive*, but `int64(base) << rc`
+wraps negative once `base·2^rc ≥ 2^63` — which for `base=30` happens at `rc=59`,
+**three counts below the guard**. So `calc(30,600,59/60/61)` overflow to a value that
+is neither `>maxDelay` nor `>int32max`, and `int32()` truncates it to `0` → backoff
+silently disabled. The guard only covers `base≤3`; any `base≥4` has a live hole in
+`rc∈[⌊63−log2(base)⌋+1, 61]`. Correct fix: cap on `restartCount` (or check
+`delay/base` overflow) **before** the shift, e.g. `if maxDelay>0 && (delayWouldOverflow || delay>maxDelay) { return maxDelay }`.
+
+## Round 1 (historical) — PR head `0c0fcc11`
+
 The harness has three layers, all run against the **PR head** (`0c0fcc11`):
 
 | Layer | What it exercises | How to run |
