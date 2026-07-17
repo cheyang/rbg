@@ -129,6 +129,10 @@ run_layer() {
   echo "re-verify: running layer '$layer' ($kind)" >&2
   if [ "$kind" = "gotest" ]; then
     bash -c "$cmd" >"$out" 2>&1 || true
+    # compile failure: package builds are reported as build-fail / [build failed]
+    if grep -q '"Action":"build-fail"' "$out" || grep -q 'build failed' "$out"; then
+      echo "__BUILD_OR_NO_TESTS__"; return 0
+    fi
     if ! grep -q '"Action":"\(pass\|fail\)"' "$out"; then
       echo "__BUILD_OR_NO_TESTS__"; return 0
     fi
