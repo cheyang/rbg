@@ -1,0 +1,21 @@
+=== RUN   TestStressDeployScriptImageTagOverrideHonored
+    values_regroup_verify_test.go:115: stress script sets image tag via "image.tag", but sentinel "stress-sentinel-tag" did not reach the rendered image.
+        The override is silently dropped; the stress deploy uses the chart-default tag instead.
+--- FAIL: TestStressDeployScriptImageTagOverrideHonored (0.59s)
+=== RUN   TestStressDeployScriptTuningOverrideHonored
+    values_regroup_verify_test.go:130: stress script sets max-concurrent-reconciles via "controllerTuning.maxConcurrentReconciles", but "77" did not reach the manager args.
+        The tuning override is silently dropped; the controller uses the default (10).
+--- FAIL: TestStressDeployScriptTuningOverrideHonored (0.36s)
+=== RUN   TestStressDeployScriptReplicaOverrideHonored
+    values_regroup_verify_test.go:145: stress script sets replica count via "replicaCount", but replicas: 7 did not reach the Deployment.
+        The replica override is silently dropped; the controller uses the default (2).
+--- FAIL: TestStressDeployScriptReplicaOverrideHonored (0.39s)
+=== RUN   TestRenderSucceedsWithNullGlobal
+    values_regroup_verify_test.go:157: helm template failed when global is null (expected safe navigation):
+        Error: template: rbgs/templates/manager/manager.yaml:22:68: executing "rbgs/templates/manager/manager.yaml" at <.Values.global.imagePullSecrets>: nil pointer evaluating interface {}.imagePullSecrets
+    values_regroup_verify_test.go:160: render hit a nil-pointer on null global:
+        Error: template: rbgs/templates/manager/manager.yaml:22:68: executing "rbgs/templates/manager/manager.yaml" at <.Values.global.imagePullSecrets>: nil pointer evaluating interface {}.imagePullSecrets
+--- FAIL: TestRenderSucceedsWithNullGlobal (0.37s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/helm	2.142s
+FAIL

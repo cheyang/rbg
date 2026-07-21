@@ -1,0 +1,10 @@
+=== RUN   TestStressDeployScriptImageTagOverrideHonored
+--- PASS: TestStressDeployScriptImageTagOverrideHonored (0.52s)
+=== RUN   TestStressDeployScriptTuningOverrideHonored
+--- PASS: TestStressDeployScriptTuningOverrideHonored (0.34s)
+=== RUN   TestStressDeployScriptReplicaOverrideHonored
+--- PASS: TestStressDeployScriptReplicaOverrideHonored (0.33s)
+=== RUN   TestRenderSucceedsWithNullGlobal
+--- PASS: TestRenderSucceedsWithNullGlobal (0.34s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/helm	2.261s
