@@ -4,6 +4,49 @@ Reproducible evidence for the suspected bugs raised while reviewing
 [sgl-project/rbg#394](https://github.com/sgl-project/rbg/pull/394)
 ("feat: add exponential backoff for restart policy").
 
+## Round 3 re-verification (PR head `245884dd`, 2026-07-22)
+
+Commit `245884dd` ("fix: address review comments on restart backoff robustness")
+directly targets the round-2 findings. Re-run via `scripts/re-verify.sh` (harness
+adapted to the new `checkRestartBackoff(instance, fresh, pods, inactive)` signature
+and the corrected `2^(restartCount-1)` formula in commit `ecf0e69e`).
+
+| ID | Finding | Polarity | Round 2 | Round 3 verdict | Observed on `245884dd` | Expected (fixed) |
+|----|---------|----------|---------|-----------------|------------------------|------------------|
+| **B1** | int64 overflow disables backoff | contract (unit) | Partial | **FIXED** ✅ | overflow now guarded *before* the shift (`rc>=62 || base > 1<<(62-rc)`); `calc(30,600,{59,60,61,62,…,100})=600`, uncapped saturates to int32max | all high `rc` → cap / saturate |
+| **B5** | first realized backoff is `2×base` | canary→contract (unit) | Still-present | **FIXED** ✅ | formula now `base·2^(rc-1)`; `calc(30,600,1)=30`. Canary flipped → promoted to a contract test asserting `first delay == base` | first delay = `base` |
+| **B4b** | apiserver accepts `-30` on RoleInstance | contract (envtest) | Fixed | **FIXED** ✅ (unchanged) | RoleInstance still rejects negative `baseDelaySeconds` (shared `RestartPolicyConfig` `Minimum=0`) | rejected |
+| **B4a** | negative delay bypasses backoff *in code* | contract (unit) | Still-broken | **STILL-BROKEN (code) / mitigated** | `checkRestartBackoff(base=-30) ⇒ 0s`; code still doesn't clamp negatives, but B4b's CRD gate makes it unreachable via the API | clamp negatives **or** rely on B4b |
+| **B2** | stable-period reset clobbered | contract (envtest) | Still-broken | **STILL-BROKEN** | `isReset` replaced with a timestamp heuristic, but the reset 5→1 is still overwritten: a racing reconcile carries the stale-high count 5 + a *fresh* timestamp → `restartTrackingChanged=true` → 5 trusted over 1; the preserve-live fallback then re-cements 5 | resets to `1` and stays |
+
+Net round 3: **3 of 5 resolved (B1, B5, B4b).** B4a is defense-in-depth only —
+the negative value can no longer reach the code path through the API (B4b), so the
+unit code-guard assertion can be retired if the team accepts API-only validation.
+**B2 is the one substantive bug still open.**
+
+### B2 — why the timestamp fix still clobbers the reset
+
+Instrumented envtest trace (`results/b2-clobber-round3-trace.log`) shows the reset
+5→1 *is* persisted, then immediately overwritten:
+
+```
+[22] US newStatus.RC=1 informer.RC=5 clone(cache).RC=5 changed=true  -> final.RC=1   # reset persisted, API=1
+[24] US newStatus.RC=5 informer.RC=5 clone(cache).RC=1 changed=true  -> final.RC=5   # CLOBBER: stale-high 5 + fresh stamp trusted over 1
+[26] US newStatus.RC=1 informer.RC=1 clone(cache).RC=5 changed=false -> final.RC=5   # preserve-live re-cements the clobbered 5
+```
+
+Root cause: the reset (5→1) fights two "preserve the maximum count" mechanisms that
+were left intact. (1) `syncRestartTrackingFromAPI` pulls RestartCount **upward only**
+(`if fresh.RC > instance.RC`), so it can never carry a reset downward — a reconcile
+seeded from a stale-high read keeps 5 and re-stamps it fresh. (2) `updateStatus`'s new
+`restartTrackingChanged` heuristic trusts `newStatus.RestartCount` whenever the
+timestamp is fresh, but a fresh timestamp does not imply the count is the reset value
+(it can be the monotonic-high 5 + a fresh stamp); and when the count *is* 1 with
+`changed=false`, it falls back to the (cache-backed) live value, which is by then the
+clobbered 5. Fix direction: treat `(RestartCount, LastRestartTime)` as one
+timestamp-versioned pair — newest-timestamp wins, not highest-count wins — in both
+`syncRestartTrackingFromAPI` and `updateStatus`.
+
 ## Round 2 re-verification (PR head `ad7cd462`, 2026-07-17)
 
 Between round 1 (`0c0fcc11`) and round 2 (`ad7cd462`) the author refactored the

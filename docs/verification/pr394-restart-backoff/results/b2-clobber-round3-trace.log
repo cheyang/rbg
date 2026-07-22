@@ -1,0 +1,81 @@
+B2 root-cause trace — round 3 (PR head 245884dd)
+=================================================
+
+Reproduced by instrumenting the round-3 code with two prints (reverted after):
+  - DEBUG-SYNC-R3 in reconciler.syncInstance, at the `if scaling {…}` restart-
+    tracking propagation block: shows updateInstance.RC/LRT flowing into newStatus.
+  - DEBUG-US-R3 in realStatusUpdater.updateStatus, right before Status().Update:
+    shows newStatus.RC, the informer-cached `instance`.RC, the `clone` value read
+    back via r.Get (ALSO cache-backed), the `restartTrackingChanged` decision, and
+    the final RC written.
+
+Test: envtest "B2: RestartCount>1 must reset to 1 after a stable period", full
+`PR394 Restart Backoff Bug Verification` focus (B2 is a race — it only reproduces
+under concurrent-reconcile load, not when the spec is run in isolation).
+
+Seed: RestartCount=5, LastRestartTime = 11 min ago (past the stable threshold
+max(maxDelay*2, 10min)=10min), then a fresh crash.
+
+Chronological (b2-reset-role-1-0):
+
+  [21] SYNC scaling=true updateInstance.RC=1 LRT=fresh -> newStatus.RC=1 (informer.RC=5)
+  [22] US   newStatus.RC=1 informer.RC=5 clone(cache).RC=5 changed=true  -> final.RC=1
+       # RESET reconcile: updateRestartTracking saw the 11-min-old LRT, reset 5->0->1
+       #   with a fresh timestamp. changed=true, so newStatus=1 is trusted. API := 1. OK.
+
+  [23] SYNC scaling=true updateInstance.RC=5 LRT=fresh -> newStatus.RC=5 (informer.RC=5)
+  [24] US   newStatus.RC=5 informer.RC=5 clone(cache).RC=1 changed=true  -> final.RC=5
+       # CLOBBER: a racing reconcile seeded RestartCount=5 from a stale-high read
+       #   (syncRestartTrackingFromAPI only pulls the count UPWARD: `if fresh.RC >
+       #   instance.RC`), and updateRestartTracking re-stamped LastRestartTime fresh
+       #   WITHOUT resetting (its synced LRT was already the fresh reset time, so the
+       #   stable-period branch didn't fire). Result: newStatus carries the stale
+       #   count 5 + a fresh timestamp. `restartTrackingChanged` only checks the
+       #   timestamp, so it concludes "trust newStatus" and writes 5 over the API's 1.
+       #   Note clone(cache).RC=1 here (the API genuinely held the reset 1) — but the
+       #   fix ignores clone when changed=true. API := 5.  <-- reset lost.
+
+  [26] US   newStatus.RC=1 informer.RC=1 clone(cache).RC=5 changed=false -> final.RC=5
+       # RE-CEMENT: informer has now delivered the reset (newStatus.RC=1), and this
+       #   reconcile did NOT run updateRestartTracking (changed=false), so it takes the
+       #   "preserve the live API value" branch — but the live value it reads back
+       #   (clone via cache-backed r.Get) is the clobbered 5. So it re-writes 5 over 1.
+
+  [29..] US newStatus.RC=5 informer.RC=5 clone.RC=5 changed=false -> final.RC=5
+       # steady state: stuck at 5 for the whole 60s window (see B2 observed=5 x120).
+
+Root cause
+----------
+The reset (RestartCount 5 -> 1) is written once (line 22) but is not DURABLE. Two
+independent "preserve the maximum count" mechanisms defeat it:
+
+  1. syncRestartTrackingFromAPI is monotonic-UP only:
+        if fresh.Status.RestartCount > instance.Status.RestartCount { instance.RC = fresh.RC }
+     It can never carry a reset downward, so any reconcile that reads a stale-high 5
+     keeps 5 and (with updateRestartTracking) re-stamps it with a fresh timestamp.
+
+  2. updateStatus's timestamp heuristic:
+        restartTrackingChanged := newStatus.LastRestartTime != nil &&
+            (instance.LRT == nil || !newStatus.LRT.Equal(instance.LRT))
+     treats a fresh LastRestartTime as proof that newStatus.RestartCount is
+     authoritative. But a fresh timestamp does NOT imply the count is the reset value
+     — it can be a monotonic-high 5 + fresh stamp (line 24). And when the count IS the
+     reset value (1) but changed=false, it falls back to the cache-backed clone, which
+     by then holds the clobbered 5 (line 26).
+
+The round-2 -> round-3 rewrite (isReset -> timestamp detection) fixed the earlier
+symptom (stale-LOW clobbering fresh-HIGH) but not the reset's durability against a
+stale-HIGH + fresh-stamp reconcile. Because both syncRestartTrackingFromAPI and the
+updateStatus fallback enforce preserve-max, "reset to 1" and "preserve the highest
+seen count" remain contradictory invariants.
+
+Suggested direction
+-------------------
+Treat (RestartCount, LastRestartTime) as one versioned pair keyed by the timestamp,
+not two independently-preserved fields:
+  - syncRestartTrackingFromAPI: if fresh.LastRestartTime is newer, adopt BOTH fresh
+    RestartCount and time (even when the count is lower) — i.e. newest-timestamp wins,
+    not highest-count wins.
+  - updateStatus: decide reset-vs-preserve from the fresh API pair, and only overwrite
+    RestartCount when the value paired with the newer timestamp actually changed —
+    never restore a count whose paired timestamp is older than newStatus's.
