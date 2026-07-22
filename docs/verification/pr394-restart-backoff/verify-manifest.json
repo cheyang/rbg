@@ -21,7 +21,7 @@
   "findings": [
     { "id": "B1",  "polarity": "contract", "layer": "unit",        "match": ["TestRestartBackoffVerify_B1_Overflow", "TestRestartBackoffVerify_B1_NoCapOverflow"] },
     { "id": "B4a", "polarity": "contract", "layer": "unit",        "match": ["TestRestartBackoffVerify_B4_NegativeDelayBypass"] },
-    { "id": "B5",  "polarity": "canary",   "layer": "unit",        "match": ["TestRestartBackoffVerify_B5_OffByOne"] },
+    { "id": "B5",  "polarity": "contract", "layer": "unit",        "match": ["TestRestartBackoffVerify_B5_OffByOne"] },
     { "id": "B2",  "polarity": "contract", "layer": "integration", "match": ["B2: RestartCount"] },
     { "id": "B4b", "polarity": "contract", "layer": "integration", "match": ["B4: apiserver"] }
   ],

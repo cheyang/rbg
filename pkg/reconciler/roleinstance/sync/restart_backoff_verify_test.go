@@ -24,7 +24,6 @@ package sync
 // See docs/verification/pr394-restart-backoff/README.md.
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -46,14 +45,14 @@ func TestRestartBackoffVerify_B1_Overflow(t *testing.T) {
 	const base int32 = 30
 	const max int32 = 600
 
-	// Every count >= 5 already reaches the cap with base=30/max=600, so the
-	// correct result is exactly max for all of these.
-	// NOTE (round 2): PR head ad7cd462 added a guard `if restartCount >= 62`, but
-	// for base=30 the multiply `int64(base)<<restartCount` overflows int64 at
-	// restartCount 59/60/61 — BELOW the guard — and truncates back to 0. So the
-	// overflow window [59,61] is still live. 62/63/64/100 are now handled by the
-	// guard. These counts pin both the fixed region and the surviving hole.
-	counts := []int32{5, 27, 50, 58, 59, 60, 61, 62, 63, 64, 100}
+	// NOTE (round 3): head 245884dd corrects the formula to base*2^(restartCount-1)
+	// (the B5 fix) and now guards int64 overflow BEFORE the shift
+	// (`rc>=62 || base > 1<<(62-rc)`). The whole window that used to overflow to 0 —
+	// restartCount 59/60/61 and >=62 — now saturates at maxDelay. Under the corrected
+	// formula the cap is first reached at count 6 (30*2^5=960>600); count 5 (=480) is
+	// the last sub-cap value, so the "== max" contract below starts at 6. These counts
+	// pin the previously-broken overflow region as fixed.
+	counts := []int32{6, 27, 50, 58, 59, 60, 61, 62, 63, 64, 100}
 
 	for _, rc := range counts {
 		got := calculateRestartDelay(base, max, rc)
@@ -85,11 +84,16 @@ func TestRestartBackoffVerify_B1_NoCapOverflow(t *testing.T) {
 	}
 }
 
-// B5: the realized first backoff is 2*base, not base. updateRestartTracking
-// increments RestartCount to >=1 BEFORE the first backoff check happens, so
-// checkRestartBackoff never evaluates calculateRestartDelay with restartCount==0.
-// Therefore the documented/PR-table "first retry after base (30s)" never occurs;
-// the smallest real wait is calculateRestartDelay(base, max, 1) == 2*base.
+// B5: the realized first backoff must equal base, not 2*base.
+//
+// POLARITY (round 3): this began as a bug-canary asserting the buggy 2*base
+// behavior. Head 245884dd fixed the off-by-one by switching the formula to
+// base*2^(restartCount-1), so calculateRestartDelay(base,max,1) == base. The
+// canary has therefore FLIPPED and is promoted to a CONTRACT test: it now asserts
+// the intended "first realized delay == base" and will go red again if the
+// off-by-one regresses. updateRestartTracking still increments to >=1 before the
+// first backoff check, so the smallest count ever passed at runtime is 1 — the
+// fix makes that produce exactly base rather than 2*base.
 func TestRestartBackoffVerify_B5_OffByOne(t *testing.T) {
 	const base int32 = 30
 	const max int32 = 600
@@ -112,21 +116,22 @@ func TestRestartBackoffVerify_B5_OffByOne(t *testing.T) {
 	firstRealizedDelay := calculateRestartDelay(base, max, inst.Status.RestartCount)
 	t.Logf("first realized backoff delay = %ds (base=%d)", firstRealizedDelay, base)
 
-	// The documented behavior is "first retry after base (30s)". Show that the
-	// realized value is actually 2*base (60s) — i.e. base is never used as a wait.
-	assert.Equal(t, 2*base, firstRealizedDelay,
-		"first realized delay is 2*base, contradicting the documented 'base' first retry")
-	assert.NotEqual(t, base, firstRealizedDelay,
-		"documented first-retry value (base=%d) is never the realized delay", base)
+	// Fixed contract: the first realized delay equals base (30s), matching the
+	// documented "first retry after base". The pre-fix value was 2*base (60s).
+	assert.Equal(t, base, firstRealizedDelay,
+		"first realized delay must equal base (fixed); 2*base would be the old off-by-one")
+	assert.NotEqual(t, 2*base, firstRealizedDelay,
+		"first realized delay must no longer be 2*base=%d (the off-by-one)", 2*base)
 }
 
-// B5 corollary: calculateRestartDelay(base, max, 0) == base is only reachable in
-// unit tests, never on the live reconcile path. This test documents that the
-// count==0 branch exists but is dead code at runtime.
+// B5 corollary: at runtime the count passed to calculateRestartDelay is always
+// >=1 (updateRestartTracking increments before the first check). Head 245884dd
+// added an explicit `restartCount <= 0 => 0` guard, so the count==0 branch now
+// returns 0 rather than base — harmless because it is never reached at runtime.
 func TestRestartBackoffVerify_B5_Count0IsUnreachableAtRuntime(t *testing.T) {
 	const base int32 = 30
-	// The function itself returns base for count 0 ...
-	assert.Equal(t, base, calculateRestartDelay(base, 600, 0))
+	// Round 3: count 0 now returns 0 (explicit guard), not base.
+	assert.Equal(t, int32(0), calculateRestartDelay(base, 600, 0))
 
 	// ... but updateRestartTracking guarantees the persisted count is >=1 the
 	// moment a restart is recorded, so checkRestartBackoff (which requires
@@ -186,13 +191,16 @@ func TestRestartBackoffVerify_B4_NegativeDelayBypass(t *testing.T) {
 	}
 
 	// Control: a sane positive base delays (backoff window open) => remaining > 0.
-	posRemaining := c.checkRestartBackoff(context.Background(), newInstance(30), []*corev1.Pod{failedPod}, nil)
+	// Round 3 (245884dd) changed the signature to checkRestartBackoff(instance,
+	// fresh, pods, inactive); fresh==nil here (unit test has no apiReader), so the
+	// in-object status is used directly.
+	posRemaining := c.checkRestartBackoff(newInstance(30), nil, []*corev1.Pod{failedPod}, nil)
 	assert.Greater(t, posRemaining, time.Duration(0),
 		"sanity: with base=30 and a just-now restart, backoff must be pending")
 
 	// Negative base: the delay math goes negative, so checkRestartBackoff reports
 	// "no wait" — backoff is bypassed even though a delay was configured.
-	negRemaining := c.checkRestartBackoff(context.Background(), newInstance(-30), []*corev1.Pod{failedPod}, nil)
+	negRemaining := c.checkRestartBackoff(newInstance(-30), nil, []*corev1.Pod{failedPod}, nil)
 	t.Logf("checkRestartBackoff with base=-30 => %v (expected >0 if validated)", negRemaining)
 	assert.Greater(t, negRemaining, time.Duration(0),
 		"negative baseDelaySeconds should NOT bypass backoff; a negative delay disables it")
