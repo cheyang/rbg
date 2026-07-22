@@ -1,7 +1,10 @@
 # PR #394 round-3 review comment — POSTED
 
 Target: https://github.com/sgl-project/rbg/pull/394 (head `245884dd`)
-Posted: 2026-07-22 as https://github.com/sgl-project/rbg/pull/394#issuecomment-5045974131
+Posted: 2026-07-22
+- Summary (PR-level): https://github.com/sgl-project/rbg/pull/394#issuecomment-5045974131
+- Inline B2 (instance_status.go:441, restartTrackingChanged): https://github.com/sgl-project/rbg/pull/394#discussion_r3630392825
+- Inline B2 (instance_scale.go:375, monotonic-up sync): https://github.com/sgl-project/rbg/pull/394#discussion_r3630394090
 
 ---
 
