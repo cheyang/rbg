@@ -1,6 +1,7 @@
-# DRAFT — PR #394 round-3 review comment (NOT yet posted)
+# PR #394 round-3 review comment — POSTED
 
 Target: https://github.com/sgl-project/rbg/pull/394 (head `245884dd`)
+Posted: 2026-07-22 as https://github.com/sgl-project/rbg/pull/394#issuecomment-5045974131
 
 ---
 
