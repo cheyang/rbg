@@ -1,0 +1,8 @@
+=== RUN   TestPR407_MaxSkewBoundsBatchStep
+--- PASS: TestPR407_MaxSkewBoundsBatchStep (0.00s)
+=== RUN   TestPR407_OrderReadyGatesNextBatch
+--- PASS: TestPR407_OrderReadyGatesNextBatch (0.00s)
+=== RUN   TestPR407_UpdateRetryReGetResetsSlice_NoDoubleAppend
+--- PASS: TestPR407_UpdateRetryReGetResetsSlice_NoDoubleAppend (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/verify/pr407	(cached)

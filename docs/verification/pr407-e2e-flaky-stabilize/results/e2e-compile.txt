@@ -1,0 +1,3 @@
+# e2e package compile check at PR head (93545869)
+$ go vet ./test/e2e/testcase/v1alpha2/
+exit=0 (0=compiles clean)

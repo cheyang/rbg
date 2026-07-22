@@ -1,0 +1,35 @@
+{
+  "_comment": "Verification harness for PR #407 (test-only e2e flakiness stabilization). No production bug; these are contract-style PROOFS of the two design claims the review conclusion rests on. Consumed by scripts/re-verify.sh.",
+  "topic": "pr407-e2e-flaky-stabilize",
+  "pr": "https://github.com/sgl-project/rbg/pull/407",
+  "harnessPaths": [
+    "docs/verification/pr407-e2e-flaky-stabilize",
+    "test/verify/pr407/pr407_verify_test.go"
+  ],
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/verify/pr407/... -run TestPR407 -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "V1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestPR407_MaxSkewBoundsBatchStep", "TestPR407_OrderReadyGatesNextBatch"],
+      "note": "coordinated_policy.go MaxSkew 50%->33%: real CoordinationScaler steps 1->2->3 at 33% but jumps 1->3 at 50%; OrderReady gates the next batch. Backs the skew<=1 e2e assertion being deterministic."
+    },
+    {
+      "id": "V2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestPR407_UpdateRetryReGetResetsSlice_NoDoubleAppend"],
+      "note": "scaling_adapter.go updateRbgSpecV2Retry is retry-safe: re-Get via real controller-runtime client resets Spec.Roles so the append is re-applied idempotently on a 409 retry (no double-append). Includes a harness-bites control proving the broken pattern doubles."
+    }
+  ],
+  "liveNote": "No live layer: PR is test-only and no KUBECONFIG was provided. Full e2e already runs green in CI (e2e-test, 28m). Compile of the changed e2e package proven at PR head — see results/e2e-compile.txt.",
+  "manualChecks": [
+    "e2e package compiles at PR head: `go vet ./test/e2e/testcase/v1alpha2/` (captured in results/e2e-compile.txt)."
+  ]
+}
