@@ -1,0 +1,4 @@
+TestStressDeployScriptImageTagOverrideHonored	fail
+TestStressDeployScriptTuningOverrideHonored	fail
+TestStressDeployScriptReplicaOverrideHonored	fail
+TestRenderSucceedsWithNullGlobal	pass
