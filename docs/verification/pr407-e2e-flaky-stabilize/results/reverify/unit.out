@@ -1,0 +1,16 @@
+{"Time":"2026-07-22T11:00:51.385289+08:00","Action":"start","Package":"sigs.k8s.io/rbgs/test/verify/pr407"}
+{"Time":"2026-07-22T11:00:51.385382+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Test":"TestPR407_MaxSkewBoundsBatchStep"}
+{"Time":"2026-07-22T11:00:51.385391+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Test":"TestPR407_MaxSkewBoundsBatchStep","Output":"=== RUN   TestPR407_MaxSkewBoundsBatchStep\n"}
+{"Time":"2026-07-22T11:00:51.385402+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Test":"TestPR407_MaxSkewBoundsBatchStep","Output":"--- PASS: TestPR407_MaxSkewBoundsBatchStep (0.00s)\n"}
+{"Time":"2026-07-22T11:00:51.385408+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Test":"TestPR407_MaxSkewBoundsBatchStep","Elapsed":0}
+{"Time":"2026-07-22T11:00:51.385417+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Test":"TestPR407_OrderReadyGatesNextBatch"}
+{"Time":"2026-07-22T11:00:51.38542+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Test":"TestPR407_OrderReadyGatesNextBatch","Output":"=== RUN   TestPR407_OrderReadyGatesNextBatch\n"}
+{"Time":"2026-07-22T11:00:51.385425+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Test":"TestPR407_OrderReadyGatesNextBatch","Output":"--- PASS: TestPR407_OrderReadyGatesNextBatch (0.00s)\n"}
+{"Time":"2026-07-22T11:00:51.385428+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Test":"TestPR407_OrderReadyGatesNextBatch","Elapsed":0}
+{"Time":"2026-07-22T11:00:51.385432+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Test":"TestPR407_UpdateRetryReGetResetsSlice_NoDoubleAppend"}
+{"Time":"2026-07-22T11:00:51.385435+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Test":"TestPR407_UpdateRetryReGetResetsSlice_NoDoubleAppend","Output":"=== RUN   TestPR407_UpdateRetryReGetResetsSlice_NoDoubleAppend\n"}
+{"Time":"2026-07-22T11:00:51.38544+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Test":"TestPR407_UpdateRetryReGetResetsSlice_NoDoubleAppend","Output":"--- PASS: TestPR407_UpdateRetryReGetResetsSlice_NoDoubleAppend (0.03s)\n"}
+{"Time":"2026-07-22T11:00:51.385443+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Test":"TestPR407_UpdateRetryReGetResetsSlice_NoDoubleAppend","Elapsed":0.03}
+{"Time":"2026-07-22T11:00:51.385628+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Output":"PASS\n"}
+{"Time":"2026-07-22T11:00:51.385632+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Output":"ok  \tsigs.k8s.io/rbgs/test/verify/pr407\t(cached)\n"}
+{"Time":"2026-07-22T11:00:51.385637+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/verify/pr407","Elapsed":0}
