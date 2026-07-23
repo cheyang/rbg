@@ -1,0 +1,29 @@
+{
+  "topic": "pr394-restart-backoff",
+  "pr": "https://github.com/sgl-project/rbg/pull/394",
+  "prHeadFetch": { "remote": "new-origin", "ref": "pull/394/head" },
+  "harnessPaths": [
+    "docs/verification/pr394-restart-backoff",
+    "pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go",
+    "test/envtest/testcase/restart_policy/backoff_bug_verify_test.go"
+  ],
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/roleinstance/sync/ -run RestartBackoffVerify -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=$PWD/$(bin/setup-envtest use 1.31.0 --bin-dir bin -p path) go test ./test/envtest/testcase/restart_policy/... -run TestRestartPolicy -ginkgo.focus 'PR394 Restart Backoff Bug Verification' -ginkgo.json-report=$GINKGO_REPORT -timeout 10m",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    { "id": "B1",  "polarity": "contract", "layer": "unit",        "match": ["TestRestartBackoffVerify_B1_Overflow", "TestRestartBackoffVerify_B1_NoCapOverflow"] },
+    { "id": "B4a", "polarity": "contract", "layer": "unit",        "match": ["TestRestartBackoffVerify_B4_NegativeDelayBypass"] },
+    { "id": "B5",  "polarity": "contract", "layer": "unit",        "match": ["TestRestartBackoffVerify_B5_OffByOne"] },
+    { "id": "B2",  "polarity": "contract", "layer": "integration", "match": ["B2: RestartCount"] },
+    { "id": "B4b", "polarity": "contract", "layer": "integration", "match": ["B4: apiserver"] }
+  ],
+  "liveNote": "L3 needs a real cluster: run scripts/00-setup.sh, start the controller, then scripts/10-live-backoff.sh. Fixed => controller logs 'delay=<base>' (not 2*base) at restartCount=1; crashed pod still preserved during the window."
+}
