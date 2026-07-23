@@ -4,6 +4,35 @@ Reproducible evidence for the suspected bugs raised while reviewing
 [sgl-project/rbg#394](https://github.com/sgl-project/rbg/pull/394)
 ("feat: add exponential backoff for restart policy").
 
+## Round 4 re-verification (PR head `422b9394`, 2026-07-23) — B2 fixed
+
+After the round-3 inline comments, the branch was first rebased onto newer main
+(`f27bd290`, no restart-backoff code change — confirmed identical), then the B2 fix
+landed at `422b9394`. It implements the suggested direction exactly:
+
+- **`syncRestartTrackingFromAPI`** now treats `(RestartCount, LastRestartTime)` as a
+  versioned pair — when the fresh API timestamp is newer it adopts **both** fields,
+  even if the count is lower, so a reset (5→1) is carried downward instead of being
+  blocked by the old monotonic-up guard.
+- **`updateStatus`** `restartTrackingChanged` now requires `newStatus.LastRestartTime`
+  to differ from **both** the informer's and the live API value — distinguishing a real
+  `updateRestartTracking` (brand-new timestamp) from a `syncRestartTrackingFromAPI`
+  pass-through (equal to live), so the reset is preserved instead of re-clobbered.
+
+| ID | Finding | Polarity | Round 3 | Round 4 verdict | Observed on `422b9394` |
+|----|---------|----------|---------|-----------------|------------------------|
+| **B1** | int64 overflow | contract (unit) | Fixed | **FIXED** ✅ | `calc(30,600,{59,60,61,…})=600`; saturates uncapped |
+| **B5** | first backoff `2×base` | contract (unit) | Fixed | **FIXED** ✅ | `calc(30,600,1)=30` |
+| **B4b** | apiserver accepts `-30` | contract (envtest) | Fixed | **FIXED** ✅ | RoleInstance rejects negative delay |
+| **B2** | stable-period reset clobbered | contract (envtest) | Still-broken | **FIXED** ✅ | reset 5→1 now persists for the full window (was stuck at 5) |
+| **B4a** | negative delay not clamped *in code* | contract (unit) | Still-broken | **STILL-BROKEN / defense-in-depth** | `checkRestartBackoff(-30)=0s`; unreachable via API (B4b), so optional |
+
+Net round 4: **4 of 5 fixed; only B4a remains, and it is defense-in-depth only**
+(the negative value cannot reach the code path through the API now that B4b rejects
+it at the CRD). If the team accepts API-only validation, the B4a unit code-guard can
+be retired and all findings are effectively resolved. Round-4 raw output:
+`results/reverify/`.
+
 ## Round 3 re-verification (PR head `245884dd`, 2026-07-22)
 
 Commit `245884dd` ("fix: address review comments on restart backoff robustness")
