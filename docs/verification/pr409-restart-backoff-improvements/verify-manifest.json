@@ -1,0 +1,26 @@
+{
+  "pr": "https://github.com/sgl-project/rbg/pull/409",
+  "topic": "pr409-restart-backoff-improvements",
+  "codeUnderReviewHead": "1e5b0e6fdb88bef7edd96a57bd9e20c5dee8ad56",
+  "harnessPaths": [
+    "pkg/reconciler/roleinstance/sync/verify_pr409_test.go",
+    "test/envtest/testcase/restart_policy_cel/cel_test.go"
+  ],
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/roleinstance/sync/ -run TestVerifyPR409 -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=$(ls -d /root/rbg/bin/k8s/*/ 2>/dev/null | head -1) go test ./test/envtest/testcase/restart_policy_cel/ -run TestVerifyPR409_F4 -json"
+    }
+  },
+  "findings": [
+    { "id": "F1", "title": "Slow-path backoff freezes rolling updates / spec changes (TODO Issue #4)", "polarity": "canary", "layer": "unit", "match": ["TestVerifyPR409_F1_SlowPathFreezesSpecChange_CANARY"], "note": "Passes on PR head (frozen). Flips when fix returns 0 during Generation/Revision mismatch. Control TestVerifyPR409_F1_Control_LegitimateBackoffStillApplies must stay green." },
+    { "id": "F3", "title": "Permanent LastRestartTime bypass in shouldRecreateInstance (TODO Issue #2)", "polarity": "canary", "layer": "unit", "match": ["TestVerifyPR409_F3_PermanentLastRestartTimeBypass_CANARY"], "note": "Passes on PR head. Flips when LastRestartTime is cleared after a stable period." },
+    { "id": "F2", "title": "ClearRestarting on deletion unblocks a new same-name instance (fix present)", "polarity": "contract", "layer": "unit", "match": ["TestVerifyPR409_F2_ClearRestartingUnblocksSameName_CONTRACT"], "note": "Green on PR head; confirms shipped fix. Should stay green." },
+    { "id": "F4", "title": "maxDelaySeconds=600 default + CEL rejects base>600 with max omitted", "polarity": "contract", "layer": "integration", "match": ["TestVerifyPR409_F4_CEL_And_Defaulting"], "note": "Behavior change confirmed via envtest against the PR CRDs. Green on PR head." }
+  ],
+  "liveNote": "L2 uses isolated envtest (its own API server + the PR config/crd/bases). The shared sandbox cluster was intentionally NOT modified. envtest assets: setup-envtest use 1.31.0 --bin-dir ./bin."
+}

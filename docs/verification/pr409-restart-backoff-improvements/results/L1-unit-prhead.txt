@@ -1,0 +1,10 @@
+=== RUN   TestVerifyPR409_F1_SlowPathFreezesSpecChange_CANARY
+--- PASS: TestVerifyPR409_F1_SlowPathFreezesSpecChange_CANARY (0.00s)
+=== RUN   TestVerifyPR409_F1_Control_LegitimateBackoffStillApplies
+--- PASS: TestVerifyPR409_F1_Control_LegitimateBackoffStillApplies (0.00s)
+=== RUN   TestVerifyPR409_F3_PermanentLastRestartTimeBypass_CANARY
+--- PASS: TestVerifyPR409_F3_PermanentLastRestartTimeBypass_CANARY (0.00s)
+=== RUN   TestVerifyPR409_F2_ClearRestartingUnblocksSameName_CONTRACT
+--- PASS: TestVerifyPR409_F2_ClearRestartingUnblocksSameName_CONTRACT (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	(cached)

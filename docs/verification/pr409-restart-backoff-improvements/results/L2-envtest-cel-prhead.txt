@@ -1,0 +1,14 @@
+=== RUN   TestVerifyPR409_F4_CEL_And_Defaulting
+=== RUN   TestVerifyPR409_F4_CEL_And_Defaulting/base>600_with_max_omitted_is_REJECTED_(default_max=600_<_base)
+    cel_test.go:103: REJECTED as expected: RoleInstance.workloads.x-k8s.io "vpr409-f4-reject" is invalid: spec.restartPolicy: Invalid value: "object": maxDelaySeconds must be greater than or equal to baseDelaySeconds
+=== RUN   TestVerifyPR409_F4_CEL_And_Defaulting/base=30_(default)_with_max_omitted_is_ACCEPTED,_and_max_defaults_to_600
+    cel_test.go:125: ACCEPTED; server-side defaults applied: base=30 max=600
+=== RUN   TestVerifyPR409_F4_CEL_And_Defaulting/base=700_with_explicit_max=800_is_ACCEPTED_(control)
+=== RUN   TestVerifyPR409_F4_CEL_And_Defaulting/explicit_max<base_is_REJECTED_(CEL_sanity)
+--- PASS: TestVerifyPR409_F4_CEL_And_Defaulting (0.17s)
+    --- PASS: TestVerifyPR409_F4_CEL_And_Defaulting/base>600_with_max_omitted_is_REJECTED_(default_max=600_<_base) (0.14s)
+    --- PASS: TestVerifyPR409_F4_CEL_And_Defaulting/base=30_(default)_with_max_omitted_is_ACCEPTED,_and_max_defaults_to_600 (0.02s)
+    --- PASS: TestVerifyPR409_F4_CEL_And_Defaulting/base=700_with_explicit_max=800_is_ACCEPTED_(control) (0.01s)
+    --- PASS: TestVerifyPR409_F4_CEL_And_Defaulting/explicit_max<base_is_REJECTED_(CEL_sanity) (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy_cel	10.639s
