@@ -4,6 +4,32 @@ Reproducible evidence for the suspected bugs raised while reviewing
 [sgl-project/rbg#394](https://github.com/sgl-project/rbg/pull/394)
 ("feat: add exponential backoff for restart policy").
 
+## Round 5 re-verification (PR head `d0db8af0`, 2026-07-23) — no code change, all verdicts hold
+
+Delta `422b9394..d0db8af0` is **test-infra + docs only** — no production code touched:
+
+- `test/utils/utils.go`: `DefaultImage` switched `acs/pause:3.5` (VPC-internal registry,
+  not CI-reachable) → `acs-sample/nginx:latest`. Both are long-running (pod stays Running);
+  the `roletemplate.go` image-equality assertions compare against this constant, so they
+  still hold. CI-accessibility fix, not a behavior change.
+- `test/e2e/.../restart_policy_stability.go`: e2e backoff-delay test hardened for Kind CI —
+  `baseDelay 5→90`, `maxDelay 30→300`, `Consistently 4s→15s`. Rationale sound: with the
+  B5 fix (first delay = base, not 2×base) a 90 s base leaves ≥40 s of window after the
+  ~50 s first-recovery path, so the 15 s no-recreate check has real margin.
+- `doc/best-practice/{en,zh}/01-deploy-inference-service*.md`: unrelated new guides.
+
+Re-verify against `d0db8af0` reproduces round 4 **exactly** — B1/B5/B2/B4b **FIXED**,
+B4a **STILL-BROKEN (defense-in-depth, unreachable via API)**. No new findings; nothing
+added to the harness. Raw output: `results/reverify/`.
+
+| ID | Polarity | Layer | Round 4 | Round 5 verdict |
+|----|----------|-------|---------|-----------------|
+| **B1**  | contract | unit        | FIXED        | **FIXED** ✅ (pass=2 fail=0) |
+| **B5**  | contract | unit        | FIXED        | **FIXED** ✅ (pass=1 fail=0) |
+| **B2**  | contract | integration | FIXED        | **FIXED** ✅ (pass=1 fail=0) |
+| **B4b** | contract | integration | FIXED        | **FIXED** ✅ (pass=1 fail=0) |
+| **B4a** | contract | unit        | STILL-BROKEN | **STILL-BROKEN** (defense-in-depth only) |
+
 ## Round 4 re-verification (PR head `422b9394`, 2026-07-23) — B2 fixed
 
 After the round-3 inline comments, the branch was first rebased onto newer main
