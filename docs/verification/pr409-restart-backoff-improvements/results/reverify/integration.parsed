@@ -1,0 +1,5 @@
+TestVerifyPR409_F4_CEL_And_Defaulting/base>600_with_max_omitted_is_REJECTED_(default_max=600_<_base)	pass
+TestVerifyPR409_F4_CEL_And_Defaulting/base=30_(default)_with_max_omitted_is_ACCEPTED,_and_max_defaults_to_600	pass
+TestVerifyPR409_F4_CEL_And_Defaulting/base=700_with_explicit_max=800_is_ACCEPTED_(control)	pass
+TestVerifyPR409_F4_CEL_And_Defaulting/explicit_max<base_is_REJECTED_(CEL_sanity)	pass
+TestVerifyPR409_F4_CEL_And_Defaulting	pass

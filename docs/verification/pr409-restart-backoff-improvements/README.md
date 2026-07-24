@@ -1,69 +1,86 @@
 # Verification — PR #409 (restart-policy backoff improvements)
 
 **PR:** https://github.com/sgl-project/rbg/pull/409
-**Code under review (head):** `1e5b0e6f` ("guard against negative baseDelaySeconds")
-**Layers:** L1 unit (pure logic) + L2 integration (envtest, isolated API server with the PR's CRDs).
-**Production code is untouched** — this branch adds only test files + this `docs/verification/` tree.
+**Rounds:** R1 reviewed head `1e5b0e6f`; **R2 (current) reviewed head `67b13b6d`.**
+**Layers:** L1 unit (pure logic) + L2 integration (isolated envtest with the PR's CRDs).
+**Production code is untouched** — additive test files + this `docs/verification/` tree only.
 
-## Hypotheses → falsifiable claims
+## Round 2 summary (head `67b13b6d`)
 
-| ID | Claim | Polarity |
-|----|-------|----------|
-| F1 | When a spec change / rolling update is in progress (`Generation != ObservedGeneration`), a `Recreate`-policy instance with a recent restart + a failed pod has its update **frozen**: `checkRestartBackoff` returns >0, so `Scale()` requeues and skips scaling. Documented in-tree only as TODO "Issue #4". | **canary** (passes now, flips when fixed) |
-| F3 | `shouldRecreateInstance`'s not-Ready bypass is **permanent**: `LastRestartTime` is never cleared, so an instance that restarted once bypasses `wasInstanceReady()` forever (even an hour-old restart). TODO "Issue #2". | **canary** |
-| F2 | The PR's fix works: `ClearRestarting` on the delete paths removes the in-memory cache entry, so a new same-name instance is not blocked by `isAlreadyRestarting`. | **contract** (green now, stays green) |
-| F4 | With `maxDelaySeconds` now defaulting to 600 + the new CEL rule, a config of `baseDelaySeconds > 600` with `maxDelaySeconds` **omitted** is **rejected at admission** (default 600 < base). Previously accepted (and silently capped at runtime). | **contract** (documents behavior change) |
+The author pushed three commits directly addressing R1:
+- `9ce22679` — **fixes F1 and F3** (exactly as suggested).
+- `25f61156` — **documents F4** in `failure-handling.md`.
+- `67b13b6d` — adds the author's own envtest + e2e regression tests.
 
-## Observed vs expected (on PR head `1e5b0e6f`)
+`re-verify.sh` result against `67b13b6d`: **all 4 findings FIXED** (F1/F3 canaries flipped;
+F2/F4 contracts green). The two canaries have been **inverted into contract tests** so they now
+guard against regression.
 
-| ID | Layer | Test | Observed | Verdict |
-|----|-------|------|----------|---------|
-| F1 | L1 | `TestVerifyPR409_F1_SlowPathFreezesSpecChange_CANARY` | `checkRestartBackoff` returns >0 during a spec change → update frozen | **Confirmed** |
-| F1 | L1 | `..._F1_Control_LegitimateBackoffStillApplies` | genuine crash (gen matched) still backs off | control green |
-| F3 | L1 | `TestVerifyPR409_F3_PermanentLastRestartTimeBypass_CANARY` | hour-old `LastRestartTime` still bypasses not-Ready guard | **Confirmed** |
-| F2 | L1 | `TestVerifyPR409_F2_ClearRestartingUnblocksSameName_CONTRACT` | after `ClearRestarting`, fresh same-name instance not blocked | **Confirmed (fix works)** |
-| F4 | L2 | `TestVerifyPR409_F4_CEL_And_Defaulting` | `base=700, max omitted` → `Invalid value ... maxDelaySeconds must be greater than or equal to baseDelaySeconds`; `base/max omitted` → accepted, defaulted to 30/600 | **Confirmed (behavior change)** |
+| ID | Finding | Polarity (R2) | R1 | R2 verdict | Evidence |
+|----|---------|---------------|----|-----------|----------|
+| F1 | Slow-path backoff froze rolling updates / spec changes | contract (was canary) | Confirmed bug | **Fixed** — early `return 0` on Generation/Revision mismatch | `results/L1-unit-round2-fixed.txt` |
+| F3 | `wasInstanceReady` bypass was permanent | contract (was canary) | Confirmed bug | **Fixed** — bounded via `hasRecentRestart()` | `results/L1-unit-round2-fixed.txt` |
+| F2 | `ClearRestarting` on delete unblocks same-name instance | contract | Confirmed fix | **Still green** | `results/L1-unit-round2-fixed.txt` |
+| F4 | `maxDelaySeconds=600` default + CEL rejects `base>600` w/ `max` omitted | contract | Confirmed behavior change | **Still green + now documented** | `results/L2-envtest-cel-prhead.txt` |
 
-Raw output: `results/L1-unit-prhead.txt`, `results/L2-envtest-cel-prhead.txt`.
+### F1 fix (author)
+```go
+if !shouldRecreateInstance(...) {
+    if instance.Generation != instance.Status.ObservedGeneration ||
+        instance.Status.CurrentRevision != instance.Status.UpdateRevision {
+        return 0 // don't freeze a spec change / rolling update
+    }
+    ...
+}
+```
+### F3 fix (author)
+`hasRecentRestart(instance)` (restart within `max(maxDelay*2,10min)`) replaces the old
+`LastRestartTime == nil`, so the not-Ready bypass is bounded, not permanent. `LastRestartTime`
+is preserved as a historical record. Shared `stableThreshold()` helper extracted.
 
-## Harness-bites check (Step 4)
+## New in Round 2 — F5 (non-blocking, test quality)
 
-A temporary patch applying **both** proposed fixes was applied to `instance_scale.go`, tests re-run, then reverted (production diff empty again):
-- F1 fix (return 0 in the slow path when recreate was skipped due to Generation/Revision mismatch) → **F1 canary flipped to FAIL**, F1 control stayed green.
-- F3 fix (bound the not-Ready bypass to the stability window) → **F3 canary flipped to FAIL**.
-- F2 contract and F4 unaffected (stayed green).
+The author's **new** envtest suite `test/envtest/testcase/restart_policy` is **flaky under a
+full-suite run**: `15 Passed | 2 Failed` of 17, but **both failing specs PASS when run in
+isolation** (`results/L2-presweep-round2-*.txt`). So the production recreate logic is fine —
+the tests race under contention:
 
-This proves the canaries exercise the real code paths and are not red/green for the wrong reason.
+- `RestartPolicy=None … should only replace the failed pod` (@505): fails with
+  `409 Conflict — the object has been modified` on `Status().Update(pod)`. The test `Get`s a pod
+  then updates its status without `retry.RetryOnConflict`; the controller mutates the pod
+  concurrently. **Fix:** wrap the status update in `retry.RetryOnConflict` (or re-`Get` before
+  update). Applies to the other `Status().Update(pod)` sites too.
+- `Recreate … should recreate all component pods when worker fails in LeaderWorker pattern`
+  (@349): 60s `Eventually` timeout under full-suite CPU contention (passes alone in ~30s for
+  both specs). **Fix:** raise this spec's timeout and/or reduce cross-spec contention.
 
-## Proposed fixes (for the author)
+This is a CI-flakiness risk, not a correctness bug. Worth fixing before relying on the suite
+as a merge gate.
 
-- **F1 (Issue #4):** in `checkRestartBackoff`, when `shouldRecreateInstance` returned false, only enter the slow-path backoff if the reason was `wasInstanceReady`, not `Generation != ObservedGeneration` or `CurrentRevision != UpdateRevision`. Otherwise return 0 so spec changes / rolling updates are not frozen.
-- **F3 (Issue #2):** clear `LastRestartTime` after a sustained Ready period (`max(maxDelay*2, 10min)`) so `wasInstanceReady()` re-gates the bypass. (Equivalent: bound the bypass by `time.Since(LastRestartTime)`.)
-- **F4:** not a bug — it is a validation tightening. Worth one line in the PR/docs: `baseDelaySeconds > 600` with `maxDelaySeconds` omitted is now rejected (defaulting fills 600). Callers relying on the old silent-cap behavior must set `maxDelaySeconds` explicitly.
+## Harness-bites check (Round 1, still valid)
+
+Applying the proposed F1+F3 fixes to `instance_scale.go` flipped both canaries to FAIL (control
++ contracts stayed green); production diff empty after revert. R2 confirms the *real* author fix
+makes the inverted contracts pass.
 
 ## How to run
 
 ```bash
-# from a checkout of THIS branch (verify/pr409-restart-backoff-improvements)
-# L1 (fast, no deps):
+# L1 (fast):
 go test ./pkg/reconciler/roleinstance/sync/ -run TestVerifyPR409 -v
-
-# L2 (envtest — isolated API server; does NOT touch any real cluster):
+# L2 (isolated envtest; does NOT touch any real cluster):
 export KUBEBUILDER_ASSETS=$(ls -d ./bin/k8s/*/ | head -1)   # setup-envtest use 1.31.0 --bin-dir ./bin
 go test ./test/envtest/testcase/restart_policy_cel/ -run TestVerifyPR409_F4 -v
-```
-
-## Continuing after the fix (any machine)
-
-All durable state is on this branch: the harness, `verify-manifest.json`, `.last-reviewed`, this table.
-
-```bash
-git fetch origin && git checkout verify/pr409-restart-backoff-improvements
-# re-run the harness against the current PR head (auto-discovered from manifest.pr):
+# Re-verify everything against the current PR head (auto-resolved from manifest.pr):
 bash docs/verification/pr409-restart-backoff-improvements/scripts/re-verify.sh
 ```
 
-`re-verify.sh` applies polarity: a **canary** is reported *Fixed only when it flips to FAIL*; a **contract** is *Fixed when green*. After a canary flips, invert its assertion (or promote to a contract test) so it guards against regressions. Advance `.last-reviewed` to the new head and commit.
+## Continuing after further changes (any machine)
 
-**Kickoff prompt for a fresh agent:**
-> Resume the review pipeline for https://github.com/sgl-project/rbg/pull/409. Check out branch `verify/pr409-restart-backoff-improvements`, read `docs/verification/pr409-restart-backoff-improvements/README.md`, run `scripts/re-verify.sh`, and report Fixed/Still-broken per finding honoring polarity (F1, F3 are canaries; F2, F4 are contracts).
+All durable state is on this branch. `re-verify.sh` reads `.last-reviewed` (now `67b13b6d`) and
+reports the `last-reviewed..head` delta. F1/F3 are now **contract** tests (green = still fixed).
+
+**Kickoff prompt:**
+> Resume the review pipeline for https://github.com/sgl-project/rbg/pull/409. Check out
+> `verify/pr409-restart-backoff-improvements`, read the README, run `scripts/re-verify.sh`,
+> report per finding. All of F1–F4 are contracts now; F5 (envtest flakiness) is tracked in the README.

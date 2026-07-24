@@ -1,0 +1,15 @@
+# Pre-merge full sweep against fixed head 67b13b6d
+## unit (roleinstance/...)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.151s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	0.168s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.172s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/lifecycle	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.252s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	[no test files]
+## author envtest restart_policy suite (FULL RUN)
+Summarizing 2 Failures:
+  [FAIL] RestartPolicy Controller Integration RecreateRoleInstanceOnPodRestart [It] should recreate all component pods when worker fails in LeaderWorker pattern
+  [FAIL] RestartPolicy Controller Integration RestartPolicy=None [It] should only replace the failed pod, not recreate all pods
+Ran 17 of 17 Specs in 233.240 seconds
+FAIL! -- 15 Passed | 2 Failed | 0 Pending | 0 Skipped

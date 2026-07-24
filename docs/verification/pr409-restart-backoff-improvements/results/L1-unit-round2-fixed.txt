@@ -1,0 +1,15 @@
+=== RUN   TestVerifyPR409_F1_SpecChangeNotFrozen_CONTRACT
+--- PASS: TestVerifyPR409_F1_SpecChangeNotFrozen_CONTRACT (0.00s)
+=== RUN   TestVerifyPR409_F1_RollingUpdateNotFrozen_CONTRACT
+--- PASS: TestVerifyPR409_F1_RollingUpdateNotFrozen_CONTRACT (0.00s)
+=== RUN   TestVerifyPR409_F1_Control_LegitimateBackoffStillApplies
+--- PASS: TestVerifyPR409_F1_Control_LegitimateBackoffStillApplies (0.00s)
+=== RUN   TestVerifyPR409_F3_BoundedBypass_CONTRACT
+=== RUN   TestVerifyPR409_F3_BoundedBypass_CONTRACT/ancient_restart_+_not_Ready:_guard_re-armed,_no_recreate
+=== RUN   TestVerifyPR409_F3_BoundedBypass_CONTRACT/recent_restart_+_not_Ready:_bypass_still_active,_recreate_(deadlock_prevention)
+=== RUN   TestVerifyPR409_F3_BoundedBypass_CONTRACT/no_prior_restart_+_not_Ready:_guard_active,_no_recreate
+--- PASS: TestVerifyPR409_F3_BoundedBypass_CONTRACT (0.00s)
+=== RUN   TestVerifyPR409_F2_ClearRestartingUnblocksSameName_CONTRACT
+--- PASS: TestVerifyPR409_F2_ClearRestartingUnblocksSameName_CONTRACT (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.241s

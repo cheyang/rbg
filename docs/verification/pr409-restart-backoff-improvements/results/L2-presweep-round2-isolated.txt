@@ -1,0 +1,2 @@
+# Same 2 specs re-run IN ISOLATION against fixed head
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy	30.457s

@@ -1,7 +1,7 @@
 {
   "pr": "https://github.com/sgl-project/rbg/pull/409",
   "topic": "pr409-restart-backoff-improvements",
-  "codeUnderReviewHead": "1e5b0e6fdb88bef7edd96a57bd9e20c5dee8ad56",
+  "codeUnderReviewHead": "67b13b6d948905e28f0f3dacd2f203c7bc90d800",
   "harnessPaths": [
     "pkg/reconciler/roleinstance/sync/verify_pr409_test.go",
     "test/envtest/testcase/restart_policy_cel/cel_test.go"
@@ -17,10 +17,10 @@
     }
   },
   "findings": [
-    { "id": "F1", "title": "Slow-path backoff freezes rolling updates / spec changes (TODO Issue #4)", "polarity": "canary", "layer": "unit", "match": ["TestVerifyPR409_F1_SlowPathFreezesSpecChange_CANARY"], "note": "Passes on PR head (frozen). Flips when fix returns 0 during Generation/Revision mismatch. Control TestVerifyPR409_F1_Control_LegitimateBackoffStillApplies must stay green." },
-    { "id": "F3", "title": "Permanent LastRestartTime bypass in shouldRecreateInstance (TODO Issue #2)", "polarity": "canary", "layer": "unit", "match": ["TestVerifyPR409_F3_PermanentLastRestartTimeBypass_CANARY"], "note": "Passes on PR head. Flips when LastRestartTime is cleared after a stable period." },
-    { "id": "F2", "title": "ClearRestarting on deletion unblocks a new same-name instance (fix present)", "polarity": "contract", "layer": "unit", "match": ["TestVerifyPR409_F2_ClearRestartingUnblocksSameName_CONTRACT"], "note": "Green on PR head; confirms shipped fix. Should stay green." },
-    { "id": "F4", "title": "maxDelaySeconds=600 default + CEL rejects base>600 with max omitted", "polarity": "contract", "layer": "integration", "match": ["TestVerifyPR409_F4_CEL_And_Defaulting"], "note": "Behavior change confirmed via envtest against the PR CRDs. Green on PR head." }
+    { "id": "F1", "title": "Slow-path backoff must not freeze rolling updates / spec changes", "polarity": "contract", "layer": "unit", "match": ["TestVerifyPR409_F1_SpecChangeNotFrozen_CONTRACT", "TestVerifyPR409_F1_RollingUpdateNotFrozen_CONTRACT"], "note": "Round 1: canary (bug reproduced). Round 2: FIXED in 9ce22679 (early return 0 on Generation/Revision mismatch); inverted to contract. Control TestVerifyPR409_F1_Control_LegitimateBackoffStillApplies stays green." },
+    { "id": "F3", "title": "wasInstanceReady bypass must be bounded, not permanent", "polarity": "contract", "layer": "unit", "match": ["TestVerifyPR409_F3_BoundedBypass_CONTRACT"], "note": "Round 1: canary (permanent bypass reproduced). Round 2: FIXED in 9ce22679 (hasRecentRestart bounds the bypass to the stability window); inverted to contract, also verifies the recent-restart bypass still works." },
+    { "id": "F2", "title": "ClearRestarting on deletion unblocks a new same-name instance", "polarity": "contract", "layer": "unit", "match": ["TestVerifyPR409_F2_ClearRestartingUnblocksSameName_CONTRACT"], "note": "Confirmed working both rounds." },
+    { "id": "F4", "title": "maxDelaySeconds=600 default + CEL rejects base>600 with max omitted", "polarity": "contract", "layer": "integration", "match": ["TestVerifyPR409_F4_CEL_And_Defaulting"], "note": "Behavior change confirmed via envtest. Round 2: author documented it in failure-handling.md (25f61156)." }
   ],
   "liveNote": "L2 uses isolated envtest (its own API server + the PR config/crd/bases). The shared sandbox cluster was intentionally NOT modified. envtest assets: setup-envtest use 1.31.0 --bin-dir ./bin."
 }
