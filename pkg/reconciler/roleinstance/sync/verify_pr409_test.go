@@ -6,10 +6,12 @@ Licensed under the Apache License, Version 2.0 (the "License");
 // Verification harness for sgl-project/rbg PR #409.
 // ADDITIVE ONLY — no production code is modified by this file.
 //
+// Round 2: the author fixed F1 and F3 (commit 9ce22679). The two canaries that
+// documented the bugs have been INVERTED into CONTRACT tests that assert the
+// fixed behavior, so they now guard against regressions.
+//
 // Polarity legend (see docs/verification/pr409-restart-backoff-improvements):
-//   CANARY   = asserts the CURRENT (buggy) behavior. PASSES on PR head;
-//              FLIPS TO FAIL when the documented fix lands (then invert it).
-//   CONTRACT = asserts the INTENDED behavior. FAILS on PR head; PASSES when fixed.
+//   CONTRACT = asserts the INTENDED behavior. Green on fixed code; red if it regresses.
 package sync
 
 import (
@@ -24,14 +26,14 @@ import (
 	workloadsv1alpha2 "sigs.k8s.io/rbgs/api/workloads/v1alpha2"
 )
 
-// recreateInstance builds a RoleInstance with RestartPolicy=Recreate, base=30/max=600,
+// vpr409_recreateInstance builds a RoleInstance with RestartPolicy=Recreate, base=30/max=600,
 // Ready=True, generation matched, revisions converged — the "steady state" baseline.
 func vpr409_recreateInstance() *workloadsv1alpha2.RoleInstance {
 	inst := &workloadsv1alpha2.RoleInstance{
 		ObjectMeta: metav1.ObjectMeta{Name: "vpr409", Namespace: "default"},
 		Spec: workloadsv1alpha2.RoleInstanceSpec{
 			RestartPolicy: workloadsv1alpha2.RestartPolicyConfig{
-				Type:            workloadsv1alpha2.RecreateRoleInstanceOnPodRestart,
+				Type:             workloadsv1alpha2.RecreateRoleInstanceOnPodRestart,
 				BaseDelaySeconds: ptr.To(int32(30)),
 				MaxDelaySeconds:  ptr.To(int32(600)),
 			},
@@ -57,42 +59,50 @@ func vpr409_failedPod() *corev1.Pod {
 	}
 }
 
-// Finding #1 (TODO "Issue #4"): the slow path in checkRestartBackoff applies backoff
-// even when shouldRecreateInstance returned false ONLY because a spec change / rolling
-// update is in progress (Generation != ObservedGeneration). This FREEZES the update:
-// checkRestartBackoff returns >0, and Scale() then requeues and skips all scaling.
-//
-// CANARY: on PR head this returns >0 (frozen). The proposed fix ("only apply slow-path
-// backoff when shouldRecreateInstance returned false due to wasInstanceReady, not
-// Generation/Revision mismatch") makes it return 0 — this test then FLIPS to fail.
-func TestVerifyPR409_F1_SlowPathFreezesSpecChange_CANARY(t *testing.T) {
+func vpr409_notReady(inst *workloadsv1alpha2.RoleInstance) {
+	inst.Status.Conditions = []workloadsv1alpha2.RoleInstanceCondition{
+		{Type: workloadsv1alpha2.RoleInstanceReady, Status: corev1.ConditionFalse},
+	}
+}
+
+// Finding #1 (CONTRACT, was a canary — fixed in 9ce22679): when a spec change / rolling
+// update is in progress (Generation != ObservedGeneration), checkRestartBackoff must NOT
+// freeze the reconcile. It should return 0 so the update can proceed.
+func TestVerifyPR409_F1_SpecChangeNotFrozen_CONTRACT(t *testing.T) {
 	c := &realControl{}
 	inst := vpr409_recreateInstance()
-	// Spec change in flight: a new generation the controller hasn't observed yet.
-	inst.Generation = 2 // ObservedGeneration stays 1
-	// A prior restart happened recently (backoff clock is armed).
+	inst.Generation = 2 // ObservedGeneration stays 1 → spec change in flight
 	now := metav1.Now()
 	inst.Status.LastRestartTime = &now
 	inst.Status.RestartCount = 1
-
 	failed := vpr409_failedPod()
 
-	// Isolate the cause: shouldRecreateInstance is false PURELY due to the
-	// generation mismatch (instance is Ready, revisions converged, LastRestartTime set).
 	require.False(t, shouldRecreateInstance(inst, []*corev1.Pod{failed}, nil),
 		"precondition: recreate is skipped because a spec change is in progress")
 
 	got := c.checkRestartBackoff(inst, nil, []*corev1.Pod{failed}, nil)
-
-	// CANARY assertion (current buggy behavior): the update is frozen by backoff.
-	assert.Greater(t, got, time.Duration(0),
-		"CANARY(F1): backoff freezes the spec change until the window expires; "+
-			"expected >0 on buggy PR head, will flip to 0 once the TODO fix lands")
+	assert.Equal(t, time.Duration(0), got,
+		"CONTRACT(F1): backoff must not freeze a spec change / rolling update")
 }
 
-// Control for F1: with generation matched (no spec change), a failed pod + recent
-// restart legitimately yields backoff. This is CORRECT behavior and must stay green
-// before and after the fix — it proves the F1 canary isolates the spec-change path.
+// Also cover the rolling-update variant: CurrentRevision != UpdateRevision.
+func TestVerifyPR409_F1_RollingUpdateNotFrozen_CONTRACT(t *testing.T) {
+	c := &realControl{}
+	inst := vpr409_recreateInstance()
+	inst.Status.CurrentRevision = "rev-1"
+	inst.Status.UpdateRevision = "rev-2" // rolling update in progress
+	now := metav1.Now()
+	inst.Status.LastRestartTime = &now
+	inst.Status.RestartCount = 1
+	failed := vpr409_failedPod()
+
+	got := c.checkRestartBackoff(inst, nil, []*corev1.Pod{failed}, nil)
+	assert.Equal(t, time.Duration(0), got,
+		"CONTRACT(F1): backoff must not freeze a rolling update (revision mismatch)")
+}
+
+// Control for F1: with generation matched (no spec change), a genuine crash still backs off.
+// Must stay green — proves the F1 contract isolates the spec-change path.
 func TestVerifyPR409_F1_Control_LegitimateBackoffStillApplies(t *testing.T) {
 	c := &realControl{}
 	inst := vpr409_recreateInstance() // Generation == ObservedGeneration == 1
@@ -105,58 +115,57 @@ func TestVerifyPR409_F1_Control_LegitimateBackoffStillApplies(t *testing.T) {
 		"precondition: a genuine crash on a converged instance does trigger recreate")
 	got := c.checkRestartBackoff(inst, nil, []*corev1.Pod{failed}, nil)
 	assert.Greater(t, got, time.Duration(0),
-		"legitimate backoff on a real crash (control, stays green after fix)")
+		"legitimate backoff on a real crash still applies")
 }
 
-// Finding #3 (TODO "Issue #2"): once LastRestartTime is set it is never cleared, so the
-// "not-Ready bypass" in shouldRecreateInstance is PERMANENT — even an ancient restart
-// timestamp keeps bypassing wasInstanceReady().
-//
-// CANARY: on PR head, a not-Ready instance whose only restart happened long ago still
-// returns true (recreate). The proposed fix (clear LastRestartTime after a sustained
-// Ready period) would re-enable the not-Ready guard → return false → this FLIPS to fail.
-func TestVerifyPR409_F3_PermanentLastRestartTimeBypass_CANARY(t *testing.T) {
-	inst := vpr409_recreateInstance()
-	// Not Ready anymore.
-	inst.Status.Conditions = []workloadsv1alpha2.RoleInstanceCondition{
-		{Type: workloadsv1alpha2.RoleInstanceReady, Status: corev1.ConditionFalse},
-	}
-	require.False(t, wasInstanceReady(inst), "precondition: instance is not Ready")
-	// Ancient restart, far beyond any stability window (1 hour).
-	old := metav1.NewTime(time.Now().Add(-1 * time.Hour))
-	inst.Status.LastRestartTime = &old
-
+// Finding #3 (CONTRACT, was a canary — fixed in 9ce22679): the not-Ready bypass in
+// shouldRecreateInstance is now BOUNDED to the stability window (hasRecentRestart), not
+// permanent. Verifies both sides: an ancient restart no longer bypasses the guard, but a
+// recent restart still does (deadlock prevention preserved).
+func TestVerifyPR409_F3_BoundedBypass_CONTRACT(t *testing.T) {
 	failed := vpr409_failedPod()
 
-	// CANARY: bypass still active despite the ancient timestamp.
-	assert.True(t, shouldRecreateInstance(inst, []*corev1.Pod{failed}, nil),
-		"CANARY(F3): ancient LastRestartTime still bypasses the not-Ready guard "+
-			"(bypass is permanent); flips to false once LastRestartTime is cleared after stability")
+	t.Run("ancient restart + not Ready: guard re-armed, no recreate", func(t *testing.T) {
+		inst := vpr409_recreateInstance()
+		vpr409_notReady(inst)
+		old := metav1.NewTime(time.Now().Add(-1 * time.Hour)) // > max(1200s,10min)=20min window
+		inst.Status.LastRestartTime = &old
+		require.False(t, hasRecentRestart(inst), "precondition: restart is outside the stable window")
+		assert.False(t, shouldRecreateInstance(inst, []*corev1.Pod{failed}, nil),
+			"CONTRACT(F3): stale restart no longer bypasses the not-Ready guard")
+	})
 
-	// Contrast: with no prior restart, the not-Ready guard blocks recreate.
-	inst2 := inst.DeepCopy()
-	inst2.Status.LastRestartTime = nil
-	assert.False(t, shouldRecreateInstance(inst2, []*corev1.Pod{failed}, nil),
-		"baseline: not-Ready + no prior restart is correctly gated (guard active)")
+	t.Run("recent restart + not Ready: bypass still active, recreate (deadlock prevention)", func(t *testing.T) {
+		inst := vpr409_recreateInstance()
+		vpr409_notReady(inst)
+		recent := metav1.NewTime(time.Now().Add(-1 * time.Minute))
+		inst.Status.LastRestartTime = &recent
+		require.True(t, hasRecentRestart(inst), "precondition: restart is within the stable window")
+		assert.True(t, shouldRecreateInstance(inst, []*corev1.Pod{failed}, nil),
+			"CONTRACT(F3): a recent restart still bypasses the not-Ready guard")
+	})
+
+	t.Run("no prior restart + not Ready: guard active, no recreate", func(t *testing.T) {
+		inst := vpr409_recreateInstance()
+		vpr409_notReady(inst)
+		inst.Status.LastRestartTime = nil
+		assert.False(t, shouldRecreateInstance(inst, []*corev1.Pod{failed}, nil),
+			"baseline: not-Ready + no prior restart is correctly gated")
+	})
 }
 
-// Finding #2 (fix-intent, CONTRACT): ClearRestarting removes the in-memory cache entry so
-// a new same-name instance is not blocked by isAlreadyRestarting. This should PASS on PR
-// head (it verifies the fix already present in this PR) and stay green after any fix.
+// Finding #2 (CONTRACT): ClearRestarting removes the in-memory cache entry so a new
+// same-name instance is not blocked by isAlreadyRestarting. Confirms the shipped fix.
 func TestVerifyPR409_F2_ClearRestartingUnblocksSameName_CONTRACT(t *testing.T) {
 	c := &realControl{} // apiReader nil → slow path returns false
 	inst := vpr409_recreateInstance()
 
-	// Simulate an in-progress restart marking the cache (as setRestartingCondition does).
 	setRestartingCondition(inst)
 	assert.True(t, c.isAlreadyRestarting(nil, inst),
 		"precondition: instance is marked restarting in the cache")
 
-	// The deletion path calls ClearRestarting (new in this PR).
 	c.ClearRestarting(inst)
 
-	// A freshly created same-name instance (empty status, no persisted condition) must
-	// not be considered restarting.
 	fresh := vpr409_recreateInstance()
 	assert.False(t, c.isAlreadyRestarting(nil, fresh),
 		"CONTRACT(F2): after ClearRestarting a new same-name instance is not blocked")
