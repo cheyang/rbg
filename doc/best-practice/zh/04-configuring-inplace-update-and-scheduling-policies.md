@@ -368,9 +368,7 @@ kubectl get pods -l rbg.workloads.x-k8s.io/group-name=<rbg-name> -o wide
 
 ## 相关文档
 
-<!-- TODO: 以下文档尚未创建，待文档完成后统一添加链接 -->
-
-+ 使用 RBG 部署推理服务
-+ 配置滚动更新策略
++ [使用 RBG 部署推理服务](./01-deploy-inference-service.md)
++ [配置滚动更新策略](./03-configuring-rolling-updates.md)
 + RBG Warmup 预热
 
