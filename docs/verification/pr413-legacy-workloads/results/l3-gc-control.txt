@@ -1,0 +1,15 @@
+GC control -- why the live F4 fixture is invalid.
+Seed an RBG-owned Deployment (genuine ownerReference, owner RBG exists) and run NO controller:
+
+  seeded; owner RBG uid=39686ca4-b96b-471f-a68a-cdcfc5c3501e; NO controller will run
+    t+10s orphan: GONE
+    t+20s orphan: GONE
+    t+30s orphan: GONE
+    t+40s orphan: GONE
+    t+50s orphan: GONE
+    t+60s orphan: GONE
+  VERDICT: DELETED BY GC -> fixture invalid for live F4
+
+Consequence: 30-live-f4-migration.sh deletes the orphan in BOTH MODE=disabled and MODE=enabled,
+each with 0 controller "delete deploy" lines, so the live layer cannot discriminate F4.
+F4 therefore rests on the unit layer, which has a bidirectional control.

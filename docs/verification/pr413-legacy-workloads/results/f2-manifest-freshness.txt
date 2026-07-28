@@ -1,0 +1,11 @@
+== committed installer: is the flag present? ==
+  98695:        - --enable-legacy-workloads=true
+== running 'make manifests' ==
+  # Helm conditionals for legacy workload permissions. Do NOT overwrite it.
+  # Keep it in sync with config/rbac/role.yaml when adding new permissions.
+  /root/pr413-verify/repo/bin/kustomize build config/default > deploy/kubectl/manifests.yaml
+== tracked files modified by 'make manifests' ==
+  (none)
+
+RESULT: PASS - generated artifacts are in sync
+F2_EXIT=0

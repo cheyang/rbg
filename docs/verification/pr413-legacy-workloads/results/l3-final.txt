@@ -1,0 +1,29 @@
+== reset namespace pr413-verify ==
+   RBG mixed: role legacy workload-type = apps/v1/Deployment (verified)
+   RBG migrated: worker=RoleInstanceSet, plus orphaned Deployment migrated-oldrole
+   tree clean; building from 59e384d5
+== controller: --enable-legacy-workloads=false, identity=rbgs-controller-sa ==
+   binary sha256: 5175ed2bd29cd90a
+   waiting for the controller to prove it reconciles.
+   controller is reconciling (roleinstanceset/migrated-worker exists)
+
+===== OBSERVATIONS =====
+-- A) mixed RBG: is the healthy 'modern' role reconciled despite the legacy role? --
+   RoleInstanceSets:
+     migrated-worker
+     mixed-modern
+/root/pr413-verify/repo/docs/verification/pr413-legacy-workloads/scripts/20-live-scenario.sh: 行 147: 948001 已杀死               KUBECONFIG="$SA_KUBECONFIG" "$WORK/rbgs-under-test" --enable-legacy-workloads=false --enable-webhooks=none --metrics-bind-address=0 --health-probe-bind-address=0 --zap-log-level=info > "$RUNLOG" 2>&1
+   mixed-modern RoleInstanceSet present: YES
+   RBG mixed roleStatuses: [{"name":"modern","readyReplicas":0,"replicas":1,"updatedReplicas":1},{"name":"legacy","readyReplicas":1,"replicas":1,"updatedReplicas":1}]
+   RBG mixed conditions : Ready=False(RoleNotReady) 
+   events:
+     SucceedCreateRevision   Successful create revision for RoleBasedGroup
+     Succeed                 ReconcileSucceed
+   Deployment created for the legacy role: YES (unexpected -- reject did not hold)
+
+-- B) migrated RBG: is the orphaned legacy Deployment cleaned up? --
+     migrated-oldrole deleted -> cleanup ran (F4 not reproduced live)
+
+-- controller log: legacy / RBAC signal --
+   watch errors: 6
+L3_EXIT=0

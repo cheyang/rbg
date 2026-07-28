@@ -1,0 +1,19 @@
+namespace/pr413-probe created
+STEP1 ns created: Active
+rolebasedgroup.workloads.x-k8s.io/mixed created
+STEP2 legacy ann stored = apps/v1/Deployment
+rolebasedgroup.workloads.x-k8s.io/migrated created
+deployment.apps/migrated-oldrole created
+STEP3 orphan exists BEFORE controller: deployment.apps/migrated-oldrole
+STEP3 deployments BEFORE: [deployment.apps/migrated-oldrole deployment.apps/mixed-legacy ]
+STEP4 building...
+STEP4 tree: [] head=59e384d5
+STEP5 deployments AFTER:  [deployment.apps/mixed-legacy ]
+STEP5 roleinstancesets:   [roleinstanceset.workloads.x-k8s.io/migrated-worker roleinstanceset.workloads.x-k8s.io/mixed-modern ]
+STEP5 rbg mixed status:   [{"name":"modern","readyReplicas":0,"replicas":1,"updatedReplicas":1},{"name":"legacy","readyReplicas":1,"replicas":1,"updatedReplicas":1}]
+STEP6 log: reject lines   = 0
+STEP6 log: Forbidden      = 0
+STEP6 log: Unauthorized   = 0
+STEP6 log: distinct errors:
+         6 "error":"failed to list *v1alpha2.RoleInstanceSet: json:
+PROBE_EXIT=0

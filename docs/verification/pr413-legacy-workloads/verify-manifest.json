@@ -1,0 +1,118 @@
+{
+  "topic": "pr413-legacy-workloads",
+  "pr": "https://github.com/sgl-project/rbg/pull/413",
+  "reviewedHead": "59e384d5eb42e5365ac26f062834d3ad55be99b9",
+  "baseSha": "8a54787d698f76f3f754e844342d5dbd71244885",
+  "note": "Reviewer-private verification harness. Production code is untouched on this branch; the only additions are the two *_verify_test.go files and this docs/verification tree.",
+  "harnessPaths": [
+    "docs/verification/pr413-legacy-workloads",
+    "internal/controller/workloads/legacy_workloads_verify_test.go",
+    "cmd/rbgs/cacheoptions_verify_test.go"
+  ],
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ ./cmd/rbgs/ -run 'TestVerifyPR413' -v -json"
+    },
+    "script": {
+      "kind": "shell",
+      "cmds": [
+        "bash docs/verification/pr413-legacy-workloads/scripts/01-check-flag-default.sh",
+        "bash docs/verification/pr413-legacy-workloads/scripts/02-check-manifest-freshness.sh"
+      ]
+    },
+    "live": {
+      "kind": "shell",
+      "cmds": [
+        "bash docs/verification/pr413-legacy-workloads/scripts/10-live-setup.sh",
+        "bash docs/verification/pr413-legacy-workloads/scripts/20-live-scenario.sh",
+        "MODE=disabled bash docs/verification/pr413-legacy-workloads/scripts/30-live-f4-migration.sh",
+        "MODE=enabled  bash docs/verification/pr413-legacy-workloads/scripts/30-live-f4-migration.sh",
+        "bash docs/verification/pr413-legacy-workloads/scripts/90-live-teardown.sh"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "title": "--enable-legacy-workloads Go default (false) contradicts the documented/chart default (true)",
+      "polarity": "contract",
+      "layer": "script",
+      "match": [
+        "01-check-flag-default.sh"
+      ],
+      "status": "reproduced",
+      "evidence": "results/f1-flag-default.txt"
+    },
+    {
+      "id": "F2",
+      "title": "deploy/kubectl/manifests.yaml stale vs config/manager/manager.yaml; broke the lint job",
+      "polarity": "contract",
+      "layer": "script",
+      "match": [
+        "02-check-manifest-freshness.sh"
+      ],
+      "status": "fixed-in-59e384d5",
+      "evidence": "results/f2-manifest-freshness.txt"
+    },
+    {
+      "id": "F3a",
+      "title": "Legacy workload kinds are refused when the flag is off (the author's fix for the original Forbidden-loop finding)",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR413_F3a_LegacyKindsRejectedWhenDisabled"
+      ],
+      "status": "fixed-in-59e384d5",
+      "evidence": "results/l1-unit.txt"
+    },
+    {
+      "id": "F3b",
+      "title": "One legacy role makes preCheck fail the WHOLE RBG, so healthy RoleInstanceSet roles in the same group never reconcile and cleanup is never reached",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR413_F3b_OneLegacyRoleFailsEntireGroup_Canary"
+      ],
+      "status": "reproduced-unit-and-live",
+      "evidence": "results/l1-unit.txt, results/l3-decide.txt",
+      "canaryNote": "PASSES today (documents the fail-closed-whole-group behavior). When the author moves to per-role degradation or admission-time rejection this test FLIPS TO RED -- that means FIXED; invert the assertion then.",
+      "liveEvidence": "flag off, RBG with 1 legacy + 1 RoleInstanceSet role: 28 rejections, 14 Reconciler error, NO RoleInstanceSet created for the healthy role in 60s"
+    },
+    {
+      "id": "F4",
+      "title": "deleteOrphanRoles skips legacy cleanup when the flag is off, so the controller no longer removes RBG-owned legacy workloads left by a migrated role",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR413_F4_OrphanedLegacyWorkloadLeaksWhenDisabled"
+      ],
+      "status": "reproduced-unit-only",
+      "evidence": "results/l1-unit.txt",
+      "harnessBites": "The control_legacyEnabled_orphanIsCleanedUp subtest passes (the orphan IS deleted with the flag on), proving the test exercises CleanupOrphanedWorkloads rather than failing for an unrelated reason.",
+      "liveNote": "INCONCLUSIVE live: on the ACK test cluster the orphaned Deployment is removed within ~10s in BOTH modes with 0 controller delete attempts, and also with NO controller running at all (gccontrol.sh) -- Kubernetes GC is the actor, so the live test cannot discriminate. The leaks indefinitely framing is NOT evidence-backed; only the code-level skip is proven. Any fix must also retain delete RBAC for legacy types, else cleanup 403s."
+    },
+    {
+      "id": "F5",
+      "title": "cacheOptions(false) drops the group-name label selector for Deployment/StatefulSet, leaving a latent unfiltered cluster-wide informer",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR413_F5_CacheSelectorDroppedWhenLegacyDisabled_Canary"
+      ],
+      "status": "latent",
+      "evidence": "results/l1-unit.txt",
+      "canaryNote": "Latent on this head: the F3a reject removes the only reachable cached read path for legacy types. Keeping the selector regardless of the flag costs nothing. Test PASSES today; FLIPS if a bounded selector or DefaultLabelSelector is added."
+    },
+    {
+      "id": "D1",
+      "title": "DISPROVED: Helm guard asymmetry between manager.yaml (default dict/hasKey) and clusterrole.yaml (direct deref)",
+      "polarity": "n/a",
+      "layer": "script",
+      "match": [],
+      "status": "disproved",
+      "evidence": "Rendered 4 value shapes with helm 3.16.3 (default, enabled=false, legacyWorkloads={}, features={}). Helm value coalescing restores chart defaults; all non-false shapes render byte-identical to default. No nil-pointer, no flag/RBAC mismatch."
+    }
+  ],
+  "liveNote": "L3 needs a real cluster and ALWAYS finish with 90-live-teardown.sh. Scripts abort loudly on the four traps that produced void runs here: FIXTURE INVALID (wrong annotation prefix -- v1alpha2 uses rbg.workloads.x-k8s.io/, not rolebasedgroup.workloads.x-k8s.io/), CONTROLLER VOID (expired SA token -> Unauthorized, or CRDs older than the PR Go types -> cannot unmarshal restartPolicy), TREE DIRTY (binary not built from the code under review), and a leftover controller from a prior run. Cluster used: ACK cn-hongkong, k8s v1.36.1; its CRDs were upgraded to the PR version and are not reverted. LWS CRD absent, so the LWS arm of F3a is unit-only."
+}

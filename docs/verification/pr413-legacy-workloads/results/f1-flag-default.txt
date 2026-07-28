@@ -1,0 +1,18 @@
+== Go flag registration ==
+  cmd/rbgs/main.go default: false
+== Helm chart default ==
+  values.yaml legacyWorkloads.enabled: true
+== Built binary --help ==
+    -enable-legacy-workloads
+      	Enable legacy workload types (Deployment, StatefulSet, LeaderWorkerSet). Set to false to disable watching and reconciling these workload types, reducing required RBAC permissions. Only RoleInstanceSet-based workloads will be managed when disabled.
+    -enable-port-allocator
+      	Enable the port allocator.
+
+RESULT: FAIL - F1 REPRODUCED
+  Go flag default        : false
+  Chart/doc default      : true
+A bare 'rbgs' process (no --enable-legacy-workloads argument) therefore runs with
+legacy workloads DISABLED, while every document describing the flag says the
+default is enabled. Both shipped install paths pass the flag explicitly so they
+are unaffected, but any other consumer -- a downstream chart, a custom manifest,
+or running the binary directly -- silently loses legacy workload reconciliation.

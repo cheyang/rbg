@@ -1,0 +1,24 @@
+F3b live confirmation -- decisive run (clean tree 59e384d5, SA identity, flag off, no other controller)
+ClusterRole: 13 rules (legacy disabled); SA cannot create deployments
+RBG "mixed" in ns pr413-decide: role modern=RoleInstanceSet, role legacy=apps/v1/Deployment (annotation verified)
+
+T0 deployments: []            (no controller yet)
+  t+10s deploy=[] ris=[]
+  t+20s deploy=[] ris=[]
+  t+30s deploy=[] ris=[]
+  t+40s deploy=[] ris=[]
+  t+50s deploy=[] ris=[]
+  t+60s deploy=[] ris=[]
+
+controller log:
+  legacy reject lines ("not supported when legacy workloads are disabled") = 28
+  Forbidden    = 0
+  Unauthorized = 0
+  17 "Starting EventSource"
+  14 "Start reconciling"
+  14 "Failed to create workload reconciler"
+  14 "Reconciler error"
+  14 "Finished reconciling"
+
+VERDICT: no Deployment created (F3a reject holds, no Forbidden) AND no RoleInstanceSet created
+for the healthy "modern" role -> the whole RBG is wedged by the single legacy role. F3b confirmed.

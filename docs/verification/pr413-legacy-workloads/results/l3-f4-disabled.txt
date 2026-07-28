@@ -1,0 +1,14 @@
+ClusterRole rules: 13 (full)
+phase1: running with legacy ENABLED so the controller creates the Deployment
+  Deployment app-old created, ownerRef = RoleBasedGroup/app uid=f9e2add4-9d50-4bda-bbcf-39b7f68e65e0
+phase2: removed role 'old' from the RBG; roles now = keep 
+  orphan present before phase3: deployment.apps/app-old
+phase3: running with --enable-legacy-workloads=false (full RBAC)
+=== VERDICT (MODE=disabled) ===
+  app-old DELETED -> orphan cleanup ran
+  'delete deploy' log lines : 0
+  Forbidden                 : 0
+  legacy reject lines       : 0
+  reconciles finished       : 0
+  surviving 'keep' role RIS : roleinstanceset.workloads.x-k8s.io/app-keep 
+EXIT=0
