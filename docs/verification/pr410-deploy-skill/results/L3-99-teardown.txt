@@ -1,0 +1,4 @@
+deleting scoped namespace rbg-verify-pr410 (and everything in it)
+rolebasedgroup.workloads.x-k8s.io "f1-templateref-tol" deleted from rbg-verify-pr410 namespace
+namespace "rbg-verify-pr410" deleted
+remaining rbgs in rbg-verify-pr410: No resources found in rbg-verify-pr410 namespace.

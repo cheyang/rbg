@@ -1,0 +1,18 @@
+=== RUN   TestF2_MakeTargetsDocumentedInClaudeMdExist
+    doc_claims_test.go:81: CLAUDE.md documents make target(s) that do not exist in the Makefile: [build-cli build-cli-all]
+--- FAIL: TestF2_MakeTargetsDocumentedInClaudeMdExist (0.00s)
+=== RUN   TestF3_LLMCommandTreeIsReachable
+    doc_claims_test.go:97: CLAUDE.md documents `kubectl rbg llm ...` commands, but llm.NewLLMCmd is never registered in cmd/cli/cmd/root.go, so `kubectl rbg llm` does not exist
+--- FAIL: TestF3_LLMCommandTreeIsReachable (0.00s)
+=== RUN   TestF4_DocumentedRestartPolicyValuesAreAccepted
+    doc_claims_test.go:135: CLAUDE.md documents restartPolicy value(s) [RecreateRBGOnPodRestart] that the v1alpha2 enum rejects (allowed: None,RecreateRoleInstanceOnPodRestart); the API server refuses them
+--- FAIL: TestF4_DocumentedRestartPolicyValuesAreAccepted (0.00s)
+=== RUN   TestF4c_RestartPolicyLivesUnderThePatternNotTheRole
+    doc_claims_test.go:153: confirmed: restartPolicy is a pattern-level field (leaderWorkerPattern / customComponentsPattern), not roles[].restartPolicy as CLAUDE.md implies
+--- PASS: TestF4c_RestartPolicyLivesUnderThePatternNotTheRole (0.00s)
+=== RUN   TestF5_SkillMarkdownFencesAreBalanced
+    doc_claims_test.go:188: .claude/skills/rbg-inference-deploy/SKILL.md: 27 code fences (odd) — unbalanced; fence lines [37 40 51 54 64 66 105 107 133 142 197 200 215 246 254 290 296 301 304 308 311 323 325 329 331 337 348]. Everything after the stray fence renders with inverted parity.
+--- FAIL: TestF5_SkillMarkdownFencesAreBalanced (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/verification/pr410	0.137s
+FAIL

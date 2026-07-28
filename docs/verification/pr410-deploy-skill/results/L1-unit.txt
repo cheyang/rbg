@@ -1,0 +1,28 @@
+=== RUN   TestF1_TolerationsSurviveTemplateRefPatch
+--- PASS: TestF1_TolerationsSurviveTemplateRefPatch (0.00s)
+=== RUN   TestF1_NodeSelectorAndTolerationsSurviveTogether
+--- PASS: TestF1_NodeSelectorAndTolerationsSurviveTogether (0.00s)
+=== RUN   TestF1_TolerationsListIsReplacedNotDropped
+--- PASS: TestF1_TolerationsListIsReplacedNotDropped (0.00s)
+=== RUN   TestF1_EmptyPatchInheritsBaseTolerations
+--- PASS: TestF1_EmptyPatchInheritsBaseTolerations (0.00s)
+=== RUN   TestF8_TemplateRefWithoutPatchIsRejected
+    templateref_patch_verification_test.go:178: validation error (expected): spec.roles[0]: templateRef.patch is required when templateRef is set (if no overrides needed, set patch to empty object: {})
+--- PASS: TestF8_TemplateRefWithoutPatchIsRejected (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.222s
+
+### Harness-bites check (Step 4): temporary probe setting merged.Spec.Tolerations = nil in applyStrategicMergePatch, i.e. making PR #410's documented behavior real.
+--- FAIL: TestF1_TolerationsSurviveTemplateRefPatch (0.00s)
+    templateref_patch_verification_test.go:91: PR #410 claims tolerations are dropped by templateRef.patch; want 1 toleration on the resolved template, got 0 ([])
+--- FAIL: TestF1_NodeSelectorAndTolerationsSurviveTogether (0.00s)
+    templateref_patch_verification_test.go:121: tolerations dropped or mangled: []
+--- FAIL: TestF1_TolerationsListIsReplacedNotDropped (0.00s)
+    templateref_patch_verification_test.go:141: want 1 toleration after replace, got 0 ([])
+--- FAIL: TestF1_EmptyPatchInheritsBaseTolerations (0.00s)
+    templateref_patch_verification_test.go:163: base tolerations lost through empty patch: []
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.254s
+FAIL
+
+### Probe reverted; production diff empty; tests green again.

@@ -1,0 +1,27 @@
+=== F4a — the repo's own example uses RecreateRBGOnPodRestart (examples/deprecated/v1alpha1/basics/restart-policy.yaml) ===
+The RoleBasedGroup "restart-policy" is invalid: 
+* spec.roles[0].restartPolicy: Unsupported value: "RecreateRBGOnPodRestart": supported values: "None", "RecreateRoleInstanceOnPodRestart"
+* <nil>: Invalid value: null: some validation rules were not checked because the object was invalid; correct the existing errors to complete validation
+FAIL  the API server REJECTS RecreateRBGOnPodRestart — CLAUDE.md:122 documents an unusable value (and examples/deprecated/v1alpha1/basics/restart-policy.yaml is broken)
+
+=== F4b — same value on a v1alpha2 leaderWorkerPattern ===
+The RoleBasedGroup "f4-restartpolicy" is invalid: 
+* spec.roles[0].leaderWorkerPattern.restartPolicy: Unsupported value: "RecreateRBGOnPodRestart": supported values: "None", "RecreateRoleInstanceOnPodRestart"
+* <nil>: Invalid value: null: some validation rules were not checked because the object was invalid; correct the existing errors to complete validation
+FAIL  v1alpha2 also rejects RecreateRBGOnPodRestart
+
+=== F4c — CLAUDE.md presents restartPolicy as a role-level field; does v1alpha2 have one? ===
+annotations, customComponentsPattern, dependencies, engineRuntimes, labels, leaderWorkerPattern, minReadySeconds, name, podManagementPolicy, replicas, rolloutStrategy, scalingAdapter, servicePorts, standalonePattern
+FAIL  v1alpha2 has NO roles[].restartPolicy — it lives under the pattern (leaderWorkerPattern / customComponentsPattern), which CLAUDE.md does not say
+
+=== F8 — templateRef without patch ===
+apply said: rolebasedgroup.workloads.x-k8s.io/f8-no-patch created
+--- the check lives in the controller (rolebasedgroup_controller.go:303), not in admission,
+--- so look at the RBG conditions / events rather than the apply exit code:
+[]
+InvalidTemplateRef: spec.roles[0].templatePatch: required when templateRef is set (if no overrides needed, use empty object: templatePatch: {})
+InvalidTemplateRef: spec.roles[0].templatePatch: required when templateRef is set (if no overrides needed, use empty object: templatePatch: {})
+InvalidTemplateRef: spec.roles[0].templatePatch: required when templateRef is set (if no overrides needed, use empty object: templatePatch: {})
+PASS  controller rejects templateRef without patch — PR #410 rule 3 is CORRECT, the review comment claiming patch is optional is wrong
+
+=== summary: 3 failing claim(s) ===

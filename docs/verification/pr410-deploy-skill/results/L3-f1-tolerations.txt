@@ -1,0 +1,18 @@
+rolebasedgroup.workloads.x-k8s.io/f1-templateref-tol created
+--- waiting for pods (up to 120s) ---
+NAME                           READY   STATUS    RESTARTS   AGE   IP             NODE                       NOMINATED NODE   READINESS GATES
+f1-templateref-tol-decode-0    1/1     Running   0          6s    10.39.55.169   cn-hongkong.10.39.55.151   <none>           2/2
+f1-templateref-tol-prefill-0   1/1     Running   0          6s    10.39.55.173   cn-hongkong.10.39.55.151   <none>           2/2
+
+--- rbg status ---
+{"phase":null,"roles":[{"n":"prefill","ready":1},{"n":"decode","ready":1}]}
+
+--- OBSERVED: tolerations on each Pod (kubernetes-injected defaults filtered out) ---
+f1-templateref-tol-decode-0	[]
+f1-templateref-tol-prefill-0	[{"effect":"NoSchedule","key":"verify.rbg.io/pr410","operator":"Equal","value":"from-patch"}]
+
+--- OBSERVED: nodeSelector on each Pod ---
+f1-templateref-tol-decode-0	null
+f1-templateref-tol-prefill-0	{"kubernetes.io/os":"linux"}
+
+RESULT F1: REFUTED — the toleration from templateRef.patch IS present on the Pod (1 match).

@@ -1,0 +1,94 @@
+{
+  "_comment": "Verification harness for sgl-project/rbg PR #410. Consumed by scripts/re-verify.sh. PR #410 is a docs/agent-skill PR: the 'code under review' is prose that an agent executes, so most findings are proven by asserting the repo facts the prose claims. Production content is untouched by this branch.",
+  "topic": "pr410-deploy-skill",
+  "pr": "https://github.com/sgl-project/rbg/pull/410",
+  "prHeadFetch": {
+    "remote": "upstream",
+    "ref": "pull/410/head"
+  },
+  "harnessPaths": [
+    "docs/verification/pr410-deploy-skill",
+    "api/workloads/v1alpha2/templateref_patch_verification_test.go",
+    "test/verification/pr410/doc_claims_test.go"
+  ],
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./api/workloads/v1alpha2/ ./test/verification/pr410/ -run 'TestF1_|TestF4c_|TestF4_|TestF5_|TestF8_|TestF2_|TestF3_' -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestF1_TolerationsSurviveTemplateRefPatch",
+        "TestF1_NodeSelectorAndTolerationsSurviveTogether",
+        "TestF1_TolerationsListIsReplacedNotDropped",
+        "TestF1_EmptyPatchInheritsBaseTolerations",
+        "TestF1_DocsDoNotClaimTolerationsAreDropped"
+      ],
+      "claim": "PR #410 (yaml-rules.md:6/570/575, SKILL.md:230, PR description) states tolerations are silently dropped when passed through templateRef.patch, and makes that the sole reason to forbid roleTemplates on tainted nodes.",
+      "verdict": "NOT REPRODUCED — the claim is false. Tolerations survive templateRef.patch at the API-helper level and reach the real Pod on a live cluster.",
+      "note": "Mixed by design. The four behavior tests PASS on the code under review - that IS the refutation (they would fail if the documented limitation existed; see results/harness-bites.txt) and they must keep passing. TestF1_DocsDoNotClaimTolerationsAreDropped FAILS while the skill still carries the wrong guidance, so re-verify.sh reports F1 as fixed only once the four offending lines in yaml-rules.md / SKILL.md are removed."
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestF2_MakeTargetsDocumentedInClaudeMdExist"
+      ],
+      "claim": "CLAUDE.md:14-15 tells the reader to run `make build-cli` and `make build-cli-all`.",
+      "verdict": "CONFIRMED — neither target exists in the Makefile."
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestF3_LLMCommandTreeIsReachable"
+      ],
+      "claim": "CLAUDE.md:130-135 documents five `kubectl rbg llm ...` commands.",
+      "verdict": "CONFIRMED — llm.NewLLMCmd is never registered on the CLI root, so the built binary exposes only completion/help/rollout/status."
+    },
+    {
+      "id": "F4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestF4_DocumentedRestartPolicyValuesAreAccepted",
+        "TestF4c_RestartPolicyLivesUnderThePatternNotTheRole"
+      ],
+      "claim": "CLAUDE.md:120-123 lists `RecreateRBGOnPodRestart` as a valid restartPolicy and frames restartPolicy as a role-level field.",
+      "verdict": "CONFIRMED — the v1alpha2 enum accepts only {None, RecreateRoleInstanceOnPodRestart}; a real API server rejects the value. restartPolicy lives under leaderWorkerPattern / customComponentsPattern, not roles[]."
+    },
+    {
+      "id": "F5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestF5_SkillMarkdownFencesAreBalanced"
+      ],
+      "claim": "SKILL.md renders as intended.",
+      "verdict": "CONFIRMED — 27 (odd) code fences. A stray fence at SKILL.md:200 inverts fence parity for the rest of the file; the `marked` parser loses the Phase 4 / 4.1 / 4.2 headings entirely. One-line fix."
+    },
+    {
+      "id": "F8",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestF8_TemplateRefWithoutPatchIsRejected"
+      ],
+      "claim": "Counter-check of the Copilot review comment on yaml-rules.md:7 asserting that templateRef.patch is optional.",
+      "verdict": "PR #410 IS RIGHT, the review comment is wrong — the controller rejects templateRef without patch (api/workloads/v1alpha2/roletemplate_validation.go:139), confirmed live via an InvalidTemplateRef event."
+    }
+  ],
+  "liveNote": "L3 needs a real cluster with the RBG controller installed. Run scripts/00-setup.sh, then scripts/10-scenario-f1-tolerations.sh (observable signal: the Pod of role 'prefill' carries toleration key verify.rbg.io/pr410, which came only from templateRef.patch; role 'decode' with patch {} carries none), then scripts/30-live-api-validation.sh (observable signal: API server 'Unsupported value: RecreateRBGOnPodRestart', and an InvalidTemplateRef event for the no-patch RBG). Always finish with scripts/99-teardown.sh. Verified against: ACK cn-hongkong, k8s v1.36.1-aliyun.1, controller image rolebasedgroup/rbgs-controller:v0.8.0-cea2a47 in ns rbg-system, 3 untainted nodes.",
+  "notVerified": [
+    "F6 (language consistency: SKILL.md:17 suggests a bilingual switch notice while SKILL.md:369 forbids mixing languages in one response) — a self-consistency reading, no runtime behavior to test.",
+    "F7 (SKILL.md declares 'Default language: English' but 4 of the 5 reference files are Chinese-only) — a judgement call about the repo's doc language policy, not a falsifiable claim.",
+    "The llmctl command surface used across prerequisites.md / deployment-analysis.md / benchmark.md belongs to the external rolebasedgroup/inference-ext-cli project and was not cross-checked against that repo."
+  ]
+}

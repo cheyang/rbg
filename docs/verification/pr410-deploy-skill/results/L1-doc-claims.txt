@@ -1,0 +1,66 @@
+=== F2 — CLAUDE.md:13-15 documents make targets for the CLI ===
+PASS  Makefile target 'build' exists
+FAIL  Makefile has no target 'build-cli' (CLAUDE.md documents 'make build-cli')
+FAIL  Makefile has no target 'build-cli-all' (CLAUDE.md documents 'make build-cli-all')
+--- does ANY make target build cmd/cli? ---
+PASS  some target references cmd/cli
+
+=== F3 — CLAUDE.md:130-135 documents 'kubectl rbg llm ...' subcommands ===
+FAIL  NewLLMCmd is never registered in cmd/cli/cmd/root.go — 'kubectl rbg llm' does not exist
+--- build the CLI and ask it what it supports ---
+built ok; top-level commands reported by the binary:
+Available Commands:
+  completion  Generate the autocompletion script for the specified shell
+  help        Help about any command
+  rollout     Manage the rollout of a rbg object
+  status      Display rbg status information
+
+FAIL  'llm' is NOT an available command, so all 5 'kubectl rbg llm ...' lines in CLAUDE.md are unusable
+--- direct invocation ---
+Kubectl plugin for RoleBasedGroup
+
+Usage:
+
+=== F4 — CLAUDE.md:120-123 lists restartPolicy values ===
+--- Go constants ---
+156:	RestartPolicyNone RestartPolicyType = "None"
+159:	RecreateRoleInstanceOnPodRestart RestartPolicyType = "RecreateRoleInstanceOnPodRestart"
+--- kubebuilder enum actually generated ---
+338:	// +kubebuilder:validation:Enum={None,RecreateRoleInstanceOnPodRestart}
+349:	// +kubebuilder:validation:Enum={None,RecreateRoleInstanceOnPodRestart}
+FAIL  RecreateRBGOnPodRestart is NOT in the restartPolicy enum, yet CLAUDE.md:122 documents it as valid
+--- where does v1alpha2 put restartPolicy? ---
+340:	RestartPolicy RestartPolicyType `json:"restartPolicy,omitempty"`
+343-type CustomComponentsPattern struct {
+351:	RestartPolicy RestartPolicyType `json:"restartPolicy,omitempty"`
+
+=== F5 — SKILL.md fenced-code-block balance ===
+fence lines: [37, 40, 51, 54, 64, 66, 105, 107, 133, 142, 197, 200, 215, 246, 254, 290, 296, 301, 304, 308, 311, 323, 325, 329, 331, 337, 348]
+fence count: 27 (odd count => unbalanced)
+unterminated fence at EOF: True
+ROOT CAUSE: odd fence count. The summary box at lines 197-215 carries THREE fences (197, 200, 215) instead of two; the stray one at 200 inverts fence parity for the whole rest of the file.
+FAIL  fence 215..246 renders 3 markdown heading(s) as code:
+        line 219: ## Phase 4: RBG YAML Generation / RBG YAML 生成与配置
+        line 223: ### 4.1 Generate Base YAML / 生成基础 YAML
+        line 238: ### 4.2 Configure Extra Features / 配置额外功能
+FAIL  fence 254..290 renders 4 markdown heading(s) as code:
+        line 274: ### 4.3 YAML Preview & Confirm / YAML 预览与确认
+        line 280: ## Phase 5: Deploy, Verify & Test / 部署、验证与测试
+        line 282: ### 5.1 Deployment Decision / 部署决策
+        line 288: ### 5.2 Execute Deployment / 执行部署
+FAIL  fence 296..301 renders 1 markdown heading(s) as code:
+        line 298: ### 5.3 Wait for Ready + Smart Diagnosis / 等待 Ready + 智能诊断
+FAIL  fence 331..337 renders 1 markdown heading(s) as code:
+        line 333: ### 5.4 Smoke Test / 冒烟测试
+FAIL  SKILL.md has a malformed code fence (see above)
+
+=== F5 cross-check with a real markdown parser (marked), if available ===
+headings written in source: 28
+headings a renderer actually sees: 27
+FAIL  3 section heading(s) are swallowed into a code block and never render:
+        Phase 4: RBG YAML Generation / RBG YAML 生成与配置
+        4.1 Generate Base YAML / 生成基础 YAML
+        4.2 Configure Extra Features / 配置额外功能
+FAIL  marked confirms SKILL.md sections are swallowed by a code block
+
+=== final summary: 7 failing claim(s) ===

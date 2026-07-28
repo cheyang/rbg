@@ -1,0 +1,52 @@
+Harness-bites check (skill Step 4) — proving each test is red for the RIGHT reason.
+Production code / PR content was temporarily modified, re-run, then reverted.
+`git diff --stat pr410` was empty afterwards (verified twice).
+
+===============================================================================
+(1) F1 / F8 unit layer — probe: make PR #410's documented behavior REAL
+===============================================================================
+Temporary edit to api/workloads/v1alpha2/helper.go, inside applyStrategicMergePatch,
+right after the merged template is unmarshalled:
+
+    // HARNESS-BITES PROBE (temporary): simulate the behavior PR #410 documents,
+    // i.e. tolerations are silently dropped when going through templateRef.
+    merged.Spec.Tolerations = nil
+
+Result with the probe in place — all four F1 contract tests flip red, each on its own
+assertion (not a compile error, not a shared helper):
+
+--- FAIL: TestF1_TolerationsSurviveTemplateRefPatch (0.00s)
+    templateref_patch_verification_test.go:91: PR #410 claims tolerations are dropped by templateRef.patch; want 1 toleration on the resolved template, got 0 ([])
+--- FAIL: TestF1_NodeSelectorAndTolerationsSurviveTogether (0.00s)
+    templateref_patch_verification_test.go:121: tolerations dropped or mangled: []
+--- FAIL: TestF1_TolerationsListIsReplacedNotDropped (0.00s)
+    templateref_patch_verification_test.go:141: want 1 toleration after replace, got 0 ([])
+--- FAIL: TestF1_EmptyPatchInheritsBaseTolerations (0.00s)
+    templateref_patch_verification_test.go:163: base tolerations lost through empty patch: []
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.234s
+
+=> The tests genuinely exercise the toleration path. Their green result on the
+   unmodified code is therefore a real refutation of PR #410's claim, not a
+   test that never looked.
+
+Probe reverted; `go test ./api/workloads/v1alpha2/ -run 'TestF1_|TestF8_'` => ok.
+
+===============================================================================
+(2) F2 / F3 / F4 / F5 doc layer — probe: apply the PROPOSED fixes
+===============================================================================
+Temporary edits (see scripts/../results note; applied via a throwaway script):
+  F2  removed the two `make build-cli` / `make build-cli-all` lines from CLAUDE.md
+  F3  removed the five `- \x60kubectl rbg llm ...\x60` lines from CLAUDE.md
+  F4  removed the `- \x60RecreateRBGOnPodRestart\x60: ...` line from CLAUDE.md
+  F5  deleted the single stray fence at .claude/skills/rbg-inference-deploy/SKILL.md:200
+
+Result with the proposed fixes in place:
+
+  ok  	sigs.k8s.io/rbgs/test/verification/pr410	0.165s
+
+=> Every doc-claim test passes once the docs are corrected, so each red result
+   maps to exactly one fixable defect. Notably F5 is a ONE-LINE fix: deleting the
+   stray fence at SKILL.md:200 restores fence parity for the whole file and brings
+   the three swallowed Phase 4 headings back.
+
+Fixes reverted; tests FAIL again; `git diff --stat pr410` empty.

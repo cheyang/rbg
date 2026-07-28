@@ -1,0 +1,13 @@
+namespace/rbg-verify-pr410 unchanged
+--- environment fingerprint ---
+clientVersion:
+  buildDate: "2026-06-11T18:12:06Z"
+  compiler: gc
+  gitCommit: 24e2b02af5543d7910c2bb074c7264df5a8f0467
+  gitTreeState: clean
+  gitVersion: v1.36.2
+controller image: rolebasedgroup/rbgs-controller:v0.8.0-cea2a47
+controller ns:    rbg-system
+crd versions:     v1alpha1 v1alpha2
+node taints:      [{"n":"cn-hongkong.10.167.14.221","t":[]},{"n":"cn-hongkong.10.39.55.150","t":[]},{"n":"cn-hongkong.10.39.55.151","t":[]}]
+namespace:        rbg-verify-pr410
