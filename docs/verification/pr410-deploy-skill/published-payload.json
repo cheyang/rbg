@@ -1,0 +1,54 @@
+{
+  "inlineComments": [
+    {
+      "path": ".claude/skills/rbg-inference-deploy/yaml-rules.md",
+      "line": 6,
+      "body": "I tried to reproduce this and couldn't. I think the premise is backwards, and it's load-bearing for the whole roleTemplates rule.\n\n`GetResolvedTemplate` (api/workloads/v1alpha2/helper.go:315) runs a plain `strategicpatch.StrategicMergePatch` over the entire PodTemplateSpec, and `ConstructPodTemplateSpecApplyConfiguration` (pkg/reconciler/pod_reconciler.go:128) converts the result with the generic unstructured converter. There is no field allow-list on that path, and the sts / deploy / lws / roleinstanceset reconcilers all funnel through it, so nothing strips `tolerations`.\n\nOn a live cluster (k8s v1.36.1, controller v0.8.0-cea2a47), one RBG with two roles sharing one roleTemplate:\n\n```\nprefill-0   [{\"key\":\"verify.rbg.io/pr410\",\"operator\":\"Equal\",\"value\":\"from-patch\",\"effect\":\"NoSchedule\"}]\ndecode-0    []      # same base template, patch: {}\n```\n\nThe only place `prefill` could have gotten that toleration from is `templateRef.patch`. Both pods reached Running.\n\nThere is a real caveat worth documenting in its place: `corev1.PodSpec.Tolerations` carries no `patchMergeKey`, so a patched `tolerations` list *replaces* the base list instead of merging into it. Replace, not drop.\n\nI'd treat this as blocking rather than a nit because of the blast radius: cloud GPU node pools are almost always tainted, so as written the wizard will never use `roleTemplates` in the environment it targets, and every user ends up with the same inline template duplicated per role. The same reasoning applies to the `affinity` warning at line 577 and the taint branch at lines 173-176.\n\nUnit tests and the full run log: https://github.com/cheyang/rbg/blob/verify/pr410-deploy-skill/docs/verification/pr410-deploy-skill/README.md"
+    },
+    {
+      "path": ".claude/skills/rbg-inference-deploy/SKILL.md",
+      "line": 230,
+      "body": "Same as my comment on yaml-rules.md:6 \u2014 `tolerations` do survive `templateRef.patch`, checked at the helper level and against a real cluster. This is the line the agent actually acts on, so it needs to go too, along with the `NODE_TAINTS` is empty precondition above it."
+    },
+    {
+      "path": ".claude/skills/rbg-inference-deploy/SKILL.md",
+      "line": 200,
+      "body": "This fence closes the summary box early, and then the fence at line 215 re-opens instead of closing. The file ends up with 27 fences \u2014 an odd number \u2014 so fence parity is inverted from here to EOF.\n\nRunning the file through `marked`, three headings vanish into a code block: `Phase 4: RBG YAML Generation`, `4.1 Generate Base YAML`, `4.2 Configure Extra Features`. That's the YAML-generation part of the wizard, i.e. the section that matters most.\n\nDeleting this one line fixes the whole file. `markdown-check` in CI doesn't catch it."
+    },
+    {
+      "path": "CLAUDE.md",
+      "line": 131,
+      "body": "None of these five are reachable today. `llm.NewLLMCmd` exists in cmd/cli/cmd/llm/llm.go but is never attached to the root command \u2014 cmd/cli/cmd/root.go:73-74 registers only `status` and `rollout`. Building the CLI and asking it:\n\n```\nAvailable Commands:\n  completion  Generate the autocompletion script for the specified shell\n  help        Help about any command\n  rollout     Manage the rollout of a rbg object\n  status      Display rbg status information\n```\n\n`config`, `model` and `svc` don't exist in the tree at all; `llm benchmark` does exist but can't be invoked. The unreachable `llm` tree looks like a pre-existing CLI bug rather than something this PR caused \u2014 probably worth its own issue \u2014 but the doc shouldn't ship pointing at it."
+    },
+    {
+      "path": "CLAUDE.md",
+      "line": 122,
+      "body": "The API server rejects this value:\n\n```\nspec.roles[0].leaderWorkerPattern.restartPolicy: Unsupported value: \"RecreateRBGOnPodRestart\": supported values: \"None\", \"RecreateRoleInstanceOnPodRestart\"\n```\n\nThe Go constant is still there and pod_controller.go:283 still compares against it, which is probably why it looks valid, but the kubebuilder enum only allows the other two. keps/inactive-pod-handling/README.md:453 records it as deprecated by #340.\n\nSeparately, this section reads as if `roles[].restartPolicy` were a field. In v1alpha2 it isn't \u2014 it lives under `leaderWorkerPattern` / `customComponentsPattern`. Worth saying so, since an agent following this will put it one level too high."
+    },
+    {
+      "path": "CLAUDE.md",
+      "line": 14,
+      "body": "Agreeing with Copilot here after checking it myself: neither target exists. Worth adding that no Makefile target builds `cmd/cli` at all right now, so there isn't an alternative command to point the reader at unless the targets get added."
+    },
+    {
+      "path": ".claude/skills/rbg-inference-deploy/yaml-rules.md",
+      "line": 7,
+      "body": "Flagging that the Copilot comment on this line is wrong and rule 3 as written is correct \u2014 I wouldn't relax it. `Patch` is optional in the Go type, but the controller rejects `templateRef` without it (api/workloads/v1alpha2/roletemplate_validation.go:139). Applying such an RBG on a live cluster gets you an `InvalidTemplateRef` event: `spec.roles[0].templatePatch: required when templateRef is set`."
+    }
+  ],
+  "meta": {
+    "language": "en",
+    "voice": "reviewer",
+    "humanized": true,
+    "humanizerSkill": "humanizer",
+    "builder": "build_review_payload.py",
+    "notes": [
+      "GitHub-facing comments should be written in English unless the publish gate is intentionally changed.",
+      "Phrase comments as reviewer feedback, not assistant narration.",
+      "Run a humanization pass before publishing and set --humanized only after that pass is complete."
+    ]
+  },
+  "summary": {
+    "body": "I reviewed this by testing the claims rather than reading them, since the skill is prose an agent executes verbatim and CI can't check any of it. Five of the factual claims about this repo don't hold; details inline.\n\nThe one I'd fix first is the `tolerations` / `templateRef` premise in yaml-rules.md \u2014 it's stated as verified in source, it's the sole justification for forbidding `roleTemplates` on tainted nodes, and both a unit test on `GetResolvedTemplate` and a live cluster run show tolerations do reach the Pod.\n\nOne thing that isn't a defect but is worth thinking about: nothing keeps this file honest as the repo moves. The Makefile targets, the CLI commands and the restartPolicy enum were all correct at some point in this project's history. If CLAUDE.md is going to describe build commands and API values, a small CI check that greps the documented `make` targets and enum values against the tree would stop the next drift.\n\nHarness, tests and raw run logs: https://github.com/cheyang/rbg/blob/verify/pr410-deploy-skill/docs/verification/pr410-deploy-skill/README.md"
+  }
+}
