@@ -48,13 +48,28 @@ else
   fi
 fi
 
-# The harness must run against the code under review.
+# The harness must run against the code under review. The harness commit sits ON
+# TOP of the PR head, so the correct test is ancestry -- not equality. (An earlier
+# version compared for equality and printed the rebase hint even right after a
+# successful rebase, which trains the reader to ignore it.)
 CUR=$(git rev-parse HEAD)
-if [ "$CUR" != "$HEAD_SHA" ]; then
+if git merge-base --is-ancestor "$HEAD_SHA" "$CUR" 2>/dev/null; then
+  AHEAD=$(git rev-list --count "$HEAD_SHA..$CUR")
   echo
-  echo "   NOTE: worktree is at $(git rev-parse --short "$CUR") but the PR head is"
-  echo "         $(git rev-parse --short "$HEAD_SHA"). Rebase this verification branch onto"
-  echo "         the new head before trusting the results below:"
+  echo "   worktree: $(git rev-parse --short "$CUR") = PR head + $AHEAD harness commit(s) -- OK"
+  # Belt and braces: the harness must not be sitting on modified production code.
+  PROD=$(git diff --name-only "$HEAD_SHA" "$CUR" -- api cmd internal pkg deploy config Makefile test)
+  if [ -n "$PROD" ]; then
+    echo
+    echo "   WARNING: the harness commit(s) modify code under review -- results are NOT"
+    echo "            about the PR as submitted:"
+    echo "$PROD" | sed 's/^/              /'
+  fi
+else
+  echo
+  echo "   NOTE: worktree is at $(git rev-parse --short "$CUR"), which does NOT contain the"
+  echo "         PR head $(git rev-parse --short "$HEAD_SHA"). Rebase before trusting the"
+  echo "         results below:"
   echo "           git rebase --onto pr${NUM}head $LAST $(git rev-parse --abbrev-ref HEAD)"
 fi
 
@@ -74,6 +89,8 @@ echo "############ SCRIPT LAYER ############"
 run "F1  helm render (contract)"        f1-helm-render.txt        bash "$DIR/scripts/01-helm-render.sh"
 run "F2  rbac drift (contract)"         f2-rbac-drift.txt         bash "$DIR/scripts/02-rbac-drift.sh"
 run "     rbac gating (control)"        f3-rbac-gating.txt        bash "$DIR/scripts/03-rbac-gating.sh"
+run "F1b whole-chart render (contract)" f5-chart-render-all.txt   bash "$DIR/scripts/05-chart-render-all.sh"
+# Slowest, and it mutates the worktree -- keep it last in this layer.
 run "     make manifests (contract)"    f4-manifests-freshness.txt bash "$DIR/scripts/04-manifests-freshness.sh"
 
 echo

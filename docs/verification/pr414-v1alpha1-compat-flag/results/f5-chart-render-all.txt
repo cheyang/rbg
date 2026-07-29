@@ -1,0 +1,12 @@
+== chart: /root/rbg/deploy/helm/rbgs ==
+== helm v3.16.3+gcfd0749 ==
+
+[default              ] 12 docs, 0 invalid
+[compat-disabled      ] 12 docs, 0 invalid
+[compat-enabled       ] 12 docs, 0 invalid
+[empty-v1alpha1Compat ] 12 docs, 0 invalid
+[empty-features       ] 12 docs, 0 invalid
+
+RESULT: every template renders valid objects under all 5 value shapes.
+        Suggested CI gate (would have caught F1 in seconds rather than 30 min):
+          helm template rbgs deploy/helm/rbgs | kubectl apply --dry-run=client -f -

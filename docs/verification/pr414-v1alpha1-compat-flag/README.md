@@ -5,27 +5,61 @@ Reviewer-private harness for [sgl-project/rbg#414](https://github.com/sgl-projec
 | | |
 |---|---|
 | PR | `feat: add --enable-v1alpha1-compat flag to toggle v1alpha1 API compatibility` (diw-zw) |
-| Reviewed head | `66a2500a` |
+| Reviewed head | `0151936a` (round 2; round 1 reviewed `66a2500a`) |
 | Base | `8a54787d` (`main`) |
-| Diff | 14 files, +569 / −55 |
+| Diff | 15 files, +594 / −66 |
 | Predecessor | PR #413, closed — **same head branch** `0727-lagacy`, flag renamed. See `verify/pr413-legacy-workloads`. |
 
 **Production code on this branch is untouched.** The only additions are three
 `pr414_*_verify_test.go` files and this `docs/verification/` tree.
 
-## Verdict
+## Verdict — round 2 (`0151936a`)
 
-**Do not merge as-is.** The chart this PR ships cannot be installed — with
-default values, on any cluster. Upstream CI already says so (`e2e-test` →
-*Deploy controller*), and it reproduces here both offline and against a live
-API server. Two further blocking-class findings are behavioural: one legacy role
-terminally stops an entire RoleBasedGroup, and `RoleBasedGroupSet` re-creates
-the exact infinite-backoff-for-a-configuration-error that this PR was written to
-eliminate.
+**F1 is fixed. The two behavioural blockers are untouched.**
 
-The feature's *design* is sound and its RBAC gating is correct — `03-rbac-gating.sh`
-proves the two modes differ exactly as documented, and the flag/chart default
-mismatch from the #413 round is genuinely fixed. The problems are in the seams.
+`0151936a` repairs the Helm template, and that is now confirmed three ways:
+5/5 value shapes render a valid ClusterRole offline, all 12 documents in the
+chart render valid under all 5 shapes, and a live k8s v1.36.1 API server accepts
+both the ClusterRole and the whole release server-side. Upstream `e2e-test` went
+from failing at *Deploy controller* to **passing in 29m44s** — the suite ran to
+completion on this PR for the first time.
+
+Nothing else changed. **No canary flipped**, so every behavioural finding stands
+exactly as in round 1:
+
+- **F4** — one legacy role still terminally stops the whole RoleBasedGroup
+  (`stop=true, err=nil` → no requeue, no backoff); healthy `RoleInstanceSet`
+  siblings are still abandoned.
+- **F7** — `RoleBasedGroupSet` still has no compat awareness and no validating
+  webhook, so it still error-loops forever with no terminal condition: the same
+  problem this PR fixes one level down.
+
+The feature's *design* remains sound and its RBAC gating is correct
+(`03-rbac-gating.sh` proves the two modes differ exactly as documented). The
+problems are in the seams.
+
+### Where F1 came from
+
+Worth knowing, because it changes what to ask for. CI on this branch:
+
+| head | e2e-test |
+|---|---|
+| `59e384d5` (PR #413 head) | pass |
+| `62e64713` | pass |
+| `66a2500a` — *"Deal with copilot comments"* | **fail** at *Deploy controller* |
+| `0151936a` — *"deal with e2e test"* | pass (29m44s) |
+
+The chart breakage was introduced by the commit that answered Copilot's
+comments — specifically the nil-safety comment block added above the variable
+block, for the concern recorded here as `D1`, which this harness disproved in
+both the #413 and #414 rounds. A correct rebuttal existed; acting on the comment
+anyway cost a total outage of the install path. Nothing else in that commit is
+at fault, and the author's own rebuttal on the `EnableV1Alpha1Compat` zero-value
+comment was right.
+
+`N1` is the systemic half of this: `lint`, `unit-test`, `envtest` and `build`
+were all green while the chart was uninstallable. Only the 30-minute e2e job
+noticed. `scripts/05-chart-render-all.sh` is written to be lifted into CI as-is.
 
 ## Observed vs. expected
 
@@ -34,24 +68,52 @@ Polarity matters when reading pass/fail:
 **CANARY** = asserts the current suspected-wrong behaviour → *pass means broken;
 if it flips red, the bug is fixed and the assertion must be inverted.*
 
-| ID | Finding | Sev | Pol | Layer | Expected | Observed | Verdict |
-|---|---|---|---|---|---|---|---|
-| **F1** | `clusterrole.yaml` renders with `apiVersion:` swallowed into a YAML comment → chart uninstallable | **blocking** | contract | script + live | valid ClusterRole | 5/5 value shapes parse `apiVersion=None`; live `helm install --dry-run=server` → `apiVersion not set` | **REPRODUCED** |
-| F2 | chart RBAC drifted from `config/rbac/role.yaml` after `make manifests` stopped syncing it | none | contract | script | in sync | 209 == 209 triples, empty symmetric difference | **DISPROVED** |
-| F3 | flag's own guard: legacy kinds refused, RoleInstanceSet still served | none | contract | unit | refuse | refuses all 3, allows RoleInstanceSet | green (regression guard) |
-| **F4** | one legacy role terminally stops the **whole** RBG; healthy siblings never reconciled, nothing retries | **blocking** | canary | unit (live **void**) | per-role degradation | `stop=true, err=nil` → `Result{}`, no requeue; `Ready=False(LegacyWorkloadsDisabled)` for the whole group | **REPRODUCED** (unit) |
-| F5 | `.status.roleStatuses` frozen at last-healthy values, never refreshed | non-blocking | canary | unit | invalidated or refreshed | `Ready=False(LegacyWorkloadsDisabled)` next to `3/3 ready`, forever | **REPRODUCED** (unit) |
-| F6 | `deleteOrphanRoles` skips legacy cleanup when disabled | non-blocking | contract | unit | cleanup still runs | orphan survives with compat off; **control**: deleted with compat on | **REPRODUCED** (unit only) |
-| **F7** | `RoleBasedGroupSet` has no compat awareness → children rejected by the RBG webhook, reconcile error-loops forever with no terminal condition | **blocking** | contract | unit | fail fast + terminal condition | 5 reconciles, 10 rejections, 0 children, 0 conditions, error every time | **REPRODUCED** |
-| F8 | legacy-type list triplicated across 2 packages; one copy unreachable | non-blocking | contract | unit | one source of truth | all 3 agree *today* | green (drift guard) |
-| F9 | `cacheOptions(false)` drops `ByObject` entries → unbounded informer that would now also 403 | non-blocking | canary | unit | keep the label selector | no entry for Deployment/StatefulSet with compat off | **LATENT** |
-| F10 | `ValidateWorkloadTypesUpdate` grandfathers by role *name*, so StatefulSet→Deployment is accepted | non-blocking | canary | unit | monotonic migration only | all 3 legacy→legacy swaps accepted; **controls** both bite | **REPRODUCED** (unit) |
-| D1 | Helm nil-deref / RBAC drop when upgrading with an older `values.yaml` (raised by Copilot) | none | — | script | — | 5 shapes incl. `features=null` render byte-identically; value coalescing restores defaults | **DISPROVED** |
-| N1 | no CI gate renders the chart, so F1 could only surface in the 4-minute e2e job | note | — | — | — | lint/unit/envtest/build all green on `66a2500a` | observation |
-| N2 | `e2e-test-manifest` failure is a pre-existing restart-policy flake | none | — | — | — | fails on `restart_policy_stability.go:515`; PR touches no restart-policy code | attributed elsewhere |
-| N3 | sandbox cluster stores `roleInstanceTemplate.restartPolicy` as a bare string, unreadable by current Go types | none | — | — | — | breaks the PR binary's informer; `RestartPolicyConfig` identical on `main`, untouched by this PR | environmental — **not PR #414**; voided the live F4 arm |
+Round-2 column: what the same test says on `0151936a`.
 
-## F1 in detail — the blocker
+| ID | Finding | Sev | Pol | Layer | Round 1 (`66a2500a`) | Round 2 (`0151936a`) |
+|---|---|---|---|---|---|---|
+| **F1** | `clusterrole.yaml` renders with `apiVersion:` swallowed into a YAML comment → chart uninstallable | **blocking** | contract | script + live | **REPRODUCED** — 5/5 shapes parse `apiVersion=None`; live rejected | ✅ **FIXED** — 5/5 shapes valid; live accepts ClusterRole *and* whole release |
+| F1b | *(new)* same defect class anywhere else in the chart | — | contract | script | not tested | ✅ clean — 12 docs × 5 shapes all valid |
+| **F11** | *(new)* `warmup.go` e2e change is unnecessary for CI and unrelated to this PR | minor | — | review | — | see below |
+| F2 | chart RBAC drifted from `config/rbac/role.yaml` after `make manifests` stopped syncing it | none | contract | script | **DISPROVED** — 209 == 209 triples | unchanged — still 209 == 209 |
+| F3 | flag's own guard: legacy kinds refused, RoleInstanceSet still served | none | contract | unit | green | green |
+| **F4** | one legacy role terminally stops the **whole** RBG; healthy siblings never reconciled, nothing retries | **blocking** | canary | unit (live **void**) | **REPRODUCED** — `stop=true, err=nil` → no requeue | ⚠️ **canary did not flip — still broken** |
+| F5 | `.status.roleStatuses` frozen at last-healthy values, never refreshed | non-blocking | canary | unit | **REPRODUCED** — `Ready=False` next to `3/3 ready` | ⚠️ canary did not flip — still broken |
+| F6 | `deleteOrphanRoles` skips legacy cleanup when disabled | non-blocking | contract | unit | **REPRODUCED**; control (compat on) deletes it | ⚠️ still FAIL, control still passes |
+| **F7** | `RoleBasedGroupSet` has no compat awareness → children rejected by the RBG webhook, reconcile error-loops forever with no terminal condition | **blocking** | contract | unit | **REPRODUCED** — 5 reconciles, 10 rejections, 0 children, 0 conditions | ⚠️ **still FAIL — unchanged** |
+| F8 | legacy-type list triplicated across 2 packages; one copy unreachable | non-blocking | contract | unit | green (all 3 agree) | green |
+| F9 | `cacheOptions(false)` drops `ByObject` entries → unbounded informer that would now also 403 | non-blocking | canary | unit | **LATENT** | unchanged — still latent |
+| F10 | `ValidateWorkloadTypesUpdate` grandfathers by role *name*, so StatefulSet→Deployment is accepted | non-blocking | canary | unit | **REPRODUCED** — all 3 swaps accepted | ⚠️ canary did not flip — still broken |
+| D1 | Helm nil-deref / RBAC drop when upgrading with an older `values.yaml` (raised by Copilot) | none | — | script | **DISPROVED** — 5 shapes render byte-identically | still disproved — **and acting on it caused F1** |
+| N1 | no CI gate renders the chart, so F1 could only surface in the 30-minute e2e job | note | — | — | observation | still open; `05-chart-render-all.sh` is a liftable gate |
+| N2 | `e2e-test-manifest` failure is a pre-existing restart-policy flake | none | — | — | fails at `restart_policy_stability.go:515` | still failing, **different spec** in the same family (`:355`), 70/106 specs ran |
+| N3 | sandbox cluster stores `roleInstanceTemplate.restartPolicy` as a bare string, unreadable by current Go types | none | — | — | environmental — **not PR #414** | unchanged — still voids the live F4 arm (`exit 4`) |
+
+## F11 — the `warmup.go` change does not belong in this PR
+
+`0151936a` also rewrites `test/e2e/testcase/v1alpha2/warmup.go`, generalizing the
+*"merge multi-role actions"* spec from "1 warmup Pod with 2 containers" to
+"1 Pod per unique node, total containers == number of roles".
+
+The generalization itself is reasonable. Two things make it worth raising:
+
+1. **It is not needed for CI.** Both e2e jobs create their cluster with
+   `kind create cluster` and **no `--config`** (`.github/workflows/e2e-test.yml:112`
+   and `:297`), i.e. a single-node cluster. Both RBG pods therefore always
+   co-locate, `uniqueNodeCount` is always 1, and the new assertions reduce to
+   exactly the old ones. CI history confirms the old spec was not the problem:
+   `62e64713` passed `e2e-test` with the old assertions, and the only failure on
+   `66a2500a` was at *Deploy controller*, before any spec ran.
+2. **It is unrelated to `--enable-v1alpha1-compat`.** Bundled into a feature PR it
+   is harder to review and cannot be backported on its own.
+
+If the intent is to support multi-node dev clusters, then on such a cluster the
+spec's *stated purpose* — the merge path — becomes nondeterministic and can go
+unexercised while the test still passes. In that case pin both roles to one node
+(`nodeSelector`/`podAffinity`) so the merge stays covered, and add a separate spec
+for the spread case. Either way this belongs in its own PR.
+
+## F1 in detail — the blocker (fixed in `0151936a`)
 
 `deploy/helm/rbgs/templates/rbac/clusterrole.yaml` opens with a block of literal
 YAML comments, then its first Helm action:
@@ -86,6 +148,36 @@ reviewer's kubeconfig.
 
 Fixes, any one of: drop the `-` from the first `{{-`; move the variable block
 above the comments; or leave a blank line the chomp can consume.
+
+**`0151936a` took the second option** — the variable block moved above `---`, and
+the `-}}` right-chomps on the `if`/`end` became plain `}}`. Verified fixed:
+
+```
+$ helm template rbgs deploy/helm/rbgs --show-only templates/rbac/clusterrole.yaml | head -2
+---
+apiVersion: rbac.authorization.k8s.io/v1          # survives, all 5 shapes
+
+$ helm upgrade rbgs deploy/helm/rbgs -n rbg-system --dry-run=server
+   ACCEPTED (whole release renders and validates)
+```
+
+## Harness corrections made in round 2
+
+Recorded because two of them would have produced wrong review feedback.
+
+| # | Problem | Consequence if unfixed |
+|---|---|---|
+| H1 | `20-live-helm-install.sh` reported **F1 REPRODUCED** on any failure, whatever the cause | **False positive.** After the fix it still failed — because the throwaway release name `rbgs-f1-dryrun` collided with the ownership annotations of the real `rbgs` release. It would have told the author F1 was still broken. Now the finding is **signature-gated** on `apiVersion not set`; anything else is `INCONCLUSIVE` (exit 2), never a finding. Arm B also reuses the existing release name so ownership cannot collide. |
+| H2 | `re-verify.sh` compared `HEAD` to the PR head for **equality** | Printed "rebase before trusting these results" *immediately after a correct rebase* — the harness commit sits **on top of** the PR head. Trains the reader to ignore the one warning that matters. Now tests **ancestry**, reports `PR head + N harness commit(s)`, and additionally warns if a harness commit touches code under review. |
+| H3 | F1 was only checked on one template | Added `05-chart-render-all.sh`: every template, 5 value shapes, asserting `apiVersion`+`kind` on every document, plus a direct grep for the glued-into-comment signature. Doubles as the CI gate `N1` recommends. |
+
+Two process notes from this round, both self-inflicted and worth not repeating:
+overwriting a script while a detached job was executing it corrupted that job
+mid-read (`line 95: ating.txt: command not found`), and `git checkout -- .` (used
+to undo `make manifests` worktree mutations) silently reverted uncommitted script
+fixes, so an "already fixed" script ran in its old form. Kill the job before
+editing its scripts; commit harness fixes before running anything that cleans the
+tree.
 
 ## Layers
 

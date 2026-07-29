@@ -1,15 +1,15 @@
 == cluster ==
    server: v1.36.1-aliyun.1
 
-== helm install --dry-run=server (validates against the live API server) ==
-   REJECTED:
-     Error: INSTALLATION FAILED: unable to build kubernetes objects from release manifest: error validating "": error validating data: apiVersion not set
+== arm A: helm template | kubectl apply --dry-run=server ==
+   ACCEPTED:
+     clusterrole.rbac.authorization.k8s.io/rbgs-controller-role configured (server dry run)
 
-== helm template | kubectl apply --dry-run=server (what the e2e job does) ==
-   REJECTED:
-     error: error validating "/root/pr414-verify/f1-clusterrole.yaml": error validating data: apiVersion not set; if you choose to ignore these errors, turn validation off with --validate=false
+== arm B: helm upgrade --dry-run=server (reusing existing release 'rbgs') ==
+   ACCEPTED (whole release renders and validates)
 
-== control: another template from the same chart/cluster must be accepted ==
-   control accepted -> the rejection above is specific to clusterrole.yaml
+== control: a sibling template from the same chart/cluster ==
+   control ACCEPTED -> cluster and kubeconfig are usable
 
-RESULT: F1 REPRODUCED LIVE -- the chart this PR ships cannot be installed.
+RESULT: F1 FIXED -- the ClusterRole is accepted by a live API server, and the
+        whole release validates server-side.
