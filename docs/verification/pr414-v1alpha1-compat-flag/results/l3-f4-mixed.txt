@@ -1,0 +1,17 @@
+== G1 ok: tree clean, code under test = 66a2500a ==
+== quiescing the in-cluster controller (was 2 replicas) ==
+== G2 ok: no in-cluster controller pods remain ==
+== reset namespace pr414-verify ==
+== G3 ok: RBG mixed = modern-a(RoleInstanceSet), modern-b(RoleInstanceSet), legacy(apps/v1/Deployment) ==
+   RBG allmodern: worker(RoleInstanceSet)  <- liveness control
+== building the binary under test ==
+   sha256: 64fe36fc3049e3b3
+== running: --enable-v1alpha1-compat=false (admin identity) ==
+   waiting for OUR process log to show it reconciling the control RBG........................................
+G4 CONTROLLER VOID: our binary never logged a reconcile of the legacy-free control
+  RBG within ~120s, so silence below would prove nothing.
+  process alive: yes
+  log lines: 15   top errors:
+          8 "error":"failed to list *v1alpha2.RoleInstanceSet: json: cannot unmarshal string into Go struct field RoleInstanceTemplate.items.spec.roleInstanceTemplate.resta
+docs/verification/pr414-v1alpha1-compat-flag/scripts/30-live-mixed-rbg.sh: line 53: 1069270 Killed                  "$WORK/rbgs-under-test" --enable-v1alpha1-compat=false --enable-webhooks=none --metrics-bind-address=0 --health-probe-bind-address=0 --zap-log-level=info > "$RUNLOG" 2>&1
+   [teardown] restored rbgs-controller-manager to 2 replica(s)

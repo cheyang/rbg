@@ -1,0 +1,24 @@
+resources with compat=true : 47
+resources with compat=false: 39
+
+-- must be REMOVED when compat=false --
+   OK     apps                         deployments                      on=True off=False
+   OK     apps                         statefulsets                     on=True off=False
+   OK     apps                         deployments/status               on=True off=False
+   OK     apps                         statefulsets/status              on=True off=False
+   OK     apps                         deployments/finalizers           on=True off=False
+   OK     apps                         statefulsets/finalizers          on=True off=False
+   OK     leaderworkerset.x-k8s.io     leaderworkersets                 on=True off=False
+   OK     leaderworkerset.x-k8s.io     leaderworkersets/status          on=True off=False
+
+-- must SURVIVE in both modes --
+   OK     apps                         controllerrevisions              on=True off=True
+   OK     apps                         controllerrevisions/status       on=True off=True
+   OK     workloads.x-k8s.io           roleinstancesets                 on=True off=True
+   OK     (core)                       services                         on=True off=True
+   OK     (core)                       pods                             on=True off=True
+   OK     (core)                       events                           on=True off=True
+   OK     coordination.k8s.io          leases                           on=True off=True
+
+RESULT: gating behaves as documented -- the harness can tell the two modes
+        apart, so the drift/render findings are not measuring noise.

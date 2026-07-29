@@ -1,0 +1,16 @@
+== running: make manifests generate ==
+RESULT: clean -- /root/rbg/bin/controller-gen crd:allowDangerousTypes=true,crdVersions=v1,generateEmbeddedObjectMeta=true,ignoreUnexportedFields=true,maxDescLen=200 rbac:roleName=controller-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases output:rbac:artifacts:config=config/rbac
+# NOTE: The Helm chart's clusterrole.yaml is manually maintained with
+# Helm conditionals for v1alpha1 indirect workload permissions. Do NOT
+# overwrite it. Keep it in sync with config/rbac/role.yaml when adding
+# new permissions.
+/root/rbg/bin/kustomize build config/default > deploy/kubectl/manifests.yaml
+cp -f /root/go/pkg/mod/k8s.io/code-generator@v0.34.1/generate-groups.sh /root/rbg/bin/
+cp -f /root/go/pkg/mod/k8s.io/code-generator@v0.34.1/generate-internal-groups.sh /root/rbg/bin/
+cp -f /root/go/pkg/mod/k8s.io/code-generator@v0.34.1/kube_codegen.sh /root/rbg/bin/
+/root/rbg/bin/controller-gen object:headerFile="hack/boilerplate.go.txt" paths="./..."
+./hack/update-codegen.sh go /root/rbg/bin
+Generating applyconfig code for 2 targets
+Generating client code for 2 targets
+Generating lister code for 2 targets
+Generating informer code for 2 targets produced no diff.

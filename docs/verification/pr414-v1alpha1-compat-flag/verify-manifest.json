@@ -1,0 +1,245 @@
+{
+  "topic": "pr414-v1alpha1-compat-flag",
+  "pr": "https://github.com/sgl-project/rbg/pull/414",
+  "reviewedHead": "66a2500aa33d612e0e65097ff6d9d14ac3577c55",
+  "baseSha": "8a54787d698f76f3f754e844342d5dbd71244885",
+  "note": "Reviewer-private verification harness. Production code is untouched on this branch; the only additions are the three pr414_*_verify_test.go files and this docs/verification tree.",
+  "lineage": {
+    "predecessor": "https://github.com/sgl-project/rbg/pull/413",
+    "predecessorBranch": "verify/pr413-legacy-workloads",
+    "relation": "PR#413 was closed and PR#414 opened on the SAME head branch (0727-lagacy) with the flag renamed --enable-legacy-workloads -> --enable-v1alpha1-compat. History was rewritten, so 59e384d5 (the PR#413 reviewed head) is NOT an ancestor of 66a2500a; both share base 8a54787d. The PR#413 findings were re-checked here under new F-numbers.",
+    "carriedOver": {
+      "pr413-F1": "F1 there (Go flag default false vs chart true) is FIXED: the Go default is now true. Not re-listed.",
+      "pr413-F2": "manifests-freshness regression: still FIXED, guarded by 04-manifests-freshness.sh.",
+      "pr413-F3a": "now F3 here (legacy kinds refused when disabled) -- still green, kept as a regression guard.",
+      "pr413-F3b": "now F4 here, and WORSE: the whole-group failure is now terminal (no requeue) instead of error-backoff.",
+      "pr413-F4": "now F6 here (orphan cleanup skipped). Unchanged. Live arm still inconclusive because K8s GC is the actor.",
+      "pr413-F5": "now F9 here (cache selector dropped). Unchanged, still latent.",
+      "pr413-D1": "Helm nil-deref on upgrade shapes: still DISPROVED. 01-helm-render.sh renders 5 value shapes; all coalesce to chart defaults. Copilot raised the same point on PR#414 and it is still wrong."
+    }
+  },
+  "harnessPaths": [
+    "docs/verification/pr414-v1alpha1-compat-flag",
+    "internal/controller/workloads/pr414_compat_verify_test.go",
+    "cmd/rbgs/pr414_cacheoptions_verify_test.go",
+    "api/workloads/v1alpha2/pr414_validation_verify_test.go"
+  ],
+  "layers": {
+    "script": {
+      "kind": "shell",
+      "needsCluster": false,
+      "cmds": [
+        "bash docs/verification/pr414-v1alpha1-compat-flag/scripts/01-helm-render.sh",
+        "bash docs/verification/pr414-v1alpha1-compat-flag/scripts/02-rbac-drift.sh",
+        "bash docs/verification/pr414-v1alpha1-compat-flag/scripts/03-rbac-gating.sh",
+        "bash docs/verification/pr414-v1alpha1-compat-flag/scripts/04-manifests-freshness.sh"
+      ]
+    },
+    "unit": {
+      "kind": "gotest",
+      "needsCluster": false,
+      "cmd": "go test ./internal/controller/workloads/ ./cmd/rbgs/ ./api/workloads/v1alpha2/ -run 'TestVerifyPR414' -v -count=1"
+    },
+    "live": {
+      "kind": "shell",
+      "needsCluster": true,
+      "cmds": [
+        "bash docs/verification/pr414-v1alpha1-compat-flag/scripts/20-live-helm-install.sh",
+        "bash docs/verification/pr414-v1alpha1-compat-flag/scripts/30-live-mixed-rbg.sh"
+      ]
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "title": "BLOCKER: clusterrole.yaml renders without apiVersion -- the Helm chart cannot be installed at all, for every value shape including defaults",
+      "severity": "blocking",
+      "polarity": "contract",
+      "layer": "script+live",
+      "match": [
+        "01-helm-render.sh",
+        "20-live-helm-install.sh"
+      ],
+      "status": "reproduced-script-and-live",
+      "evidence": "results/f1-helm-render.txt, results/l3-f1-helm-live.txt",
+      "detail": "The template opens with a block of literal YAML comments followed by `{{- $features := ... -}}`. The left-chomp on that first action eats the newline that terminates the last comment line, so the output is `# ...RBAC permissions.apiVersion: rbac.authorization.k8s.io/v1` -- the key is inside a comment. Fix: use `{{-` without a preceding comment line, or put the variable block before the comments, or start the file with an explicit newline after the comments.",
+      "observed": "5/5 value shapes (default, enabled, disabled, empty v1alpha1Compat, empty features) render a document whose parsed apiVersion is None. helm install --dry-run=server on a live k8s v1.36.1 fails with the exact upstream CI string: 'error validating data: apiVersion not set'.",
+      "control": "A sibling template from the same chart and the same cluster (templates/rbac/service_account.yaml) is accepted server-side, so the rejection is attributable to this file and not to the chart, cluster or kubeconfig.",
+      "upstreamSignal": "e2e-test job, step 'Deploy controller': Error: unable to build kubernetes objects from release manifest: error validating data: apiVersion not set"
+    },
+    {
+      "id": "F2",
+      "title": "DISPROVED: chart clusterrole has drifted from config/rbac/role.yaml now that `make manifests` no longer syncs it",
+      "severity": "none",
+      "polarity": "contract",
+      "layer": "script",
+      "match": [
+        "02-rbac-drift.sh"
+      ],
+      "status": "disproved",
+      "evidence": "results/f2-rbac-drift.txt",
+      "detail": "Normalized to (apiGroup, resource, verb) triples, the chart with compat enabled and config/rbac/role.yaml are identical: 209 == 209, zero triples on either side only. The de-generation is a maintainability risk with no CI gate, not a defect at this head. Reported as a non-blocking note only.",
+      "observed": "209 generated triples, 209 chart triples, empty symmetric difference."
+    },
+    {
+      "id": "F3",
+      "title": "The flag's own guard: v1alpha1 indirect kinds are refused and RoleInstanceSet still works when compat is disabled",
+      "severity": "none",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR414_F3_LegacyKindsRejectedWhenCompatDisabled"
+      ],
+      "status": "green",
+      "evidence": "results/l1-unit.txt",
+      "detail": "Kept as a regression guard. Pairs with 03-rbac-gating.sh, which proves the RBAC half of the same feature is also correct -- the gating logic in F1 is right, only the template whitespace is wrong."
+    },
+    {
+      "id": "F4",
+      "title": "One legacy role terminally stops the WHOLE RoleBasedGroup: healthy RoleInstanceSet siblings are never reconciled and nothing retries",
+      "severity": "blocking",
+      "polarity": "canary",
+      "layer": "unit+live",
+      "match": [
+        "TestVerifyPR414_F4_MixedRBGTerminallyStoppedAsAWhole_Canary",
+        "30-live-mixed-rbg.sh"
+      ],
+      "status": "reproduced-unit-only",
+      "evidence": "results/l1-unit.txt",
+      "liveNote": "LIVE ARM NOT ESTABLISHED (void, not a pass and not a fail). 30-live-mixed-rbg.sh aborted three times at guard G4 CONTROLLER VOID, exit 4: the PR-head binary's RoleInstanceSet informer never syncs on this cluster. Cause is environmental, NOT a PR#414 property: the in-cluster rbgs image is older than this branch and writes spec.roleInstanceTemplate.restartPolicy as a bare string, the roleinstancesets CRD carries x-kubernetes-preserve-unknown-fields so that shape is stored verbatim, and the PR-head Go types (RestartPolicyConfig, a struct -- identical on upstream/main, and untouched by this PR) cannot unmarshal it. The failing list is served from the informer's resourceVersion=0 watch-cache read, which is why a plain `kubectl get` showed an empty collection while the informer saw 3 items. Scaling the in-cluster Deployment to 0 (guard G2) proved insufficient to isolate the two controller versions on one cluster. F4 therefore rests on the unit layer, which asserts the mechanism directly (stop=true + err=nil + the LegacyWorkloadsDisabled condition). A future round wanting the live arm should either use a cluster with no prior rbgs state or add a G7 that attributes created objects via metadata.managedFields[].manager.",
+      "detail": "handleLegacyWorkloads runs at Step 0 of Reconcile, before preCheck and before any role is reconciled, and returns stop=true, err=nil for a group containing ANY legacy role. Reconcile then returns ctrl.Result{}, nil -- no error, no RequeueAfter -- so controller-runtime does not retry. This is strictly worse than the PR#413 round, where the same whole-group failure at least came back on the error backoff. On an enabled->disabled flag flip, every mixed RBG stops being managed in full, including its healthy roles.",
+      "canaryNote": "PASSES today (documents the fail-closed-whole-group behavior). FLIPS TO RED when the author moves to per-role degradation -- invert the assertion then.",
+      "suggestion": "Degrade per role: mark only the legacy roles Ready=False/LegacyWorkloadsDisabled and continue reconciling the rest, or reject at admission only (which the validator already does for CREATE) and leave the controller to manage what it can."
+    },
+    {
+      "id": "F5",
+      "title": ".status.roleStatuses is frozen at its last healthy value, not invalidated, and never refreshed because the stop is terminal",
+      "severity": "non-blocking",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR414_F5_StaleRoleStatusesFrozenNotInvalidated_Canary"
+      ],
+      "status": "reproduced-unit",
+      "evidence": "results/l1-unit.txt",
+      "detail": "handleLegacyWorkloads patches status via toRBGApplyConfigurationForStatus, which always re-declares .status.roleStatuses from the object it is handed. For an RBG that was healthy before the flag flip that re-declares the old replica counts verbatim, and the terminal stop means nothing updates them again. An operator sees Ready=False(LegacyWorkloadsDisabled) sitting next to roleStatuses claiming 3/3 ready, indefinitely, even after the pods are gone.",
+      "canaryNote": "PASSES today. FLIPS when stale role statuses are cleared/marked or a requeue is added -- invert then.",
+      "note": "SSA does NOT wipe the rest of .status here -- that hypothesis was checked and is wrong, because the apply configuration re-declares roleStatuses and conditions together."
+    },
+    {
+      "id": "F6",
+      "title": "deleteOrphanRoles skips legacy cleanup when compat is disabled, so an RBG-owned legacy workload left by a migrated role is never removed by the controller",
+      "severity": "non-blocking",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR414_F6_OrphanedLegacyWorkloadNotCleanedUpWhenCompatDisabled"
+      ],
+      "status": "reproduced-unit-only",
+      "evidence": "results/l1-unit.txt",
+      "detail": "Cleaning up already-created legacy workloads is a different concern from managing new ones. If the skip stays, the delete RBAC for legacy types must be retained or cleanup will 403 when compat is re-enabled.",
+      "harnessBites": "The control_compatEnabled_orphanIsCleanedUp subtest passes (the orphan IS deleted with the flag on), proving the test exercises CleanupOrphanedWorkloads rather than failing for an unrelated reason.",
+      "liveNote": "INCONCLUSIVE LIVE, carried from the PR#413 round: on a real cluster the owner-referenced orphan disappears within ~10s in BOTH modes and also with NO controller running at all -- Kubernetes GC is the actor, so a live test cannot discriminate. Only the code-level skip is proven. Do NOT claim 'leaks indefinitely'."
+    },
+    {
+      "id": "F7",
+      "title": "RoleBasedGroupSet has no compat awareness at all: it reproduces the exact infinite-backoff-for-a-config-error this PR fixes, one level up",
+      "severity": "blocking",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR414_F7_RBGSetErrorLoopsForeverWhenCompatDisabled",
+        "TestVerifyPR414_F7b_ValidatorRejectsLegacyChildRBG"
+      ],
+      "status": "reproduced",
+      "evidence": "results/l1-unit.txt",
+      "detail": "RoleBasedGroupSet gets only a conversion webhook, no validating webhook (see SetupWebhookWithManager in rolebasedgroup_webhook.go), so an RBGSet whose groupTemplate uses a legacy workload type is admitted. Its controller then client.Creates each child RBG, the RBG validator -- which DOES know the flag -- rejects every one, scaleUp aggregates that into a returned error, and Reconcile returns it. controller-runtime backs off exponentially, forever, with no terminal condition on the RBGSet and no event explaining why.",
+      "observed": "5 reconciles, 10 admission rejections, 0 child RBGs, an error returned every time, and zero LegacyWorkloadsDisabled conditions on the RBGSet.",
+      "harnessBites": "The admission stand-in is an interceptor returning the error text the real validator produces; F7b asserts that text against the real RoleBasedGroupValidator (and that compat=true accepts the same object), so the stand-in cannot drift into a fiction.",
+      "suggestion": "Give RoleBasedGroupSet the same treatment as RoleBasedGroup: a validating webhook that knows the flag, plus a terminal condition + event in its reconciler instead of a returned error."
+    },
+    {
+      "id": "F8",
+      "title": "The legacy-type list is triplicated across two packages with no shared source of truth; one copy is also unreachable",
+      "severity": "non-blocking",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR414_F8_LegacyTypeListsAgree",
+        "TestVerifyPR414_F8b_ValidationLegacyListMatches"
+      ],
+      "status": "green-today",
+      "evidence": "results/l1-unit.txt",
+      "detail": "Three copies: isLegacyWorkloadType in internal/controller/workloads/rolebasedgroup_controller.go, an inline switch in getOrCreateWorkloadReconciler in the same file, and isLegacyWorkloadType in api/workloads/v1alpha2/rolebasedgroup_validation.go. The inline switch is also dead in the compat=false path it exists for, because handleLegacyWorkloads stops Reconcile before any reconciler is built. No drift TODAY; the tests exist so adding a fourth legacy type cannot half-apply. Suggest one exported helper in api/workloads/constants."
+    },
+    {
+      "id": "F9",
+      "title": "cacheOptions(false) drops the ByObject entries entirely instead of keeping the label selector, leaving an unbounded informer that would now also 403",
+      "severity": "non-blocking",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR414_F9_CacheSelectorDroppedWhenCompatDisabled_Canary"
+      ],
+      "status": "latent",
+      "evidence": "results/l1-unit.txt",
+      "detail": "ByObject is per-type configuration, not an allowlist. Removing the entry does not prevent a cached informer for Deployment/StatefulSet, it only removes the group-name label selector that bounded it. Any cached read with compat off would start an unfiltered cluster-wide informer, which then cannot establish its watch because this PR also removes list/watch on those types from the ClusterRole. The RBAC half and the cache half disagree about what 'disabled' means.",
+      "canaryNote": "LATENT on this head: Owns() is not registered, Reconcile stops at handleLegacyWorkloads, and svc_reconciler's StatefulSet Get is only reached for a StatefulSet-typed role, so no cached read is reachable. Keeping the selector in both modes costs nothing. Test PASSES today; FLIPS if a selector or DefaultLabelSelector is registered regardless of the flag."
+    },
+    {
+      "id": "F10",
+      "title": "ValidateWorkloadTypesUpdate grandfathers by role NAME, so an existing legacy role can be switched to a DIFFERENT legacy type while compat is disabled",
+      "severity": "non-blocking",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR414_F10_LegacyTypeSwapAllowedOnGrandfatheredRole_Canary"
+      ],
+      "status": "reproduced-unit",
+      "evidence": "results/l1-unit.txt",
+      "detail": "StatefulSet -> Deployment, Deployment -> LWS and LWS -> StatefulSet are all accepted on a grandfathered role name. The stated intent is to let users migrate AWAY from legacy types; swapping one unsupported kind for another is not that. Practical impact is mild (the role was unmanaged either way) but the rule does not enforce monotonic progress toward RoleInstanceSet, which is its only justification.",
+      "canaryNote": "PASSES today. FLIPS if the check compares per-role workload types -- invert then.",
+      "controls": "control_newLegacyRoleRejected and control_migrationToRoleInstanceSetAllowed both pass, so the check does bite where it is supposed to."
+    },
+    {
+      "id": "N1",
+      "title": "NOTE (not a PR defect): no CI gate renders the Helm chart, so F1 could only be caught by the full e2e job",
+      "severity": "non-blocking",
+      "polarity": "n/a",
+      "layer": "n/a",
+      "status": "observation",
+      "detail": "lint, unit-test, envtest, build, check-changes and markdown-check all pass on 66a2500a; only e2e-test fails, 4 minutes in, at 'Deploy controller'. A `helm template ... | kubectl apply --dry-run=client -f -` step (or `helm lint --strict`) in the lint job would have caught F1 in seconds. Worth suggesting to the project independently of this PR."
+    },
+    {
+      "id": "N3",
+      "title": "NOTE (not a PR defect, worth its own look): the sandbox cluster stores roleInstanceTemplate.restartPolicy as a bare string, which current Go types cannot read",
+      "severity": "none",
+      "polarity": "n/a",
+      "layer": "n/a",
+      "status": "observation-environmental",
+      "detail": "Existing RoleInstanceSet objects on the test cluster carry spec.roleInstanceTemplate.restartPolicy as the string 'None'. pkg/reconciler/roleinstanceset_reconciler.go writes it as a nested object (WithType(role.GetRestartPolicy())), and the roleinstancesets CRD has x-kubernetes-preserve-unknown-fields, so an older writer's shape survives untouched and then breaks the typed informer with 'cannot unmarshal string into Go struct field ... of type v1alpha2.RestartPolicyConfig'. RestartPolicyConfig is identical on upstream/main and this PR does not touch RoleInstanceSet types, so this is NOT a PR#414 finding and must not be raised as one. It may be a real upgrade-path gap on main (no schema to prune the old shape, no conversion) and is worth a separate issue.",
+      "blocked": "This is what voided the live arm of F4; see that finding's liveNote."
+    },
+    {
+      "id": "N2",
+      "title": "NOTE (not a PR defect): the e2e-test-manifest failure is a pre-existing restart-policy flake, unrelated to this PR",
+      "severity": "none",
+      "polarity": "n/a",
+      "layer": "n/a",
+      "status": "attributed-elsewhere",
+      "detail": "e2e-test-manifest fails on '[v1alpha2] restart policy stability RecreateRoleInstanceOnPodRestart rolling update proceeds during backoff' (test/e2e/testcase/v1alpha2/restart_policy_stability.go:515), 42 passed / 1 failed. This PR touches no restart-policy code. Same test family as PRs #394/#407/#409. Do NOT raise it as PR#414 feedback."
+    },
+    {
+      "id": "D1",
+      "title": "DISPROVED (again): Helm guard asymmetry / nil-deref when upgrading with an older values.yaml",
+      "severity": "none",
+      "polarity": "n/a",
+      "layer": "script",
+      "match": [],
+      "status": "disproved",
+      "evidence": "results/f1-helm-render.txt",
+      "detail": "Raised by Copilot on both PR#413 and PR#414. Rendered 5 value shapes with helm 3.16.3, including controller.features=null and controller.features.v1alpha1Compat=null: Helm value coalescing restores chart defaults and all shapes render byte-identically. No nil-pointer, no silent RBAC drop. (The author's rebuttal on the related EnableV1Alpha1Compat zero-value comment is also correct: SetupWebhookWithManager is the only constructor.)"
+    }
+  ],
+  "liveNote": "Cluster used: ACK cn-hongkong, k8s v1.36.1-aliyun.1, rbgs already installed in rbg-system (2 replicas). 20-live-helm-install.sh is entirely dry-run and safe on shared clusters. 30-live-mixed-rbg.sh scales rbgs-controller-manager to 0 so it does not race the binary under test and RESTORES the original replica count in its EXIT trap; it creates and deletes only namespace pr414-verify. It runs with the ADMIN kubeconfig on purpose: F4 is about reconcile granularity, and admin creds remove the RBAC/403 confounder. It aborts loudly on TREE DIRTY, FIXTURE INVALID (the v1alpha2 workload-type annotation prefix is rbg.workloads.x-k8s.io/, not rolebasedgroup.workloads.x-k8s.io/) and CONTROLLER VOID (a legacy-free control RBG must get a RoleInstanceSet first, else silence proves nothing). LWS CRD is absent on this cluster, so the LWS arm of F3 is unit-only."
+}

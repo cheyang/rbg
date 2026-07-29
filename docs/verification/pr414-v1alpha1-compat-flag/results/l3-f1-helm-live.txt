@@ -1,0 +1,15 @@
+== cluster ==
+   server: v1.36.1-aliyun.1
+
+== helm install --dry-run=server (validates against the live API server) ==
+   REJECTED:
+     Error: INSTALLATION FAILED: unable to build kubernetes objects from release manifest: error validating "": error validating data: apiVersion not set
+
+== helm template | kubectl apply --dry-run=server (what the e2e job does) ==
+   REJECTED:
+     error: error validating "/root/pr414-verify/f1-clusterrole.yaml": error validating data: apiVersion not set; if you choose to ignore these errors, turn validation off with --validate=false
+
+== control: another template from the same chart/cluster must be accepted ==
+   control accepted -> the rejection above is specific to clusterrole.yaml
+
+RESULT: F1 REPRODUCED LIVE -- the chart this PR ships cannot be installed.

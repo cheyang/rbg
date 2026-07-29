@@ -1,0 +1,4 @@
+generated (config/rbac/role.yaml) triples : 209
+chart (compat enabled) triples            : 209
+
+RESULT: F2 not reproduced -- chart (compat enabled) == generated role.

@@ -1,0 +1,23 @@
+== helm v3.16.3+gcfd0749 ==
+== chart: /root/rbg/deploy/helm/rbgs ==
+
+[default              ] apiVersion-key=no  parsed=None|ClusterRole|rbgs-controller-role
+    GLUED INTO COMMENT -> 11:# the indirect workload RBAC permissions.apiVersion: rbac.authorization.k8s.io/v1
+    => INVALID: helm/kubectl will reject this with 'apiVersion not set'
+[compat-disabled      ] apiVersion-key=no  parsed=None|ClusterRole|rbgs-controller-role
+    GLUED INTO COMMENT -> 11:# the indirect workload RBAC permissions.apiVersion: rbac.authorization.k8s.io/v1
+    => INVALID: helm/kubectl will reject this with 'apiVersion not set'
+[compat-enabled       ] apiVersion-key=no  parsed=None|ClusterRole|rbgs-controller-role
+    GLUED INTO COMMENT -> 11:# the indirect workload RBAC permissions.apiVersion: rbac.authorization.k8s.io/v1
+    => INVALID: helm/kubectl will reject this with 'apiVersion not set'
+[empty-v1alpha1Compat ] apiVersion-key=no  parsed=None|ClusterRole|rbgs-controller-role
+    GLUED INTO COMMENT -> 11:# the indirect workload RBAC permissions.apiVersion: rbac.authorization.k8s.io/v1
+    => INVALID: helm/kubectl will reject this with 'apiVersion not set'
+[empty-features       ] apiVersion-key=no  parsed=None|ClusterRole|rbgs-controller-role
+    GLUED INTO COMMENT -> 11:# the indirect workload RBAC permissions.apiVersion: rbac.authorization.k8s.io/v1
+    => INVALID: helm/kubectl will reject this with 'apiVersion not set'
+
+RESULT: F1 REPRODUCED -- the rendered ClusterRole has no apiVersion.
+        Upstream CI hits this as: e2e-test / 'Deploy controller' ->
+        Error: unable to build kubernetes objects from release manifest:
+        error validating data: apiVersion not set
