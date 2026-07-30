@@ -74,24 +74,66 @@ fi
 echo "== G1 ok: tree clean, code under test = $(git rev-parse --short HEAD) =="
 
 # --- G2: no rival controller ------------------------------------------------
+# Round 2 note: the earlier version of this guard passed while a rival was in
+# fact still acting. It counted pods with `grep -c` on kubectl output and treated
+# ANY empty/failed result as "zero pods" -- so a transient kubectl error read as
+# success. It now (a) requires kubectl itself to succeed, and (b) reads the
+# deployment's own status rather than grepping pod names.
 echo "== quiescing the in-cluster controller (was ${ORIG_REPLICAS:-absent} replicas) =="
 kubectl -n "$CTRL_NS" scale deploy "$CTRL_DEPLOY" --replicas=0 >/dev/null 2>&1 || true
+SEL=$(kubectl -n "$CTRL_NS" get deploy "$CTRL_DEPLOY" \
+        -o jsonpath='{range .spec.selector.matchLabels}{@}{end}' 2>/dev/null)
+SELARG=$(kubectl -n "$CTRL_NS" get deploy "$CTRL_DEPLOY" -o json 2>/dev/null | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+print(','.join('%s=%s' % kv for kv in sorted(d['spec']['selector']['matchLabels'].items())))
+" 2>/dev/null)
+[ -n "$SELARG" ] || { echo "G2 SETUP FAILED: cannot read the deployment selector." >&2; exit 6; }
+echo "   selector: $SELARG"
+
 RIVAL=unknown
 for _ in $(seq 1 40); do
-  READY=$(kubectl -n "$CTRL_NS" get pods -l control-plane=controller-manager \
-            --field-selector=status.phase=Running --no-headers 2>/dev/null | wc -l)
-  ALL=$(kubectl -n "$CTRL_NS" get pods --no-headers 2>/dev/null \
-          | grep -c "$CTRL_DEPLOY" || true)
-  if [ "${ALL:-0}" -eq 0 ]; then RIVAL=none; break; fi
+  # kubectl MUST succeed; a failed call is not evidence of zero pods.
+  if ! PODS=$(kubectl -n "$CTRL_NS" get pods -l "$SELARG" \
+                -o jsonpath='{.items[*].metadata.name}' 2>/dev/null); then
+    sleep 3; continue
+  fi
+  STATUS=$(kubectl -n "$CTRL_NS" get deploy "$CTRL_DEPLOY" \
+             -o jsonpath='{.status.replicas}' 2>/dev/null)
+  if [ -z "${PODS// /}" ] && [ -z "${STATUS:-}" ]; then RIVAL=none; break; fi
   sleep 3
 done
 if [ "$RIVAL" != none ]; then
-  echo "G2 RIVAL RUNNING: $CTRL_DEPLOY still has pod(s) after ~120s. A controller with" >&2
-  echo "  compat=TRUE would do the reconciling and every observation below would be a lie." >&2
-  kubectl -n "$CTRL_NS" get pods 2>/dev/null | sed 's/^/    /' >&2
+  echo "G2 RIVAL RUNNING: $CTRL_DEPLOY still has pod(s)/replicas after ~120s. A controller" >&2
+  echo "  with compat=TRUE would do the reconciling and every observation below would be a lie." >&2
+  kubectl -n "$CTRL_NS" get pods -l "$SELARG" 2>/dev/null | sed 's/^/    /' >&2
   exit 6
 fi
-echo "== G2 ok: no in-cluster controller pods remain =="
+echo "== G2 ok: 0 pods for selector, .status.replicas empty =="
+
+# --- G2b: the informer poison must be absent BEFORE we start ------------------
+# N3: RoleInstanceSets written by the older in-cluster image store
+# spec.roleInstanceTemplate.restartPolicy as a bare string, which the PR-head Go
+# types cannot unmarshal -- the informer then never syncs and the run is void.
+# Informers LIST at resourceVersion=0 (watch cache), so check it the same way;
+# a plain `kubectl get` does a quorum read and can disagree.
+POISON=$(kubectl get --raw \
+  "/apis/workloads.x-k8s.io/v1alpha2/roleinstancesets?resourceVersion=0" 2>/dev/null | python3 -c "
+import json,sys
+bad=[]
+for i in json.load(sys.stdin).get('items',[]):
+    rp=((i.get('spec') or {}).get('roleInstanceTemplate') or {}).get('restartPolicy')
+    if rp is not None and not isinstance(rp, dict):
+        bad.append('%s/%s=%r' % (i['metadata']['namespace'], i['metadata']['name'], rp))
+print(' '.join(bad))
+" 2>/dev/null)
+if [ -n "${POISON// /}" ]; then
+  echo "G2b INFORMER POISON present -- these objects will stop our binary syncing (N3):" >&2
+  echo "   $POISON" >&2
+  echo "  Remove them (or use a cluster with no prior rbgs state) before running." >&2
+  exit 9
+fi
+echo "== G2b ok: no string-shaped restartPolicy objects to poison the informer =="
 
 echo "== reset namespace $NS =="
 kubectl delete ns "$NS" --ignore-not-found --wait=true >/dev/null 2>&1 || true
@@ -184,6 +226,31 @@ if [ "$RECONCILED" != yes ]; then
   exit 4
 fi
 echo "== G4 ok: our binary is reconciling (logged 'allmodern' + roleinstanceset exists) =="
+
+# --- G7: attribute the created object to the CODE UNDER TEST ------------------
+# G4 proves *something* of ours logged a reconcile; G7 proves the object in the
+# cluster was written by the code under review and not by a rival that slipped
+# past G2. Two independent signals:
+#   1. restartPolicy must be the STRUCT shape -- the old image writes a string.
+#   2. the field manager must not be the in-cluster controller's.
+SHAPE=$(kubectl -n "$NS" get roleinstanceset allmodern-worker -o json 2>/dev/null | python3 -c "
+import json,sys
+d=json.load(sys.stdin)
+rp=((d.get('spec') or {}).get('roleInstanceTemplate') or {}).get('restartPolicy')
+mgrs=sorted({f.get('manager','?') for f in (d.get('metadata',{}).get('managedFields') or [])})
+print('%s|%s|%s' % (type(rp).__name__, json.dumps(rp)[:60], ','.join(mgrs)))
+" 2>/dev/null)
+RP_TYPE=${SHAPE%%|*}
+RP_MGRS=${SHAPE##*|}
+echo "   restartPolicy type=$RP_TYPE  field managers=[$RP_MGRS]"
+if [ "$RP_TYPE" = "str" ]; then
+  echo "G7 WRONG WRITER: allmodern-worker has a STRING restartPolicy, which the code under" >&2
+  echo "  review never writes -- a rival controller created it, so every observation below" >&2
+  echo "  would be about the wrong binary. (This is exactly how the round-1/2 runs went void.)" >&2
+  cp "$RUNLOG" "$RESULTS/l3-f4-VOID-controller.log" 2>/dev/null || true
+  exit 10
+fi
+echo "== G7 ok: the object was written by the code under test (struct-shaped restartPolicy) =="
 
 sleep 45   # let the mixed RBG settle / prove nothing further happens
 

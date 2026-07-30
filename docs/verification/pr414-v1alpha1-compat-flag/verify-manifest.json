@@ -221,14 +221,17 @@
     },
     {
       "id": "N3",
-      "title": "NOTE (not a PR defect, worth its own look): the sandbox cluster stores roleInstanceTemplate.restartPolicy as a bare string, which current Go types cannot read",
+      "title": "NOTE (not a PR defect): the live F4 arm cannot be run on this cluster; root cause only partly established",
       "severity": "none",
       "polarity": "n/a",
       "layer": "n/a",
-      "status": "observation-environmental-unchanged",
-      "detail": "Existing RoleInstanceSet objects on the test cluster carry spec.roleInstanceTemplate.restartPolicy as the string 'None'. pkg/reconciler/roleinstanceset_reconciler.go writes it as a nested object (WithType(role.GetRestartPolicy())), and the roleinstancesets CRD has x-kubernetes-preserve-unknown-fields, so an older writer's shape survives untouched and then breaks the typed informer with 'cannot unmarshal string into Go struct field ... of type v1alpha2.RestartPolicyConfig'. RestartPolicyConfig is identical on upstream/main and this PR does not touch RoleInstanceSet types, so this is NOT a PR#414 finding and must not be raised as one. It may be a real upgrade-path gap on main (no schema to prune the old shape, no conversion) and is worth a separate issue.",
+      "status": "blocked-environmental-not-root-caused",
+      "detail": "Four attempts across two sessions, all correctly refusing to emit a result (guards G4/G7). The PR-head binary's RoleInstanceSet informer never syncs: 'failed to list *v1alpha2.RoleInstanceSet: json: cannot unmarshal string into Go struct field ...spec.roleInstanceTemplate.restartPolicy of type v1alpha2.RestartPolicyConfig'. Established facts: (a) the roleinstancesets CRD carries x-kubernetes-preserve-unknown-fields and defines NO schema for restartPolicy, so any shape sent is stored verbatim; (b) string-shaped objects DO appear transiently in the test namespace during a run and are removed by teardown; (c) RestartPolicyConfig is identical on upstream/main and this PR does not touch RoleInstanceSet types, so this is NOT a PR#414 property; (d) informers LIST at resourceVersion=0 (watch cache), which is why a plain `kubectl get` can show an empty collection while the informer sees items.",
       "blocked": "This is what voided the live arm of F4; see that finding's liveNote.",
-      "round2": "Still voids the live F4 arm on 0151936a (30-live-mixed-rbg.sh exit 4, guard G4)."
+      "round2": "Still voids the live F4 arm on 0151936a (30-live-mixed-rbg.sh exit 4, guard G4).",
+      "whatIsNotEstablished": "WHO writes the string-shaped objects. The round-3 attempt ran with the rival deployment verifiably at 0 pods and empty .status.replicas (G2), with the collection verifiably free of string-shaped objects beforehand (G2b), and only one rbgs controller exists cluster-wide (image v0.8.0-cea2a47) -- yet the poison still appeared. The earlier hypothesis 'the older in-cluster image wrote them' is consistent with rounds 1-2 but does NOT explain round 3. Do not repeat that explanation as settled; it is not.",
+      "harnessDefectFound": "Round 3 did find a real defect in the guard itself: G2 grepped for label control-plane=controller-manager, but the deployment's actual selector is control-plane=rbgs-controller, so its ready-pod count was always 0 regardless of reality -- which is why G2 passed in rounds 1-2 while a rival was in fact acting. G2 now reads the selector from the deployment and requires kubectl itself to succeed. G2b (pre-flight poison check) and G7 (attribute the created object to the code under test via restartPolicy shape + managedFields) were added.",
+      "decision": "The live arm is retired for this environment. F4 rests on the unit layer, which asserts the mechanism directly (stop=true + err=nil + the LegacyWorkloadsDisabled condition on the whole group). Anyone wanting the live proof should use a cluster with no prior rbgs state; the guards will then either produce a real result or refuse again."
     },
     {
       "id": "N2",

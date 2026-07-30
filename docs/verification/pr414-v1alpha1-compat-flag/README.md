@@ -87,7 +87,7 @@ Round-2 column: what the same test says on `0151936a`.
 | D1 | Helm nil-deref / RBAC drop when upgrading with an older `values.yaml` (raised by Copilot) | none | — | script | **DISPROVED** — 5 shapes render byte-identically | still disproved — **and acting on it caused F1** |
 | N1 | no CI gate renders the chart, so F1 could only surface in the 30-minute e2e job | note | — | — | observation | still open; `05-chart-render-all.sh` is a liftable gate |
 | N2 | `e2e-test-manifest` failure is a pre-existing restart-policy flake | none | — | — | fails at `restart_policy_stability.go:515` | still failing, **different spec** in the same family (`:355`), 70/106 specs ran |
-| N3 | sandbox cluster stores `roleInstanceTemplate.restartPolicy` as a bare string, unreadable by current Go types | none | — | — | environmental — **not PR #414** | unchanged — still voids the live F4 arm (`exit 4`) |
+| N3 | live F4 arm unrunnable here: informer dies on a string-shaped `restartPolicy` | none | — | — | environmental — **not PR #414** | **retired** after a 4th attempt; writer still unidentified, and a real G2 defect found (wrong label) |
 
 ## F11 — the `warmup.go` change does not belong in this PR
 
@@ -228,21 +228,35 @@ G4 CONTROLLER VOID: our binary never logged a reconcile of the legacy-free
        string into Go struct field ...restartPolicy of type RestartPolicyConfig"
 ```
 
-Root cause is **environmental, not a property of this PR** (see `N3`): the
-in-cluster `rbgs` image predates this branch and writes
-`spec.roleInstanceTemplate.restartPolicy` as a bare string; the
-`roleinstancesets` CRD carries `x-kubernetes-preserve-unknown-fields`, so that
-shape is stored verbatim; and the PR-head Go types — `RestartPolicyConfig`, a
-struct, **identical on `upstream/main` and untouched by this PR** — cannot
-unmarshal it. A plain `kubectl get` showed an empty collection while the informer
-saw three items, because informers do their initial LIST at
-`resourceVersion=0` (watch cache) rather than a quorum read.
+**Retired after four attempts (rounds 1–3).** What is established: the
+`roleinstancesets` CRD carries `x-kubernetes-preserve-unknown-fields` and defines
+**no schema at all** for `restartPolicy`, so any shape sent is stored verbatim;
+string-shaped objects *do* appear transiently in the test namespace during a run;
+`RestartPolicyConfig` is identical on `upstream/main` and this PR does not touch
+`RoleInstanceSet` types, so this is **not a property of PR #414**; and a plain
+`kubectl get` can show an empty collection while the informer sees items, because
+informers LIST at `resourceVersion=0` (watch cache), not a quorum read.
 
-Scaling the in-cluster Deployment to 0 (**G2**) turned out to be insufficient to
-isolate two controller versions on one cluster. F4 therefore rests on the unit
-layer, which asserts the mechanism directly. A future round that wants the live
-arm should use a cluster with no prior `rbgs` state, or add a `G7` attributing
-created objects via `metadata.managedFields[].manager`.
+**What is _not_ established: who writes them.** Round 3 ran with the rival
+deployment verifiably at 0 pods and empty `.status.replicas`, with the collection
+verifiably clean beforehand, and only one rbgs controller exists cluster-wide
+(`v0.8.0-cea2a47`) — and the poison still appeared. The tidy explanation from
+rounds 1–2 ("the older in-cluster image wrote them") fits those rounds but **does
+not explain round 3**. It is recorded as unresolved rather than restated as
+settled.
+
+Round 3 did, however, find a real defect in the guard itself: **G2 grepped for
+label `control-plane=controller-manager`, while the deployment's actual selector
+is `control-plane=rbgs-controller`** — so its ready-pod count was always 0
+regardless of reality. That is precisely why G2 passed in rounds 1–2 while a
+rival was in fact acting. G2 now reads the selector from the deployment and
+requires `kubectl` itself to succeed; **G2b** pre-flight-checks for the poison;
+**G7** attributes the created object to the code under test via its
+`restartPolicy` shape and `managedFields`.
+
+F4 rests on the unit layer, which asserts the mechanism directly. Anyone wanting
+the live proof should use a cluster with no prior `rbgs` state; the guards will
+then either produce a real result or refuse again.
 
 The six guards, each added for a specific way a run lied:
 
@@ -251,9 +265,11 @@ The six guards, each added for a specific way a run lied:
 | G1 `TREE DIRTY` | the binary would not be the code under review |
 | G2 `RIVAL RUNNING` | in-cluster controller pods remain (a compat=**true** rival) |
 | G3 `FIXTURE INVALID` | the workload-type annotation did not persist |
+| G2b `INFORMER POISON` | a string-shaped `restartPolicy` object exists that would stop our binary syncing |
 | G4 `CONTROLLER VOID` | **our own process log** does not show it reconciling the control RBG |
 | G5 `DIED EARLY` | the binary exited before observations were read |
 | G6 `CACHE BROKEN` | any `Failed to watch` — absence then proves nothing |
+| G7 `WRONG WRITER` | the created object was not written by the code under test (string-shaped `restartPolicy`, or a foreign field manager) |
 
 G4 is the important one: the earlier version accepted an *API object* as proof of
 liveness, which anything in the cluster could have created.
