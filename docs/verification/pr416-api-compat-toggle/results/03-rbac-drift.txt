@@ -1,0 +1,12 @@
+=== F5: chart ClusterRole (compat enabled) vs generated config/rbac/role.yaml ===
+
+--- the removed sync step ---
+  was: 63:	cp config/rbac/role.yaml deploy/helm/rbgs/templates/rbac/clusterrole.yaml
+  now: 65:	@echo "      If RBAC rules changed, manually sync them to deploy/helm/rbgs/templates/rbac/clusterrole.yaml"
+
+generated triples: 209
+chart triples:     209
+
+RESULT: no drift at this head (209 == 209).
+        The maintainability risk stands (no CI gate now that make manifests
+        no longer syncs), but it is a NOTE, not a defect at this commit.

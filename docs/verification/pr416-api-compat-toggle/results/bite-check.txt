@@ -1,0 +1,24 @@
+=== BITE CHECK F1: flip the values.yaml default to the documented 'false' ===
+before:     enabled: true
+perl: warning: Setting locale failed.
+perl: warning: Please check that your locale settings:
+	LANGUAGE = (unset),
+	LC_ALL = (unset),
+	LC_CTYPE = "UTF-8",
+	LANG = "en_US.UTF-8"
+    are supported and installed on your system.
+perl: warning: Falling back to a fallback locale ("en_US.UTF-8").
+after:      enabled: false
+  (edit applied)
+  -> 01-helm-default-rbac.sh now PASSES. The test bites: it was red purely because of
+     the default value, and the documented default makes it green.
+
+=== BITE CHECK F3: gate NewWorkloadReconciler so legacy types are refused ===
+  (edit applied: Deployment case now returns an error)
+  -> the Deployment subtest reports F3 FIXED. The test bites: it observes the gate.
+
+RESULT: harness bites for F1 and F3 -- both flip when the proposed fix is applied.
+
+--- reverting all production edits ---
+production diff (must be empty, harness files excluded):
+  (clean)

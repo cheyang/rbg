@@ -1,0 +1,36 @@
+=== F1: does a DEFAULT chart render omit v1alpha1 legacy RBAC? ===
+chart: deploy/helm/rbgs
+WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: /root/.kube/config
+WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: /root/.kube/config
+helm:  v3.16.3+gcfd0749
+
+--- values.yaml declared default ---
+compatibility:
+  v1alpha1:
+    enabled: true
+
+
+--- chart README documented default ---
+27:| `compatibility.v1alpha1.enabled` | Enable v1alpha1 API compatibility (Deployment/StatefulSet/LeaderWorkerSet workload types). When false, RBAC for these resources is removed, the validating webhook rejects them, and the controller stops watching them. | `false` |
+29:By default (`compatibility.v1alpha1.enabled=false`), the chart ships in restricted mode for security. Set `compatibility.v1alpha1.enabled=true` to preserve full v1alpha1 API compatibility if you have existing v1alpha1 RoleBasedGroup resources that use Deployment, StatefulSet, or LeaderWorkerSet workload types.
+
+--- legacy resources present in the DEFAULT-rendered ClusterRole ---
+  deployments
+  deployments/finalizers
+  deployments/status
+  leaderworkersets
+  leaderworkersets/status
+  statefulsets
+  statefulsets/finalizers
+  statefulsets/status
+
+--- CONTROL: same render with compatibility.v1alpha1.enabled=false ---
+  legacy resource lines when explicitly disabled: 0
+  -> the conditional works; whatever we see above is purely the DEFAULT's doing.
+
+--- controller args in the DEFAULT render ---
+            - --scheduler-name=scheduler-plugins
+
+RESULT: F1 REPRODUCED -- the default render STILL GRANTS v1alpha1 legacy RBAC.
+        Documented default is 'false' (restricted); values.yaml ships 'true'.
+        The PR's stated purpose (remove excessive RBAC before release) is unmet by default.

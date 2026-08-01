@@ -1,0 +1,20 @@
+=== F6b: outcome of each realistic 'compatibility' value shape ===
+
+values shape                                   | renders?       | legacy RBAC granted?
+-----------------------------------------------+----------------+---------------------
+(nothing specified -- chart default)           | ok             | YES (8 rules)
+compatibility.v1alpha1.enabled: true           | ok             | YES (8 rules)
+compatibility.v1alpha1.enabled: false          | ok             | no  <-- stripped
+compatibility: (key present, no children)      | FAIL           | n/a (install blocked)
+compatibility.v1alpha1: (no children)          | FAIL           | n/a (install blocked)
+compatibility.v1alpha1.enabled: (no value)     | ok             | no  <-- stripped
+
+Reading of the table:
+  * The chart default GRANTS legacy RBAC, although the README and the PR description both
+    state the default is `false` / restricted (finding F1).
+  * A `compatibility:` block that is present but incomplete does NOT fall back to the chart
+    default: it either hard-fails the render with an opaque Go template nil-pointer error
+    (finding F6), or -- when only `enabled:` is left blank -- silently evaluates falsy and
+    STRIPS the controller's RBAC without the operator ever asking for it.
+  * Every pre-existing block in this chart avoids all three outcomes by using
+    `| default dict` (see 02-render-all-shapes.sh controls). The new block does not.

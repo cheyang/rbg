@@ -1,0 +1,48 @@
+=== F4: upgrade guard vs. the repo's own documented commands ===
+
+--- the guard ---
+{{- if .Release.IsUpgrade }}
+{{- fail "Upgrade is not supported for this chart version. Please uninstall and reinstall. See chart README for details." }}
+{{- end }}
+
+--- install render (.Release.IsUpgrade=false) ---
+  install render: OK
+--- upgrade render (.Release.IsUpgrade=true) ---
+  upgrade render: HARD FAIL, as the guard intends:
+Error: execution error at (rbgs/templates/upgrade-guard.yaml:2:4): Upgrade is not supported for this chart version. Please uninstall and reinstall. See chart README for details.
+
+--- documented/automated call sites that the guard breaks on re-run ---
+  ./Makefile:253:	$(HELM) upgrade --install rbgs deploy/helm/rbgs \
+  ./deploy/helm/rbgs/README.md:40:helm upgrade --install rbgs deploy/helm/rbgs \
+  ./test/stress/scripts/deploy-controller.sh:52:helm upgrade --install "${RELEASE_NAME}" "${PROJECT_ROOT}/deploy/helm/rbgs" \
+  ./README-zh_CN.md:77:helm upgrade --install rbgs https://github.com/sgl-project/rbg/releases/download/v$VERSION/rbgs-$VERSION.tgz \
+  ./README.md:77:helm upgrade --install rbgs https://github.com/sgl-project/rbg/releases/download/v$VERSION/rbgs-$VERSION.tgz \
+  ./.github/workflows/e2e-test.yml:158:          helm upgrade --install rbgs deploy/helm/rbgs \
+  ./.github/workflows/release-test.yml:117:          helm upgrade --install rbgs deploy/helm/rbgs \
+  ./doc/install.md:30:helm upgrade --install rbgs deploy/helm/rbgs \
+  ./doc/install.md:66:helm upgrade --install rbgs deploy/helm/rbgs \
+  ./doc/dev/how_to_develop.md:294:helm upgrade --install rbgs deploy/helm/rbgs \
+
+  -> 10 call site(s) invoke 'helm upgrade'.
+
+--- self-contradiction inside deploy/helm/rbgs/README.md ---
+  forbids upgrade at:
+    33:**This chart version only supports fresh installation (`helm install`).**
+123:> **Warning**: This chart version does **not** support `helm upgrade`.
+  yet documents it as the install command at:
+    40:helm upgrade --install rbgs deploy/helm/rbgs \
+  -> same README both forbids 'helm upgrade' and prescribes 'helm upgrade --install'.
+
+--- why CI stays green ---
+  kind cluster creations per workflow (fresh cluster => IsUpgrade always false):
+    .github/workflows/e2e-test.yml:112:          kind create cluster --name rbgs-e2e --image kindest/node:${{ env.KUBERNETES_VERSION }} --wait 5m
+    .github/workflows/e2e-test.yml:297:          kind create cluster --name rbgs-manifest-e2e --image kindest/node:${{ env.KUBERNETES_VERSION }} --wait 5m
+    .github/workflows/release-test.yml:84:          kind create cluster --name rbgs-e2e --image kindest/node:${{ env.KUBERNETES_VERSION }} --wait 5m
+    .github/workflows/release-test.yml:215:          kind create cluster --name rbgs-manifest-e2e --image kindest/node:${{ env.KUBERNETES_VERSION }} --wait 5m
+  chart installs per workflow:
+    .github/workflows/e2e-test.yml:158:          helm upgrade --install rbgs deploy/helm/rbgs \
+    .github/workflows/release-test.yml:117:          helm upgrade --install rbgs deploy/helm/rbgs \
+
+RESULT: F4 REPRODUCED -- the guard hard-fails 'helm upgrade --install', which is the
+        command the repo documents in its READMEs, doc/install.md, Makefile, the
+        stress-test script and two CI workflows. Each works once per cluster.

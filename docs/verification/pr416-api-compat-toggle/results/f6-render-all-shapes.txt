@@ -1,0 +1,48 @@
+=== render every chart document under 8 value shapes (helm v3.16.3+gcfd0749) ===
+
+--- shape: default  (no overrides) ---
+    12 document(s), 0 bad
+
+--- shape: compat-enabled  (--set compatibility.v1alpha1.enabled=true) ---
+    12 document(s), 0 bad
+
+--- shape: compat-disabled  (--set compatibility.v1alpha1.enabled=false) ---
+    12 document(s), 0 bad
+
+--- shape: null-compat  (--set compatibility=null) ---
+  RENDER FAILED:
+    Error: template: rbgs/templates/rbac/clusterrole.yaml:76:14: executing "rbgs/templates/rbac/clusterrole.yaml" at <.Values.compatibility.v1alpha1.enabled>: nil pointer evaluating interface {}.v1alpha1
+    
+    Use --debug flag to render out invalid YAML
+
+--- shape: empty-compat-map  (--set compatibility={}) ---
+  RENDER FAILED:
+    Error: template: rbgs/templates/rbac/clusterrole.yaml:76:14: executing "rbgs/templates/rbac/clusterrole.yaml" at <.Values.compatibility.v1alpha1.enabled>: can't evaluate field v1alpha1 in type interface {}
+    
+    Use --debug flag to render out invalid YAML
+
+--- shape: null-v1alpha1  (--set compatibility.v1alpha1=null) ---
+  RENDER FAILED:
+    Error: template: rbgs/templates/rbac/clusterrole.yaml:76:14: executing "rbgs/templates/rbac/clusterrole.yaml" at <.Values.compatibility.v1alpha1.enabled>: nil pointer evaluating interface {}.enabled
+    
+    Use --debug flag to render out invalid YAML
+
+--- shape: empty-features(CONTROL)  (--set controller.features=null) ---
+    12 document(s), 0 bad
+
+--- shape: empty-global(CONTROL)  (--set global=null) ---
+    12 document(s), 0 bad
+
+--- how the pre-existing blocks guard themselves, vs the new one ---
+  defensive '| default dict' uses in the chart:
+    deploy/helm/rbgs/templates/manager/manager.yaml:31:          {{- $pprof := .Values.controller.pprof | default dict }}
+    deploy/helm/rbgs/templates/manager/manager.yaml:41:            {{- $features := .Values.controller.features | default dict }}
+    deploy/helm/rbgs/templates/manager/manager.yaml:42:            {{- $portAllocator := $features.portAllocator | default dict }}
+    deploy/helm/rbgs/templates/manager/manager.yaml:49:            {{- $gangScheduling := $features.gangScheduling | default dict }}
+  direct .Values.compatibility dereferences (no guard):
+    deploy/helm/rbgs/templates/NOTES.txt:19:{{- if not .Values.compatibility.v1alpha1.enabled }}
+    deploy/helm/rbgs/templates/rbac/clusterrole.yaml:76:{{- if .Values.compatibility.v1alpha1.enabled }}
+    deploy/helm/rbgs/templates/rbac/clusterrole.yaml:119:{{- if .Values.compatibility.v1alpha1.enabled }}
+    deploy/helm/rbgs/templates/manager/manager.yaml:51:            {{- if not .Values.compatibility.v1alpha1.enabled }}
+
+RESULT: RENDER REGRESSION -- at least one shape produced an invalid/unparseable document.

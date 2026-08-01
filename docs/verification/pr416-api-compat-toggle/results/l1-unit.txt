@@ -1,0 +1,51 @@
+=== RUN   TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG
+=== RUN   TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG/apps/v1/Deployment
+    pr416_compat_verify_test.go:171: patch attempts=1 requeue=true err=rolebasedgroups.workloads.x-k8s.io "preexisting-legacy" is forbidden: spec.roles[0] (role "worker"): workload type "apps/v1/Deployment" is not supported when v1alpha1 compatibility is disabled
+    pr416_compat_verify_test.go:199: F2a REPRODUCED (apps/v1/Deployment): the controller's own annotation patch is denied by this PR's webhook (spec.roles[0] (role "worker"): workload type "apps/v1/Deployment" is not supported when v1alpha1 compatibility is disabled); ensureDiscoveryConfigMode returns requeue=true err=rolebasedgroups.workloads.x-k8s.io "preexisting-legacy" is forbidden: spec.roles[0] (role "worker"): workload type "apps/v1/Deployment" is not supported when v1alpha1 compatibility is disabled, so Reconcile returns an error and retries forever. No terminal/explanatory condition was set on the RBG (conditions=0).
+=== RUN   TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG/apps/v1/StatefulSet
+    pr416_compat_verify_test.go:171: patch attempts=1 requeue=true err=rolebasedgroups.workloads.x-k8s.io "preexisting-legacy" is forbidden: spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is not supported when v1alpha1 compatibility is disabled
+    pr416_compat_verify_test.go:199: F2a REPRODUCED (apps/v1/StatefulSet): the controller's own annotation patch is denied by this PR's webhook (spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is not supported when v1alpha1 compatibility is disabled); ensureDiscoveryConfigMode returns requeue=true err=rolebasedgroups.workloads.x-k8s.io "preexisting-legacy" is forbidden: spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is not supported when v1alpha1 compatibility is disabled, so Reconcile returns an error and retries forever. No terminal/explanatory condition was set on the RBG (conditions=0).
+=== RUN   TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet
+    pr416_compat_verify_test.go:171: patch attempts=1 requeue=true err=rolebasedgroups.workloads.x-k8s.io "preexisting-legacy" is forbidden: spec.roles[0] (role "worker"): workload type "leaderworkerset.x-k8s.io/v1/LeaderWorkerSet" is not supported when v1alpha1 compatibility is disabled
+    pr416_compat_verify_test.go:199: F2a REPRODUCED (leaderworkerset.x-k8s.io/v1/LeaderWorkerSet): the controller's own annotation patch is denied by this PR's webhook (spec.roles[0] (role "worker"): workload type "leaderworkerset.x-k8s.io/v1/LeaderWorkerSet" is not supported when v1alpha1 compatibility is disabled); ensureDiscoveryConfigMode returns requeue=true err=rolebasedgroups.workloads.x-k8s.io "preexisting-legacy" is forbidden: spec.roles[0] (role "worker"): workload type "leaderworkerset.x-k8s.io/v1/LeaderWorkerSet" is not supported when v1alpha1 compatibility is disabled, so Reconcile returns an error and retries forever. No terminal/explanatory condition was set on the RBG (conditions=0).
+--- FAIL: TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG (0.10s)
+    --- FAIL: TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG/apps/v1/Deployment (0.09s)
+    --- FAIL: TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG/apps/v1/StatefulSet (0.00s)
+    --- FAIL: TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet (0.00s)
+=== RUN   TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator
+=== RUN   TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator/apps/v1/Deployment
+    pr416_compat_verify_test.go:239: real validator denial: spec.roles[0] (role "worker"): workload type "apps/v1/Deployment" is not supported when v1alpha1 compatibility is disabled
+=== RUN   TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator/apps/v1/StatefulSet
+    pr416_compat_verify_test.go:239: real validator denial: spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is not supported when v1alpha1 compatibility is disabled
+=== RUN   TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet
+    pr416_compat_verify_test.go:239: real validator denial: spec.roles[0] (role "worker"): workload type "leaderworkerset.x-k8s.io/v1/LeaderWorkerSet" is not supported when v1alpha1 compatibility is disabled
+--- PASS: TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator (0.01s)
+    --- PASS: TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator/apps/v1/Deployment (0.00s)
+    --- PASS: TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator/apps/v1/StatefulSet (0.00s)
+    --- PASS: TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet (0.01s)
+=== RUN   TestVerifyPR416_F2c_NoGrandfatheringForExistingLegacyRBG
+=== RUN   TestVerifyPR416_F2c_NoGrandfatheringForExistingLegacyRBG/scale_an_existing_legacy_rbg
+    pr416_compat_verify_test.go:279: F2c REPRODUCED: an already-existing legacy RBG cannot even be scaled while compatibility is disabled; there is no grandfathering (PR #414 had it): spec.roles[0] (role "worker"): workload type "apps/v1/Deployment" is not supported when v1alpha1 compatibility is disabled
+=== RUN   TestVerifyPR416_F2c_NoGrandfatheringForExistingLegacyRBG/control_migration_to_roleinstanceset_allowed
+--- FAIL: TestVerifyPR416_F2c_NoGrandfatheringForExistingLegacyRBG (0.00s)
+    --- FAIL: TestVerifyPR416_F2c_NoGrandfatheringForExistingLegacyRBG/scale_an_existing_legacy_rbg (0.00s)
+    --- PASS: TestVerifyPR416_F2c_NoGrandfatheringForExistingLegacyRBG/control_migration_to_roleinstanceset_allowed (0.00s)
+=== RUN   TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled
+=== RUN   TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/apps/v1/Deployment
+    pr416_compat_verify_test.go:361: F3 REPRODUCED: with --disable-v1alpha1-compatibility=true the controller still built a *reconciler.DeploymentReconciler for workload type apps/v1/Deployment. Nothing stops Reconcile from reading/writing that type, whose RBAC this PR removes and whose cache selector it drops.
+=== RUN   TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/apps/v1/StatefulSet
+    pr416_compat_verify_test.go:361: F3 REPRODUCED: with --disable-v1alpha1-compatibility=true the controller still built a *reconciler.StatefulSetReconciler for workload type apps/v1/StatefulSet. Nothing stops Reconcile from reading/writing that type, whose RBAC this PR removes and whose cache selector it drops.
+=== RUN   TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet
+    pr416_compat_verify_test.go:361: F3 REPRODUCED: with --disable-v1alpha1-compatibility=true the controller still built a *reconciler.LeaderWorkerSetReconciler for workload type leaderworkerset.x-k8s.io/v1/LeaderWorkerSet. Nothing stops Reconcile from reading/writing that type, whose RBAC this PR removes and whose cache selector it drops.
+=== RUN   TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/control_roleinstanceset_still_built
+--- FAIL: TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled (0.01s)
+    --- FAIL: TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/apps/v1/Deployment (0.00s)
+    --- FAIL: TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/apps/v1/StatefulSet (0.00s)
+    --- FAIL: TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet (0.00s)
+    --- PASS: TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/control_roleinstanceset_still_built (0.00s)
+=== RUN   TestVerifyPR416_F3b_CacheDropsSelectorInsteadOfKeepingIt
+    pr416_compat_verify_test.go:404: see docs/verification/pr416-api-compat-toggle/scripts/06-cache-selector.sh for the source-level assertion; the behavioural consequence is covered by F3
+--- PASS: TestVerifyPR416_F3b_CacheDropsSelectorInsteadOfKeepingIt (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.360s
+FAIL
