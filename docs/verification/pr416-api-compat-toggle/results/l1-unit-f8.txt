@@ -1,0 +1,14 @@
+=== RUN   TestVerifyPR416_F8_DisablingCompatKillsTheWholeV1alpha1API
+    pr416_v1alpha1_chain_test.go:79: conversion produced rbg.workloads.x-k8s.io/role-workload-type="apps/v1/StatefulSet"
+    pr416_v1alpha1_chain_test.go:99: F8 REPRODUCED: a v1alpha1 RoleBasedGroup whose author never chose a workload type is rejected when compatibility is disabled. The CRD default injected StatefulSet, conversion stamped it as rbg.workloads.x-k8s.io/role-workload-type="apps/v1/StatefulSet", and the validator refused it: spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is not supported when v1alpha1 compatibility is disabled. So compatibility.v1alpha1.enabled=false does not 'restrict v1alpha1-era workload types' -- it disables the v1alpha1 API wholesale, which the PR description does not say and which pre-empts the migration path that description defers to a follow-up PR.
+--- FAIL: TestVerifyPR416_F8_DisablingCompatKillsTheWholeV1alpha1API (0.27s)
+=== RUN   TestVerifyPR416_F8b_ControlsForF8
+=== RUN   TestVerifyPR416_F8b_ControlsForF8/control_same_object_accepted_when_compat_enabled
+=== RUN   TestVerifyPR416_F8b_ControlsForF8/control_v1alpha1_survives_only_by_naming_a_v1alpha2_type
+    pr416_v1alpha1_chain_test.go:162: bounded: a v1alpha1 role survives only if the user explicitly writes the v1alpha2 RoleInstanceSet type into the v1alpha1 workload field
+--- PASS: TestVerifyPR416_F8b_ControlsForF8 (0.01s)
+    --- PASS: TestVerifyPR416_F8b_ControlsForF8/control_same_object_accepted_when_compat_enabled (0.00s)
+    --- PASS: TestVerifyPR416_F8b_ControlsForF8/control_v1alpha1_survives_only_by_naming_a_v1alpha2_type (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.716s
+FAIL

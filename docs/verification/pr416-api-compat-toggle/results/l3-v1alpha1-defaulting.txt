@@ -1,0 +1,8 @@
+=== LIVE PROOF (read-only): v1alpha1 CRD defaulting on k8s v1.36.1-aliyun.1 ===
+A v1alpha1 RoleBasedGroup submitted with NO spec.roles[].workload field:
+
+{"apiVersion":"apps/v1","kind":"StatefulSet"}
+
+The API server injects StatefulSet. convertRoleV1alpha1ToV2 (conversion.go:142-148) then
+stamps it into rbg.workloads.x-k8s.io/role-workload-type, which validateNoLegacyWorkloads
+rejects. Chain closed deterministically by TestVerifyPR416_F8.
