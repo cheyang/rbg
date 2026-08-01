@@ -1,0 +1,7 @@
+=== RUN   TestVerifyPR416_P1_MigrationDropsTheLWSEnvContract
+    pr416_lws_parity_test.go:108: env injected on the RoleInstanceSet+LeaderWorkerPattern path: [RBG_COMPONENT_NAME RBG_GROUP_NAME RBG_LWP_LEADER_ADDRESS RBG_COMPONENT_INDEX RBG_ROLE_INDEX RBG_ROLE_INSTANCE_NAME RBG_ROLE_NAME RBG_LWP_WORKER_INDEX RBG_LWP_GROUP_SIZE]
+    pr416_lws_parity_test.go:129: P1 REPRODUCED: the RoleInstanceSet+LeaderWorkerPattern path injects the replacements (RBG_LWP_LEADER_ADDRESS, RBG_LWP_GROUP_SIZE, RBG_LWP_WORKER_INDEX) but NOT the names LWS used to provide ([LWS_LEADER_ADDRESS LWS_GROUP_SIZE LWS_WORKER_INDEX]). A container that reads the old names keeps starting and fails at runtime: no admission error, no reconcile error, nothing on the RBG status. RBG declares DeprecatedEnvLws* constants for exactly this but references them nowhere, so no alias shim exists.
+--- FAIL: TestVerifyPR416_P1_MigrationDropsTheLWSEnvContract (0.29s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/discovery	0.904s
+FAIL
