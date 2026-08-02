@@ -210,22 +210,33 @@
       "observed": "12/12 documents valid on each of the three valid value shapes, and a live k8s v1.36.1 API server accepts all 12 under both the default and compat-disabled shapes. The apiVersion-less control object is correctly rejected by the same command, so the check is not vacuously green."
     },
     {
-      "id": "N1",
-      "severity": "non-blocking",
-      "status": "open",
-      "polarity": "n/a",
-      "layer": "n/a",
-      "title": "NOTE (process, not a PR defect): no CI job renders the chart or installs it twice, so F1, F4 and F6 are all invisible to CI",
-      "detail": "All 10 checks pass on a69ceada. F1 (wrong default) would be caught by asserting the rendered default RBAC; F6 (unguarded dereference) by rendering a few partial value shapes; F4 (upgrade guard) only by installing the chart twice in one job, which no workflow does. scripts/02-render-all-shapes.sh and scripts/03-rbac-drift.sh are written to be lifted into the lint job verbatim and run in seconds. Carried over from PR#414's N1, still unaddressed."
+      "id": "F8",
+      "severity": "blocking",
+      "status": "reproduced",
+      "polarity": "contract",
+      "layer": "unit+live",
+      "match": [
+        "TestVerifyPR416_F8_DisablingCompatKillsTheWholeV1alpha1API",
+        "TestVerifyPR416_F8b_ControlsForF8"
+      ],
+      "evidence": "results/l1-unit-f8.txt, results/l3-v1alpha1-defaulting.txt",
+      "title": "Disabling compatibility does not restrict v1alpha1-era workload types -- it makes the ENTIRE v1alpha1 API unusable, including for users who never chose a workload type",
+      "detail": "Three links compose: (1) v1alpha1 RoleSpec.Workload has a CRD default of {apps/v1, StatefulSet} (rolebasedgroup_types.go:341) applied by the API SERVER, so the field is never empty -- proven read-only against live k8s v1.36.1; (2) convertRoleV1alpha1ToV2 unconditionally copies it into the role-workload-type annotation (conversion.go:142-148), behind a guard that the default renders permanently true; (3) validateNoLegacyWorkloads rejects exactly that value. The PR bills itself as an interim RBAC reduction whose migration path is deferred to a follow-up, but as written it removes the API that follow-up is meant to migrate.",
+      "controls": "Same converted object accepted with compat enabled; a v1alpha1 role survives only if the user explicitly writes the v1alpha2 RoleInstanceSet type into the v1alpha1 workload field -- which bounds the finding while showing that path is unusable as a migration story.",
+      "seeAlso": "F8b extends this to RoleBasedGroupSet, so a fix confined to the RBG validator is insufficient."
     },
     {
-      "id": "N2",
-      "severity": "non-blocking",
-      "status": "carried-unchanged",
-      "polarity": "n/a",
-      "layer": "n/a",
-      "title": "NOTE: deleteOrphanRoles still skips legacy cleanup when compatibility is disabled (PR#414's F6, unchanged)",
-      "detail": "rolebasedgroup_controller.go:679-694 wraps the Deployment/StatefulSet/LWS CleanupOrphanedWorkloads calls in `if !r.disableV1alpha1Compatibility`. Cleaning up already-created legacy workloads is a different concern from managing new ones; if the skip stays, the delete RBAC must be retained or cleanup will 403 when compatibility is re-enabled. Carried from PR#413/#414. NOT re-tested live: on a real cluster an owner-referenced orphan disappears within ~10s in BOTH modes and also with no controller running at all, because Kubernetes GC is the actor, so a live test cannot discriminate. Do NOT claim 'leaks indefinitely' -- only the code-level skip is established."
+      "id": "F8b",
+      "severity": "blocking",
+      "status": "reproduced",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR416_F8b_V1alpha1RBGSetIsAlsoRejectedWholesale"
+      ],
+      "evidence": "results/sweep-unit.txt, SWEEP.md",
+      "title": "The F8 defaulting chain also reaches RoleBasedGroupSet, so every v1alpha1 RBGSet is rejected wholesale too",
+      "detail": "The v1alpha1 rolebasedgroupsets schema carries the same StatefulSet default on spec.template.roles[].workload (config/crd/bases/...rolebasedgroupsets.yaml:16672-16681) and rolebasedgroupset_conversion.go:37 routes through the same convertRoleV1alpha1ToV2. A fix confined to the RBG validator would leave RBGSet broken."
     },
     {
       "id": "F9",
@@ -254,17 +265,37 @@
       "detail": "rolebasedgroupscalingadapter_controller.go:511 (updateRoleReplicas) sets role.Replicas and calls client.Update on the RBG. This is the scale-subresource/HPA path (ScaleTargetRef, pkg/scale). retry.RetryOnConflict only retries Conflict, so an admission Forbidden propagates straight out. This reframes F2c: the real consequence is not that users cannot scale, but that HPA cannot."
     },
     {
-      "id": "F8b",
-      "severity": "blocking",
+      "id": "P1",
+      "severity": "major",
       "status": "reproduced",
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerifyPR416_F8b_V1alpha1RBGSetIsAlsoRejectedWholesale"
+        "TestVerifyPR416_P1_MigrationDropsTheLWSEnvContract"
       ],
-      "evidence": "results/sweep-unit.txt, SWEEP.md",
-      "title": "The F8 defaulting chain also reaches RoleBasedGroupSet, so every v1alpha1 RBGSet is rejected wholesale too",
-      "detail": "The v1alpha1 rolebasedgroupsets schema carries the same StatefulSet default on spec.template.roles[].workload (config/crd/bases/...rolebasedgroupsets.yaml:16672-16681) and rolebasedgroupset_conversion.go:37 routes through the same convertRoleV1alpha1ToV2. A fix confined to the RBG validator would leave RBGSet broken."
+      "evidence": "results/p1-lws-env-parity.txt, LWS-PARITY.md",
+      "title": "Migrating an LWS-backed role to RoleInstanceSet silently renames the pod env contract, breaking user containers at runtime",
+      "detail": "LWS injected LWS_LEADER_ADDRESS / LWS_GROUP_SIZE / LWS_WORKER_INDEX; the RoleInstanceSet path injects RBG_LWP_LEADER_ADDRESS / RBG_LWP_GROUP_SIZE / RBG_LWP_WORKER_INDEX. Same semantics, different names, no aliases. The RBG is admitted, the pods run, and the failure happens inside the user process -- no admission error, no reconcile error, nothing on the RBG status. RBG already declares DeprecatedEnvLws* constants for a shim but references them nowhere. Secondary: LwsWorkerIndexLabelKey is also a dead constant, so the leaderworkerset.sigs.k8s.io/worker-index label disappears too.",
+      "harnessBites": "The test fails outright if the replacement RBG_LWP_* variables are absent, so it cannot pass or fail vacuously.",
+      "note": "This is NOT a defect of PR#416 itself -- it is a consequence of the planned LWS removal that PR#416 is the first step toward. Raise it against the removal timeline, not this PR."
+    },
+    {
+      "id": "N1",
+      "severity": "non-blocking",
+      "status": "open",
+      "polarity": "n/a",
+      "layer": "n/a",
+      "title": "NOTE (process, not a PR defect): no CI job renders the chart or installs it twice, so F1, F4 and F6 are all invisible to CI",
+      "detail": "All 10 checks pass on a69ceada. F1 (wrong default) would be caught by asserting the rendered default RBAC; F6 (unguarded dereference) by rendering a few partial value shapes; F4 (upgrade guard) only by installing the chart twice in one job, which no workflow does. scripts/02-render-all-shapes.sh and scripts/03-rbac-drift.sh are written to be lifted into the lint job verbatim and run in seconds. Carried over from PR#414's N1, still unaddressed."
+    },
+    {
+      "id": "N2",
+      "severity": "non-blocking",
+      "status": "carried-unchanged",
+      "polarity": "n/a",
+      "layer": "n/a",
+      "title": "NOTE: deleteOrphanRoles still skips legacy cleanup when compatibility is disabled (PR#414's F6, unchanged)",
+      "detail": "rolebasedgroup_controller.go:679-694 wraps the Deployment/StatefulSet/LWS CleanupOrphanedWorkloads calls in `if !r.disableV1alpha1Compatibility`. Cleaning up already-created legacy workloads is a different concern from managing new ones; if the skip stays, the delete RBAC must be retained or cleanup will 403 when compatibility is re-enabled. Carried from PR#413/#414. NOT re-tested live: on a real cluster an owner-referenced orphan disappears within ~10s in BOTH modes and also with no controller running at all, because Kubernetes GC is the actor, so a live test cannot discriminate. Do NOT claim 'leaks indefinitely' -- only the code-level skip is established."
     }
   ],
   "liveNote": "L3 is READ-ONLY on the shared ACK cluster: 20-live-dryrun.sh renames every object with a pr416dry- prefix, retargets namespaced objects to `default` (the chart's rbgs-system namespace does not exist there, and creating it would be a needless mutation of shared infra), and uses only --dry-run=server. The mutating arms were deliberately not run because this chart's cluster-scoped object names are fixed and would overwrite the unrelated rbgs controller live in rbg-system. To run them, use a throwaway cluster: (1) helm install, then helm upgrade --install again, and expect the second to fail at upgrade-guard.yaml (F4); (2) install with compatibility disabled, create a legacy RBG while it is enabled, flip the flag, and watch the controller error-loop with no condition on the object (F2a/F3).",
