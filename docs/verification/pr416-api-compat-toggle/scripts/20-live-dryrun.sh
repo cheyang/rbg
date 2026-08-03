@@ -36,7 +36,7 @@ $KUBECTL get clusterrole rbgs-controller-role -o jsonpath='{.metadata.name}{"\n"
   | sed 's/^/  existing ClusterRole: /' || echo "  (none)"
 echo
 
-for shape in "default:" "compat-disabled:--set compatibility.v1alpha1.enabled=false"; do
+for shape in "default:" "deprecated-disabled:--set controller.deprecatedWorkloadTypes.enabled=false"; do
   name=${shape%%:*}; args=${shape#*:}
   echo "--- shape: $name ---"
 

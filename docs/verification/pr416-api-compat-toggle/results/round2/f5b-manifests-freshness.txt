@@ -1,0 +1,31 @@
+# 05-manifests-freshness.sh
+# head: dcc7104aef6f6e8c16cf4342bb25baf9426c68ab (PR sgl-project/rbg#416, round 2)
+# base: 8a54787d  prev head: a69ceada
+# run:  2026-08-03T10:34:42Z  helm v3.16.3+gcfd0749
+
+=== F5b: are the generated artefacts committed and up to date? ===
+  NOTE: tree already dirty before generating (harness files); only tracked
+        generated paths are judged below.
+
+--- (1) is the committed chart ClusterRole what hack/gen-helm-rbac emits? ---
+  Makefile wiring:
+    65:	go run ./hack/gen-helm-rbac
+  FRESH: byte-for-byte identical to the committed file.
+
+--- (2) is hack/gen-helm-rbac idempotent? ---
+  IDEMPOTENT: run 1 output == run 2 output.
+  CONTROL: perturb the file, re-run the generator, expect it to be restored
+    control OK: generator overwrote the perturbation and restored the committed bytes.
+
+--- (3) running: make manifests generate ---
+  NOTE: config/rbac/role.yaml has been regenerated.
+  go run ./hack/gen-helm-rbac
+  gen-helm-rbac: wrote deploy/helm/rbgs/templates/rbac/clusterrole.yaml from config/rbac/role.yaml
+
+--- git status / diff --stat over generated paths ---
+  (none) -- generated artefacts are in sync
+
+RESULT: F5b clean. The committed chart ClusterRole is fresh, hack/gen-helm-rbac is
+        idempotent, and 'make manifests generate' matches the committed files.
+
+EXIT=0

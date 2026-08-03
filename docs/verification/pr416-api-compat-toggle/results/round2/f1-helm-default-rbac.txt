@@ -1,0 +1,45 @@
+# 01-helm-default-rbac.sh
+# head: dcc7104aef6f6e8c16cf4342bb25baf9426c68ab (PR sgl-project/rbg#416, round 2)
+# base: 8a54787d  prev head: a69ceada
+# run:  2026-08-03T10:34:37Z  helm v3.16.3+gcfd0749
+
+=== F1: does the DEFAULT chart render match the README's documented default? ===
+chart: deploy/helm/rbgs
+helm:  v3.16.3+gcfd0749
+
+--- values.yaml declared default ---
+  76:  deprecatedWorkloadTypes:
+  77-    enabled: true
+  78-
+
+--- chart README documented default ---
+  33:| `controller.deprecatedWorkloadTypes.enabled` | Enable the deprecated workload types (Deployment/StatefulSet/LeaderWorkerSet). When false, RBAC for these resources is removed, the validating webho
+  35:With `controller.deprecatedWorkloadTypes.enabled=false`, a role is only accepted if its workload
+  121:| `controller.deprecatedWorkloadTypes.enabled` | Enable the deprecated workload types — see [Deprecated workload types](#deprecated-workload-types) | `true` |
+
+  README says default = true
+  values.yaml ships    = true
+
+--- deprecated resources present in the DEFAULT-rendered ClusterRole ---
+  deployments
+  deployments/finalizers
+  deployments/status
+  leaderworkersets
+  leaderworkersets/status
+  statefulsets
+  statefulsets/finalizers
+  statefulsets/status
+  count: 8 (expected 8 when enabled, 0 when disabled)
+
+--- controller flag in the DEFAULT render ---
+  --enable-deprecated-workload-types=true
+
+--- CONTROL: same render with controller.deprecatedWorkloadTypes.enabled=false ---
+  deprecated resource lines when explicitly disabled: 0 (expect 0)
+  flag when explicitly disabled: --enable-deprecated-workload-types=false (expect =false)
+  -> the toggle works; whatever the default render shows is purely the DEFAULT's doing.
+
+RESULT: F1 FIXED -- README, values.yaml, the rendered RBAC (8/8 entries) and the
+        rendered flag (--enable-deprecated-workload-types=true) all agree on default = true.
+
+EXIT=0

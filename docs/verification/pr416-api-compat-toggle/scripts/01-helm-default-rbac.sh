@@ -1,90 +1,79 @@
 #!/usr/bin/env bash
-# F1 (CONTRACT test) -- the documented default must ship WITHOUT v1alpha1 legacy RBAC.
+# F1 (round 2) -- is the SHIPPED chart default the same as the DOCUMENTED default,
+# and does the toggle actually remove the deprecated-workload RBAC when set to false?
 #
-# The chart README table says `compatibility.v1alpha1.enabled` default = `false`, the README
-# prose says "By default (compatibility.v1alpha1.enabled=false), the chart ships in restricted
-# mode for security", and the PR description says "(default: `false`)" / "When disabled
-# (default): ClusterRole omits RBAC for deployments/statefulsets/leaderworkersets".
+# Round 1 found the two disagreed: values.yaml shipped `compatibility.v1alpha1.enabled: true`
+# while the README table, the README prose and the PR description all said `false`.
+# Round 2 renamed the value to `controller.deprecatedWorkloadTypes.enabled` and settled on
+# `true` everywhere, so this script is now a CONTRACT test: it must exit 0.
 #
-# This test asserts that documented intent. On the PR head it is expected to FAIL,
-# because values.yaml actually sets `enabled: true`.
-#
-# Exit 0 = documented behaviour holds (finding fixed). Exit 1 = finding reproduced.
+# Parse only stdout -- helm writes kubeconfig permission warnings to stderr, and feeding
+# those into the YAML/grep pipeline produced a wrong answer in an earlier round.
 set -uo pipefail
-cd "$(dirname "$0")/../../../.." || exit 2
+cd "$(git rev-parse --show-toplevel)"
 CHART=deploy/helm/rbgs
-HELM=${HELM:-helm}
+VALUE=controller.deprecatedWorkloadTypes.enabled
+rc=0
 
-echo "=== F1: does a DEFAULT chart render omit v1alpha1 legacy RBAC? ==="
+echo "=== F1: shipped default vs documented default, and does false actually strip RBAC? ==="
 echo "chart: $CHART"
-echo "helm:  $($HELM version --short)"
+helm version --short 2>/dev/null
+
+# --- what values.yaml actually ships -------------------------------------------------
+shipped="$(helm template rbgs "$CHART" --show-only templates/manager/manager.yaml 2>/dev/null \
+          | grep -oE -- "--enable-deprecated-workload-types=[a-z]+" | head -1 | cut -d= -f2)"
 echo
+echo "--- shipped default (flag as rendered with no overrides) ---"
+echo "  --enable-deprecated-workload-types=${shipped:-<absent>}"
 
-echo "--- values.yaml declared default ---"
-grep -A 3 '^compatibility:' "$CHART/values.yaml"
+# --- what the docs claim -------------------------------------------------------------
 echo
-echo "--- chart README documented default ---"
-grep -n 'compatibility.v1alpha1.enabled' "$CHART/README.md" | head -5
+echo "--- documented default (chart README value table) ---"
+documented="$(grep -F "\`$VALUE\`" "$CHART/README.md" \
+             | grep -oE '\| `(true|false)` \|' | grep -oE 'true|false' | sort -u | tr '\n' ' ')"
+grep -nF "\`$VALUE\`" "$CHART/README.md" | sed 's/^/  /' | cut -c1-140
+echo "  -> documented default(s): ${documented:-<none found>}"
+
+# --- consistency ---------------------------------------------------------------------
 echo
-
-# Render the ClusterRole with *no* overrides at all -- exactly `helm install rbgs <chart>`.
-render=$($HELM template rbgs "$CHART" --namespace rbgs-system 2>&1)
-rc=$?
-if [ $rc -ne 0 ]; then
-  echo "HARNESS PROBLEM: default render failed, cannot evaluate F1"
-  echo "$render" | head -20
-  exit 2
-fi
-
-clusterrole=$(printf '%s\n' "$render" | awk '
-  /^# Source: /   { insrc = ($3 ~ /rbac\/clusterrole\.yaml$/) }
-  insrc           { print }
-')
-
-if [ -z "$clusterrole" ]; then
-  echo "HARNESS PROBLEM: no clusterrole.yaml document found in the default render"
-  exit 2
-fi
-
-echo "--- legacy resources present in the DEFAULT-rendered ClusterRole ---"
-legacy=$(printf '%s\n' "$clusterrole" \
-  | grep -E '^[[:space:]]*- (deployments|statefulsets|leaderworkersets)(/[a-z]+)?[[:space:]]*$' \
-  | sed 's/^[[:space:]]*- //' | sort -u)
-
-if [ -n "$legacy" ]; then
-  printf '  %s\n' $legacy
+if [ -z "$shipped" ]; then
+  echo "  FAIL: the flag is not rendered at all in the default manifest."; rc=1
+elif [ -z "$documented" ]; then
+  echo "  FAIL: no default documented for $VALUE in the chart README table."; rc=1
+elif ! printf '%s' "$documented" | grep -qw "$shipped"; then
+  echo "  F1 REPRODUCED: shipped default ($shipped) != documented default ($documented)."; rc=1
 else
-  echo "  (none)"
-fi
-echo
-
-# Control: prove the gate *can* bite, so a "no legacy RBAC" result would be meaningful
-# and this test is not simply blind to the resources it greps for.
-echo "--- CONTROL: same render with compatibility.v1alpha1.enabled=false ---"
-ctl=$($HELM template rbgs "$CHART" --namespace rbgs-system \
-        --set compatibility.v1alpha1.enabled=false 2>&1 \
-      | awk '/^# Source: /{insrc=($3 ~ /rbac\/clusterrole\.yaml$/)} insrc{print}' \
-      | grep -cE '^[[:space:]]*- (deployments|statefulsets|leaderworkersets)(/[a-z]+)?[[:space:]]*$')
-echo "  legacy resource lines when explicitly disabled: $ctl"
-if [ "$ctl" -ne 0 ]; then
-  echo "  HARNESS PROBLEM: the gate does not remove legacy RBAC even when explicitly false;"
-  echo "  F1 cannot be attributed to the default value alone."
-  exit 2
-fi
-echo "  -> the conditional works; whatever we see above is purely the DEFAULT's doing."
-echo
-
-# Also record what the controller is actually told to do by default.
-echo "--- controller args in the DEFAULT render ---"
-printf '%s\n' "$render" | grep -E '^\s+- --(disable-v1alpha1-compatibility|scheduler-name)' || true
-echo
-
-if [ -n "$legacy" ]; then
-  echo "RESULT: F1 REPRODUCED -- the default render STILL GRANTS v1alpha1 legacy RBAC."
-  echo "        Documented default is 'false' (restricted); values.yaml ships 'true'."
-  echo "        The PR's stated purpose (remove excessive RBAC before release) is unmet by default."
-  exit 1
+  echo "  OK: shipped default ($shipped) matches the documented default ($documented)."
 fi
 
-echo "RESULT: F1 FIXED -- default render omits legacy RBAC as documented."
-exit 0
+# --- does the toggle do anything? ----------------------------------------------------
+# Count the deprecated-workload resources granted in the rendered ClusterRole.
+legacy_count() { # $@ = extra helm args
+  helm template rbgs "$CHART" "$@" --show-only templates/rbac/clusterrole.yaml 2>/dev/null \
+    | grep -cE '^[[:space:]]+- (deployments|statefulsets|leaderworkersets)(/(status|finalizers))?$'
+}
+on="$(legacy_count --set "$VALUE=true")"
+off="$(legacy_count --set "$VALUE=false")"
+def="$(legacy_count)"
+echo
+echo "--- deprecated-workload RBAC lines in the rendered ClusterRole ---"
+echo "  default         : $def"
+echo "  =true  (control): $on"
+echo "  =false (subject): $off"
+if [ "$off" -ne 0 ]; then
+  echo "  FAIL: setting $VALUE=false left $off deprecated-workload RBAC line(s) in place;"
+  echo "        the toggle does not remove the permissions it claims to remove."; rc=1
+elif [ "$on" -eq 0 ]; then
+  echo "  HARNESS PROBLEM: the =true control also yielded 0 lines, so the =false result"
+  echo "        proves nothing (the grep may no longer match the rendered shape)."; rc=1
+else
+  echo "  OK: =false removes all $on line(s); the =true control keeps them (toggle works)."
+fi
+
+echo
+if [ "$rc" -eq 0 ]; then
+  echo "RESULT: F1 FIXED -- default is consistent and the toggle is effective."
+else
+  echo "RESULT: F1 still failing (see above)."
+fi
+exit "$rc"

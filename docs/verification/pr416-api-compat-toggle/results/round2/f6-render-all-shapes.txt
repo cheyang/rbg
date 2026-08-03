@@ -1,0 +1,86 @@
+# 02-render-all-shapes.sh
+# head: dcc7104aef6f6e8c16cf4342bb25baf9426c68ab (PR sgl-project/rbg#416, round 2)
+# base: 8a54787d  prev head: a69ceada
+# run:  2026-08-03T10:34:37Z  helm v3.16.3+gcfd0749
+
+=== render every chart document under 13 value shapes (helm v3.16.3+gcfd0749) ===
+
+--- shape: default  (no overrides) ---
+    12 document(s), 0 bad
+    flag: --enable-deprecated-workload-types=true
+
+--- shape: deprecated-enabled  (--set controller.deprecatedWorkloadTypes.enabled=true) ---
+    12 document(s), 0 bad
+    flag: --enable-deprecated-workload-types=true
+
+--- shape: deprecated-disabled  (--set controller.deprecatedWorkloadTypes.enabled=false) ---
+    12 document(s), 0 bad
+    flag: --enable-deprecated-workload-types=false
+
+--- shape: null-subblock  (--set controller.deprecatedWorkloadTypes=null) ---
+    12 document(s), 0 bad
+    flag: --enable-deprecated-workload-types=true
+
+--- shape: empty-subblock(file)  (-f /tmp/tmp.fGNAKr7sFt/empty-sub.yaml) ---
+    12 document(s), 0 bad
+    flag: --enable-deprecated-workload-types=true
+
+--- shape: partial-controller(file)  (-f /tmp/tmp.fGNAKr7sFt/partial-controller.yaml) ---
+    12 document(s), 0 bad
+    flag: --enable-deprecated-workload-types=true
+
+--- shape: empty-controller(file)  (-f /tmp/tmp.fGNAKr7sFt/empty-controller.yaml) ---
+    12 document(s), 0 bad
+    flag: --enable-deprecated-workload-types=true
+
+--- shape: null-controller(file)  (-f /tmp/tmp.fGNAKr7sFt/null-controller.yaml) ---
+  RENDER FAILED:
+    Error: template: rbgs/templates/rbac/clusterrole.yaml:11:39: executing "rbgs/templates/rbac/clusterrole.yaml" at <.Values.controller.deprecatedWorkloadTypes>: nil pointer evaluating interface {}.deprecatedWorkloadTypes
+    
+    Use --debug flag to render out invalid YAML
+    (whole-controller shape -- attribution decided by script 07 vs base commit)
+
+--- shape: empty-features-null(CONTROL)  (--set controller.features=null) ---
+    12 document(s), 0 bad
+    flag: --enable-deprecated-workload-types=true
+
+--- shape: empty-features-file(CONTROL)  (-f /tmp/tmp.fGNAKr7sFt/empty-features.yaml) ---
+    12 document(s), 0 bad
+    flag: --enable-deprecated-workload-types=true
+
+--- shape: empty-global(CONTROL)  (--set global=null) ---
+    12 document(s), 0 bad
+    flag: --enable-deprecated-workload-types=true
+
+--- shape: set-brace-deprecated(CONTROL)  (--set controller.deprecatedWorkloadTypes={}) ---
+  RENDER FAILED:
+    coalesce.go:286: warning: cannot overwrite table with non table for rbgs.controller.deprecatedWorkloadTypes (map[enabled:true])
+    Error: template: rbgs/templates/rbac/clusterrole.yaml:12:42: executing "rbgs/templates/rbac/clusterrole.yaml" at <$deprecatedWorkloadTypes>: wrong type for value; expected map[string]interface {}; got []interface {}
+    
+    Use --debug flag to render out invalid YAML
+    (CONTROL shape -- failure here means the behaviour is not PR-specific)
+
+--- shape: set-brace-features(CONTROL)  (--set controller.features={}) ---
+  RENDER FAILED:
+    coalesce.go:286: warning: cannot overwrite table with non table for rbgs.controller.features (map[gangScheduling:map[schedulerName:scheduler-plugins] portAllocator:map[enabled:false portRange:5000 startPort:30000 strategy:random]])
+    Error: template: rbgs/templates/manager/manager.yaml:42:43: executing "rbgs/templates/manager/manager.yaml" at <$features.portAllocator>: can't evaluate field portAllocator in type []interface {}
+    
+    Use --debug flag to render out invalid YAML
+    (CONTROL shape -- failure here means the behaviour is not PR-specific)
+
+--- how the pre-existing blocks guard themselves, vs the new one ---
+  defensive '| default dict' uses in the chart:
+    deploy/helm/rbgs/templates/NOTES.txt:19:{{- $deprecatedWorkloadTypes := .Values.controller.deprecatedWorkloadTypes | default dict }}
+    deploy/helm/rbgs/templates/rbac/clusterrole.yaml:11:{{- $deprecatedWorkloadTypes := .Values.controller.deprecatedWorkloadTypes | default dict }}
+    deploy/helm/rbgs/templates/manager/manager.yaml:31:          {{- $pprof := .Values.controller.pprof | default dict }}
+    deploy/helm/rbgs/templates/manager/manager.yaml:41:            {{- $features := .Values.controller.features | default dict }}
+    deploy/helm/rbgs/templates/manager/manager.yaml:42:            {{- $portAllocator := $features.portAllocator | default dict }}
+    deploy/helm/rbgs/templates/manager/manager.yaml:49:            {{- $gangScheduling := $features.gangScheduling | default dict }}
+    deploy/helm/rbgs/templates/manager/manager.yaml:56:            {{- $deprecatedWorkloadTypes := .Values.controller.deprecatedWorkloadTypes | default dict }}
+  .Values.controller dereferences in the RBAC template (NEW in this PR -- clusterrole.yaml
+  did not reference .Values.controller at all before):
+    deploy/helm/rbgs/templates/rbac/clusterrole.yaml:11:{{- $deprecatedWorkloadTypes := .Values.controller.deprecatedWorkloadTypes | default dict }}
+
+RESULT: all non-control shapes render valid documents. No PR#414-class render regression.
+
+EXIT=0

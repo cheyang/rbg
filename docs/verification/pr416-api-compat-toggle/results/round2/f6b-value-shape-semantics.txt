@@ -1,0 +1,74 @@
+# 07-value-shape-semantics.sh
+# head: dcc7104aef6f6e8c16cf4342bb25baf9426c68ab (PR sgl-project/rbg#416, round 2)
+# base: 8a54787d  prev head: a69ceada
+# run:  2026-08-03T10:36:50Z  helm v3.16.3+gcfd0749
+
+=== F6b: outcome of each realistic value shape (head dcc7104a) ===
+
+values shape                                         | renders? | deprecated | rendered flag
+-----------------------------------------------------+----------+------------+--------------------------------------
+1. defaults (no overrides)                           | ok       | 8/8        | --enable-deprecated-workload-types=true
+2. --set ...enabled=false                            | ok       | 0/8        | --enable-deprecated-workload-types=false
+3. --set ...enabled=true                             | ok       | 8/8        | --enable-deprecated-workload-types=true
+4. file: controller.deprecatedWorkloadTypes:{}       | ok       | 8/8        | --enable-deprecated-workload-types=true
+5. file: controller: {}                              | ok       | 8/8        | --enable-deprecated-workload-types=true
+6. file: controller: null                            | FAIL     | n/a        | n/a (install blocked)
+      Error: template: rbgs/templates/rbac/clusterrole.yaml:11:39: executing "rbgs/templates/rbac/clusterrole.yaml" at <.Values.controller.deprecatedWorkloadTypes>: n
+7. file: controller.image.repository only            | ok       | 8/8        | --enable-deprecated-workload-types=true
+8a. --set ...enabled=0  (coercion)                   | ok       | 0/8        | --enable-deprecated-workload-types=0
+8b. --set ...enabled=""  (coercion)                  | ok       | 0/8        | --enable-deprecated-workload-types=
+8c. file: enabled: (blank / null)                    | ok       | 8/8        | --enable-deprecated-workload-types=true
+8d. file: enabled: "false" (string)                  | ok       | 8/8        | --enable-deprecated-workload-types=false
+
+=== attribution for the whole-controller shapes (5/6/7) ===
+clusterrole.yaml did NOT reference .Values.controller before this PR; manager.yaml
+always did. Re-run the same shapes against the base commit and the previous head.
+
+--- BASE 8a54787d (/root/pr416-base/deploy/helm/rbgs) ---
+shape                                                | renders? | deprecated | rendered flag
+5. controller: {}                                    | ok       | 8/8        | <NOT RENDERED>
+6. controller: null                                  | FAIL     | n/a        | n/a (install blocked)
+      Error: template: rbgs/templates/manager/manager.yaml:9:22: executing "rbgs/templates/manager/manager.yaml" at <.Values.controller.replicaCount>: nil pointer eva
+7. controller.image.repository only                  | ok       | 8/8        | <NOT RENDERED>
+
+--- PREVHEAD a69ceada (/root/pr416-prevhead/deploy/helm/rbgs) ---
+shape                                                | renders? | deprecated | rendered flag
+5. controller: {}                                    | ok       | 8/8        | <NOT RENDERED>
+6. controller: null                                  | FAIL     | n/a        | n/a (install blocked)
+      Error: template: rbgs/templates/manager/manager.yaml:9:22: executing "rbgs/templates/manager/manager.yaml" at <.Values.controller.replicaCount>: nil pointer eva
+7. controller.image.repository only                  | ok       | 8/8        | <NOT RENDERED>
+
+--- HEAD dcc7104a (deploy/helm/rbgs) ---
+shape                                                | renders? | deprecated | rendered flag
+5. controller: {}                                    | ok       | 8/8        | --enable-deprecated-workload-types=true
+6. controller: null                                  | FAIL     | n/a        | n/a (install blocked)
+      Error: template: rbgs/templates/rbac/clusterrole.yaml:11:39: executing "rbgs/templates/rbac/clusterrole.yaml" at <.Values.controller.deprecatedWorkloadTypes>: n
+7. controller.image.repository only                  | ok       | 8/8        | --enable-deprecated-workload-types=true
+
+=== flag-validity check: is each rendered flag value a legal Go bool literal? ===
+Go's flag package accepts 1 0 t f T F true false TRUE FALSE True False and rejects
+everything else, including the empty string. The chart now ALWAYS renders the flag, so
+an unparseable value crashloops the manager instead of being silently ignored.
+  --set controller.deprecatedWorkloadTypes.enabled=false     -> --enable-deprecated-workload-types=false       legal
+  --set controller.deprecatedWorkloadTypes.enabled=true      -> --enable-deprecated-workload-types=true        legal
+  --set controller.deprecatedWorkloadTypes.enabled=0         -> --enable-deprecated-workload-types=0           legal
+  --set controller.deprecatedWorkloadTypes.enabled=          -> --enable-deprecated-workload-types=            ILLEGAL -> flag.Parse error -> manager CrashLoopBackOff
+
+Reading of the table:
+  * Shapes 1-5 and 7: the new block is guarded (`| default dict` + `hasKey`) and the parent
+    `controller:` block coalesces with the chart defaults, so a missing, empty or partially
+    written block falls back to the chart default (enabled, 8/8 RBAC entries, flag=true).
+    The round-1 F6 behaviour -- a partial block silently stripping RBAC -- is FIXED.
+  * Shape 8c (`enabled:` left blank in a values file) was the round-1 silent-strip case. Helm
+    treats an explicit null in a user values file as "delete this key", so it coalesces back
+    to the chart default: 8/8 and flag=true. Also fixed.
+  * Shape 6 (`controller: null`) still hard-fails -- but it hard-fails on the BASE commit too,
+    at manager.yaml:9 `.Values.controller.replicaCount`. This PR only changes which template
+    reports the nil pointer first. PRE-EXISTING, not a finding against this PR.
+  * Shape 8b (`--set ...enabled=""`) renders `--enable-deprecated-workload-types=` with an
+    empty value. RBAC is stripped consistently, but the flag string itself is rejected by Go's
+    flag parser, so the manager would CrashLoopBackOff rather than start restricted. Other
+    flags in this chart pipe through `| default`, so they degrade instead. Minor: it requires
+    the operator to assign an empty string to a boolean.
+
+EXIT=0
