@@ -25,12 +25,12 @@ limitations under the License.
 // separate controllers do, and every one of them is denied for a legacy-typed RBG once
 // compatibility is disabled:
 //
-//	1. internal/controller/workloads/rolebasedgroup_controller.go:362
-//	     ensureDiscoveryConfigMode -> client.Patch(rbg)          [filed as F2a]
-//	2. internal/controller/workloads/rolebasedgroupset_controller.go:465
-//	     RBGSet syncing groupTemplate onto a child -> client.Update(latestRBG)   [F9]
-//	3. internal/controller/workloads/rolebasedgroupscalingadapter_controller.go:511
-//	     updateRoleReplicas -> client.Update(rbg)  -- the HPA / scale path       [F10]
+//  1. internal/controller/workloads/rolebasedgroup_controller.go:362
+//     ensureDiscoveryConfigMode -> client.Patch(rbg)          [filed as F2a]
+//  2. internal/controller/workloads/rolebasedgroupset_controller.go:465
+//     RBGSet syncing groupTemplate onto a child -> client.Update(latestRBG)   [F9]
+//  3. internal/controller/workloads/rolebasedgroupscalingadapter_controller.go:511
+//     updateRoleReplicas -> client.Update(rbg)  -- the HPA / scale path       [F10]
 //
 // None of the three sets a condition, and all three retry forever.
 package v1alpha2
@@ -59,8 +59,8 @@ func pr416SweepLegacyRole(name string) RoleSpec {
 
 func pr416SweepValidator(disabled bool) *RoleBasedGroupValidator {
 	return &RoleBasedGroupValidator{
-		Client:                       fake.NewClientBuilder().Build(),
-		DisableV1alpha1Compatibility: disabled,
+		Client:                        fake.NewClientBuilder().Build(),
+		EnableDeprecatedWorkloadTypes: !disabled,
 	}
 }
 
@@ -171,11 +171,11 @@ func TestVerifyPR416_F8b_V1alpha1RBGSetIsAlsoRejectedWholesale(t *testing.T) {
 		},
 	}
 
-	disabled := &RoleBasedGroupSetValidator{DisableV1alpha1Compatibility: true}
+	disabled := &RoleBasedGroupSetValidator{EnableDeprecatedWorkloadTypes: false}
 	_, err := disabled.ValidateCreate(ctx, rbgset)
 
 	// Control: accepted with compatibility enabled.
-	enabled := &RoleBasedGroupSetValidator{DisableV1alpha1Compatibility: false}
+	enabled := &RoleBasedGroupSetValidator{EnableDeprecatedWorkloadTypes: true}
 	if _, ctlErr := enabled.ValidateCreate(ctx, rbgset.DeepCopy()); ctlErr != nil {
 		t.Fatalf("CONTROL FAILED: compat-enabled RBGSet validator rejected the object (%v);"+
 			" nothing can be attributed to the flag", ctlErr)

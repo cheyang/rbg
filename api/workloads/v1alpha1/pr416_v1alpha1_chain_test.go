@@ -18,16 +18,16 @@ limitations under the License.
 //
 // F8 is the design-level consequence of three independently innocuous links:
 //
-//	1. v1alpha1 RoleSpec.Workload carries a CRD-level default of
-//	   {apiVersion: apps/v1, kind: StatefulSet}
-//	   (api/workloads/v1alpha1/rolebasedgroup_types.go:341). The API SERVER applies it, so
-//	   `src.Workload` is never empty for any object that was actually submitted. Proven
-//	   against a live k8s v1.36.1 API server -- see
-//	   docs/verification/pr416-api-compat-toggle/results/l3-v1alpha1-defaulting.txt
-//	2. convertRoleV1alpha1ToV2 unconditionally copies that into the
-//	   RoleWorkloadTypeAnnotationKey annotation
-//	   (api/workloads/v1alpha1/rolebasedgroup_conversion.go:142-148).
-//	3. validateNoLegacyWorkloads rejects exactly that annotation value.
+//  1. v1alpha1 RoleSpec.Workload carries a CRD-level default of
+//     {apiVersion: apps/v1, kind: StatefulSet}
+//     (api/workloads/v1alpha1/rolebasedgroup_types.go:341). The API SERVER applies it, so
+//     `src.Workload` is never empty for any object that was actually submitted. Proven
+//     against a live k8s v1.36.1 API server -- see
+//     docs/verification/pr416-api-compat-toggle/results/l3-v1alpha1-defaulting.txt
+//  2. convertRoleV1alpha1ToV2 unconditionally copies that into the
+//     RoleWorkloadTypeAnnotationKey annotation
+//     (api/workloads/v1alpha1/rolebasedgroup_conversion.go:142-148).
+//  3. validateNoLegacyWorkloads rejects exactly that annotation value.
 //
 // Therefore `compatibility.v1alpha1.enabled=false` does not merely "restrict v1alpha1-era
 // workload types" as the PR describes -- it makes the ENTIRE v1alpha1 API unusable, including
@@ -90,8 +90,8 @@ func TestVerifyPR416_F8_DisablingCompatKillsTheWholeV1alpha1API(t *testing.T) {
 		Spec:       v2.RoleBasedGroupSpec{Roles: []v2.RoleSpec{*dst}},
 	}
 	v := &v2.RoleBasedGroupValidator{
-		Client:                       fake.NewClientBuilder().Build(),
-		DisableV1alpha1Compatibility: true,
+		Client:                        fake.NewClientBuilder().Build(),
+		EnableDeprecatedWorkloadTypes: false,
 	}
 	_, err := v.ValidateCreate(context.Background(), rbg)
 
@@ -114,8 +114,8 @@ func TestVerifyPR416_F8_DisablingCompatKillsTheWholeV1alpha1API(t *testing.T) {
 func TestVerifyPR416_F8b_ControlsForF8(t *testing.T) {
 	newV := func(disabled bool) *v2.RoleBasedGroupValidator {
 		return &v2.RoleBasedGroupValidator{
-			Client:                       fake.NewClientBuilder().Build(),
-			DisableV1alpha1Compatibility: disabled,
+			Client:                        fake.NewClientBuilder().Build(),
+			EnableDeprecatedWorkloadTypes: !disabled,
 		}
 	}
 	wrap := func(r *v2.RoleSpec) *v2.RoleBasedGroup {
