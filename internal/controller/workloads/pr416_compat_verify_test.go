@@ -122,7 +122,7 @@ func TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG(t *test
 			// guard, which would make the injected error an artefact of the harness.
 			v := &workloadsv1alpha2.RoleBasedGroupValidator{
 				Client:                       fake.NewClientBuilder().WithScheme(s).Build(),
-				DisableV1alpha1Compatibility: true,
+				EnableDeprecatedWorkloadTypes: false,
 			}
 			_, valErr := v.ValidateUpdate(context.Background(), rbg.DeepCopy(), rbg.DeepCopy())
 			if valErr == nil {
@@ -158,7 +158,7 @@ func TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG(t *test
 				client:                       c,
 				scheme:                       s,
 				workloadReconciler:           map[string]reconciler.WorkloadReconciler{},
-				disableV1alpha1Compatibility: true,
+				enableDeprecatedWorkloadTypes: false,
 			}
 
 			cur := &workloadsv1alpha2.RoleBasedGroup{}
@@ -227,7 +227,7 @@ func TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator(t *testing.T) {
 
 			disabled := &workloadsv1alpha2.RoleBasedGroupValidator{
 				Client:                       newClient(),
-				DisableV1alpha1Compatibility: true,
+				EnableDeprecatedWorkloadTypes: false,
 			}
 			_, err := disabled.ValidateUpdate(context.Background(), rbg.DeepCopy(), rbg.DeepCopy())
 			if err == nil {
@@ -242,7 +242,7 @@ func TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator(t *testing.T) {
 			// rejection is attributable to the flag and not to the object being malformed.
 			enabled := &workloadsv1alpha2.RoleBasedGroupValidator{
 				Client:                       newClient(),
-				DisableV1alpha1Compatibility: false,
+				EnableDeprecatedWorkloadTypes: true,
 			}
 			if _, err := enabled.ValidateUpdate(
 				context.Background(), rbg.DeepCopy(), rbg.DeepCopy(),
@@ -266,7 +266,7 @@ func TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator(t *testing.T) {
 func TestVerifyPR416_F2c_NoGrandfatheringForExistingLegacyRBG(t *testing.T) {
 	v := &workloadsv1alpha2.RoleBasedGroupValidator{
 		Client:                       fake.NewClientBuilder().WithScheme(pr416Scheme(t)).Build(),
-		DisableV1alpha1Compatibility: true,
+		EnableDeprecatedWorkloadTypes: false,
 	}
 
 	old := pr416LegacyRBG(constants.DeploymentWorkloadType)
@@ -344,7 +344,7 @@ func TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled(t *testing.
 				client:                       fake.NewClientBuilder().WithScheme(s).Build(),
 				scheme:                       s,
 				workloadReconciler:           map[string]reconciler.WorkloadReconciler{},
-				disableV1alpha1Compatibility: true, // compatibility is OFF
+				enableDeprecatedWorkloadTypes: false, // deprecated workload types are OFF
 			}
 
 			role := &workloadsv1alpha2.RoleSpec{
@@ -372,7 +372,7 @@ func TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled(t *testing.
 			client:                       fake.NewClientBuilder().WithScheme(s).Build(),
 			scheme:                       s,
 			workloadReconciler:           map[string]reconciler.WorkloadReconciler{},
-			disableV1alpha1Compatibility: true,
+			enableDeprecatedWorkloadTypes: false,
 		}
 		role := &workloadsv1alpha2.RoleSpec{Name: "worker"} // defaults to RoleInstanceSet
 		if _, err := r.getOrCreateWorkloadReconciler(
