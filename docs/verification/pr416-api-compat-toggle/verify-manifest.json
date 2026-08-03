@@ -1,9 +1,9 @@
 {
   "topic": "pr416-api-compat-toggle",
   "pr": "https://github.com/sgl-project/rbg/pull/416",
-  "reviewedHead": "a69ceada83126c3a7dbd1ab9e1578b3e10dc6ed4",
+  "reviewedHead": "dcc7104aef6f6e8c16cf4342bb25baf9426c68ab",
   "baseSha": "8a54787d698f76f3f754e844342d5dbd71244885",
-  "note": "Reviewer-private verification harness. Production code is untouched on this branch; the only additions are internal/controller/workloads/pr416_compat_verify_test.go and this docs/verification tree. The bite check (scripts/90-bite-check.sh) temporarily edits production files and restores them, verifying a clean diff on exit.",
+  "note": "Reviewer-private verification harness. Production code is untouched on this branch; the branch merges the PR head (dcc7104a) so the harness compiles natively, and the only additions are the pr416_*_test.go harness files and this docs/verification tree. Round 2 re-verified every round-1 finding and reviewed the a69ceada..dcc7104a delta.",
   "environment": {
     "sandbox": "remote Linux sandbox, go1.24.1, helm v3.16.3, kubectl v1.36.2",
     "cluster": "ACK cn-hongkong, k8s v1.36.1-aliyun.1, 3 nodes -- used READ-ONLY (--dry-run=server) only",
@@ -59,8 +59,7 @@
       "polarity": "contract",
       "layer": "script",
       "match": [
-        "01-helm-default-rbac.sh",
-        "07-value-shape-semantics.sh"
+        "01-helm-default-rbac.sh"
       ],
       "evidence": "results/f1-helm-default-rbac.txt, results/f6b-value-shape-semantics.txt",
       "title": "The shipped default is the OPPOSITE of the documented default, so the PR does not remove any RBAC by default and its stated purpose is unmet",
@@ -68,7 +67,9 @@
       "observed": "A default `helm template rbgs deploy/helm/rbgs` grants all 8 legacy RBAC entries (deployments, deployments/finalizers, deployments/status, statefulsets, statefulsets/finalizers, statefulsets/status, leaderworkersets, leaderworkersets/status) and emits NO --disable-v1alpha1-compatibility argument.",
       "control": "The same render with --set compatibility.v1alpha1.enabled=false yields 0 legacy entries, proving the conditional itself works and the result is purely the default's doing.",
       "biteCheck": "90-bite-check.sh flips values.yaml to false, re-runs 01-helm-default-rbac.sh, and it PASSES; the edit is then reverted and the production diff verified empty.",
-      "suggestion": "Either set values.yaml to `enabled: false` to match the documentation and the PR's purpose, or change the README table, README prose and PR description to say the default is `true`. Given the PR is explicitly a pre-release RBAC reduction, the former is almost certainly intended. This is the third round in a row where the Go/chart default has disagreed with the documentation (see pr413-F1)."
+      "suggestion": "Either set values.yaml to `enabled: false` to match the documentation and the PR's purpose, or change the README table, README prose and PR description to say the default is `true`. Given the PR is explicitly a pre-release RBAC reduction, the former is almost certainly intended. This is the third round in a row where the Go/chart default has disagreed with the documentation (see pr413-F1).",
+      "round2Verdict": "FIXED",
+      "round2Note": "Shipped default, README table, README prose, NOTES.txt and the Go flag default all agree on true, and the toggle is effective: =false removes all 8 deprecated-workload RBAC lines while the =true control keeps them."
     },
     {
       "id": "F2a",
@@ -84,7 +85,9 @@
       "detail": "The new validating webhook rule covers UPDATE on `rolebasedgroups`. ensureDiscoveryConfigMode (rolebasedgroup_controller.go:339-370) patches an annotation onto the MAIN RBG resource on the first reconcile of any RBG that lacks the discovery-config-mode annotation -- i.e. every RBG created before this controller build. With compatibility disabled that patch is rejected by validateNoLegacyWorkloads, ensureDiscoveryConfigMode returns (requeue=true, err), Reconcile returns the error, and controller-runtime retries with exponential backoff indefinitely. PR#414 at least set a terminal LegacyWorkloadsDisabled condition via handleLegacyWorkloads; PR#416 removed that function entirely, so there is no condition and no event -- an operator sees only a silently error-looping controller. This state is not exotic: the PR's own prescribed update path is uninstall-and-reinstall, and the CRDs are NOT Helm-managed (no crds/ dir; they come from the crd-upgrade Job), so all pre-existing RBG objects survive and land in exactly this state.",
       "observed": "For all three legacy types: patch attempts=1, requeue=true, err='rolebasedgroups.workloads.x-k8s.io \"preexisting-legacy\" is forbidden: spec.roles[0] (role \"worker\"): workload type \"<type>\" is not supported when v1alpha1 compatibility is disabled', and conditions=0 on the RBG afterwards.",
       "harnessBites": "The injected denial is not invented: TestVerifyPR416_F2b derives it from the REAL RoleBasedGroupValidator (with a real Client, so its own nil-client guard does not fire) and asserts the same validator ACCEPTS the identical object when compatibility is enabled. The test also fails loudly if the controller never attempts the patch, so it cannot pass vacuously.",
-      "suggestion": "Restore a Step-0 guard equivalent to PR#414's handleLegacyWorkloads: detect legacy roles, set a terminal, explanatory condition (+ event) on the RBG, and stop without an error -- or exempt the controller's own housekeeping writes from the legacy-workload rejection. Degrading per role rather than per group would be better still."
+      "suggestion": "Restore a Step-0 guard equivalent to PR#414's handleLegacyWorkloads: detect legacy roles, set a terminal, explanatory condition (+ event) on the RBG, and stop without an error -- or exempt the controller's own housekeeping writes from the legacy-workload rejection. Degrading per role rather than per group would be better still.",
+      "round2Verdict": "FIXED",
+      "round2Note": "validateNoNewDeprecatedWorkloadTypes exempts a role whose workload type is unchanged, so the discovery-mode annotation patch at rolebasedgroup_controller.go:363 is now accepted. Proved end-to-end against the real ensureDiscoveryConfigMode."
     },
     {
       "id": "F2b",
@@ -97,7 +100,9 @@
       ],
       "evidence": "results/l1-unit.txt",
       "title": "HARNESS-BITES CHECK for F2a: the injected admission denial is verbatim what the real validator produces, and the same object is accepted when compatibility is enabled",
-      "detail": "Kept in the harness permanently so F2a can never drift into asserting a fiction."
+      "detail": "Kept in the harness permanently so F2a can never drift into asserting a fiction.",
+      "round2Verdict": "RETARGETED",
+      "round2Note": "This was the harness-bites control for F2a and asserted that the real validator DENIES the update. The fix inverted that premise, so the test now reports HARNESS PROBLEM by design. Replaced by the TestPR416R2_Grandfathering_* regression guards."
     },
     {
       "id": "F2c",
@@ -113,7 +118,9 @@
       "detail": "PR#414 had ValidateWorkloadTypesUpdate, which grandfathered role names already using a legacy type (PR#414's F10 criticised that rule as too loose). PR#416 dropped the concept: ValidateUpdate now runs validateNoLegacyWorkloads over the whole new object on every UPDATE. So a pre-existing legacy RBG cannot be scaled, cannot have its image changed, and cannot be modified by any client that PUTs the whole object.",
       "observed": "Scaling an existing Deployment-typed RBG from 1 to 3 replicas is rejected: 'spec.roles[0] (role \"worker\"): workload type \"apps/v1/Deployment\" is not supported when v1alpha1 compatibility is disabled'.",
       "control": "control_migration_to_roleinstanceset_allowed PASSES -- switching the role's annotation to RoleInstanceSet is accepted, so one escape hatch does exist and users are not completely stuck. Without this control the finding would have been overstated.",
-      "suggestion": "Decide explicitly whether existing legacy objects are meant to be frozen or merely prevented from growing. If freezing is intended, say so in the README and surface it as a condition on the object (see F2a) rather than only as an admission error on every write. Allowing replica changes while forbidding new legacy roles is the usual middle ground."
+      "suggestion": "Decide explicitly whether existing legacy objects are meant to be frozen or merely prevented from growing. If freezing is intended, say so in the README and surface it as a condition on the object (see F2a) rather than only as an admission error on every write. Allowing replica changes while forbidding new legacy roles is the usual middle ground.",
+      "round2Verdict": "FIXED",
+      "round2Note": "Scaling a pre-existing deprecated role is accepted; migrating away is still allowed. Pinned by TestPR416R2_Grandfathering_ExistingRoleStaysWritable."
     },
     {
       "id": "F3",
@@ -130,7 +137,9 @@
       "observed": "With disableV1alpha1Compatibility=true the controller still built *reconciler.DeploymentReconciler, *reconciler.StatefulSetReconciler and *reconciler.LeaderWorkerSetReconciler for the corresponding workload types.",
       "control": "control_roleinstanceset_still_built PASSES, so the factory is functional and the finding is not 'the factory is broken'.",
       "biteCheck": "90-bite-check.sh makes the Deployment case return an error, re-runs the subtest, and it reports 'F3 FIXED'; the edit is reverted and the production diff verified empty.",
-      "suggestion": "Gate the reconcile path too -- either pass the flag into NewWorkloadReconciler so it refuses legacy types with a clear error, or (better) restore the Step-0 guard from F2a so Reconcile never reaches the factory for a legacy role. Also gate dynamicWatchCustomCRD's LWS branch. And keep the label selector in cacheOptions in BOTH modes: it costs nothing and removing it makes the failure mode strictly worse."
+      "suggestion": "Gate the reconcile path too -- either pass the flag into NewWorkloadReconciler so it refuses legacy types with a clear error, or (better) restore the Step-0 guard from F2a so Reconcile never reaches the factory for a legacy role. Also gate dynamicWatchCustomCRD's LWS branch. And keep the label selector in cacheOptions in BOTH modes: it costs nothing and removing it makes the failure mode strictly worse.",
+      "round2Verdict": "STILL-BROKEN",
+      "round2Note": "The delta only renamed the field. getOrCreateWorkloadReconciler still builds legacy reconcilers with no gate and still calls dynamicWatchCustomCRD, which re-arms the LeaderWorkerSet watch at rolebasedgroup_controller.go:1617-1621 regardless of the flag."
     },
     {
       "id": "F4",
@@ -147,7 +156,9 @@
       "observed": "`helm template --is-upgrade` fails with 'Error: execution error at (rbgs/templates/upgrade-guard.yaml:2:4): Upgrade is not supported for this chart version.' while the plain install render succeeds. 10 call sites invoke helm/`$(HELM)` upgrade: Makefile:253, deploy/helm/rbgs/README.md:40, test/stress/scripts/deploy-controller.sh:52, README.md:77, README-zh_CN.md:77, doc/install.md:30 and :66, doc/dev/how_to_develop.md:294, .github/workflows/e2e-test.yml:158, .github/workflows/release-test.yml:117.",
       "whyCIIsGreen": "Every workflow runs `kind create cluster` first (e2e-test.yml:112 and :297, release-test.yml:84 and :215), so the release never pre-exists and IsUpgrade is never true. No CI job installs the chart twice, which makes this entire class invisible to CI -- the same blind spot that let PR#414's render blocker through.",
       "liveNote": "The end-to-end arm (real `helm install` then real `helm upgrade`) was NOT run. This chart's ClusterRole/ClusterRoleBinding/ValidatingWebhookConfiguration have fixed names and would overwrite the unrelated rbgs controller already live in rbg-system on the shared review cluster. `helm template --is-upgrade` is a complete and deterministic proof of the guard's behaviour, and the call-site list is a static fact, so the mutating arm adds confirmation rather than evidence. Run it on a throwaway cluster if wanted.",
-      "suggestion": "If upgrades must be blocked, at minimum update the 10 documented call sites in the same PR (they currently contradict the guard), and prefer a targeted check -- e.g. fail only when upgrading ACROSS the incompatible version boundary, by comparing the previous release's chart version -- over an unconditional `fail` that also blocks value-only changes, rollbacks and same-version redeploys."
+      "suggestion": "If upgrades must be blocked, at minimum update the 10 documented call sites in the same PR (they currently contradict the guard), and prefer a targeted check -- e.g. fail only when upgrading ACROSS the incompatible version boundary, by comparing the previous release's chart version -- over an unconditional `fail` that also blocks value-only changes, rollbacks and same-version redeploys.",
+      "round2Verdict": "STILL-BROKEN",
+      "round2Note": "The upgrade guard still hard-fails 'helm upgrade --install', which the repo documents in 10 call sites including the chart's own README, which both forbids and prescribes it."
     },
     {
       "id": "F5",
@@ -162,7 +173,9 @@
       "title": "`make manifests` no longer syncs the chart ClusterRole; the only remaining protection is an @echo asking a human to do it",
       "detail": "The PR replaces `cp config/rbac/role.yaml deploy/helm/rbgs/templates/rbac/clusterrole.yaml` (Makefile:63 on the base) with a printed reminder. The chart template now carries hand-written conditionals, which is a legitimate reason for the change, but nothing in CI compares the two afterwards, so the chart's RBAC can silently rot while `check-changes` stays green.",
       "observed": "No drift at this head: 209 generated (apiGroup, resource, verb) triples vs 209 chart triples, empty symmetric difference in both directions. Reported as a note, not a defect at this commit.",
-      "suggestion": "Add a CI step that renders the chart with compatibility enabled and diffs the normalised triples against config/rbac/role.yaml. 03-rbac-drift.sh is written to be lifted in verbatim."
+      "suggestion": "Add a CI step that renders the chart with compatibility enabled and diffs the normalised triples against config/rbac/role.yaml. 03-rbac-drift.sh is written to be lifted in verbatim.",
+      "round2Verdict": "FIXED",
+      "round2Note": "hack/gen-helm-rbac generates the chart ClusterRole from config/rbac/role.yaml, runs inside the make manifests recipe, and is CI-gated by .github/workflows/project-check.yml:43-46 (make manifests then fail on a non-empty git status). Output is byte-identical across runs. See R2-F14/F15/F16 for what the single-source-of-truth design now hides."
     },
     {
       "id": "F5b",
@@ -175,7 +188,9 @@
       ],
       "evidence": "results/f5b-manifests-freshness.txt",
       "title": "Regression guard: `make manifests generate` output matches the committed generated artefacts",
-      "detail": "Relevant because this PR adds a new kubebuilder webhook marker (RoleBasedGroupSetValidator) whose generated output must be committed for the kustomize install path to work."
+      "detail": "Relevant because this PR adds a new kubebuilder webhook marker (RoleBasedGroupSetValidator) whose generated output must be committed for the kustomize install path to work.",
+      "round2Verdict": "GREEN",
+      "round2Note": "make manifests generate leaves an empty git status in a clean scratch worktree. The round-1 re-run reported drift that was really this harness's own edits."
     },
     {
       "id": "F6",
@@ -185,14 +200,17 @@
       "layer": "script",
       "match": [
         "02-render-all-shapes.sh",
-        "07-value-shape-semantics.sh"
+        "07-value-shape-semantics.sh",
+        "08-flag-rbac-agreement.sh"
       ],
       "evidence": "results/f6-render-all-shapes.txt, results/f6b-value-shape-semantics.txt",
       "title": "The new compatibility block is the one block in the chart that dereferences values unguarded, so a partially-written block either hard-fails the render or SILENTLY strips the controller's RBAC",
       "detail": "Four templates dereference .Values.compatibility.v1alpha1.enabled directly (clusterrole.yaml:76 and :119, manager.yaml:51, NOTES.txt:19). Every pre-existing block uses the defensive `| default dict` idiom (manager.yaml:31, :41, :42, :49). Consequence: a `compatibility:` key that is present but incomplete does NOT coalesce to the chart default. NOTE FOR THE AUTHOR: this is the concern Copilot raised on PR#413 and PR#414 and was wrong about both times -- it was correctly disproved there because those blocks were guarded. It is real here, for the new block only.",
       "observed": "`compatibility:` with no children and `compatibility.v1alpha1:` with no children both HARD-FAIL: 'nil pointer evaluating interface {}.v1alpha1' / '.enabled' at clusterrole.yaml:76. `compatibility: {}` fails with \"can't evaluate field v1alpha1 in type interface {}\". Worse, `compatibility.v1alpha1.enabled:` left blank renders fine but evaluates falsy, SILENTLY stripping all 8 legacy RBAC rules without the operator asking.",
       "control": "--set controller.features=null and --set global=null both render 12/12 valid documents, so the defect is specific to the new unguarded block and not a general property of the chart or of helm value coalescing.",
-      "suggestion": "Use the same idiom as the rest of the chart, e.g. `{{- $compat := (.Values.compatibility | default dict).v1alpha1 | default dict }}{{- if $compat.enabled }}`, and define the intended default in exactly one place. This also removes the silent-strip shape."
+      "suggestion": "Use the same idiom as the rest of the chart, e.g. `{{- $compat := (.Values.compatibility | default dict).v1alpha1 | default dict }}{{- if $compat.enabled }}`, and define the intended default in exactly one place. This also removes the silent-strip shape.",
+      "round2Verdict": "PARTIAL",
+      "round2Note": "The dangerous direction is now unreachable: no value shape yields flag-enabled + RBAC-stripped (disproved across 13 shapes). But the value is consumed by two different predicates, which opens R2-F11 and R2-F12."
     },
     {
       "id": "F7",
@@ -207,7 +225,9 @@
       "evidence": "results/f6-render-all-shapes.txt, results/l3-live-dryrun.txt",
       "title": "Regression guard: PR#414's render blocker does not recur -- all documents are valid offline and accepted by a real API server",
       "detail": "PR#414 shipped a clusterrole.yaml whose apiVersion was swallowed into a comment by a left-chomp, making the chart uninstallable in every value shape; only the 30-minute e2e job caught it. PR#416 edits the same file, so the check is kept.",
-      "observed": "12/12 documents valid on each of the three valid value shapes, and a live k8s v1.36.1 API server accepts all 12 under both the default and compat-disabled shapes. The apiVersion-less control object is correctly rejected by the same command, so the check is not vacuously green."
+      "observed": "12/12 documents valid on each of the three valid value shapes, and a live k8s v1.36.1 API server accepts all 12 under both the default and compat-disabled shapes. The apiVersion-less control object is correctly rejected by the same command, so the check is not vacuously green.",
+      "round2Verdict": "GREEN",
+      "round2Note": "A real API server accepts all 12 rendered documents in both toggle states. Note the round-1 script tested the default twice because its second shape used the removed value path; retargeted, so this is now non-vacuous."
     },
     {
       "id": "F8",
@@ -223,7 +243,9 @@
       "title": "Disabling compatibility does not restrict v1alpha1-era workload types -- it makes the ENTIRE v1alpha1 API unusable, including for users who never chose a workload type",
       "detail": "Three links compose: (1) v1alpha1 RoleSpec.Workload has a CRD default of {apps/v1, StatefulSet} (rolebasedgroup_types.go:341) applied by the API SERVER, so the field is never empty -- proven read-only against live k8s v1.36.1; (2) convertRoleV1alpha1ToV2 unconditionally copies it into the role-workload-type annotation (conversion.go:142-148), behind a guard that the default renders permanently true; (3) validateNoLegacyWorkloads rejects exactly that value. The PR bills itself as an interim RBAC reduction whose migration path is deferred to a follow-up, but as written it removes the API that follow-up is meant to migrate.",
       "controls": "Same converted object accepted with compat enabled; a v1alpha1 role survives only if the user explicitly writes the v1alpha2 RoleInstanceSet type into the v1alpha1 workload field -- which bounds the finding while showing that path is unusable as a migration story.",
-      "seeAlso": "F8b extends this to RoleBasedGroupSet, so a fix confined to the RBG validator is insufficient."
+      "seeAlso": "F8b extends this to RoleBasedGroupSet, so a fix confined to the RBG validator is insufficient.",
+      "round2Verdict": "STILL-BROKEN",
+      "round2Note": "Acknowledged rather than fixed: the v1alpha1 schema still defaults spec.roles[].workload to apps/v1 StatefulSet, so a v1alpha1 object is rejected on CREATE unless every role names RoleInstanceSet explicitly. The delta documents the trap in the flag help and the chart README instead of removing it."
     },
     {
       "id": "F8b",
@@ -236,7 +258,9 @@
       ],
       "evidence": "results/sweep-unit.txt, SWEEP.md",
       "title": "The F8 defaulting chain also reaches RoleBasedGroupSet, so every v1alpha1 RBGSet is rejected wholesale too",
-      "detail": "The v1alpha1 rolebasedgroupsets schema carries the same StatefulSet default on spec.template.roles[].workload (config/crd/bases/...rolebasedgroupsets.yaml:16672-16681) and rolebasedgroupset_conversion.go:37 routes through the same convertRoleV1alpha1ToV2. A fix confined to the RBG validator would leave RBGSet broken."
+      "detail": "The v1alpha1 rolebasedgroupsets schema carries the same StatefulSet default on spec.template.roles[].workload (config/crd/bases/...rolebasedgroupsets.yaml:16672-16681) and rolebasedgroupset_conversion.go:37 routes through the same convertRoleV1alpha1ToV2. A fix confined to the RBG validator would leave RBGSet broken.",
+      "round2Verdict": "STILL-BROKEN",
+      "round2Note": "The same defaulting chain still rejects every v1alpha1 RoleBasedGroupSet wholesale on create."
     },
     {
       "id": "F9",
@@ -249,7 +273,9 @@
       ],
       "evidence": "results/sweep-unit.txt, SWEEP.md",
       "title": "RBGSet child-sync is denied by the new UPDATE rule: a pre-existing RBGSet with a legacy template error-loops forever (PR#414 F7 recurring)",
-      "detail": "rolebasedgroupset_controller.go:465 copies groupTemplate.spec.roles onto the child RBG and calls client.Update. That is an UPDATE on rolebasedgroups, so the new rule denies it for a legacy-typed template. The new RoleBasedGroupSetValidator only guards NEW RBGSets; objects already in the cluster are never re-validated, and the child-sync path is exactly where PR#414 F7 returns. The sync is idempotent (identical roles) and still rejected."
+      "detail": "rolebasedgroupset_controller.go:465 copies groupTemplate.spec.roles onto the child RBG and calls client.Update. That is an UPDATE on rolebasedgroups, so the new rule denies it for a legacy-typed template. The new RoleBasedGroupSetValidator only guards NEW RBGSets; objects already in the cluster are never re-validated, and the child-sync path is exactly where PR#414 F7 returns. The sync is idempotent (identical roles) and still rejected.",
+      "round2Verdict": "PARTIAL",
+      "round2Note": "The update leg is fixed (rolebasedgroupset_controller.go:465 template sync is accepted). The CREATE leg is not: see R2-F13."
     },
     {
       "id": "F10",
@@ -262,7 +288,9 @@
       ],
       "evidence": "results/sweep-unit.txt, SWEEP.md",
       "title": "HPA-driven autoscaling of a legacy RBG fails: the scale path writes the RBG main resource and is denied",
-      "detail": "rolebasedgroupscalingadapter_controller.go:511 (updateRoleReplicas) sets role.Replicas and calls client.Update on the RBG. This is the scale-subresource/HPA path (ScaleTargetRef, pkg/scale). retry.RetryOnConflict only retries Conflict, so an admission Forbidden propagates straight out. This reframes F2c: the real consequence is not that users cannot scale, but that HPA cannot."
+      "detail": "rolebasedgroupscalingadapter_controller.go:511 (updateRoleReplicas) sets role.Replicas and calls client.Update on the RBG. This is the scale-subresource/HPA path (ScaleTargetRef, pkg/scale). retry.RetryOnConflict only retries Conflict, so an admission Forbidden propagates straight out. This reframes F2c: the real consequence is not that users cannot scale, but that HPA cannot.",
+      "round2Verdict": "FIXED",
+      "round2Note": "The ScalingAdapter replica update at rolebasedgroupscalingadapter_controller.go:511 is accepted. Proved against the real updateRoleReplicas with the adapter object present, so ValidateScalingAdapterReplicas actually runs."
     },
     {
       "id": "P1",
@@ -277,7 +305,9 @@
       "title": "Migrating an LWS-backed role to RoleInstanceSet silently renames the pod env contract, breaking user containers at runtime",
       "detail": "LWS injected LWS_LEADER_ADDRESS / LWS_GROUP_SIZE / LWS_WORKER_INDEX; the RoleInstanceSet path injects RBG_LWP_LEADER_ADDRESS / RBG_LWP_GROUP_SIZE / RBG_LWP_WORKER_INDEX. Same semantics, different names, no aliases. The RBG is admitted, the pods run, and the failure happens inside the user process -- no admission error, no reconcile error, nothing on the RBG status. RBG already declares DeprecatedEnvLws* constants for a shim but references them nowhere. Secondary: LwsWorkerIndexLabelKey is also a dead constant, so the leaderworkerset.sigs.k8s.io/worker-index label disappears too.",
       "harnessBites": "The test fails outright if the replacement RBG_LWP_* variables are absent, so it cannot pass or fail vacuously.",
-      "note": "This is NOT a defect of PR#416 itself -- it is a consequence of the planned LWS removal that PR#416 is the first step toward. Raise it against the removal timeline, not this PR."
+      "note": "This is NOT a defect of PR#416 itself -- it is a consequence of the planned LWS removal that PR#416 is the first step toward. Raise it against the removal timeline, not this PR.",
+      "round2Verdict": "STILL-BROKEN",
+      "round2Note": "Untouched by this delta."
     },
     {
       "id": "N1",
@@ -286,7 +316,9 @@
       "polarity": "n/a",
       "layer": "n/a",
       "title": "NOTE (process, not a PR defect): no CI job renders the chart or installs it twice, so F1, F4 and F6 are all invisible to CI",
-      "detail": "All 10 checks pass on a69ceada. F1 (wrong default) would be caught by asserting the rendered default RBAC; F6 (unguarded dereference) by rendering a few partial value shapes; F4 (upgrade guard) only by installing the chart twice in one job, which no workflow does. scripts/02-render-all-shapes.sh and scripts/03-rbac-drift.sh are written to be lifted into the lint job verbatim and run in seconds. Carried over from PR#414's N1, still unaddressed."
+      "detail": "All 10 checks pass on a69ceada. F1 (wrong default) would be caught by asserting the rendered default RBAC; F6 (unguarded dereference) by rendering a few partial value shapes; F4 (upgrade guard) only by installing the chart twice in one job, which no workflow does. scripts/02-render-all-shapes.sh and scripts/03-rbac-drift.sh are written to be lifted into the lint job verbatim and run in seconds. Carried over from PR#414's N1, still unaddressed.",
+      "round2Verdict": "PARTLY-ADDRESSED",
+      "round2Note": "Chart/config RBAC drift is now CI-gated by project-check.yml. Still no CI job renders the chart across value shapes or installs it twice, so F4, R2-F11 and R2-F12 remain invisible to CI."
     },
     {
       "id": "N2",
@@ -295,10 +327,146 @@
       "polarity": "n/a",
       "layer": "n/a",
       "title": "NOTE: deleteOrphanRoles still skips legacy cleanup when compatibility is disabled (PR#414's F6, unchanged)",
-      "detail": "rolebasedgroup_controller.go:679-694 wraps the Deployment/StatefulSet/LWS CleanupOrphanedWorkloads calls in `if !r.disableV1alpha1Compatibility`. Cleaning up already-created legacy workloads is a different concern from managing new ones; if the skip stays, the delete RBAC must be retained or cleanup will 403 when compatibility is re-enabled. Carried from PR#413/#414. NOT re-tested live: on a real cluster an owner-referenced orphan disappears within ~10s in BOTH modes and also with no controller running at all, because Kubernetes GC is the actor, so a live test cannot discriminate. Do NOT claim 'leaks indefinitely' -- only the code-level skip is established."
+      "detail": "rolebasedgroup_controller.go:679-694 wraps the Deployment/StatefulSet/LWS CleanupOrphanedWorkloads calls in `if !r.disableV1alpha1Compatibility`. Cleaning up already-created legacy workloads is a different concern from managing new ones; if the skip stays, the delete RBAC must be retained or cleanup will 403 when compatibility is re-enabled. Carried from PR#413/#414. NOT re-tested live: on a real cluster an owner-referenced orphan disappears within ~10s in BOTH modes and also with no controller running at all, because Kubernetes GC is the actor, so a live test cannot discriminate. Do NOT claim 'leaks indefinitely' -- only the code-level skip is established.",
+      "round2Verdict": "UNCHANGED",
+      "round2Note": "deleteOrphanRoles still skips legacy cleanup when the types are disabled; rename only."
+    },
+    {
+      "id": "R2-F13",
+      "severity": "blocking",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestPR416R2_ChildRBGCreateIsStillDenied"
+      ],
+      "claim": "The RoleBasedGroupSet's own UPDATE is grandfathered, but the child RoleBasedGroup its controller must CREATE (rolebasedgroupset_controller.go:231) is not, because ValidateCreate still runs the strict whole-object check. A pre-existing RBGSet whose template uses a deprecated workload type can no longer scale up or replace a deleted child; the controller retries the denied create forever.",
+      "aggravating": [
+        "spec.replicas on RoleBasedGroupSet is a scale subresource (rolebasedgroupset_types.go:77) and the webhook rule does not cover rolebasedgroupsets/scale, so an HPA can raise replicas without admission ever seeing it; the refusal then happens asynchronously inside the controller.",
+        "scaleUp's error short-circuits Reconcile at :184-189, BEFORE updateStatus at :332, so the object does not even record the failure -- round 1's 'no sign on the object' complaint recurs verbatim.",
+        "Reachable with zero user action: a child lost to GC or an accidental delete can never be replaced."
+      ],
+      "canaryTwins": [
+        "TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied",
+        "TestPR416R2_F9Create_SelfHealRecreateOfDeletedChildIsDenied",
+        "TestPR416R2_CreatePathIsStrictForTheExactControllerPayload"
+      ]
+    },
+    {
+      "id": "R2-F11",
+      "severity": "major",
+      "polarity": "contract",
+      "layer": "script",
+      "match": [
+        "08-flag-rbac-agreement.sh"
+      ],
+      "claim": "A string-typed false renders flag=false but leaves the deprecated RBAC in place. manager.yaml:57 PRINTS the value while clusterrole.yaml:12 tests Go-template truthiness, and a non-empty string is truthy. The operator stops using the deprecated types while keeping full create/delete/patch on them -- the exact permissions this PR exists to remove -- and nothing warns. Reachable via --set-string, a quoted enabled: \"false\", or ArgoCD forceString. Same for \"0\", \"f\", \"F\", \"False\", \"FALSE\"."
+    },
+    {
+      "id": "R2-F12",
+      "severity": "major",
+      "polarity": "contract",
+      "layer": "script",
+      "match": [
+        "08-flag-rbac-agreement.sh"
+      ],
+      "claim": "enabled: \"\" / {} / [] strips the deprecated RBAC and renders a flag value (empty, map[], []) that flag.BoolVar cannot parse, so the manager exits at startup into CrashLoopBackOff. helm renders these with no error and no warning. Confirmed against the compiled binary, not inferred."
+    },
+    {
+      "id": "R2-F14",
+      "severity": "major",
+      "polarity": "contract",
+      "layer": "script",
+      "match": [
+        "09-gen-helm-rbac-robustness.sh"
+      ],
+      "claim": "The generator's deprecated-resource list is a third hand-maintained copy of 'which workload types are deprecated' (alongside isDeprecatedWorkloadType in rolebasedgroup_validation.go and the gated Owns() calls in rolebasedgroup_controller.go). A resource missing from it is emitted OUTSIDE the conditional, i.e. granted even when the toggle is off -- it fails OPEN (over-grant), with no test and no CI signal. F5's named failure mode is fixed; the judgement call about which rules belong inside the gate moved from a Makefile comment to an unverified Go string map."
+    },
+    {
+      "id": "R2-F15",
+      "severity": "major-latent",
+      "polarity": "contract",
+      "layer": "script",
+      "match": [
+        "09-gen-helm-rbac-robustness.sh"
+      ],
+      "claim": "A nonResourceURLs-only rule is silently dropped and the generator still exits 0, because splitRules partitions on .Resources and such a rule yields neither a kept nor a gated block. Not reachable at this head (no kubebuilder:rbac urls= marker exists), but controller-gen v0.17.2 does emit them, and since the generator is now the only copy there is no diff for CI to catch when it bites."
+    },
+    {
+      "id": "R2-F16",
+      "severity": "major-latent",
+      "polarity": "contract",
+      "layer": "script",
+      "match": [
+        "09-gen-helm-rbac-robustness.sh"
+      ],
+      "claim": "A multi-document role.yaml silently loses every document after the first, exit 0 (sigs.k8s.io/yaml.Unmarshal decodes only one document). Latent: controller-gen currently writes a single document."
+    },
+    {
+      "id": "R2-F17",
+      "severity": "non-blocking",
+      "polarity": "contract",
+      "layer": "script",
+      "match": [
+        "09-gen-helm-rbac-robustness.sh"
+      ],
+      "claim": "Non-strict unmarshal with no apiVersion/kind assertion: kind: Role is accepted and rendered as the chart ClusterRole, aggregationRule is parsed then never emitted, and a misspelled key (resource: for resources:) makes that rule vanish -- all at exit 0. UnmarshalStrict plus a kind check would close R2-F16 and R2-F17 together."
+    },
+    {
+      "id": "R2-F18",
+      "severity": "non-blocking",
+      "polarity": "n/a",
+      "layer": "n/a",
+      "match": [],
+      "claim": "No test for the generator, though splitRules / isDeprecated / render are already pure functions -- every case in R2-F14..F17 is a few table lines away from being caught instead of latent."
+    },
+    {
+      "id": "R2-F19",
+      "severity": "non-blocking",
+      "polarity": "n/a",
+      "layer": "n/a",
+      "match": [],
+      "claim": "The chart README value-table row says the webhook 'rejects roles that use' a deprecated type, contradicting the prose three lines below it, NOTES.txt, values.yaml and the Go flag help, all of which correctly say roles that ALREADY use one are exempt. The table row is the only place with the stricter wording, and it describes the behaviour this delta specifically removed."
+    },
+    {
+      "id": "R2-F20",
+      "severity": "non-blocking",
+      "polarity": "n/a",
+      "layer": "n/a",
+      "match": [],
+      "claim": "`rbg rollout undo` (cmd/cli/cmd/rollout/rollout_undo.go:123) restores roles from a ControllerRevision, so rolling back across a workload-type change or a role rename is refused while the toggle is off -- a documented user-facing feature failing with an update-path message about a 'newly added role'."
+    },
+    {
+      "id": "R2-N3",
+      "severity": "note",
+      "polarity": "n/a",
+      "layer": "unit",
+      "match": [
+        "TestPR416R2_RoleRenameOnUpdateIsDenied"
+      ],
+      "claim": "The exemption is keyed by role NAME, so renaming a role that already carries a deprecated type reads as 'newly added' and is denied: roles in a pre-existing deprecated object can never be renamed while the toggle is off. NOT reachable as a controller operation -- an RBGSet template rename is refused at the parent, so it never propagates to a child. Reorder IS handled correctly. Accepted as reasonable; the 'newly added role' wording is the confusing part."
+    },
+    {
+      "id": "R2-N4",
+      "severity": "note",
+      "polarity": "n/a",
+      "layer": "unit",
+      "match": [
+        "TestPR416R2_V1alpha1ConversionIsStableAcrossUpdate"
+      ],
+      "claim": "NEGATIVE RESULT (checked, no defect): the delta check cannot misfire via conversion. Both CRDs have storageversion v1alpha2 and the webhook is registered for v1alpha2, so oldObject is read from etcd already in the webhook's version and is never conversion-derived; GetWorkloadType() returns the same string on both sides across a v1alpha1 round-trip. No reachable path makes oldRoles empty. This is now a constraint the design DEPENDS on: if oldObject ever became conversion-derived, every role would look newly added."
+    },
+    {
+      "id": "R2-N5",
+      "severity": "note",
+      "polarity": "n/a",
+      "layer": "unit",
+      "match": [
+        "TestPR416R2_StatusSubresourceWritesAreNotIntercepted"
+      ],
+      "claim": "NEGATIVE RESULT (checked, no defect): status subresource writes bypass the webhook (the rule lists rolebasedgroups / rolebasedgroupsets, not .../status), so no status write is denied. Related near-miss worth one sentence in review: syncRBGMetadata (rolebasedgroupset_controller.go:497-506) wipes the child's metadata.annotations, which would be a second blocker if the workload-type annotation lived there -- it lives on RoleSpec.Annotations, so it is safe, but only by one field location."
     }
   ],
-  "liveNote": "L3 is READ-ONLY on the shared ACK cluster: 20-live-dryrun.sh renames every object with a pr416dry- prefix, retargets namespaced objects to `default` (the chart's rbgs-system namespace does not exist there, and creating it would be a needless mutation of shared infra), and uses only --dry-run=server. The mutating arms were deliberately not run because this chart's cluster-scoped object names are fixed and would overwrite the unrelated rbgs controller live in rbg-system. To run them, use a throwaway cluster: (1) helm install, then helm upgrade --install again, and expect the second to fail at upgrade-guard.yaml (F4); (2) install with compatibility disabled, create a legacy RBG while it is enabled, flip the flag, and watch the controller error-loop with no condition on the object (F2a/F3).",
+  "liveNote": "L3 is READ-ONLY on the shared ACK cluster: 20-live-dryrun.sh prefixes every object with pr416dry-, retargets namespaced objects to `default`, and uses only --dry-run=server. Round 2 fixed its second shape, which still used the removed compatibility.v1alpha1.enabled path and was therefore re-rendering the default: it now uses controller.deprecatedWorkloadTypes.enabled=false. 12/12 objects accepted in both shapes. The mutating arms were deliberately not run because this chart's cluster-scoped object names are fixed and would overwrite the unrelated rbgs controller live in rbg-system. To run them, use a throwaway cluster: (1) helm install, then helm upgrade --install again, and expect the second to fail at upgrade-guard.yaml (F4); (2) install with the deprecated types enabled, create an RBGSet whose template uses StatefulSet, flip the toggle off, then raise replicas and watch the child create be denied with nothing written to the RBGSet status (R2-F13).",
   "rounds": [
     {
       "round": 1,
@@ -370,5 +538,7 @@
       "P3 LWS startup ordering (needs a throwaway cluster)",
       "F9/F10 live arm (unit layer only; needs a throwaway cluster)"
     ]
-  }
+  },
+  "previousReviewedHead": "a69ceada83126c3a7dbd1ab9e1578b3e10dc6ed4",
+  "round": 2
 }

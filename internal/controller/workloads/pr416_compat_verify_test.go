@@ -107,6 +107,21 @@ func pr416LegacyRBG(workloadType string) *workloadsv1alpha2.RoleBasedGroup {
 //
 // Expected on the PR head: RED (error returned, no explanatory condition).
 func TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG(t *testing.T) {
+	// SUPERSEDED IN ROUND 2 -- F2a is FIXED.
+	//
+	// This test derived its injected denial from the real validator and required
+	// that the validator DENY an update to a pre-existing legacy RBG. Round 2
+	// narrowed the update path to a delta check, so the validator now ACCEPTS it
+	// and the premise no longer holds -- the test reports "HARNESS PROBLEM" by
+	// design, which is the fix showing up as a harness failure rather than a bug.
+	//
+	// The desired behaviour is now pinned positively by
+	// TestPR416R2_Grandfathering_ExistingRoleStaysWritable in
+	// api/workloads/v1alpha2/pr416_r2_grandfathering_test.go, and end-to-end
+	// through the real controller by TestPR416R2_F2a_DiscoveryModeAnnotationPatch_NowAccepted
+	// in pr416_r2_paths_test.go. Kept (skipped) rather than deleted so the round-1
+	// reproduction stays readable next to its round-2 replacement.
+	t.Skip("superseded: F2a fixed in round 2; see TestPR416R2_Grandfathering_ExistingRoleStaysWritable")
 	s := pr416Scheme(t)
 
 	for _, wt := range []string{
@@ -121,7 +136,7 @@ func TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG(t *test
 			// The validator needs a real Client or it short-circuits on its own nil-client
 			// guard, which would make the injected error an artefact of the harness.
 			v := &workloadsv1alpha2.RoleBasedGroupValidator{
-				Client:                       fake.NewClientBuilder().WithScheme(s).Build(),
+				Client:                        fake.NewClientBuilder().WithScheme(s).Build(),
 				EnableDeprecatedWorkloadTypes: false,
 			}
 			_, valErr := v.ValidateUpdate(context.Background(), rbg.DeepCopy(), rbg.DeepCopy())
@@ -155,9 +170,9 @@ func TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG(t *test
 				Build()
 
 			r := &RoleBasedGroupReconciler{
-				client:                       c,
-				scheme:                       s,
-				workloadReconciler:           map[string]reconciler.WorkloadReconciler{},
+				client:                        c,
+				scheme:                        s,
+				workloadReconciler:            map[string]reconciler.WorkloadReconciler{},
 				enableDeprecatedWorkloadTypes: false,
 			}
 
@@ -214,6 +229,11 @@ func TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG(t *test
 // validator returns for the same object, and that with compatibility ENABLED the same
 // object is accepted -- so F2a cannot be passing/failing for an unrelated reason.
 func TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator(t *testing.T) {
+	// SUPERSEDED IN ROUND 2 -- this was the harness-bites control for F2a and
+	// asserted that the real validator REJECTS the update. That is exactly what
+	// round 2 changed, so the control is obsolete along with the finding it
+	// guarded. See the note on TestVerifyPR416_F2a_... above.
+	t.Skip("superseded: F2a fixed in round 2; control no longer meaningful")
 	s := pr416Scheme(t)
 	newClient := func() client.Client { return fake.NewClientBuilder().WithScheme(s).Build() }
 
@@ -226,7 +246,7 @@ func TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator(t *testing.T) {
 			rbg := pr416LegacyRBG(wt)
 
 			disabled := &workloadsv1alpha2.RoleBasedGroupValidator{
-				Client:                       newClient(),
+				Client:                        newClient(),
 				EnableDeprecatedWorkloadTypes: false,
 			}
 			_, err := disabled.ValidateUpdate(context.Background(), rbg.DeepCopy(), rbg.DeepCopy())
@@ -241,7 +261,7 @@ func TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator(t *testing.T) {
 			// Control: the identical object is accepted when compatibility is enabled, so the
 			// rejection is attributable to the flag and not to the object being malformed.
 			enabled := &workloadsv1alpha2.RoleBasedGroupValidator{
-				Client:                       newClient(),
+				Client:                        newClient(),
 				EnableDeprecatedWorkloadTypes: true,
 			}
 			if _, err := enabled.ValidateUpdate(
@@ -265,7 +285,7 @@ func TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator(t *testing.T) {
 // Expected on the PR head: RED for the "scale an existing legacy RBG" case.
 func TestVerifyPR416_F2c_NoGrandfatheringForExistingLegacyRBG(t *testing.T) {
 	v := &workloadsv1alpha2.RoleBasedGroupValidator{
-		Client:                       fake.NewClientBuilder().WithScheme(pr416Scheme(t)).Build(),
+		Client:                        fake.NewClientBuilder().WithScheme(pr416Scheme(t)).Build(),
 		EnableDeprecatedWorkloadTypes: false,
 	}
 
@@ -341,9 +361,9 @@ func TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled(t *testing.
 	for _, tc := range cases {
 		t.Run(tc.workloadType, func(t *testing.T) {
 			r := &RoleBasedGroupReconciler{
-				client:                       fake.NewClientBuilder().WithScheme(s).Build(),
-				scheme:                       s,
-				workloadReconciler:           map[string]reconciler.WorkloadReconciler{},
+				client:                        fake.NewClientBuilder().WithScheme(s).Build(),
+				scheme:                        s,
+				workloadReconciler:            map[string]reconciler.WorkloadReconciler{},
 				enableDeprecatedWorkloadTypes: false, // deprecated workload types are OFF
 			}
 
@@ -369,9 +389,9 @@ func TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled(t *testing.
 	// functional and F3 is not just "the factory is broken".
 	t.Run("control_roleinstanceset_still_built", func(t *testing.T) {
 		r := &RoleBasedGroupReconciler{
-			client:                       fake.NewClientBuilder().WithScheme(s).Build(),
-			scheme:                       s,
-			workloadReconciler:           map[string]reconciler.WorkloadReconciler{},
+			client:                        fake.NewClientBuilder().WithScheme(s).Build(),
+			scheme:                        s,
+			workloadReconciler:            map[string]reconciler.WorkloadReconciler{},
 			enableDeprecatedWorkloadTypes: false,
 		}
 		role := &workloadsv1alpha2.RoleSpec{Name: "worker"} // defaults to RoleInstanceSet
