@@ -1,0 +1,31 @@
+=== R2-F11/F12: does the rendered flag agree with the rendered RBAC? ===
+v3.16.3+gcfd0749
+
+SHAPE                                  FLAG         RBAC       MANAGER-READS NOTE
+default (no overrides)                 true         present    true         agrees
+--set enabled=true                     true         present    true         agrees
+--set enabled=false                    false        stripped   false        agrees
+--set-string enabled=false             false        present    false        MISMATCH: manager disables the types, RBAC keeps them
+--set-string enabled=0                 0            present    false        MISMATCH: manager disables the types, RBAC keeps them
+--set-string enabled=False             False        present    false        MISMATCH: manager disables the types, RBAC keeps them
+--set enabled= (empty)                 <empty>      stripped   UNPARSEABLE  flag rejected by flag.BoolVar -> CrashLoopBackOff; RBAC silently stripped
+enabled: "false" (quoted)              false        present    false        MISMATCH: manager disables the types, RBAC keeps them
+enabled: "" (empty str)                <empty>      stripped   UNPARSEABLE  flag rejected by flag.BoolVar -> CrashLoopBackOff; RBAC silently stripped
+enabled: {} (empty map)                map[]        stripped   UNPARSEABLE  flag rejected by flag.BoolVar -> CrashLoopBackOff; RBAC silently stripped
+enabled: [] (empty list)               []           stripped   UNPARSEABLE  flag rejected by flag.BoolVar -> CrashLoopBackOff; RBAC silently stripped
+enabled: null                          true         present    true         agrees
+deprecatedWorkloadTypes: {} (key absent) true         present    true         agrees
+
+  controls: 5 shape(s) agree (incl. default / =true / =false) -- baseline is sound.
+  R2-F11 REPRODUCED: 4 shape(s) render a flag and an RBAC set that
+        disagree. clusterrole.yaml tests Go-template truthiness while
+        manager.yaml prints the value, so a non-empty string such as
+        "false" is truthy for the RBAC gate but parses as false for the
+        manager: the operator stops using the deprecated types while
+        keeping full create/delete/patch RBAC on them. The reduction in
+        privilege the value advertises silently does not happen.
+  R2-F12 REPRODUCED: 4 shape(s) render a flag value that
+        flag.BoolVar cannot parse, so the manager exits at startup
+        (CrashLoopBackOff). helm renders them without error or warning.
+
+RESULT: R2-F11/F12 reproduced (see above).

@@ -1,0 +1,17 @@
+=== LIVE (read-only): server-side validation of the rendered chart ===
+  server: v1.36.1-aliyun.1
+  context: kubernetes-admin-cca617a19bc6847cbb716503870f37a94
+
+--- pre-existing rbgs install on this cluster (left untouched) ---
+  existing ClusterRole: rbgs-controller-role
+
+--- shape: default ---
+  objects accepted server-side: 12
+--- shape: deprecated-disabled ---
+  objects accepted server-side: 12
+
+--- CONTROL: an apiVersion-less object must be rejected ---
+  correctly rejected: error: error validating "STDIN": error validating data: apiVersion not set; if you choose to ignore these errors, turn validation off with --validate=false
+
+RESULT: a real API server accepts every document this chart renders (both shapes).
+        No PR#414-class render blocker at this head.

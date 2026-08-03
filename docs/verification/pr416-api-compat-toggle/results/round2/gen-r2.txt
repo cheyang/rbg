@@ -1,0 +1,56 @@
+=== R2-F14/F15/F16/F17: what does hack/gen-helm-rbac drop or mis-gate? ===
+go version go1.24.1 linux/amd64
+
+--- control-plain ---
+  exit: 0
+  emitted resources: pods get 
+  emitted nonResourceURLs: 0
+  gated blocks: 3
+
+--- R2-F15 nonResourceURLs-only rule ---
+  exit: 0
+  emitted resources: pods get 
+  emitted nonResourceURLs: 0
+  gated blocks: 3
+  R2-F15 REPRODUCED: the /metrics + /healthz rule was silently dropped and the
+        generator still exited 0. splitRules partitions on .Resources, so a
+        nonResourceURLs-only rule yields neither a kept nor a gated block.
+        Latent today (no kubebuilder:rbac urls= marker in the tree), but the
+        generator is the only copy, so CI would stay green when it bites.
+
+--- R2-F16 multi-document role.yaml ---
+  exit: 0
+  emitted resources: pods get 
+  emitted nonResourceURLs: 0
+  gated blocks: 3
+  R2-F16 REPRODUCED: the second document was silently lost (daemonsets absent),
+        exit 0. sigs.k8s.io/yaml.Unmarshal decodes only the first document.
+
+--- R2-F14 unmapped resource beside a mapped one ---
+  exit: 0
+  emitted resources: apps replicasets get apps deployments get 
+  emitted nonResourceURLs: 0
+  gated blocks: 4
+  R2-F14 REPRODUCED: 'replicasets' is emitted OUTSIDE the conditional (line
+        21, gate starts at 24), i.e. granted even when the deprecated
+        types are disabled. The gate list is a third hand-maintained copy of
+        'which types are deprecated', and an entry missing from it FAILS OPEN
+        (over-grant) with no test and no CI signal.
+
+--- R2-F17 misspelled key + aggregationRule + wrong kind ---
+  exit: 0
+  emitted resources: 
+  emitted nonResourceURLs: 0
+  gated blocks: 3
+  R2-F17 REPRODUCED: kind: Role (not ClusterRole) was accepted, aggregationRule
+        was parsed then never emitted, and the misspelled 'resource:' key made
+        that rule vanish -- all at exit 0. UnmarshalStrict plus an
+        apiVersion/kind assertion would close R2-F16 and R2-F17 together.
+
+--- determinism: 3 runs against the repo's real config/rbac/role.yaml ---
+  OK: byte-identical across 3 runs (no Go map-iteration nondeterminism).
+
+RESULT: generator robustness findings reproduced (see above).
+        Note these are about the generator being the SOLE source of truth:
+        F5's named failure mode (chart drifting from config/rbac) IS fixed and
+        is CI-gated. What is new is that a drop or a mis-gate now fails silently.
