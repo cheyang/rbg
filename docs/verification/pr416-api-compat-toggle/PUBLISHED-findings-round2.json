@@ -1,0 +1,138 @@
+{
+  "round": 2,
+  "reviewId": 4850089849,
+  "reviewUrl": "https://github.com/sgl-project/rbg/pull/416#pullrequestreview-4850089849",
+  "submittedAt": "2026-08-04T02:36:35Z",
+  "commitId": "dcc7104aef6f6e8c16cf4342bb25baf9426c68ab",
+  "event": "REQUEST_CHANGES",
+  "state": "CHANGES_REQUESTED",
+  "author": "cheyang",
+  "reviewDecision": {
+    "event": "request-changes",
+    "reason": "Two blocking issues, both the same root cause: the deprecated-workload exemption was implemented at the admission layer only. ValidateCreate kept the whole-object check so an exempt RoleBasedGroupSet can never scale up or heal, and the RBAC/watches are still removed unconditionally so an admitted group still cannot be reconciled. Both contradict a sentence this PR adds to the chart README. Mitigating factor stated in the review: the default is now true, so nothing reaches an operator who does not opt in."
+  },
+  "publishedInline": [
+    {
+      "n": 1,
+      "severity": "blocker",
+      "path": "api/workloads/v1alpha2/rolebasedgroup_admission.go",
+      "line": 61,
+      "maps_to": [
+        "G1",
+        "R2-F13"
+      ],
+      "title": "A pre-existing RoleBasedGroupSet with a deprecated template can never scale up or heal"
+    },
+    {
+      "n": 2,
+      "severity": "blocker",
+      "path": "deploy/helm/rbgs/README.md",
+      "line": 37,
+      "maps_to": [
+        "F3"
+      ],
+      "title": "\"the controllers can keep reconciling it\" isn't true yet -- admission was fixed, RBAC and watches weren't"
+    },
+    {
+      "n": 3,
+      "severity": "major",
+      "path": "deploy/helm/rbgs/templates/manager/manager.yaml",
+      "line": 57,
+      "maps_to": [
+        "R2-F11",
+        "R2-F12",
+        "G3",
+        "G4"
+      ],
+      "title": "Two value shapes make this flag and the ClusterRole disagree, and one crash-loops the manager"
+    },
+    {
+      "n": 4,
+      "severity": "major",
+      "path": "hack/gen-helm-rbac/main.go",
+      "line": 71,
+      "maps_to": [
+        "R2-F14"
+      ],
+      "title": "The deprecated-resource list is a third hand-maintained copy, and it fails open"
+    },
+    {
+      "n": 5,
+      "severity": "non-blocking",
+      "path": "hack/gen-helm-rbac/main.go",
+      "line": 129,
+      "maps_to": [
+        "R2-F15",
+        "R2-F16",
+        "R2-F17",
+        "R2-F18",
+        "G2"
+      ],
+      "title": "Three input shapes silently dropped; worst case emits a rules-less ClusterRole at exit 0"
+    },
+    {
+      "n": 6,
+      "severity": "non-blocking",
+      "path": "deploy/helm/rbgs/README.md",
+      "line": 33,
+      "maps_to": [
+        "R2-F19"
+      ],
+      "title": "This table row contradicts the prose three lines below it"
+    }
+  ],
+  "publishedInSummaryOnly": [
+    {
+      "maps_to": [
+        "F4"
+      ],
+      "why_no_inline": "upgrade-guard.yaml is unchanged by this PR"
+    },
+    {
+      "maps_to": [
+        "R2-F20"
+      ],
+      "why_no_inline": "cmd/cli/cmd/rollout/rollout_undo.go is not in the diff"
+    },
+    {
+      "maps_to": [
+        "P1"
+      ],
+      "why_no_inline": "pkg/discovery is not in the diff"
+    },
+    {
+      "maps_to": [
+        "R2-F21"
+      ],
+      "why_no_inline": "the PR description is not a file"
+    }
+  ],
+  "creditedAsFixed": [
+    "F1",
+    "F2a",
+    "F2c",
+    "F5",
+    "F5b",
+    "F6",
+    "F9",
+    "F10"
+  ],
+  "notRaised": [
+    {
+      "id": "R2-N3",
+      "why": "role rename reads as newly-added, but not reachable as a controller operation"
+    },
+    {
+      "id": "R2-N4",
+      "why": "conversion is stable across update -- negative result"
+    },
+    {
+      "id": "R2-N5",
+      "why": "status subresource writes bypass the webhook -- negative result"
+    },
+    {
+      "id": "controller: null",
+      "why": "render failure is pre-existing; fails on the base commit too"
+    }
+  ]
+}
