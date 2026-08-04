@@ -1,0 +1,43 @@
+Round 2 — documentation consistency check for the F1 fix
+========================================================
+
+Reviewed head: dcc7104aef6f6e8c16cf4342bb25baf9426c68ab
+
+Round 1's F1 was: values.yaml shipped `compatibility.v1alpha1.enabled: true` while three
+separate documents said the default was `false`. The review offered two ways out:
+
+  (a) ship `false` (and fix the blockers that made `false` dangerous), or
+  (b) ship `true` and correct the three documents to match.
+
+The author took (b). Checking each of the three documents named in that comment:
+
+  1. chart README value table       -> UPDATED. Now reads
+                                       `| controller.deprecatedWorkloadTypes.enabled | ... | true |`
+  2. chart README prose             -> UPDATED. The "By default … the chart ships in restricted
+                                       mode for security" sentence is gone, replaced by
+                                       "They remain enabled by default and can be turned off to
+                                       shrink the controller's RBAC surface."
+  3. PR description (GitHub)        -> NOT UPDATED.
+
+The PR description as of this head still describes the round-1 design in full:
+
+  line  3: "This PR adds a `compatibility.v1alpha1.enabled` Helm value (default: `false`)"
+  line  5: "When disabled (default):"
+  line 11: "When enabled (`compatibility.v1alpha1.enabled=true`), full v1alpha1 API
+            compatibility is preserved with no behavioral changes."
+  line 19: "conditional `--disable-v1alpha1-compatibility` controller flag"
+  line 20: "new `--disable-v1alpha1-compatibility` flag"
+
+Every one of those is wrong at this head:
+
+  - the value is now `controller.deprecatedWorkloadTypes.enabled`, not
+    `compatibility.v1alpha1.enabled`;
+  - the default is now `true`, not `false`;
+  - the flag is now `--enable-deprecated-workload-types` with the opposite polarity;
+  - "the validating webhook rejects RBGs/RBGSets using legacy workload types" is no longer
+    accurate for UPDATE, which is now delta-only (validateNoNewDeprecatedWorkloadTypes).
+
+Severity: minor. Nothing ships from the PR description — but it is what reviewers read and
+what tends to become the squashed commit message and the changelog entry, and this is the
+document that carried the original F1 contradiction. Two of the three were fixed; this is the
+third.

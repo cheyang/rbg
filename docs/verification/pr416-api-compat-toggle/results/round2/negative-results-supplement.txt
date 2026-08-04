@@ -1,0 +1,74 @@
+Round 2 — NEGATIVE RESULTS, supplement
+======================================
+
+Supplements the "Negative results — checked, no defect" section of README.md with two
+hypotheses checked independently that are not in that list. Recorded so a later round does not
+re-raise them.
+
+Reviewed head: dcc7104aef6f6e8c16cf4342bb25baf9426c68ab
+
+
+S-1. `enabled: null` in a values FILE does NOT desynchronise the templates
+--------------------------------------------------------------------------
+This is the boundary of R2-F11/R2-F12, and it falls on the safe side.
+
+Hypothesis: manager.yaml:57 renders the flag with
+  {{ if hasKey $dwt "enabled" }}{{ $dwt.enabled }}{{ else }}true{{ end }}
+while clusterrole.yaml gates RBAC with
+  or (not (hasKey $dwt "enabled")) $dwt.enabled
+If a user wrote `enabled: null` in a values file, `hasKey` would be true and `$dwt.enabled`
+nil, so the flag would render empty (an R2-F12 crash) while the ClusterRole, evaluating
+`or false nil`, would drop the deprecated RBAC — a third variant of the same disagreement.
+
+DISPROVED. Helm's value coalescing treats an explicit null in user values as a DELETION of the
+key, so after merging with the chart defaults the key is absent and `hasKey` is false in both
+templates.
+
+  $ cat /tmp/null-enabled.yaml
+  controller:
+    deprecatedWorkloadTypes:
+      enabled: null
+
+  $ helm template rbgs deploy/helm/rbgs -f /tmp/null-enabled.yaml
+  RENDER OK
+  line 319:  - --enable-deprecated-workload-types=true
+  deprecated RBAC entries: 8
+
+  Control (key present, sub-block empty — `deprecatedWorkloadTypes: {}`):
+  RENDER OK
+  line 319:  - --enable-deprecated-workload-types=true
+  deprecated RBAC entries: 8
+
+Both agree: flag=true AND 8 deprecated RBAC entries. So R2-F11/R2-F12 are specifically about
+non-empty non-boolean scalars and empty collections, NOT about null. Worth keeping in mind when
+fixing them: a `_helpers.tpl` normaliser must preserve this null-means-default behaviour, or it
+will turn a currently-safe shape into a broken one.
+
+
+S-2. The webhook really does intercept CREATE, so R2-F13 is not hypothetical
+----------------------------------------------------------------------------
+R2-F13 (the child-RBG-create gap) rests on the assumption that the shipped webhook
+configuration covers the CREATE verb. Verified directly rather than assumed:
+
+  deploy/helm/rbgs/templates/webhook/manifests.yaml, vrolebasedgroup.kb.io:
+    failurePolicy: Fail
+    rules:
+    - apiGroups:    [workloads.x-k8s.io]
+      apiVersions:  [v1alpha2]
+      operations:   [CREATE, UPDATE]      <-- CREATE is present
+      resources:    [rolebasedgroups]
+
+with `failurePolicy: Fail`, so the RBGSet controller's `client.Create` of a child RBG is
+intercepted and hard-denied rather than failing open.
+
+Also bounded the blast radius: `rolebasedgroupset_controller.go:231` is the ONLY site in the
+tree that creates a RoleBasedGroup.
+
+  $ grep -rn --include='*.go' 'Create(ctx' internal/ pkg/ cmd/ | grep -v _test.go
+    rolebasedgroupset_controller.go:231   -> RoleBasedGroup        <-- the R2-F13 path
+    rolebasedgroup_controller.go:262      -> ControllerRevision    (not webhook-guarded)
+    rolebasedgroup_controller.go:959      -> RoleBasedGroupScalingAdapter (different webhook)
+    rolebasedgroupwarmup_controller.go:323 -> Pod
+
+So R2-F13's fix surface is exactly one call site, and no other controller create path is
+affected.

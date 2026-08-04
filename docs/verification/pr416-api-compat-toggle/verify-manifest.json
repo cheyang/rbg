@@ -35,12 +35,15 @@
   },
   "harnessPaths": [
     "docs/verification/pr416-api-compat-toggle",
-    "internal/controller/workloads/pr416_compat_verify_test.go"
+    "internal/controller/workloads/pr416_compat_verify_test.go",
+    "pkg/discovery/pr416_lws_parity_test.go",
+    "api/workloads/v1alpha1/pr416_v1alpha1_chain_test.go",
+    "api/workloads/v1alpha2/pr416_writers_sweep_test.go"
   ],
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./internal/controller/workloads/ -run TestVerifyPR416 -count=1 -json"
+      "cmd": "go test ./internal/controller/workloads/ ./pkg/discovery/ ./api/workloads/v1alpha1/ ./api/workloads/v1alpha2/ -run TestVerifyPR416 -count=1 -json"
     },
     "script": {
       "kind": "shell",
@@ -139,7 +142,9 @@
       "biteCheck": "90-bite-check.sh makes the Deployment case return an error, re-runs the subtest, and it reports 'F3 FIXED'; the edit is reverted and the production diff verified empty.",
       "suggestion": "Gate the reconcile path too -- either pass the flag into NewWorkloadReconciler so it refuses legacy types with a clear error, or (better) restore the Step-0 guard from F2a so Reconcile never reaches the factory for a legacy role. Also gate dynamicWatchCustomCRD's LWS branch. And keep the label selector in cacheOptions in BOTH modes: it costs nothing and removing it makes the failure mode strictly worse.",
       "round2Verdict": "STILL-BROKEN",
-      "round2Note": "The delta only renamed the field. getOrCreateWorkloadReconciler still builds legacy reconcilers with no gate and still calls dynamicWatchCustomCRD, which re-arms the LeaderWorkerSet watch at rolebasedgroup_controller.go:1617-1621 regardless of the flag."
+      "round2Note": "The delta only renamed the field. getOrCreateWorkloadReconciler still builds legacy reconcilers with no gate and still calls dynamicWatchCustomCRD, which re-arms the LeaderWorkerSet watch at rolebasedgroup_controller.go:1617-1621 regardless of the flag.",
+      "round2Escalation": "Code unchanged, CONSEQUENCE escalated. In round 1 the webhook denied the controller's first write, so Reconcile stopped at step 0 and never reached the ungated factory. Round 2 deliberately admits that write (the F2a/F2c/F9/F10 fix), so the ungated path is now REACHED for exactly the pre-existing objects the exemption was written to protect, and fails on Forbidden against statefulsets with no condition and no event. This also makes it a documentation defect: deploy/helm/rbgs/README.md:36-38 now asserts an exempt group \"stays writable (and scalable) and the controllers can keep reconciling it\" -- the admission clause holds, the reconcile clause does not. README.md:33 and the Go flag help also both say \"the controller stops watching them\", which dynamicWatchCustomCRD (rolebasedgroup_controller.go:1609) contradicts for LeaderWorkerSet by re-arming the watch at runtime.",
+      "round2EscalationEvidence": "results/round2/f3-escalation.md"
     },
     {
       "id": "F4",
@@ -379,7 +384,8 @@
       "match": [
         "09-gen-helm-rbac-robustness.sh"
       ],
-      "claim": "The generator's deprecated-resource list is a third hand-maintained copy of 'which workload types are deprecated' (alongside isDeprecatedWorkloadType in rolebasedgroup_validation.go and the gated Owns() calls in rolebasedgroup_controller.go). A resource missing from it is emitted OUTSIDE the conditional, i.e. granted even when the toggle is off -- it fails OPEN (over-grant), with no test and no CI signal. F5's named failure mode is fixed; the judgement call about which rules belong inside the gate moved from a Makefile comment to an unverified Go string map."
+      "claim": "The generator's deprecated-resource list is a third hand-maintained copy of 'which workload types are deprecated' (alongside isDeprecatedWorkloadType in rolebasedgroup_validation.go and the gated Owns() calls in rolebasedgroup_controller.go). A resource missing from it is emitted OUTSIDE the conditional, i.e. granted even when the toggle is off -- it fails OPEN (over-grant), with no test and no CI signal. F5's named failure mode is fixed; the judgement call about which rules belong inside the gate moved from a Makefile comment to an unverified Go string map.",
+      "boundedBy": "results/round2/rbac-generator-audit.md -- on the input at this head the gate list is exactly right: enabled render vs config/rbac/role.yaml is 209 == 209 (apiGroup,resource,verb,resourceNames) tuples with an EMPTY symmetric difference, and disabling removes exactly the 32 deprecated tuples, no over-removal and no under-removal. Also verified independent of controller-gen rule ordering (all 17 rules reversed -> identical tuple sets), resourceNames preserved across a split rule, and the mixed deprecated/non-deprecated rule that is already live in the real input (apps: [controllerrevisions, deployments, statefulsets]) split correctly. So R2-F14 is a fails-open RISK with no current instance, not a live over-grant."
     },
     {
       "id": "R2-F15",
@@ -464,6 +470,20 @@
         "TestPR416R2_StatusSubresourceWritesAreNotIntercepted"
       ],
       "claim": "NEGATIVE RESULT (checked, no defect): status subresource writes bypass the webhook (the rule lists rolebasedgroups / rolebasedgroupsets, not .../status), so no status write is denied. Related near-miss worth one sentence in review: syncRBGMetadata (rolebasedgroupset_controller.go:497-506) wipes the child's metadata.annotations, which would be a second blocker if the workload-type annotation lived there -- it lives on RoleSpec.Annotations, so it is safe, but only by one field location."
+    },
+    {
+      "id": "R2-F21",
+      "severity": "non-blocking",
+      "status": "reproduced",
+      "round": 2,
+      "polarity": "contract",
+      "layer": "script",
+      "match": [
+        "round2/doc-consistency.txt"
+      ],
+      "evidence": "results/round2/doc-consistency.txt",
+      "claim": "The PR description still describes the round-1 design, so two of the three documents round 1's F1 named were corrected and the third was not. At this head the body still says `compatibility.v1alpha1.enabled` (renamed), \"(default: `false`)\" (now true), `--disable-v1alpha1-compatibility` (renamed AND inverted), and \"the validating webhook rejects RBGs/RBGSets using legacy workload types\" -- which is no longer true for UPDATE, the single most important behavioural change in this delta. Nothing ships from the PR description, but it is what reviewers read and it tends to become the squash message and the changelog entry. Related to R2-F19, which is the same class of defect inside the chart README.",
+      "suggestion": "Update the PR body to match the delta, or note that the description is superseded."
     }
   ],
   "liveNote": "L3 is READ-ONLY on the shared ACK cluster: 20-live-dryrun.sh prefixes every object with pr416dry-, retargets namespaced objects to `default`, and uses only --dry-run=server. Round 2 fixed its second shape, which still used the removed compatibility.v1alpha1.enabled path and was therefore re-rendering the default: it now uses controller.deprecatedWorkloadTypes.enabled=false. 12/12 objects accepted in both shapes. The mutating arms were deliberately not run because this chart's cluster-scoped object names are fixed and would overwrite the unrelated rbgs controller live in rbg-system. To run them, use a throwaway cluster: (1) helm install, then helm upgrade --install again, and expect the second to fail at upgrade-guard.yaml (F4); (2) install with the deprecated types enabled, create an RBGSet whose template uses StatefulSet, flip the toggle off, then raise replicas and watch the child create be denied with nothing written to the RBGSet status (R2-F13).",

@@ -94,6 +94,7 @@ fixed (F5). One blocker is now partial (F9). Two blockers (F8, F8b) and three ma
 | R2-F18 | non-blocking | No test for the generator, though its functions are already pure | Confirmed | ditto |
 | R2-F19 | non-blocking | The README value-table row says the webhook rejects roles that *use* a deprecated type, contradicting the prose three lines below it (and the whole point of the delta) | Confirmed | — |
 | R2-F20 | non-blocking | `rbg rollout undo` restores roles from a ControllerRevision, so rolling back across a workload-type change or a role rename is refused | Confirmed | — |
+| R2-F21 | non-blocking | The PR description still describes the round-1 design (`compatibility.v1alpha1.enabled`, "default: `false`", `--disable-v1alpha1-compatibility`, and a whole-object UPDATE rejection) — the third of the three documents round 1 flagged; the other two were fixed | Confirmed | [`doc-consistency.txt`](results/round2/doc-consistency.txt) |
 | R2-N3 | note | The exemption is keyed by role **name**, so renaming a pre-existing deprecated role reads as "newly added" and is rejected — but **not reachable as a controller operation** (a template rename is refused at the parent) | Documented, not asserted as a defect | [`unit-r2.txt`](results/round2/unit-r2.txt) |
 
 ### Every operator write, and which one is still denied
@@ -327,3 +328,46 @@ Per-finding, after a fix lands:
 > any shared cluster — this chart's cluster-scoped object names are fixed and would
 > clobber the existing install. Do not run `git reset`/`checkout` in a clone that has this
 > branch checked out; commit and push before spawning helpers.
+
+---
+
+## Supplementary evidence added after the round-2 verdicts
+
+Three additions that do not change any verdict above, plus one harness-automation fix.
+
+**F3's reachability changed even though its code did not.** Round 1 masked F3: the webhook denied
+the controller's first write, so `Reconcile` stopped at step 0 and never reached the ungated
+reconciler factory. Round 2 deliberately admits that write — which means the ungated path is now
+*reached* for exactly the pre-existing objects the exemption was written to protect. That also
+makes F3 a documentation defect: `README.md:36-38` of the chart now asserts an exempt group
+"stays writable (and scalable) and the controllers can keep reconciling it". The admission clause
+holds; the reconcile clause does not. Same for `README.md:33` and the Go flag help, which both say
+"the controller stops watching them" — contradicted for LeaderWorkerSet by `dynamicWatchCustomCRD`
+re-arming the watch at runtime. Detail in
+[`f3-escalation.md`](results/round2/f3-escalation.md).
+
+**R2-F14 is a fails-open risk with no current instance.** The gate list *can* over-grant, but on
+the input at this head it does not: normalising both sides into
+`(apiGroup, resource, verb, resourceNames)` tuples gives **209 == 209** against
+`config/rbac/role.yaml` with an *empty* symmetric difference, and disabling removes **exactly** the
+32 deprecated tuples — no over-removal, no under-removal. Also verified independent of
+controller-gen's rule ordering (all 17 rules reversed → identical tuple sets), with `resourceNames`
+preserved across a split rule and the mixed rule that is already live in the real input
+(`apps: [controllerrevisions, deployments, statefulsets]`) splitting correctly. Detail in
+[`rbac-generator-audit.md`](results/round2/rbac-generator-audit.md).
+
+**Two more negative results**, in
+[`negative-results-supplement.txt`](results/round2/negative-results-supplement.txt): `enabled: null`
+in a values *file* is safe and agrees across both templates (helm treats an explicit null as key
+deletion), which bounds R2-F11/R2-F12 to non-boolean scalars and empty collections — a
+`_helpers.tpl` normaliser must preserve that. And R2-F13's premise was verified directly rather
+than assumed: the shipped webhook really does list `operations: [CREATE, UPDATE]` with
+`failurePolicy: Fail`, and `rolebasedgroupset_controller.go:231` is the *only* site in the tree that
+creates a RoleBasedGroup, so its fix surface is one call site.
+
+**Harness automation fix.** `harnessPaths` listed 2 of the 4 harness test files and
+`layers.unit.cmd` ran only `./internal/controller/workloads/`. Since `re-verify.sh` grafts exactly
+`harnessPaths`, F8/F8b (`api/workloads/v1alpha1`), F9/F10 (`api/workloads/v1alpha2`) and P1
+(`pkg/discovery`) were never executed by the automation and reported `HARNESS-UPDATE`; their
+round-2 verdicts were obtained by running those packages by hand. Both fields now cover all four
+packages, so the next round's `re-verify.sh` produces real verdicts for them.
