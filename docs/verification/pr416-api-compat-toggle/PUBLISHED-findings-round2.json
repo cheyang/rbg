@@ -14,14 +14,15 @@
   "publishedInline": [
     {
       "n": 1,
-      "severity": "blocker",
+      "severity": "major (corrected from blocker)",
       "path": "api/workloads/v1alpha2/rolebasedgroup_admission.go",
       "line": 61,
       "maps_to": [
         "G1",
         "R2-F13"
       ],
-      "title": "A pre-existing RoleBasedGroupSet with a deprecated template can never scale up or heal"
+      "title": "A pre-existing RoleBasedGroupSet with a deprecated template can never scale up or heal",
+      "correctedBy": 3709209392
     },
     {
       "n": 2,
@@ -133,6 +134,30 @@
     {
       "id": "controller: null",
       "why": "render failure is pre-existing; fails on the base commit too"
+    }
+  ],
+  "corrections": [
+    {
+      "target": "inline #1 (rolebasedgroup_admission.go:61)",
+      "replyId": 3709209392,
+      "replyUrl": "https://github.com/sgl-project/rbg/pull/416#discussion_r3709209392",
+      "severityChange": "blocker -> major",
+      "withdrawn": "The scale-up half. Refusing to CREATE a child RBG with a deprecated template is AS DESIGNED: the README already lists \"creating a RoleBasedGroup/RoleBasedGroupSet whose roles use a deprecated workload type\" as rejected, and a controller-created child falls under that. If scale-up kept working the toggle would have no teeth. The original comment framed a deliberate decision as a defect.",
+      "retained": [
+        {
+          "point": "documentation",
+          "detail": "The rejected-list does not mention RBGSet scaling, and two lines above it the same paragraph says an existing group \"stays writable (and scalable)\" -- for RBGSet those contradict, since its scaling IS child creation. One of the two must change."
+        },
+        {
+          "point": "enforced at the wrong layer",
+          "detail": "RoleBasedGroupSetValidator.ValidateUpdate does not look at spec.replicas, so `replicas: 2 -> 4` is admitted and persisted and the controller then retries a denied create forever; spec/status diverge permanently with no condition or event. If scale-up is meant to be refused, refusing a replica increase at admission is the same decision enforced where the user finds out."
+        },
+        {
+          "point": "self-healing regression",
+          "detail": "With replicas=2 and index 1 lost to node failure / GC / kubectl delete, the controller's attempt to refill it is rejected, so capacity goes 2 -> 1 permanently. Verified directly: the object built to refill the missing index is refused by ValidateCreate. Distinct from scale-up -- this is an existing workload degrading at a moment the operator did not choose."
+        }
+      ],
+      "lesson": "Packaged a design decision and a real defect under one blocker heading (\"can never scale up or heal\"). The two halves needed separating before publishing, not after."
     }
   ]
 }
