@@ -1,0 +1,28 @@
+=== L3: absolute scaling.maxSkew bricks the RoleBasedGroup ===
+namespace : pr400-l3-1741754 (deleted on exit)
+cluster   : v1.36.1-aliyun.1
+controller: rolebasedgroup/rbgs-controller:v0.8.0-47cfe17
+
+--- 1. apply with maxSkew: 2 (absolute, as documented) ---
+rolebasedgroup.workloads.x-k8s.io/c created
+coordinatedpolicy.workloads.x-k8s.io/c created
+    (accepted by the apiserver: the CRD is x-kubernetes-int-or-string,
+     so nothing warns the user here)
+
+--- 2. wait 50s, then observe ---
+    RBG ready : False
+    pods      : 0
+    events    :
+      9s          Warning   FailedCalculateScaling   rolebasedgroup/c   Failed to calculate scaling targets for c: failed to create coordination scaler: failed to parse maxSkew: percentage string must end with '%'
+
+--- 3. change ONLY maxSkew to "100%" and re-observe ---
+    RBG ready : True
+    pods      : 4
+      c-decode-0    1/1   Running   0     29s
+      c-decode-1    1/1   Running   0     29s
+      c-prefill-0   1/1   Running   0     29s
+      c-prefill-1   1/1   Running   0     29s
+
+--- verdict ---
+CANARY HOLDS: absolute maxSkew -> 0 pods; percentage -> 4 pods.
+F1 confirmed on a live cluster: the documented absolute form bricks the RBG.

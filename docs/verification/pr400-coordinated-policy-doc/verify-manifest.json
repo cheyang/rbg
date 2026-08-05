@@ -2,7 +2,10 @@
   "_comment": "Verification harness for the review of PR #400 (a DOCUMENTATION PR). Every finding is a doc-vs-implementation divergence, so every test is a bug-canary: it PASSES on the code under review and FLIPS TO RED once the divergence is resolved. See README.md for the observed-vs-expected table and per-finding fix sketches.",
   "topic": "pr400-coordinated-policy-doc",
   "pr": "https://github.com/sgl-project/rbg/pull/400",
-  "prHeadFetch": { "remote": "upstream", "ref": "pull/400/head" },
+  "prHeadFetch": {
+    "remote": "upstream",
+    "ref": "pull/400/head"
+  },
   "harnessPaths": [
     "docs/verification/pr400-coordinated-policy-doc",
     "pkg/coordination/coordinationscaling/zz_verify_pr400_doc_claims_test.go",
@@ -12,6 +15,11 @@
     "unit": {
       "kind": "gotest",
       "cmd": "go test ./pkg/coordination/coordinationscaling/ ./internal/controller/workloads/ -run 'TestVerifyPR400' -count=1 -json"
+    },
+    "live": {
+      "kind": "script",
+      "cmd": "KUBECONFIG=${KUBECONFIG:-$HOME/.kube/config} bash docs/verification/pr400-coordinated-policy-doc/scripts/l3-absolute-maxskew-bricks-rbg.sh",
+      "_note": "Exits 0 while the documented absolute maxSkew still bricks the RBG."
     }
   },
   "findings": [
@@ -33,7 +41,9 @@
       "layer": "unit",
       "severity": "major",
       "claim": "Doc says coordinated scaling only affects first deployment; there is no first-deployment gate, so steady-state scale-up (HPA/ScalingAdapter) is throttled identically.",
-      "match": ["TestVerifyPR400_F2_ScalingThrottlesScaleUpFromSteadyState"]
+      "match": [
+        "TestVerifyPR400_F2_ScalingThrottlesScaleUpFromSteadyState"
+      ]
     },
     {
       "id": "F3",
@@ -52,7 +62,9 @@
       "layer": "unit",
       "severity": "major",
       "claim": "Doc body's batch-2 walkthrough claims {prefill:2, decode:3}; the implementation yields {prefill:1, decode:2}.",
-      "match": ["TestVerifyPR400_F4_Batch2WalkthroughIsWrong"]
+      "match": [
+        "TestVerifyPR400_F4_Batch2WalkthroughIsWrong"
+      ]
     },
     {
       "id": "F5",
@@ -60,7 +72,9 @@
       "layer": "unit",
       "severity": "major",
       "claim": "Guide claims each batch creates '1 decode and 2 prefill'; no batch ever does (max prefill delta per batch is 1).",
-      "match": ["TestVerifyPR400_F5_GuideBatchCadenceIsWrong"]
+      "match": [
+        "TestVerifyPR400_F5_GuideBatchCadenceIsWrong"
+      ]
     },
     {
       "id": "F6",
@@ -68,8 +82,22 @@
       "layer": "unit",
       "severity": "minor",
       "claim": "Doc says progression defaults to OrderScheduled; there is no CRD default, so an omitted value is \"\" and canProceedToNextBatch skips the batch gate entirely.",
-      "match": ["TestVerifyPR400_F6_OmittedProgressionIsNotOrderScheduled"]
+      "match": [
+        "TestVerifyPR400_F6_OmittedProgressionIsNotOrderScheduled"
+      ]
+    },
+    {
+      "id": "F1-live",
+      "severity": "blocker",
+      "polarity": "canary",
+      "layer": "live",
+      "claim": "Applying the documented absolute form scaling.maxSkew: 2 is accepted by the apiserver with no warning, then the RBG creates ZERO pods and stays READY=False; the only clue is a FailedCalculateScaling event. Changing only that value to \"100%\" yields READY=True and all 4 pods Running.",
+      "match": [
+        "l3-absolute-maxskew-bricks-rbg.sh"
+      ],
+      "verdict": "Confirmed",
+      "note": "Sharpens F1 from 'reconcile aborts' to a measured total failure with no apply-time signal."
     }
   ],
-  "liveNote": "No L3 layer. F1's cluster-layer evidence is L2: run `KUBECONFIG=... bash docs/verification/pr400-coordinated-policy-doc/scripts/l2-crd-accepts-absolute-maxskew.sh`. It only uses --dry-run=server (nothing is persisted) and exits 0 while the schema still accepts an absolute maxSkew; it exits 1 if schema validation is added, which is the L2 canary flipping."
+  "liveNote": "Round 2 (2026-08-05): the live layer is now available. The blocker was a controller-image lag -- the cluster ran v0.8.0-cea2a47 (commit cea2a472, 23 commits behind main, older than #394) which wrote restartPolicy as a bare string while the already-correct CRDs required an object, so no Pod was ever created. Fixed with: helm upgrade rbgs deploy/helm/rbgs -n rbg-system --set controller.features.portAllocator.enabled=true (chart 0.8.0-alpha.3, image rolebasedgroup/rbgs-controller:v0.8.0-47cfe17). Cluster: v1.36.1-aliyun.1, 3 nodes. No data migration was needed because the cluster held zero RoleInstanceSets -- do not assume that next time. F1 is now confirmed live (see results/l3-absolute-maxskew.txt). F2 (coordinated scaling is not limited to first deployment) is the next most valuable finding to take live -- its consequence, HPA-driven scale-out being throttled without an obvious cause, is most convincing when observed on a cluster. Not attempted this round. F3-F11 remain unit-level."
 }

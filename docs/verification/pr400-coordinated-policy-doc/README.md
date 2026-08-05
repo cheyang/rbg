@@ -196,3 +196,81 @@ Do not modify production code or the reviewed doc files. Cluster work must stay
 on --dry-run=server; run no cluster-wide destructive actions. Then advance
 .last-reviewed to the newly reviewed sha.
 ```
+
+---
+
+# Round 2 addendum — F1 confirmed on a live cluster
+
+**Date:** 2026-08-05. **Reviewed head:** unchanged (`ab396534`) — this round adds
+evidence, not a new review of new code.
+
+Round 1 proved F1 (the blocker) at unit level: `parsePercentage` rejects an
+absolute `scaling.maxSkew`, and the error propagates out of `Reconcile`. What it
+could not show was the user-visible consequence, because the sandbox cluster's
+controller was 23 commits stale (`v0.8.0-cea2a47`) and wrote `restartPolicy` as a
+bare string while the CRDs required an object, so no RBG could create Pods at all.
+After `helm upgrade rbgs deploy/helm/rbgs -n rbg-system` (chart `0.8.0-alpha.3`,
+image `rolebasedgroup/rbgs-controller:v0.8.0-47cfe17`) the blast radius is
+directly observable.
+
+New script `scripts/l3-absolute-maxskew-bricks-rbg.sh`, output
+`results/l3-absolute-maxskew.txt` (exit 0, **CANARY HOLDS**). It scopes everything
+to a generated namespace and deletes it on exit.
+
+## The measured blast radius
+
+Applying the doc's own advertised form — `strategy.scaling.maxSkew: 2` — on a
+two-role RBG with 2 replicas each:
+
+```
+--- 1. apply with maxSkew: 2 (absolute, as documented) ---
+rolebasedgroup.workloads.x-k8s.io/c created
+coordinatedpolicy.workloads.x-k8s.io/c created
+    (accepted by the apiserver: the CRD is x-kubernetes-int-or-string,
+     so nothing warns the user here)
+
+--- 2. wait 50s, then observe ---
+    RBG ready : False
+    pods      : 0
+    events    :
+      Warning  FailedCalculateScaling  rolebasedgroup/c  Failed to calculate scaling
+      targets for c: failed to create coordination scaler: failed to parse maxSkew:
+      percentage string must end with '%'
+
+--- 3. change ONLY maxSkew to "100%" and re-observe ---
+    RBG ready : True
+    pods      : 4
+      c-decode-0    1/1   Running   0   29s
+      c-decode-1    1/1   Running   0   29s
+      c-prefill-0   1/1   Running   0   29s
+      c-prefill-1   1/1   Running   0   29s
+```
+
+Changing that one value from `2` to `"100%"` is the only difference between zero
+Pods and a healthy group. This closes the causal chain and sharpens the severity
+in two ways the unit test could not:
+
+1. **The failure is total, not partial.** It is not that coordinated scaling is
+   skipped — the RBG never creates a single Pod. Round 1's README said the error
+   "aborts the whole RBG reconcile"; this is that statement measured.
+2. **The user gets no signal at apply time.** `kubectl apply` succeeds, the
+   `CoordinatedPolicy` is stored, and the only clue is a `FailedCalculateScaling`
+   event on the RBG. A user following the parameter table has nothing pointing at
+   `maxSkew` unless they think to read events.
+
+## Polarity
+
+`scripts/l3-absolute-maxskew-bricks-rbg.sh` is a **canary**: it exits 0 while the
+absolute form still bricks the RBG. If the implementation is changed to accept
+absolute values (via `intstr.GetScaledValueFromIntOrPercent`, matching
+`rollingUpdate.maxSkew`), or if a webhook starts rejecting them at admission, the
+script exits 1 and must be inverted — and at that point the doc's parameter table
+becomes correct as written rather than needing the fix proposed for F1.
+
+## Unchanged by this round
+
+F2–F11 remain as recorded in round 1, all at unit level. F2 (coordinated scaling
+is not limited to first deployment) would be the next most valuable one to take
+live, since its consequence — HPA-driven scale-out being throttled without an
+obvious cause — is the kind of thing that only looks real to a maintainer when
+observed on a cluster. It was not attempted this round.
