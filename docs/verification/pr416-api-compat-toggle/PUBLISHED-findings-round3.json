@@ -1,0 +1,89 @@
+{
+  "round": 3,
+  "reviewId": 4860902245,
+  "reviewUrl": "https://github.com/sgl-project/rbg/pull/416#pullrequestreview-4860902245",
+  "commitId": "aac6056d5c615dae4c90ce8431d404043c5d2032",
+  "event": "REQUEST_CHANGES",
+  "state": "CHANGES_REQUESTED",
+  "author": "cheyang",
+  "scope": "Published KEY PROBLEMS ONLY, at the reviewer's instruction: the two major findings inline, everything else summarised or dropped.",
+  "publishedInline": [
+    {
+      "n": 1,
+      "severity": "major",
+      "path": "deploy/helm/rbgs/templates/upgrade-guard.yaml",
+      "line": 2,
+      "commentId": 3717866540,
+      "commentUrl": "https://github.com/sgl-project/rbg/pull/416#discussion_r3717866540",
+      "maps_to": [
+        "F4",
+        "R3-F22"
+      ],
+      "title": "The guard checks IsUpgrade rather than cluster state: it breaks the documented helm upgrade --install (10 call sites incl. 2 CI workflows) and does not enforce the fresh-install premise the design rests on",
+      "recommendation": "pre-install,pre-upgrade hook Job gating on objects, hook-weight below crd-upgrade's -4",
+      "designNote": "UPGRADE-GUARD-DESIGN.md"
+    },
+    {
+      "n": 2,
+      "severity": "major",
+      "path": "hack/gen-helm-rbac/main.go",
+      "line": 128,
+      "commentId": 3717866545,
+      "commentUrl": "https://github.com/sgl-project/rbg/pull/416#discussion_r3717866545",
+      "maps_to": [
+        "R3-F23",
+        "R2-F15"
+      ],
+      "title": "The dropped-rule guard is a count comparison that a rule split masks; 16 rules -> 18 blocks at this head, so it tolerates 2 dropped rules",
+      "recommendation": "reject any input rule that produced no output block"
+    }
+  ],
+  "publishedInSummaryOnly": [
+    {
+      "maps_to": [
+        "F3"
+      ],
+      "why_no_inline": "the affected reconcile code is not in the diff"
+    },
+    {
+      "maps_to": [
+        "P1"
+      ],
+      "why_no_inline": "pkg/discovery env handling is not in the diff"
+    },
+    {
+      "maps_to": [
+        "chart-version"
+      ],
+      "why_no_inline": "deploy/helm/rbgs/Chart.yaml is not in the diff",
+      "note": "Chart.yaml is still 0.8.0-alpha.2, below the 0.8.0-alpha.3 line the guard draws"
+    }
+  ],
+  "deliberatelyNotRaised": [
+    {
+      "id": "R2-F14",
+      "why": "narrowed to a fail-open residual in mustGroupResources; non-blocking, dropped to keep the review to key problems"
+    },
+    {
+      "id": "R2-F20",
+      "why": "rollout undo across a workload-type change; non-blocking and rollout_undo.go is not in the diff"
+    },
+    {
+      "id": "praise/design-confirmation inlines",
+      "why": "drafted for rolebasedgroupset_admission.go:61 and cmd/rbgs/main.go:643 but dropped at the reviewer's instruction to publish key problems only; the substance is kept in the summary body"
+    }
+  ],
+  "retractions": [
+    {
+      "target": "F8 / F8b",
+      "change": "blocker -> withdrawn",
+      "why": "that false makes v1alpha1 unusable unless every role names RoleInstanceSet is now documented in six places as intended. A deliberate cost, not a defect; stated explicitly in the summary body."
+    },
+    {
+      "target": "round-2 claim that F4 could not be inlined",
+      "change": "corrected",
+      "why": "round 2 recorded 'upgrade-guard.yaml is unchanged by this PR'. It is ADDED by this PR (diff status A, absent at base 8a54787d), so round 3 anchors F4 inline. Stated explicitly in the summary body."
+    }
+  ],
+  "designReversalHandling": "F2a/F2c/F9/F10 were NOT re-filed as regressions. The delta deletes validateNoNewDeprecatedWorkloadTypes and restores the whole-object check, which is documented consistently as fresh-install-only, so those denials are unreachable under the stated premise. The summary says so explicitly and points at inline #1 as the reason it matters: the premise is unenforced."
+}

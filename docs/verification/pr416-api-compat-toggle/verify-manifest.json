@@ -675,47 +675,59 @@
       "no live arm for F9/F10"
     ]
   },
-  "published": {
-    "pr": "https://github.com/sgl-project/rbg/pull/416",
-    "reviewedHead": "a69ceada83126c3a7dbd1ab9e1578b3e10dc6ed4",
-    "verdict": "CHANGES_REQUESTED",
-    "submittedBy": "cheyang",
-    "submittedAt": "2026-08-02T04:41:02Z",
-    "inlineCount": 5,
-    "publishedFindings": [
-      "F1",
-      "F8",
-      "F8b",
-      "F9+F10 (as one comment on the UPDATE rule)",
-      "rename (naming/major)"
-    ],
-    "anchors": {
-      "deploy/helm/rbgs/values.yaml:11": "F1 default vs docs",
-      "api/workloads/v1alpha2/rolebasedgroup_validation.go:171": "F8 whole v1alpha1 API",
-      "api/workloads/v1alpha2/rolebasedgroupset_admission.go:60": "F8b both validators",
-      "api/workloads/v1alpha2/rolebasedgroup_admission.go:87": "F9+F10 three writers incl HPA",
-      "deploy/helm/rbgs/values.yaml:9": "rename to deprecation-lifecycle name"
-    },
-    "heldBack": {
-      "file": "HELD-BACK.json",
-      "reason": "Kept out to keep the review focused. None of these fires while the chart default stays permissive (true); ALL become blocking the moment the default flips to false. That coupling is stated inside the F1 comment.",
-      "items": [
-        "F3 ungated reconcile path + LWS watch re-arm",
-        "cacheOptions drops selector not informer",
-        "F6 value-shape render failures + silent RBAC strip",
-        "F4 upgrade guard (10 call sites, porous)",
-        "F5 no CI gate for chart RBAC drift",
-        "README self-contradiction + missing timeline",
-        "missingTests: no controller/chart/conversion test"
+  "published": [
+    {
+      "pr": "https://github.com/sgl-project/rbg/pull/416",
+      "reviewedHead": "a69ceada83126c3a7dbd1ab9e1578b3e10dc6ed4",
+      "verdict": "CHANGES_REQUESTED",
+      "submittedBy": "cheyang",
+      "submittedAt": "2026-08-02T04:41:02Z",
+      "inlineCount": 5,
+      "publishedFindings": [
+        "F1",
+        "F8",
+        "F8b",
+        "F9+F10 (as one comment on the UPDATE rule)",
+        "rename (naming/major)"
       ],
-      "postWhen": "after the author responds to the five published comments"
+      "anchors": {
+        "deploy/helm/rbgs/values.yaml:11": "F1 default vs docs",
+        "api/workloads/v1alpha2/rolebasedgroup_validation.go:171": "F8 whole v1alpha1 API",
+        "api/workloads/v1alpha2/rolebasedgroupset_admission.go:60": "F8b both validators",
+        "api/workloads/v1alpha2/rolebasedgroup_admission.go:87": "F9+F10 three writers incl HPA",
+        "deploy/helm/rbgs/values.yaml:9": "rename to deprecation-lifecycle name"
+      },
+      "heldBack": {
+        "file": "HELD-BACK.json",
+        "reason": "Kept out to keep the review focused. None of these fires while the chart default stays permissive (true); ALL become blocking the moment the default flips to false. That coupling is stated inside the F1 comment.",
+        "items": [
+          "F3 ungated reconcile path + LWS watch re-arm",
+          "cacheOptions drops selector not informer",
+          "F6 value-shape render failures + silent RBAC strip",
+          "F4 upgrade guard (10 call sites, porous)",
+          "F5 no CI gate for chart RBAC drift",
+          "README self-contradiction + missing timeline",
+          "missingTests: no controller/chart/conversion test"
+        ],
+        "postWhen": "after the author responds to the five published comments"
+      },
+      "humanizerNote": "Text passed through the humanizer skill before publishing: 14 em dashes -> 0, 19 bold runs -> 0, formulaic scaffolding removed; all file:line facts verified intact afterwards. Gotcha: the plan subcommand rebuilds the payload with its own defaults, so --humanized must be passed to plan, not only to build-payload.",
+      "stillUnverified": [
+        "P3 LWS startup ordering (needs a throwaway cluster)",
+        "F9/F10 live arm (unit layer only; needs a throwaway cluster)"
+      ]
     },
-    "humanizerNote": "Text passed through the humanizer skill before publishing: 14 em dashes -> 0, 19 bold runs -> 0, formulaic scaffolding removed; all file:line facts verified intact afterwards. Gotcha: the plan subcommand rebuilds the payload with its own defaults, so --humanized must be passed to plan, not only to build-payload.",
-    "stillUnverified": [
-      "P3 LWS startup ordering (needs a throwaway cluster)",
-      "F9/F10 live arm (unit layer only; needs a throwaway cluster)"
-    ]
-  },
+    {
+      "round": 3,
+      "reviewId": 4860902245,
+      "reviewUrl": "https://github.com/sgl-project/rbg/pull/416#pullrequestreview-4860902245",
+      "commitId": "aac6056d5c615dae4c90ce8431d404043c5d2032",
+      "event": "REQUEST_CHANGES",
+      "inlineCount": 2,
+      "scope": "key problems only",
+      "details": "PUBLISHED-findings-round3.json"
+    }
+  ],
   "previousReviewedHead": "dcc7104aef6f6e8c16cf4342bb25baf9426c68ab",
   "round": 3,
   "designNotes": [
