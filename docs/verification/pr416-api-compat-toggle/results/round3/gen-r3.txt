@@ -1,0 +1,39 @@
+=== RUN   TestDeprecatedResources
+--- PASS: TestDeprecatedResources (0.00s)
+=== RUN   TestSplitRules
+=== RUN   TestSplitRules/a_rule_of_only_deprecated_resources_is_gated_whole
+=== RUN   TestSplitRules/a_mixed_rule_is_split,_and_controllerrevisions_stay_granted
+=== RUN   TestSplitRules/subresources_follow_their_base_resource
+=== RUN   TestSplitRules/a_resource_outside_the_gate_is_granted_unconditionally
+--- PASS: TestSplitRules (0.00s)
+    --- PASS: TestSplitRules/a_rule_of_only_deprecated_resources_is_gated_whole (0.00s)
+    --- PASS: TestSplitRules/a_mixed_rule_is_split,_and_controllerrevisions_stay_granted (0.00s)
+    --- PASS: TestSplitRules/subresources_follow_their_base_resource (0.00s)
+    --- PASS: TestSplitRules/a_resource_outside_the_gate_is_granted_unconditionally (0.00s)
+=== RUN   TestParseRole
+=== RUN   TestParseRole/well-formed_ClusterRole
+=== RUN   TestParseRole/misspelled_key
+=== RUN   TestParseRole/namespaced_Role
+=== RUN   TestParseRole/no_rules
+--- PASS: TestParseRole (0.00s)
+    --- PASS: TestParseRole/well-formed_ClusterRole (0.00s)
+    --- PASS: TestParseRole/misspelled_key (0.00s)
+    --- PASS: TestParseRole/namespaced_Role (0.00s)
+    --- PASS: TestParseRole/no_rules (0.00s)
+=== RUN   TestSplitRulesDropsResourcelessRule
+--- PASS: TestSplitRulesDropsResourcelessRule (0.00s)
+=== RUN   TestSplitRulesRejectsAmbiguousGroups
+--- PASS: TestSplitRulesRejectsAmbiguousGroups (0.00s)
+=== RUN   TestPR416R3_DropGuardIsMaskedByASplit
+    pr416_r3_gen_test.go:100: R3-F23 REPRODUCED: 2 input rules produced 2 blocks, so run()'s `len(blocks) < len(role.Rules)` guard does NOT fire -- but the nonResourceURLs rule was silently dropped from the chart ClusterRole and the generator exits 0. The guard added in 68850e6f compares totals, and splitRules emits 2 blocks for the straddling rule, which pays for the missing one. Fix: reject any input rule that produced no block, instead of comparing counts.
+--- FAIL: TestPR416R3_DropGuardIsMaskedByASplit (0.00s)
+=== RUN   TestPR416R3_DropIsUndetectedInTheCommittedRoleYaml
+    pr416_r3_gen_test.go:130: committed config/rbac/role.yaml: 16 rules -> 18 blocks (count guard slack = 2)
+    pr416_r3_gen_test.go:140: R3-F23 REPRODUCED against the committed config/rbac/role.yaml: adding a single urls= kubebuilder marker (17 rules total) strips that permission from the chart ClusterRole with exit 0, no error and no CI diff, because the two straddling apps rules already inflate the block count past the guard. R2-F15 is therefore only partially fixed.
+--- FAIL: TestPR416R3_DropIsUndetectedInTheCommittedRoleYaml (0.00s)
+=== RUN   TestPR416R3_SplitRulesIsNotCountPreserving
+    pr416_r3_gen_test.go:161: 1 input rule -> 2 output blocks: len(blocks) cannot be compared to len(rules)
+--- PASS: TestPR416R3_SplitRulesIsNotCountPreserving (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/hack/gen-helm-rbac	0.078s
+FAIL

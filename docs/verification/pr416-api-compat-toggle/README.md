@@ -371,3 +371,177 @@ creates a RoleBasedGroup, so its fix surface is one call site.
 (`pkg/discovery`) were never executed by the automation and reported `HARNESS-UPDATE`; their
 round-2 verdicts were obtained by running those packages by hand. Both fields now cover all four
 packages, so the next round's `re-verify.sh` produces real verdicts for them.
+
+---
+
+# Round 3 — head `aac6056d`
+
+| | |
+|---|---|
+| Reviewed head | `aac6056d5c615dae4c90ce8431d404043c5d2032` |
+| Previous round head | `dcc7104aef6f6e8c16cf4342bb25baf9426c68ab` |
+| Round | **3** (fifth of the #413 → #414 → #416 lineage) |
+| Delta reviewed | 4 commits, 27 files, +459 / −235 |
+| Environment | same remote Linux sandbox; ACK cn-hongkong used **read-only** (`--dry-run=server`) |
+
+## The delta
+
+| Commit | What it changes |
+|---|---|
+| `681332fa` | Chart: docs and NOTES rewritten around "fresh installation only" |
+| `6fb8397a` | `+kubebuilder:deprecatedversion:warning` on the v1alpha1 kinds |
+| `68850e6f` | `gen-helm-rbac`: strict decode, `kind: ClusterRole` assertion, dropped-rule guard, derived gate, unit tests |
+| `aac6056d` | `cacheOptions` bounds StatefulSet/Deployment unconditionally |
+
+## The headline: the design was reverted, not advanced
+
+`aac6056d` **deletes `validateNoNewDeprecatedWorkloadTypes`** and routes `ValidateUpdate`
+back through the strict whole-object check, for `RoleBasedGroup` and `RoleBasedGroupSet`
+alike. Round 2's grandfathering — the thing that closed round-1 blockers F2a, F2c, F10 and
+half of F9 — is gone.
+
+This is a deliberate scope decision rather than a regression, and it is now stated
+consistently in six places (PR body, root README, chart README, `values.yaml`, `NOTES.txt`,
+flag help): `false` is for a **fresh installation only**, with no exemption for objects that
+already use a deprecated workload type. Under that premise the round-1 denials are
+*unreachable* rather than *fixed* — no such object can exist.
+
+The whole design now rests on that single premise. So round 3 tested the premise.
+
+## R3-F22 — "fresh installation only" is enforced nowhere, and the repo documents the bypass
+
+**Severity: major.** Evidence: [`f22-fresh-install-invariant.txt`](results/round3/f22-fresh-install-invariant.txt)
+(`scripts/10-fresh-install-invariant.sh`, read-only).
+
+The PR's stated enforcement is `templates/upgrade-guard.yaml`. Four structural facts, each
+independently checked, show it does not cover the case that matters:
+
+1. **The chart declares no CRDs** — `crds/` is empty and no template emits a
+   `CustomResourceDefinition` (they come from the `crd-upgrade` pre-install Job). So
+   `helm uninstall` removes neither the CRDs nor any `RoleBasedGroup`/`RoleBasedGroupSet`.
+   Those objects survive an uninstall, guaranteed.
+2. **The guard keys on `.Release.IsUpgrade`**, which is **false** on a reinstall. Confirmed
+   with a control: `helm template --is-upgrade` does fail, a plain render does not.
+3. **The repo instructs exactly that path in four places** — `upgrade-guard.yaml:2`
+   ("Please uninstall and reinstall"), `NOTES.txt:17`, chart `README.md:65` and `README.md:155`
+   ("Only fresh `helm install` is supported. To update, uninstall and reinstall.").
+4. **Nothing inspects the cluster.** No template uses Helm `lookup` to find existing
+   RoleBasedGroups; `helm install --set controller.deprecatedWorkloadTypes.enabled=false`
+   renders successfully (416 lines, flag `false`, 0 deprecated RBAC lines) whatever is
+   already in the cluster.
+
+So the documented update procedure — uninstall, reinstall — produces a *fresh release over
+surviving objects*, and the toggle can be set `false` in that same command. The result is
+the state the PR says cannot exist, and its consequences are already proved by the round-1
+write-path tests, all RED again at this head:
+
+| Write | Site | Fate with a pre-existing deprecated role |
+|---|---|---|
+| annotation patch | `rolebasedgroup_controller.go:363` | **denied** (F2a) |
+| `kubectl scale` | user | **denied** (F2c) |
+| RBGSet template sync | `rolebasedgroupset_controller.go:465` | **denied** (F9) |
+| HPA / scale adapter | `rolebasedgroupscalingadapter_controller.go:511` | **denied** (F10) |
+| child RBG create | `rolebasedgroupset_controller.go:231` | **denied** (R2-F13) |
+
+Nothing is written to the object's status on any of them, so the object is unreconcilable
+and silent about it.
+
+**Suggested fix:** a pre-install check that fails the install when `enabled=false` and any
+`RoleBasedGroup`/`RoleBasedGroupSet` already uses a deprecated workload type. The
+`crd-upgrade` Job is the precedent that this is feasible in-chart with its own
+ServiceAccount. That makes the premise real and closes F2a/F2c/F9/F10/R2-F13 as a *class*,
+instead of one path at a time — which is what the previous two rounds each attempted.
+
+## R3-F23 — the new dropped-rule guard cannot fire (R2-F15 only partly fixed)
+
+**Severity: major (latent).** Evidence: `hack/gen-helm-rbac/pr416_r3_gen_test.go`,
+[`gen-r3.txt`](results/round3/gen-r3.txt).
+
+`68850e6f` answers R2-F15 with a guard in `run()`:
+
+```go
+if len(blocks) < len(role.Rules) { return error }
+```
+
+But `splitRules` is **not count-preserving**: a rule whose resources straddle the gate emits
+*two* blocks. A split inflates the count and pays for a drop.
+
+Measured against the committed `config/rbac/role.yaml`: **16 rules → 18 blocks**. Two rules
+already straddle (`apps: controllerrevisions+deployments+statefulsets`, and the matching
+`/status` rule), so the guard tolerates **two silently dropped rules today**. Adding one
+`urls=` kubebuilder marker strips that permission from the chart ClusterRole with exit 0, no
+error, and no CI diff.
+
+The PR's own `TestSplitRulesDropsResourcelessRule` asserts `assert.Empty(t, blocks)` with no
+error — it pins the drop as acceptable at the `splitRules` level, so the fix is tested at the
+wrong layer.
+
+**Fix:** reject any input rule that produced no block (per-rule coverage), not a count
+comparison. Verified by the harness-bites check: adding that check turns all three R3
+generator tests green (and requires updating `TestSplitRulesDropsResourcelessRule`).
+
+## What the delta genuinely fixed
+
+* **R2-F11 / R2-F12 — fixed, and structurally.** `clusterrole.yaml` and `manager.yaml` now
+  read the toggle with the *identical* expression
+  (`or (not (hasKey $d "enabled")) $d.enabled`), so the granted RBAC and the rendered flag
+  cannot disagree. All value shapes agree and every rendered flag is parseable —
+  no more `enabled: ""` → CrashLoopBackOff. [`08-flag-rbac-agreement`](results/round3/)
+* **R2-F16 / R2-F17 — fixed.** `yaml.UnmarshalStrict` + a `kind: ClusterRole` assertion:
+  a misspelled `resource:` key and a multi-document input now exit 1 with a clear message
+  instead of silently emitting a short ClusterRole.
+* **R2-F18 — fixed.** `hack/gen-helm-rbac/main_test.go` (223 lines) covers the derived gate,
+  rule splitting, subresources and each rejected input shape. Output is deterministic.
+* **R2-F19 — fixed.** The chart README's value-table row no longer contradicts the prose
+  three lines below it.
+* **F3b — fixed, with the right reasoning.** `cacheOptions` now lists StatefulSet and
+  Deployment unconditionally. The comment is correct: `ByObject` is per-type configuration,
+  not an allowlist, and creates no informer, so gating it only stripped the label bound from
+  an informer that would start anyway.
+* **The deprecation markers are correct.** All six v1alpha1 kinds point at v1alpha2 kinds
+  that exist (`RoleInstance`, `RoleInstanceSet`, `ClusterEngineRuntimeProfile`, …), and the
+  controller does not read v1alpha1 `Instance`/`InstanceSet` outside one test constant, so
+  there is no self-inflicted deprecation-warning spam.
+* **F1, F5, F5b, F7 stay green.** Default consistent and toggle effective; no chart/RBAC
+  drift (209 == 209); generated artefacts in sync after `make manifests generate`; a real
+  API server accepts all 12 rendered objects in both shapes.
+
+## Round-3 verdicts
+
+| ID | Sev | Claim | R3 verdict | Evidence |
+|----|-----|-------|-----------|----------|
+| **R3-F22** | **major** | "Fresh install only" is unenforced; the documented uninstall+reinstall path reaches `enabled=false` over surviving objects | **Reproduced (new)** | [`f22`](results/round3/f22-fresh-install-invariant.txt) |
+| **R3-F23** | major (latent) | The dropped-rule guard is a count comparison a split can mask; slack is already 2 | **Reproduced (new)** | [`gen-r3`](results/round3/gen-r3.txt) |
+| F2a/F2c/F9/F10/R2-F13 | — | Controller + user writes denied for a pre-existing deprecated object | **Red by design** — unreachable iff R3-F22 is closed | [`unit-r3`](results/round3/unit-r3.txt) |
+| **F3** | major | Legacy reconcilers still built when disabled; nothing stops a read/write of a type whose RBAC is gone | **Still broken** | ditto |
+| **F4** | major | Upgrade guard hard-fails `helm upgrade --install`, the command the repo documents | **Still broken** | [`04`](results/round3/) |
+| **F8 / F8b** | blocker | v1alpha1 defaulting makes the whole v1alpha1 API unusable when disabled | **Still broken — documented** | [`unit-r3`](results/round3/unit-r3.txt) |
+| **P1** | major | `LWS_*` → `RBG_LWP_*` env rename has no alias shim; containers fail at runtime, silently | **Still broken** (untouched) | ditto |
+| R2-F14 | non-blocking | Gate list is still a second list — a deprecated type added to the validator but not to `mustGroupResources` is emitted **ungated** (fails open) | **Narrowed, not closed** | [`09`](results/round3/) |
+| R2-F20 | non-blocking | `rbg rollout undo` refused across a workload-type change | Unchanged | — |
+| R2-F21 | non-blocking | PR description described the round-1 design | **Fixed** — body now matches the code | — |
+| R2-F11/F12/F16/F17/F18/F19, F3b | — | see above | **Fixed** | [`08`](results/round3/), [`09`](results/round3/) |
+| F1, F5, F5b, F7 | — | Regression guards | **Green** | [`01`](results/round3/), [`03`](results/round3/), [`05`](results/round3/), [`20`](results/round3/) |
+
+**Net: 7 findings fixed this round (R2-F11, F12, F16, F17, F18, F19, F21 + F3b). 2 new
+(R3-F22, R3-F23). The grandfathering that closed 4 round-1 findings was reverted, so those
+denials are live again — acceptable only if R3-F22 is closed.**
+
+## Harness changes this round
+
+* **11 round-2 tests retired**, not deleted: `r3RetireGrandfatheringAssertion(t)` skips each
+  with a pointer to the reversal commit and the replacement pins. They asserted the
+  grandfathering contract, which no longer exists — reporting them as failures would have
+  been a false regression claim.
+* **New design pins** (`api/workloads/v1alpha2/pr416_r3_design_test.go`, GREEN): whole-object
+  rejection on update for both kinds, and create/update producing an *identical* verdict —
+  the asymmetry that was R2-F13. Each denial has an ENABLED control, so none can pass
+  vacuously. A fourth design flip cannot happen silently.
+* **New generator tests** (`hack/gen-helm-rbac/pr416_r3_gen_test.go`, RED): R3-F23, written
+  against a `dropDetected` helper that mirrors `run()`'s acceptance logic, so they go green
+  wherever the fix lands.
+* **Fixed a harness false positive:** `05-manifests-freshness.sh` counted this harness's own
+  `pr416_*` test files under `api/` as generated-artefact drift and reported "F5b
+  REPRODUCED". It now excludes them; F5b is genuinely clean.
+
+Production code remains untouched on this branch.

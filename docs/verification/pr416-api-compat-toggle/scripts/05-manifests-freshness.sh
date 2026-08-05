@@ -27,7 +27,10 @@ echo
 echo "--- diff in generated paths ---"
 paths="config/ deploy/kubectl/ api/ client-go/"
 # shellcheck disable=SC2086
-drift=$(git status --porcelain -- $paths)
+# Exclude this harness's own pr416_* test files: they live under api/ but are not
+# generated, so a harness edit must not read as generated-artefact drift (it did in
+# round 3, producing a false F5b REPRODUCED).
+drift=$(git status --porcelain -- $paths | grep -v 'pr416_' || true)
 if [ -z "$drift" ]; then
   echo "  (none) -- generated artefacts are in sync"
   echo

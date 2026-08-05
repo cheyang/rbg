@@ -1,0 +1,21 @@
+=== F1: shipped default vs documented default, and does false actually strip RBAC? ===
+chart: deploy/helm/rbgs
+v3.16.3+gcfd0749
+
+--- shipped default (flag as rendered with no overrides) ---
+  --enable-deprecated-workload-types=true
+
+--- documented default (chart README value table) ---
+  33:| `controller.deprecatedWorkloadTypes.enabled` | Enable the deprecated workload types (Deployment/StatefulSet/LeaderWorkerSet). When fa
+  127:| `controller.deprecatedWorkloadTypes.enabled` | Enable the deprecated workload types — see [Deprecated workload types](#deprecated-
+  -> documented default(s): true 
+
+  OK: shipped default (true) matches the documented default (true ).
+
+--- deprecated-workload RBAC lines in the rendered ClusterRole ---
+  default         : 8
+  =true  (control): 8
+  =false (subject): 0
+  OK: =false removes all 8 line(s); the =true control keeps them (toggle works).
+
+RESULT: F1 FIXED -- default is consistent and the toggle is effective.

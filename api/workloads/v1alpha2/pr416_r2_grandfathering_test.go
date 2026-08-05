@@ -89,6 +89,7 @@ var r2DeprecatedTypes = []string{
 // RBGSet template sync, the ScalingAdapter replica update) rewrites roles it does
 // not mean to change. Round 1: RED. Must stay GREEN.
 func TestPR416R2_Grandfathering_ExistingRoleStaysWritable(t *testing.T) {
+	r3RetireGrandfatheringAssertion(t)
 	for _, wt := range r2DeprecatedTypes {
 		t.Run(wt, func(t *testing.T) {
 			old := r2RBG(r2Role("worker", wt))
@@ -122,6 +123,7 @@ func TestPR416R2_Grandfathering_ExistingRoleStaysWritable(t *testing.T) {
 // deprecated type, or swapping one deprecated type for another, must still be
 // rejected.
 func TestPR416R2_Grandfathering_StillRejectsNewAndSwapped(t *testing.T) {
+	r3RetireGrandfatheringAssertion(t)
 	old := r2RBG(r2Role("worker", constants.StatefulSetWorkloadType))
 
 	t.Run("newly added deprecated role is rejected", func(t *testing.T) {
@@ -204,6 +206,7 @@ func TestPR416R2_Grandfathering_RoleRenameLosesTheExemption(t *testing.T) {
 // was already accepted should not be denied -- so it is RED while the gap exists
 // and turns GREEN when it is closed.
 func TestPR416R2_ChildRBGCreateIsStillDenied(t *testing.T) {
+	r3RetireGrandfatheringAssertion(t)
 	for _, wt := range r2DeprecatedTypes {
 		t.Run(wt, func(t *testing.T) {
 			ctx := context.Background()
@@ -241,4 +244,24 @@ func TestPR416R2_ChildRBGCreateIsStillDenied(t *testing.T) {
 				" Denial: %v", wt, err)
 		})
 	}
+}
+
+// r3RetireGrandfatheringAssertion retires a round-2 assertion that the design
+// reversal at aac6056d made meaningless.
+//
+// Round 2 narrowed ValidateUpdate to a delta check
+// (validateNoNewDeprecatedWorkloadTypes) so a pre-existing deprecated role stayed
+// writable. Commit aac6056d deletes that function and restores the strict
+// whole-object check on both create and update, for RoleBasedGroup and
+// RoleBasedGroupSet alike.
+//
+// So these tests are NOT evidence of a regression -- the contract they encode no
+// longer exists, deliberately. The replacement pins for the current design are the
+// TestPR416R3_* tests in api/workloads/v1alpha2/pr416_r3_design_test.go. The
+// question the reversal actually raises -- whether the "fresh installation only"
+// premise that justifies it is enforced anywhere (it is not) -- is R3-F22, proved by
+// docs/verification/pr416-api-compat-toggle/scripts/10-fresh-install-invariant.sh.
+func r3RetireGrandfatheringAssertion(t *testing.T) {
+	t.Helper()
+	t.Skip("superseded: grandfathering removed at aac6056d; see TestPR416R3_* pins and R3-F22")
 }

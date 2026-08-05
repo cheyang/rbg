@@ -1,0 +1,10 @@
+=== F5b: is the generated output committed and up to date? ===
+  NOTE: tree already dirty before generating (harness files); only tracked
+        generated paths are judged below.
+--- running: make manifests generate ---
+  NOTE: config/rbac/role.yaml has been regenerated.
+
+--- diff in generated paths ---
+  (none) -- generated artefacts are in sync
+
+RESULT: F5b clean. Generated output matches the committed files.

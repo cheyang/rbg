@@ -1,0 +1,55 @@
+
+=== 1. Does the chart own the CRDs? (if not, uninstall cannot remove the CRs)
+chart crds/ entries: 0 ; templates declaring a CRD: 0
+FINDING: the chart declares no CRDs, so 'helm uninstall' removes neither the CRDs nor any RoleBasedGroup/RoleBasedGroupSet. Those objects survive an uninstall.
+    CRDs come from the pre-install Job instead: 33:          image: "{{ .Values.crdUpgrade.image.repository }}:{{ .Values.crdUpgrade.image.tag | default .Chart.AppVersion }}"
+
+=== 2. What does the upgrade guard actually guard?
+{{- if .Release.IsUpgrade }}
+{{- fail "Upgrade is not supported for this chart version. Please uninstall and reinstall. See chart README for details." }}
+{{- end }}
+ok: the guard keys on .Release.IsUpgrade
+FINDING: …which is FALSE on a reinstall after an uninstall. The guard blocks 'helm upgrade' only; it cannot see objects left behind by the previous release.
+
+=== 3. The repo's own instruction for updating
+    deploy/helm/rbgs/templates/upgrade-guard.yaml:2:{{- fail "Upgrade is not supported for this chart version. Please uninstall and reinstall. See chart README for details." }}
+    deploy/helm/rbgs/templates/NOTES.txt:17:To update, uninstall and reinstall.
+    deploy/helm/rbgs/README.md:65:To update to a newer version, uninstall and reinstall.
+    deploy/helm/rbgs/README.md:155:> Only fresh `helm install` is supported. To update, uninstall and reinstall.
+FINDING: the documented remediation for 'upgrade is not supported' is exactly the path that produces a fresh release over surviving objects.
+
+=== 4. Does anything refuse enabled=false when deprecated objects already exist?
+templates using Helm 'lookup' to find existing RoleBasedGroups: 0
+pre-install hooks present: deploy/helm/rbgs/templates/crd-upgrade/crd-upgrade.yaml 
+FINDING: no template inspects the cluster for pre-existing deprecated-workload objects. 'helm install --set controller.deprecatedWorkloadTypes.enabled=false' is accepted unconditionally, whatever is already in the cluster.
+    (note: crd-upgrade.yaml shows the chart CAN run a cluster-inspecting
+     pre-install Job with its own ServiceAccount, so a guard is feasible here.)
+
+=== 5. Confirm the render actually succeeds in that shape (the bypass is real)
+ok: fresh-install render with enabled=false SUCCEEDS (416 lines)
+    flag rendered: 1x
+    deprecated RBAC lines remaining: 0
+
+=== 6. Control: the guard DOES fire on a real helm upgrade
+ok: guard fires on --is-upgrade: :2:4): Upgrade is not supported for this chart version. Please uninstall and reinstall. See chart README for details.Use --debug flag to render out invalid YAML
+    -> so the ONLY thing standing between an existing install and enabled=false
+       is a check that the documented workaround walks straight around.
+
+=== VERDICT
+R3-F22 REPRODUCED. The premise "no such object can exist" is unenforced:
+
+  helm uninstall rbgs                       # CRDs and all RBG/RBGSet objects survive
+  helm install rbgs ... \
+    --set controller.deprecatedWorkloadTypes.enabled=false   # accepted, IsUpgrade=false
+
+leaves every pre-existing object using Deployment/StatefulSet/LeaderWorkerSet
+permanently unwritable and unreconcilable -- the state the PR says cannot happen.
+The consequences are already proved by the round-1 write-path tests, which are RED
+again at this head (F2a/F2c/F9/F10: annotation patch, kubectl scale, RBGSet template
+sync, HPA scale -- all denied, with nothing written to the object's status).
+
+Suggested fix: a pre-install check (the crd-upgrade Job is the precedent) that fails
+the install when enabled=false and any RoleBasedGroup/RoleBasedGroupSet already uses
+a deprecated workload type. That makes the invariant the design assumes real, and it
+is the smallest change that closes F2a/F2c/F9/F10/R2-F13 as a class rather than
+one path at a time.

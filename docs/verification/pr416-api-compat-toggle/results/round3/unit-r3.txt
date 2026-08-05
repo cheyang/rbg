@@ -1,0 +1,253 @@
+?   	sigs.k8s.io/rbgs/api/workloads/constants	[no test files]
+?   	sigs.k8s.io/rbgs/api/workloads/pub/inplace_update	[no test files]
+=== RUN   TestVerifyPR416_F8_DisablingCompatKillsTheWholeV1alpha1API
+    pr416_v1alpha1_chain_test.go:79: conversion produced rbg.workloads.x-k8s.io/role-workload-type="apps/v1/StatefulSet"
+    pr416_v1alpha1_chain_test.go:99: F8 REPRODUCED: a v1alpha1 RoleBasedGroup whose author never chose a workload type is rejected when compatibility is disabled. The CRD default injected StatefulSet, conversion stamped it as rbg.workloads.x-k8s.io/role-workload-type="apps/v1/StatefulSet", and the validator refused it: spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true). So compatibility.v1alpha1.enabled=false does not 'restrict v1alpha1-era workload types' -- it disables the v1alpha1 API wholesale, which the PR description does not say and which pre-empts the migration path that description defers to a follow-up PR.
+--- FAIL: TestVerifyPR416_F8_DisablingCompatKillsTheWholeV1alpha1API (0.15s)
+=== RUN   TestVerifyPR416_F8b_ControlsForF8
+=== RUN   TestVerifyPR416_F8b_ControlsForF8/control_same_object_accepted_when_compat_enabled
+=== RUN   TestVerifyPR416_F8b_ControlsForF8/control_v1alpha1_survives_only_by_naming_a_v1alpha2_type
+    pr416_v1alpha1_chain_test.go:162: bounded: a v1alpha1 role survives only if the user explicitly writes the v1alpha2 RoleInstanceSet type into the v1alpha1 workload field
+--- PASS: TestVerifyPR416_F8b_ControlsForF8 (0.01s)
+    --- PASS: TestVerifyPR416_F8b_ControlsForF8/control_same_object_accepted_when_compat_enabled (0.00s)
+    --- PASS: TestVerifyPR416_F8b_ControlsForF8/control_v1alpha1_survives_only_by_naming_a_v1alpha2_type (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.540s
+=== RUN   TestPR416R2_Grandfathering_ExistingRoleStaysWritable
+    pr416_r2_grandfathering_test.go:92: superseded: grandfathering removed at aac6056d; see TestPR416R3_* pins and R3-F22
+--- SKIP: TestPR416R2_Grandfathering_ExistingRoleStaysWritable (0.00s)
+=== RUN   TestPR416R2_Grandfathering_StillRejectsNewAndSwapped
+    pr416_r2_grandfathering_test.go:126: superseded: grandfathering removed at aac6056d; see TestPR416R3_* pins and R3-F22
+--- SKIP: TestPR416R2_Grandfathering_StillRejectsNewAndSwapped (0.00s)
+=== RUN   TestPR416R2_Grandfathering_RoleRenameLosesTheExemption
+    pr416_r2_grandfathering_test.go:178: NOTE: renaming a pre-existing deprecated role is REJECTED, because the exemption is keyed by role name: spec.roles[0] (role "worker-v2"): workload type "apps/v1/StatefulSet" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)
+--- PASS: TestPR416R2_Grandfathering_RoleRenameLosesTheExemption (0.11s)
+=== RUN   TestPR416R2_ChildRBGCreateIsStillDenied
+    pr416_r2_grandfathering_test.go:209: superseded: grandfathering removed at aac6056d; see TestPR416R3_* pins and R3-F22
+--- SKIP: TestPR416R2_ChildRBGCreateIsStillDenied (0.00s)
+=== RUN   TestPR416R3_WholeObjectRejectionOnUpdate
+=== RUN   TestPR416R3_WholeObjectRejectionOnUpdate/apps/v1/Deployment
+=== RUN   TestPR416R3_WholeObjectRejectionOnUpdate/apps/v1/StatefulSet
+=== RUN   TestPR416R3_WholeObjectRejectionOnUpdate/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet
+--- PASS: TestPR416R3_WholeObjectRejectionOnUpdate (0.01s)
+    --- PASS: TestPR416R3_WholeObjectRejectionOnUpdate/apps/v1/Deployment (0.01s)
+    --- PASS: TestPR416R3_WholeObjectRejectionOnUpdate/apps/v1/StatefulSet (0.00s)
+    --- PASS: TestPR416R3_WholeObjectRejectionOnUpdate/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet (0.00s)
+=== RUN   TestPR416R3_WholeObjectRejectionOnUpdate_RBGSet
+=== RUN   TestPR416R3_WholeObjectRejectionOnUpdate_RBGSet/apps/v1/Deployment
+=== RUN   TestPR416R3_WholeObjectRejectionOnUpdate_RBGSet/apps/v1/StatefulSet
+=== RUN   TestPR416R3_WholeObjectRejectionOnUpdate_RBGSet/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet
+--- PASS: TestPR416R3_WholeObjectRejectionOnUpdate_RBGSet (0.00s)
+    --- PASS: TestPR416R3_WholeObjectRejectionOnUpdate_RBGSet/apps/v1/Deployment (0.00s)
+    --- PASS: TestPR416R3_WholeObjectRejectionOnUpdate_RBGSet/apps/v1/StatefulSet (0.00s)
+    --- PASS: TestPR416R3_WholeObjectRejectionOnUpdate_RBGSet/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet (0.00s)
+=== RUN   TestPR416R3_CreateAndUpdateNowAgree
+=== RUN   TestPR416R3_CreateAndUpdateNowAgree/apps/v1/Deployment
+=== RUN   TestPR416R3_CreateAndUpdateNowAgree/apps/v1/StatefulSet
+=== RUN   TestPR416R3_CreateAndUpdateNowAgree/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet
+--- PASS: TestPR416R3_CreateAndUpdateNowAgree (0.01s)
+    --- PASS: TestPR416R3_CreateAndUpdateNowAgree/apps/v1/Deployment (0.00s)
+    --- PASS: TestPR416R3_CreateAndUpdateNowAgree/apps/v1/StatefulSet (0.00s)
+    --- PASS: TestPR416R3_CreateAndUpdateNowAgree/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet (0.00s)
+=== RUN   TestVerifyPR416_F9F10_ThreeControllersAreDeniedByTheNewUpdateRule
+=== RUN   TestVerifyPR416_F9F10_ThreeControllersAreDeniedByTheNewUpdateRule/F2a_rolebasedgroup_controller.go:362
+    pr416_writers_sweep_test.go:141: F2a REPRODUCED at rolebasedgroup_controller.go:362: ensureDiscoveryConfigMode patches an annotation onto the main resource, and the new UPDATE rule denies it (spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)). Consequence: the RBG can never be reconciled at all.
+=== RUN   TestVerifyPR416_F9F10_ThreeControllersAreDeniedByTheNewUpdateRule/F9_rolebasedgroupset_controller.go:465
+    pr416_writers_sweep_test.go:141: F9 REPRODUCED at rolebasedgroupset_controller.go:465: RBGSet copies groupTemplate.spec.roles onto the child and Updates it, and the new UPDATE rule denies it (spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)). Consequence: a pre-existing RBGSet with a legacy template error-loops forever; this is PR#414's F7 recurring, because the new RBGSet validator only guards NEW RBGSets, not ones already in the cluster.
+=== RUN   TestVerifyPR416_F9F10_ThreeControllersAreDeniedByTheNewUpdateRule/F10_rolebasedgroupscalingadapter_controller.go:511
+    pr416_writers_sweep_test.go:141: F10 REPRODUCED at rolebasedgroupscalingadapter_controller.go:511: updateRoleReplicas sets role.Replicas and Updates -- the HPA/scale path, and the new UPDATE rule denies it (spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)). Consequence: HPA-driven autoscaling of a legacy RBG fails; note retry.RetryOnConflict only retries Conflict, so an admission Forbidden propagates straight out.
+--- FAIL: TestVerifyPR416_F9F10_ThreeControllersAreDeniedByTheNewUpdateRule (0.01s)
+    --- FAIL: TestVerifyPR416_F9F10_ThreeControllersAreDeniedByTheNewUpdateRule/F2a_rolebasedgroup_controller.go:362 (0.00s)
+    --- FAIL: TestVerifyPR416_F9F10_ThreeControllersAreDeniedByTheNewUpdateRule/F9_rolebasedgroupset_controller.go:465 (0.00s)
+    --- FAIL: TestVerifyPR416_F9F10_ThreeControllersAreDeniedByTheNewUpdateRule/F10_rolebasedgroupscalingadapter_controller.go:511 (0.00s)
+=== RUN   TestVerifyPR416_F8b_V1alpha1RBGSetIsAlsoRejectedWholesale
+    pr416_writers_sweep_test.go:189: F8b REPRODUCED: a v1alpha1 RoleBasedGroupSet whose template never specified a workload type is rejected wholesale when compatibility is disabled: spec.groupTemplate.spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true). The defaulting chain reaches RBGSet through rolebasedgroupset_conversion.go:37, so any fix must cover BOTH kinds, not just RoleBasedGroup.
+--- FAIL: TestVerifyPR416_F8b_V1alpha1RBGSetIsAlsoRejectedWholesale (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.275s
+=== RUN   TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG
+    pr416_compat_verify_test.go:124: superseded: F2a fixed in round 2; see TestPR416R2_Grandfathering_ExistingRoleStaysWritable
+--- SKIP: TestVerifyPR416_F2a_ControllerOwnPatchDeniedForPreexistingLegacyRBG (0.00s)
+=== RUN   TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator
+    pr416_compat_verify_test.go:236: superseded: F2a fixed in round 2; control no longer meaningful
+--- SKIP: TestVerifyPR416_F2b_AdmissionStandInMatchesRealValidator (0.00s)
+=== RUN   TestVerifyPR416_F2c_NoGrandfatheringForExistingLegacyRBG
+=== RUN   TestVerifyPR416_F2c_NoGrandfatheringForExistingLegacyRBG/scale_an_existing_legacy_rbg
+    pr416_compat_verify_test.go:299: F2c REPRODUCED: an already-existing legacy RBG cannot even be scaled while compatibility is disabled; there is no grandfathering (PR #414 had it): spec.roles[0] (role "worker"): workload type "apps/v1/Deployment" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)
+=== RUN   TestVerifyPR416_F2c_NoGrandfatheringForExistingLegacyRBG/control_migration_to_roleinstanceset_allowed
+--- FAIL: TestVerifyPR416_F2c_NoGrandfatheringForExistingLegacyRBG (0.13s)
+    --- FAIL: TestVerifyPR416_F2c_NoGrandfatheringForExistingLegacyRBG/scale_an_existing_legacy_rbg (0.00s)
+    --- PASS: TestVerifyPR416_F2c_NoGrandfatheringForExistingLegacyRBG/control_migration_to_roleinstanceset_allowed (0.00s)
+=== RUN   TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled
+=== RUN   TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/apps/v1/Deployment
+    pr416_compat_verify_test.go:381: F3 REPRODUCED: with --disable-v1alpha1-compatibility=true the controller still built a *reconciler.DeploymentReconciler for workload type apps/v1/Deployment. Nothing stops Reconcile from reading/writing that type, whose RBAC this PR removes and whose cache selector it drops.
+=== RUN   TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/apps/v1/StatefulSet
+    pr416_compat_verify_test.go:381: F3 REPRODUCED: with --disable-v1alpha1-compatibility=true the controller still built a *reconciler.StatefulSetReconciler for workload type apps/v1/StatefulSet. Nothing stops Reconcile from reading/writing that type, whose RBAC this PR removes and whose cache selector it drops.
+=== RUN   TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet
+    pr416_compat_verify_test.go:381: F3 REPRODUCED: with --disable-v1alpha1-compatibility=true the controller still built a *reconciler.LeaderWorkerSetReconciler for workload type leaderworkerset.x-k8s.io/v1/LeaderWorkerSet. Nothing stops Reconcile from reading/writing that type, whose RBAC this PR removes and whose cache selector it drops.
+=== RUN   TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/control_roleinstanceset_still_built
+--- FAIL: TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled (0.02s)
+    --- FAIL: TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/apps/v1/Deployment (0.00s)
+    --- FAIL: TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/apps/v1/StatefulSet (0.01s)
+    --- FAIL: TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet (0.00s)
+    --- PASS: TestVerifyPR416_F3_LegacyReconcilerStillBuiltWhenCompatDisabled/control_roleinstanceset_still_built (0.00s)
+=== RUN   TestVerifyPR416_F3b_CacheDropsSelectorInsteadOfKeepingIt
+    pr416_compat_verify_test.go:424: see docs/verification/pr416-api-compat-toggle/scripts/06-cache-selector.sh for the source-level assertion; the behavioural consequence is covered by F3
+--- PASS: TestVerifyPR416_F3b_CacheDropsSelectorInsteadOfKeepingIt (0.00s)
+=== RUN   TestPR416R2_F2a_DiscoveryModeAnnotationPatch_NowAccepted
+    pr416_r2_paths_test.go:225: superseded: grandfathering removed at aac6056d; see TestPR416R3_* pins and R3-F22
+--- SKIP: TestPR416R2_F2a_DiscoveryModeAnnotationPatch_NowAccepted (0.00s)
+=== RUN   TestPR416R2_F10_ScalingAdapterReplicaUpdate_NowAccepted
+    pr416_r2_paths_test.go:280: superseded: grandfathering removed at aac6056d; see TestPR416R3_* pins and R3-F22
+--- SKIP: TestPR416R2_F10_ScalingAdapterReplicaUpdate_NowAccepted (0.00s)
+=== RUN   TestPR416R2_F9Update_RBGSetTemplateSyncToChild_NowAccepted
+    pr416_r2_paths_test.go:340: superseded: grandfathering removed at aac6056d; see TestPR416R3_* pins and R3-F22
+--- SKIP: TestPR416R2_F9Update_RBGSetTemplateSyncToChild_NowAccepted (0.00s)
+=== RUN   TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied
+=== RUN   TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/apps/v1/Deployment
+=== RUN   TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/apps/v1/Deployment/toggleOFF_DENIED
+2026-08-05T10:54:18+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"preexisting","namespace":"default"}}
+2026-08-05T10:54:18+08:00	INFO	Scaling up RoleBasedGroups, 1 -> 2	{"rbgset": {"name":"preexisting","namespace":"default"}, "count": 1}
+2026-08-05T10:54:18+08:00	ERROR	Failed to scale up	{"rbgset": {"name":"preexisting","namespace":"default"}, "error": "failed to create RoleBasedGroup preexisting-1: rolebasedgroups.workloads.x-k8s.io \"preexisting-1\" is forbidden: spec.roles[0] (role \"worker\"): workload type \"apps/v1/Deployment\" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)", "errorCauses": [{"error": "failed to create RoleBasedGroup preexisting-1: rolebasedgroups.workloads.x-k8s.io \"preexisting-1\" is forbidden: spec.roles[0] (role \"worker\"): workload type \"apps/v1/Deployment\" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)"}]}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile
+	/root/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:185
+sigs.k8s.io/rbgs/internal/controller/workloads.TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied.func1.1
+	/root/rbg/internal/controller/workloads/pr416_r2_paths_test.go:421
+sigs.k8s.io/rbgs/internal/controller/workloads.TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied.func1.2
+	/root/rbg/internal/controller/workloads/pr416_r2_paths_test.go:428
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:1792
+    pr416_r2_paths_test.go:457: F9(create) REPRODUCED (apps/v1/Deployment): rolebasedgroupset_controller.go:231 r.client.Create(ctx, rbg) is DENIED -> failed to create RoleBasedGroup preexisting-1: rolebasedgroups.workloads.x-k8s.io "preexisting-1" is forbidden: spec.roles[0] (role "worker"): workload type "apps/v1/Deployment" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)
+    pr416_r2_paths_test.go:459:   consequence: child preexisting-1 is never created (scale-up wedged), and Reconcile returns before updateStatus at :332, so status stays at replicas=0 readyReplicas=0 conditions=0 with no explanation on the object
+=== RUN   TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/apps/v1/Deployment/CONTROL_toggleON_accepted
+2026-08-05T10:54:18+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"preexisting","namespace":"default"}}
+2026-08-05T10:54:18+08:00	INFO	Scaling up RoleBasedGroups, 1 -> 2	{"rbgset": {"name":"preexisting","namespace":"default"}, "count": 1}
+2026-08-05T10:54:18+08:00	INFO	Successfully created RoleBasedGroup	{"rbgset": {"name":"preexisting","namespace":"default"}, "name": "preexisting-1"}
+2026-08-05T10:54:18+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"preexisting","namespace":"default"}, "replicas": 2, "readyReplicas": 0}
+2026-08-05T10:54:18+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"preexisting","namespace":"default"}}
+    pr416_r2_paths_test.go:480: CONTROL PASSES (apps/v1/Deployment): the identical reconcile creates preexisting-1 with workload type "apps/v1/Deployment" when the deprecated types are enabled, so the denial above is attributable to the flag and not to a malformed child object
+=== RUN   TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/apps/v1/StatefulSet
+=== RUN   TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/apps/v1/StatefulSet/toggleOFF_DENIED
+2026-08-05T10:54:18+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"preexisting","namespace":"default"}}
+2026-08-05T10:54:18+08:00	INFO	Scaling up RoleBasedGroups, 1 -> 2	{"rbgset": {"name":"preexisting","namespace":"default"}, "count": 1}
+2026-08-05T10:54:18+08:00	ERROR	Failed to scale up	{"rbgset": {"name":"preexisting","namespace":"default"}, "error": "failed to create RoleBasedGroup preexisting-1: rolebasedgroups.workloads.x-k8s.io \"preexisting-1\" is forbidden: spec.roles[0] (role \"worker\"): workload type \"apps/v1/StatefulSet\" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)", "errorCauses": [{"error": "failed to create RoleBasedGroup preexisting-1: rolebasedgroups.workloads.x-k8s.io \"preexisting-1\" is forbidden: spec.roles[0] (role \"worker\"): workload type \"apps/v1/StatefulSet\" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)"}]}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile
+	/root/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:185
+sigs.k8s.io/rbgs/internal/controller/workloads.TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied.func1.1
+	/root/rbg/internal/controller/workloads/pr416_r2_paths_test.go:421
+sigs.k8s.io/rbgs/internal/controller/workloads.TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied.func1.2
+	/root/rbg/internal/controller/workloads/pr416_r2_paths_test.go:428
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:1792
+    pr416_r2_paths_test.go:457: F9(create) REPRODUCED (apps/v1/StatefulSet): rolebasedgroupset_controller.go:231 r.client.Create(ctx, rbg) is DENIED -> failed to create RoleBasedGroup preexisting-1: rolebasedgroups.workloads.x-k8s.io "preexisting-1" is forbidden: spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)
+    pr416_r2_paths_test.go:459:   consequence: child preexisting-1 is never created (scale-up wedged), and Reconcile returns before updateStatus at :332, so status stays at replicas=0 readyReplicas=0 conditions=0 with no explanation on the object
+=== RUN   TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/apps/v1/StatefulSet/CONTROL_toggleON_accepted
+2026-08-05T10:54:18+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"preexisting","namespace":"default"}}
+2026-08-05T10:54:18+08:00	INFO	Scaling up RoleBasedGroups, 1 -> 2	{"rbgset": {"name":"preexisting","namespace":"default"}, "count": 1}
+2026-08-05T10:54:18+08:00	INFO	Successfully created RoleBasedGroup	{"rbgset": {"name":"preexisting","namespace":"default"}, "name": "preexisting-1"}
+2026-08-05T10:54:18+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"preexisting","namespace":"default"}, "replicas": 2, "readyReplicas": 0}
+2026-08-05T10:54:18+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"preexisting","namespace":"default"}}
+    pr416_r2_paths_test.go:480: CONTROL PASSES (apps/v1/StatefulSet): the identical reconcile creates preexisting-1 with workload type "apps/v1/StatefulSet" when the deprecated types are enabled, so the denial above is attributable to the flag and not to a malformed child object
+=== RUN   TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet
+=== RUN   TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet/toggleOFF_DENIED
+2026-08-05T10:54:18+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"preexisting","namespace":"default"}}
+2026-08-05T10:54:18+08:00	INFO	Scaling up RoleBasedGroups, 1 -> 2	{"rbgset": {"name":"preexisting","namespace":"default"}, "count": 1}
+2026-08-05T10:54:18+08:00	ERROR	Failed to scale up	{"rbgset": {"name":"preexisting","namespace":"default"}, "error": "failed to create RoleBasedGroup preexisting-1: rolebasedgroups.workloads.x-k8s.io \"preexisting-1\" is forbidden: spec.roles[0] (role \"worker\"): workload type \"leaderworkerset.x-k8s.io/v1/LeaderWorkerSet\" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)", "errorCauses": [{"error": "failed to create RoleBasedGroup preexisting-1: rolebasedgroups.workloads.x-k8s.io \"preexisting-1\" is forbidden: spec.roles[0] (role \"worker\"): workload type \"leaderworkerset.x-k8s.io/v1/LeaderWorkerSet\" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)"}]}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile
+	/root/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:185
+sigs.k8s.io/rbgs/internal/controller/workloads.TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied.func1.1
+	/root/rbg/internal/controller/workloads/pr416_r2_paths_test.go:421
+sigs.k8s.io/rbgs/internal/controller/workloads.TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied.func1.2
+	/root/rbg/internal/controller/workloads/pr416_r2_paths_test.go:428
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:1792
+    pr416_r2_paths_test.go:457: F9(create) REPRODUCED (leaderworkerset.x-k8s.io/v1/LeaderWorkerSet): rolebasedgroupset_controller.go:231 r.client.Create(ctx, rbg) is DENIED -> failed to create RoleBasedGroup preexisting-1: rolebasedgroups.workloads.x-k8s.io "preexisting-1" is forbidden: spec.roles[0] (role "worker"): workload type "leaderworkerset.x-k8s.io/v1/LeaderWorkerSet" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)
+    pr416_r2_paths_test.go:459:   consequence: child preexisting-1 is never created (scale-up wedged), and Reconcile returns before updateStatus at :332, so status stays at replicas=0 readyReplicas=0 conditions=0 with no explanation on the object
+=== RUN   TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet/CONTROL_toggleON_accepted
+2026-08-05T10:54:18+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"preexisting","namespace":"default"}}
+2026-08-05T10:54:18+08:00	INFO	Scaling up RoleBasedGroups, 1 -> 2	{"rbgset": {"name":"preexisting","namespace":"default"}, "count": 1}
+2026-08-05T10:54:18+08:00	INFO	Successfully created RoleBasedGroup	{"rbgset": {"name":"preexisting","namespace":"default"}, "name": "preexisting-1"}
+2026-08-05T10:54:18+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"preexisting","namespace":"default"}, "replicas": 2, "readyReplicas": 0}
+2026-08-05T10:54:18+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"preexisting","namespace":"default"}}
+    pr416_r2_paths_test.go:480: CONTROL PASSES (leaderworkerset.x-k8s.io/v1/LeaderWorkerSet): the identical reconcile creates preexisting-1 with workload type "leaderworkerset.x-k8s.io/v1/LeaderWorkerSet" when the deprecated types are enabled, so the denial above is attributable to the flag and not to a malformed child object
+--- PASS: TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied (0.03s)
+    --- PASS: TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/apps/v1/Deployment (0.02s)
+        --- PASS: TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/apps/v1/Deployment/toggleOFF_DENIED (0.01s)
+        --- PASS: TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/apps/v1/Deployment/CONTROL_toggleON_accepted (0.00s)
+    --- PASS: TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/apps/v1/StatefulSet (0.01s)
+        --- PASS: TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/apps/v1/StatefulSet/toggleOFF_DENIED (0.00s)
+        --- PASS: TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/apps/v1/StatefulSet/CONTROL_toggleON_accepted (0.00s)
+    --- PASS: TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet (0.01s)
+        --- PASS: TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet/toggleOFF_DENIED (0.00s)
+        --- PASS: TestPR416R2_F9Create_RBGSetScaleUpChildCreateIsDenied/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet/CONTROL_toggleON_accepted (0.00s)
+=== RUN   TestPR416R2_F9Create_SelfHealRecreateOfDeletedChildIsDenied
+=== RUN   TestPR416R2_F9Create_SelfHealRecreateOfDeletedChildIsDenied/toggleOFF_DENIED
+2026-08-05T10:54:18+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"preexisting","namespace":"default"}}
+2026-08-05T10:54:18+08:00	INFO	Scaling up RoleBasedGroups, 0 -> 1	{"rbgset": {"name":"preexisting","namespace":"default"}, "count": 1}
+2026-08-05T10:54:18+08:00	ERROR	Failed to scale up	{"rbgset": {"name":"preexisting","namespace":"default"}, "error": "failed to create RoleBasedGroup preexisting-0: rolebasedgroups.workloads.x-k8s.io \"preexisting-0\" is forbidden: spec.roles[0] (role \"worker\"): workload type \"apps/v1/StatefulSet\" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)", "errorCauses": [{"error": "failed to create RoleBasedGroup preexisting-0: rolebasedgroups.workloads.x-k8s.io \"preexisting-0\" is forbidden: spec.roles[0] (role \"worker\"): workload type \"apps/v1/StatefulSet\" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)"}]}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile
+	/root/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:185
+sigs.k8s.io/rbgs/internal/controller/workloads.TestPR416R2_F9Create_SelfHealRecreateOfDeletedChildIsDenied.func1
+	/root/rbg/internal/controller/workloads/pr416_r2_paths_test.go:507
+sigs.k8s.io/rbgs/internal/controller/workloads.TestPR416R2_F9Create_SelfHealRecreateOfDeletedChildIsDenied.func2
+	/root/rbg/internal/controller/workloads/pr416_r2_paths_test.go:514
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:1792
+    pr416_r2_paths_test.go:518: REPRODUCED: with no user action at all, a pre-existing RBGSet can no longer replace a lost child. rolebasedgroupset_controller.go:231 -> failed to create RoleBasedGroup preexisting-0: rolebasedgroups.workloads.x-k8s.io "preexisting-0" is forbidden: spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)
+=== RUN   TestPR416R2_F9Create_SelfHealRecreateOfDeletedChildIsDenied/CONTROL_toggleON_accepted
+2026-08-05T10:54:18+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"preexisting","namespace":"default"}}
+2026-08-05T10:54:18+08:00	INFO	Scaling up RoleBasedGroups, 0 -> 1	{"rbgset": {"name":"preexisting","namespace":"default"}, "count": 1}
+2026-08-05T10:54:18+08:00	INFO	Successfully created RoleBasedGroup	{"rbgset": {"name":"preexisting","namespace":"default"}, "name": "preexisting-0"}
+2026-08-05T10:54:18+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"preexisting","namespace":"default"}, "replicas": 1, "readyReplicas": 0}
+2026-08-05T10:54:18+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"preexisting","namespace":"default"}}
+    pr416_r2_paths_test.go:532: CONTROL PASSES: the same self-heal succeeds when the deprecated types are enabled
+--- PASS: TestPR416R2_F9Create_SelfHealRecreateOfDeletedChildIsDenied (0.01s)
+    --- PASS: TestPR416R2_F9Create_SelfHealRecreateOfDeletedChildIsDenied/toggleOFF_DENIED (0.00s)
+    --- PASS: TestPR416R2_F9Create_SelfHealRecreateOfDeletedChildIsDenied/CONTROL_toggleON_accepted (0.00s)
+=== RUN   TestPR416R2_CreatePathIsStrictForTheExactControllerPayload
+    pr416_r2_paths_test.go:541: superseded: grandfathering removed at aac6056d; see TestPR416R3_* pins and R3-F22
+--- SKIP: TestPR416R2_CreatePathIsStrictForTheExactControllerPayload (0.00s)
+=== RUN   TestPR416R2_RoleReorderOnUpdateIsAccepted
+    pr416_r2_paths_test.go:579: superseded: grandfathering removed at aac6056d; see TestPR416R3_* pins and R3-F22
+--- SKIP: TestPR416R2_RoleReorderOnUpdateIsAccepted (0.00s)
+=== RUN   TestPR416R2_RoleRenameOnUpdateIsDenied
+    pr416_r2_paths_test.go:603: superseded: grandfathering removed at aac6056d; see TestPR416R3_* pins and R3-F22
+--- SKIP: TestPR416R2_RoleRenameOnUpdateIsDenied (0.00s)
+=== RUN   TestPR416R2_RBGSetTemplateRoleRenameIsDeniedAtTheParent
+=== RUN   TestPR416R2_RBGSetTemplateRoleRenameIsDeniedAtTheParent/toggleOFF_DENIED
+    pr416_r2_paths_test.go:653: REPRODUCED: renaming a role in a pre-existing RBGSet template is denied at the parent (so the child never diverges): spec.groupTemplate.spec.roles[0] (role "workers"): workload type "apps/v1/StatefulSet" is deprecated and not enabled on this cluster; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)
+=== RUN   TestPR416R2_RBGSetTemplateRoleRenameIsDeniedAtTheParent/CONTROL_toggleON_accepted
+    pr416_r2_paths_test.go:662: CONTROL PASSES
+--- PASS: TestPR416R2_RBGSetTemplateRoleRenameIsDeniedAtTheParent (0.00s)
+    --- PASS: TestPR416R2_RBGSetTemplateRoleRenameIsDeniedAtTheParent/toggleOFF_DENIED (0.00s)
+    --- PASS: TestPR416R2_RBGSetTemplateRoleRenameIsDeniedAtTheParent/CONTROL_toggleON_accepted (0.00s)
+=== RUN   TestPR416R2_V1alpha1ConversionIsStableAcrossUpdate
+    pr416_r2_paths_test.go:685: superseded: grandfathering removed at aac6056d; see TestPR416R3_* pins and R3-F22
+--- SKIP: TestPR416R2_V1alpha1ConversionIsStableAcrossUpdate (0.00s)
+=== RUN   TestPR416R2_EmptyOldRolesWouldRejectEverything
+    pr416_r2_paths_test.go:780: superseded: grandfathering removed at aac6056d; see TestPR416R3_* pins and R3-F22
+--- SKIP: TestPR416R2_EmptyOldRolesWouldRejectEverything (0.00s)
+=== RUN   TestPR416R2_StatusSubresourceWritesAreNotIntercepted
+    pr416_r2_paths_test.go:831: OK: status subresource writes bypass the webhook (rule lists `rolebasedgroupsets`, not `rolebasedgroupsets/status`), so no status write is denied
+--- PASS: TestPR416R2_StatusSubresourceWritesAreNotIntercepted (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.417s
+=== RUN   TestVerifyPR416_P1_MigrationDropsTheLWSEnvContract
+    pr416_lws_parity_test.go:108: env injected on the RoleInstanceSet+LeaderWorkerPattern path: [RBG_LWP_WORKER_INDEX RBG_COMPONENT_INDEX RBG_COMPONENT_NAME RBG_GROUP_NAME RBG_ROLE_NAME RBG_LWP_LEADER_ADDRESS RBG_LWP_GROUP_SIZE RBG_ROLE_INDEX RBG_ROLE_INSTANCE_NAME]
+    pr416_lws_parity_test.go:129: P1 REPRODUCED: the RoleInstanceSet+LeaderWorkerPattern path injects the replacements (RBG_LWP_LEADER_ADDRESS, RBG_LWP_GROUP_SIZE, RBG_LWP_WORKER_INDEX) but NOT the names LWS used to provide ([LWS_LEADER_ADDRESS LWS_GROUP_SIZE LWS_WORKER_INDEX]). A container that reads the old names keeps starting and fails at runtime: no admission error, no reconcile error, nothing on the RBG status. RBG declares DeprecatedEnvLws* constants for exactly this but references them nowhere, so no alias shim exists.
+--- FAIL: TestVerifyPR416_P1_MigrationDropsTheLWSEnvContract (0.10s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/discovery	0.283s
+=== RUN   TestPR416R3_DropGuardIsMaskedByASplit
+    pr416_r3_gen_test.go:100: R3-F23 REPRODUCED: 2 input rules produced 2 blocks, so run()'s `len(blocks) < len(role.Rules)` guard does NOT fire -- but the nonResourceURLs rule was silently dropped from the chart ClusterRole and the generator exits 0. The guard added in 68850e6f compares totals, and splitRules emits 2 blocks for the straddling rule, which pays for the missing one. Fix: reject any input rule that produced no block, instead of comparing counts.
+--- FAIL: TestPR416R3_DropGuardIsMaskedByASplit (0.00s)
+=== RUN   TestPR416R3_DropIsUndetectedInTheCommittedRoleYaml
+    pr416_r3_gen_test.go:130: committed config/rbac/role.yaml: 16 rules -> 18 blocks (count guard slack = 2)
+    pr416_r3_gen_test.go:140: R3-F23 REPRODUCED against the committed config/rbac/role.yaml: adding a single urls= kubebuilder marker (17 rules total) strips that permission from the chart ClusterRole with exit 0, no error and no CI diff, because the two straddling apps rules already inflate the block count past the guard. R2-F15 is therefore only partially fixed.
+--- FAIL: TestPR416R3_DropIsUndetectedInTheCommittedRoleYaml (0.00s)
+=== RUN   TestPR416R3_SplitRulesIsNotCountPreserving
+    pr416_r3_gen_test.go:161: 1 input rule -> 2 output blocks: len(blocks) cannot be compared to len(rules)
+--- PASS: TestPR416R3_SplitRulesIsNotCountPreserving (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/hack/gen-helm-rbac	0.080s
+FAIL

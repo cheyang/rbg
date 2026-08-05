@@ -222,6 +222,7 @@ var pr416DeprecatedTypes = []string{
 // ensureDiscoveryConfigMode (rolebasedgroup_controller.go:340-371, patch at
 // :363) against a pre-existing RBG with a deprecated workload type.
 func TestPR416R2_F2a_DiscoveryModeAnnotationPatch_NowAccepted(t *testing.T) {
+	r3RetireGrandfatheringAssertion(t)
 	for _, wt := range pr416DeprecatedTypes {
 		t.Run(wt, func(t *testing.T) {
 			for _, enabled := range []bool{false, true} {
@@ -276,6 +277,7 @@ func TestPR416R2_F2a_DiscoveryModeAnnotationPatch_NowAccepted(t *testing.T) {
 // updateRoleReplicas (rolebasedgroupscalingadapter_controller.go:499-524,
 // Update at :511) -- the HPA / scale path.
 func TestPR416R2_F10_ScalingAdapterReplicaUpdate_NowAccepted(t *testing.T) {
+	r3RetireGrandfatheringAssertion(t)
 	for _, wt := range pr416DeprecatedTypes {
 		t.Run(wt, func(t *testing.T) {
 			for _, enabled := range []bool{false, true} {
@@ -335,6 +337,7 @@ func TestPR416R2_F10_ScalingAdapterReplicaUpdate_NowAccepted(t *testing.T) {
 // TestPR416R2_F9Update_RBGSetTemplateSyncToChild_NowAccepted drives the real
 // updateExistingRBGs (rolebasedgroupset_controller.go:436-480, Update at :465).
 func TestPR416R2_F9Update_RBGSetTemplateSyncToChild_NowAccepted(t *testing.T) {
+	r3RetireGrandfatheringAssertion(t)
 	for _, wt := range pr416DeprecatedTypes {
 		t.Run(wt, func(t *testing.T) {
 			for _, enabled := range []bool{false, true} {
@@ -535,6 +538,7 @@ func TestPR416R2_F9Create_SelfHealRecreateOfDeletedChildIsDenied(t *testing.T) {
 // ValidateCreate but would be accepted by ValidateUpdate against the very roles
 // it was copied from. That asymmetry is the whole finding.
 func TestPR416R2_CreatePathIsStrictForTheExactControllerPayload(t *testing.T) {
+	r3RetireGrandfatheringAssertion(t)
 	s := pr416R2Scheme(t)
 	inner := fake.NewClientBuilder().WithScheme(s).Build()
 	v := &workloadsv1alpha2.RoleBasedGroupValidator{Client: inner, EnableDeprecatedWorkloadTypes: false}
@@ -572,6 +576,7 @@ func TestPR416R2_CreatePathIsStrictForTheExactControllerPayload(t *testing.T) {
 // TestPR416R2_RoleReorderOnUpdateIsAccepted confirms the map is keyed by name,
 // so reordering roles is not mistaken for adding them.
 func TestPR416R2_RoleReorderOnUpdateIsAccepted(t *testing.T) {
+	r3RetireGrandfatheringAssertion(t)
 	s := pr416R2Scheme(t)
 	inner := fake.NewClientBuilder().WithScheme(s).Build()
 	v := &workloadsv1alpha2.RoleBasedGroupValidator{Client: inner, EnableDeprecatedWorkloadTypes: false}
@@ -595,6 +600,7 @@ func TestPR416R2_RoleReorderOnUpdateIsAccepted(t *testing.T) {
 // TestPR416R2_RoleRenameOnUpdateIsDenied documents that renaming a role that
 // legitimately carries a deprecated type reads as "newly added".
 func TestPR416R2_RoleRenameOnUpdateIsDenied(t *testing.T) {
+	r3RetireGrandfatheringAssertion(t)
 	s := pr416R2Scheme(t)
 	inner := fake.NewClientBuilder().WithScheme(s).Build()
 
@@ -676,6 +682,7 @@ func convertV1alpha1RBG(t *testing.T, src *workloadsv1alpha1.RoleBasedGroup) *wo
 // return the same string for the stored object and for the same object
 // re-submitted through the v1alpha1 endpoint?
 func TestPR416R2_V1alpha1ConversionIsStableAcrossUpdate(t *testing.T) {
+	r3RetireGrandfatheringAssertion(t)
 	s := pr416R2Scheme(t)
 	inner := fake.NewClientBuilder().WithScheme(s).Build()
 	v := &workloadsv1alpha2.RoleBasedGroupValidator{Client: inner, EnableDeprecatedWorkloadTypes: false}
@@ -770,6 +777,7 @@ func TestPR416R2_V1alpha1ConversionIsStableAcrossUpdate(t *testing.T) {
 // errors out rather than passing an empty oldObj, and both CRDs have
 // storageversion v1alpha2 so oldObject is never conversion-derived).
 func TestPR416R2_EmptyOldRolesWouldRejectEverything(t *testing.T) {
+	r3RetireGrandfatheringAssertion(t)
 	s := pr416R2Scheme(t)
 	inner := fake.NewClientBuilder().WithScheme(s).Build()
 	v := &workloadsv1alpha2.RoleBasedGroupValidator{Client: inner, EnableDeprecatedWorkloadTypes: false}
@@ -822,4 +830,24 @@ func TestPR416R2_StatusSubresourceWritesAreNotIntercepted(t *testing.T) {
 	}
 	t.Logf("OK: status subresource writes bypass the webhook (rule lists `rolebasedgroupsets`, " +
 		"not `rolebasedgroupsets/status`), so no status write is denied")
+}
+
+// r3RetireGrandfatheringAssertion retires a round-2 assertion that the design
+// reversal at aac6056d made meaningless.
+//
+// Round 2 narrowed ValidateUpdate to a delta check
+// (validateNoNewDeprecatedWorkloadTypes) so a pre-existing deprecated role stayed
+// writable. Commit aac6056d deletes that function and restores the strict
+// whole-object check on both create and update, for RoleBasedGroup and
+// RoleBasedGroupSet alike.
+//
+// So these tests are NOT evidence of a regression -- the contract they encode no
+// longer exists, deliberately. The replacement pins for the current design are the
+// TestPR416R3_* tests in api/workloads/v1alpha2/pr416_r3_design_test.go. The
+// question the reversal actually raises -- whether the "fresh installation only"
+// premise that justifies it is enforced anywhere (it is not) -- is R3-F22, proved by
+// docs/verification/pr416-api-compat-toggle/scripts/10-fresh-install-invariant.sh.
+func r3RetireGrandfatheringAssertion(t *testing.T) {
+	t.Helper()
+	t.Skip("superseded: grandfathering removed at aac6056d; see TestPR416R3_* pins and R3-F22")
 }

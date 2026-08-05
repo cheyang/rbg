@@ -1,0 +1,22 @@
+=== R2-F11/F12: does the rendered flag agree with the rendered RBAC? ===
+v3.16.3+gcfd0749
+
+SHAPE                                  FLAG         RBAC       MANAGER-READS NOTE
+default (no overrides)                 true         present    true         agrees
+--set enabled=true                     true         present    true         agrees
+--set enabled=false                    false        stripped   false        agrees
+--set-string enabled=false             true         present    true         agrees
+--set-string enabled=0                 true         present    true         agrees
+--set-string enabled=False             true         present    true         agrees
+--set enabled= (empty)                 false        stripped   false        agrees
+enabled: "false" (quoted)              true         present    true         agrees
+enabled: "" (empty str)                false        stripped   false        agrees
+enabled: {} (empty map)                false        stripped   false        agrees
+enabled: [] (empty list)               false        stripped   false        agrees
+enabled: null                          true         present    true         agrees
+deprecatedWorkloadTypes: {} (key absent) true         present    true         agrees
+
+  controls: 13 shape(s) agree (incl. default / =true / =false) -- baseline is sound.
+  OK: no shape disagrees and every flag value is parseable.
+
+RESULT: R2-F11/F12 FIXED -- flag and RBAC agree across all shapes.
