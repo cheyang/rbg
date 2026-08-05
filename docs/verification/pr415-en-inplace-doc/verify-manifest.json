@@ -20,7 +20,8 @@
     },
     "live": {
       "kind": "script",
-      "cmd": "KUBECONFIG=${KUBECONFIG:-$HOME/.kube/config} bash docs/verification/pr415-en-inplace-doc/scripts/l2-crd-accepts-bogus-strategy.sh"
+      "cmd": "KUBECONFIG=${KUBECONFIG:-$HOME/.kube/config} bash docs/verification/pr415-en-inplace-doc/scripts/l3-inplace-update-order-and-spacing.sh; KUBECONFIG=${KUBECONFIG:-$HOME/.kube/config} bash docs/verification/pr415-en-inplace-doc/scripts/l3-inplace-scheduling-affinity.sh",
+      "_note": "Needs a cluster whose rbgs controller actually reconciles. The affinity-polling arm of the second script has a known false-positive (jsonpath presence test); the 'affinity on the settled pods' block is the authoritative reading."
     }
   },
   "findings": [
@@ -46,7 +47,9 @@
       "layer": "unit",
       "claim": "InPlaceOnlyUpdateStrategyType is referenced zero times under internal/ and pkg/ -- only at its constant definition. If it ever gains a real code path this flips red and the doc note must be rewritten.",
       "codeLocation": "api/workloads/v1alpha2/rolebasedgroup_types.go:113-114",
-      "match": ["TestVerifyPR415_F1_InPlaceOnlyHasNoImplementationReferences"],
+      "match": [
+        "TestVerifyPR415_F1_InPlaceOnlyHasNoImplementationReferences"
+      ],
       "verdict": "Confirmed"
     },
     {
@@ -56,7 +59,9 @@
       "layer": "doc",
       "claim": "en:371 keeps a TODO comment claiming the documents below have not been created yet, while both links beneath it already resolve on disk. The zh side deleted exactly this line in this PR; the en side missed it.",
       "docLocation": "doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies.md:371",
-      "match": ["check-todo-consistency.sh"],
+      "match": [
+        "check-todo-consistency.sh"
+      ],
       "currentlyRed": true,
       "verdict": "Confirmed"
     },
@@ -80,7 +85,9 @@
       "polarity": "canary",
       "layer": "live",
       "claim": "The real apiserver accepts type: TotallyBogusValue and the realistic typo InPlaceIfPosible via --dry-run=server; with the field omitted the returned object has type <ABSENT>, so the documented default never materializes server-side.",
-      "match": ["l2-crd-accepts-bogus-strategy.sh"],
+      "match": [
+        "l2-crd-accepts-bogus-strategy.sh"
+      ],
       "verdict": "Confirmed"
     },
     {
@@ -90,7 +97,9 @@
       "layer": "doc",
       "claim": "zh guide:344's comment says the command confirms the new image, but the command inspects env[?(@.name=='new_env')] and step 3 never changes the image. The en translation of this line is the correct one -- zh is copy-paste residue from step 1.",
       "docLocation": "doc/best-practice/zh/04-configuring-inplace-update-and-scheduling-policies-guide.md:344",
-      "match": ["check-comment-command-agreement.sh"],
+      "match": [
+        "check-comment-command-agreement.sh"
+      ],
       "currentlyRed": true,
       "note": "The defect is in the already-merged zh document (PR #399), not in the en files this PR adds. Fixing it is a follow-up, not a change request against #415.",
       "verdict": "Confirmed"
@@ -108,6 +117,31 @@
       ],
       "verdict": "Confirmed correct",
       "note": "Run over the WHOLE doc/best-practice/ tree, check-codeblock-parity.sh exits 1 on two PRE-EXISTING drifts unrelated to this PR: 03-configuring-rolling-updates-guide.md:415 (en has an extra 'Error' sample line) and 10-deploy-mooncake-store-with-rbg{,-guide}.md:42,59,329. Scope with --only 04-configuring-inplace to judge this PR alone."
+    },
+    {
+      "id": "F6",
+      "severity": "minor",
+      "polarity": "contract",
+      "layer": "live",
+      "claim": "zh/en guide:87 say there are ~30 seconds between two consecutive instance updates. Measured with the guide's own settings (maxUnavailable 1, gracePeriodSeconds 30) the gaps are 60s, 62s, 60s -- about twice the stated figure. 30s is the per-Pod drain (correctly described at lines 136 and 370), not the inter-instance interval, which additionally includes the container restart and the wait to become Ready.",
+      "docLocation": "doc/best-practice/zh/04-configuring-inplace-update-and-scheduling-policies-guide.md:87, doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies-guide.md:87",
+      "match": [
+        "l3-inplace-update-order-and-spacing.sh"
+      ],
+      "verdict": "Confirmed",
+      "note": "Measured with 4 replicas rather than the guide's 2, to get three consecutive gaps instead of one sample. Lines 136 and 370 are a different statement and are NOT part of this finding."
+    },
+    {
+      "id": "F-live-baseline",
+      "severity": "none",
+      "polarity": "contract",
+      "layer": "live",
+      "claim": "Positive baseline measured on real Pods: an image-only change updates in place (startTime and Pod uid unchanged, restartCount 0->1, node unchanged); the controller injects readinessGates [InPlaceUpdateReady, InstancePodReady] and sets InPlaceUpdateReady; instances update strictly high-to-low ordinal (3->2->1->0); role-inplace-scheduling Preferred injects preferredDuringScheduling weight=100 on kubernetes.io/hostname toward the historical node, and Required injects requiredDuringScheduling.",
+      "match": [
+        "l3-inplace-update-order-and-spacing.sh",
+        "l3-inplace-scheduling-affinity.sh"
+      ],
+      "verdict": "Confirmed correct"
     }
   ],
   "harnessBites": {
@@ -120,7 +154,7 @@
       "The first BITE 4 attempt is preserved in the transcript but marked INVALID: its mutation never applied (AssertionError: anchor count=2), so its 'fixed -> GREEN' line measured the unmutated file. Redone as BITE 4b, addressing the line by number."
     ]
   },
-  "liveNote": "L3 (real rollout) was NOT run and its assertions remain unverified: sequential update from highest ordinal down (1 -> 0), ~30s spacing between instances, AGE not resetting while RESTARTS increments, and Preferred/Required affinity returning a Pod to its original node. Reason: this sandbox cluster's deployed controller and CRDs disagree about RoleInstance.spec.restartPolicy (controller writes a string, CRD requires an object), so RoleInstances are rejected and no Pod is ever created; locally-built rbgs binaries have also been observed to silently reconcile nothing here. Closing this gap needs a healthy cluster. L2 cluster used: v1.36.1-aliyun.1, 3 nodes, --dry-run=server only (nothing created, CRDs never modified).",
+  "liveNote": "Round 2 (2026-08-05): the live layer is now available. The blocker was a controller-image lag -- the cluster ran v0.8.0-cea2a47 (commit cea2a472, 23 commits behind main, older than #394) which wrote restartPolicy as a bare string while the already-correct CRDs required an object, so no Pod was ever created. Fixed with: helm upgrade rbgs deploy/helm/rbgs -n rbg-system --set controller.features.portAllocator.enabled=true (chart 0.8.0-alpha.3, image rolebasedgroup/rbgs-controller:v0.8.0-47cfe17). Cluster: v1.36.1-aliyun.1, 3 nodes. No data migration was needed because the cluster held zero RoleInstanceSets -- do not assume that next time. Every round-1 unverified assertion has now been measured: in-place update semantics, InPlaceUpdateReady, high-to-low ordinal sequencing, and Preferred/Required affinity injection are all CORRECT as documented; only the '~30 seconds between instances' figure is wrong (new finding F6, measured ~60s). Caveats: (1) an earlier in-place-scheduling run of mine was INVALID because it put the annotation on the RBG's metadata.annotations instead of spec.roles[].annotations, and its 'same node' result would have read as a false confirmation -- with replicas spread over 3 nodes, node placement alone cannot distinguish affinity from coincidence, which is why the corrected script asserts on the injected affinity in the Pod spec instead; (2) the guide's literal sample kubectl output (node-A..node-D, 4 nodes) was not reproduced -- the behavior is confirmed, the transcript is not; (3) gracePeriodSeconds: 0 is still untested.",
   "openQuestions": [
     "Is InPlaceOnly officially deprecated? zh:76 says so, but v1alpha2 has no // Deprecated: marker and no enum exclusion; v1alpha1 dropped the value entirely (api/workloads/v1alpha1/constant.go:229-241). The maintainers' answer determines F1's final wording.",
     "role-inplace-scheduling-avoid (api/workloads/constants/annotation.go:221-227) is undocumented on both sides -- a coverage gap in the original zh doc, not a translation defect.",

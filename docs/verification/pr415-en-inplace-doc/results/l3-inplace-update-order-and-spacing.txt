@@ -1,0 +1,30 @@
+waiting for 4 pods to be Running...
+baseline:
+o-backend-0   2026-08-05T06:36:24Z   0
+o-backend-1   2026-08-05T06:36:24Z   0
+o-backend-2   2026-08-05T06:36:24Z   0
+o-backend-3   2026-08-05T06:36:24Z   0
+
+=== patching image; polling every 2s, recording the instant each pod's restartCount increments ===
+patch applied at t=0
+  t=+61s  o-backend-3  restartCount -> 1
+  t=+121s  o-backend-2  restartCount -> 1
+  t=+183s  o-backend-1  restartCount -> 1
+  t=+243s  o-backend-0  restartCount -> 1
+
+=== ORDER (by the moment each pod restarted) ===
+  +61   s  o-backend-3
+  +121  s  o-backend-2
+  +183  s  o-backend-1
+  +243  s  o-backend-0
+
+=== spacing between consecutive updates ===
+  o-backend-3 -> o-backend-2 : 60s
+  o-backend-2 -> o-backend-1 : 62s
+  o-backend-1 -> o-backend-0 : 60s
+
+=== final state (startTime must be unchanged = AGE not reset) ===
+o-backend-0   2026-08-05T06:36:24Z   1     registry-cn-hongkong.ack.aliyuncs.com/acs/busybox:1.30
+o-backend-1   2026-08-05T06:36:24Z   1     registry-cn-hongkong.ack.aliyuncs.com/acs/busybox:1.30
+o-backend-2   2026-08-05T06:36:24Z   1     registry-cn-hongkong.ack.aliyuncs.com/acs/busybox:1.30
+o-backend-3   2026-08-05T06:36:24Z   1     registry-cn-hongkong.ack.aliyuncs.com/acs/busybox:1.30

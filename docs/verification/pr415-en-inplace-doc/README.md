@@ -384,3 +384,119 @@ docs/verification/pr415-en-inplace-doc/
 pkg/reconciler/zz_verify_pr415_updatestrategy_test.go                                  (additive)
 pkg/reconciler/roleinstanceset/statefulmode/zz_verify_pr415_inplaceonly_test.go         (additive)
 ```
+
+---
+
+# Round 2 addendum — the L3 gap is now closed
+
+**Date:** 2026-08-05. **Reviewed head:** unchanged (`285761e9`) — this round adds
+evidence, not a new review of new code.
+
+When this harness was first written, Layer 3 was skipped: the sandbox cluster's
+controller (`v0.8.0-cea2a47`, commit `cea2a472`, 23 commits behind main and older
+than #394) wrote `restartPolicy` as a bare string while the already-upgraded CRDs
+required an object, so **no Pod was ever created**. That has been fixed by
+upgrading to upstream `main`'s chart:
+
+```bash
+helm upgrade rbgs deploy/helm/rbgs -n rbg-system \
+  --set controller.features.portAllocator.enabled=true
+# chart 0.8.0-alpha.3, image rolebasedgroup/rbgs-controller:v0.8.0-47cfe17
+```
+
+It was only ever a controller-image lag — the CRDs were already correct, and the
+cluster happened to hold zero `RoleInstanceSet`s so no data migration was needed.
+RBGs now reconcile end to end, and every previously-unverified assertion in this
+document has been measured on real Pods.
+
+## What the live layer confirmed
+
+| Doc claim | Location | Live result | Verdict |
+|-----------|----------|-------------|---------|
+| Image-only change updates in place; Pod AGE not reset, RESTARTS increases | zh/en:370 summary, guide step 1 | `startTime` identical at T0 and T+75s (`06:31:12`), Pod **uid unchanged**, `restartCount` 0→1, image swapped, node unchanged | **Correct** |
+| Controller sets `InPlaceUpdateReady` | zh/en:170 step 1 | `readinessGates: [InPlaceUpdateReady, InstancePodReady]` (controller-injected — the manifest declared none), condition `InPlaceUpdateReady=True` | **Correct** |
+| Instances update one at a time from high to low ordinal | zh/en guide:87 | 4 replicas, `maxUnavailable: 1`: restarted in order **3 → 2 → 1 → 0**, strictly sequential | **Correct** |
+| `Preferred` injects `preferredDuringScheduling` with **weight=100** toward the historical node | en guide:206 / zh guide:206 | recreated Pod carries `PREFERRED: weight=100 kubernetes.io/hostname In ['cn-hongkong.10.39.55.151']` | **Correct** |
+| `Required` injects `requiredDuringScheduling` toward the historical node | en guide:313 / zh guide:313 | recreated Pod carries `REQUIRED: kubernetes.io/hostname In ['cn-hongkong.10.39.55.150']` | **Correct** |
+| ~30 s between two consecutive instance updates | zh/en guide:87 | measured **60 s, 62 s, 60 s** | **Wrong — new finding F6** |
+
+Artifacts: `results/l3-inplace-update-basic.txt`,
+`results/l3-inplace-update-order-and-spacing.txt`,
+`results/l3-inplace-scheduling-affinity.txt`. Scripts:
+`scripts/l3-inplace-update-order-and-spacing.sh`,
+`scripts/l3-inplace-scheduling-affinity.sh`.
+
+## F6 — the "~30 seconds between instances" figure is the wrong quantity (new, minor)
+
+- **POLARITY: contract.** Green once the doc states the right interval.
+- **Location:** `doc/best-practice/zh/04-...-guide.md:87` and
+  `doc/best-practice/en/04-...-guide.md:87`.
+- **Doc says:** zh — 「按序号从高到低逐个更新实例（1 → 0），**两个实例更新间隔约 30 秒**」;
+  en — "Instances are updated one by one from high to low ordinal (1 → 0), with
+  **approximately 30 seconds between the two instance updates**".
+- **Actually:** with the guide's own settings (`maxUnavailable: 1`,
+  `inPlaceUpdateStrategy.gracePeriodSeconds: 30`) the measured gap between
+  consecutive restarts is **~60 s**, consistently about twice the figure given:
+
+  ```
+  t=+61s   o-backend-3  restartCount -> 1
+  t=+121s  o-backend-2  restartCount -> 1
+  t=+183s  o-backend-1  restartCount -> 1
+  t=+243s  o-backend-0  restartCount -> 1
+
+  o-backend-3 -> o-backend-2 : 60s
+  o-backend-2 -> o-backend-1 : 62s
+  o-backend-1 -> o-backend-0 : 60s
+  ```
+
+  The mechanism explains it: each instance costs `gracePeriodSeconds` (30 s of
+  draining while `InPlaceUpdateReady=False`) **plus** the container restart and
+  the wait to become Ready again; only then does `maxUnavailable: 1` release the
+  next instance. So 30 s is the *per-Pod drain*, not the *inter-instance gap*.
+- **Note this is a different statement from lines 136 and 370**, which say each
+  Pod waits ~30 s *between becoming NotReady and the image update*. That one
+  describes the drain itself and is consistent with `gracePeriodSeconds: 30`; it
+  is **not** part of this finding. Only line 87 conflates the two.
+- **Suggested change** (zh:87): 「按序号从高到低逐个更新实例（1 → 0）。每个实例先等待
+  `gracePeriodSeconds`（示例中 30 秒）排空连接，再原地更新并等待重新 Ready，因此**相邻两个
+  实例的更新间隔约为 60 秒**，即 grace 时长加上容器重启与就绪时间。」 and the
+  matching en text.
+- **Measured with 4 replicas rather than the guide's 2**, deliberately: it yields
+  three consecutive gaps instead of one, so the ~60 s figure rests on three
+  samples rather than a single measurement.
+
+## Two honest caveats about this round
+
+1. **My first in-place-scheduling run was invalid and is not included as
+   evidence.** I put `role-inplace-scheduling` on the RBG's
+   `metadata.annotations`, but the doc puts it at `spec.roles[].annotations`
+   (en guide:164, :272) alongside `rollingUpdate.type: RecreatePod`. No affinity
+   was injected, and all Pods still showed "same node" — which would have read
+   as a confirmation. It was not one: with replicas spread over a 3-node cluster,
+   the scheduler distributes one per node anyway, so **node placement alone
+   cannot distinguish affinity from coincidence**. The corrected run
+   (`scripts/l3-inplace-scheduling-affinity.sh`) therefore asserts on the
+   *injected affinity in the Pod spec*, which is independent of where the Pod
+   lands, and says so in its own output.
+2. **The affinity-polling arm of that script has a false-positive.** It uses
+   `jsonpath='{.spec.affinity.nodeAffinity}'` as a presence test, which reports
+   non-empty even when the structure carries nothing, so its `t=+3s ... HAS
+   nodeAffinity` lines are followed by `<NONE>`. The authoritative reading is the
+   "affinity on the settled pods" block at the end. Worth fixing before this
+   script is reused.
+
+Also visible in the corrected run: only the `-backend-1` Pods had been recreated
+(`env=v2`) when it settled, while `-backend-0` was still `env=v1` — a third
+independent corroboration of high-ordinal-first sequencing.
+
+## Still not verified
+
+- The guide's sample `kubectl get pods` **output blocks** (node names `node-A`..`node-D`,
+  the `2/2` READY column) were not reproduced; the sandbox has 3 nodes, not 4.
+  The behavior they illustrate is confirmed, the literal transcript is not.
+- `gracePeriodSeconds: 0` behavior, and whether `SetOptionsDefaults`
+  (`pkg/inplace/instance/inplaceupdate/inplace_update_defaults.go:33`)
+  special-cases `0`, is still untested.
+- Whether `InPlaceOnly` is *officially* deprecated remains an open question for
+  the maintainers — see [Downgraded / needs author input](#downgraded--needs-author-input).
+  F1's live behavior is unchanged by this round.

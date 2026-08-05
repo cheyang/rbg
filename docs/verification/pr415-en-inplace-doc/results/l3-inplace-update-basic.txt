@@ -1,0 +1,70 @@
+L3 evidence: image-only change performs a genuine IN-PLACE update
+=================================================================
+Source: interactive session on the sandbox, 2026-08-05, transcribed verbatim.
+        (The order/spacing and scheduling runs next to this file are scripted;
+        this one was interactive, so it is recorded as a transcript rather than
+        as scripted output. Re-run it via the steps at the bottom.)
+
+cluster    : v1.36.1-aliyun.1, 3 nodes
+controller : rolebasedgroup/rbgs-controller:v0.8.0-47cfe17
+            (upgraded from v0.8.0-cea2a47, which could not create Pods at all --
+             see the "Environment limits" section of the README)
+namespace  : l3 (deleted afterwards)
+
+RBG under test: role "prefill", replicas 2, standalonePattern, busybox,
+                one env var new_env=v1, no rolloutStrategy overrides.
+
+
+--- T0 baseline ------------------------------------------------------------
+NAME          NODE                       START                  RESTARTS  IMAGE
+t-prefill-0   cn-hongkong.10.39.55.151   2026-08-05T06:31:12Z   0         .../busybox:v1.29.2
+t-prefill-1   cn-hongkong.10.39.55.150   2026-08-05T06:31:12Z   0         .../busybox:v1.29.2
+
+uid t-prefill-0 = deb46a8d-1dba-41e0-ace6-b7d191672aa9
+uid t-prefill-1 = b4d9c64c-442a-4eca-add5-667dc864b31b
+
+
+--- trigger: change ONLY the container image tag --------------------------
+$ kubectl -n l3 patch rbg t --type=json -p '[{"op":"replace",
+    "path":"/spec/roles/0/standalonePattern/template/spec/containers/0/image",
+    "value":".../busybox:1.30"}]'
+rolebasedgroup.workloads.x-k8s.io/t patched      (at 06:32:36)
+
+
+--- T1, 75 seconds later --------------------------------------------------
+NAME          NODE                       START                  RESTARTS  IMAGE                READY
+t-prefill-0   cn-hongkong.10.39.55.151   2026-08-05T06:31:12Z   1         .../busybox:1.30     true
+t-prefill-1   cn-hongkong.10.39.55.150   2026-08-05T06:31:12Z   1         .../busybox:1.30     true
+
+  t-prefill-0: uid unchanged -> SAME Pod object, updated in place
+  t-prefill-1: uid unchanged -> SAME Pod object, updated in place
+
+
+--- readinessGate / condition --------------------------------------------
+$ kubectl -n l3 get pod t-prefill-0 -o json | ...
+  readinessGates: ['InPlaceUpdateReady', 'InstancePodReady']
+  condition InPlaceUpdateReady = True 2026-08-05T06:33:37Z
+
+
+--- what this proves -----------------------------------------------------
+1. startTime is UNCHANGED (06:31:12 at both T0 and T1) while restartCount went
+   0 -> 1. That is exactly the doc's "Pod AGE not reset, RESTARTS increased".
+2. The Pod uid is unchanged, so this is the same API object -- an in-place
+   container restart, not a recreate. uid comparison is the reliable test here;
+   AGE alone can mislead because `kubectl get` recomputes it from startTime.
+3. The node is unchanged, as the doc says for an image-only change.
+4. `InPlaceUpdateReady` exists both as a readinessGate and as a condition,
+   matching the doc's step 1 ("Controller sets the Pod's InPlaceUpdateReady
+   condition to False"). NOTE: the manifest under test did NOT declare
+   readinessGates -- the controller injected both gates. The doc does not ask
+   the user to add them manually, so this is consistent with the doc; the
+   "must be added to template.spec.readinessGates" remark found during review
+   was a Go source comment, not a doc claim.
+
+--- to re-run ------------------------------------------------------------
+Create any RBG with a standalonePattern role, record
+  kubectl -n <ns> get pods -o custom-columns=\
+NAME:.metadata.name,START:.status.startTime,\
+RESTARTS:.status.containerStatuses[0].restartCount,UID:.metadata.uid
+then patch ONLY the image and re-read the same columns after ~75s.
+startTime and uid must be unchanged; restartCount must increment.

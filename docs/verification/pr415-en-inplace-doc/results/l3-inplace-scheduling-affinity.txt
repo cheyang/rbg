@@ -1,0 +1,66 @@
+=== waiting for 4 pods Running ===
+=== BEFORE ===
+preferred-backend-0   cn-hongkong.10.39.55.150   2ffe2c09-3ca4-4aa7-8b1c-778f3fcbef6a
+preferred-backend-1   cn-hongkong.10.39.55.151   38e63c45-7970-4f71-ad63-e138686ec4bb
+required-backend-0    cn-hongkong.10.39.55.151   030b709d-ddf8-4d53-b4ec-6e2c653a5a60
+required-backend-1    cn-hongkong.10.39.55.150   f7c3f96a-0503-4144-9586-b23063c80ebf
+  affinity before the update (expected: none yet -- there is no history):
+    preferred-backend-0
+      node: cn-hongkong.10.39.55.150
+      nodeAffinity: <NONE>
+    required-backend-0
+      node: cn-hongkong.10.39.55.151
+      nodeAffinity: <NONE>
+
+=== trigger: env change (non-image) with type RecreatePod ===
+=== polling for the recreated pods, capturing affinity AS SOON AS it appears ===
+  t=+3s  preferred-backend-0 HAS nodeAffinity:
+      node: cn-hongkong.10.39.55.150
+      nodeAffinity: <NONE>
+  t=+3s  preferred-backend-1 HAS nodeAffinity:
+      node: cn-hongkong.10.39.55.151
+      nodeAffinity: <NONE>
+  t=+3s  required-backend-0 HAS nodeAffinity:
+      node: cn-hongkong.10.39.55.151
+      nodeAffinity: <NONE>
+  t=+3s  required-backend-1 HAS nodeAffinity:
+      node: cn-hongkong.10.39.55.150
+      nodeAffinity: <NONE>
+
+=== settle, then AFTER ===
+preferred-backend-0   cn-hongkong.10.39.55.150   2ffe2c09-3ca4-4aa7-8b1c-778f3fcbef6a
+preferred-backend-1   cn-hongkong.10.39.55.151   8bf4bf3b-2ff9-4191-bad7-7652fe9de53f
+required-backend-0    cn-hongkong.10.39.55.151   030b709d-ddf8-4d53-b4ec-6e2c653a5a60
+required-backend-1    cn-hongkong.10.39.55.150   07ec60a7-3cb7-443a-8e46-48f740e9dbbd
+  affinity on the settled pods:
+    preferred-backend-0
+      node: cn-hongkong.10.39.55.150
+      nodeAffinity: <NONE>
+    preferred-backend-1
+      node: cn-hongkong.10.39.55.151
+      PREFERRED: weight=100 kubernetes.io/hostname In ['cn-hongkong.10.39.55.151']
+    required-backend-0
+      node: cn-hongkong.10.39.55.151
+      nodeAffinity: <NONE>
+    required-backend-1
+      node: cn-hongkong.10.39.55.150
+      REQUIRED : kubernetes.io/hostname In ['cn-hongkong.10.39.55.150']
+
+=== node preserved? recreated? ===
+  preferred-backend-0      NODE-SAME                              uid-same(NOT recreated)
+  preferred-backend-1      NODE-SAME                              uid-changed(recreated)
+  required-backend-0       NODE-SAME                              uid-same(NOT recreated)
+  required-backend-1       NODE-SAME                              uid-changed(recreated)
+
+=== how many nodes are even schedulable? (needed to judge whether NODE-SAME is meaningful) ===
+  nodes: 3
+  NOTE: with replicas=2 on a 3-node cluster, NODE-SAME is weak evidence on its own.
+        The affinity injection above is the real signal.
+
+=== env updated? ===
+preferred-backend-0=v1
+preferred-backend-1=v2
+required-backend-0=v1
+required-backend-1=v2
+
+(namespace l3s2 left in place for inspection; delete with: kubectl delete ns l3s2)
