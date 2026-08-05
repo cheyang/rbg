@@ -1,0 +1,42 @@
+=== Q1. Does semverCompare handle the prerelease threshold correctly? ===
+    (the guard would compare an installed version against 0.8.0-alpha.3;
+     Masterminds/semver is notoriously fussy about prerelease vs release)
+# Source: probe/templates/t.yaml
+# 0.5.0-alpha.3    < 0.8.0-alpha.3 ? true
+# 0.7.0            < 0.8.0-alpha.3 ? true
+# 0.8.0-alpha.1    < 0.8.0-alpha.3 ? true
+# 0.8.0-alpha.2    < 0.8.0-alpha.3 ? true
+# 0.8.0-alpha.3    < 0.8.0-alpha.3 ? false
+# 0.8.0-alpha.4    < 0.8.0-alpha.3 ? false
+# 0.8.0            < 0.8.0-alpha.3 ? false
+# 0.9.0            < 0.8.0-alpha.3 ? false
+    -> expected: true for the four older, false for alpha.3 and everything newer.
+
+=== Q2. When is `lookup` actually populated? ===
+    (decides whether a template-level guard can see cluster state at all,
+     and therefore whether 'not found' may be treated as 'old version')
+  helm template:                     lookup: EMPTY   IsUpgrade: false
+  helm template --is-upgrade:        lookup: EMPTY   IsUpgrade: true
+  helm template --dry-run=server:    lookup: POPULATED   IsUpgrade: false
+  helm install --dry-run:            lookup: EMPTY   IsUpgrade: false
+    -> EMPTY on every client-side path. A template guard therefore cannot
+       distinguish 'old install' from 'cannot tell', and helm-diff style
+       tooling would false-fail on a fail-closed template check.
+
+=== Q3. Is there an authoritative 'which era is this install' signal? ===
+    (the alternative to a chart-version marker, which cannot work: the
+     marker ships with THIS PR, so an upgrade from the already-released
+     0.8.0-alpha.3 would find no marker at all)
+# Source: probe/templates/t.yaml
+# crd: FOUND
+# storedVersions: [v1alpha2]
+# still has v1alpha1 stored: false
+# served versions: v1alpha1(storage=false) v1alpha2(storage=true)
+    -> readable, and maintained by Kubernetes itself. NOTE it is sticky:
+       storedVersions only shrinks when an operator explicitly patches it,
+       so a fully-migrated cluster can still list v1alpha1. Use it as a
+       corroborating signal, not as the hard gate.
+
+RESULT: state-based checking is feasible; a chart-version marker is not
+        sufficient on its own; and a fail-closed TEMPLATE check is the wrong
+        carrier because lookup is blind on every client-side path.

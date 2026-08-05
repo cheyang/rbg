@@ -1,0 +1,62 @@
+############ Part 1: chart-version marker guard (template-level fail)
+
+--- 1) first 'helm upgrade --install' (IsUpgrade=false) -- must succeed
+STATUS: deployed
+   marker written: 0.8.0-alpha.3
+
+--- 2) re-run 'helm upgrade --install' (idempotent, marker=0.8.0-alpha.3) -- must succeed
+   this is the F4 fix: the documented command works twice on one cluster
+STATUS: deployed
+
+--- 3) marker patched to 0.8.0-alpha.1 (simulating an old install) -- must refuse
+Error: UPGRADE FAILED: execution error at (guard/templates/upgrade-guard.yaml:9:4): upgrading from chart 0.8.0-alpha.1 is unsupported (minimum 0.8.0-alpha.3) -- uninstall and reinstall
+
+--- 4) marker deleted (simulating a pre-marker release) -- must refuse
+Error: UPGRADE FAILED: execution error at (guard/templates/upgrade-guard.yaml:7:4): cannot determine the installed chart version; upgrading from a release older than 0.8.0-alpha.3 is unsupported -- uninstall and reinstall, or re-run with --set upgrade.allowUnsupported=true
+   ^ NOTE: this is the branch an upgrade from the ALREADY-RELEASED 0.8.0-alpha.3
+     lands in, because the marker ships with this PR. The stated intent
+     ('allow upgrades from >= alpha.3') is therefore unreachable by a marker.
+
+--- 5) escape hatch --set upgrade.allowUnsupported=true -- must pass
+STATUS: deployed
+
+--- 6) release state after the two refusals in 3) and 4)
+REVISION	UPDATED                 	STATUS    	CHART              	APP VERSION	DESCRIPTION     
+1       	Wed Aug  5 11:59:52 2026	superseded	guard-0.8.0-alpha.3	           	Install complete
+2       	Wed Aug  5 11:59:52 2026	superseded	guard-0.8.0-alpha.3	           	Upgrade complete
+3       	Wed Aug  5 11:59:53 2026	deployed  	guard-0.8.0-alpha.3	           	Upgrade complete
+   -> a template-level fail aborts at RENDER time: no failed revision is
+      recorded, the release never leaves 'deployed'.
+
+############ Part 2: pre-upgrade hook Job (the state-check carrier)
+
+--- 1) install
+STATUS: deployed
+
+--- 2) pre-upgrade hook exits 1 -- what happens to the release?
+Error: UPGRADE FAILED: pre-upgrade hooks failed: 1 error occurred:
+   helm list:
+     NAME	NAMESPACE      	REVISION	UPDATED                              	STATUS	CHART   	APP VERSION
+     h   	pr416-hook-test	2       	2026-08-05 11:59:54.0931221 +0800 CST	failed	hk-0.1.0	           
+   helm history:
+     REVISION	UPDATED                 	STATUS  	CHART   	APP VERSION	DESCRIPTION                                                    
+     1       	Wed Aug  5 11:59:53 2026	deployed	hk-0.1.0	           	Install complete                                               
+     2       	Wed Aug  5 11:59:54 2026	failed  	hk-0.1.0	           	Upgrade "h" failed: pre-upgrade hooks failed: 1 error occurr...
+
+--- 3) can a normal upgrade proceed afterwards WITHOUT --force?
+STATUS: deployed
+   helm history:
+     1       	Wed Aug  5 11:59:53 2026	superseded	hk-0.1.0	           	Install complete                                               
+     2       	Wed Aug  5 11:59:54 2026	failed    	hk-0.1.0	           	Upgrade "h" failed: pre-upgrade hooks failed: 1 error occurr...
+     3       	Wed Aug  5 11:59:58 2026	deployed  	hk-0.1.0	           	Upgrade complete                                               
+
+RESULT: both carriers refuse the operation. The difference:
+  - template fail  : release untouched, no failed revision, but lookup is
+                     blind client-side, so fail-closed false-fails helm-diff.
+  - hook Job       : leaves a 'failed' revision (recoverable without --force),
+                     but sees real cluster state, can reuse the controller's
+                     own Go constants, and is SKIPPED by helm-diff so it
+                     cannot false-fail.
+
+=== CLEANUP ===
+  removed releases g/h and namespaces pr416-guard-test, pr416-hook-test

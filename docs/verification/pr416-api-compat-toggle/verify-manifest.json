@@ -41,7 +41,10 @@
     "api/workloads/v1alpha2/pr416_writers_sweep_test.go",
     "api/workloads/v1alpha2/pr416_r3_design_test.go",
     "hack/gen-helm-rbac/pr416_r3_gen_test.go",
-    "docs/verification/pr416-api-compat-toggle/scripts/10-fresh-install-invariant.sh"
+    "docs/verification/pr416-api-compat-toggle/scripts/10-fresh-install-invariant.sh",
+    "docs/verification/pr416-api-compat-toggle/scripts/11-guard-design-probe.sh",
+    "docs/verification/pr416-api-compat-toggle/scripts/12-guard-design-e2e.sh",
+    "docs/verification/pr416-api-compat-toggle/UPGRADE-GUARD-DESIGN.md"
   ],
   "layers": {
     "unit": {
@@ -191,7 +194,8 @@
         "status": "reproduced",
         "note": "upgrade guard still hard-fails 'helm upgrade --install'; its remediation text is the R3-F22 bypass",
         "evidence": "results/round3/04-upgrade-guard.txt"
-      }
+      },
+      "designNote": "UPGRADE-GUARD-DESIGN.md"
     },
     {
       "id": "F5",
@@ -613,7 +617,8 @@
       "evidence": "results/round3/f22-fresh-install-invariant.txt",
       "title": "The 'fresh installation only' premise the whole design rests on is enforced nowhere, and the repo documents the bypass in four places",
       "detail": "PR #416 justifies having no grandfathering, no conversion and no migration with one claim: 'the sole supported way to reach false is a fresh install, where no such object can exist', enforced by templates/upgrade-guard.yaml. Four structural facts show that guard does not cover the case that matters. (1) The chart declares no CRDs -- crds/ is empty and no template emits a CustomResourceDefinition (they come from the crd-upgrade pre-install Job) -- so helm uninstall removes neither the CRDs nor any RoleBasedGroup/RoleBasedGroupSet; those objects survive. (2) The guard keys on .Release.IsUpgrade, false on a reinstall (control: helm template --is-upgrade does fail, a plain render does not). (3) The repo instructs exactly that path in four places: upgrade-guard.yaml:2 'Please uninstall and reinstall', NOTES.txt:17, chart README.md:65 and README.md:155. (4) Nothing inspects the cluster -- no template uses Helm lookup, and the enabled=false render succeeds unconditionally. So the documented update procedure yields a fresh release over surviving objects with the toggle settable to false in the same command, producing exactly the state the PR says cannot exist. Consequences are already proved RED at this head by the round-1 write-path tests: the discovery annotation patch, kubectl scale, the RBGSet template sync, the HPA scale path and the child RBG create are all denied, with nothing written to the object's status.",
-      "proposedFix": "A pre-install check that fails the install when enabled=false and any RoleBasedGroup/RoleBasedGroupSet already uses a deprecated workload type. The crd-upgrade Job is the in-chart precedent (its own ServiceAccount, pre-install hook). This makes the premise real and closes F2a/F2c/F9/F10/R2-F13 as a class, rather than one path per round."
+      "proposedFix": "A pre-install check that fails the install when enabled=false and any RoleBasedGroup/RoleBasedGroupSet already uses a deprecated workload type. The crd-upgrade Job is the in-chart precedent (its own ServiceAccount, pre-install hook). This makes the premise real and closes F2a/F2c/F9/F10/R2-F13 as a class, rather than one path per round.",
+      "designNote": "UPGRADE-GUARD-DESIGN.md"
     },
     {
       "id": "R3-F23",
@@ -712,5 +717,30 @@
     ]
   },
   "previousReviewedHead": "dcc7104aef6f6e8c16cf4342bb25baf9426c68ab",
-  "round": 3
+  "round": 3,
+  "designNotes": [
+    {
+      "doc": "UPGRADE-GUARD-DESIGN.md",
+      "addresses": [
+        "F4",
+        "R3-F22"
+      ],
+      "scripts": [
+        "11-guard-design-probe.sh",
+        "12-guard-design-e2e.sh"
+      ],
+      "evidence": "results/round3/design/probe.txt, results/round3/design/e2e.txt",
+      "conclusion": "Gate on cluster state (deprecated-workload objects; v1alpha1-era objects), not on chart version numbers, carried by a pre-install,pre-upgrade hook Job with hook-weight below crd-upgrade's -4. One mechanism closes F4 and R3-F22, and the documented 'helm upgrade --install' becomes idempotent again so none of the 10 call sites need changing.",
+      "measuredFacts": [
+        "The previous chart version is NOT readable from a template: the Deployment carries no version label, and the release Secret's `version` label is the revision number ('1') while the chart version is gzipped inside data.",
+        "lookup is EMPTY on helm template, --is-upgrade and client-side --dry-run; populated only on a real install/upgrade or --dry-run=server. A fail-closed TEMPLATE check therefore false-fails helm diff upgrade.",
+        "semverCompare '< 0.8.0-alpha.3' is correct on all 8 prerelease/release cases, so version comparison is not the risky part of the design.",
+        "CRD status.storedVersions is readable via lookup (this cluster: [v1alpha2]) and is maintained by Kubernetes, but it is STICKY -- it only shrinks when an operator patches it, so it must corroborate rather than gate.",
+        "A failing pre-upgrade hook Job leaves the release 'failed' with a recorded revision, but a subsequent normal upgrade succeeds WITHOUT --force. A template-level fail aborts at render time and leaves the release untouched.",
+        "helm diff upgrade does not execute hooks at all, so a hook-based check cannot false-fail it -- the decisive advantage over a template check."
+      ],
+      "rejectedOption": "A chart-version marker ConfigMap + semverCompare was built and tested end-to-end (all 6 scenarios behave correctly), but it CANNOT deliver the stated intent: the marker ships with this PR while 0.8.0-alpha.3 is already released without it, so an upgrade from alpha.3 always lands in the 'cannot tell' branch. Related trap: the PR branch's Chart.yaml is still 0.8.0-alpha.2, below the threshold, so shipping as-is would have the chart's own guard refuse the next upgrade.",
+      "safety": "Read-only against the shared cluster except two throwaway namespaces (pr416-guard-test, pr416-hook-test) holding a scratch chart whose only real resource is a ConfigMap. No cluster-scoped object created, so no collision with the unrelated rbgs release in rbg-system. Both namespaces removed by an EXIT trap."
+    }
+  ]
 }

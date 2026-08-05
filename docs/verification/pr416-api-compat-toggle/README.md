@@ -545,3 +545,33 @@ denials are live again — acceptable only if R3-F22 is closed.**
   REPRODUCED". It now excludes them; F5b is genuinely clean.
 
 Production code remains untouched on this branch.
+
+## Design note — how the guard should actually work
+
+F4 and R3-F22 both live in `templates/upgrade-guard.yaml`, and both have the same
+root cause: the guard checks `.Release.IsUpgrade` instead of checking whether the
+cluster is in a state this chart version can serve. The design exploration behind a
+replacement — measured on a real cluster rather than reasoned from documentation — is
+in **[`UPGRADE-GUARD-DESIGN.md`](UPGRADE-GUARD-DESIGN.md)**, with raw output in
+[`results/round3/design/`](results/round3/design/).
+
+Four things it establishes:
+
+| Question | Measured answer |
+|---|---|
+| Can a template read the previously installed chart version? | **No.** The Deployment has no version label, and the release Secret's `version` label is the *revision number*; the chart version is gzipped inside `data`. |
+| When is `lookup` populated? | Only on a real install/upgrade or `--dry-run=server`. **EMPTY** on `helm template`, `--is-upgrade`, and client-side `--dry-run` — so a fail-closed *template* check false-fails `helm diff`. |
+| Is `semverCompare` safe with the `0.8.0-alpha.3` prerelease threshold? | **Yes**, all 8 cases correct. Version comparison is not the risky part. |
+| Which carrier refuses more cleanly? | Template `fail` leaves the release untouched; a **hook Job** leaves a `failed` revision (recoverable without `--force`) but sees real state, reuses the controller's Go constants, and **is skipped by `helm diff` so it cannot false-fail**. |
+
+Conclusion: gate on **objects, not version numbers**, carried by a
+`pre-install,pre-upgrade` hook Job with `hook-weight` below `crd-upgrade`'s `-4`.
+One mechanism closes F4 (the documented `helm upgrade --install` becomes idempotent
+again, so none of the 10 call sites need changing) and R3-F22.
+
+A chart-version marker was also built and tested end-to-end, and **cannot deliver the
+stated intent**: the marker ships with this PR, while `0.8.0-alpha.3` is already
+released without it, so an upgrade from alpha.3 always lands in the "cannot tell"
+branch. Related trap — the PR branch's `Chart.yaml` is still `0.8.0-alpha.2`, *below*
+the threshold, so shipping as-is would have the chart's own guard refuse the next
+upgrade.
