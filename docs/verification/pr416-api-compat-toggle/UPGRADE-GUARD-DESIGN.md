@@ -176,3 +176,126 @@ resource is a ConfigMap. No cluster-scoped object was created, so nothing could
 collide with the unrelated `rbgs` release live in `rbg-system` (whose ClusterRole,
 ClusterRoleBinding and ValidatingWebhookConfiguration have fixed names). Both
 namespaces are deleted by an `EXIT` trap.
+
+---
+
+# Addendum — is `status.storedVersions` alone enough? And a working prototype
+
+Two follow-up questions, both answered by measurement:
+`scripts/13-preflight-prototype.sh`, raw output in
+[`results/round3/design/preflight-prototype.txt`](results/round3/design/preflight-prototype.txt).
+
+## 1. `storedVersions` alone is not enough — it is the wrong axis
+
+It is a reasonable instinct (simpler, Kubernetes-maintained, no bootstrap hole), and for
+the **upgrade-era gate** it does work: `v1alpha1` in `status.storedVersions` means
+v1alpha1-era objects were persisted. The only caveat is that it is *sticky* — it shrinks
+only when an operator explicitly patches it — so a fully-migrated cluster can be refused.
+An escape hatch covers that.
+
+**For R3-F22 it cannot work at all.** The effective workload type is a *role annotation*,
+entirely independent of which API version the object is stored in:
+
+```go
+// api/workloads/v1alpha2/rolebasedgroup_types.go:258
+func (r *RoleSpec) GetWorkloadType() string {
+	if r.Annotations != nil {
+		if wt := r.Annotations[constants.RoleWorkloadTypeAnnotationKey]; wt != "" {
+			return wt
+		}
+	}
+	return constants.RoleInstanceSetWorkloadType // default
+}
+```
+
+So a **v1alpha2** object can carry `rbg.workloads.x-k8s.io/role-workload-type:
+apps/v1/StatefulSet`, and that is precisely the object that becomes unreconcilable under
+`enabled=false`. A cluster full of them still reports `storedVersions: ["v1alpha2"]` —
+i.e. "clean".
+
+Demonstrated both ways:
+
+| | Input | `storedVersions` would say | The check says |
+|---|---|---|---|
+| A | the real cluster, 8 RoleBasedGroups | `["v1alpha2"]` — clean | `offenders=0` ✓ agrees |
+| B | one **v1alpha2** object, role annotated `apps/v1/StatefulSet` | `["v1alpha2"]` — **clean** | `ns1/legacy-rbg role=worker` ✗ **caught** |
+
+Row B is the whole argument: the two signals disagree exactly where it matters.
+
+## 2. The check is much simpler than first proposed — no Go binary needed
+
+Because `GetWorkloadType()` is just "read the role annotation, default `RoleInstanceSet`"
+— no defaulting chain to reimplement — the earlier recommendation to build a Go
+`preflight` binary and extend the controller image was **over-engineered, and is
+withdrawn**. The whole check is a few lines of `jq` and fits the existing
+`tools/crd-upgrade` shape (alpine + kubectl + a script):
+
+```bash
+kubectl get rolebasedgroups.workloads.x-k8s.io,rolebasedgroupsets.workloads.x-k8s.io -A -o json \
+| jq -r --arg k rbg.workloads.x-k8s.io/role-workload-type '
+    [ .items[]
+      | .metadata as $m
+      | ( (.spec.roles // []), (.spec.groupTemplate.spec.roles // []) )[]
+      | select( (.annotations[$k] // "workloads.x-k8s.io/v1alpha2/RoleInstanceSet")
+                | . == "apps/v1/Deployment"
+                  or . == "apps/v1/StatefulSet"
+                  or . == "leaderworkerset.x-k8s.io/v1/LeaderWorkerSet" )
+      | "  \($m.namespace)/\($m.name)  role=\(.name)  type=\(.annotations[$k])" ] | .[]'
+```
+
+Non-empty → print and `exit 1`. The three literals are the only duplication left; exporting
+a `DeprecatedWorkloadTypes` slice from `api/workloads/v1alpha2` and generating this list
+from it would also close R2-F14's residual, but that is optional polish, not a blocker.
+
+## 3. Prototype — all four mechanics verified
+
+A working hook Job was built and run against the real cluster:
+
+| Check | Result |
+|---|---|
+| `enabled=true` (default) renders no preflight objects | **0 objects** — no cost on the default path |
+| preflight completes before the crd-upgrade stage | preflight end `07:15:40.283` → crd-upgrade start `07:15:45` ✓ |
+| fails fast, with the check's own message | helm exited in **7s** (not the 180s timeout); pod log carries the object list |
+| refuses before the CRD-upgrade stage | crd-upgrade Job never created ✓ |
+
+The refusal the operator actually sees:
+
+```
+REFUSING INSTALL: controller.deprecatedWorkloadTypes.enabled=false, but these objects
+already use a deprecated workload type:
+  ns1/legacy-rbg  role=worker  type=apps/v1/StatefulSet
+They would become unreconcilable: no RBAC is granted for those types and the webhook
+would refuse every write.
+Keep enabled=true on this cluster until a migration path to RoleInstanceSet ships.
+```
+
+### The settings that matter, and why
+
+| Setting | Value | Why not the `crd-upgrade` value |
+|---|---|---|
+| `restartPolicy` | **`Never`** + `backoffLimit: 0` | `crd-upgrade` uses `OnFailure` because it is meant to succeed. A check that is *expected* to fail would restart forever under `OnFailure`, and the operator would see a Helm timeout instead of the reason. |
+| `hook-weight` | RBAC `-7`, Job `-6` | must precede `crd-upgrade`'s `-5`/`-4`, or the CRDs are already rewritten when the check runs |
+| `hook-delete-policy` (Job) | `hook-succeeded,before-hook-creation` — **no `hook-failed`** | a failed check's pod must survive so its log can be read |
+| RBAC | read-only `get,list` on the two CRs | narrower than `crd-upgrade`'s `create/update/patch` on CRDs |
+| render condition | only when `enabled=false` | the default path should not pay for a Job that can never say no |
+
+## Two harness bugs found and fixed while building this
+
+Recorded because they were briefly mistaken for design problems:
+
+1. `hook-delete-policy: hook-succeeded` removed the Job before its log could be read, so
+   the ordering check looked empty. The prototype drops `hook-succeeded` and notes that
+   production should keep it.
+2. Scenario 3 initially reported "ordering is broken". It was stale state: hook resources
+   are **not** removed by `helm uninstall` when the delete policy omits `hook-succeeded`,
+   so the previous scenario's crd-upgrade Job was still present. The script now deletes
+   both Jobs before the offender run. Also, `helm --set-string` cannot parse a JSON blob
+   whose keys contain dots and brackets — the fixture goes through a values file instead.
+
+## Safety
+
+Throwaway namespace `pr416-preflight-test`, throwaway release, read-only ServiceAccount,
+and an `EXIT` trap that removes the namespace plus the two cluster-scoped RBAC objects.
+The offender case is driven from a **fixture**, deliberately not by creating a real
+RoleBasedGroup: the live rbgs controller on this cluster watches cluster-wide and would
+have reconciled one into real StatefulSets.

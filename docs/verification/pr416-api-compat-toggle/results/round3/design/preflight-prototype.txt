@@ -1,0 +1,38 @@
+############ 1) default (enabled=true): the preflight must not be rendered at all
+   objects named pf-preflight rendered: 0   (expected 0 -- no cost on the default path)
+           1 kind: ConfigMap
+           1 kind: Job
+
+############ 2) enabled=false on a CLEAN cluster: install proceeds, ordering observed
+   STATUS: deployed
+
+--- preflight pod log
+     preflight start 07:15:40.174516541
+     preflight OK: no object uses a deprecated workload type
+     preflight end   07:15:40.283188658
+
+--- did preflight really finish before crd-upgrade started?
+     crd-upgrade start 07:15:45.%N
+     ^ compare timestamps: preflight end must precede crd-upgrade start
+
+############ 3) enabled=false with an OFFENDER: must fail fast with the check's own message
+   (fixture: a v1alpha2 object whose role annotation is apps/v1/StatefulSet --
+    exactly the case status.storedVersions would report as clean)
+   helm exited after 7s
+   Error: INSTALLATION FAILED: failed pre-install: 1 error occurred:
+
+--- the failed pod survived (no hook-failed in the delete policy), and its message is:
+     preflight start 07:15:53.887719153
+     (reading fixture instead of the live cluster)
+     REFUSING INSTALL: controller.deprecatedWorkloadTypes.enabled=false, but these objects already use a deprecated workload type:
+       ns1/legacy-rbg  role=worker  type=apps/v1/StatefulSet
+     They would become unreconcilable: no RBAC is granted for those types and the webhook would refuse every write.
+     Keep enabled=true on this cluster until a migration path to RoleInstanceSet ships.
+
+--- was the crd-upgrade stand-in ever run?
+     NO -- refused before the CRD-upgrade stage, as intended
+
+RESULT: see the four checks above.
+
+=== CLEANUP ===
+  removed release pf, namespace pr416-preflight-test, and the preflight ClusterRole/Binding
