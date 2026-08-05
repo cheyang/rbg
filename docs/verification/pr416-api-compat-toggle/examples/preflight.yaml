@@ -37,11 +37,6 @@ rules:
   - apiGroups: ["workloads.x-k8s.io"]
     resources: ["rolebasedgroups", "rolebasedgroupsets"]
     verbs: ["get", "list"]
-{{- if $preflight.checkStoredVersions }}
-  - apiGroups: ["apiextensions.k8s.io"]
-    resources: ["customresourcedefinitions"]
-    verbs: ["get"]
-{{- end }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -108,8 +103,6 @@ spec:
           env:
             - name: ENABLE_DEPRECATED_WORKLOAD_TYPES
               value: "false"
-            - name: CHECK_STORED_VERSIONS
-              value: {{ $preflight.checkStoredVersions | default false | quote }}
             - name: MAX_REPORTED
               value: {{ $preflight.maxReported | default 20 | quote }}
 {{- end }}

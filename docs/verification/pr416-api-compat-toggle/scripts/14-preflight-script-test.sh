@@ -97,14 +97,30 @@ expect 1 "LeaderWorkerSet via RoleBasedGroupSet groupTemplate" <<EOF
 ENABLE_DEPRECATED_WORKLOAD_TYPES=false FIXTURE_FILE=$F/rbgset.json bash $SCRIPT
 EOF
 
+cat > "$F/unknown.json" <<'JSON'
+{"items":[
+ {"metadata":{"namespace":"n","name":"future"},
+  "spec":{"roles":[{"name":"x","annotations":{"rbg.workloads.x-k8s.io/role-workload-type":"acme.io/v1/FutureThing"}}]}}
+]}
+JSON
+
 echo
-echo "### 4) output is capped, and says so"
+echo "### 4) FAIL-CLOSED: a type that is neither RoleInstanceSet nor a known"
+echo "     deprecated one must be refused, not waved through. This is the whole"
+echo "     reason the check is an allowlist -- a fourth deprecated type added to"
+echo "     isDeprecatedWorkloadType is caught here without touching this script."
+expect 1 "unknown workload type is refused" <<EOF
+ENABLE_DEPRECATED_WORKLOAD_TYPES=false FIXTURE_FILE=$F/unknown.json bash $SCRIPT
+EOF
+
+echo
+echo "### 5) output is capped, and says so"
 expect 1 "25 offenders, MAX_REPORTED=5" <<EOF
 ENABLE_DEPRECATED_WORKLOAD_TYPES=false MAX_REPORTED=5 FIXTURE_FILE=$F/many.json bash $SCRIPT
 EOF
 
 echo
-echo "### 5) FAILURE DIRECTION -- the cases that decide if this is safe to gate on"
+echo "### 6) FAILURE DIRECTION -- the cases that decide if this is safe to gate on"
 echo "     a query it cannot complete must NOT come back as 'approved'"
 expect 2 "unreachable API server must exit 2, not 0" <<EOF
 ENABLE_DEPRECATED_WORKLOAD_TYPES=false KUBECONFIG=/nonexistent-kubeconfig \
@@ -123,7 +139,7 @@ ENABLE_DEPRECATED_WORKLOAD_TYPES=false RBGSET_RESOURCE=nosuchsets.example.com ba
 EOF
 
 echo
-echo "### 6) against the real cluster (read-only)"
+echo "### 7) against the real cluster (read-only)"
 expect 0 "live cluster, toggle off" <<EOF
 ENABLE_DEPRECATED_WORKLOAD_TYPES=false bash $SCRIPT
 EOF

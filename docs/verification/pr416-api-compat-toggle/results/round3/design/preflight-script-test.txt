@@ -4,63 +4,77 @@
 
 ### 2) clean inputs -- must pass
   PASS  rc=0  roles with no annotation default to RoleInstanceSet
-        | preflight: reading fixture /tmp/tmp.5QizM9CCtq/clean.json instead of the cluster (test mode)
-        | preflight: OK -- no RoleBasedGroup or RoleBasedGroupSet uses a deprecated workload type.
+        | preflight: reading fixture /tmp/tmp.c0m72ATGxy/clean.json instead of the cluster (test mode)
+        | preflight: OK -- every role uses workloads.x-k8s.io/v1alpha2/RoleInstanceSet.
   PASS  rc=0  no objects at all
-        | preflight: reading fixture /tmp/tmp.5QizM9CCtq/empty.json instead of the cluster (test mode)
-        | preflight: OK -- no RoleBasedGroup or RoleBasedGroupSet uses a deprecated workload type.
+        | preflight: reading fixture /tmp/tmp.c0m72ATGxy/empty.json instead of the cluster (test mode)
+        | preflight: OK -- every role uses workloads.x-k8s.io/v1alpha2/RoleInstanceSet.
 
 ### 3) each deprecated type must be caught, on both kinds
   PASS  rc=1  StatefulSet on a RoleBasedGroup
-        | preflight: reading fixture /tmp/tmp.5QizM9CCtq/offender.json instead of the cluster (test mode)
+        | preflight: reading fixture /tmp/tmp.c0m72ATGxy/offender.json instead of the cluster (test mode)
         | 
         | preflight: REFUSING -- controller.deprecatedWorkloadTypes.enabled=false, but 1 role(s)
-        | in this cluster already use a deprecated workload type:
+        | in this cluster use a workload type other than RoleInstanceSet:
         | 
         |   prod/legacy  role=worker  type=apps/v1/StatefulSet
         | 
-        | With the toggle off no RBAC is granted for these workload types and none of them are
+        | With the toggle off no RBAC is granted for the deprecated workload types and none of
   PASS  rc=1  Deployment on a RoleBasedGroup
-        | preflight: reading fixture /tmp/tmp.5QizM9CCtq/deployment.json instead of the cluster (test mode)
+        | preflight: reading fixture /tmp/tmp.c0m72ATGxy/deployment.json instead of the cluster (test mode)
         | 
         | preflight: REFUSING -- controller.deprecatedWorkloadTypes.enabled=false, but 1 role(s)
-        | in this cluster already use a deprecated workload type:
+        | in this cluster use a workload type other than RoleInstanceSet:
         | 
         |   d/dep  role=w  type=apps/v1/Deployment
         | 
-        | With the toggle off no RBAC is granted for these workload types and none of them are
+        | With the toggle off no RBAC is granted for the deprecated workload types and none of
   PASS  rc=1  LeaderWorkerSet via RoleBasedGroupSet groupTemplate
-        | preflight: reading fixture /tmp/tmp.5QizM9CCtq/rbgset.json instead of the cluster (test mode)
+        | preflight: reading fixture /tmp/tmp.c0m72ATGxy/rbgset.json instead of the cluster (test mode)
         | 
         | preflight: REFUSING -- controller.deprecatedWorkloadTypes.enabled=false, but 1 role(s)
-        | in this cluster already use a deprecated workload type:
+        | in this cluster use a workload type other than RoleInstanceSet:
         | 
         |   prod/set1  role=lws  type=leaderworkerset.x-k8s.io/v1/LeaderWorkerSet
         | 
-        | With the toggle off no RBAC is granted for these workload types and none of them are
+        | With the toggle off no RBAC is granted for the deprecated workload types and none of
 
-### 4) output is capped, and says so
+### 4) FAIL-CLOSED: a type that is neither RoleInstanceSet nor a known
+     deprecated one must be refused, not waved through. This is the whole
+     reason the check is an allowlist -- a fourth deprecated type added to
+     isDeprecatedWorkloadType is caught here without touching this script.
+  PASS  rc=1  unknown workload type is refused
+        | preflight: reading fixture /tmp/tmp.c0m72ATGxy/unknown.json instead of the cluster (test mode)
+        | 
+        | preflight: REFUSING -- controller.deprecatedWorkloadTypes.enabled=false, but 1 role(s)
+        | in this cluster use a workload type other than RoleInstanceSet:
+        | 
+        |   n/future  role=x  type=acme.io/v1/FutureThing
+        | 
+        | With the toggle off no RBAC is granted for the deprecated workload types and none of
+
+### 5) output is capped, and says so
   PASS  rc=1  25 offenders, MAX_REPORTED=5
-        | preflight: reading fixture /tmp/tmp.5QizM9CCtq/many.json instead of the cluster (test mode)
+        | preflight: reading fixture /tmp/tmp.c0m72ATGxy/many.json instead of the cluster (test mode)
         | 
         | preflight: REFUSING -- controller.deprecatedWorkloadTypes.enabled=false, but 25 role(s)
-        | in this cluster already use a deprecated workload type:
+        | in this cluster use a workload type other than RoleInstanceSet:
         | 
         |   n0/r0  role=w  type=apps/v1/StatefulSet
         |   n1/r1  role=w  type=apps/v1/StatefulSet
         |   n2/r2  role=w  type=apps/v1/StatefulSet
 
-### 5) FAILURE DIRECTION -- the cases that decide if this is safe to gate on
+### 6) FAILURE DIRECTION -- the cases that decide if this is safe to gate on
      a query it cannot complete must NOT come back as 'approved'
   PASS  rc=2  unreachable API server must exit 2, not 0
         | preflight: FAILED to query rolebasedgroups.workloads.x-k8s.io:
-        |   E0805 15:33:09.819093 1747647 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
-        |   E0805 15:33:09.819435 1747647 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
-        |   E0805 15:33:09.820833 1747647 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
-        |   E0805 15:33:09.821053 1747647 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
-        |   E0805 15:33:09.822438 1747647 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
-        |   E0805 15:33:09.822669 1747647 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
-        |   E0805 15:33:09.823992 1747647 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
+        |   E0805 16:05:21.233022 1758334 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
+        |   E0805 16:05:21.233439 1758334 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
+        |   E0805 16:05:21.234830 1758334 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
+        |   E0805 16:05:21.235069 1758334 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
+        |   E0805 16:05:21.236377 1758334 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
+        |   E0805 16:05:21.236631 1758334 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
+        |   E0805 16:05:21.237972 1758334 memcache.go:265] "Unhandled Error" err="couldn't get current server API group list: Get \"http://localhost:8080/api?timeout=32s\": dial tcp [::1]:8080: connect: connection refused"
 
      ...and the other side of that coin: a CRD that is simply not installed
      yet must read as 'fresh cluster', NOT as a failure
@@ -70,10 +84,10 @@
         | preflight: neither CRD is installed; this is a fresh cluster. OK.
   PASS  rc=0  one CRD absent, the other real and clean
         | preflight: nosuchsets.example.com is not installed yet -- treating as no objects.
-        | preflight: OK -- no RoleBasedGroup or RoleBasedGroupSet uses a deprecated workload type.
+        | preflight: OK -- every role uses workloads.x-k8s.io/v1alpha2/RoleInstanceSet.
 
-### 6) against the real cluster (read-only)
+### 7) against the real cluster (read-only)
   PASS  rc=0  live cluster, toggle off
-        | preflight: OK -- no RoleBasedGroup or RoleBasedGroupSet uses a deprecated workload type.
+        | preflight: OK -- every role uses workloads.x-k8s.io/v1alpha2/RoleInstanceSet.
 
-======== 11 passed, 0 failed ========
+======== 12 passed, 0 failed ========

@@ -1,32 +1,14 @@
-=== A) 默认 enabled=true -> 不应渲染任何 preflight 对象 ===
-  preflight 对象数: 0
+enabled=true  -> preflight 对象数: 0
+enabled=false -> rc=0
+          1 kind: ClusterRole
+          1 kind: ClusterRoleBinding
+          1 kind: Job
+          1 kind: ServiceAccount
 
-=== B) enabled=false -> 应渲染 SA + ClusterRole + Binding + Job ===
-  rc=0
-        1 kind: ClusterRole
-        1 kind: ClusterRoleBinding
-        1 kind: Job
-        1 kind: ServiceAccount
-
-  --- hook 权重（必须都小于 crd-upgrade 的 -5/-4）---
-        "helm.sh/hook-weight": "-7"
-        "helm.sh/hook-weight": "-7"
-        "helm.sh/hook-weight": "-7"
-        "helm.sh/hook-weight": "-4"
-        "helm.sh/hook-weight": "-6"
-  --- 对照 crd-upgrade 的权重 ---
-        "helm.sh/hook-weight": "-5"
-        "helm.sh/hook-weight": "-5"
-
-  --- 关键设置 ---
-        "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
-          restartPolicy: OnFailure
-        "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
-      # NOT restartPolicy: OnFailure (which crd-upgrade uses, because it is meant to
-      backoffLimit: 0
-          restartPolicy: Never
-
-=== C) helm lint ===
-  [INFO] Chart.yaml: icon is recommended
-  
-  1 chart(s) linted, 0 chart(s) failed
+  --- preflight ClusterRole 的规则（应只有 workloads.x-k8s.io 只读）---
+      - apiGroups: ["workloads.x-k8s.io"]
+        resources: ["rolebasedgroups", "rolebasedgroupsets"]
+        verbs: ["get", "list"]
+  preflight 块内提及 customresourcedefinitions: 0 处 (应为 0)
+  CHECK_STORED_VERSIONS: 0 处 (应为 0)
+  helm lint: 1 chart(s) linted, 0 chart(s) failed
