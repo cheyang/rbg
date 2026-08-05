@@ -1,0 +1,115 @@
+{{- /*
+  Preflight guard for controller.deprecatedWorkloadTypes.enabled=false.
+
+  Only rendered when the toggle is off: with it on the check can never say no, and
+  the default install path should not pay for a Job.
+
+  Weights are deliberately lower than crd-upgrade.yaml's (-5 RBAC / -4 Job) so this
+  runs BEFORE the CRDs are rewritten.
+*/ -}}
+{{- $d := .Values.controller.deprecatedWorkloadTypes | default dict }}
+{{- $deprecatedEnabled := or (not (hasKey $d "enabled")) $d.enabled }}
+{{- $preflight := .Values.preflight | default dict }}
+{{- $preflightEnabled := or (not (hasKey $preflight "enabled")) $preflight.enabled }}
+{{- if and $preflightEnabled (not $deprecatedEnabled) }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rbgs-preflight
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-7"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: rbgs-preflight
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-7"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
+rules:
+  # Read-only, and deliberately narrower than rbgs-crds-upgrade's
+  # create/update/patch on CRDs.
+  - apiGroups: ["workloads.x-k8s.io"]
+    resources: ["rolebasedgroups", "rolebasedgroupsets"]
+    verbs: ["get", "list"]
+{{- if $preflight.checkStoredVersions }}
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["get"]
+{{- end }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: rbgs-preflight
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-7"
+    "helm.sh/hook-delete-policy": hook-succeeded,hook-failed,before-hook-creation
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: rbgs-preflight
+subjects:
+  - kind: ServiceAccount
+    name: rbgs-preflight
+    namespace: {{ .Release.Namespace }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: rbgs-preflight-{{ replace "." "" .Chart.AppVersion }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    # Lower than crd-upgrade's -4: the check must see the CRDs as they are now.
+    "helm.sh/hook-weight": "-6"
+    # NOTE: no hook-failed. A failed check's pod must survive so `kubectl logs` can
+    # show the operator which objects are the problem.
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  # NOT restartPolicy: OnFailure (which crd-upgrade uses, because it is meant to
+  # succeed). This check is EXPECTED to fail sometimes; under OnFailure the pod
+  # would restart forever and the operator would see a Helm timeout instead of the
+  # reason.
+  backoffLimit: 0
+{{- if $preflight.ttlSecondsAfterFinished }}
+  ttlSecondsAfterFinished: {{ $preflight.ttlSecondsAfterFinished }}
+{{- end }}
+  template:
+    spec:
+      restartPolicy: Never
+      serviceAccountName: rbgs-preflight
+      {{- with $preflight.imagePullSecrets | default (.Values.global).imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $preflight.tolerations | default .Values.crdUpgrade.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with $preflight.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: preflight
+          # Same image as the CRD upgrader: it already carries kubectl, and the
+          # check ships alongside the upgrade script. `jq` must be added to that
+          # image's apk line.
+          image: "{{ $preflight.image.repository | default .Values.crdUpgrade.image.repository }}:{{ $preflight.image.tag | default .Values.crdUpgrade.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ $preflight.image.pullPolicy | default "IfNotPresent" }}
+          command: ["bash", "/rbgs/check-deprecated-workloads.sh"]
+          env:
+            - name: ENABLE_DEPRECATED_WORKLOAD_TYPES
+              value: "false"
+            - name: CHECK_STORED_VERSIONS
+              value: {{ $preflight.checkStoredVersions | default false | quote }}
+            - name: MAX_REPORTED
+              value: {{ $preflight.maxReported | default 20 | quote }}
+{{- end }}
