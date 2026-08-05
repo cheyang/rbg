@@ -1,0 +1,30 @@
+=== 1) CRD with v1 as the storage version; write one object ===
+   storedVersions: ["v1"]          <- expected ["v1"]
+
+=== 2) migrate: v2 becomes the storage version ===
+   storedVersions: ["v1","v2"]
+
+=== 3) rewrite EVERY object so nothing is stored as v1 any more ===
+   storedVersions: ["v1","v2"]
+   objects now readable as v2: 1
+
+=== VERDICT ===
+   storedVersions is STILL ["v1","v2"] after a full migration.
+
+   CONFIRMED STICKY. Kubernetes does not remove the old entry once every object has
+   been rewritten -- only an explicit
+       kubectl patch crd widgets.pr416test.example.com --subresource=status --type=merge \
+         -p '{"status":{"storedVersions":["v2"]}}'
+   shrinks it.
+
+   So "storedVersions contains v1alpha1" does NOT mean "v1alpha1 objects exist"; it
+   means "v1alpha1 was a storage version at some point, and nobody has cleaned up the
+   bookkeeping". Gating an upgrade on it would refuse a fully-migrated cluster.
+   That is why checkStoredVersions defaults to false: it is a corroborating signal,
+   not a gate.
+
+=== 4) control: the explicit patch does shrink it ===
+   after an explicit operator patch: ["v2"]
+
+=== CLEANUP ===
+  deleted the throwaway CRD widgets.pr416test.example.com (rbgs CRDs untouched)
