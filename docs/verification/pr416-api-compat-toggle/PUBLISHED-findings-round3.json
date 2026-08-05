@@ -85,5 +85,31 @@
       "why": "round 2 recorded 'upgrade-guard.yaml is unchanged by this PR'. It is ADDED by this PR (diff status A, absent at base 8a54787d), so round 3 anchors F4 inline. Stated explicitly in the summary body."
     }
   ],
-  "designReversalHandling": "F2a/F2c/F9/F10 were NOT re-filed as regressions. The delta deletes validateNoNewDeprecatedWorkloadTypes and restores the whole-object check, which is documented consistently as fresh-install-only, so those denials are unreachable under the stated premise. The summary says so explicitly and points at inline #1 as the reason it matters: the premise is unenforced."
+  "designReversalHandling": "F2a/F2c/F9/F10 were NOT re-filed as regressions. The delta deletes validateNoNewDeprecatedWorkloadTypes and restores the whole-object check, which is documented consistently as fresh-install-only, so those denials are unreachable under the stated premise. The summary says so explicitly and points at inline #1 as the reason it matters: the premise is unenforced.",
+  "followUps": [
+    {
+      "target": "inline #1 (deploy/helm/rbgs/templates/upgrade-guard.yaml:2)",
+      "replyId": 3718702715,
+      "replyUrl": "https://github.com/sgl-project/rbg/pull/416#discussion_r3718702715",
+      "inReplyTo": 3717866540,
+      "what": "Working preflight prototype, plus a correction that makes the ask smaller.",
+      "corrections": [
+        "Withdrew the recommendation to build a Go preflight binary / extend the controller image. GetWorkloadType() only reads the role annotation and defaults to RoleInstanceSet -- there is no defaulting chain to reimplement -- so the check is a few lines of jq in the existing tools/crd-upgrade shape."
+      ],
+      "preempted": [
+        "status.storedVersions as a simpler substitute: it is the wrong axis for R3-F22. The workload type is a role annotation, independent of the stored API version, so a v1alpha2 object carrying apps/v1/StatefulSet is invisible to it. It does work for the pre-alpha.3 upgrade gate, subject to its stickiness."
+      ],
+      "evidence": [
+        "scripts/13-preflight-prototype.sh",
+        "results/round3/design/preflight-prototype.txt",
+        "UPGRADE-GUARD-DESIGN.md (addendum)"
+      ],
+      "verified": {
+        "defaultPathRendersNothing": "0 preflight objects when enabled=true",
+        "hookOrdering": "preflight end 07:15:40.283 -> crd-upgrade start 07:15:45",
+        "failsFast": "helm exited in 7s with the check's message, not the 180s timeout",
+        "refusesBeforeCrdUpgrade": "crd-upgrade Job never created"
+      }
+    }
+  ]
 }
