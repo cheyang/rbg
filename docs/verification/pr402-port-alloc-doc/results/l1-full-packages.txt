@@ -1,0 +1,4 @@
+ok  	sigs.k8s.io/rbgs/pkg/port-allocator	0.160s
+ok  	sigs.k8s.io/rbgs/pkg/component-discovery	0.127s
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.560s
+ok  	sigs.k8s.io/rbgs/pkg/utils	0.425s

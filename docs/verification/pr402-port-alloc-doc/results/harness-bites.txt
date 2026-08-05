@@ -1,0 +1,197 @@
+harness-bites for topic pr402-port-alloc-doc
+code under review: b412ed6c6789cf87083c2c6f6fbdbc3c879157d0
+generated: 2026-08-05T03:43:03Z
+go version: go version go1.24.1 linux/amd64
+
+Each block: (a) baseline on the reviewed code, (b) the same tests after a
+TEMPORARY perturbation of production code, (c) restore. A canary must PASS at
+baseline and FAIL under the proposed fix; a contract test must PASS at baseline
+and FAIL under a wrong-direction perturbation.
+
+==============================================================
+F1 canary - TestVerifyPR402_F1_ReferencesOnlyResolvePodScoped_Canary
+perturbation: add a RoleScoped fallback to InjectPortsIntoPod's
+              reference resolution (manager.go) == the proposed fix
+expected: canary FLIPS to FAIL
+==============================================================
+--- (a) baseline (reviewed code) ---
+ok  	sigs.k8s.io/rbgs/pkg/port-allocator	0.236s
+--- (b) with the proposed F1 fix applied ---
+--- FAIL: TestVerifyPR402_F1_ReferencesOnlyResolvePodScoped_Canary (0.00s)
+    --- FAIL: TestVerifyPR402_F1_ReferencesOnlyResolvePodScoped_Canary/target_port_allocated_RoleScoped_->_hard_failure_(doc_implies_it_resolves) (0.00s)
+        zz_verify_pr402_doc_claims_test.go:176: scope=RoleScoped annotationKey="leader.leader-grpc" err=<nil> injected LEADER_GRPC_PORT="30111"
+        zz_verify_pr402_doc_claims_test.go:180: 
+            	Error Trace:	/root/rbgrev402/pkg/port-allocator/zz_verify_pr402_doc_claims_test.go:180
+            	Error:      	An error is expected but got nil.
+            	Test:       	TestVerifyPR402_F1_ReferencesOnlyResolvePodScoped_Canary/target_port_allocated_RoleScoped_->_hard_failure_(doc_implies_it_resolves)
+            	Messages:   	doc (zh:313-344) implies references resolve regardless of scope; expected the CURRENT implementation to fail for RoleScoped
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/port-allocator	0.240s
+FAIL
+--- (c) manager.go restored: 0 diff lines ---
+
+==============================================================
+F2 canary - TestVerifyPR402_F2_RandomAllocatorNotUniqueAcrossCalls_Canary
+              TestVerifyPR402_F2_ReleaseIsNoOp_Canary
+perturbation: give RandomAllocator cross-call bookkeeping (a persistent
+              allocated set + a real Release) == the proposed fix
+expected: both canaries FLIP to FAIL
+==============================================================
+--- (a) baseline (reviewed code) ---
+ok  	sigs.k8s.io/rbgs/pkg/port-allocator	0.278s
+--- (b) with the proposed F2 fix applied ---
+            	Messages:   	per-pod AllocateBatch must succeed
+    --- FAIL: TestVerifyPR402_F2_RandomAllocatorNotUniqueAcrossCalls_Canary/33_PodScoped_ports_out_of_a_range_of_32_(pigeonhole:_duplicate_certain) (0.00s)
+        zz_verify_pr402_doc_claims_test.go:291: 
+            	Error Trace:	/root/rbgrev402/pkg/port-allocator/zz_verify_pr402_doc_claims_test.go:291
+            	Error:      	Received unexpected error:
+            	            	requested 1 ports, but only 0 available in range
+            	Test:       	TestVerifyPR402_F2_RandomAllocatorNotUniqueAcrossCalls_Canary/33_PodScoped_ports_out_of_a_range_of_32_(pigeonhole:_duplicate_certain)
+            	Messages:   	per-pod AllocateBatch must succeed
+    --- FAIL: TestVerifyPR402_F2_RandomAllocatorNotUniqueAcrossCalls_Canary/2_PodScoped_ports_out_of_a_range_of_1_(degenerate_pigeonhole) (0.00s)
+        zz_verify_pr402_doc_claims_test.go:291: 
+            	Error Trace:	/root/rbgrev402/pkg/port-allocator/zz_verify_pr402_doc_claims_test.go:291
+            	Error:      	Received unexpected error:
+            	            	requested 1 ports, but only 0 available in range
+            	Test:       	TestVerifyPR402_F2_RandomAllocatorNotUniqueAcrossCalls_Canary/2_PodScoped_ports_out_of_a_range_of_1_(degenerate_pigeonhole)
+            	Messages:   	per-pod AllocateBatch must succeed
+--- FAIL: TestVerifyPR402_F2_ReleaseIsNoOp_Canary (0.00s)
+    zz_verify_pr402_doc_claims_test.go:371: 
+        	Error Trace:	/root/rbgrev402/pkg/port-allocator/zz_verify_pr402_doc_claims_test.go:371
+        	Error:      	Received unexpected error:
+        	            	port 1 out of range [30000,30004)
+        	Test:       	TestVerifyPR402_F2_ReleaseIsNoOp_Canary
+        	Messages:   	out-of-range Release is silently accepted (no-op)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/port-allocator	0.294s
+FAIL
+--- (c) random.go restored: 0 diff lines ---
+
+==============================================================
+F3 contract - TestVerifyPR402_F3_* (reverse perturbation)
+perturbation: break the FQDN template in component_discovery.go
+              (drop the pod-name/service-name dot, mimicking the
+               truncated string the doc prints)
+expected: contract tests go RED (proving they are not empty assertions)
+==============================================================
+--- (a) baseline (reviewed code) ---
+ok  	sigs.k8s.io/rbgs/pkg/component-discovery	0.121s
+--- (b) with the FQDN template broken ---
+            	            	-cd-demo-prefill-0-worker-1.s-cd-demo-prefill.pr402-verify.svc.cluster.local
+            	            	+cd-demo-prefill-0-worker-1s-cd-demo-prefill.pr402-verify.svc.cluster.local
+            	Test:       	TestVerifyPR402_F3_ComponentAddressFQDNShape_Contract/worker_pod_1_-_must_differ_from_worker_pod_0
+        zz_verify_pr402_fqdn_test.go:144: 
+            	Error Trace:	/root/rbgrev402/pkg/component-discovery/zz_verify_pr402_fqdn_test.go:144
+            	Error:      	Expect "cd-demo-prefill-0-worker-1s-cd-demo-prefill.pr402-verify.svc.cluster.local" to match "^[a-z0-9]([-a-z0-9]*[a-z0-9])?\.[a-z0-9]([-a-z0-9]*[a-z0-9])?\.[a-z0-9]([-a-z0-9]*[a-z0-9])?\.svc\.cluster\.local$"
+            	Test:       	TestVerifyPR402_F3_ComponentAddressFQDNShape_Contract/worker_pod_1_-_must_differ_from_worker_pod_0
+            	Messages:   	injected address must be a legal FQDN
+--- FAIL: TestVerifyPR402_F3_TruncatedDocRowsAreIndistinguishable_Contract (0.00s)
+    zz_verify_pr402_fqdn_test.go:215: impl values: map[LEADER_ADDR:cd-demo-prefill-0-leader-0s-cd-demo-prefill.pr402-verify.svc.cluster.local WORKER_0_ADDR:cd-demo-prefill-0-worker-0s-cd-demo-prefill.pr402-verify.svc.cluster.local WORKER_1_ADDR:cd-demo-prefill-0-worker-1s-cd-demo-prefill.pr402-verify.svc.cluster.local]
+    zz_verify_pr402_fqdn_test.go:221: 
+        	Error Trace:	/root/rbgrev402/pkg/component-discovery/zz_verify_pr402_fqdn_test.go:221
+        	Error:      	Expect "cd-demo-prefill-0-leader-0s-cd-demo-prefill.pr402-verify.svc.cluster.local" to match "^[a-z0-9]([-a-z0-9]*[a-z0-9])?\.[a-z0-9]([-a-z0-9]*[a-z0-9])?\.[a-z0-9]([-a-z0-9]*[a-z0-9])?\.svc\.cluster\.local$"
+        	Test:       	TestVerifyPR402_F3_TruncatedDocRowsAreIndistinguishable_Contract
+    zz_verify_pr402_fqdn_test.go:221: 
+        	Error Trace:	/root/rbgrev402/pkg/component-discovery/zz_verify_pr402_fqdn_test.go:221
+        	Error:      	Expect "cd-demo-prefill-0-worker-0s-cd-demo-prefill.pr402-verify.svc.cluster.local" to match "^[a-z0-9]([-a-z0-9]*[a-z0-9])?\.[a-z0-9]([-a-z0-9]*[a-z0-9])?\.[a-z0-9]([-a-z0-9]*[a-z0-9])?\.svc\.cluster\.local$"
+        	Test:       	TestVerifyPR402_F3_TruncatedDocRowsAreIndistinguishable_Contract
+    zz_verify_pr402_fqdn_test.go:221: 
+        	Error Trace:	/root/rbgrev402/pkg/component-discovery/zz_verify_pr402_fqdn_test.go:221
+        	Error:      	Expect "cd-demo-prefill-0-worker-1s-cd-demo-prefill.pr402-verify.svc.cluster.local" to match "^[a-z0-9]([-a-z0-9]*[a-z0-9])?\.[a-z0-9]([-a-z0-9]*[a-z0-9])?\.[a-z0-9]([-a-z0-9]*[a-z0-9])?\.svc\.cluster\.local$"
+        	Test:       	TestVerifyPR402_F3_TruncatedDocRowsAreIndistinguishable_Contract
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/component-discovery	0.142s
+FAIL
+--- (c) component_discovery.go restored: 0 diff lines ---
+
+==============================================================
+F4 contract - TestVerifyPR402_F4_* (reverse perturbation)
+perturbation: replace sigs.k8s.io/yaml (alphabetical, JSON-tag driven)
+              with an order-preserving hand-written emitter that puts
+              size before instances - i.e. the order the doc prints
+expected: contract tests go RED
+==============================================================
+--- (a) baseline (reviewed code) ---
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.329s
+--- (b) with an order-preserving (doc-order) serializer ---
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1,4 +1,4 @@
+            	            	 ([]string) (len=2) {
+            	            	- (string) (len=9) "instances",
+            	            	- (string) (len=4) "size"
+            	            	+ (string) (len=4) "size",
+            	            	+ (string) (len=9) "instances"
+            	            	 }
+            	Test:       	TestVerifyPR402_F4_ConfigMapYAMLKeysAreAlphabetical_Contract/guide_step_2_shape_after_scale-out:_prefill=2_decode=3
+            	Messages:   	role body keys must be alphabetical: instances before size
+        zz_verify_pr402_configmap_keyorder_test.go:232: 
+            	Error Trace:	/root/rbgrev402/pkg/discovery/zz_verify_pr402_configmap_keyorder_test.go:232
+            	Error:      	"22" is not less than "10"
+            	Test:       	TestVerifyPR402_F4_ConfigMapYAMLKeysAreAlphabetical_Contract/guide_step_2_shape_after_scale-out:_prefill=2_decode=3
+            	Messages:   	role "decode": `instances:` must appear BEFORE `size:` (finding F4: the guide's step-1 listing prints them the other way round)
+        zz_verify_pr402_configmap_keyorder_test.go:232: 
+            	Error Trace:	/root/rbgrev402/pkg/discovery/zz_verify_pr402_configmap_keyorder_test.go:232
+            	Error:      	"23" is not less than "11"
+            	Test:       	TestVerifyPR402_F4_ConfigMapYAMLKeysAreAlphabetical_Contract/guide_step_2_shape_after_scale-out:_prefill=2_decode=3
+            	Messages:   	role "prefill": `instances:` must appear BEFORE `size:` (finding F4: the guide's step-1 listing prints them the other way round)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/discovery	0.313s
+FAIL
+--- (c) config_builder.go restored: 0 diff lines ---
+
+==============================================================
+F5 contract - TestVerifyPR402_F5_* (reverse perturbation)
+perturbation: remove the legacy-name compatibility branch from
+              GetCompatibleHeadlessServiceName, i.e. make the code match
+              the doc's unconditional s-{rbg}-{role} rule
+expected: contract test goes RED on the 'legacy Service EXISTS' row
+==============================================================
+--- (a) baseline (reviewed code) ---
+ok  	sigs.k8s.io/rbgs/pkg/utils	0.230s
+--- (b) with the legacy-compat branch removed ---
+--- FAIL: TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract (0.10s)
+    --- FAIL: TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract/legacy_Service_EXISTS_->_legacy_name_is_kept_(doc's_rule_does_NOT_hold) (0.00s)
+        zz_verify_pr402_svcname_test.go:142: preexisting=[pd-inference-prefill] -> impl="s-pd-inference-prefill"  doc-predicts="s-pd-inference-prefill"  legacyName="pd-inference-prefill" newName="s-pd-inference-prefill"
+        zz_verify_pr402_svcname_test.go:146: 
+            	Error Trace:	/root/rbgrev402/pkg/utils/zz_verify_pr402_svcname_test.go:146
+            	Error:      	Not equal: 
+            	            	expected: "pd-inference-prefill"
+            	            	actual  : "s-pd-inference-prefill"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-pd-inference-prefill
+            	            	+s-pd-inference-prefill
+            	Test:       	TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract/legacy_Service_EXISTS_->_legacy_name_is_kept_(doc's_rule_does_NOT_hold)
+        zz_verify_pr402_svcname_test.go:151: 
+            	Error Trace:	/root/rbgrev402/pkg/utils/zz_verify_pr402_svcname_test.go:151
+            	Error:      	Should not be: "s-pd-inference-prefill"
+            	Test:       	TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract/legacy_Service_EXISTS_->_legacy_name_is_kept_(doc's_rule_does_NOT_hold)
+            	Messages:   	F5: the doc states s-{rbgName}-{roleName} unconditionally, but the legacy-compat branch returns "pd-inference-prefill"
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/utils	0.264s
+FAIL
+--- (c) service_utils.go restored: 0 diff lines ---
+
+==============================================================
+RESTORE VERIFICATION - production code diff must be EMPTY
+==============================================================
+git status --short:
+?? docs/
+?? pkg/component-discovery/zz_verify_pr402_fqdn_test.go
+?? pkg/discovery/zz_verify_pr402_configmap_keyorder_test.go
+?? pkg/port-allocator/zz_verify_pr402_doc_claims_test.go
+?? pkg/utils/zz_verify_pr402_svcname_test.go
+
+git diff --stat (tracked files) - must be empty:
+OK: no modifications to tracked (production) files.
+
+--- final full harness run on restored code ---
+ok  	sigs.k8s.io/rbgs/pkg/port-allocator	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/component-discovery	0.286s
+ok  	sigs.k8s.io/rbgs/pkg/discovery	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/utils	0.251s

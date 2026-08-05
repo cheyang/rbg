@@ -1,0 +1,185 @@
+=== RUN   TestVerifyPR402_F1_ReferencesOnlyResolvePodScoped_Canary
+=== RUN   TestVerifyPR402_F1_ReferencesOnlyResolvePodScoped_Canary/target_port_allocated_PodScoped_->_resolves_(doc_and_impl_agree)
+    zz_verify_pr402_doc_claims_test.go:176: scope=PodScoped annotationKey="pd-server-prefill-0-leader-0.leader-grpc" err=<nil> injected LEADER_GRPC_PORT="30111"
+=== RUN   TestVerifyPR402_F1_ReferencesOnlyResolvePodScoped_Canary/target_port_allocated_RoleScoped_->_hard_failure_(doc_implies_it_resolves)
+    zz_verify_pr402_doc_claims_test.go:176: scope=RoleScoped annotationKey="leader.leader-grpc" err=referenced port not found: prefill.leader.leader-grpc (key: pd-server-prefill-0-leader-0.leader-grpc) injected LEADER_GRPC_PORT=""
+--- PASS: TestVerifyPR402_F1_ReferencesOnlyResolvePodScoped_Canary (0.00s)
+    --- PASS: TestVerifyPR402_F1_ReferencesOnlyResolvePodScoped_Canary/target_port_allocated_PodScoped_->_resolves_(doc_and_impl_agree) (0.00s)
+    --- PASS: TestVerifyPR402_F1_ReferencesOnlyResolvePodScoped_Canary/target_port_allocated_RoleScoped_->_hard_failure_(doc_implies_it_resolves) (0.00s)
+=== RUN   TestVerifyPR402_F1_PortAllocatorHasNoRoleScopedFallback_Contract
+--- PASS: TestVerifyPR402_F1_PortAllocatorHasNoRoleScopedFallback_Contract (0.00s)
+=== RUN   TestVerifyPR402_F2_RandomAllocatorNotUniqueAcrossCalls_Canary
+=== RUN   TestVerifyPR402_F2_RandomAllocatorNotUniqueAcrossCalls_Canary/9_PodScoped_ports_out_of_a_range_of_8_(pigeonhole:_duplicate_certain)
+    zz_verify_pr402_doc_claims_test.go:303: range=[30000,30008) pods=9 allocated=[30006 30004 30003 30001 30004 30005 30006 30003 30003] duplicates=map[30003:[2 7 8] 30004:[1 4] 30006:[0 6]]
+=== RUN   TestVerifyPR402_F2_RandomAllocatorNotUniqueAcrossCalls_Canary/33_PodScoped_ports_out_of_a_range_of_32_(pigeonhole:_duplicate_certain)
+    zz_verify_pr402_doc_claims_test.go:303: range=[31000,31032) pods=33 allocated=[31009 31007 31009 31005 31029 31006 31016 31010 31021 31005 31031 31015 31020 31014 31011 31017 31006 31007 31031 31025 31029 31000 31002 31016 31012 31002 31016 31028 31015 31013 31012 31018 31014] duplicates=map[31002:[22 25] 31005:[3 9] 31006:[5 16] 31007:[1 17] 31009:[0 2] 31012:[24 30] 31014:[13 32] 31015:[11 28] 31016:[6 23 26] 31029:[4 20] 31031:[10 18]]
+=== RUN   TestVerifyPR402_F2_RandomAllocatorNotUniqueAcrossCalls_Canary/2_PodScoped_ports_out_of_a_range_of_1_(degenerate_pigeonhole)
+    zz_verify_pr402_doc_claims_test.go:303: range=[30500,30501) pods=2 allocated=[30500 30500] duplicates=map[30500:[0 1]]
+--- PASS: TestVerifyPR402_F2_RandomAllocatorNotUniqueAcrossCalls_Canary (0.00s)
+    --- PASS: TestVerifyPR402_F2_RandomAllocatorNotUniqueAcrossCalls_Canary/9_PodScoped_ports_out_of_a_range_of_8_(pigeonhole:_duplicate_certain) (0.00s)
+    --- PASS: TestVerifyPR402_F2_RandomAllocatorNotUniqueAcrossCalls_Canary/33_PodScoped_ports_out_of_a_range_of_32_(pigeonhole:_duplicate_certain) (0.00s)
+    --- PASS: TestVerifyPR402_F2_RandomAllocatorNotUniqueAcrossCalls_Canary/2_PodScoped_ports_out_of_a_range_of_1_(degenerate_pigeonhole) (0.00s)
+=== RUN   TestVerifyPR402_F2_SingleBatchIsUnique_Contract
+--- PASS: TestVerifyPR402_F2_SingleBatchIsUnique_Contract (0.00s)
+=== RUN   TestVerifyPR402_F2_ReleaseIsNoOp_Canary
+--- PASS: TestVerifyPR402_F2_ReleaseIsNoOp_Canary (0.00s)
+=== RUN   TestVerifyPR402_F2_PodScopedAllocatesPerPod_Contract
+--- PASS: TestVerifyPR402_F2_PodScopedAllocatesPerPod_Contract (0.00s)
+=== RUN   TestVerifyPR402_F2_RandomIsTheOnlyRegisteredStrategy_Contract
+    zz_verify_pr402_doc_claims_test.go:432: registered strategies: [random]
+--- PASS: TestVerifyPR402_F2_RandomIsTheOnlyRegisteredStrategy_Contract (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/port-allocator	0.283s
+=== RUN   TestVerifyPR402_F3_ComponentAddressFQDNShape_Contract
+=== RUN   TestVerifyPR402_F3_ComponentAddressFQDNShape_Contract/leader_pod_0
+    zz_verify_pr402_fqdn_test.go:138: LEADER_ADDR: impl="cd-demo-prefill-0-leader-0.s-cd-demo-prefill.pr402-verify.svc.cluster.local"  doc-prints="pd-server-prefill-0-...s-pd-server-prefill.default.svc.cluster.local"
+=== RUN   TestVerifyPR402_F3_ComponentAddressFQDNShape_Contract/worker_pod_0
+    zz_verify_pr402_fqdn_test.go:138: WORKER_0_ADDR: impl="cd-demo-prefill-0-worker-0.s-cd-demo-prefill.pr402-verify.svc.cluster.local"  doc-prints="pd-server-prefill-0-...s-pd-server-prefill.default.svc.cluster.local"
+=== RUN   TestVerifyPR402_F3_ComponentAddressFQDNShape_Contract/worker_pod_1_-_must_differ_from_worker_pod_0
+    zz_verify_pr402_fqdn_test.go:138: WORKER_1_ADDR: impl="cd-demo-prefill-0-worker-1.s-cd-demo-prefill.pr402-verify.svc.cluster.local"  doc-prints="pd-server-prefill-0-...s-pd-server-prefill.default.svc.cluster.local"
+--- PASS: TestVerifyPR402_F3_ComponentAddressFQDNShape_Contract (0.00s)
+    --- PASS: TestVerifyPR402_F3_ComponentAddressFQDNShape_Contract/leader_pod_0 (0.00s)
+    --- PASS: TestVerifyPR402_F3_ComponentAddressFQDNShape_Contract/worker_pod_0 (0.00s)
+    --- PASS: TestVerifyPR402_F3_ComponentAddressFQDNShape_Contract/worker_pod_1_-_must_differ_from_worker_pod_0 (0.00s)
+=== RUN   TestVerifyPR402_F3_TruncatedDocRowsAreIndistinguishable_Contract
+    zz_verify_pr402_fqdn_test.go:215: impl values: map[LEADER_ADDR:cd-demo-prefill-0-leader-0.s-cd-demo-prefill.pr402-verify.svc.cluster.local WORKER_0_ADDR:cd-demo-prefill-0-worker-0.s-cd-demo-prefill.pr402-verify.svc.cluster.local WORKER_1_ADDR:cd-demo-prefill-0-worker-1.s-cd-demo-prefill.pr402-verify.svc.cluster.local]
+--- PASS: TestVerifyPR402_F3_TruncatedDocRowsAreIndistinguishable_Contract (0.00s)
+=== RUN   TestVerifyPR402_F3_PortRefResolvesBothScopes_Contract
+=== RUN   TestVerifyPR402_F3_PortRefResolvesBothScopes_Contract/PodScoped_key_resolves
+    zz_verify_pr402_fqdn_test.go:276: annotations=map[cd-demo-prefill-0-leader-0.leader-grpc:30111] -> value="30111" err=<nil>
+=== RUN   TestVerifyPR402_F3_PortRefResolvesBothScopes_Contract/RoleScoped_key_ALSO_resolves_(unlike_pkg/port-allocator_references_-_F1)
+    zz_verify_pr402_fqdn_test.go:276: annotations=map[leader.leader-grpc:30222] -> value="30222" err=<nil>
+=== RUN   TestVerifyPR402_F3_PortRefResolvesBothScopes_Contract/neither_key_present_->_error_naming_BOTH_tried_keys
+    zz_verify_pr402_fqdn_test.go:276: annotations=map[unrelated:1] -> value="" err=component-discovery portRef: port "leader-grpc" for component "leader" not found in instance annotations (tried keys: "cd-demo-prefill-0-leader-0.leader-grpc", "leader.leader-grpc")
+--- PASS: TestVerifyPR402_F3_PortRefResolvesBothScopes_Contract (0.00s)
+    --- PASS: TestVerifyPR402_F3_PortRefResolvesBothScopes_Contract/PodScoped_key_resolves (0.00s)
+    --- PASS: TestVerifyPR402_F3_PortRefResolvesBothScopes_Contract/RoleScoped_key_ALSO_resolves_(unlike_pkg/port-allocator_references_-_F1) (0.00s)
+    --- PASS: TestVerifyPR402_F3_PortRefResolvesBothScopes_Contract/neither_key_present_->_error_naming_BOTH_tried_keys (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/component-discovery	0.124s
+=== RUN   TestVerifyPR402_F4_ConfigMapYAMLKeysAreAlphabetical_Contract
+=== RUN   TestVerifyPR402_F4_ConfigMapYAMLKeysAreAlphabetical_Contract/guide_step_1_shape:_prefill=2_decode=2
+    zz_verify_pr402_configmap_keyorder_test.go:159: config.yaml produced by config_builder.Build():
+        group:
+          name: pd-inference
+          roles:
+          - prefill
+          - decode
+          size: 2
+        roles:
+          decode:
+            instances:
+            - address: pd-inference-decode-0.s-pd-inference-decode
+              ports:
+                http: 8000
+            - address: pd-inference-decode-1.s-pd-inference-decode
+              ports:
+                http: 8000
+            size: 2
+          prefill:
+            instances:
+            - address: pd-inference-prefill-0.s-pd-inference-prefill
+              ports:
+                http: 8000
+            - address: pd-inference-prefill-1.s-pd-inference-prefill
+              ports:
+                http: 8000
+            size: 2
+    zz_verify_pr402_configmap_keyorder_test.go:177: group keys: impl=[name roles size]  doc-prints=[name size roles]
+    zz_verify_pr402_configmap_keyorder_test.go:191: roles map order: impl=[decode prefill]
+    zz_verify_pr402_configmap_keyorder_test.go:206: role "decode" body keys: impl=[instances size]  doc-prints(step1)=[size instances]
+    zz_verify_pr402_configmap_keyorder_test.go:206: role "prefill" body keys: impl=[instances size]  doc-prints(step1)=[size instances]
+=== RUN   TestVerifyPR402_F4_ConfigMapYAMLKeysAreAlphabetical_Contract/guide_step_2_shape_after_scale-out:_prefill=2_decode=3
+    zz_verify_pr402_configmap_keyorder_test.go:159: config.yaml produced by config_builder.Build():
+        group:
+          name: pd-inference
+          roles:
+          - prefill
+          - decode
+          size: 2
+        roles:
+          decode:
+            instances:
+            - address: pd-inference-decode-0.s-pd-inference-decode
+              ports:
+                http: 8000
+            - address: pd-inference-decode-1.s-pd-inference-decode
+              ports:
+                http: 8000
+            - address: pd-inference-decode-2.s-pd-inference-decode
+              ports:
+                http: 8000
+            size: 3
+          prefill:
+            instances:
+            - address: pd-inference-prefill-0.s-pd-inference-prefill
+              ports:
+                http: 8000
+            - address: pd-inference-prefill-1.s-pd-inference-prefill
+              ports:
+                http: 8000
+            size: 2
+    zz_verify_pr402_configmap_keyorder_test.go:177: group keys: impl=[name roles size]  doc-prints=[name roles size]
+    zz_verify_pr402_configmap_keyorder_test.go:191: roles map order: impl=[decode prefill]
+    zz_verify_pr402_configmap_keyorder_test.go:206: role "decode" body keys: impl=[instances size]  doc-prints(step1)=[instances size]
+    zz_verify_pr402_configmap_keyorder_test.go:206: role "prefill" body keys: impl=[instances size]  doc-prints(step1)=[instances size]
+--- PASS: TestVerifyPR402_F4_ConfigMapYAMLKeysAreAlphabetical_Contract (0.19s)
+    --- PASS: TestVerifyPR402_F4_ConfigMapYAMLKeysAreAlphabetical_Contract/guide_step_1_shape:_prefill=2_decode=2 (0.18s)
+    --- PASS: TestVerifyPR402_F4_ConfigMapYAMLKeysAreAlphabetical_Contract/guide_step_2_shape_after_scale-out:_prefill=2_decode=3 (0.00s)
+=== RUN   TestVerifyPR402_F4_KeyOrderIsStableAcrossBuilds_Contract
+    zz_verify_pr402_configmap_keyorder_test.go:270: stable output:
+        group:
+          name: pd-inference
+          roles:
+          - prefill
+          - decode
+          size: 2
+        roles:
+          decode:
+            instances:
+            - address: pd-inference-decode-0.s-pd-inference-decode
+              ports:
+                http: 8000
+            - address: pd-inference-decode-1.s-pd-inference-decode
+              ports:
+                http: 8000
+            size: 2
+          prefill:
+            instances:
+            - address: pd-inference-prefill-0.s-pd-inference-prefill
+              ports:
+                http: 8000
+            - address: pd-inference-prefill-1.s-pd-inference-prefill
+              ports:
+                http: 8000
+            size: 2
+--- PASS: TestVerifyPR402_F4_KeyOrderIsStableAcrossBuilds_Contract (0.02s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.481s
+=== RUN   TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract
+=== RUN   TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract/no_legacy_Service_->_new_s-_prefixed_name_(doc's_rule_holds)
+    zz_verify_pr402_svcname_test.go:142: preexisting=[] -> impl="s-pd-inference-prefill"  doc-predicts="s-pd-inference-prefill"  legacyName="pd-inference-prefill" newName="s-pd-inference-prefill"
+=== RUN   TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract/legacy_Service_EXISTS_->_legacy_name_is_kept_(doc's_rule_does_NOT_hold)
+    zz_verify_pr402_svcname_test.go:142: preexisting=[pd-inference-prefill] -> impl="pd-inference-prefill"  doc-predicts="s-pd-inference-prefill"  legacyName="pd-inference-prefill" newName="s-pd-inference-prefill"
+=== RUN   TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract/an_unrelated_s-_Service_existing_does_not_change_the_outcome
+    zz_verify_pr402_svcname_test.go:142: preexisting=[s-pd-inference-prefill] -> impl="s-pd-inference-prefill"  doc-predicts="s-pd-inference-prefill"  legacyName="pd-inference-prefill" newName="s-pd-inference-prefill"
+=== RUN   TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract/legacy_Service_for_a_DIFFERENT_role_does_not_leak_across_roles
+    zz_verify_pr402_svcname_test.go:142: preexisting=[pd-inference-decode] -> impl="s-pd-inference-prefill"  doc-predicts="s-pd-inference-prefill"  legacyName="pd-inference-prefill" newName="s-pd-inference-prefill"
+--- PASS: TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract (0.22s)
+    --- PASS: TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract/no_legacy_Service_->_new_s-_prefixed_name_(doc's_rule_holds) (0.22s)
+    --- PASS: TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract/legacy_Service_EXISTS_->_legacy_name_is_kept_(doc's_rule_does_NOT_hold) (0.00s)
+    --- PASS: TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract/an_unrelated_s-_Service_existing_does_not_change_the_outcome (0.00s)
+    --- PASS: TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract/legacy_Service_for_a_DIFFERENT_role_does_not_leak_across_roles (0.00s)
+=== RUN   TestVerifyPR402_F5_ServiceNameTruncatedAt63_Contract
+=== RUN   TestVerifyPR402_F5_ServiceNameTruncatedAt63_Contract/short_names_are_not_truncated
+    zz_verify_pr402_svcname_test.go:207: naive="s-pd-inference-prefill" (len=22)  GetServiceName="s-pd-inference-prefill" (len=22)  GetWorkloadName="pd-inference-prefill" (len=20)
+=== RUN   TestVerifyPR402_F5_ServiceNameTruncatedAt63_Contract/long_rbg_name_is_truncated_to_63
+    zz_verify_pr402_svcname_test.go:207: naive="s-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-prefill" (len=68)  GetServiceName="s-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-pr" (len=63)  GetWorkloadName="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-pref" (len=63)
+=== RUN   TestVerifyPR402_F5_ServiceNameTruncatedAt63_Contract/truncation_landing_on_a_hyphen_strips_it_(DNS-1035_validity)
+    zz_verify_pr402_svcname_test.go:207: naive="s-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-worker" (len=69)  GetServiceName="s-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb" (len=62)  GetWorkloadName="bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb-wo" (len=63)
+--- PASS: TestVerifyPR402_F5_ServiceNameTruncatedAt63_Contract (0.00s)
+    --- PASS: TestVerifyPR402_F5_ServiceNameTruncatedAt63_Contract/short_names_are_not_truncated (0.00s)
+    --- PASS: TestVerifyPR402_F5_ServiceNameTruncatedAt63_Contract/long_rbg_name_is_truncated_to_63 (0.00s)
+    --- PASS: TestVerifyPR402_F5_ServiceNameTruncatedAt63_Contract/truncation_landing_on_a_hyphen_strips_it_(DNS-1035_validity) (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/utils	0.426s

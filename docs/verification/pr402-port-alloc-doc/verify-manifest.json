@@ -1,0 +1,92 @@
+{
+  "_comment": "Verification manifest for the review of PR #402 (a DOCUMENTATION PR: doc/best-practice/{zh,en}/05-port-allocation-and-service-discovery{,-guide}.md). Consumed by scripts/re-verify.sh. Every finding is a DOC defect: the implementation is the source of truth. Polarity semantics here: 'contract' tests pin the real implementation behaviour and stay GREEN after the doc is corrected; 'canary' tests pin CURRENT CODE behaviour that the doc contradicts, so they FLIP RED only if the maintainers change the CODE instead of the DOC.",
+  "topic": "pr402-port-alloc-doc",
+  "pr": "https://github.com/sgl-project/rbg/pull/402",
+  "prHeadFetch": { "remote": "upstream", "ref": "pull/402/head" },
+  "harnessPaths": [
+    "docs/verification/pr402-port-alloc-doc",
+    "pkg/port-allocator/zz_verify_pr402_doc_claims_test.go",
+    "pkg/component-discovery/zz_verify_pr402_fqdn_test.go",
+    "pkg/discovery/zz_verify_pr402_configmap_keyorder_test.go",
+    "pkg/utils/zz_verify_pr402_svcname_test.go"
+  ],
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/port-allocator/... ./pkg/component-discovery/... ./pkg/discovery/... ./pkg/utils/... -run PR402 -count=1 -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "major",
+      "polarity": "canary",
+      "layer": "unit",
+      "claim": "references can only resolve PodScoped ports. A RoleScoped target hard-fails with 'referenced port not found: prefill.leader.leader-grpc (key: <pod>.leader-grpc)' and blocks Pod creation. The doc (zh:313-344 / en:316-347) implies any already-allocated port of another component in the same role resolves, with no scope constraint.",
+      "match": ["TestVerifyPR402_F1_ReferencesOnlyResolvePodScoped_Canary"],
+      "supportingContract": [
+        "TestVerifyPR402_F1_PortAllocatorHasNoRoleScopedFallback_Contract",
+        "TestVerifyPR402_F3_PortRefResolvesBothScopes_Contract"
+      ]
+    },
+    {
+      "id": "F2",
+      "severity": "major",
+      "polarity": "canary",
+      "layer": "unit",
+      "claim": "random port allocation is NOT unique across AllocateBatch calls (random.go:28-31), and PodScoped allocation calls AllocateBatch once per Pod; Release() is a no-op with zero bookkeeping. The doc (zh:222-245 / en:225-248, zh:278) presents dynamic allocation as the fix for hostNetwork port collisions.",
+      "match": [
+        "TestVerifyPR402_F2_RandomAllocatorNotUniqueAcrossCalls_Canary",
+        "TestVerifyPR402_F2_ReleaseIsNoOp_Canary"
+      ],
+      "supportingContract": [
+        "TestVerifyPR402_F2_SingleBatchIsUnique_Contract",
+        "TestVerifyPR402_F2_PodScopedAllocatesPerPod_Contract",
+        "TestVerifyPR402_F2_RandomIsTheOnlyRegisteredStrategy_Contract"
+      ]
+    },
+    {
+      "id": "F3",
+      "severity": "minor",
+      "polarity": "contract",
+      "layer": "unit",
+      "claim": "the LEADER_ADDR / WORKER_*_ADDR examples at zh:597/606/614/616/618 and en:600/609/617/619/621 are ellipsis-truncated into illegal FQDNs, and the three router table rows collapse to one byte-identical string. The real format is <instanceName>-<component>-<index>.<svcName>.<ns>.svc.cluster.local (component_discovery.go:140-141).",
+      "match": [
+        "TestVerifyPR402_F3_ComponentAddressFQDNShape_Contract",
+        "TestVerifyPR402_F3_TruncatedDocRowsAreIndistinguishable_Contract"
+      ]
+    },
+    {
+      "id": "F4",
+      "severity": "minor",
+      "polarity": "contract",
+      "layer": "unit",
+      "claim": "the guide's /etc/rbg/config.yaml listing at zh:183-208 / en:184-209 prints size before roles and size before instances, but the payload is produced by sigs.k8s.io/yaml (config_builder.go:91), which emits mapping keys ALPHABETICALLY: group -> name,roles,size; per role -> instances,size; the roles map sorted decode-before-prefill. The same guide prints the CORRECT alphabetical order at zh:228-239.",
+      "match": [
+        "TestVerifyPR402_F4_ConfigMapYAMLKeysAreAlphabetical_Contract",
+        "TestVerifyPR402_F4_KeyOrderIsStableAcrossBuilds_Contract"
+      ]
+    },
+    {
+      "id": "F5",
+      "severity": "minor",
+      "polarity": "contract",
+      "layer": "unit",
+      "claim": "zh:32-38 / en:33-39 state the Service naming rule unconditionally as s-{rbgName}-{roleName}. GetCompatibleHeadlessServiceName (pkg/utils/service_utils.go:30-45) keeps the LEGACY {rbgName}-{roleName} name when such a Service already exists, and GetServiceName (api/workloads/v1alpha2/helper.go:106-116) truncates at 63 chars and strips a trailing hyphen.",
+      "match": [
+        "TestVerifyPR402_F5_HeadlessServiceNameHasLegacyFallback_Contract",
+        "TestVerifyPR402_F5_ServiceNameTruncatedAt63_Contract"
+      ]
+    },
+    {
+      "id": "F6",
+      "severity": "nit",
+      "polarity": "contract",
+      "layer": "none",
+      "verdict": "not-a-defect",
+      "claim": "en:666 renders 'In-Place Update and In-Place Scheduling' as plain text rather than a link. VERIFIED CORRECT: doc/best-practice/en/04-* does not exist (only 01,02,03,05,10 are present), so the author deliberately avoided a dead link. No test required; checked by `ls doc/best-practice/en/`.",
+      "match": []
+    }
+  ],
+  "liveNote": "L2 (scripts/l2-live-service-and-configmap.sh --live, honours $KUBECONFIG) captured real cluster evidence for F4 (discovery ConfigMap key order, alphabetical as predicted) and for the no-legacy branch of F5 (s-pd-inference-prefill / s-pd-inference-decode headless Services generated). L3 pod-level env-injection observation for F1/F3 was NOT completed on this sandbox: (1) the deployed controller image rolebasedgroup/rbgs-controller:v0.8.0-cea2a47 and the installed RoleInstance CRD disagree on spec.restartPolicy (controller writes a string, CRD demands an object), so RoleInstance creation is rejected and no Pod is ever created; (2) the controller is not started with --enable-port-allocator, so pkg/port-allocator is inert there regardless. F1/F2/F3 are proven deterministically at Layer 1. See results/l2-live.txt."
+}

@@ -1,0 +1,125 @@
+==============================================================
+L2/L3 live evidence — topic pr402-port-alloc-doc
+repo:      /root/rbgrev402
+reviewed:  b412ed6c6789cf87083c2c6f6fbdbc3c879157d0
+namespace: pr402-verify   live-stage: yes
+when:      2026-08-05T03:54:06Z
+==============================================================
+
+=== [A] Preflight ===============================================
+controller deployment(s):
+rbg-system/rbgs-controller-manager image=rolebasedgroup/rbgs-controller:v0.8.0-cea2a47
+  args=['--metrics-bind-address=:8443', '--leader-elect', '--health-probe-bind-address=:8081', '--max-concurrent-reconciles=10', '--kube-api-qps=20', '--kube-api-burst=30', '--scheduler-name=scheduler-plugins']
+PREFLIGHT LIMITATION 1: the deployed controller does NOT pass
+  --enable-port-allocator. pkg/port-allocator is therefore INERT on this
+  cluster (port_allocator.go: AllocateBatch returns ErrPortAllocatorDisabled
+  when !IsEnabled()). Findings F1 and F2 CANNOT be exercised live here; they
+  are proven deterministically at Layer 1 instead.
+
+RoleInstance CRD spec.restartPolicy schema type: object
+PREFLIGHT LIMITATION 2 (expected on this sandbox): the CRD expects
+  spec.restartPolicy to be an OBJECT, while the deployed controller image
+  writes a STRING. Any RoleInstance the controller creates is rejected with
+    spec.restartPolicy: Invalid value: "string": ... must be of type object
+  so NO PODS are ever created. The L3 pod-level checks (env-var injection
+  for F1/F3) are therefore expected to be SKIPPED. RoleInstanceSet, Service
+  and ConfigMap ARE still generated, which is what the L2 stage observes.
+
+=== [B] L2 static: --dry-run=server on the doc's YAML examples ===
+  05-port-allocation-and-service-discovery.md: 1 k8s-object YAML block(s) extracted (of 8 yaml blocks)
+  05-port-allocation-and-service-discovery.md: 1 k8s-object YAML block(s) extracted (of 8 yaml blocks)
+  05-port-allocation-and-service-discovery-guide.md: 0 k8s-object YAML block(s) extracted (of 0 yaml blocks)
+  05-port-allocation-and-service-discovery-guide.md: 0 k8s-object YAML block(s) extracted (of 0 yaml blocks)
+
+  dry-run results:
+    OK    05-port-allocation-and-service-discovery-01.yaml
+            rolebasedgroup.workloads.x-k8s.io/pd-server created (server dry run)
+
+  dry-run summary: 1 accepted, 0 rejected
+
+=== [C] L2 live: minimal RBG in namespace pr402-verify ==================
+namespace/pr402-verify created
+  applying the minimal RBG:
+    rolebasedgroup.workloads.x-k8s.io/pd-inference created
+
+  waiting up to 90s for the controller to generate child objects...
+
+  --- F5 evidence: generated Services ---
+    NAME                     CLUSTERIP   PORTS
+    s-pd-inference-decode    None        <none>
+    s-pd-inference-prefill   None        <none>
+  (doc zh:32-38 claims the name is s-{rbgName}-{roleName}; with no legacy
+   Service present the s- form is what we expect to see here. The legacy-name
+   branch is proven at Layer 1 — see pkg/utils/zz_verify_pr402_svcname_test.go.)
+
+  --- RoleInstanceSet / RoleInstance objects ---
+    NAME                                                      DESIRED   UPDATED   UPDATED_READY   READY   TOTAL   AGE
+    roleinstanceset.workloads.x-k8s.io/pd-inference-decode    2         2         0               0       2       4s
+    roleinstanceset.workloads.x-k8s.io/pd-inference-prefill   2         2         0               0       2       4s
+
+  --- F4 evidence: discovery ConfigMap payload (key order) ---
+    configmap: configmap/pd-inference
+    --- key: config.yaml ---
+      group:
+        name: pd-inference
+        roles:
+        - prefill
+        - decode
+        size: 2
+      roles:
+        decode:
+          instances:
+          - address: pd-inference-decode-0.s-pd-inference-decode
+            ports:
+              http: 8000
+          - address: pd-inference-decode-1.s-pd-inference-decode
+            ports:
+              http: 8000
+          size: 2
+        prefill:
+          instances:
+          - address: pd-inference-prefill-0.s-pd-inference-prefill
+            ports:
+              http: 8000
+          - address: pd-inference-prefill-1.s-pd-inference-prefill
+            ports:
+              http: 8000
+          size: 2
+  (F4: expect keys in ALPHABETICAL order — group: name/roles/size, per role:
+   instances before size, and the roles map sorted decode-before-prefill.)
+
+=== [D] L3 pod-level (env injection for F1/F3) ==================
+  pods in pr402-verify: 0
+
+  L3 SKIPPED — no Pods were created.
+  Diagnostic (RoleInstanceSet / RBG events, filtered):
+    1s          Warning   FailedCreate            roleinstanceset/pd-inference-decode    create RoleInstance pd-inference-decode-0 in RoleInstanceSet pd-inference-decode failed error: RoleInstance.workloads.x-k8s.io "pd-inference-decode-0" is invalid: spec.restartPolicy: Invalid value: "string": spec.restartPolicy in body must be of type object: "string"
+    1s          Warning   FailedCreate            roleinstanceset/pd-inference-prefill   create RoleInstance pd-inference-prefill-0 in RoleInstanceSet pd-inference-prefill failed error: RoleInstance.workloads.x-k8s.io "pd-inference-prefill-0" is invalid: spec.restartPolicy: Invalid value: "string": spec.restartPolicy in body must be of type object: "string"
+
+  Controller error messages for this namespace (stack traces stripped):
+    E0805 03:04:26.912119       1 stateful_instance_set_controller.go:169] "Finished syncing InstanceSet error" err="RoleInstance.workloads.x-k8s.io \"pd-inference-decode-0\" is invalid: spec.restartPolicy: Invalid value: \"string\": spec.restartPolicy in body must be of type object: \"string\"" instanc
+    Reconciler error | RoleInstance.workloads.x-k8s.io "pd-inference-decode-0" is invalid: spec.restartPolicy: Invalid value: "string": spec.restartPolicy in body must be of type object: "string"
+    E0805 03:04:26.923563       1 stateful_instance_set_controller.go:169] "Finished syncing InstanceSet error" err="RoleInstance.workloads.x-k8s.io \"pd-inference-decode-0\" is invalid: spec.restartPolicy: Invalid value: \"string\": spec.restartPolicy in body must be of type object: \"string\"" instanc
+    E0805 03:04:26.930838       1 stateful_instance_set_controller.go:169] "Finished syncing InstanceSet error" err="RoleInstance.workloads.x-k8s.io \"pd-inference-prefill-0\" is invalid: spec.restartPolicy: Invalid value: \"string\": spec.restartPolicy in body must be of type object: \"string\"" instan
+    Reconciler error | RoleInstance.workloads.x-k8s.io "pd-inference-prefill-0" is invalid: spec.restartPolicy: Invalid value: "string": spec.restartPolicy in body must be of type object: "string"
+    E0805 03:04:26.934649       1 stateful_instance_set_controller.go:169] "Finished syncing InstanceSet error" err="RoleInstance.workloads.x-k8s.io \"pd-inference-decode-0\" is invalid: spec.restartPolicy: Invalid value: \"string\": spec.restartPolicy in body must be of type object: \"string\"" instanc
+    E0805 03:04:26.944277       1 stateful_instance_set_controller.go:169] "Finished syncing InstanceSet error" err="RoleInstance.workloads.x-k8s.io \"pd-inference-prefill-0\" is invalid: spec.restartPolicy: Invalid value: \"string\": spec.restartPolicy in body must be of type object: \"string\"" instan
+    E0805 03:04:26.947902       1 stateful_instance_set_controller.go:169] "Finished syncing InstanceSet error" err="RoleInstance.workloads.x-k8s.io \"pd-inference-decode-0\" is invalid: spec.restartPolicy: Invalid value: \"string\": spec.restartPolicy in body must be of type object: \"string\"" instanc
+    E0805 03:04:26.954517       1 stateful_instance_set_controller.go:169] "Finished syncing InstanceSet error" err="RoleInstance.workloads.x-k8s.io \"pd-inference-prefill-0\" is invalid: spec.restartPolicy: Invalid value: \"string\": spec.restartPolicy in body must be of type object: \"string\"" instan
+    E0805 03:04:26.967520       1 stateful_instance_set_controller.go:169] "Finished syncing InstanceSet error" err="RoleInstance.workloads.x-k8s.io \"pd-inference-decode-0\" is invalid: spec.restartPolicy: Invalid value: \"string\": spec.restartPolicy in body must be of type object: \"string\"" instanc
+    E0805 03:04:26.967549       1 stateful_instance_set_controller.go:169] "Finished syncing InstanceSet error" err="RoleInstance.workloads.x-k8s.io \"pd-inference-prefill-0\" is invalid: spec.restartPolicy: Invalid value: \"string\": spec.restartPolicy in body must be of type object: \"string\"" instan
+    E0805 03:04:26.987756       1 stateful_instance_set_controller.go:169] "Finished syncing InstanceSet error" err="RoleInstance.workloads.x-k8s.io \"pd-inference-prefill-0\" is invalid: spec.restartPolicy: Invalid value: \"string\": spec.restartPolicy in body must be of type object: \"string\"" instan
+
+  This is PREFLIGHT LIMITATION 2 in action: the deployed controller image and
+  the installed CRD disagree on spec.restartPolicy, so RoleInstance creation is
+  rejected and no Pod is ever produced. Env-var injection (F1 references, F3
+  FQDN) cannot be observed live on this sandbox. Both are proven at Layer 1:
+    F1 -> pkg/port-allocator/zz_verify_pr402_doc_claims_test.go
+    F3 -> pkg/component-discovery/zz_verify_pr402_fqdn_test.go
+  NOTE: even with a matched controller/CRD pair, F1 and F2 would still need
+  --enable-port-allocator (PREFLIGHT LIMITATION 1).
+
+Done. Raw log: /root/rbgrev402/docs/verification/pr402-port-alloc-doc/results/l2-live.txt
+
+  cleanup: deleting namespace pr402-verify
+namespace "pr402-verify" deleted
