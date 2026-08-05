@@ -1,0 +1,35 @@
+
+--- environment ---
+cluster reachable; KUBECONFIG=/root/.kube/config  namespace=default
+
+--- CRD schema for strategy.scaling.maxSkew ---
+version=v1alpha2
+  maxSkew     = {"anyOf": [{"type": "integer"}, {"type": "string"}], "description": "MaxSkew is the maximum allowed skew between the scaling progress of different roles.\nCan be an absolute number (e.g., 5) or a percentage (e.g., \"10%\").", "x-kubernetes-int-or-string": true}
+  progression = {"description": "Progression defines the order in which replicas are scheduled during scaling.", "enum": ["OrderScheduled", "OrderReady"], "type": "string"}
+  maxSkew is x-kubernetes-int-or-string? True
+  progression has a schema default? False
+  progression enum = ["OrderScheduled", "OrderReady"]
+
+--- F1: does the API server reject an ABSOLUTE maxSkew? ---
+doc claims absolute is valid; L1 proves the controller cannot parse it.
+  [absolute-2] maxSkew: 2  -> ACCEPTED by API server (dry-run)
+           server said: coordinatedpolicy.workloads.x-k8s.io/verify-pr400-f1 created (server dry run)
+CANARY BASELINE HOLDS: the schema does NOT catch the absolute value.
+  => a doc-following user gets a policy that applies cleanly and then
+     breaks the RBG controller's Reconcile with:
+     'failed to parse maxSkew: percentage string must end with %'
+
+--- control: a PERCENTAGE maxSkew (the form that actually works) ---
+  [percent-10] maxSkew: "10%"  -> ACCEPTED by API server (dry-run)
+           server said: coordinatedpolicy.workloads.x-k8s.io/verify-pr400-f1 created (server dry run)
+as expected: percentage form is accepted at both schema and code level.
+
+--- corroboration: quoted absolute string (also doc-plausible, also unparseable) ---
+  [string-2] maxSkew: "2"  -> ACCEPTED by API server (dry-run)
+           server said: coordinatedpolicy.workloads.x-k8s.io/verify-pr400-f1 created (server dry run)
+
+--- summary ---
+checks passed: 2   failed: 0
+NOTE: every apply above used --dry-run=server; nothing was persisted.
+RESULT: PASS — F1's schema gap reproduced at the cluster layer.
+L2_EXIT=0

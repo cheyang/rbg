@@ -1,0 +1,73 @@
+=== RUN   TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue
+=== RUN   TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue/absolute_2_(the_exact_example_in_the_doc_table)
+    zz_verify_pr400_doc_claims_test.go:265: OBSERVED: maxSkew=2 REJECTED with "failed to parse maxSkew: percentage string must end with '%'"  (DOC CLAIMS: accepted)
+    zz_verify_pr400_doc_claims_test.go:268: DIVERGENCE: doc/api-comment/CRD-description all promise absolute-value support; implementation requires a '%' suffix.
+=== RUN   TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue/absolute_0
+    zz_verify_pr400_doc_claims_test.go:265: OBSERVED: maxSkew=0 REJECTED with "failed to parse maxSkew: percentage string must end with '%'"  (DOC CLAIMS: accepted)
+    zz_verify_pr400_doc_claims_test.go:268: DIVERGENCE: doc/api-comment/CRD-description all promise absolute-value support; implementation requires a '%' suffix.
+=== RUN   TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue/absolute_5_(the_example_in_the_Go_doc_comment)
+    zz_verify_pr400_doc_claims_test.go:265: OBSERVED: maxSkew=5 REJECTED with "failed to parse maxSkew: percentage string must end with '%'"  (DOC CLAIMS: accepted)
+    zz_verify_pr400_doc_claims_test.go:268: DIVERGENCE: doc/api-comment/CRD-description all promise absolute-value support; implementation requires a '%' suffix.
+=== RUN   TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue/string_without_percent_sign
+    zz_verify_pr400_doc_claims_test.go:265: OBSERVED: maxSkew=2 REJECTED with "failed to parse maxSkew: percentage string must end with '%'"  (DOC CLAIMS: accepted)
+    zz_verify_pr400_doc_claims_test.go:268: DIVERGENCE: doc/api-comment/CRD-description all promise absolute-value support; implementation requires a '%' suffix.
+=== RUN   TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue/percentage_10%_(works,_per_doc)
+    zz_verify_pr400_doc_claims_test.go:276: OBSERVED: maxSkew=10% accepted, parsed maxSkew fraction = 0.1
+=== RUN   TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue/omitted_(defaults_to_100%)
+    zz_verify_pr400_doc_claims_test.go:276: OBSERVED: maxSkew=<nil> accepted, parsed maxSkew fraction = 1
+--- PASS: TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue (0.00s)
+    --- PASS: TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue/absolute_2_(the_exact_example_in_the_doc_table) (0.00s)
+    --- PASS: TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue/absolute_0 (0.00s)
+    --- PASS: TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue/absolute_5_(the_example_in_the_Go_doc_comment) (0.00s)
+    --- PASS: TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue/string_without_percent_sign (0.00s)
+    --- PASS: TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue/percentage_10%_(works,_per_doc) (0.00s)
+    --- PASS: TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue/omitted_(defaults_to_100%) (0.00s)
+=== RUN   TestVerifyPR400_F1_AbsoluteMaxSkewErrorReachesCaller
+    zz_verify_pr400_doc_claims_test.go:309: OBSERVED: NewCoordinationScalerFromPolicy -> (nil, "failed to parse maxSkew: percentage string must end with '%'"); the RBG Reconcile returns this error and aborts reconciliation of the whole RBG.
+--- PASS: TestVerifyPR400_F1_AbsoluteMaxSkewErrorReachesCaller (0.00s)
+=== RUN   TestVerifyPR400_F2_ScalingThrottlesScaleUpFromSteadyState
+=== RUN   TestVerifyPR400_F2_ScalingThrottlesScaleUpFromSteadyState/steady_state_5/5_+_10/10,_desired_raised_to_20/40_(scale_UP)
+    zz_verify_pr400_doc_claims_test.go:401: current={prefill:5 decode:10} desired={prefill:20 decode:40}
+    zz_verify_pr400_doc_claims_test.go:402: DOC CLAIMS (scaling inactive after first deployment): {prefill:20 decode:40}
+    zz_verify_pr400_doc_claims_test.go:404: OBSERVED (throttled all the same):                    {prefill:7 decode:14}
+=== RUN   TestVerifyPR400_F2_ScalingThrottlesScaleUpFromSteadyState/steady_state_4/4_+_2/2,_desired_raised_to_8/4_(scale_UP)
+    zz_verify_pr400_doc_claims_test.go:401: current={prefill:4 decode:2} desired={prefill:8 decode:4}
+    zz_verify_pr400_doc_claims_test.go:402: DOC CLAIMS (scaling inactive after first deployment): {prefill:8 decode:4}
+    zz_verify_pr400_doc_claims_test.go:404: OBSERVED (throttled all the same):                    {prefill:5 decode:3}
+--- PASS: TestVerifyPR400_F2_ScalingThrottlesScaleUpFromSteadyState (0.00s)
+    --- PASS: TestVerifyPR400_F2_ScalingThrottlesScaleUpFromSteadyState/steady_state_5/5_+_10/10,_desired_raised_to_20/40_(scale_UP) (0.00s)
+    --- PASS: TestVerifyPR400_F2_ScalingThrottlesScaleUpFromSteadyState/steady_state_4/4_+_2/2,_desired_raised_to_8/4_(scale_UP) (0.00s)
+=== RUN   TestVerifyPR400_F4_Batch2WalkthroughIsWrong
+    zz_verify_pr400_doc_claims_test.go:458: desired={prefill:5 decode:10} maxSkew=10%
+    zz_verify_pr400_doc_claims_test.go:459: OBSERVED batch sequence: {prefill:0 decode:0} -> {prefill:1 decode:1} -> {prefill:1 decode:2} -> {prefill:2 decode:4} -> {prefill:3 decode:5} -> {prefill:3 decode:6} -> {prefill:4 decode:7} -> {prefill:4 decode:8} -> {prefill:5 decode:9} -> {prefill:5 decode:10}
+    zz_verify_pr400_doc_claims_test.go:490: batch 1  DOC CLAIMS {prefill:1 decode:1} (zh:170 / en:177 (batch 1))  |  OBSERVED {prefill:1 decode:1}  -> doc CORRECT
+    zz_verify_pr400_doc_claims_test.go:490: batch 2  DOC CLAIMS {prefill:2 decode:3} (zh:171 / en:178 (batch 2))  |  OBSERVED {prefill:1 decode:2}  -> doc WRONG
+--- PASS: TestVerifyPR400_F4_Batch2WalkthroughIsWrong (0.00s)
+=== RUN   TestVerifyPR400_F5_GuideBatchCadenceIsWrong
+    zz_verify_pr400_doc_claims_test.go:565: guide manifest: prefill=4 decode=2 maxSkew=25% progression=OrderReady
+    zz_verify_pr400_doc_claims_test.go:566: DOC CLAIMS (guide zh:103 / en:105): each batch creates 1 decode + 2 prefill
+    zz_verify_pr400_doc_claims_test.go:567: OBSERVED batch sequence:            {prefill:0 decode:0} -> {prefill:1 decode:1} -> {prefill:2 decode:1} -> {prefill:3 decode:2} -> {prefill:4 decode:2}
+    zz_verify_pr400_doc_claims_test.go:589:   batch 1 delta: prefill +1, decode +1
+    zz_verify_pr400_doc_claims_test.go:589:   batch 2 delta: prefill +1, decode +0
+    zz_verify_pr400_doc_claims_test.go:589:   batch 3 delta: prefill +1, decode +1
+    zz_verify_pr400_doc_claims_test.go:589:   batch 4 delta: prefill +1, decode +0
+    zz_verify_pr400_doc_claims_test.go:595: DIVERGENCE: no batch adds 1 decode + 2 prefill; max prefill delta per batch is 1.
+--- PASS: TestVerifyPR400_F5_GuideBatchCadenceIsWrong (0.00s)
+=== RUN   TestVerifyPR400_F6_OmittedProgressionIsNotOrderScheduled
+=== RUN   TestVerifyPR400_F6_OmittedProgressionIsNotOrderScheduled/explicit_OrderScheduled_(gate_blocks:_1_of_2_prefill_unscheduled)
+    zz_verify_pr400_doc_claims_test.go:701: progression="OrderScheduled" -> targets {prefill:2 decode:2}  (gate held = true)
+=== RUN   TestVerifyPR400_F6_OmittedProgressionIsNotOrderScheduled/explicit_OrderReady_(gate_blocks:_1_of_2_prefill_not_ready)
+    zz_verify_pr400_doc_claims_test.go:701: progression="OrderReady"     -> targets {prefill:2 decode:2}  (gate held = true)
+=== RUN   TestVerifyPR400_F6_OmittedProgressionIsNotOrderScheduled/omitted_->_""_(NO_CRD_default;_switch_matches_no_case;_gate_SKIPPED)
+    zz_verify_pr400_doc_claims_test.go:701: progression=""               -> targets {prefill:2 decode:4}  (gate held = false)
+=== NAME  TestVerifyPR400_F6_OmittedProgressionIsNotOrderScheduled
+    zz_verify_pr400_doc_claims_test.go:720: DOC CLAIMS: omitted progression defaults to OrderScheduled (zh:159 / en:166)
+    zz_verify_pr400_doc_claims_test.go:721: OBSERVED: omitted("") -> {prefill:2 decode:4}   vs   OrderScheduled -> {prefill:2 decode:2}
+    zz_verify_pr400_doc_claims_test.go:728: DIVERGENCE: an omitted progression SKIPS the batch gate entirely; OrderScheduled holds it. No +kubebuilder:default exists on the field.
+--- PASS: TestVerifyPR400_F6_OmittedProgressionIsNotOrderScheduled (0.00s)
+    --- PASS: TestVerifyPR400_F6_OmittedProgressionIsNotOrderScheduled/explicit_OrderScheduled_(gate_blocks:_1_of_2_prefill_unscheduled) (0.00s)
+    --- PASS: TestVerifyPR400_F6_OmittedProgressionIsNotOrderScheduled/explicit_OrderReady_(gate_blocks:_1_of_2_prefill_not_ready) (0.00s)
+    --- PASS: TestVerifyPR400_F6_OmittedProgressionIsNotOrderScheduled/omitted_->_""_(NO_CRD_default;_switch_matches_no_case;_gate_SKIPPED) (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/coordination/coordinationscaling	0.453s
+SCALER_RC=0

@@ -1,0 +1,67 @@
+=== gofmt (empty=good) ===
+pkg/coordination/coordinationscaling/zz_verify_pr400_doc_claims_test.go
+=== L1 scaler tests ===
+# sigs.k8s.io/rbgs/pkg/coordination/coordinationscaling [sigs.k8s.io/rbgs/pkg/coordination/coordinationscaling.test]
+pkg/coordination/coordinationscaling/zz_verify_pr400_doc_claims_test.go:70:31: undefined: workloadsv1alpha2.CoordinatedStrategy
+FAIL	sigs.k8s.io/rbgs/pkg/coordination/coordinationscaling [build failed]
+FAIL
+=== L1 controller F3 tests ===
+=== RUN   TestVerifyPR400_F3_RollingUpdateMaxSkewIntegerIsPercentNotCount
+=== RUN   TestVerifyPR400_F3_RollingUpdateMaxSkewIntegerIsPercentNotCount/int_1_equals_1%
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=0 refDesired=4 requestDesired=4 :: maxSkew=1 -> [0,0] | maxSkew="1%" -> [0,0]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=1 refDesired=4 requestDesired=4 :: maxSkew=1 -> [1,1] | maxSkew="1%" -> [1,1]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=2 refDesired=4 requestDesired=4 :: maxSkew=1 -> [2,2] | maxSkew="1%" -> [2,2]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=3 refDesired=4 requestDesired=4 :: maxSkew=1 -> [3,3] | maxSkew="1%" -> [3,3]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=4 refDesired=4 requestDesired=4 :: maxSkew=1 -> [4,4] | maxSkew="1%" -> [4,4]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=1 refDesired=5 requestDesired=10 :: maxSkew=1 -> [2,2] | maxSkew="1%" -> [2,2]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=3 refDesired=5 requestDesired=10 :: maxSkew=1 -> [6,6] | maxSkew="1%" -> [6,6]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=7 refDesired=10 requestDesired=5 :: maxSkew=1 -> [3,4] | maxSkew="1%" -> [3,4]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=50 refDesired=100 requestDesired=100 :: maxSkew=1 -> [49,51] | maxSkew="1%" -> [49,51]
+=== RUN   TestVerifyPR400_F3_RollingUpdateMaxSkewIntegerIsPercentNotCount/int_10_equals_10%
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=0 refDesired=4 requestDesired=4 :: maxSkew=10 -> [0,0] | maxSkew="10%" -> [0,0]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=1 refDesired=4 requestDesired=4 :: maxSkew=10 -> [1,1] | maxSkew="10%" -> [1,1]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=2 refDesired=4 requestDesired=4 :: maxSkew=10 -> [2,2] | maxSkew="10%" -> [2,2]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=3 refDesired=4 requestDesired=4 :: maxSkew=10 -> [3,3] | maxSkew="10%" -> [3,3]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=4 refDesired=4 requestDesired=4 :: maxSkew=10 -> [4,4] | maxSkew="10%" -> [4,4]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=1 refDesired=5 requestDesired=10 :: maxSkew=10 -> [1,3] | maxSkew="10%" -> [1,3]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=3 refDesired=5 requestDesired=10 :: maxSkew=10 -> [5,7] | maxSkew="10%" -> [5,7]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=7 refDesired=10 requestDesired=5 :: maxSkew=10 -> [3,4] | maxSkew="10%" -> [3,4]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=50 refDesired=100 requestDesired=100 :: maxSkew=10 -> [40,60] | maxSkew="10%" -> [40,60]
+=== RUN   TestVerifyPR400_F3_RollingUpdateMaxSkewIntegerIsPercentNotCount/int_25_equals_25%
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=0 refDesired=4 requestDesired=4 :: maxSkew=25 -> [0,1] | maxSkew="25%" -> [0,1]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=1 refDesired=4 requestDesired=4 :: maxSkew=25 -> [0,2] | maxSkew="25%" -> [0,2]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=2 refDesired=4 requestDesired=4 :: maxSkew=25 -> [1,3] | maxSkew="25%" -> [1,3]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=3 refDesired=4 requestDesired=4 :: maxSkew=25 -> [2,4] | maxSkew="25%" -> [2,4]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=4 refDesired=4 requestDesired=4 :: maxSkew=25 -> [3,5] | maxSkew="25%" -> [3,5]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=1 refDesired=5 requestDesired=10 :: maxSkew=25 -> [0,5] | maxSkew="25%" -> [0,5]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=3 refDesired=5 requestDesired=10 :: maxSkew=25 -> [4,9] | maxSkew="25%" -> [4,9]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=7 refDesired=10 requestDesired=5 :: maxSkew=25 -> [2,5] | maxSkew="25%" -> [2,5]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=50 refDesired=100 requestDesired=100 :: maxSkew=25 -> [25,75] | maxSkew="25%" -> [25,75]
+=== RUN   TestVerifyPR400_F3_RollingUpdateMaxSkewIntegerIsPercentNotCount/int_100_equals_100%
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=0 refDesired=4 requestDesired=4 :: maxSkew=100 -> [0,4] | maxSkew="100%" -> [0,4]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=1 refDesired=4 requestDesired=4 :: maxSkew=100 -> [0,5] | maxSkew="100%" -> [0,5]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=2 refDesired=4 requestDesired=4 :: maxSkew=100 -> [0,6] | maxSkew="100%" -> [0,6]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=3 refDesired=4 requestDesired=4 :: maxSkew=100 -> [0,7] | maxSkew="100%" -> [0,7]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=4 refDesired=4 requestDesired=4 :: maxSkew=100 -> [0,8] | maxSkew="100%" -> [0,8]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=1 refDesired=5 requestDesired=10 :: maxSkew=100 -> [0,12] | maxSkew="100%" -> [0,12]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=3 refDesired=5 requestDesired=10 :: maxSkew=100 -> [0,16] | maxSkew="100%" -> [0,16]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=7 refDesired=10 requestDesired=5 :: maxSkew=100 -> [0,9] | maxSkew="100%" -> [0,9]
+    zz_verify_pr400_maxskew_test.go:109: refUpdated=50 refDesired=100 requestDesired=100 :: maxSkew=100 -> [0,150] | maxSkew="100%" -> [0,150]
+=== NAME  TestVerifyPR400_F3_RollingUpdateMaxSkewIntegerIsPercentNotCount
+    zz_verify_pr400_maxskew_test.go:125: DIVERGENCE: integer and percentage maxSkew are indistinguishable, so `rollingUpdate.maxSkew: 1` means 1%, NOT '1 instance' as the guide states.
+--- PASS: TestVerifyPR400_F3_RollingUpdateMaxSkewIntegerIsPercentNotCount (0.00s)
+    --- PASS: TestVerifyPR400_F3_RollingUpdateMaxSkewIntegerIsPercentNotCount/int_1_equals_1% (0.00s)
+    --- PASS: TestVerifyPR400_F3_RollingUpdateMaxSkewIntegerIsPercentNotCount/int_10_equals_10% (0.00s)
+    --- PASS: TestVerifyPR400_F3_RollingUpdateMaxSkewIntegerIsPercentNotCount/int_25_equals_25% (0.00s)
+    --- PASS: TestVerifyPR400_F3_RollingUpdateMaxSkewIntegerIsPercentNotCount/int_100_equals_100% (0.00s)
+=== RUN   TestVerifyPR400_F3_GuideScenarioMaxSkew1IsLockstepNotOneInstance
+    zz_verify_pr400_maxskew_test.go:155: refUpdated=0/4 :: DOC CLAIMS window [0,1] (+/-1 instance) | OBSERVED [0,0]
+    zz_verify_pr400_maxskew_test.go:155: refUpdated=1/4 :: DOC CLAIMS window [0,2] (+/-1 instance) | OBSERVED [1,1]
+    zz_verify_pr400_maxskew_test.go:155: refUpdated=2/4 :: DOC CLAIMS window [1,3] (+/-1 instance) | OBSERVED [2,2]
+    zz_verify_pr400_maxskew_test.go:155: refUpdated=3/4 :: DOC CLAIMS window [2,4] (+/-1 instance) | OBSERVED [3,3]
+    zz_verify_pr400_maxskew_test.go:155: refUpdated=4/4 :: DOC CLAIMS window [3,4] (+/-1 instance) | OBSERVED [4,4]
+    zz_verify_pr400_maxskew_test.go:170: DIVERGENCE: guide's `maxSkew: 1` with 4 replicas yields a +/-0 (lockstep) window, not the documented +/-1 instance.
+--- PASS: TestVerifyPR400_F3_GuideScenarioMaxSkew1IsLockstepNotOneInstance (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.166s
+ALLDONE

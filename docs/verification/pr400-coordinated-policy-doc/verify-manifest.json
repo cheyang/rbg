@@ -1,0 +1,75 @@
+{
+  "_comment": "Verification harness for the review of PR #400 (a DOCUMENTATION PR). Every finding is a doc-vs-implementation divergence, so every test is a bug-canary: it PASSES on the code under review and FLIPS TO RED once the divergence is resolved. See README.md for the observed-vs-expected table and per-finding fix sketches.",
+  "topic": "pr400-coordinated-policy-doc",
+  "pr": "https://github.com/sgl-project/rbg/pull/400",
+  "prHeadFetch": { "remote": "upstream", "ref": "pull/400/head" },
+  "harnessPaths": [
+    "docs/verification/pr400-coordinated-policy-doc",
+    "pkg/coordination/coordinationscaling/zz_verify_pr400_doc_claims_test.go",
+    "internal/controller/workloads/zz_verify_pr400_maxskew_test.go"
+  ],
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/coordination/coordinationscaling/ ./internal/controller/workloads/ -run 'TestVerifyPR400' -count=1 -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "canary",
+      "layer": "unit",
+      "severity": "blocker",
+      "claim": "Doc says scaling.maxSkew accepts an absolute number (e.g. 2); parsePercentage requires a '%' suffix, so an absolute value aborts the whole RBG Reconcile.",
+      "match": [
+        "TestVerifyPR400_F1_ScalingMaxSkewRejectsAbsoluteValue",
+        "TestVerifyPR400_F1_AbsoluteMaxSkewErrorReachesCaller"
+      ],
+      "alsoLayer": "l2 (scripts/l2-crd-accepts-absolute-maxskew.sh) proves the CRD does not reject it either"
+    },
+    {
+      "id": "F2",
+      "polarity": "canary",
+      "layer": "unit",
+      "severity": "major",
+      "claim": "Doc says coordinated scaling only affects first deployment; there is no first-deployment gate, so steady-state scale-up (HPA/ScalingAdapter) is throttled identically.",
+      "match": ["TestVerifyPR400_F2_ScalingThrottlesScaleUpFromSteadyState"]
+    },
+    {
+      "id": "F3",
+      "polarity": "canary",
+      "layer": "unit",
+      "severity": "major",
+      "claim": "Guide says rollingUpdate.maxSkew: 1 means 'at most 1 instance of skew'; the base is the literal 100, so an integer N is identical to \"N%\".",
+      "match": [
+        "TestVerifyPR400_F3_RollingUpdateMaxSkewIntegerIsPercentNotCount",
+        "TestVerifyPR400_F3_GuideScenarioMaxSkew1IsLockstepNotOneInstance"
+      ]
+    },
+    {
+      "id": "F4",
+      "polarity": "canary",
+      "layer": "unit",
+      "severity": "major",
+      "claim": "Doc body's batch-2 walkthrough claims {prefill:2, decode:3}; the implementation yields {prefill:1, decode:2}.",
+      "match": ["TestVerifyPR400_F4_Batch2WalkthroughIsWrong"]
+    },
+    {
+      "id": "F5",
+      "polarity": "canary",
+      "layer": "unit",
+      "severity": "major",
+      "claim": "Guide claims each batch creates '1 decode and 2 prefill'; no batch ever does (max prefill delta per batch is 1).",
+      "match": ["TestVerifyPR400_F5_GuideBatchCadenceIsWrong"]
+    },
+    {
+      "id": "F6",
+      "polarity": "canary",
+      "layer": "unit",
+      "severity": "minor",
+      "claim": "Doc says progression defaults to OrderScheduled; there is no CRD default, so an omitted value is \"\" and canProceedToNextBatch skips the batch gate entirely.",
+      "match": ["TestVerifyPR400_F6_OmittedProgressionIsNotOrderScheduled"]
+    }
+  ],
+  "liveNote": "No L3 layer. F1's cluster-layer evidence is L2: run `KUBECONFIG=... bash docs/verification/pr400-coordinated-policy-doc/scripts/l2-crd-accepts-absolute-maxskew.sh`. It only uses --dry-run=server (nothing is persisted) and exits 0 while the schema still accepts an absolute maxSkew; it exits 1 if schema validation is added, which is the L2 canary flipping."
+}
