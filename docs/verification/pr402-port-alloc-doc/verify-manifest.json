@@ -2,7 +2,10 @@
   "_comment": "Verification manifest for the review of PR #402 (a DOCUMENTATION PR: doc/best-practice/{zh,en}/05-port-allocation-and-service-discovery{,-guide}.md). Consumed by scripts/re-verify.sh. Every finding is a DOC defect: the implementation is the source of truth. Polarity semantics here: 'contract' tests pin the real implementation behaviour and stay GREEN after the doc is corrected; 'canary' tests pin CURRENT CODE behaviour that the doc contradicts, so they FLIP RED only if the maintainers change the CODE instead of the DOC.",
   "topic": "pr402-port-alloc-doc",
   "pr": "https://github.com/sgl-project/rbg/pull/402",
-  "prHeadFetch": { "remote": "upstream", "ref": "pull/402/head" },
+  "prHeadFetch": {
+    "remote": "upstream",
+    "ref": "pull/402/head"
+  },
   "harnessPaths": [
     "docs/verification/pr402-port-alloc-doc",
     "pkg/port-allocator/zz_verify_pr402_doc_claims_test.go",
@@ -14,6 +17,11 @@
     "unit": {
       "kind": "gotest",
       "cmd": "go test ./pkg/port-allocator/... ./pkg/component-discovery/... ./pkg/discovery/... ./pkg/utils/... -run PR402 -count=1 -json"
+    },
+    "live": {
+      "kind": "script",
+      "cmd": "KUBECONFIG=${KUBECONFIG:-$HOME/.kube/config} bash docs/verification/pr402-port-alloc-doc/scripts/l3-live-pod-level.sh",
+      "_note": "Needs the controller started with --enable-port-allocator=true. Creates a scoped namespace and deletes it on exit."
     }
   },
   "findings": [
@@ -23,7 +31,9 @@
       "polarity": "canary",
       "layer": "unit",
       "claim": "references can only resolve PodScoped ports. A RoleScoped target hard-fails with 'referenced port not found: prefill.leader.leader-grpc (key: <pod>.leader-grpc)' and blocks Pod creation. The doc (zh:313-344 / en:316-347) implies any already-allocated port of another component in the same role resolves, with no scope constraint.",
-      "match": ["TestVerifyPR402_F1_ReferencesOnlyResolvePodScoped_Canary"],
+      "match": [
+        "TestVerifyPR402_F1_ReferencesOnlyResolvePodScoped_Canary"
+      ],
       "supportingContract": [
         "TestVerifyPR402_F1_PortAllocatorHasNoRoleScopedFallback_Contract",
         "TestVerifyPR402_F3_PortRefResolvesBothScopes_Contract"
@@ -53,8 +63,10 @@
       "claim": "the LEADER_ADDR / WORKER_*_ADDR examples at zh:597/606/614/616/618 and en:600/609/617/619/621 are ellipsis-truncated into illegal FQDNs, and the three router table rows collapse to one byte-identical string. The real format is <instanceName>-<component>-<index>.<svcName>.<ns>.svc.cluster.local (component_discovery.go:140-141).",
       "match": [
         "TestVerifyPR402_F3_ComponentAddressFQDNShape_Contract",
-        "TestVerifyPR402_F3_TruncatedDocRowsAreIndistinguishable_Contract"
-      ]
+        "TestVerifyPR402_F3_TruncatedDocRowsAreIndistinguishable_Contract",
+        "l3-live-pod-level.sh"
+      ],
+      "note": "Round 2: confirmed against real Pods / a real ConfigMap, not just unit level."
     },
     {
       "id": "F4",
@@ -64,8 +76,10 @@
       "claim": "the guide's /etc/rbg/config.yaml listing at zh:183-208 / en:184-209 prints size before roles and size before instances, but the payload is produced by sigs.k8s.io/yaml (config_builder.go:91), which emits mapping keys ALPHABETICALLY: group -> name,roles,size; per role -> instances,size; the roles map sorted decode-before-prefill. The same guide prints the CORRECT alphabetical order at zh:228-239.",
       "match": [
         "TestVerifyPR402_F4_ConfigMapYAMLKeysAreAlphabetical_Contract",
-        "TestVerifyPR402_F4_KeyOrderIsStableAcrossBuilds_Contract"
-      ]
+        "TestVerifyPR402_F4_KeyOrderIsStableAcrossBuilds_Contract",
+        "l3-live-pod-level.sh"
+      ],
+      "note": "Round 2: confirmed against real Pods / a real ConfigMap, not just unit level."
     },
     {
       "id": "F5",
@@ -86,7 +100,18 @@
       "verdict": "not-a-defect",
       "claim": "en:666 renders 'In-Place Update and In-Place Scheduling' as plain text rather than a link. VERIFIED CORRECT: doc/best-practice/en/04-* does not exist (only 01,02,03,05,10 are present), so the author deliberately avoided a dead link. No test required; checked by `ls doc/best-practice/en/`.",
       "match": []
+    },
+    {
+      "id": "F-live-baseline",
+      "severity": "none",
+      "polarity": "contract",
+      "layer": "live",
+      "claim": "Positive baseline measured on real Pods: 6 RBG_* env vars on a standalone role (exactly the base+Stateful+RoleInstanceSet sub-tables, RBG_LWP_* absent as the doc's split implies), hostname/subdomain identity, rbg-cluster-config mounted read-only at /etc/rbg, headless Services s-a-prefill / s-pd-prefill with clusterIP None and publishNotReadyAddresses true, group.size = role count (1) distinct from roles.<r>.size = replicas (2), allocated port 31349 inside 30000-34999, and the four portAllocator flags reaching /manager.",
+      "match": [
+        "l3-live-pod-level.sh"
+      ],
+      "verdict": "Confirmed correct"
     }
   ],
-  "liveNote": "L2 (scripts/l2-live-service-and-configmap.sh --live, honours $KUBECONFIG) captured real cluster evidence for F4 (discovery ConfigMap key order, alphabetical as predicted) and for the no-legacy branch of F5 (s-pd-inference-prefill / s-pd-inference-decode headless Services generated). L3 pod-level env-injection observation for F1/F3 was NOT completed on this sandbox: (1) the deployed controller image rolebasedgroup/rbgs-controller:v0.8.0-cea2a47 and the installed RoleInstance CRD disagree on spec.restartPolicy (controller writes a string, CRD demands an object), so RoleInstance creation is rejected and no Pod is ever created; (2) the controller is not started with --enable-port-allocator, so pkg/port-allocator is inert there regardless. F1/F2/F3 are proven deterministically at Layer 1. See results/l2-live.txt."
+  "liveNote": "Round 2 (2026-08-05): the live layer is now available. The blocker was a controller-image lag -- the cluster ran v0.8.0-cea2a47 (commit cea2a472, 23 commits behind main, older than #394) which wrote restartPolicy as a bare string while the already-correct CRDs required an object, so no Pod was ever created. Fixed with: helm upgrade rbgs deploy/helm/rbgs -n rbg-system --set controller.features.portAllocator.enabled=true (chart 0.8.0-alpha.3, image rolebasedgroup/rbgs-controller:v0.8.0-47cfe17). Cluster: v1.36.1-aliyun.1, 3 nodes. No data migration was needed because the cluster held zero RoleInstanceSets -- do not assume that next time. Both round-1 environment limits are gone: Pods start, and the controller now runs with --enable-port-allocator=true --port-allocate-strategy=random --start-port=30000 --port-range=5000. F3 and F4 are confirmed live. F1, F2 and F5 stay unit-level on purpose: F2 rests on the pigeonhole principle (9 PodScoped ports out of a range of 8 makes a duplicate certain), which is exact, whereas provoking a collision in a 5000-port range live would be flaky; F5 needs a pre-existing legacy-named Service, so the live run only covers the no-legacy branch. IMPORTANT: the live run allocates one port on one component, so it is NOT evidence that allocation is collision-free -- F2 stands."
 }

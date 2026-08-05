@@ -1,0 +1,59 @@
+=== L3: port allocation & service discovery on real Pods ===
+namespace : pr402-l3-1742195 (deleted on exit)
+cluster   : v1.36.1-aliyun.1
+controller: rolebasedgroup/rbgs-controller:v0.8.0-47cfe17
+port allocator flags: "--enable-port-allocator=true" "--port-allocate-strategy=random" "--start-port=30000" "--port-range=5000" 
+
+--- waiting for 5 pods Running (2 standalone + 3 components) ---
+    a-prefill-0             1/1   Running   0     5s
+    a-prefill-1             1/1   Running   0     5s
+    pd-prefill-0-leader-0   1/1   Running   0     5s
+    pd-prefill-0-worker-0   1/1   Running   0     5s
+    pd-prefill-0-worker-1   1/1   Running   0     5s
+
+--- 1. injected RBG_* env vars on a standaloneP attern pod (doc zh:91-118) ---
+    The doc splits these into 4 sub-tables by applicability; a standalone
+    role is NOT LeaderWorkerPattern, so the 3 RBG_LWP_* vars must be ABSENT.
+    count: 6
+      RBG_COMPONENT_INDEX        = <fieldRef metadata.labels['rbg.workloads.x-k8s.io/component-id']>
+      RBG_COMPONENT_NAME         = <fieldRef metadata.labels['rbg.workloads.x-k8s.io/component-name']>
+      RBG_GROUP_NAME             = a
+      RBG_ROLE_INDEX             = <fieldRef metadata.labels['rbg.workloads.x-k8s.io/role-instance-index']>
+      RBG_ROLE_INSTANCE_NAME     = <fieldRef metadata.labels['rbg.workloads.x-k8s.io/role-instance-name']>
+      RBG_ROLE_NAME              = prefill
+    RBG_LWP_* present: none (expected for standalonePattern)
+    hostname/subdomain: a-prefill-0 / s-a-prefill
+    volumeMounts: [('rbg-cluster-config', '/etc/rbg', True)]
+
+--- 2. headless Service naming + attributes (doc zh:32-38) ---
+    s-a-prefill    None   true
+    s-pd-prefill   None   true
+
+--- 3. ConfigMap /etc/rbg/config.yaml -- ACTUAL key order (doc F4) ---
+    The guide prints size->roles and size->instances; sigs.k8s.io/yaml
+    emits alphabetically, so expect name->roles->size and instances->size.
+    group:
+      name: a
+      roles:
+      - prefill
+      size: 1
+    roles:
+      prefill:
+        instances:
+        - address: a-prefill-0.s-a-prefill
+        - address: a-prefill-1.s-a-prefill
+        size: 2
+
+--- 4. allocated port + component-discovery FQDN (doc F3) ---
+    The doc truncates LEADER_ADDR with an ellipsis that swallows
+    '-leader-0' and its separating dot. The real value must contain it.
+    pd-prefill-0-leader-0:
+      LEADER_GRPC_PORT=31349
+    pd-prefill-0-worker-0:
+      LEADER_ADDR=pd-prefill-0-leader-0.s-pd-prefill.pr402-l3-1742195.svc.cluster.local
+    pd-prefill-0-worker-1:
+      LEADER_ADDR=pd-prefill-0-leader-0.s-pd-prefill.pr402-l3-1742195.svc.cluster.local
+
+--- verdict ---
+  OK   allocated port 31349 is inside the documented 30000-34999 range
+  OK   LEADER_ADDR is a full FQDN containing '-leader-0.': pd-prefill-0-leader-0.s-pd-prefill.pr402-l3-1742195.svc.cluster.local

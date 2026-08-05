@@ -357,3 +357,75 @@ unless explicitly asked.
 | `scripts/re-verify.sh` | polarity-aware re-verification driver (from the `review-finding-verifier` skill, unmodified) |
 | `verify-manifest.json` | machine-readable finding → tests → polarity → layer map, consumed by `re-verify.sh` |
 | `.last-reviewed` | `b412ed6c` — the PR head this round reviewed |
+
+---
+
+# Round 2 addendum — the L3 gap is now closed
+
+**Date:** 2026-08-05. **Reviewed head:** unchanged (`b412ed6c`) — this round adds
+evidence, not a new review of new code.
+
+The first round recorded two environment limits that blocked the live layer:
+the cluster could not create Pods at all (controller `v0.8.0-cea2a47` wrote
+`restartPolicy` as a bare string while the CRDs required an object — a
+23-commit controller lag, not a CRD problem), and the controller had no
+`--enable-port-allocator`. Both are resolved:
+
+```bash
+helm upgrade rbgs deploy/helm/rbgs -n rbg-system \
+  --set controller.features.portAllocator.enabled=true
+# chart 0.8.0-alpha.3, image rolebasedgroup/rbgs-controller:v0.8.0-47cfe17
+```
+
+The resulting controller args — reproduced verbatim in the new results file —
+are themselves evidence for the doc's flag table:
+
+```
+"--enable-port-allocator=true" "--port-allocate-strategy=random"
+"--start-port=30000" "--port-range=5000"
+```
+
+New script `scripts/l3-live-pod-level.sh`, output `results/l3-live-pod-level.txt`
+(exit 0). It creates one `standalonePattern` RBG and one
+`customComponentsPattern` RBG in a scoped namespace and deletes it on exit.
+
+## What the live layer confirmed
+
+| Doc claim | Location | Live result | Verdict |
+|-----------|----------|-------------|---------|
+| The `RBG_*` env vars and their Downward API sources | zh:91-118 / en:94-121 | **6** injected on a standalone role — exactly the base (2) + Stateful (1) + RoleInstanceSet (3) sub-tables; label paths match character for character | **Correct** |
+| `RBG_LWP_*` are LeaderWorkerPattern-only | zh:114-117 | absent on the standalone role, as the doc's sub-table split implies | **Correct** |
+| Pod identity via `hostname` + `subdomain` | zh:33-38 | `hostname=a-prefill-0`, `subdomain=s-a-prefill` | **Correct** |
+| ConfigMap volume `rbg-cluster-config` mounted read-only at `/etc/rbg` | zh:200-210 | `[('rbg-cluster-config', '/etc/rbg', True)]` | **Correct** |
+| Headless Service `s-{rbgName}-{roleName}`, `clusterIP: None`, `publishNotReadyAddresses: true` | zh:32-38 | `s-a-prefill None true`, `s-pd-prefill None true` | **Correct** |
+| `group.size` is the number of **roles**, not Pods | zh:190-196 | `group.size: 1` with one role, while `roles.prefill.size: 2` for two replicas | **Correct** |
+| Allocated ports fall in `30000`–`34999` | zh:249-253 | `LEADER_GRPC_PORT=31349` | **Correct** |
+| Helm values path `controller.features.portAllocator.*` | zh:255-262 | the four flags above reached `/manager` | **Correct** |
+| ConfigMap key order printed as `size`→`roles` / `size`→`instances` | guide zh:183-208 | actual order is `name`→`roles`→`size` and `instances`→`size` | **Wrong — F4 confirmed live** |
+| `LEADER_ADDR` sample value | zh:597-618 | real value `pd-prefill-0-leader-0.s-pd-prefill.<ns>.svc.cluster.local` — the doc's ellipsis swallows `-leader-0` **and** its separating dot | **Wrong — F3 confirmed live** |
+
+F3 and F4 were previously proven only at unit level; they are now confirmed
+against real Pods and a real ConfigMap. F1, F2 and F5 remain unit-level findings
+(see below).
+
+## What is still unit-level only, and why that is the right layer
+
+- **F1** (`references` resolves only PodScoped keys, so referencing a RoleScoped
+  port hard-fails and blocks Pod creation) and **F2** (the `random` allocator does
+  not guarantee uniqueness across calls, and `Release()` is a no-op) are proven by
+  deterministic tests, not live runs. That is deliberate: F2 in particular relies
+  on the pigeonhole principle (9 PodScoped ports out of a range of 8 → a duplicate
+  is *certain*), which is exact and reproducible. Reproducing it live would mean
+  provoking a probabilistic collision in a 5000-port range — flaky evidence for a
+  claim the unit layer already settles.
+- **F5** (the legacy Service-name fallback) needs a pre-existing Service under the
+  old `{rbgName}-{roleName}` name. The live run exercises only the no-legacy
+  branch (`s-` prefix), which it confirms; the fallback branch stays with the
+  fake-client test.
+
+## Caveat
+
+The live run allocates a single PodScoped port on a single component, so it shows
+that allocation and injection work — it does **not** exercise the collision
+scenario F2 is about. Do not read `results/l3-live-pod-level.txt` as evidence
+that port allocation is collision-free; it is not, and F2 stands.
