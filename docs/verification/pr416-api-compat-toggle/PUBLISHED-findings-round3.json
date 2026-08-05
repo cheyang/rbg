@@ -125,5 +125,31 @@
       ],
       "framing": "Explicitly offered as take-it-or-leave-it: the blocking point is that SOMETHING must enforce the fresh-install premise, not that this particular implementation be adopted."
     }
+  ],
+  "followUpEdits": [
+    {
+      "why": "The two follow-up replies carried a superseded design (a hard-coded list of deprecated types, plus a checkStoredVersions option). Leaving them as-is would have misled the author into implementing the version that was already withdrawn, so both were rewritten in place rather than buried under a third reply. Each now opens with an explicit 'Edited' note naming what changed; GitHub preserves the edit history.",
+      "edits": [
+        {
+          "commentId": 3718810023,
+          "url": "https://github.com/sgl-project/rbg/pull/416#discussion_r3718810023",
+          "nowContains": "The definitive recommendation, led by a two-step summary: (1) add the preflight hook Job -- blocking, R3-F22; (2) decide upgrade-guard.yaml separately -- blocking, F4, with an explicit recommendation to delete it and move the pre-0.8.0-alpha.3 intent to release notes, or keep it with an escape hatch. Then the allowlist implementation, the three adoption edits, the four settings that must differ from crd-upgrade, the exit-code rationale, why an allowlist, why no storedVersions, and the verification summary.",
+          "removed": [
+            "the hard-coded DEPRECATED_TYPES list",
+            "the checkStoredVersions option and its RBAC rule"
+          ]
+        },
+        {
+          "commentId": 3718702715,
+          "url": "https://github.com/sgl-project/rbg/pull/416#discussion_r3718702715",
+          "nowContains": "Trimmed from 4801 to 1476 chars: only the two points that still stand (no Go binary needed; a hook Job beats a template-level fail because helm diff does not execute hooks), plus a pointer to the current reply.",
+          "removed": [
+            "the first-draft jq snippet with the hard-coded deprecated list",
+            "the storedVersions-as-alternative discussion, now folded into the current reply as a withdrawal"
+          ]
+        }
+      ],
+      "verifiedAfterEdit": "No DEPRECATED_TYPES reference remains in the thread; the single surviving checkStoredVersions mention is the deliberate 'this was superseded' note at the top of the current reply."
+    }
   ]
 }
