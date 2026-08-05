@@ -1,0 +1,11 @@
+ok   04-configuring-inplace-update-and-scheduling-policies-guide.md: 23 blocks parity-clean (23 code byte-identical, 0 diagram structure-identical)
+ok   04-configuring-inplace-update-and-scheduling-policies.md: 9 blocks parity-clean (6 code byte-identical, 3 diagram structure-identical)
+
+--- code block parity summary ---
+filter (--only)          : 04-configuring-inplace
+shared files compared    : 2
+files parity-clean       : 2
+code blocks compared     : 29  (comment text normalized away)
+diagram blocks compared  : 3 (line-count structure only)
+files skipped (one-sided): 0
+RESULT: PASS

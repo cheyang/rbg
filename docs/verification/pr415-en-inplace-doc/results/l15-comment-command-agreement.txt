@@ -1,0 +1,12 @@
+FAIL comment/command mismatch (comment says IMAGE, command inspects ENV):
+     doc/best-practice/zh/04-configuring-inplace-update-and-scheduling-policies-guide.md:344
+     comment: # 确认所有 Pod 使用新镜像
+     command: kubectl get pods -l rbg.workloads.x-k8s.io/group-name=inplace-scheduling-required -o jsonpath='{range .items[*]}{.metadata.name}{"="}{.spec.containers[0].env[?(@.name=="new_env")].value}{"\n"}{end}'
+     FIX: describe the env var instead (the en translation of this same
+          line already does).
+
+--- comment/command agreement summary ---
+markdown files scanned  : 20
+comment+command pairs   : 226
+mismatches              : 1
+RESULT: FAIL (a code-block comment describes something the command does not do)

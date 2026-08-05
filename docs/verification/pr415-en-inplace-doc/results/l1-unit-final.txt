@@ -1,0 +1,50 @@
+=== RUN   TestVerifyPR415_F3_ControllerBackfillsEmptyRollingUpdateType
+--- PASS: TestVerifyPR415_F3_ControllerBackfillsEmptyRollingUpdateType (0.00s)
+=== RUN   TestVerifyPR415_F3_CRDHasNoEnumOrDefaultOnRollingUpdateType
+--- PASS: TestVerifyPR415_F3_CRDHasNoEnumOrDefaultOnRollingUpdateType (0.22s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.550s
+testing: warning: no tests to run
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.148s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	0.166s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.129s [no tests to run]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/lifecycle	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	[no test files]
+testing: warning: no tests to run
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.166s [no tests to run]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	[no test files]
+=== RUN   TestVerifyPR415_F1_InPlaceOnlyFallsBackToRecreate
+I0805 12:09:58.538347 1728933 stateful_instance_set_control.go:744] "Updating instance" instanceSet="default/s" instance="default/s-0" from="old-rev" to="update-rev" isSurge=false free=false
+--- PASS: TestVerifyPR415_F1_InPlaceOnlyFallsBackToRecreate (0.00s)
+=== RUN   TestVerifyPR415_F1_InPlaceOnlyAndIfPossibleAreIndistinguishable
+I0805 12:09:58.539119 1728933 stateful_instance_set_control.go:744] "Updating instance" instanceSet="default/s" instance="default/s-0" from="old-rev" to="update-rev" isSurge=false free=false
+I0805 12:09:58.539132 1728933 stateful_instance_set_control.go:744] "Updating instance" instanceSet="default/s" instance="default/s-0" from="old-rev" to="update-rev" isSurge=false free=false
+--- PASS: TestVerifyPR415_F1_InPlaceOnlyAndIfPossibleAreIndistinguishable (0.00s)
+=== RUN   TestVerifyPR415_F1_RecreatePodIsTheOnlyExcludedStrategy
+I0805 12:09:58.539176 1728933 stateful_instance_set_control.go:744] "Updating instance" instanceSet="default/s" instance="default/s-0" from="old-rev" to="update-rev" isSurge=false free=false
+I0805 12:09:58.539188 1728933 stateful_instance_set_control.go:744] "Updating instance" instanceSet="default/s" instance="default/s-0" from="old-rev" to="update-rev" isSurge=false free=false
+I0805 12:09:58.539207 1728933 stateful_instance_set_control.go:744] "Updating instance" instanceSet="default/s" instance="default/s-0" from="old-rev" to="update-rev" isSurge=false free=false
+I0805 12:09:58.539218 1728933 stateful_instance_set_control.go:744] "Updating instance" instanceSet="default/s" instance="default/s-0" from="old-rev" to="update-rev" isSurge=false free=false
+I0805 12:09:58.539232 1728933 stateful_instance_set_control.go:744] "Updating instance" instanceSet="default/s" instance="default/s-0" from="old-rev" to="update-rev" isSurge=false free=false
+--- PASS: TestVerifyPR415_F1_RecreatePodIsTheOnlyExcludedStrategy (0.00s)
+=== RUN   TestVerifyPR415_F1_InPlaceOnlyHasNoImplementationReferences
+--- PASS: TestVerifyPR415_F1_InPlaceOnlyHasNoImplementationReferences (0.41s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.593s
+testing: warning: no tests to run
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode	0.131s [no tests to run]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/core	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision	[no test files]
+testing: warning: no tests to run
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/sync	0.151s [no tests to run]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/utils	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/utils/revisionadapter	[no test files]
+L1 exit=0

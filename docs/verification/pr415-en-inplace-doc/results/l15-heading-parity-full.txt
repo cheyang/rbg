@@ -1,0 +1,16 @@
+ok   01-deploy-inference-service-guide.md: headings 20/20 level-aligned, table rows 4/4, bullets 27/27
+ok   01-deploy-inference-service.md: headings 18/18 level-aligned, table rows 26/26, bullets 14/14
+ok   02-using-role-templates-guide.md: headings 22/22 level-aligned, table rows 4/4, bullets 36/36
+ok   02-using-role-templates.md: headings 13/13 level-aligned, table rows 12/12, bullets 6/6
+ok   03-configuring-rolling-updates-guide.md: headings 39/39 level-aligned, table rows 5/5, bullets 36/36
+ok   03-configuring-rolling-updates.md: headings 20/20 level-aligned, table rows 22/22, bullets 25/25
+ok   04-configuring-inplace-update-and-scheduling-policies-guide.md: headings 26/26 level-aligned, table rows 4/4, bullets 35/35
+ok   04-configuring-inplace-update-and-scheduling-policies.md: headings 26/26 level-aligned, table rows 40/40, bullets 20/20
+ok   10-deploy-mooncake-store-with-rbg-guide.md: headings 24/24 level-aligned, table rows 5/5, bullets 29/29
+ok   10-deploy-mooncake-store-with-rbg.md: headings 21/21 level-aligned, table rows 11/11, bullets 17/17
+
+--- heading/structure parity summary ---
+shared files compared    : 10
+files structurally equal : 10
+files skipped (one-sided): 0
+RESULT: PASS

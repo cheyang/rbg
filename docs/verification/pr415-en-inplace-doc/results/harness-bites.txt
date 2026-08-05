@@ -1,0 +1,296 @@
+harness-bites for PR #415 verification harness
+date : 2026-08-05T04:13:52Z
+repo : /root/rbgrev415
+head : 285761e948b81c2533d0fb91c84c3989f95ec3db
+
+Method: each bite makes ONE temporary mutation, re-runs the relevant test or
+script, and shows the resulting exit code. A contract test must go RED when the
+asserted behavior is broken; a canary must go RED when the current state it
+documents changes; a currently-red script must go GREEN when the defect it
+reproduces is fixed (proving it is not permanently red). Every bite is then
+reverted and the tracked tree is re-verified empty with git diff.
+--- git status --short (expect only the known untracked harness paths) ---
+?? .harness-bites.sh
+?? docs/
+?? pkg/reconciler/roleinstanceset/statefulmode/zz_verify_pr415_inplaceonly_test.go
+?? pkg/reconciler/zz_verify_pr415_updatestrategy_test.go
+--- git diff --stat against HEAD for TRACKED files (expect EMPTY) ---
+TRACKED-TREE-CLEAN: yes (git diff is empty)
+
+################################################################
+## BITE 1 (F1 contract) -- make InPlaceOnly skip in-place update entirely
+################################################################
+Mutation: pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go:749 guard becomes an additional exclusion of InPlaceOnly,
+i.e. pretend the code really implements what en:76 claims.
+patched pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go
+--- diff of the mutation ---
+diff --git a/pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go b/pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go
+index 67d6d67a..ef345421 100644
+--- a/pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go
++++ b/pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go
+@@ -746,7 +746,8 @@ func (ssc *defaultStatefulInstanceSetControl) applyTargetUpdate(
+ 		"isSurge", isSurgeSlot, "free", isFree)
+ 	var inplacing bool
+ 	var err error
+-	if set.Spec.UpdateStrategy.Type != workloadsv1alpha2.RecreatePodUpdateStrategyType {
++	if set.Spec.UpdateStrategy.Type != workloadsv1alpha2.RecreatePodUpdateStrategyType &&
++		set.Spec.UpdateStrategy.Type != workloadsv1alpha2.InPlaceOnlyUpdateStrategyType {
+ 		inplacing, err = ssc.inPlaceUpdateInstance(set, target, updateRevision, revisions)
+ 		if err != nil {
+ 			return false, err
+--- re-run F1 contract tests ---
+=== RUN   TestVerifyPR415_F1_InPlaceOnlyFallsBackToRecreate
+--- FAIL: TestVerifyPR415_F1_InPlaceOnlyFallsBackToRecreate (0.00s)
+=== RUN   TestVerifyPR415_F1_InPlaceOnlyAndIfPossibleAreIndistinguishable
+--- FAIL: TestVerifyPR415_F1_InPlaceOnlyAndIfPossibleAreIndistinguishable (0.00s)
+=== RUN   TestVerifyPR415_F1_RecreatePodIsTheOnlyExcludedStrategy
+--- FAIL: TestVerifyPR415_F1_RecreatePodIsTheOnlyExcludedStrategy (0.00s)
+=== RUN   TestVerifyPR415_F1_InPlaceOnlyHasNoImplementationReferences
+        The review of PR #415 rested on this being zero -- InPlaceOnly having no distinct code path is why en doc:76's "update gets stuck" claim was wrong.
+--- FAIL: TestVerifyPR415_F1_InPlaceOnlyHasNoImplementationReferences (0.26s)
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.610s
+EXIT_CODE(go test -run PR415_F1, mutated) = 1   (want NON-ZERO = contract went red)
+--- restored; re-run to confirm green again ---
+EXIT_CODE(go test -run PR415_F1, restored) = 0   (want 0)
+--- git status --short (expect only the known untracked harness paths) ---
+?? .harness-bites.sh
+?? docs/
+?? pkg/reconciler/roleinstanceset/statefulmode/zz_verify_pr415_inplaceonly_test.go
+?? pkg/reconciler/zz_verify_pr415_updatestrategy_test.go
+--- git diff --stat against HEAD for TRACKED files (expect EMPTY) ---
+TRACKED-TREE-CLEAN: yes (git diff is empty)
+
+################################################################
+## BITE 2 (F1 canary) -- add an InPlaceOnly reference under pkg/
+################################################################
+Mutation: new file pkg/reconciler/roleinstanceset/statefulmode/zz_bite_inplaceonly_ref.go referencing InPlaceOnlyUpdateStrategyType,
+simulating someone implementing a distinct InPlaceOnly code path.
+--- re-run F1 canary ---
+    zz_verify_pr415_inplaceonly_test.go:254: CANARY FLIPPED: InPlaceOnlyUpdateStrategyType is now referenced in implementation code (1 site(s)): [pkg/reconciler/roleinstanceset/statefulmode/zz_bite_inplaceonly_ref.go:7]
+--- FAIL: TestVerifyPR415_F1_InPlaceOnlyHasNoImplementationReferences (0.26s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.415s
+FAIL
+EXIT_CODE(canary, mutated) = 1   (want NON-ZERO = canary flipped red)
+EXIT_CODE(canary, restored) = 0   (want 0)
+--- git status --short (expect only the known untracked harness paths) ---
+?? .harness-bites.sh
+?? docs/
+?? pkg/reconciler/roleinstanceset/statefulmode/zz_verify_pr415_inplaceonly_test.go
+?? pkg/reconciler/zz_verify_pr415_updatestrategy_test.go
+--- git diff --stat against HEAD for TRACKED files (expect EMPTY) ---
+TRACKED-TREE-CLEAN: yes (git diff is empty)
+
+################################################################
+## BITE 3 (F2 contract) -- apply the recommended fix to en:371 and confirm GREEN
+################################################################
+Mutation: delete the stale TODO comment line from the en document.
+371:<!-- TODO: The following documents have not been created yet; links will be added once they are complete -->
+removed the TODO line
+diff --git a/doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies.md b/doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies.md
+index 56ce70b4..9e11cd91 100644
+--- a/doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies.md
++++ b/doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies.md
+@@ -368,7 +368,6 @@ If the Pod AGE is significantly greater than the time corresponding to the conta
+ 
+ ## Related Documents
+ 
+-<!-- TODO: The following documents have not been created yet; links will be added once they are complete -->
+ 
+ + [Deploying Inference Services with RBG](./01-deploy-inference-service.md)
+ + [Configuring Rolling Update Strategies](./03-configuring-rolling-updates.md)
+
+--- TODO/link consistency summary ---
+markdown files scanned: 20
+TODO placeholders seen: 6
+self-contradicting    : 0
+RESULT: PASS
+EXIT_CODE(check-todo-consistency.sh, F2 fixed) = 0   (want 0 = turns GREEN, so it is not permanently red)
+EXIT_CODE(check-todo-consistency.sh, restored) = 1   (want 1 = red again, F2 reproduced)
+--- git status --short (expect only the known untracked harness paths) ---
+?? .harness-bites.sh
+?? docs/
+?? pkg/reconciler/roleinstanceset/statefulmode/zz_verify_pr415_inplaceonly_test.go
+?? pkg/reconciler/zz_verify_pr415_updatestrategy_test.go
+--- git diff --stat against HEAD for TRACKED files (expect EMPTY) ---
+TRACKED-TREE-CLEAN: yes (git diff is empty)
+
+################################################################
+## BITE 4 (F4 contract) -- apply the recommended fix to zh guide:344 and confirm GREEN
+################################################################
+Mutation: replace the stale zh comment with the env-var wording the en side already uses.
+Traceback (most recent call last):
+  File "<stdin>", line 6, in <module>
+AssertionError: anchor count=2
+FAIL comment/command mismatch (comment says IMAGE, command inspects ENV):
+     doc/best-practice/zh/04-configuring-inplace-update-and-scheduling-policies-guide.md:344
+     comment: # 确认所有 Pod 使用新镜像
+     command: kubectl get pods -l rbg.workloads.x-k8s.io/group-name=inplace-scheduling-required -o jsonpath='{range .items[*]}{.metadata.name}{"="}{.spec.containers[0].env[?(@.name=="new_env")].value}{"\n"}{end}'
+     FIX: describe the env var instead (the en translation of this same
+          line already does).
+
+--- comment/command agreement summary ---
+markdown files scanned  : 20
+comment+command pairs   : 226
+mismatches              : 1
+RESULT: FAIL (a code-block comment describes something the command does not do)
+EXIT_CODE(check-comment-command-agreement.sh, F4 fixed) = 1   (want 0 = turns GREEN)
+EXIT_CODE(check-comment-command-agreement.sh, restored) = 1   (want 1 = red again, F4 reproduced)
+--- git status --short (expect only the known untracked harness paths) ---
+?? .harness-bites.sh
+?? docs/
+?? pkg/reconciler/roleinstanceset/statefulmode/zz_verify_pr415_inplaceonly_test.go
+?? pkg/reconciler/zz_verify_pr415_updatestrategy_test.go
+--- git diff --stat against HEAD for TRACKED files (expect EMPTY) ---
+TRACKED-TREE-CLEAN: yes (git diff is empty)
+
+################################################################
+## BITE 5 (F3 canary) -- add an enum to rollingUpdate.type
+################################################################
+Two parts. (a) the Go CRD-schema canary reads config/crd/bases -- patch that file,
+confirm the canary flips, restore. (b) the L2 script reads the LIVE cluster CRD;
+the cluster CRD is deliberately NOT modified, so instead we prove the enum-detection
+arm of that script on a local COPY of the live CRD via a stubbed kubectl.
+
+--- 5a: patch the generated CRD in the repo ---
+
+    *** the run that produced everything above terminated here (connection
+    *** dropped mid-BITE-5). BITE 4 above is INVALID: its mutation never
+    *** applied (AssertionError: anchor count=2), so its "fixed -> GREEN"
+    *** line measured the unmutated file. BITE 4 is redone below as BITE 4b.
+
+
+################################################################
+## BITE 4b (F4 contract) -- redo: apply the recommended fix to zh guide:344
+################################################################
+Mutation: rewrite the stale zh comment on line 344 to describe the env var,
+which is what the en translation of the same line already says.
+line 344 before: # 确认所有 Pod 使用新镜像
+line 344 after : # 确认所有 Pod 已包含新增环境变量
+$ git --no-pager diff --unified=1 -- doc/best-practice/zh/04-configuring-inplace-update-and-scheduling-policies-guide.md
+diff --git a/doc/best-practice/zh/04-configuring-inplace-update-and-scheduling-policies-guide.md b/doc/best-practice/zh/04-configuring-inplace-update-and-scheduling-policies-guide.md
+index c5fb02cb..ad038958 100644
+--- a/doc/best-practice/zh/04-configuring-inplace-update-and-scheduling-policies-guide.md
++++ b/doc/best-practice/zh/04-configuring-inplace-update-and-scheduling-policies-guide.md
+@@ -343,3 +343,3 @@ kubectl get pods -l rbg.workloads.x-k8s.io/group-name=inplace-scheduling-require
+ ```bash
+-# 确认所有 Pod 使用新镜像
++# 确认所有 Pod 已包含新增环境变量
+ kubectl get pods -l rbg.workloads.x-k8s.io/group-name=inplace-scheduling-required -o jsonpath='{range .items[*]}{.metadata.name}{"="}{.spec.containers[0].env[?(@.name=="new_env")].value}{"\n"}{end}'
+
+--- comment/command agreement summary ---
+markdown files scanned  : 20
+comment+command pairs   : 226
+mismatches              : 0
+RESULT: PASS
+EXIT_CODE(check-comment-command-agreement.sh, F4 fixed) = 0   (want 0 = turns GREEN, proving it is not permanently red)
+EXIT_CODE(check-comment-command-agreement.sh, restored) = 1   (want 1 = red again, F4 reproduced)
+--- git diff --stat for TRACKED files (expect EMPTY) ---
+TRACKED-TREE-CLEAN: yes (git diff is empty)
+
+################################################################
+## BITE 5a (F3 canary) -- add an enum to rollingUpdate.type in the generated CRD
+################################################################
+Mutation: inject 'enum: [InPlaceIfPossible, InPlaceOnly, RecreatePod]' onto
+v1alpha2 spec.roles[].rolloutStrategy.rollingUpdate.type in config/crd/bases/workloads.x-k8s.io_rolebasedgroups.yaml,
+i.e. pretend someone added +kubebuilder:validation:Enum and regenerated.
+=== RUN   TestVerifyPR415_F3_CRDHasNoEnumOrDefaultOnRollingUpdateType
+    zz_verify_pr415_updatestrategy_test.go:129: CANARY FLIPPED: rollingUpdate.type now has an enum ([InPlaceIfPossible InPlaceOnly RecreatePod]). The apiserver now rejects misspelled strategies, so F3's "typos are silently accepted" finding no longer holds. Invert this assertion to check the enum members, and update docs zh:121/en:121.
+--- FAIL: TestVerifyPR415_F3_CRDHasNoEnumOrDefaultOnRollingUpdateType (0.36s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.585s
+testing: warning: no tests to run
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.150s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	0.265s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.153s [no tests to run]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/lifecycle	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	[no test files]
+testing: warning: no tests to run
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.228s [no tests to run]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	[no test files]
+testing: warning: no tests to run
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.212s [no tests to run]
+testing: warning: no tests to run
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode	0.172s [no tests to run]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/core	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision	[no test files]
+testing: warning: no tests to run
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/sync	0.218s [no tests to run]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/utils	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/utils/revisionadapter	[no test files]
+FAIL
+EXIT_CODE(F3 CRD canary, mutated) = 1   (want NON-ZERO = canary flipped red)
+EXIT_CODE(F3 CRD canary, restored) = 0   (want 0)
+--- git diff --stat for TRACKED files (expect EMPTY) ---
+TRACKED-TREE-CLEAN: yes (git diff is empty)
+
+## BITE 5b (F3 canary, live-cluster arm) -- NOT PERFORMED
+The L2 script reads the rollebasedgroups CRD from the LIVE cluster. Adding an
+enum there would mutate shared infrastructure, which is out of scope for a
+review harness, and the stubbed-kubectl workaround the earlier run started
+was not completed before it died. The repo-side arm (5a) exercises the same
+enum/default detection logic, so the canary itself is proven; what remains
+unproven is only the script's kubectl plumbing. Recorded as a known gap.
+
+################################################################
+## BITE 6 (F5 contract) -- drift one en code block value
+################################################################
+Mutation: change a replica count inside an en/04 guide code block so it no
+longer matches zh, which is exactly the translation drift F5 guards against.
+$ git --no-pager diff --unified=0 -- doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies-guide.md
+diff --git a/doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies-guide.md b/doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies-guide.md
+index abc70817..0c43727f 100644
+--- a/doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies-guide.md
++++ b/doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies-guide.md
+@@ -35 +35 @@ spec:
+-      replicas: 2
++      replicas: 9
+FAIL 04-configuring-inplace-update-and-scheduling-policies-guide.md block #001: CODE content drifted between zh and en
+     doc/best-practice/zh/04-configuring-inplace-update-and-scheduling-policies-guide.md:26
+     doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies-guide.md:26
+       @@ -6,7 +6,7 @@
+        spec:
+          roles:
+            - name: backend
+       -      replicas: 2
+       +      replicas: 9
+              rolloutStrategy:
+                type: RollingUpdate
+                rollingUpdate:
+ok   04-configuring-inplace-update-and-scheduling-policies.md: 9 blocks parity-clean (6 code byte-identical, 3 diagram structure-identical)
+
+--- code block parity summary ---
+filter (--only)          : 04-configuring-inplace
+shared files compared    : 2
+files parity-clean       : 1
+code blocks compared     : 29  (comment text normalized away)
+diagram blocks compared  : 3 (line-count structure only)
+files skipped (one-sided): 0
+RESULT: FAIL (zh/en code block drift)
+EXIT_CODE(check-codeblock-parity.sh --only 04, mutated) = 1   (want NON-ZERO = contract went red)
+EXIT_CODE(check-codeblock-parity.sh --only 04, restored) = 0   (want 0)
+--- git diff --stat for TRACKED files (expect EMPTY) ---
+TRACKED-TREE-CLEAN: yes (git diff is empty)
+
+################################################################
+## FINAL CLEANLINESS CHECK
+################################################################
+$ git status --short
+?? .finish-bites.sh
+?? .harness-bites.sh
+?? docs/
+?? pkg/reconciler/roleinstanceset/statefulmode/zz_verify_pr415_inplaceonly_test.go
+?? pkg/reconciler/zz_verify_pr415_updatestrategy_test.go
+--- git diff --stat for TRACKED files (expect EMPTY) ---
+TRACKED-TREE-CLEAN: yes (git diff is empty)
+
+bites complete: 2026-08-05T05:17:53Z

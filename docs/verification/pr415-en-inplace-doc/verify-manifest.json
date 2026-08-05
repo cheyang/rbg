@@ -1,0 +1,129 @@
+{
+  "_comment": "Consumed by scripts/re-verify.sh. PR #415 is a zh->en translation PR for the in-place-update/scheduling best-practice doc, so most findings are proven by doc-consistency scripts (layer 'doc') rather than Go tests. Polarity: 'contract' = should be GREEN once fixed; 'canary' = GREEN now, FLIPS to red when the underlying code changes and must then be inverted. NOTE: the two 'doc' contract checks for F2 and F4 are RED on purpose right now -- that redness IS the reproduction.",
+  "topic": "pr415-en-inplace-doc",
+  "pr": "https://github.com/sgl-project/rbg/pull/415",
+  "reviewedHead": "285761e948b81c2533d0fb91c84c3989f95ec3db",
+  "harnessPaths": [
+    "docs/verification/pr415-en-inplace-doc",
+    "pkg/reconciler/zz_verify_pr415_updatestrategy_test.go",
+    "pkg/reconciler/roleinstanceset/statefulmode/zz_verify_pr415_inplaceonly_test.go"
+  ],
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/... -run 'PR415' -count=1 -json"
+    },
+    "doc": {
+      "kind": "script",
+      "_note": "Each script exits 0 when the tree is consistent and non-zero when it finds a defect, printing file:line. They cover the whole doc/best-practice/ tree and skip one-sided files, so they keep working as PR #402 (05) and PR #400 (07) land.",
+      "cmd": "bash docs/verification/pr415-en-inplace-doc/scripts/check-codeblock-parity.sh; bash docs/verification/pr415-en-inplace-doc/scripts/check-heading-parity.sh; bash docs/verification/pr415-en-inplace-doc/scripts/check-links.sh; bash docs/verification/pr415-en-inplace-doc/scripts/check-todo-consistency.sh; bash docs/verification/pr415-en-inplace-doc/scripts/check-comment-command-agreement.sh"
+    },
+    "live": {
+      "kind": "script",
+      "cmd": "KUBECONFIG=${KUBECONFIG:-$HOME/.kube/config} bash docs/verification/pr415-en-inplace-doc/scripts/l2-crd-accepts-bogus-strategy.sh"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "major",
+      "polarity": "contract",
+      "layer": "unit",
+      "claim": "en:76 says InPlaceOnly does not fall back to Pod recreation and the update gets stuck. Actually InPlaceOnly has no distinct code path: the guard is '!= RecreatePod', so it behaves exactly like InPlaceIfPossible and does fall back to recreate.",
+      "docLocation": "doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies.md:76",
+      "codeLocation": "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go:749, pkg/reconciler/roleinstanceset/statelessmode/sync/update.go:182",
+      "match": [
+        "TestVerifyPR415_F1_InPlaceOnlyFallsBackToRecreate",
+        "TestVerifyPR415_F1_InPlaceOnlyAndIfPossibleAreIndistinguishable",
+        "TestVerifyPR415_F1_RecreatePodIsTheOnlyExcludedStrategy"
+      ],
+      "verdict": "Confirmed"
+    },
+    {
+      "id": "F1-canary",
+      "severity": "major",
+      "polarity": "canary",
+      "layer": "unit",
+      "claim": "InPlaceOnlyUpdateStrategyType is referenced zero times under internal/ and pkg/ -- only at its constant definition. If it ever gains a real code path this flips red and the doc note must be rewritten.",
+      "codeLocation": "api/workloads/v1alpha2/rolebasedgroup_types.go:113-114",
+      "match": ["TestVerifyPR415_F1_InPlaceOnlyHasNoImplementationReferences"],
+      "verdict": "Confirmed"
+    },
+    {
+      "id": "F2",
+      "severity": "minor",
+      "polarity": "contract",
+      "layer": "doc",
+      "claim": "en:371 keeps a TODO comment claiming the documents below have not been created yet, while both links beneath it already resolve on disk. The zh side deleted exactly this line in this PR; the en side missed it.",
+      "docLocation": "doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies.md:371",
+      "match": ["check-todo-consistency.sh"],
+      "currentlyRed": true,
+      "verdict": "Confirmed"
+    },
+    {
+      "id": "F3",
+      "severity": "minor",
+      "polarity": "canary",
+      "layer": "unit",
+      "claim": "zh:121 / en:121 state rollingUpdate.type defaults to InPlaceIfPossible. The CRD has neither enum nor default -- the default is back-filled by the controller, so the apiserver silently accepts a misspelled strategy and treats it as in-place update.",
+      "docLocation": "doc/best-practice/zh/04-configuring-inplace-update-and-scheduling-policies.md:121, doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies.md:121",
+      "codeLocation": "pkg/reconciler/roleinstanceset_reconciler.go:232-234, config/crd/bases/workloads.x-k8s.io_rolebasedgroups.yaml",
+      "match": [
+        "TestVerifyPR415_F3_ControllerBackfillsEmptyRollingUpdateType",
+        "TestVerifyPR415_F3_CRDHasNoEnumOrDefaultOnRollingUpdateType"
+      ],
+      "verdict": "Confirmed"
+    },
+    {
+      "id": "F3-live",
+      "severity": "minor",
+      "polarity": "canary",
+      "layer": "live",
+      "claim": "The real apiserver accepts type: TotallyBogusValue and the realistic typo InPlaceIfPosible via --dry-run=server; with the field omitted the returned object has type <ABSENT>, so the documented default never materializes server-side.",
+      "match": ["l2-crd-accepts-bogus-strategy.sh"],
+      "verdict": "Confirmed"
+    },
+    {
+      "id": "F4",
+      "severity": "nit",
+      "polarity": "contract",
+      "layer": "doc",
+      "claim": "zh guide:344's comment says the command confirms the new image, but the command inspects env[?(@.name=='new_env')] and step 3 never changes the image. The en translation of this line is the correct one -- zh is copy-paste residue from step 1.",
+      "docLocation": "doc/best-practice/zh/04-configuring-inplace-update-and-scheduling-policies-guide.md:344",
+      "match": ["check-comment-command-agreement.sh"],
+      "currentlyRed": true,
+      "note": "The defect is in the already-merged zh document (PR #399), not in the en files this PR adds. Fixing it is a follow-up, not a change request against #415.",
+      "verdict": "Confirmed"
+    },
+    {
+      "id": "F5",
+      "severity": "none",
+      "polarity": "contract",
+      "layer": "doc",
+      "claim": "Positive baseline: the new en/04 pair faithfully mirrors zh/04 -- 29 code blocks byte-identical (comments normalized) plus 3 diagram blocks structurally identical, headings 26/26 level-aligned on both files, table rows 40/40 and 4/4, bullets 20/20 and 35/35, and zero dead links across 14 relative links.",
+      "match": [
+        "check-codeblock-parity.sh --only 04-configuring-inplace",
+        "check-heading-parity.sh",
+        "check-links.sh"
+      ],
+      "verdict": "Confirmed correct",
+      "note": "Run over the WHOLE doc/best-practice/ tree, check-codeblock-parity.sh exits 1 on two PRE-EXISTING drifts unrelated to this PR: 03-configuring-rolling-updates-guide.md:415 (en has an extra 'Error' sample line) and 10-deploy-mooncake-store-with-rbg{,-guide}.md:42,59,329. Scope with --only 04-configuring-inplace to judge this PR alone."
+    }
+  ],
+  "harnessBites": {
+    "transcript": "results/harness-bites.txt",
+    "allBite": true,
+    "notPerformed": [
+      "BITE 5b (F3 live arm): would require adding an enum to the shared cluster's CRD. BITE 5a exercises the same enum/default detection logic against the repo's generated CRD; only the script's kubectl plumbing stays unproven."
+    ],
+    "invalidated": [
+      "The first BITE 4 attempt is preserved in the transcript but marked INVALID: its mutation never applied (AssertionError: anchor count=2), so its 'fixed -> GREEN' line measured the unmutated file. Redone as BITE 4b, addressing the line by number."
+    ]
+  },
+  "liveNote": "L3 (real rollout) was NOT run and its assertions remain unverified: sequential update from highest ordinal down (1 -> 0), ~30s spacing between instances, AGE not resetting while RESTARTS increments, and Preferred/Required affinity returning a Pod to its original node. Reason: this sandbox cluster's deployed controller and CRDs disagree about RoleInstance.spec.restartPolicy (controller writes a string, CRD requires an object), so RoleInstances are rejected and no Pod is ever created; locally-built rbgs binaries have also been observed to silently reconcile nothing here. Closing this gap needs a healthy cluster. L2 cluster used: v1.36.1-aliyun.1, 3 nodes, --dry-run=server only (nothing created, CRDs never modified).",
+  "openQuestions": [
+    "Is InPlaceOnly officially deprecated? zh:76 says so, but v1alpha2 has no // Deprecated: marker and no enum exclusion; v1alpha1 dropped the value entirely (api/workloads/v1alpha1/constant.go:229-241). The maintainers' answer determines F1's final wording.",
+    "role-inplace-scheduling-avoid (api/workloads/constants/annotation.go:221-227) is undocumented on both sides -- a coverage gap in the original zh doc, not a translation defect.",
+    "gracePeriodSeconds default 0 (en:122) holds as written, but SetOptionsDefaults (pkg/inplace/instance/inplaceupdate/inplace_update_defaults.go:33) was not chased to confirm nothing special-cases 0."
+  ]
+}

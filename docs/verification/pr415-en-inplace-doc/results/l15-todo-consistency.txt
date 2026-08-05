@@ -1,0 +1,15 @@
+FAIL self-contradicting TODO placeholder:
+     doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies.md:371
+     comment claims the following documents are NOT yet created:
+       <!-- TODO: The following documents have not been created yet; links will be added once they are complete -->
+     but these link(s) below it already resolve on disk:
+       doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies.md:373  ->  ./01-deploy-inference-service.md
+       doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies.md:374  ->  ./03-configuring-rolling-updates.md
+     FIX: drop the TODO comment (as the zh document already did in PR #415),
+          or move it below the entries that really are still missing.
+
+--- TODO/link consistency summary ---
+markdown files scanned: 20
+TODO placeholders seen: 7
+self-contradicting    : 1
+RESULT: FAIL (a TODO says the docs are missing while their links already work)

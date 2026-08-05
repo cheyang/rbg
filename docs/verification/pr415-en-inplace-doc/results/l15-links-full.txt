@@ -1,0 +1,8 @@
+
+--- link check summary ---
+markdown files      : 20
+relative links      : 14
+in-page anchors     : 0
+absolute links      : 12 (not fetched -- offline check)
+dead                : 0
+RESULT: PASS

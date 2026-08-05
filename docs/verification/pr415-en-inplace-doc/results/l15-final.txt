@@ -1,0 +1,129 @@
+################ L1.5 FINAL RUN 2026-08-05T04:10:24Z ################
+repo=/root/rbgrev415  head=285761e948b81c2533d0fb91c84c3989f95ec3db
+
+===== check-codeblock-parity.sh    (finding F5) =====
+ok   01-deploy-inference-service-guide.md: 22 blocks parity-clean (22 code byte-identical, 0 diagram structure-identical)
+ok   01-deploy-inference-service.md: 11 blocks parity-clean (6 code byte-identical, 5 diagram structure-identical)
+ok   02-using-role-templates-guide.md: 23 blocks parity-clean (23 code byte-identical, 0 diagram structure-identical)
+ok   02-using-role-templates.md: 5 blocks parity-clean (5 code byte-identical, 0 diagram structure-identical)
+FAIL 03-configuring-rolling-updates-guide.md block #023: CODE content drifted between zh and en
+     doc/best-practice/zh/03-configuring-rolling-updates-guide.md:415
+     doc/best-practice/en/03-configuring-rolling-updates-guide.md:415
+       @@ -48,6 +48,7 @@
+        > pd-rollout-demo-prefill-1   0/1     ContainerCreating   0          0s
+        > pd-rollout-demo-prefill-1   1/1     Running             0          30s
+        > pd-rollout-demo-prefill-0   1/1     Terminating         0          50m
+       +> pd-rollout-demo-prefill-0   0/1     Error               0          50m
+        > pd-rollout-demo-prefill-0   0/1     Pending             0          0s
+        > pd-rollout-demo-prefill-0   0/1     ContainerCreating   0          0s
+        > pd-rollout-demo-prefill-0   1/1     Running             0          29s
+ok   03-configuring-rolling-updates.md: 5 blocks parity-clean (5 code byte-identical, 0 diagram structure-identical)
+ok   04-configuring-inplace-update-and-scheduling-policies-guide.md: 23 blocks parity-clean (23 code byte-identical, 0 diagram structure-identical)
+ok   04-configuring-inplace-update-and-scheduling-policies.md: 9 blocks parity-clean (6 code byte-identical, 3 diagram structure-identical)
+FAIL 10-deploy-mooncake-store-with-rbg-guide.md block #009: CODE content drifted between zh and en
+     doc/best-practice/zh/10-deploy-mooncake-store-with-rbg-guide.md:329
+     doc/best-practice/en/10-deploy-mooncake-store-with-rbg-guide.md:329
+       @@ -2,7 +2,7 @@
+        kubectl logs -l rbg.workloads.x-k8s.io/role-name=mooncake-master -c master | tail -5
+        
+        > I0709 07:22:03.712014    30 rpc_service.cpp:41] Master Metrics: Mem Storage: 4.00 KB / 100.00 GB (0.0%) | SSD Storage: 0 B / 0 B | Keys: 1 (soft-pinned: 0) | Clients: 2 | Requests (Success/Total): PutStart=8/8, PutEnd=6/6, PutRevoke=2/2, Get=6/6, Exist=6/6, Del=0/0, DelAll=0/0, Ping=3131/3131, CopyStart=0/0, CopyEnd=0/0, CopyRevoke=0/0, MoveStart=0/0, MoveEnd=0/0, MoveRevoke=0/0 | Batch Requests (Req=Success/PartialSuccess/Total, Item=Success/Total): PutStart:(Req=0/0/0, Item=0/0), PutEnd:(Req=0/0/0, Item=0/0), PutRevoke:(Req=0/0/0, Item=0/0), Get:(Req=0/0/0, Item=0/0), ExistKey:(Req=0/0/0, Item=0/0), QueryIp:(Req=0/0/0, Item=0/0), Clear:(Req=0/0/0, Item=0/0), CreateMoveTask:(Req=0/0), CreateCopyTask:(Req=0/0), QueryTask=(Req=0/0), FetchTasks=(Req=0/0), MarkTaskToComplete= (Req=0/0),  | Eviction: Success/Attempts=0/0, keys=0, size=0 B | Discard: Released/Total=0/0, StagingSize=0 B
+       -> I0709 07:22:13.712157    30 rpc_service.cpp:41] Master Metrics: Mem Storage: 4.00 KB / 100.00 GB (0.0%) | SSD Storage: 0 B / 0 B | Keys: 1 (soft-pinned: 0) | Clients: 2 | Requests (Success/Total): PutStart=8/8, PutEnd=6/6, PutRevoke=2/2, Get=6/6, Exist=6/6, Del=0/0, DelAll=0/0, Ping=3151/3151, CopyStart=0/0, CopyEnd=0/0, CopyRevoke=0/0, MoveStart=0/0, MoveEnd=0/0, MoveRevoke=0/0 | Batch Requests (Req=Success/PartialSuccess/Total, Item=Success/Total): PutStart:(Req=0/0/0, Item=0/0), PutEnd:(Req=0/0/0, Item=0/0), PutRevoke:(Req=0/0/0, Item=0/0), Get:(Req=0/0/0, Item=0/0), ExistKey:(Req=0/0/0, Item=0/0), QueryIp:(Req=0/0/0, Item=0/0), Clear:(Req=0/0/0, Item=0/0), CreateMoveTask:(Req=0/0), CreateCopyTask:(Req=0/0), QueryTask=(Req=0/0), FetchTasks=(Req=0/0), MarkTaskToComplete= (Req=0/0),  | Eviction: Success/Attempts=0/0, keys=0, size=0 B | Discard: Released/Total=0/0, StagingSize=0 B
+       -> I0709 07:22:23.712291    30 rpc_service.cpp:41] Master Metrics: Mem Storage: 1.54 MB / 100.00 GB (0.0%) | SSD Storage: 0 B / 0 B | Keys: 29 (soft-pinned: 0) | Clients: 2 | Requests (Success/Total): PutStart=8/8, PutEnd=6/6, PutRevoke=2/2, Get=6/6, Exist=6/6, Del=0/0, DelAll=0/0, Ping=3171/3171, CopyStart=0/0, CopyEnd=0/0, CopyRevoke=0/0, MoveStart=0/0, MoveEnd=0/0, MoveRevoke=0/0 | Batch Requests (Req=Success/PartialSuccess/Total, Item=Success/Total): PutStart:(Req=2/0/2, Item=28/28), PutEnd:(Req=2/0/2, Item=28/28), PutRevoke:(Req=0/0/0, Item=0/0), Get:(Req=0/0/0, Item=0/0), ExistKey:(Req=2/0/2, Item=28/28), QueryIp:(Req=0/0/0, Item=0/0), Clear:(Req=0/0/0, Item=0/0), CreateMoveTask:(Req=0/0), CreateCopyTask:(Req=0/0), QueryTask=(Req=0/0), FetchTasks=(Req=0/0), MarkTaskToComplete= (Req=0/0),  | Eviction: Success/Attempts=0/0, keys=0, size=0 B | Discard: Released/Total=0/0, StagingSize=0 B
+       -> I0709 07:22:33.712416    30 rpc_service.cpp:41] Master Metrics: Mem Storage: 26.58 MB / 100.00 GB (0.0%) | SSD Storage: 0 B / 0 B | Keys: 487 (soft-pinned: 0) | Clients: 2 | Requests (Success/Total): PutStart=8/8, PutEnd=6/6, PutRevoke=2/2, Get=6/6, Exist=6/6, Del=0/0, DelAll=0/0, Ping=3191/3191, CopyStart=0/0, CopyEnd=0/0, CopyRevoke=0/0, MoveStart=0/0, MoveEnd=0/0, MoveRevoke=0/0 | Batch Requests (Req=Success/PartialSuccess/Total, Item=Success/Total): PutStart:(Req=5/0/5, Item=486/486), PutEnd:(Req=5/0/5, Item=486/486), PutRevoke:(Req=0/0/0, Item=0/0), Get:(Req=0/0/0, Item=0/0), ExistKey:(Req=5/0/5, Item=486/486), QueryIp:(Req=0/0/0, Item=0/0), Clear:(Req=0/0/0, Item=0/0), CreateMoveTask:(Req=0/0), CreateCopyTask:(Req=0/0), QueryTask=(Req=0/0), FetchTasks=(Req=0/0), MarkTaskToComplete= (Req=0/0),  | Eviction: Success/Attempts=0/0, keys=0, size=0 B | Discard: Released/Total=0/0, StagingSize=0 B
+       -> I0709 07:22:43.712549    30 rpc_service.cpp:41] Master Metrics: Mem Storage: 26.58 MB / 100.00 GB (0.0%) | SSD Storage: 0 B / 0 B | Keys: 487 (soft-pinned: 0) | Clients: 2 | Requests (Success/Total): PutStart=8/8, PutEnd=6/6, PutRevoke=2/2, Get=6/6, Exist=6/6, Del=0/0, DelAll=0/0, Ping=3211/3211, CopyStart=0/0, CopyEnd=0/0, CopyRevoke=0/0, MoveStart=0/0, MoveEnd=0/0, MoveRevoke=0/0 | Batch Requests (Req=Success/PartialSuccess/Total, Item=Success/Total): PutStart:(Req=5/0/5, Item=486/486), PutEnd:(Req=5/0/5, Item=486/486), PutRevoke:(Req=0/0/0, Item=0/0), Get:(Req=0/0/0, Item=0/0), ExistKey:(Req=5/0/5, Item=486/486), QueryIp:(Req=0/0/0, Item=0/0), Clear:(Req=0/0/0, Item=0/0), CreateMoveTask:(Req=0/0), CreateCopyTask:(Req=0/0), QueryTask=(Req=0/0), FetchTasks=(Req=0/0), MarkTaskToComplete= (Req=0/0),  | Eviction: Success/Attempts=0/0, keys=0, size=0 B | Discard: Released/Total=0/0, StagingSize=0 B
+       +> I0709 07:22:13.712157    30 rpc_service.cpp:41] Master Metrics: Mem Storage: 4.00 KB / 100.00 GB (0.0%) | SSD Storage: 0 B / 0 B | Keys: 1 (soft-pinned: 0) | Clients: 2 | Requests (Success/Total): PutStart=8/8, PutEnd=6/6, PutRevoke=2/2, Get=6/6, Exist=6/6, Del=0/0, DelAll=0/0, Ping=3151/3151, CopyStart=0/0, CopyEnd=0/0, CopyRevoke=0/0, MoveStart=0/0, MoveEnd=0/0, MoveRevoke=0/0 | Batch Requests (Req=Success/PartialSuccess/Total, Item=Success/Total): PutStart:(Req=0/0/0, Item=0/0), PutEnd:(Req=0/0/0, Item=0/0), PutRevoke:(Req=0/0/0, Item=0/0), Get:(Req=0/0/0, Item=0/0), ExistKey:(Req=0/0/0, Item=0/0), QueryIp:(Req=0/0/0, Item=0/0), Clear:(Req=0/0/0, Item=0/0), CreateMoveTask:(Req=0/0), CreateCopyTask=(Req=0/0), QueryTask=(Req=0/0), FetchTasks=(Req=0/0), MarkTaskToComplete= (Req=0/0),  | Eviction: Success/Attempts=0/0, keys=0, size=0 B | Discard: Released/Total=0/0, StagingSize=0 B
+       +> I0709 07:22:23.712291    30 rpc_service.cpp:41] Master Metrics: Mem Storage: 1.54 MB / 100.00 GB (0.0%) | SSD Storage: 0 B / 0 B | Keys: 29 (soft-pinned: 0) | Clients: 2 | Requests (Success/Total): PutStart=8/8, PutEnd=6/6, PutRevoke=2/2, Get=6/6, Exist=6/6, Del=0/0, DelAll=0/0, Ping=3171/3171, CopyStart=0/0, CopyEnd=0/0, CopyRevoke=0/0, MoveStart=0/0, MoveEnd=0/0, MoveRevoke=0/0 | Batch Requests (Req=Success/PartialSuccess/Total, Item=Success/Total): PutStart:(Req=2/0/2, Item=28/28), PutEnd:(Req=2/0/2, Item=28/28), PutRevoke:(Req=0/0/0, Item=0/0), Get:(Req=0/0/0, Item=0/0), ExistKey:(Req=2/0/2, Item=28/28), QueryIp:(Req=0/0/0, Item=0/0), Clear:(Req=0/0/0, Item=0/0), CreateMoveTask=(Req=0/0), CreateCopyTask=(Req=0/0), QueryTask=(Req=0/0), FetchTasks=(Req=0/0), MarkTaskToComplete= (Req=0/0),  | Eviction: Success/Attempts=0/0, keys=0, size=0 B | Discard: Released/Total=0/0, StagingSize=0 B
+       +> I0709 07:22:33.712416    30 rpc_service.cpp:41] Master Metrics: Mem Storage: 26.58 MB / 100.00 GB (0.0%) | SSD Storage: 0 B / 0 B | Keys: 487 (soft-pinned: 0) | Clients: 2 | Requests (Success/Total): PutStart=8/8, PutEnd=6/6, PutRevoke=2/2, Get=6/6, Exist=6/6, Del=0/0, DelAll=0/0, Ping=3191/3191, CopyStart=0/0, CopyEnd=0/0, CopyRevoke=0/0, MoveStart=0/0, MoveEnd=0/0, MoveRevoke=0/0 | Batch Requests (Req=Success/PartialSuccess/Total, Item=Success/Total): PutStart:(Req=5/0/5, Item=486/486), PutEnd:(Req=5/0/5, Item=486/486), PutRevoke:(Req=0/0/0, Item=0/0), Get:(Req=0/0/0, Item=0/0), ExistKey:(Req=5/0/5, Item=486/486), QueryIp:(Req=0/0/0, Item=0/0), Clear:(Req=0/0/0, Item=0/0), CreateMoveTask=(Req=0/0), CreateCopyTask=(Req=0/0), QueryTask=(Req=0/0), FetchTasks=(Req=0/0), MarkTaskToComplete= (Req=0/0),  | Eviction: Success/Attempts=0/0, keys=0, size=0 B | Discard: Released/Total=0/0, StagingSize=0 B
+       +> I0709 07:22:43.712549    30 rpc_service.cpp:41] Master Metrics: Mem Storage: 26.58 MB / 100.00 GB (0.0%) | SSD Storage: 0 B / 0 B | Keys: 487 (soft-pinned: 0) | Clients: 2 | Requests (Success/Total): PutStart=8/8, PutEnd=6/6, PutRevoke=2/2, Get=6/6, Exist=6/6, Del=0/0, DelAll=0/0, Ping=3211/3211, CopyStart=0/0, CopyEnd=0/0, CopyRevoke=0/0, MoveStart=0/0, MoveEnd=0/0, MoveRevoke=0/0 | Batch Requests (Req=Success/PartialSuccess/Total, Item=Success/Total): PutStart:(Req=5/0/5, Item=486/486), PutEnd:(Req=5/0/5, Item=486/486), PutRevoke=(Req=0/0/0, Item=0/0), Get:(Req=0/0/0, Item=0/0), ExistKey:(Req=5/0/5, Item=486/486), QueryIp:(Req=0/0/0, Item=0/0), Clear:(Req=0/0/0, Item=0/0), CreateMoveTask=(Req=0/0), CreateCopyTask=(Req=0/0), QueryTask=(Req=0/0), FetchTasks=(Req=0/0), MarkTaskToComplete= (Req=0/0),  | Eviction: Success/Attempts=0/0, keys=0, size=0 B | Discard: Released/Total=0/0, StagingSize=0 B
+FAIL 10-deploy-mooncake-store-with-rbg.md block #001: diagram/prose block LINE COUNT differs (zh=10 en=11)
+     doc/best-practice/zh/10-deploy-mooncake-store-with-rbg.md:42
+     doc/best-practice/en/10-deploy-mooncake-store-with-rbg.md:42
+FAIL 10-deploy-mooncake-store-with-rbg.md block #002: diagram/prose block LINE COUNT differs (zh=20 en=23)
+     doc/best-practice/zh/10-deploy-mooncake-store-with-rbg.md:59
+     doc/best-practice/en/10-deploy-mooncake-store-with-rbg.md:60
+
+--- code block parity summary ---
+shared files compared    : 10
+files parity-clean       : 7
+code blocks compared     : 137  (comment text normalized away)
+diagram blocks compared  : 11 (line-count structure only)
+files skipped (one-sided): 0
+RESULT: FAIL (zh/en code block drift)
+EXIT_CODE(check-codeblock-parity.sh ) = 1
+
+===== check-codeblock-parity.sh --only 04-configuring-inplace   (finding F5) =====
+ok   04-configuring-inplace-update-and-scheduling-policies-guide.md: 23 blocks parity-clean (23 code byte-identical, 0 diagram structure-identical)
+ok   04-configuring-inplace-update-and-scheduling-policies.md: 9 blocks parity-clean (6 code byte-identical, 3 diagram structure-identical)
+
+--- code block parity summary ---
+filter (--only)          : 04-configuring-inplace
+shared files compared    : 2
+files parity-clean       : 2
+code blocks compared     : 29  (comment text normalized away)
+diagram blocks compared  : 3 (line-count structure only)
+files skipped (one-sided): 0
+RESULT: PASS
+EXIT_CODE(check-codeblock-parity.sh --only 04-configuring-inplace) = 0
+
+===== check-heading-parity.sh    (finding F5) =====
+ok   01-deploy-inference-service-guide.md: headings 20/20 level-aligned, table rows 4/4, bullets 27/27
+ok   01-deploy-inference-service.md: headings 18/18 level-aligned, table rows 26/26, bullets 14/14
+ok   02-using-role-templates-guide.md: headings 22/22 level-aligned, table rows 4/4, bullets 36/36
+ok   02-using-role-templates.md: headings 13/13 level-aligned, table rows 12/12, bullets 6/6
+ok   03-configuring-rolling-updates-guide.md: headings 39/39 level-aligned, table rows 5/5, bullets 36/36
+ok   03-configuring-rolling-updates.md: headings 20/20 level-aligned, table rows 22/22, bullets 25/25
+ok   04-configuring-inplace-update-and-scheduling-policies-guide.md: headings 26/26 level-aligned, table rows 4/4, bullets 35/35
+ok   04-configuring-inplace-update-and-scheduling-policies.md: headings 26/26 level-aligned, table rows 40/40, bullets 20/20
+ok   10-deploy-mooncake-store-with-rbg-guide.md: headings 24/24 level-aligned, table rows 5/5, bullets 29/29
+ok   10-deploy-mooncake-store-with-rbg.md: headings 21/21 level-aligned, table rows 11/11, bullets 17/17
+
+--- heading/structure parity summary ---
+shared files compared    : 10
+files structurally equal : 10
+files skipped (one-sided): 0
+RESULT: PASS
+EXIT_CODE(check-heading-parity.sh ) = 0
+
+===== check-links.sh    (finding F5) =====
+
+--- link check summary ---
+markdown files      : 20
+relative links      : 14
+in-page anchors     : 0
+absolute links      : 12 (not fetched -- offline check)
+dead                : 0
+RESULT: PASS
+EXIT_CODE(check-links.sh ) = 0
+
+===== check-todo-consistency.sh    (finding F2) =====
+FAIL self-contradicting TODO placeholder:
+     doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies.md:371
+     comment claims the following documents are NOT yet created:
+       <!-- TODO: The following documents have not been created yet; links will be added once they are complete -->
+     but these link(s) below it already resolve on disk:
+       doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies.md:373  ->  ./01-deploy-inference-service.md
+       doc/best-practice/en/04-configuring-inplace-update-and-scheduling-policies.md:374  ->  ./03-configuring-rolling-updates.md
+     FIX: drop the TODO comment (as the zh document already did in PR #415),
+          or move it below the entries that really are still missing.
+
+--- TODO/link consistency summary ---
+markdown files scanned: 20
+TODO placeholders seen: 7
+self-contradicting    : 1
+RESULT: FAIL (a TODO says the docs are missing while their links already work)
+EXIT_CODE(check-todo-consistency.sh ) = 1
+
+===== check-comment-command-agreement.sh    (finding F4) =====
+FAIL comment/command mismatch (comment says IMAGE, command inspects ENV):
+     doc/best-practice/zh/04-configuring-inplace-update-and-scheduling-policies-guide.md:344
+     comment: # 确认所有 Pod 使用新镜像
+     command: kubectl get pods -l rbg.workloads.x-k8s.io/group-name=inplace-scheduling-required -o jsonpath='{range .items[*]}{.metadata.name}{"="}{.spec.containers[0].env[?(@.name=="new_env")].value}{"\n"}{end}'
+     FIX: describe the env var instead (the en translation of this same
+          line already does).
+
+--- comment/command agreement summary ---
+markdown files scanned  : 20
+comment+command pairs   : 226
+mismatches              : 1
+RESULT: FAIL (a code-block comment describes something the command does not do)
+EXIT_CODE(check-comment-command-agreement.sh ) = 1

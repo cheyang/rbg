@@ -1,0 +1,34 @@
+=== L2: does the apiserver accept a bogus rollingUpdate.type? ===
+kubeconfig : <kubectl default>
+namespace  : default (dry-run only -- nothing is created)
+
+--- cluster ---
+  server gitVersion: v1.36.1-aliyun.1
+
+--- 1. live CRD schema for spec.roles[].rolloutStrategy.rollingUpdate.type ---
+  {"description": "Type indicates the type of the InstanceSetUpdateStrategy.\nDefault is InPlaceIfPossible.", "type": "string"}
+  enum present   : NO
+  default present: NO
+
+--- 2. kubectl apply --dry-run=server (full apiserver validation, no persistence) ---
+  ACCEPTED  type: InPlaceIfPossible  (documented default, valid)
+            rolebasedgroup.workloads.x-k8s.io/pr415-f3-dryrun-probe created (server dry run)
+  ACCEPTED  type: RecreatePod        (valid)
+            rolebasedgroup.workloads.x-k8s.io/pr415-f3-dryrun-probe created (server dry run)
+  ACCEPTED  type: InPlaceOnly        (valid constant, no impl)
+            rolebasedgroup.workloads.x-k8s.io/pr415-f3-dryrun-probe created (server dry run)
+  ACCEPTED  type: TotallyBogusValue  (NOT a strategy at all)
+            rolebasedgroup.workloads.x-k8s.io/pr415-f3-dryrun-probe created (server dry run)
+  ACCEPTED  type: InPlaceIfPosible   (realistic typo, one "s")
+            rolebasedgroup.workloads.x-k8s.io/pr415-f3-dryrun-probe created (server dry run)
+
+--- 3. is the documented default materialized by the apiserver? ---
+  with rollingUpdate.type omitted, the object the apiserver returns has: {"type": "<ABSENT>"}
+  (docs zh:121 / en:121 say the default is InPlaceIfPossible; if the value
+   above is <ABSENT>, that default exists only inside the controller.)
+
+--- verdict ---
+CANARY HOLDS: the apiserver accepted 'TotallyBogusValue' and the schema has
+  no enum -- a misspelled strategy is silently accepted and then handled by
+  the '!= RecreatePod' branch, i.e. treated as in-place update. F3 confirmed.
+RESULT: PASS (canary)
