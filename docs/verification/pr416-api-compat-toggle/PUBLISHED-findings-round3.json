@@ -110,6 +110,20 @@
         "failsFast": "helm exited in 7s with the check's message, not the 180s timeout",
         "refusesBeforeCrdUpgrade": "crd-upgrade Job never created"
       }
+    },
+    {
+      "target": "inline #1 (deploy/helm/rbgs/templates/upgrade-guard.yaml:2)",
+      "replyId": 3718810023,
+      "replyUrl": "https://github.com/sgl-project/rbg/pull/416#discussion_r3718810023",
+      "inReplyTo": 3717866540,
+      "what": "The complete implementation, inline in collapsible sections: the full check script, the full hook-Job/RBAC template, the three adoption edits (jq in the CRD-upgrader image, the values block, the NOTES.txt line), the exit-code rationale, and the four settings that must differ from crd-upgrade.yaml.",
+      "sourceOfTruth": "docs/verification/pr416-api-compat-toggle/examples/ -- the comment embeds those files verbatim (sha-verified identical at post time).",
+      "evidenceCited": [
+        "scripts/14-preflight-script-test.sh (11/11)",
+        "scripts/13-preflight-prototype.sh (helm mechanics)",
+        "results/round3/design/preflight-template-render.txt"
+      ],
+      "framing": "Explicitly offered as take-it-or-leave-it: the blocking point is that SOMETHING must enforce the fresh-install premise, not that this particular implementation be adopted."
     }
   ]
 }
