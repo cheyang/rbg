@@ -1,7 +1,10 @@
 # Draft replies — round 2 (NOT POSTED)
 
-Two comments, both follow-ups on threads already open. Nothing here is published until
+Three comments, all follow-ups on threads already open. Nothing here is published until
 explicitly confirmed.
+
+Suggested order: **Reply 3 first** (it settles the default decision), then Reply 2 (time-sensitive,
+the author is about to rewrite the KEP), then Reply 1.
 
 ---
 
@@ -78,14 +81,71 @@ text is what lands in the squash commit message.
 
 ---
 
+## Reply 3 — thread on `pkg/reconciler/svc_reconciler.go:111` (primary)
+
+Closes out the two-option question raised in that thread. Post this one first: it settles the
+default decision that Reply 1 and Reply 2 both depend on.
+
+```text
+Option two, and I don't think it costs much.
+
+I've changed my mind on the "keep `nil -> All`" half. The KEP's own motivation argues for
+`LeaderOnly` better than the PR description does: worker Pods may only run a dummy API server, so
+the old all-Pods default was routing requests at non-functional endpoints. All six
+`leaderWorkerPattern` examples in this repo leave the field unset, so the topology that was
+mis-served is the one everybody deploys. That's a correction and I'd keep it. What I still want is
+for it not to ride along under a `fix:` title.
+
+The split is cheap because after f8f2a59 the API surface is already identical to base: the CEL rule
+is back, there is no `default: LeaderOnly` in the generated CRDs, and the entire `config/crd` plus
+`deploy/kubectl` diff is description text. The breaking change is one condition.
+
+    // svc_reconciler.go:111
+    - SharedServiceSelection != nil && *... == LeaderOnly    // nil does not narrow
+    + GetSharedServiceSelection() == LeaderOnly              // nil narrows
+
+The worker-DNS fix doesn't depend on it. `GetSharedServiceSelection()` is inert in
+`roleinstanceset_reconciler.go`, because `nil` resolving to `LeaderOnly` is still not `All`, so
+unset roles behave there exactly as they do today.
+
+So `roleinstanceset_reconciler.go`, `helper.go`, the `ComponentServiceName` test, the envtest `All`
+context, the e2e `LeaderOnly -> All` case and the KEP's `All` semantics can go in as the fix. The
+`svc_reconciler.go` condition, all three `svc_reconciler_test.go` hunks, the envtest "policy is not
+set" and LWS-reject contexts, and the CRD-default question from the `helper.go` thread would be the
+second PR, with an upgrade note.
+
+A useful check on that boundary: every test edit here that replaces `nil` with an explicit `All`
+exists only to accommodate the new default. The two hunks in
+`TestServiceReconciler_reconcileHeadlessService_UpdatesSelectorInPlace` and `..._Reverse` need no
+change if the condition stays as it is.
+
+One addition for the fix half. @NoobDream2568 already raised the rollout for existing `All` users
+and I agree it's expected: recreating the worker Pods is what makes the requested behaviour take
+effect, given `hostname` and `subdomain` are immutable. It belongs in the KEP and the release notes
+together with the fact that it's bounded. `limitUpdateIndexes` caps concurrent updates at
+`maxUnavailable` in `pkg/reconciler/roleinstanceset/statelessmode/sync/update.go` and `statefulmode`
+carries an equivalent budget, so it rolls rather than taking every worker down at once. I'd avoid
+saying those workloads were already broken, though. Anyone consuming only the Service-level A record
+saw nothing wrong and still gets their Pods replaced.
+
+Separately, for whichever PR ends up touching `svc_reconciler_test.go`: the expected selector is now
+computed by calling `GetSharedServiceSelection()`, the same helper the code under test uses, so that
+assertion can no longer fail if the default is wrong. Worth writing the expected labels out
+literally.
+```
+
+---
+
 ## Notes for the reviewer (not for GitHub)
 
 - Reply 1 walks back the "keep `nil -> All`" option from the `svc_reconciler.go:111` thread. That
   thread offered two choices, so this narrows rather than contradicts, but the reversal is stated
   plainly rather than left for the author to notice.
-- The claim that the rollout is bounded by `maxUnavailable` is held back from these two replies. It
-  belongs in the `svc_reconciler.go:111` thread alongside the release-note ask, or in a reply to
-  @NoobDream2568's upgrade-disruption comment.
+- The `maxUnavailable` bound lands in Reply 3, alongside the release-note ask, rather than in
+  Reply 1 where it would be off-topic.
+- Reply 3 deliberately does not restate the CRD-default / drop-the-CEL-rule proposal, which already
+  has its own thread on `helper.go:279` (Reply 1). It only cross-references it, so the two comments
+  don't duplicate each other.
 - @NoobDream2568's "the inference service may not have been functioning correctly anyway" framing
   is deliberately not repeated. Some users only consume the Service-level A record and saw nothing
   wrong, and their Pods still get replaced.
