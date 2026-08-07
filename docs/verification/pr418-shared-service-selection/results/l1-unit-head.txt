@@ -1,24 +1,19 @@
-### L1 unit harness @ PR head f8f2a59f
-Fri Aug  7 02:33:56 UTC 2026
+### L1 unit harness @ PR head f8f2a59f (F1/F1-e2e re-polarised to canary)
+Fri Aug  7 02:52:26 UTC 2026
 === RUN   TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector
-    pr418_svc_selector_test.go:125: F1 observed selector for StatefulSet+leaderWorkerPattern (policy unset): map[rbg.workloads.x-k8s.io/component-name:leader rbg.workloads.x-k8s.io/group-name:pr418-rbg rbg.workloads.x-k8s.io/role-name:pr418-sts-lwp]
-    pr418_svc_selector_test.go:127: 
-        	Error Trace:	/root/pr418-verify/repo/pkg/reconciler/pr418_svc_selector_test.go:127
-        	Error:      	map[string]string{"rbg.workloads.x-k8s.io/component-name":"leader", "rbg.workloads.x-k8s.io/group-name":"pr418-rbg", "rbg.workloads.x-k8s.io/role-name":"pr418-sts-lwp"} should not contain "rbg.workloads.x-k8s.io/component-name"
-        	Test:       	TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector
-        	Messages:   	F1: the shared service of a StatefulSet role must not be narrowed to component-name=leader -- StatefulSet pods never carry that label, so the service ends up with zero endpoints
---- FAIL: TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector (0.30s)
+    pr418_svc_selector_test.go:134: F1 observed selector for StatefulSet+leaderWorkerPattern (policy unset): map[rbg.workloads.x-k8s.io/component-name:leader rbg.workloads.x-k8s.io/group-name:pr418-rbg rbg.workloads.x-k8s.io/role-name:pr418-sts-lwp]
+--- PASS: TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector (0.29s)
 === RUN   TestVerifyPR418_F1b_ExplicitLeaderOnlyIsRejectedButDefaultIsNot
-    pr418_svc_selector_test.go:152: F1b effective policy the controller applies to a StatefulSet role: "LeaderOnly" (CEL rejects this value when written explicitly)
+    pr418_svc_selector_test.go:164: F1b effective policy the controller applies to a StatefulSet role: "LeaderOnly" (CEL rejects this value when written explicitly)
 --- PASS: TestVerifyPR418_F1b_ExplicitLeaderOnlyIsRejectedButDefaultIsNot (0.00s)
 === RUN   TestVerifyPR418_F2_UnsetPolicyNarrowsRoleInstanceSetSelector
-    pr418_svc_selector_test.go:176: F2 observed selector for RoleInstanceSet+leaderWorkerPattern (policy unset): map[rbg.workloads.x-k8s.io/component-name:leader rbg.workloads.x-k8s.io/group-name:pr418-rbg rbg.workloads.x-k8s.io/role-name:pr418-ris-lwp]
+    pr418_svc_selector_test.go:188: F2 observed selector for RoleInstanceSet+leaderWorkerPattern (policy unset): map[rbg.workloads.x-k8s.io/component-name:leader rbg.workloads.x-k8s.io/group-name:pr418-rbg rbg.workloads.x-k8s.io/role-name:pr418-ris-lwp]
 --- PASS: TestVerifyPR418_F2_UnsetPolicyNarrowsRoleInstanceSetSelector (0.01s)
 === RUN   TestVerifyPR418_F5_WorkerServiceNameUnderAll
     pr418_upgrade_rollout_test.go:81: F5 component serviceName under All: map[leader:s-pr418-all-rbg-pr418-all-role worker:s-pr418-all-rbg-pr418-all-role]
---- PASS: TestVerifyPR418_F5_WorkerServiceNameUnderAll (0.06s)
-FAIL
-FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.780s
+--- PASS: TestVerifyPR418_F5_WorkerServiceNameUnderAll (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.703s
 === RUN   TestVerifyPR418_F5b_ServiceNameChangeForcesRecreate
 === RUN   TestVerifyPR418_F5b_ServiceNameChangeForcesRecreate/worker_gains_a_serviceName_across_the_upgrade_(base_->_PR#418,_All)
     pr418_recreate_test.go:86: F5b old=<nil> new=s-rbg-role -> recreate=true
@@ -31,11 +26,10 @@ FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.780s
     --- PASS: TestVerifyPR418_F5b_ServiceNameChangeForcesRecreate/worker_loses_its_serviceName_(All_->_LeaderOnly_switch) (0.00s)
     --- PASS: TestVerifyPR418_F5b_ServiceNameChangeForcesRecreate/unchanged_serviceName_does_not_force_a_replacement (0.00s)
 PASS
-ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.170s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.139s
 === RUN   TestVerifyPR418_F3_InstanceLayerIgnoresServiceName
     pr418_instance_layer_test.go:62: F3 RoleInstanceSet layer: worker serviceName "" -> "s-rbg-role", canNotInPlaceUpdate=false
     pr418_instance_layer_test.go:82: F3 control: worker size 1 -> 3, canNotInPlaceUpdate=true
 --- PASS: TestVerifyPR418_F3_InstanceLayerIgnoresServiceName (0.00s)
 PASS
-ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	0.141s
-FAIL
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	0.138s

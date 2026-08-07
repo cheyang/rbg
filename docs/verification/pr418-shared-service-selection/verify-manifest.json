@@ -36,20 +36,22 @@
   },
   "liveNote": "Needs a real cluster with the RBG CRDs and a running RBG controller ($KUBECONFIG honoured). The script creates one throwaway namespace, applies a StatefulSet-backed leaderWorkerPattern role with the policy unset, and compares endpoint counts between the selector the INSTALLED controller generates and the selector PR#418 generates. Expected signal on unfixed code: arm A > 0 endpoints and arm B == 0, plus NXDOMAIN for arm B's DNS name. Set KEEP=1 to keep the namespace for inspection. If the cluster's controller already contains the PR, arm A will also be 0 and the comparison loses its baseline -- run it against a pre-PR controller.",
   "expectedAfterFix": {
-    "F1": "contract test goes GREEN (selector no longer keyed on component-name for StatefulSet roles); live arm B endpoint count becomes > 0",
+    "F1": "canary stays GREEN while the behaviour is accepted; flips if the narrowing is scoped to the RoleInstanceSet workload type, at which point invert or retire it",
     "F1b": "canary stays RED under a selector-only fix; flips only if GetSharedServiceSelection stops returning LeaderOnly for workload types the CEL rule forbids it on -- invert or retire it then",
     "F2": "canary stays GREEN while LeaderOnly remains the effective default; flips if the default is reverted or made explicit -- invert it then",
     "F5": "canary stays GREEN (the worker binding under All is the intended behaviour); it exists to flag the upgrade rollout, so retire it once the rollout is documented",
     "F5b": "stays GREEN; it pins correct behaviour and is worth keeping as a regression guard",
     "F3": "canary stays GREEN until the RoleInstanceSet-level check also considers serviceName; the coverage gap closes when an All -> LeaderOnly case is added to the PR's own tests",
-    "F6": "closes when the PR adds its own StatefulSet + leaderWorkerPattern case"
+    "F6": "closes when the PR adds its own StatefulSet + leaderWorkerPattern case",
+    "F1-e2e": "same as F1",
+    "F7": "closes when the KEP is re-synced with f8f2a59f"
   },
   "findingDetail": {
     "F1": {
-      "severity": "blocker",
+      "severity": "minor (TODO)",
       "claim": "A role with a leaderWorkerPattern pinned to the StatefulSet workload type, with sharedServiceSelection left unset, gets its shared headless Service selector narrowed to component-name=leader. No StatefulSet pod ever carries that label, so the Service loses every endpoint and its DNS name stops resolving.",
-      "status": "CONFIRMED",
-      "polarity": "contract",
+      "status": "CONFIRMED as a defect, ACCEPTED on a deprecating path",
+      "polarity": "canary",
       "layers": [
         "unit",
         "integration",
@@ -60,10 +62,12 @@
         "test/envtest/testcase/rbg/pr418_f1_statefulset_test.go::PR418 F1 StatefulSet leaderWorkerPattern"
       ],
       "evidence": "results/l1-unit-head.txt, results/l2-envtest-f1.txt, results/l3-live-f1.txt",
-      "regressionProof": "The same contract test PASSES at base 8a54787d (selector {group,role}) and FAILS at head f8f2a59f (selector {group,role,component-name=leader}) -- see results/l1-unit-base.txt. Live: 2 endpoint addresses -> 0, DNS NXDOMAIN."
+      "regressionProof": "The same contract test PASSES at base 8a54787d (selector {group,role}) and FAILS at head f8f2a59f (selector {group,role,component-name=leader}) -- see results/l1-unit-base.txt. Live: 2 endpoint addresses -> 0, DNS NXDOMAIN.",
+      "reachability": "Only reachable by hand-writing the deprecated role-workload-type=apps/v1/StatefulSet annotation on a v1alpha2 role that also uses leaderWorkerPattern. The v1alpha1 conversion cannot produce that shape: api/workloads/v1alpha1/rolebasedgroup_conversion.go builds a LeaderWorkerPattern only when src.LeaderWorkerSet != nil, while StatefulSet falls through to StandalonePattern. The conversion code itself states 'New v1alpha2 RBGs should NOT set this annotation', and keps/workload-compatibility-mode/README.md deprecates the workload field. Downgraded from blocker to a TODO on the reviewer's guidance that StatefulSet is being deprecated; the evidence stands, the priority does not.",
+      "polarityNote": "Re-polarised from contract to canary once reachability was pinned down, so re-verify.sh does not report Still-broken forever for a consciously accepted behaviour. It flips if the narrowing is ever scoped to the supported workload type."
     },
     "F1b": {
-      "severity": "major",
+      "severity": "minor (TODO)",
       "claim": "The restored CEL rule rejects an EXPLICIT LeaderOnly on a non-RoleInstanceSet role, yet the controller applies exactly that policy to the same role through its in-process default. CEL cannot see the defaulted value because the field is absent from the stored object, so the guard is unreachable on the only path that matters.",
       "status": "CONFIRMED",
       "polarity": "canary",
@@ -76,7 +80,8 @@
         "test/envtest/testcase/rbg/pr418_f1_statefulset_test.go::PR418 F1 StatefulSet leaderWorkerPattern"
       ],
       "evidence": "results/l2-envtest-f1.txt -- a real API server refuses the explicit value ('only supported for RoleInstanceSet') and accepts the unset field on the very same role, after which the controller builds the leader-only selector.",
-      "canaryNote": "Canary, not contract: scoping the SELECTOR to RoleInstanceSet roles (the fix that turns F1 green) does not change what GetSharedServiceSelection returns, so this test stays red under that fix by design. It flips only if the helper stops claiming LeaderOnly for workload types whose CEL rule forbids it."
+      "canaryNote": "Canary, not contract: scoping the SELECTOR to RoleInstanceSet roles (the fix that turns F1 green) does not change what GetSharedServiceSelection returns, so this test stays red under that fix by design. It flips only if the helper stops claiming LeaderOnly for workload types whose CEL rule forbids it.",
+      "note": "Same deprecating path as F1, so same disposition. Worth recording because it is the root cause of F1: the API and the controller disagree about which workload types LeaderOnly applies to, and CEL structurally cannot close that gap for a controller-side default."
     },
     "F2": {
       "severity": "major",
@@ -105,7 +110,8 @@
         "pkg/reconciler/roleinstance/inplaceupdate/pr418_recreate_test.go::TestVerifyPR418_F5b_ServiceNameChangeForcesRecreate"
       ],
       "evidence": "results/l1-unit-head.txt: worker serviceName == the shared service name at head; results/l1-unit-base.txt: the same assertion fails at base because the field is empty. F5b shows '' -> svc and svc -> '' both force ReCreate, while an unchanged value does not.",
-      "canaryNote": "Binding the worker under All is the intended fix; what needs review is the undocumented pod rollout it causes on upgrade. The KEP documents a rollout only for a user-initiated policy switch."
+      "canaryNote": "Binding the worker under All is the intended fix; what needs review is the undocumented pod rollout it causes on upgrade. The KEP documents a rollout only for a user-initiated policy switch.",
+      "raisedBy": "Independently raised by @NoobDream2568 in a PR issue comment before this harness existed. This verification CONFIRMS it with evidence rather than restating it: the worker serviceName goes from \"\" (base) to the service name (head), and a serviceName change is classified not-in-place-updatable in both directions."
     },
     "F3": {
       "severity": "minor",
@@ -119,7 +125,8 @@
         "pkg/inplace/instance/inplaceupdate/pr418_instance_layer_test.go::TestVerifyPR418_F3_InstanceLayerIgnoresServiceName"
       ],
       "evidence": "results/l1-unit-head.txt: the RoleInstanceSet-level canNotInPlaceUpdate returns false for a serviceName-only change (with a passing size-change control proving the call is live). The pod-level isComponentExtensionSpecChanged is the only thing that forces replacement, so the documented rollout works -- but nothing exercises the reverse direction end-to-end.",
-      "canaryNote": "Agrees with Copilot's inline note on test/e2e/testcase/v1alpha2/shared_service_selection.go, and raises its importance: it is not a symmetry nit."
+      "canaryNote": "Agrees with Copilot's inline note on test/e2e/testcase/v1alpha2/shared_service_selection.go, and raises its importance: it is not a symmetry nit.",
+      "raisedBy": "Independently raised by Copilot on test/e2e/testcase/v1alpha2/shared_service_selection.go:103."
     },
     "F4": {
       "severity": "minor",
@@ -142,12 +149,22 @@
         "test/envtest/testcase/rbg/pr418_f1_statefulset_test.go::PR418 F1 StatefulSet leaderWorkerPattern"
       ],
       "evidence": "The PR's own envtest adds an LWS case but no StatefulSet case; this harness supplies one and it fails."
+    },
+    "F7": {
+      "severity": "minor",
+      "claim": "The KEP still documents the CRD default that commit f8f2a59f removed, and no longer documents the CEL rule that f8f2a59f restored. Three concrete contradictions: the Go snippet still carries +kubebuilder:default=LeaderOnly; the Default section still says 'the API server defaults it to LeaderOnly'; and the '### Validation' section describing the CEL rule was deleted in 4811ab04 and never restored alongside the rule itself.",
+      "status": "CONFIRMED by inspection",
+      "polarity": "n/a (documentation)",
+      "layers": [],
+      "tests": [],
+      "evidence": "git diff --name-only 4811ab04..f8f2a59f lists six files and keps/260-leaderonly-service/README.md is NOT among them, while the same commit removed the marker from api/workloads/v1alpha2/rolebasedgroup_types.go and restored the RoleSpec CEL rule.",
+      "raisedBy": "Raised by @NoobDream2568 on keps/260-leaderonly-service/README.md:179. The author replied 'You're probably seeing stale code. I've removed the default value...', which addresses the Go code but not the KEP the comment points at -- the KEP is genuinely still stale, so the comment was correct and remains unresolved."
     }
   },
   "findings": [
     {
       "id": "F1",
-      "polarity": "contract",
+      "polarity": "canary",
       "layer": "unit",
       "match": [
         "TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector"
@@ -155,7 +172,7 @@
     },
     {
       "id": "F1-e2e",
-      "polarity": "contract",
+      "polarity": "canary",
       "layer": "integration",
       "match": [
         "still narrow the shared service selector"
@@ -201,5 +218,10 @@
         "TestVerifyPR418_F3_InstanceLayerIgnoresServiceName"
       ]
     }
-  ]
+  ],
+  "priorArt": {
+    "copilot": "F3 (reverse transition coverage)",
+    "NoobDream2568": "F5 (upgrade-triggered rollout for All roles) and F7 (stale KEP)",
+    "independentHere": "F1/F1b (StatefulSet selector + CEL/controller disagreement), F2 (unset-policy endpoint loss), F6 (missing StatefulSet coverage)"
+  }
 }

@@ -114,9 +114,12 @@ var _ = Describe("PR418 F1 StatefulSet leaderWorkerPattern", func() {
 		GinkgoWriter.Printf("F1 (L2) service selector: %v\npod template labels: %v\n",
 			svc.Spec.Selector, sts.Spec.Template.Labels)
 
-		// [CONTRACT] -- fails on the code under review.
-		Expect(svc.Spec.Selector).ShouldNot(HaveKey(constants.ComponentNameLabelKey),
-			"F1: the controller narrowed the shared service to component-name=leader on a "+
+		// [CANARY] -- records the accepted-with-TODO behaviour; see the polarity note on
+		// TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector for why this is not a contract test.
+		// The value of this spec is the two assertions ABOVE it: a real API server refuses the
+		// explicit value and accepts the unset one, after which the controller applies it anyway.
+		Expect(svc.Spec.Selector).Should(HaveKey(constants.ComponentNameLabelKey),
+			"F1 canary: the controller narrowed the shared service to component-name=leader on a "+
 				"StatefulSet role, so the service can never have an endpoint -- and this is the "+
 				"exact policy the API server just refused to let the user set explicitly")
 	})

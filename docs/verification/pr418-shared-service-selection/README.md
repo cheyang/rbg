@@ -21,29 +21,47 @@ in progress, reversing the earlier approach:
 | CEL rule restricting `LeaderOnly` to `RoleInstanceSet` | **deleted** | **restored** |
 | where the default lives | API server (stored on the object) | controller (`GetSharedServiceSelection`) |
 
-Every finding below was re-derived against `f8f2a59f`. The change is an improvement to the API
-surface, but it does **not** fix the main problem — it makes the guard *unreachable* on the path
-that actually matters, because CEL only ever sees the stored object, where the field is absent.
+Every finding below was re-derived against `f8f2a59f`. The change is a genuine improvement to
+the API surface, and it resolves most of F4. It does not change F2 or F5 — the two findings that
+affect the mainstream `RoleInstanceSet` path — because those follow from the *effective* default,
+wherever that default lives. It also leaves the CEL rule structurally unable to guard a
+controller-side default (F1b), since CEL only ever sees the stored object, where the field is
+absent.
 
 ---
 
 ## Observed vs. expected
 
-| # | Finding | Severity | Layers | Result |
-|---|---------|----------|--------|--------|
-| **F1** | StatefulSet + `leaderWorkerPattern`, policy unset → Service selector narrowed to `component-name=leader`, which no StatefulSet pod carries → **zero endpoints, NXDOMAIN** | `blocker` | L1 + L2 + L3 | **CONFIRMED** |
-| **F1b** | CEL rejects an *explicit* `LeaderOnly` on that role while the controller *applies* it via the default — the guard cannot fire | `major` | L1 + L2 | **CONFIRMED** |
-| **F2** | Existing `RoleInstanceSet` roles that never set the field silently lose worker endpoints on upgrade; the stored object shows nothing | `major` | L1 | **CONFIRMED** |
-| **F5** | Roles that already set `All` get their worker pods replaced by the controller upgrade alone | `major` | L1 | **CONFIRMED** |
-| **F3** | Reverse `All → LeaderOnly` untested; the replacement guarantee lives in only one of two layers | `minor` | L1 | **CONFIRMED** (coverage gap, not a defect) |
-| **F4** | `LeaderOnly` silently inert on LWS roles | `minor` | — | **partially superseded** by `f8f2a59f` |
-| **F6** | No test covers StatefulSet + `leaderWorkerPattern` | `minor` | L2 | **CONFIRMED** |
+| # | Finding | Severity | Layers | Result | Raised by |
+|---|---------|----------|--------|--------|-----------|
+| **F2** | Existing `RoleInstanceSet` roles that never set the field silently lose worker endpoints on upgrade; the stored object shows nothing | `major` | L1 | **CONFIRMED** | here |
+| **F5** | Roles that already set `All` get their worker pods replaced by the controller upgrade alone | `major` | L1 | **CONFIRMED** | @NoobDream2568 |
+| **F1** | StatefulSet + `leaderWorkerPattern`, policy unset → selector narrowed to `component-name=leader`, which no StatefulSet pod carries → zero endpoints, NXDOMAIN | `minor` **(TODO)** | L1+L2+L3 | **CONFIRMED**, accepted on a deprecating path | here |
+| **F1b** | CEL rejects an *explicit* `LeaderOnly` on that role while the controller *applies* it via the default — CEL structurally cannot see a controller-side default | `minor` **(TODO)** | L1+L2 | **CONFIRMED** | here |
+| **F3** | Reverse `All → LeaderOnly` untested; the replacement guarantee lives only in the pod-level check | `minor` | L1 | **CONFIRMED** (coverage gap, not a defect) | Copilot |
+| **F7** | KEP still documents the CRD default that `f8f2a59f` removed, and no longer documents the CEL rule it restored | `minor` | — | **CONFIRMED** by inspection | @NoobDream2568 |
+| **F6** | No test covers StatefulSet + `leaderWorkerPattern` | `minor` | L2 | **CONFIRMED** | here |
+| **F4** | `LeaderOnly` silently inert on LWS roles | `minor` | — | **partially superseded** by `f8f2a59f` | here |
 
-The PR's own tests are green (`results/sweep.txt`). The only red is this harness.
+The PR's own unit and envtest suites are green, and so is its CI (including e2e) on `f8f2a59f`
+— see `results/sweep.txt`. Every finding here sits in a gap those tests do not cover.
+
+**All harness tests are currently green**, because every one of them is a *canary* recording
+present behaviour. Green therefore means "behaviour unchanged", not "nothing wrong"; a test going
+red means the behaviour it pins moved. See the polarity table at the bottom.
 
 ---
 
-## F1 in detail — the load-bearing finding
+## F1 in detail — real, but on a deprecating path
+
+**Disposition: TODO, not a blocker.** The defect is real and reproduces at all three layers,
+but the only way to reach it is to hand-write the deprecated `role-workload-type:
+apps/v1/StatefulSet` annotation on a v1alpha2 role that *also* uses a `leaderWorkerPattern`.
+The v1alpha1 conversion cannot produce that shape — `rolebasedgroup_conversion.go` builds a
+`LeaderWorkerPattern` only when `src.LeaderWorkerSet != nil`, and StatefulSet falls through to
+`StandalonePattern` — and the conversion code itself says *"New v1alpha2 RBGs should NOT set
+this annotation"*. `keps/workload-compatibility-mode/README.md` deprecates the `workload` field
+outright. The evidence below stands; only the priority changed.
 
 The chain, each link independently verified:
 
@@ -82,16 +100,17 @@ s-pr418-sts-worker  -> 10.39.55.166, 10.39.55.165
 
 ### Regression proof (`results/l1-unit-base.txt`)
 
-The identical contract test **passes at base** and **fails at head**:
+Each assertion was run unchanged against **both** commits. Every one flips, which is what
+distinguishes "introduced here" from "pre-existing quirk":
 
-| | base `8a54787d` | head `f8f2a59f` |
+| observation | base `8a54787d` | head `f8f2a59f` |
 |---|---|---|
-| `F1` selector | `{group, role}` → **PASS** | `{group, role, component-name=leader}` → **FAIL** |
-| `F2` canary | not narrowed → FAIL | narrowed → PASS |
-| `F5` worker `serviceName` under `All` | `""` → FAIL | `s-…` → PASS |
+| `F1` selector, StatefulSet role | `{group, role}` | `{group, role, component-name=leader}` |
+| `F2` selector, RoleInstanceSet role, policy unset | `{group, role}` | `{group, role, component-name=leader}` |
+| `F5` worker `serviceName` under `All` | `""` | `s-pr418-…` |
 
-So F1 is introduced by this PR, and F2/F5 are genuine behaviour changes rather than
-pre-existing quirks.
+(`results/l1-unit-base.txt` shows these as *failures* at base — the tests assert the head
+behaviour, so a failure there is the flip.)
 
 ### Harness-bites check
 
@@ -103,20 +122,26 @@ if role.IsLeaderWorkerPattern() &&
     role.LeaderWorkerPattern.GetSharedServiceSelection() == ...LeaderOnly {
 ```
 
-— turns **F1 green** while leaving the F2/F5 canaries green, then the fix was reverted and the
-production diff confirmed empty. So the test exercises the real path.
+— **flipped the F1 assertion** (which was still a contract test at that point) while leaving the
+F2/F5 canaries untouched. The fix was then reverted and the production diff confirmed empty. That
+is what rules out a test that is red for an unrelated reason: the assertion responds to exactly
+the line it is about.
 
 ---
 
 ## Suggested direction (not prescriptive)
 
-- **F1:** gate the narrowing on the workload type, so the controller and the CEL rule agree on
-  the supported scope. Note the same reasoning applies to any future workload type whose pods
-  lack component labels.
+- **F1/F1b:** a `TODO` next to the narrowing is enough for now — gate it on
+  `role.GetWorkloadType() == constants.RoleInstanceSetWorkloadType` if StatefulSet outlives its
+  deprecation. Worth a line in the KEP's scope section either way, since it currently claims the
+  policy is inert outside `RoleInstanceSet` and that is only true for LWS, not StatefulSet.
 - **F2/F5:** state the upgrade consequences in the KEP and a release note — worker endpoints
   disappear for unset roles, and worker pods restart for `All` roles. Neither requires a user
   action to trigger, which is what makes them worth calling out.
 - **F3/F6:** add the reverse transition and a StatefulSet case to the PR's own tests.
+- **F7:** re-sync `keps/260-leaderonly-service/README.md` with `f8f2a59f` — drop the
+  `+kubebuilder:default` marker and the "the API server defaults it" line, and restore the
+  `### Validation` section now that the CEL rule is back.
 
 ---
 
@@ -146,8 +171,8 @@ Polarity matters — "all green" is **not** the same as "fixed":
 
 | test | polarity | after a correct fix |
 |---|---|---|
-| `F1_StatefulSetLeaderWorkerSelector` | contract | goes **green** |
-| `F6` envtest (`PR418 F1`) | contract | goes **green** |
+| `F1_StatefulSetLeaderWorkerSelector` | canary | stays green while accepted; **flips** if the narrowing is scoped — invert or retire it then |
+| `F6` envtest (`PR418 F1`) | canary | same as `F1` |
 | `F1b_ExplicitLeaderOnly…` | canary | **stays red** under a selector-only fix (by design); flips only if the helper stops claiming `LeaderOnly` for forbidden workload types |
 | `F2_UnsetPolicyNarrows…` | canary | stays green while `LeaderOnly` is the default; **invert** if the default is reverted |
 | `F5_WorkerServiceNameUnderAll` | canary | stays green (intended behaviour); retire once the rollout is documented |
