@@ -1,0 +1,42 @@
+### L1 harness @ BASE 8a54787d (discrimination check)
+Fri Aug  7 02:34:22 UTC 2026
+=== RUN   TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector
+    pr418_svc_selector_test.go:125: F1 observed selector for StatefulSet+leaderWorkerPattern (policy unset): map[rbg.workloads.x-k8s.io/group-name:pr418-rbg rbg.workloads.x-k8s.io/role-name:pr418-sts-lwp]
+--- PASS: TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector (0.18s)
+=== RUN   TestVerifyPR418_F2_UnsetPolicyNarrowsRoleInstanceSetSelector
+    pr418_svc_selector_test.go:149: F2 observed selector for RoleInstanceSet+leaderWorkerPattern (policy unset): map[rbg.workloads.x-k8s.io/group-name:pr418-rbg rbg.workloads.x-k8s.io/role-name:pr418-ris-lwp]
+    pr418_svc_selector_test.go:152: 
+        	Error Trace:	/root/pr418-verify/base/pkg/reconciler/pr418_svc_selector_test.go:152
+        	Error:      	Not equal: 
+        	            	expected: "leader"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-leader
+        	            	+
+        	Test:       	TestVerifyPR418_F2_UnsetPolicyNarrowsRoleInstanceSetSelector
+        	Messages:   	F2 canary: an unset policy now narrows the selector to the leader component, removing worker pods from the shared service endpoints on upgrade
+--- FAIL: TestVerifyPR418_F2_UnsetPolicyNarrowsRoleInstanceSetSelector (0.00s)
+=== RUN   TestVerifyPR418_F5_WorkerServiceNameUnderAll
+    pr418_upgrade_rollout_test.go:81: F5 component serviceName under All: map[leader:s-pr418-all-rbg-pr418-all-role worker:]
+    pr418_upgrade_rollout_test.go:83: 
+        	Error Trace:	/root/pr418-verify/base/pkg/reconciler/pr418_upgrade_rollout_test.go:83
+        	Error:      	Not equal: 
+        	            	expected: "s-pr418-all-rbg-pr418-all-role"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-s-pr418-all-rbg-pr418-all-role
+        	            	+
+        	Test:       	TestVerifyPR418_F5_WorkerServiceNameUnderAll
+        	Messages:   	F5 canary: the worker component is now bound to the shared service under All. On the base commit this is empty, so upgrading the controller rewrites the RoleInstanceSet template of every existing All role
+--- FAIL: TestVerifyPR418_F5_WorkerServiceNameUnderAll (0.04s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.539s
+FAIL

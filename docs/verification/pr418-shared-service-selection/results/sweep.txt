@@ -1,0 +1,4 @@
+### PR own test sweep @ PR head (harness excluded)
+Fri Aug  7 02:34:41 UTC 2026
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.470s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	25.769s

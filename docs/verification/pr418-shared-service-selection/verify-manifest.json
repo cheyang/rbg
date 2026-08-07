@@ -1,0 +1,205 @@
+{
+  "topic": "pr418-shared-service-selection",
+  "pr": "https://github.com/sgl-project/rbg/pull/418",
+  "reviewedHead": "f8f2a59f",
+  "baseSha": "8a54787d698f76f3f754e844342d5dbd71244885",
+  "note": "Reviewer-private verification harness. Production code is UNTOUCHED on this branch; the branch is based on the PR head (f8f2a59f) so the harness compiles natively, and the only additions are the pr418_*_test.go harness files and this docs/verification tree. Round 1 reviewed 8a54787d..f8f2a59f. IMPORTANT: the author force-added commit f8f2a59f ('Resume leaderworkerpattern cel validation') mid-review, which REVERSED the earlier design: the CRD default (+kubebuilder:default=LeaderOnly) was removed and the CEL rule restricting LeaderOnly to RoleInstanceSet roles was restored, with the LeaderOnly default moved into the controller (GetSharedServiceSelection). All findings below were re-derived against f8f2a59f, not the earlier 4811ab04. That change narrows the API surface but does NOT fix F1 -- it makes the guard unreachable for the defaulted path, because CEL only sees the stored object where the field is absent.",
+  "environment": {
+    "sandbox": "remote Linux sandbox root@43.99.38.217, go1.24.1, kubectl v1.36.2",
+    "cluster": "ACK cn-hongkong, k8s v1.36.1-aliyun.1, 3 nodes",
+    "envtest": "KUBEBUILDER_ASSETS=/root/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64",
+    "sharedInfraNote": "An unrelated rbgs-controller-manager (2/2, image v0.8.0-47cfe17 == PRE-PR code) already runs in rbg-system on this cluster. The live layer deliberately exploits that: arm A records the CURRENT production behaviour via the installed controller, and arm B applies the selector PR#418 generates (proved at L1) as a SEPARATE Service over the same real pods, so no second controller is deployed and nothing cluster-scoped is touched. Everything lives in one throwaway namespace, deleted on exit."
+  },
+  "harnessPaths": [
+    "docs/verification/pr418-shared-service-selection",
+    "pkg/reconciler/pr418_svc_selector_test.go",
+    "pkg/reconciler/pr418_upgrade_rollout_test.go",
+    "pkg/reconciler/roleinstance/inplaceupdate/pr418_recreate_test.go",
+    "pkg/inplace/instance/inplaceupdate/pr418_instance_layer_test.go",
+    "test/envtest/testcase/rbg/pr418_f1_statefulset_test.go",
+    "docs/verification/pr418-shared-service-selection/scripts/30-live-f1-endpoints.sh"
+  ],
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/ ./pkg/reconciler/roleinstance/inplaceupdate/ ./pkg/inplace/instance/inplaceupdate/ -run 'TestVerifyPR418' -count=1 -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=${KUBEBUILDER_ASSETS:-$(bin/setup-envtest use 1.31.0 --bin-dir bin -p path)} go test ./test/envtest/testcase/rbg/ -count=1 -timeout 20m -args -ginkgo.focus='PR418 F1' -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    },
+    "live": {
+      "kind": "shell",
+      "cmd": "bash docs/verification/pr418-shared-service-selection/scripts/30-live-f1-endpoints.sh"
+    }
+  },
+  "liveNote": "Needs a real cluster with the RBG CRDs and a running RBG controller ($KUBECONFIG honoured). The script creates one throwaway namespace, applies a StatefulSet-backed leaderWorkerPattern role with the policy unset, and compares endpoint counts between the selector the INSTALLED controller generates and the selector PR#418 generates. Expected signal on unfixed code: arm A > 0 endpoints and arm B == 0, plus NXDOMAIN for arm B's DNS name. Set KEEP=1 to keep the namespace for inspection. If the cluster's controller already contains the PR, arm A will also be 0 and the comparison loses its baseline -- run it against a pre-PR controller.",
+  "expectedAfterFix": {
+    "F1": "contract test goes GREEN (selector no longer keyed on component-name for StatefulSet roles); live arm B endpoint count becomes > 0",
+    "F1b": "canary stays RED under a selector-only fix; flips only if GetSharedServiceSelection stops returning LeaderOnly for workload types the CEL rule forbids it on -- invert or retire it then",
+    "F2": "canary stays GREEN while LeaderOnly remains the effective default; flips if the default is reverted or made explicit -- invert it then",
+    "F5": "canary stays GREEN (the worker binding under All is the intended behaviour); it exists to flag the upgrade rollout, so retire it once the rollout is documented",
+    "F5b": "stays GREEN; it pins correct behaviour and is worth keeping as a regression guard",
+    "F3": "canary stays GREEN until the RoleInstanceSet-level check also considers serviceName; the coverage gap closes when an All -> LeaderOnly case is added to the PR's own tests",
+    "F6": "closes when the PR adds its own StatefulSet + leaderWorkerPattern case"
+  },
+  "findingDetail": {
+    "F1": {
+      "severity": "blocker",
+      "claim": "A role with a leaderWorkerPattern pinned to the StatefulSet workload type, with sharedServiceSelection left unset, gets its shared headless Service selector narrowed to component-name=leader. No StatefulSet pod ever carries that label, so the Service loses every endpoint and its DNS name stops resolving.",
+      "status": "CONFIRMED",
+      "polarity": "contract",
+      "layers": [
+        "unit",
+        "integration",
+        "live"
+      ],
+      "tests": [
+        "pkg/reconciler/pr418_svc_selector_test.go::TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector",
+        "test/envtest/testcase/rbg/pr418_f1_statefulset_test.go::PR418 F1 StatefulSet leaderWorkerPattern"
+      ],
+      "evidence": "results/l1-unit-head.txt, results/l2-envtest-f1.txt, results/l3-live-f1.txt",
+      "regressionProof": "The same contract test PASSES at base 8a54787d (selector {group,role}) and FAILS at head f8f2a59f (selector {group,role,component-name=leader}) -- see results/l1-unit-base.txt. Live: 2 endpoint addresses -> 0, DNS NXDOMAIN."
+    },
+    "F1b": {
+      "severity": "major",
+      "claim": "The restored CEL rule rejects an EXPLICIT LeaderOnly on a non-RoleInstanceSet role, yet the controller applies exactly that policy to the same role through its in-process default. CEL cannot see the defaulted value because the field is absent from the stored object, so the guard is unreachable on the only path that matters.",
+      "status": "CONFIRMED",
+      "polarity": "canary",
+      "layers": [
+        "unit",
+        "integration"
+      ],
+      "tests": [
+        "pkg/reconciler/pr418_svc_selector_test.go::TestVerifyPR418_F1b_ExplicitLeaderOnlyIsRejectedButDefaultIsNot",
+        "test/envtest/testcase/rbg/pr418_f1_statefulset_test.go::PR418 F1 StatefulSet leaderWorkerPattern"
+      ],
+      "evidence": "results/l2-envtest-f1.txt -- a real API server refuses the explicit value ('only supported for RoleInstanceSet') and accepts the unset field on the very same role, after which the controller builds the leader-only selector.",
+      "canaryNote": "Canary, not contract: scoping the SELECTOR to RoleInstanceSet roles (the fix that turns F1 green) does not change what GetSharedServiceSelection returns, so this test stays red under that fix by design. It flips only if the helper stops claiming LeaderOnly for workload types whose CEL rule forbids it."
+    },
+    "F2": {
+      "severity": "major",
+      "claim": "For an existing RoleInstanceSet leaderWorkerPattern role that never set the field, the effective policy changes from all-pods (pre-PR) to LeaderOnly, so worker pod IPs silently drop out of the shared Service endpoints on controller upgrade with no user action and no change to the stored object.",
+      "status": "CONFIRMED",
+      "polarity": "canary",
+      "layers": [
+        "unit"
+      ],
+      "tests": [
+        "pkg/reconciler/pr418_svc_selector_test.go::TestVerifyPR418_F2_UnsetPolicyNarrowsRoleInstanceSetSelector"
+      ],
+      "evidence": "results/l1-unit-head.txt (narrowed) vs results/l1-unit-base.txt (not narrowed).",
+      "canaryNote": "Whether LeaderOnly is the right default is a product decision, so the test records the NEW behaviour. Because f8f2a59f dropped the CRD default, the stored object keeps sharedServiceSelection absent -- so this change is now LESS discoverable than with a CRD default: nothing in the object tells an operator that leader-only selection is in force."
+    },
+    "F5": {
+      "severity": "major",
+      "claim": "A role that already sets All gains a worker-component serviceName as a result of this PR. That rewrites the RoleInstanceSet template, and a serviceName change is classified not-in-place-updatable, so upgrading the controller alone replaces the worker pods of every existing All role.",
+      "status": "CONFIRMED",
+      "polarity": "canary",
+      "layers": [
+        "unit"
+      ],
+      "tests": [
+        "pkg/reconciler/pr418_upgrade_rollout_test.go::TestVerifyPR418_F5_WorkerServiceNameUnderAll",
+        "pkg/reconciler/roleinstance/inplaceupdate/pr418_recreate_test.go::TestVerifyPR418_F5b_ServiceNameChangeForcesRecreate"
+      ],
+      "evidence": "results/l1-unit-head.txt: worker serviceName == the shared service name at head; results/l1-unit-base.txt: the same assertion fails at base because the field is empty. F5b shows '' -> svc and svc -> '' both force ReCreate, while an unchanged value does not.",
+      "canaryNote": "Binding the worker under All is the intended fix; what needs review is the undocumented pod rollout it causes on upgrade. The KEP documents a rollout only for a user-initiated policy switch."
+    },
+    "F3": {
+      "severity": "minor",
+      "claim": "The reverse All -> LeaderOnly transition is untested, and the replacement guarantee it relies on is split across two layers of which only one knows about serviceName.",
+      "status": "CONFIRMED as a coverage gap (not a defect)",
+      "polarity": "canary",
+      "layers": [
+        "unit"
+      ],
+      "tests": [
+        "pkg/inplace/instance/inplaceupdate/pr418_instance_layer_test.go::TestVerifyPR418_F3_InstanceLayerIgnoresServiceName"
+      ],
+      "evidence": "results/l1-unit-head.txt: the RoleInstanceSet-level canNotInPlaceUpdate returns false for a serviceName-only change (with a passing size-change control proving the call is live). The pod-level isComponentExtensionSpecChanged is the only thing that forces replacement, so the documented rollout works -- but nothing exercises the reverse direction end-to-end.",
+      "canaryNote": "Agrees with Copilot's inline note on test/e2e/testcase/v1alpha2/shared_service_selection.go, and raises its importance: it is not a symmetry nit."
+    },
+    "F4": {
+      "severity": "minor",
+      "claim": "LeaderOnly is inert on LeaderWorkerSet roles with no signal to the user.",
+      "status": "PARTIALLY SUPERSEDED by f8f2a59f",
+      "polarity": "n/a",
+      "layers": [],
+      "tests": [],
+      "evidence": "The restored CEL rule now rejects an explicit LeaderOnly on LWS roles, which addresses the 'silently accepted' half. What remains is that the controller still resolves those roles to LeaderOnly internally (F1b) -- inert for LWS because reconcileHeadlessService is only called from sts_reconciler.go and roleinstanceset_reconciler.go, but not inert for StatefulSet roles, which is F1."
+    },
+    "F6": {
+      "severity": "minor",
+      "claim": "No test covers StatefulSet + leaderWorkerPattern, the combination where the policy actually misfires.",
+      "status": "CONFIRMED",
+      "polarity": "contract",
+      "layers": [
+        "integration"
+      ],
+      "tests": [
+        "test/envtest/testcase/rbg/pr418_f1_statefulset_test.go::PR418 F1 StatefulSet leaderWorkerPattern"
+      ],
+      "evidence": "The PR's own envtest adds an LWS case but no StatefulSet case; this harness supplies one and it fails."
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector"
+      ]
+    },
+    {
+      "id": "F1-e2e",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "still narrow the shared service selector"
+      ]
+    },
+    {
+      "id": "F1b",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR418_F1b_ExplicitLeaderOnlyIsRejectedButDefaultIsNot"
+      ]
+    },
+    {
+      "id": "F2",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR418_F2_UnsetPolicyNarrowsRoleInstanceSetSelector"
+      ]
+    },
+    {
+      "id": "F5",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR418_F5_WorkerServiceNameUnderAll"
+      ]
+    },
+    {
+      "id": "F5b",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR418_F5b_ServiceNameChangeForcesRecreate"
+      ]
+    },
+    {
+      "id": "F3",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR418_F3_InstanceLayerIgnoresServiceName"
+      ]
+    }
+  ]
+}
