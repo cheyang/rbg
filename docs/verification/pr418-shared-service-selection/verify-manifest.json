@@ -64,7 +64,8 @@
       "evidence": "results/l1-unit-head.txt, results/l2-envtest-f1.txt, results/l3-live-f1.txt",
       "regressionProof": "The same contract test PASSES at base 8a54787d (selector {group,role}) and FAILS at head f8f2a59f (selector {group,role,component-name=leader}) -- see results/l1-unit-base.txt. Live: 2 endpoint addresses -> 0, DNS NXDOMAIN.",
       "reachability": "Only reachable by hand-writing the deprecated role-workload-type=apps/v1/StatefulSet annotation on a v1alpha2 role that also uses leaderWorkerPattern. The v1alpha1 conversion cannot produce that shape: api/workloads/v1alpha1/rolebasedgroup_conversion.go builds a LeaderWorkerPattern only when src.LeaderWorkerSet != nil, while StatefulSet falls through to StandalonePattern. The conversion code itself states 'New v1alpha2 RBGs should NOT set this annotation', and keps/workload-compatibility-mode/README.md deprecates the workload field. Downgraded from blocker to a TODO on the reviewer's guidance that StatefulSet is being deprecated; the evidence stands, the priority does not.",
-      "polarityNote": "Re-polarised from contract to canary once reachability was pinned down, so re-verify.sh does not report Still-broken forever for a consciously accepted behaviour. It flips if the narrowing is ever scoped to the supported workload type."
+      "polarityNote": "Re-polarised from contract to canary once reachability was pinned down, so re-verify.sh does not report Still-broken forever for a consciously accepted behaviour. It flips if the narrowing is ever scoped to the supported workload type.",
+      "dispositionChanged": "Promoted from standalone TODO to the ENABLING change for a CRD default: the workload-type scope check is what makes CRD defaulting safe. Reachability is still nil in practice, so it remains low-urgency on its own -- but it is no longer optional if the default is made discoverable."
     },
     "F1b": {
       "severity": "minor (TODO)",
@@ -81,7 +82,8 @@
       ],
       "evidence": "results/l2-envtest-f1.txt -- a real API server refuses the explicit value ('only supported for RoleInstanceSet') and accepts the unset field on the very same role, after which the controller builds the leader-only selector.",
       "canaryNote": "Canary, not contract: scoping the SELECTOR to RoleInstanceSet roles (the fix that turns F1 green) does not change what GetSharedServiceSelection returns, so this test stays red under that fix by design. It flips only if the helper stops claiming LeaderOnly for workload types whose CEL rule forbids it.",
-      "note": "Same deprecating path as F1, so same disposition. Worth recording because it is the root cause of F1: the API and the controller disagree about which workload types LeaderOnly applies to, and CEL structurally cannot close that gap for a controller-side default."
+      "note": "Same deprecating path as F1, so same disposition. Worth recording because it is the root cause of F1: the API and the controller disagree about which workload types LeaderOnly applies to, and CEL structurally cannot close that gap for a controller-side default.",
+      "dispositionChanged": "Same as F1: it is the evidence that the CEL rule cannot enforce the invariant."
     },
     "F2": {
       "severity": "major",
@@ -95,7 +97,9 @@
         "pkg/reconciler/pr418_svc_selector_test.go::TestVerifyPR418_F2_UnsetPolicyNarrowsRoleInstanceSetSelector"
       ],
       "evidence": "results/l1-unit-head.txt (narrowed) vs results/l1-unit-base.txt (not narrowed).",
-      "canaryNote": "Whether LeaderOnly is the right default is a product decision, so the test records the NEW behaviour. Because f8f2a59f dropped the CRD default, the stored object keeps sharedServiceSelection absent -- so this change is now LESS discoverable than with a CRD default: nothing in the object tells an operator that leader-only selection is in force."
+      "canaryNote": "Whether LeaderOnly is the right default is a product decision, so the test records the NEW behaviour. Because f8f2a59f dropped the CRD default, the stored object keeps sharedServiceSelection absent -- so this change is now LESS discoverable than with a CRD default: nothing in the object tells an operator that leader-only selection is in force.",
+      "askChanged": "Revised: the ask is discoverability, not reversion. Keep the LeaderOnly default and restore a CRD default so the choice is recorded on the object, plus an upgrade note. The earlier framing ('keep nil -> All so the patch stays strictly additive') is superseded by the reviewer position above.",
+      "severityNote": "Still a silent behaviour change on upgrade, but corrective for the documented primary topology. Those actually hurt are users relying on the role-level headless Service for peer discovery over every Pod IP, which is a use the KEP never intended; they now need explicit All."
     },
     "F5": {
       "severity": "major",
@@ -111,7 +115,9 @@
       ],
       "evidence": "results/l1-unit-head.txt: worker serviceName == the shared service name at head; results/l1-unit-base.txt: the same assertion fails at base because the field is empty. F5b shows '' -> svc and svc -> '' both force ReCreate, while an unchanged value does not.",
       "canaryNote": "Binding the worker under All is the intended fix; what needs review is the undocumented pod rollout it causes on upgrade. The KEP documents a rollout only for a user-initiated policy switch.",
-      "raisedBy": "Independently raised by @NoobDream2568 in a PR issue comment before this harness existed. This verification CONFIRMS it with evidence rather than restating it: the worker serviceName goes from \"\" (base) to the service name (head), and a serviceName change is classified not-in-place-updatable in both directions."
+      "raisedBy": "Independently raised by @NoobDream2568 in a PR issue comment before this harness existed. This verification CONFIRMS it with evidence rather than restating it: the worker serviceName goes from \"\" (base) to the service name (head), and a serviceName change is classified not-in-place-updatable in both directions.",
+      "releaseNote": "Worth stating that the replacement is bounded by the role's rollout strategy rather than being a mass restart: limitUpdateIndexes caps concurrent updates at maxUnavailable in pkg/reconciler/roleinstanceset/statelessmode/sync/update.go, and statefulmode has an equivalent maxUnavailable budget.",
+      "accepted": "Accepted by the reviewer as a corrective rollout. No webhook or migration gate requested. Caveat carried from the discussion: do not assume the affected workloads were unusable -- anyone relying only on Service-level routing would have noticed nothing, yet their Pods are still replaced."
     },
     "F3": {
       "severity": "minor",
@@ -158,7 +164,8 @@
       "layers": [],
       "tests": [],
       "evidence": "git diff --name-only 4811ab04..f8f2a59f lists six files and keps/260-leaderonly-service/README.md is NOT among them, while the same commit removed the marker from api/workloads/v1alpha2/rolebasedgroup_types.go and restored the RoleSpec CEL rule.",
-      "raisedBy": "Raised by @NoobDream2568 on keps/260-leaderonly-service/README.md:179. The author replied 'You're probably seeing stale code. I've removed the default value...', which addresses the Go code but not the KEP the comment points at -- the KEP is genuinely still stale, so the comment was correct and remains unresolved."
+      "raisedBy": "Raised by @NoobDream2568 on keps/260-leaderonly-service/README.md:179. The author replied 'You're probably seeing stale code. I've removed the default value...', which addresses the Go code but not the KEP the comment points at -- the KEP is genuinely still stale, so the comment was correct and remains unresolved.",
+      "knockOn": "IMPORTANT: the correct re-sync direction depends on the default decision. If the CRD default returns, the +kubebuilder:default marker and the 'the API server defaults it to LeaderOnly' line become CORRECT again, and what needs removing is instead the 'deliberately not a CRD default' comment f8f2a59f added to rolebasedgroup_types.go. The '### Validation' section should only be restored if the CEL rule stays. The author has already said 'Good catch. I'll go ahead and update the documentation' (diw-zw, 2026-08-07T03:54:54Z), so raising this before that work lands avoids a second revision."
     }
   },
   "findings": [
@@ -223,5 +230,13 @@
     "copilot": "F3 (reverse transition coverage)",
     "NoobDream2568": "F5 (upgrade-triggered rollout for All roles) and F7 (stale KEP)",
     "independentHere": "F1/F1b (StatefulSet selector + CEL/controller disagreement), F2 (unset-policy endpoint loss), F6 (missing StatefulSet coverage)"
+  },
+  "reviewerPosition": {
+    "default": "Keep LeaderOnly as the effective default. The KEP's own motivation justifies it: the pre-PR all-Pods default routes requests at worker Pods that may only run a dummy API server, and all six leaderWorkerPattern examples in the repo leave the field unset, so the intended topology is exactly the mis-served one. LeaderOnly is corrective, not merely preferable.",
+    "asked": "Make the default DISCOVERABLE. f8f2a59f keeps the CEL rule and moves the default into the controller, which is the worst combination for F2: the behaviour changes while nothing in the stored object records it -- no kubectl -o yaml evidence, nothing to diff or audit.",
+    "tension": "A CRD default and the restored CEL rule are mutually exclusive, because defaulting runs before validation: a CRD default writes LeaderOnly onto every LWS/StatefulSet role and CEL then rejects it.",
+    "proposal": "CRD default + drop the CEL rule + add role.GetWorkloadType() == RoleInstanceSetWorkloadType to the narrowing condition in svc_reconciler.go. F1b is the evidence that the CEL rule is the weaker piece: it blocks only the explicit spelling of a policy the controller applies anyway via the unset path, so it is ceremony rather than protection. The scope check enforces the real invariant and fixes F1 in passing.",
+    "notARevert": "This is NOT a return to 4811ab04. That commit dropped the CEL rule WITHOUT the scope check, which is exactly what produced F1. Dropping it WITH the check is a different proposal.",
+    "residualCost": "LeaderOnly becomes writable on LWS roles where it is inert. A documentation line covers it; a status condition exposing the effective policy would be more rigorous but is probably not worth the added surface."
   }
 }

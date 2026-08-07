@@ -131,17 +131,66 @@ the line it is about.
 
 ## Suggested direction (not prescriptive)
 
-- **F1/F1b:** a `TODO` next to the narrowing is enough for now — gate it on
-  `role.GetWorkloadType() == constants.RoleInstanceSetWorkloadType` if StatefulSet outlives its
-  deprecation. Worth a line in the KEP's scope section either way, since it currently claims the
-  policy is inert outside `RoleInstanceSet` and that is only true for LWS, not StatefulSet.
-- **F2/F5:** state the upgrade consequences in the KEP and a release note — worker endpoints
-  disappear for unset roles, and worker pods restart for `All` roles. Neither requires a user
-  action to trigger, which is what makes them worth calling out.
+### Reviewer position: keep `LeaderOnly` as the default, but make it visible
+
+The KEP's own motivation is the strongest argument for the new default, and the PR undersells it:
+
+> for large-scale inference engines where only leader Pods accept external requests, routing
+> traffic to all Pods causes request failures. … worker Pods may only run a dummy API server,
+> and exposing those Pods through the role-level Service causes requests to be routed to
+> non-functional endpoints.
+
+So the pre-PR default is not a neutral old behaviour — it routes requests at dummy API servers.
+`LeaderOnly` is corrective, and all six `leaderWorkerPattern` examples in the repo leave the
+field unset, so the intended topology is exactly the one that was mis-served. That reframes F2:
+the population helped is larger than the population hurt. Who is still hurt is anyone using the
+role-level headless Service for peer discovery over every Pod IP, and they now need an explicit
+`All`.
+
+**The tension that comes with choosing `LeaderOnly`:** a discoverable default and the restored
+CEL rule are mutually exclusive. Defaulting runs before validation, so a CRD default writes
+`LeaderOnly` onto every LWS/StatefulSet role and CEL then rejects it. `f8f2a59f` resolved that by
+keeping the rule and moving the default into the controller — which produces the worst
+combination for F2: the behaviour changes, and nothing in the stored object records it. No
+`kubectl get -o yaml` evidence, nothing to diff, nothing to audit.
+
+**Suggested resolution** (not raised in the PR discussion so far): CRD default **+** drop the CEL
+rule **+** add a workload-type scope check in the controller.
+
+```go
+if role.IsLeaderWorkerPattern() &&
+    role.GetWorkloadType() == constants.RoleInstanceSetWorkloadType &&
+    role.LeaderWorkerPattern.GetSharedServiceSelection() == ...LeaderOnly {
+```
+
+The CEL rule is the weaker of the two, and F1b is the evidence: it blocks only the explicit
+spelling of a policy the controller applies anyway through the unset path, so it is ceremony
+rather than protection. The scope check is what actually enforces the invariant, and it fixes F1
+in passing.
+
+This is **not** a return to `4811ab04`. That commit dropped the rule *without* the scope check,
+which is precisely what produced F1. Dropping it *with* the check is a different proposal.
+
+Residual cost: `LeaderOnly` becomes writable on LWS roles where it is inert. A documentation line
+covers it; a status condition exposing the effective policy would be more rigorous but probably
+not worth the surface.
+
+### Per-finding direction
+
+- **F2:** keep the `LeaderOnly` default, but restore a CRD default so the choice is recorded on
+  the object, and ship an upgrade note. The ask is discoverability, not reversion.
+- **F1/F1b:** promoted from "TODO" to the *enabling change* for the above — the scope check is
+  what makes a CRD default safe.
+- **F5:** accepted as a corrective rollout. Worth noting in the release notes that it is bounded
+  by the role's rollout strategy (`limitUpdateIndexes`, `statelessmode/sync/update.go`, and the
+  equivalent budget in `statefulmode`), so it is a rolling replacement rather than a mass restart.
 - **F3/F6:** add the reverse transition and a StatefulSet case to the PR's own tests.
-- **F7:** re-sync `keps/260-leaderonly-service/README.md` with `f8f2a59f` — drop the
-  `+kubebuilder:default` marker and the "the API server defaults it" line, and restore the
-  `### Validation` section now that the CEL rule is back.
+- **F7:** re-sync the KEP — **but note the direction depends on the decision above.** If the CRD
+  default returns, the `+kubebuilder:default` marker and the "the API server defaults it" line in
+  the KEP become correct again, and what needs deleting is instead the "deliberately not a CRD
+  default" comment `f8f2a59f` added to `rolebasedgroup_types.go`. The `### Validation` section
+  should only come back if the CEL rule stays. Settling the default question first avoids making
+  the author revise the KEP twice.
 
 ---
 
