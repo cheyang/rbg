@@ -103,27 +103,21 @@ func pr418ServiceSelectorFor(
 	return svc.Spec.Selector
 }
 
-// TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector is the [CANARY] for F1.
+// TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector is the [CONTRACT] guard for F1.
 //
-// Polarity note: this began as a contract test, then was re-polarised once the reachability
-// was pinned down. The defect is real, but the only way to reach it is to hand-write the
-// deprecated role-workload-type annotation on a v1alpha2 role that also uses a
-// leaderWorkerPattern. The v1alpha1 conversion cannot produce that shape --
-// api/workloads/v1alpha1/rolebasedgroup_conversion.go builds a LeaderWorkerPattern only when
-// src.LeaderWorkerSet != nil, and StatefulSet falls through to StandalonePattern -- and the
-// conversion code itself says "New v1alpha2 RBGs should NOT set this annotation". So this
-// records the behaviour as accepted-with-a-TODO on a deprecating path rather than demanding a
-// fix. It flips if the selector is ever scoped to the supported workload type.
+// History: this reproduced a real defect at f8f2a59f, was re-polarised to a canary once the
+// reachability turned out to be nil in practice, and is now a contract test because 926778e7
+// fixed it. RoleSpec.GetSharedServiceSelection resolves any workload type other than
+// RoleInstanceSet to All, so the selector is no longer narrowed here.
 //
-// A role that carries a leaderWorkerPattern but runs on a StatefulSet still gets an
-// RBG-managed headless service (sts_reconciler.go calls reconcileHeadlessService). StatefulSet
-// pods are never labelled with ComponentNameLabelKey -- that label is only written on the
-// RoleInstanceSet path (pkg/reconciler/roleinstance/utils/instance_utils.go). So narrowing the
-// selector to component-name=leader can only ever produce a service with zero endpoints.
+// A role that carries a leaderWorkerPattern but runs on a StatefulSet still gets an RBG-managed
+// headless service (sts_reconciler.go calls reconcileHeadlessService). StatefulSet pods are never
+// labelled with ComponentNameLabelKey -- that label is only written on the RoleInstanceSet path
+// (pkg/reconciler/roleinstance/utils/instance_utils.go). Narrowing the selector to
+// component-name=leader would therefore leave the service with zero endpoints, which was verified
+// live: 2 endpoint addresses became 0 and the DNS name returned NXDOMAIN.
 //
-// The role deliberately leaves sharedServiceSelection UNSET, which is the only shape the
-// restored CEL rule still admits for this workload type -- and the shape on which
-// GetSharedServiceSelection() returns LeaderOnly.
+// Keep this green. If it fails, the workload-type scope check has been lost.
 func TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector(t *testing.T) {
 	role := wrappersv2.BuildLeaderWorkerRole("pr418-sts-lwp").
 		WithWorkload("apps/v1", "StatefulSet").Obj()
@@ -133,40 +127,35 @@ func TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector(t *testing.T) {
 
 	t.Logf("F1 observed selector for StatefulSet+leaderWorkerPattern (policy unset): %v", selector)
 
-	// TODO(pr418-F1): if the StatefulSet workload type outlives its deprecation, scope this
-	// narrowing to role.GetWorkloadType() == constants.RoleInstanceSetWorkloadType so the
-	// controller and the CEL rule agree on the supported scope.
-	assert.Contains(t, selector, constants.ComponentNameLabelKey,
-		"F1 canary: the shared service of a StatefulSet role IS narrowed to "+
-			"component-name=leader, a label no StatefulSet pod carries, so the service has zero "+
-			"endpoints. Accepted on a deprecating path -- flips if the narrowing is scoped")
+	assert.NotContains(t, selector, constants.ComponentNameLabelKey,
+		"F1: the shared service of a StatefulSet role must not be narrowed to "+
+			"component-name=leader -- no StatefulSet pod carries that label, so the service would "+
+			"have zero endpoints and its DNS name would not resolve")
 }
 
-// TestVerifyPR418_F1b_ExplicitLeaderOnlyIsRejectedButDefaultIsNot documents the guard gap
-// that commit f8f2a59f introduced. [CANARY]
+// TestVerifyPR418_F1b_ExplicitLeaderOnlyIsRejectedButDefaultIsNot is the [CONTRACT] guard for F1b.
 //
-// Polarity note: this is a canary, not a contract test. Scoping the *selector* to
-// RoleInstanceSet roles (the fix that turns F1 green) does not change what the helper
-// returns, so this stays red under that fix by design. It records the modelling
-// inconsistency itself and flips only if the helper stops claiming LeaderOnly for roles whose
-// workload type the API forbids it on.
+// The CEL rule on RoleSpec refuses an explicit LeaderOnly outside RoleInstanceSet, but CEL cannot
+// see a controller-side default: on the defaulted path the field is absent from the stored object,
+// so the rule short-circuits to valid. At f8f2a59f the helper handed LeaderOnly to exactly those
+// roles anyway, which is what made F1 reachable.
 //
-// The restored CEL rule refuses an EXPLICIT LeaderOnly on a non-RoleInstanceSet role. The
-// controller-side default is not subject to CEL at all, because CEL only sees the stored
-// object where the field is absent. So the very value the API declares unsupported for this
-// workload type is exactly the value the controller applies to it.
+// 926778e7 closed that gap by resolving non-RoleInstanceSet roles to All regardless of the stored
+// value, so the API and the controller now agree on scope without depending on admission. That also
+// keeps a cluster safe when its CRDs lag the controller.
+//
+// Keep this green. If it fails, the helper is once again claiming a policy the API rejects.
 func TestVerifyPR418_F1b_ExplicitLeaderOnlyIsRejectedButDefaultIsNot(t *testing.T) {
 	role := wrappersv2.BuildLeaderWorkerRole("pr418-sts-lwp").
 		WithWorkload("apps/v1", "StatefulSet").Obj()
 	role.LeaderWorkerPattern.SharedServiceSelection = nil
 
 	effective := role.GetSharedServiceSelection()
-	t.Logf("F1b effective policy the controller applies to a StatefulSet role: %q "+
-		"(CEL rejects this value when written explicitly)", effective)
+	t.Logf("F1b effective policy the controller applies to a StatefulSet role: %q", effective)
 
-	assert.Equal(t, workloadsv1alpha2.SharedServiceSelectionLeaderOnly, effective,
-		"F1b canary: the helper claims LeaderOnly for a workload type whose CEL rule rejects "+
-			"that value when written explicitly -- the API and the controller disagree")
+	assert.Equal(t, workloadsv1alpha2.SharedServiceSelectionAll, effective,
+		"F1b: the helper must not resolve to a policy the CEL rule rejects for this workload "+
+			"type. Outside RoleInstanceSet the effective policy has to be All")
 }
 
 // TestVerifyPR418_F2_UnsetPolicyNarrowsRoleInstanceSetSelector is the [CANARY] for F2.

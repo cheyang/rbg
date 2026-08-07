@@ -36,22 +36,20 @@
   },
   "liveNote": "Needs a real cluster with the RBG CRDs and a running RBG controller ($KUBECONFIG honoured). The script creates one throwaway namespace, applies a StatefulSet-backed leaderWorkerPattern role with the policy unset, and compares endpoint counts between the selector the INSTALLED controller generates and the selector PR#418 generates. Expected signal on unfixed code: arm A > 0 endpoints and arm B == 0, plus NXDOMAIN for arm B's DNS name. Set KEEP=1 to keep the namespace for inspection. If the cluster's controller already contains the PR, arm A will also be 0 and the comparison loses its baseline -- run it against a pre-PR controller.",
   "expectedAfterFix": {
-    "F1": "canary stays GREEN while the behaviour is accepted; flips if the narrowing is scoped to the RoleInstanceSet workload type, at which point invert or retire it",
-    "F1b": "canary stays RED under a selector-only fix; flips only if GetSharedServiceSelection stops returning LeaderOnly for workload types the CEL rule forbids it on -- invert or retire it then",
-    "F2": "canary stays GREEN while LeaderOnly remains the effective default; flips if the default is reverted or made explicit -- invert it then",
-    "F5": "canary stays GREEN (the worker binding under All is the intended behaviour); it exists to flag the upgrade rollout, so retire it once the rollout is documented",
-    "F5b": "stays GREEN; it pins correct behaviour and is worth keeping as a regression guard",
-    "F3": "canary stays GREEN until the RoleInstanceSet-level check also considers serviceName; the coverage gap closes when an All -> LeaderOnly case is added to the PR's own tests",
-    "F6": "closes when the PR adds its own StatefulSet + leaderWorkerPattern case",
-    "F1-e2e": "same as F1",
-    "F7": "closes when the KEP is re-synced with f8f2a59f"
+    "F1": "green. Red means the workload-type scope check was lost.",
+    "F1-e2e": "green. Same guard at the integration layer.",
+    "F1b": "green. Red means the helper resolves to a policy the API rejects for that workload type.",
+    "F2": "green while LeaderOnly is the effective default for RoleInstanceSet. Canary: invert if that default is ever reverted.",
+    "F5": "green. Canary recording that the worker binds under All; retire it if the upgrade note is ever dropped.",
+    "F5b": "green. Regression guard on the ReCreate decision.",
+    "F3": "green. Canary: flips if the RoleInstanceSet layer starts considering serviceName."
   },
   "findingDetail": {
     "F1": {
       "severity": "minor (TODO)",
       "claim": "A role with a leaderWorkerPattern pinned to the StatefulSet workload type, with sharedServiceSelection left unset, gets its shared headless Service selector narrowed to component-name=leader. No StatefulSet pod ever carries that label, so the Service loses every endpoint and its DNS name stops resolving.",
-      "status": "CONFIRMED as a defect, ACCEPTED on a deprecating path",
-      "polarity": "canary",
+      "status": "FIXED at 926778e7",
+      "polarity": "contract (inverted after the fix)",
       "layers": [
         "unit",
         "integration",
@@ -64,14 +62,14 @@
       "evidence": "results/l1-unit-head.txt, results/l2-envtest-f1.txt, results/l3-live-f1.txt",
       "regressionProof": "The same contract test PASSES at base 8a54787d (selector {group,role}) and FAILS at head f8f2a59f (selector {group,role,component-name=leader}) -- see results/l1-unit-base.txt. Live: 2 endpoint addresses -> 0, DNS NXDOMAIN.",
       "reachability": "Only reachable by hand-writing the deprecated role-workload-type=apps/v1/StatefulSet annotation on a v1alpha2 role that also uses leaderWorkerPattern. The v1alpha1 conversion cannot produce that shape: api/workloads/v1alpha1/rolebasedgroup_conversion.go builds a LeaderWorkerPattern only when src.LeaderWorkerSet != nil, while StatefulSet falls through to StandalonePattern. The conversion code itself states 'New v1alpha2 RBGs should NOT set this annotation', and keps/workload-compatibility-mode/README.md deprecates the workload field. Downgraded from blocker to a TODO on the reviewer's guidance that StatefulSet is being deprecated; the evidence stands, the priority does not.",
-      "polarityNote": "Re-polarised from contract to canary once reachability was pinned down, so re-verify.sh does not report Still-broken forever for a consciously accepted behaviour. It flips if the narrowing is ever scoped to the supported workload type.",
+      "polarityNote": "Was contract -> canary -> contract. Now a regression guard: it fails if the workload-type scope check is lost.",
       "dispositionChanged": "Promoted from standalone TODO to the ENABLING change for a CRD default: the workload-type scope check is what makes CRD defaulting safe. Reachability is still nil in practice, so it remains low-urgency on its own -- but it is no longer optional if the default is made discoverable."
     },
     "F1b": {
       "severity": "minor (TODO)",
       "claim": "The restored CEL rule rejects an EXPLICIT LeaderOnly on a non-RoleInstanceSet role, yet the controller applies exactly that policy to the same role through its in-process default. CEL cannot see the defaulted value because the field is absent from the stored object, so the guard is unreachable on the only path that matters.",
-      "status": "CONFIRMED",
-      "polarity": "canary",
+      "status": "FIXED at 926778e7",
+      "polarity": "contract (inverted after the fix)",
       "layers": [
         "unit",
         "integration"
@@ -83,7 +81,8 @@
       "evidence": "results/l2-envtest-f1.txt -- a real API server refuses the explicit value ('only supported for RoleInstanceSet') and accepts the unset field on the very same role, after which the controller builds the leader-only selector.",
       "canaryNote": "Canary, not contract: scoping the SELECTOR to RoleInstanceSet roles (the fix that turns F1 green) does not change what GetSharedServiceSelection returns, so this test stays red under that fix by design. It flips only if the helper stops claiming LeaderOnly for workload types whose CEL rule forbids it.",
       "note": "Same deprecating path as F1, so same disposition. Worth recording because it is the root cause of F1: the API and the controller disagree about which workload types LeaderOnly applies to, and CEL structurally cannot close that gap for a controller-side default.",
-      "dispositionChanged": "Same as F1: it is the evidence that the CEL rule cannot enforce the invariant."
+      "dispositionChanged": "Same as F1: it is the evidence that the CEL rule cannot enforce the invariant.",
+      "polarityNote": "Inverted after 926778e7. Fails if the helper again resolves to a policy the CEL rule rejects for the workload type."
     },
     "F2": {
       "severity": "major",
@@ -171,7 +170,7 @@
   "findings": [
     {
       "id": "F1",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
         "TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector"
@@ -179,7 +178,7 @@
     },
     {
       "id": "F1-e2e",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "integration",
       "match": [
         "still narrow the shared service selector"
@@ -187,7 +186,7 @@
     },
     {
       "id": "F1b",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
         "TestVerifyPR418_F1b_ExplicitLeaderOnlyIsRejectedButDefaultIsNot"
@@ -238,5 +237,12 @@
     "proposal": "CRD default + drop the CEL rule + add role.GetWorkloadType() == RoleInstanceSetWorkloadType to the narrowing condition in svc_reconciler.go. F1b is the evidence that the CEL rule is the weaker piece: it blocks only the explicit spelling of a policy the controller applies anyway via the unset path, so it is ceremony rather than protection. The scope check enforces the real invariant and fixes F1 in passing.",
     "notARevert": "This is NOT a return to 4811ab04. That commit dropped the CEL rule WITHOUT the scope check, which is exactly what produced F1. Dropping it WITH the check is a different proposal.",
     "residualCost": "LeaderOnly becomes writable on LWS roles where it is inert. A documentation line covers it; a status condition exposing the effective policy would be more rigorous but is probably not worth the added surface."
+  },
+  "finalState": {
+    "head": "a76799c9",
+    "ci": "all green, including e2e-test and e2e-test-manifest",
+    "harness": "6/6 green at L1 and L2, so re-verify.sh exits 0",
+    "outcome": "F1, F1b, F3, F6, F7 and the N1 lint regression are fixed. F2 and F5 were kept deliberately and are documented in the KEP's Upgrade Considerations.",
+    "notMerged": "The reviewer merges from the GitHub UI. This branch posted nothing to the PR."
   }
 }
