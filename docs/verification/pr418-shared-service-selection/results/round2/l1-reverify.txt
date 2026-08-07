@@ -1,0 +1,19 @@
+ssh: connect to host 43.99.38.217 port 22: Bad file descriptor
+[sb.sh] attempt 1 failed (rc=255), retrying...
+    pr418_svc_selector_test.go:134: F1 observed selector for StatefulSet+leaderWorkerPattern (policy unset): map[rbg.workloads.x-k8s.io/group-name:pr418-rbg rbg.workloads.x-k8s.io/role-name:pr418-sts-lwp]
+--- FAIL: TestVerifyPR418_F1_StatefulSetLeaderWorkerSelector (0.22s)
+    pr418_svc_selector_test.go:164: F1b effective policy the controller applies to a StatefulSet role: "All" (CEL rejects this value when written explicitly)
+--- FAIL: TestVerifyPR418_F1b_ExplicitLeaderOnlyIsRejectedButDefaultIsNot (0.00s)
+    pr418_svc_selector_test.go:188: F2 observed selector for RoleInstanceSet+leaderWorkerPattern (policy unset): map[rbg.workloads.x-k8s.io/component-name:leader rbg.workloads.x-k8s.io/group-name:pr418-rbg rbg.workloads.x-k8s.io/role-name:pr418-ris-lwp]
+--- PASS: TestVerifyPR418_F2_UnsetPolicyNarrowsRoleInstanceSetSelector (0.01s)
+    pr418_upgrade_rollout_test.go:81: F5 component serviceName under All: map[leader:s-pr418-all-rbg-pr418-all-role worker:s-pr418-all-rbg-pr418-all-role]
+--- PASS: TestVerifyPR418_F5_WorkerServiceNameUnderAll (0.05s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.540s
+--- PASS: TestVerifyPR418_F5b_ServiceNameChangeForcesRecreate (0.00s)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.154s
+    pr418_instance_layer_test.go:62: F3 RoleInstanceSet layer: worker serviceName "" -> "s-rbg-role", canNotInPlaceUpdate=false
+    pr418_instance_layer_test.go:82: F3 control: worker size 1 -> 3, canNotInPlaceUpdate=true
+--- PASS: TestVerifyPR418_F3_InstanceLayerIgnoresServiceName (0.00s)
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	0.132s
+FAIL

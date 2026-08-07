@@ -160,7 +160,7 @@ func TestVerifyPR418_F1b_ExplicitLeaderOnlyIsRejectedButDefaultIsNot(t *testing.
 		WithWorkload("apps/v1", "StatefulSet").Obj()
 	role.LeaderWorkerPattern.SharedServiceSelection = nil
 
-	effective := role.LeaderWorkerPattern.GetSharedServiceSelection()
+	effective := role.GetSharedServiceSelection()
 	t.Logf("F1b effective policy the controller applies to a StatefulSet role: %q "+
 		"(CEL rejects this value when written explicitly)", effective)
 
