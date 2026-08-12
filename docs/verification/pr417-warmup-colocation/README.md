@@ -3,6 +3,9 @@
 Reviewer-private harness for [PR #417](https://github.com/sgl-project/rbg/pull/417).
 **Production code is untouched**; this branch adds only a Go test file and this directory.
 
+- Status: stage ③ published. `CHANGES_REQUESTED` submitted on `7b544482` (2026-08-12), one
+  inline `major` on the taint filter (F1) plus one `nit` on `go.mod` (F3). Awaiting the author's
+  fix; next round is `scripts/re-verify.sh`.
 - PR head verified: `7b544482` ("update go.mod")
 - Base: `upstream/main` @ `cb14eee3`, merge-base `8a54787d`
 - Live environment: 3-node ACK cluster (`cn-hongkong.10.167.14.221`, `10.39.55.150`,
