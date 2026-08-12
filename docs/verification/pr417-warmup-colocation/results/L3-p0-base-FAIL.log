@@ -1,0 +1,120 @@
+[v1alpha2] Run role based controller e2e tests warmup should complete warmup job with targetRoleBasedGroup mode and merge multi-role actions
+/root/verify-pr417-base/test/e2e/testcase/v1alpha2/warmup.go:103
+  STEP: Creating RBG with 2 roles @ 08/12/26 11:34:21.836
+  STEP: Waiting for RBG pods to be scheduled @ 08/12/26 11:34:21.854
+  STEP: Getting node name from RBG pods @ 08/12/26 11:34:22.118
+  STEP: Creating warmup CR with targetRoleBasedGroup mode @ 08/12/26 11:34:22.132
+  [FAILED] in [It] - /root/verify-pr417-base/test/e2e/testcase/v1alpha2/warmup.go:215 @ 08/12/26 11:34:28.563
+2026-08-12T11:34:28.569+0800	INFO	v1alpha2/warmup.go:509	Warmup debug info	{"name": "warmup-targetrbg-test", "phase": "Completed", "desired": 2, "active": 0, "succeeded": 2, "failed": 0, "conditions": "[{Type:Complete Status:True ObservedGeneration:1 LastTransitionTime:2026-08-12 11:34:28 +0800 CST Reason:WarmupCompleted Message:2/2 nodes warmed up successfully}]"}
+2026-08-12T11:34:28.575+0800	INFO	v1alpha2/warmup.go:526	Warmup pod	{"name": "warmup-targetrbg-test-5htcc", "phase": "Succeeded", "node": "cn-hongkong.10.39.55.151"}
+2026-08-12T11:34:28.575+0800	INFO	v1alpha2/warmup.go:526	Warmup pod	{"name": "warmup-targetrbg-test-thmpt", "phase": "Succeeded", "node": "cn-hongkong.10.39.55.150"}
+• [FAILED] [38.708 seconds]
+[v1alpha2] Run role based controller e2e tests warmup [It] should complete warmup job with targetRoleBasedGroup mode and merge multi-role actions
+/root/verify-pr417-base/test/e2e/testcase/v1alpha2/warmup.go:103
+
+  [FAILED] Expected
+      <[]v1.Pod | len:2, cap:2>: [
+          {
+              TypeMeta: {Kind: "", APIVersion: ""},
+              ObjectMeta: {
+                  Name: "warmup-targetrbg-test-5htcc",
+                  GenerateName: "warmup-targetrbg-test-",
+                  Namespace: "test-ns-rfwrv",
+                  SelfLink: "",
+                  UID: "ffe33503-28d1-411e-875d-6fa75bb269e1",
+                  ResourceVersion: "49423477",
+                  Generation: 1,
+                  CreationTimestamp: {
+                      Time: 2026-08-12T11:34:22+08:00,
+                  },
+                  DeletionTimestamp: nil,
+                  DeletionGracePeriodSeconds: nil,
+                  Labels: {
+                      "workloads.x-k8s.io/warmup-uid": "6675583e-eab5-42ad-990d-a7f5b788c7ec",
+                      "topology.kubernetes.io/region": "cn-hongkong",
+                      "topology.kubernetes.io/zone": "cn-hongkong-b",
+                      "workloads.x-k8s.io/node-name": "cn-hongkong.10.39.55.151",
+                      "workloads.x-k8s.io/warmup-name": "warmup-targetrbg-test",
+                  },
+                  Annotations: {
+                      "k8s.aliyun.com/pod-ips": "10.39.55.179",
+                      "node-local-dns-webhook.k8s.io/status": "injected",
+                  },
+                  OwnerReferences: [
+                      {
+                          APIVersion: "workloads.x-k8s.io/v1alpha2",
+                          Kind: "RoleBasedGroupWarmup",
+                          Name: "warmup-targetrbg-test",
+                          UID: "6675583e-eab5-42ad-990d-a7f5b788c7ec",
+                          Controller: true,
+                          BlockOwnerDeletion: true,
+                      },
+                  ],
+                  Finalizers: nil,
+                  ManagedFields: [
+                      {
+                          Manager: "kube-scheduler",
+                          Operation: "Update",
+                          APIVersion: "v1",
+                          Time: {
+                              Time: 2026-08-12T11:34:22+08:00,
+                          },
+                          FieldsType: "FieldsV1",
+                          FieldsV1: {
+                              Raw: "{\"f:status\":{\"f:nominatedNodeName\":{}}}",
+                          },
+                          Subresource: "status",
+                      },
+                      {
+                          Manager: "manager",
+                          Operation: "Update",
+                          APIVersion: "v1",
+                          Time: {
+                              Time: 2026-08-12T11:34:22+08:00,
+                          },
+                          FieldsType: "FieldsV1",
+                          FieldsV1: {
+                              Raw: "{\"f:metadata\":{\"f:generateName\":{},\"f:labels\":{\".\":{},\"f:workloads.x-k8s.io/node-name\":{},\"f:workloads.x-k8s.io/warmup-name\":{},\"f:workloads.x-k8s.io/warmup-uid\":{}},\"f:ownerReferences\":{\".\":{},\"k:{\\\"uid\\\":\\\"6675583e-eab5-42ad-990d-a7f5b788c7ec\\\"}\":{}}},\"f:spec\":{\"f:containers\":{\"k:{\\\"name\\\":\\\"image-preload-0\\\"}\":{\".\":{},\"f:command\":{},\"f:image\":{},\"f:imagePullPolicy\":{},\"f:name\":{},\"f:resources\":{},\"f:terminationMessagePath\":{},\"f:terminationMessagePolicy\":{}}},\"f:dnsPolicy\":{},\"f:enableServiceLinks\":{},\"f:nodeSelector\":{},\"f:restartPolicy\":{},\"f:schedulerName\":{},\"f:securityContext\":{},\"f:terminationGracePeriodSeconds\":{}}}",
+                          },
+                          Subresource: "",
+                      },
+                      {
+                          Manager: "terwayd",
+                          Operation: "Update",
+                          APIVersion: "v1",
+                          Time: {
+                              Time: 2026-08-12T11:34:23+08:00,
+                          },
+                          FieldsType: "FieldsV1",
+                          FieldsV1: {
+                              Raw: "{\"f:metadata\":{\"f:annotations\":{\"f:k8s.aliyun.com/pod-ips\":{}}}}",
+                          },
+                          Subresource: "",
+              ...
+
+  Gomega truncated this representation as it exceeds 'format.MaxLength'.
+  Consider having the object provide a custom 'GomegaStringer' representation
+  or adjust the parameters in Gomega's 'format' package.
+
+  Learn more here: https://onsi.github.io/gomega/#adjusting-output
+
+  to have length 1
+  In [It] at: /root/verify-pr417-base/test/e2e/testcase/v1alpha2/warmup.go:215 @ 08/12/26 11:34:28.563
+------------------------------
+SSSSSS
+------------------------------
+[AfterSuite] 
+/root/verify-pr417-base/test/e2e/e2e_test.go:40
+[AfterSuite] PASSED [0.009 seconds]
+------------------------------
+
+Summarizing 1 Failure:
+  [FAIL] [v1alpha2] Run role based controller e2e tests warmup [It] should complete warmup job with targetRoleBasedGroup mode and merge multi-role actions
+  /root/verify-pr417-base/test/e2e/testcase/v1alpha2/warmup.go:215
+
+Ran 1 of 106 Specs in 38.753 seconds
+FAIL! -- 0 Passed | 1 Failed | 2 Pending | 103 Skipped
+--- FAIL: TestE2E (38.79s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/e2e	38.985s
+FAIL

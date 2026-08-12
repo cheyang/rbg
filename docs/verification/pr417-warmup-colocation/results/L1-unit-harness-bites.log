@@ -1,0 +1,11 @@
+### L1 with the proposed one-line fix applied (harness-bites check) ###
+=== RUN   TestVerifyF1_PreferNoScheduleMustNotBlockNodeSelection
+--- PASS: TestVerifyF1_PreferNoScheduleMustNotBlockNodeSelection (0.00s)
+=== RUN   TestVerifyF1_BaselineRejectionsStillHold
+--- PASS: TestVerifyF1_BaselineRejectionsStillHold (0.00s)
+=== RUN   TestVerifyF2_DefaultPodTolerationsAreANoOp
+--- PASS: TestVerifyF2_DefaultPodTolerationsAreANoOp (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/e2e/testcase/v1alpha2	(cached)
+--- production code reverted, diff: ---
+?? test/e2e/testcase/v1alpha2/warmup_node_availability_verify_test.go

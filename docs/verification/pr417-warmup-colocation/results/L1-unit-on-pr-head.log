@@ -1,0 +1,11 @@
+### L1 on PR head 7b544482 (unmodified) ###
+=== RUN   TestVerifyF1_PreferNoScheduleMustNotBlockNodeSelection
+    warmup_node_availability_verify_test.go:62: isNodeAvailable(PreferNoSchedule node) = false, want true (kube-scheduler treats PreferNoSchedule as a soft signal; a tolerationless pod still schedules there)
+--- FAIL: TestVerifyF1_PreferNoScheduleMustNotBlockNodeSelection (0.00s)
+=== RUN   TestVerifyF1_BaselineRejectionsStillHold
+--- PASS: TestVerifyF1_BaselineRejectionsStillHold (0.00s)
+=== RUN   TestVerifyF2_DefaultPodTolerationsAreANoOp
+--- PASS: TestVerifyF2_DefaultPodTolerationsAreANoOp (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/e2e/testcase/v1alpha2	0.429s
+FAIL

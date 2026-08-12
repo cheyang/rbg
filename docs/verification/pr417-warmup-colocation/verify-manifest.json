@@ -1,0 +1,70 @@
+{
+  "topic": "pr417-warmup-colocation",
+  "pr": "https://github.com/sgl-project/rbg/pull/417",
+  "prHeadFetch": { "remote": "upstream", "ref": "pull/417/head" },
+  "harnessPaths": [
+    "docs/verification/pr417-warmup-colocation",
+    "test/e2e/testcase/v1alpha2/warmup_node_availability_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "The e2e case `warmup / should complete warmup job with targetRoleBasedGroup mode and merge multi-role actions` fails on any cluster with more than one schedulable node",
+    "reportedComponent": "test/e2e/testcase/v1alpha2/warmup.go",
+    "patchedComponent": "test/e2e/testcase/v1alpha2/warmup.go",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "live",
+    "verdict": "confirmed",
+    "evidence": "On a 3-node ACK cluster (all Ready, untainted), base cb14eee3 fails at warmup.go:215 with desired=2 succeeded=2 and one warmup Pod on each of two nodes -- byte-for-byte the signature quoted in the PR body. The same spec on head 7b544482 passes. results/L3-p0-base-FAIL.log, results/L3-p0-head-PASS.log",
+    "match": ["merge multi-role actions"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/e2e/testcase/v1alpha2/ -run 'TestVerifyF' -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "severity": "minor",
+      "claim": "isNodeAvailable passes a nil inclusionFilter to FindMatchingUntoleratedTaint, so a PreferNoSchedule taint is treated as a hard block. kube-scheduler's TaintToleration plugin filters on Effect == NoSchedule || NoExecute, so such a node is schedulable for a tolerationless pod. On a cluster whose nodes carry a PreferNoSchedule taint, both loops in getFirstAvailableNodeName fall through and all five warmup cases die in ginkgo.Fail rather than running.",
+      "verdict": "confirmed",
+      "match": ["TestVerifyF1_PreferNoScheduleMustNotBlockNodeSelection"],
+      "guardTests": ["TestVerifyF1_BaselineRejectionsStillHold"],
+      "proposedFix": "pass func(t *corev1.Taint) bool { return t.Effect == corev1.TaintEffectNoSchedule || t.Effect == corev1.TaintEffectNoExecute } instead of nil"
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "severity": "nit",
+      "claim": "defaultPodTolerations cannot change any verdict once the Ready gate is in place: node.kubernetes.io/not-ready and unreachable are added exactly when Ready is False/Unknown, which isNodeAvailable already rejects. The inclusionFilter argument, not the toleration list, is what decides anything here.",
+      "verdict": "confirmed",
+      "match": ["TestVerifyF2_DefaultPodTolerationsAreANoOp"],
+      "note": "Observation, not a defect. Stays green before and after the F1 fix -- it is not a regression signal."
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "static",
+      "severity": "nit",
+      "claim": "go.mod promotes k8s.io/component-helpers to a direct require while leaving it at v0.33.3, the only k8s.io direct dependency off the v0.34.1 line that the rest of the tree uses.",
+      "verdict": "confirmed",
+      "match": ["results/static-F3-gomod-version-skew.txt"],
+      "note": "No build impact: vendor/modules.txt already listed scheduling/corev1 + nodeaffinity, and go build -mod=vendor ./... plus go vet ./test/e2e/... are clean at head."
+    },
+    {
+      "id": "D1",
+      "polarity": "contract",
+      "layer": "static",
+      "verdict": "disproved",
+      "claim": "REVIEWER HYPOTHESIS, DISPROVED: the new k8s.io/component-helpers/scheduling/corev1 import is not vendored, so -mod=vendor builds break.",
+      "match": ["results/static-F3-gomod-version-skew.txt"],
+      "note": "vendor/modules.txt at head already lists all four component-helpers packages; build and vet are clean. Not a finding -- recorded so it is not re-raised."
+    }
+  ],
+  "liveNote": "L3 needs a real multi-node cluster (>=2 Ready schedulable nodes) plus the rbgs controller installed. Run: KUBECONFIG=... go test ./test/e2e/ -v -ginkgo.v -ginkgo.focus='merge multi-role actions'. On base the observable signal is warmup status desired=2/succeeded=2 with one warmup Pod per node; on a correct fix it is desired=1/succeeded=1 with a single 2-container warmup Pod. A single-node cluster (what CI uses) cannot decide P0 at all."
+}

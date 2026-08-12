@@ -1,0 +1,45 @@
+=== RUN   TestE2E
+Running Suite: run rbg e2e test - /root/verify-pr417-head/test/e2e
+==================================================================
+Random Seed: 1786505889
+
+Will run 1 of 105 specs
+------------------------------
+[BeforeSuite] 
+/root/verify-pr417-head/test/e2e/e2e_test.go:34
+[BeforeSuite] PASSED [0.029 seconds]
+------------------------------
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+P [PENDING]
+[v1alpha2] Run role based controller e2e tests rbg controller rbg with volcano gang scheduling
+/root/verify-pr417-head/test/e2e/testcase/v1alpha2/rbg.go:240
+------------------------------
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+------------------------------
+[v1alpha2] Run role based controller e2e tests warmup should complete warmup job with targetRoleBasedGroup mode and merge multi-role actions
+/root/verify-pr417-head/test/e2e/testcase/v1alpha2/warmup.go:104
+  STEP: Creating RBG with 2 roles pinned to the same node @ 08/12/26 11:38:09.43
+  STEP: Waiting for both role pods to be scheduled @ 08/12/26 11:38:09.464
+  STEP: Verifying both roles were scheduled on the same node @ 08/12/26 11:38:09.736
+  STEP: Creating warmup CR with targetRoleBasedGroup mode @ 08/12/26 11:38:09.736
+2026-08-12T11:38:12.693+0800	INFO	v1alpha2/warmup.go:563	Warmup debug info	{"name": "warmup-targetrbg-test", "phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0, "conditions": "[{Type:Complete Status:True ObservedGeneration:1 LastTransitionTime:2026-08-12 11:38:12 +0800 CST Reason:WarmupCompleted Message:1/1 nodes warmed up successfully}]"}
+2026-08-12T11:38:12.791+0800	INFO	v1alpha2/warmup.go:580	Warmup pod	{"name": "warmup-targetrbg-test-vrqnr", "phase": "Succeeded", "node": "cn-hongkong.10.167.14.221"}
+• [34.294 seconds]
+------------------------------
+SSSSSSSSSSSSSSSSS
+P [PENDING]
+[v1alpha1] Run role based controller e2e tests rbg controller rbg with volcano gang scheduling
+/root/verify-pr417-head/test/e2e/testcase/v1alpha1/rbg.go:178
+------------------------------
+SSSSSSSSSSSSSSSSSS
+------------------------------
+[AfterSuite] 
+/root/verify-pr417-head/test/e2e/e2e_test.go:40
+[AfterSuite] PASSED [0.036 seconds]
+------------------------------
+
+Ran 1 of 105 Specs in 34.376 seconds
+SUCCESS! -- 1 Passed | 0 Failed | 2 Pending | 102 Skipped
+--- PASS: TestE2E (34.39s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/e2e	34.682s
