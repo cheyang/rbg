@@ -1,0 +1,2 @@
+rbgs-controller-manager-7995cd4c4-5schm   1/1   Running   0     38h   10.39.55.179    cn-hongkong.10.39.55.151    <none>   <none>
+rbgs-controller-manager-7995cd4c4-zgjts   1/1   Running   0     38h   10.167.14.240   cn-hongkong.10.167.14.221   <none>   <none>

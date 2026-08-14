@@ -1,0 +1,51 @@
+===== restore the object phase 2 damaged =====
+roleinstance.workloads.x-k8s.io/nginx-cluster-backend-0 patched
+
+===== apply the PR 424 CRDs (what the crd-upgrade Job would do) =====
+customresourcedefinition.apiextensions.k8s.io/clusterengineruntimeprofiles.workloads.x-k8s.io serverside-applied
+customresourcedefinition.apiextensions.k8s.io/coordinatedpolicies.workloads.x-k8s.io serverside-applied
+customresourcedefinition.apiextensions.k8s.io/instances.workloads.x-k8s.io serverside-applied
+customresourcedefinition.apiextensions.k8s.io/instancesets.workloads.x-k8s.io serverside-applied
+customresourcedefinition.apiextensions.k8s.io/rolebasedgroups.workloads.x-k8s.io serverside-applied
+customresourcedefinition.apiextensions.k8s.io/rolebasedgroupscalingadapters.workloads.x-k8s.io serverside-applied
+customresourcedefinition.apiextensions.k8s.io/rolebasedgroupsets.workloads.x-k8s.io serverside-applied
+customresourcedefinition.apiextensions.k8s.io/rolebasedgroupwarmups.workloads.x-k8s.io serverside-applied
+customresourcedefinition.apiextensions.k8s.io/roleinstances.workloads.x-k8s.io serverside-applied
+customresourcedefinition.apiextensions.k8s.io/roleinstancesets.workloads.x-k8s.io serverside-applied
+restartPolicy.type: string
+restartPolicyConfig in schema: True
+
+===== what is SERVED for the existing objects now =====
+nginx-cluster-backend-0 restartPolicy= {}
+nginx-cluster-backend-1 restartPolicy= {}
+nginx-cluster-backend-2 restartPolicy= {}
+nginx-cluster-frontend-0 restartPolicy= {}
+
+===== migrate all RoleInstances with the merge-patch recipe =====
+roleinstance.workloads.x-k8s.io/nginx-cluster-backend-0 patched
+roleinstance.workloads.x-k8s.io/nginx-cluster-backend-1 patched
+roleinstance.workloads.x-k8s.io/nginx-cluster-backend-2 patched
+roleinstance.workloads.x-k8s.io/nginx-cluster-frontend-0 patched
+nginx-cluster-backend-0 restartPolicy= null restartPolicyConfig= {"baseDelaySeconds": 30, "maxDelaySeconds": 600, "type": "None"}
+nginx-cluster-backend-1 restartPolicy= null restartPolicyConfig= {"baseDelaySeconds": 30, "maxDelaySeconds": 600, "type": "None"}
+nginx-cluster-backend-2 restartPolicy= null restartPolicyConfig= {"baseDelaySeconds": 30, "maxDelaySeconds": 600, "type": "None"}
+nginx-cluster-frontend-0 restartPolicy= null restartPolicyConfig= {"baseDelaySeconds": 30, "maxDelaySeconds": 600, "type": "None"}
+
+===== restart the controller and confirm the informer recovers =====
+Waiting for deployment "rbgs-controller-manager" rollout to finish: 1 old replicas are pending termination...
+deployment "rbgs-controller-manager" successfully rolled out
+rbgs-controller-manager-587b948b9d-6knk4: RoleInstance decode errors = 0
+rbgs-controller-manager-587b948b9d-dxgkf: RoleInstance decode errors = 0
+TOTAL decode errors after migration = 0
+
+===== LIVE F2: v0.7.0-shaped RBG, then kubectl edit the deprecated field =====
+rolebasedgroup.workloads.x-k8s.io/pr424-f2 created
+--- as stored after admission (new defaulting webhook) ---
+restartPolicy      = "RecreateRoleInstanceOnPodRestart"
+restartPolicyConfig= {"baseDelaySeconds": 30, "maxDelaySeconds": 600, "type": "RecreateRoleInstanceOnPodRestart"}
+--- operator flips the deprecated field to None (what kubectl edit sends) ---
+rolebasedgroup.workloads.x-k8s.io/pr424-f2 patched
+restartPolicy      = "None"  <- operator asked for None
+restartPolicyConfig= {"baseDelaySeconds": 30, "maxDelaySeconds": 600, "type": "RecreateRoleInstanceOnPodRestart"}  <- what the controller obeys
+--- and what actually reached the RoleInstance ---
+L3_PHASE3_DONE

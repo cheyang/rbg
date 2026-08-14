@@ -1,0 +1,41 @@
+===== remove harness objects =====
+rolebasedgroup.workloads.x-k8s.io "pr424-f2" deleted from default namespace
+===== helm rollback to revision 3 (main build) =====
+WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: /root/.kube/config
+WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: /root/.kube/config
+Rollback was a success! Happy Helming!
+helm rc=0
+===== restore the main CRDs =====
+See https://kubernetes.io/docs/reference/using-api/server-side-apply/#conflicts
+See https://kubernetes.io/docs/reference/using-api/server-side-apply/#conflicts
+See https://kubernetes.io/docs/reference/using-api/server-side-apply/#conflicts
+customresourcedefinition.apiextensions.k8s.io/roleinstancesets.workloads.x-k8s.io serverside-applied
+restartPolicy.type: string
+restartPolicyConfig in schema: True
+===== restore the 4 RoleInstances to the object shape main expects =====
+* <nil>: Invalid value: null: some validation rules were not checked because the object was invalid; correct the existing errors to complete validation
+* <nil>: Invalid value: null: some validation rules were not checked because the object was invalid; correct the existing errors to complete validation
+* <nil>: Invalid value: null: some validation rules were not checked because the object was invalid; correct the existing errors to complete validation
+* <nil>: Invalid value: null: some validation rules were not checked because the object was invalid; correct the existing errors to complete validation
+nginx-cluster-backend-0 restartPolicy= null
+nginx-cluster-backend-1 restartPolicy= null
+nginx-cluster-backend-2 restartPolicy= null
+nginx-cluster-frontend-0 restartPolicy= null
+===== the PR mutating webhook must be gone (failurePolicy=Fail would block all writes) =====
+none (good)
+===== controller health =====
+rolebasedgroup/rbgs-controller:v0.8.0-0c00546d
+rbgs-controller-manager-587b948b9d-6knk4 1/1 Terminating
+rbgs-controller-manager-587b948b9d-dxgkf 1/1 Terminating
+rbgs-controller-manager-669cf975fb-j9gls 1/1 Running
+rbgs-controller-manager-669cf975fb-pl8lb 1/1 Running
+rbgs-controller-manager-669cf975fb-j9gls decode errors = 0
+rbgs-controller-manager-669cf975fb-pl8lb decode errors = 0
+===== original workload intact? =====
+NAMESPACE   NAME            READY   AGE
+default     nginx-cluster   True    5d17h
+nginx-cluster-backend-0 1/1 Running
+nginx-cluster-backend-1 1/1 Running
+nginx-cluster-backend-2 1/1 Running
+nginx-cluster-frontend-0 1/1 Running
+ROLLBACK_DONE

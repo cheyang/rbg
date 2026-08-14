@@ -1,0 +1,91 @@
+{
+  "topic": "pr424-restart-policy-string-restore",
+  "pr": "https://github.com/sgl-project/rbg/pull/424",
+  "prHeadFetch": {
+    "remote": "upstream",
+    "ref": "pull/424/head"
+  },
+  "harnessPaths": [
+    "docs/verification/pr424-restart-policy-string-restore",
+    "test/verify/pr424",
+    "test/envtest/testcase/restart_policy/zz_verify_pr424_revision_test.go"
+  ],
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/verify/pr424/ -run '^TestL1' -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=$(pwd)/$(bin/setup-envtest use 1.33.0 --bin-dir bin -p path) go test ./test/verify/pr424/ -run '^TestL2' -timeout 30m -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestL1_R3_DeprecatedFieldStaysAuthoritativeAcrossEdits",
+        "TestL1_R3_ExplicitConfigTypeStillWins"
+      ]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestL2_R3_KubectlEditOfDeprecatedFieldTakesEffect",
+        "TestL2_R3_TargetedJSONPatchOfDeprecatedFieldTakesEffect",
+        "TestL2_R3_ExplicitConfigStillWinsOverDeprecatedField"
+      ]
+    },
+    {
+      "id": "F3",
+      "polarity": "canary",
+      "layer": "integration",
+      "match": [
+        "TestL2_Canary_OneAlphaObjectBreaksTheWholeList",
+        "TestL2_Canary_ControllerCacheNeverSyncs",
+        "TestL2_Canary_StoredRestartPolicyIsPrunedToEmptyOnRead",
+        "TestL2_Canary_JSONPatchMoveSilentlyDropsThePolicy"
+      ]
+    },
+    {
+      "id": "R4a",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestL1_R4_Canary_V0_7_0TemplateShapeStillChangesTheRevision",
+        "TestL1_R3_Canary_FieldRenameChangesTheRevisionHash",
+        "TestL1_R3_Canary_AlwaysWritingBackoffDefaultsChangesTheHash"
+      ]
+    },
+    {
+      "id": "R4b",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestL1_R4_V1alpha1LWSEmptyPolicyMustStayRecreate"
+      ]
+    },
+    {
+      "id": "R5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestL1_R5_RoleLevelNoneIsNotSilentlyFlippedToRecreate",
+        "TestL1_R5_RoleLevelRecreatePassesThrough",
+        "TestL1_R5_V1alpha2RoleSpecHasNoRoleLevelRestartPolicy"
+      ]
+    }
+  ],
+  "controls": [
+    "TestL2_UnrelatedWritesToAnUnmigratedObjectAreAccepted",
+    "TestL2_R3_RoleBasedGroupJSONPatchMigrationIsSafe",
+    "TestL1_R3_Control_RevisionHashIsDeterministic",
+    "TestL1_R4_Control_V1alpha1StandaloneEmptyPolicyIsNone"
+  ],
+  "_polarity_note": "F3's canaries stay green by design: the PR accepts the v0.8.0-alpha.3/alpha.4 wire break and now declares those two releases unsupported rather than shipping a migration. R4a's canaries document revision churn that was measured NOT to restart pods, so they are informational, not defects. R4b is a pre-existing conversion bug that this PR pinned with a new test; it wants its own change. R5 records a peer review claim that did not reproduce, kept so the claim is not retried.",
+  "liveNote": "L3 for the alpha-shape break needs a cluster already running v0.8.0-alpha.3/alpha.4. Rounds 1-3 captured it (controller stranded while 1/1 Ready, restartPolicy served as {}, historical ControllerRevision data also un-decodable, clearing it strands RoleInstance revision labels and repairing that triggers a full recreate). Since 6fc49a96 those versions are declared unsupported, so that path no longer needs re-running. The revision-churn question is answered at L2 by zz_verify_pr424_revision_test.go, which rides the existing envtest suite and needs no cluster. Rollback scripts under scripts/ are still mandatory if L3 is re-run."
+}

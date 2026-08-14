@@ -1,0 +1,49 @@
+===== (a) controller readiness vs. actual function =====
+rbgs-controller-manager-57c56fc4d8-7r4ft 1/1 Running
+rbgs-controller-manager-57c56fc4d8-jf685 1/1 Running
+rolebasedgroup/rbgs-controller:pr424-843fd2d9
+--- create a fresh RBG and see whether anything reconciles ---
+The RoleBasedGroup "pr424-probe" is invalid: 
+* spec.roles[0].leaderWorkerPattern.restartPolicy: Invalid value: "string": spec.roles[0].leaderWorkerPattern.restartPolicy in body must be of type object: "string"
+* <nil>: Invalid value: null: some validation rules were not checked because the object was invalid; correct the existing errors to complete validation
+--- RBG status after 60s ---
+Error from server (NotFound): rolebasedgroups.workloads.x-k8s.io "pr424-probe" not found
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/lib64/python3.6/json/__init__.py", line 299, in load
+    parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/usr/lib64/python3.6/json/__init__.py", line 354, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib64/python3.6/json/decoder.py", line 339, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib64/python3.6/json/decoder.py", line 357, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+--- RoleInstanceSets / RoleInstances created for it? ---
+0
+0 (nothing reconciled)
+--- did the deprecated field get materialized by the new defaulting webhook? ---
+Error from server (NotFound): rolebasedgroups.workloads.x-k8s.io "pr424-probe" not found
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+  File "/usr/lib64/python3.6/json/__init__.py", line 299, in load
+    parse_constant=parse_constant, object_pairs_hook=object_pairs_hook, **kw)
+  File "/usr/lib64/python3.6/json/__init__.py", line 354, in loads
+    return _default_decoder.decode(s)
+  File "/usr/lib64/python3.6/json/decoder.py", line 339, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+  File "/usr/lib64/python3.6/json/decoder.py", line 357, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+===== (b) the ordering trap: migrate BEFORE the CRD upgrade, as the doc says =====
+--- CRD currently served for spec.restartPolicy ---
+restartPolicy.type: object
+restartPolicyConfig in schema: False
+--- attempt the documented migration on a real RoleInstance ---
+Warning: unknown field "spec.restartPolicyConfig"
+roleinstance.workloads.x-k8s.io/nginx-cluster-backend-0 patched
+--- what actually landed? ---
+restartPolicy: null
+restartPolicyConfig: null
+L3_PHASE2_DONE

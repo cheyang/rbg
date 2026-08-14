@@ -1,0 +1,126 @@
+=== RUN   TestL1_DeprecatedRestartPolicyGoesInertAfterDefaulting
+    l1_defaulter_inert_test.go:76: 
+        	Error Trace:	/root/rbg424/test/verify/pr424/l1_defaulter_inert_test.go:76
+        	Error:      	Not equal: 
+        	            	expected: "None"
+        	            	actual  : "RecreateRoleInstanceOnPodRestart"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1alpha2.RestartPolicyType) (len=4) "None"
+        	            	+(v1alpha2.RestartPolicyType) (len=32) "RecreateRoleInstanceOnPodRestart"
+        	            	 
+        	Test:       	TestL1_DeprecatedRestartPolicyGoesInertAfterDefaulting
+        	Messages:   	changing the deprecated restartPolicy must take effect, but restartPolicyConfig.type shadows it
+    l1_defaulter_inert_test.go:78: 
+        	Error Trace:	/root/rbg424/test/verify/pr424/l1_defaulter_inert_test.go:78
+        	Error:      	Not equal: 
+        	            	expected: "None"
+        	            	actual  : "RecreateRoleInstanceOnPodRestart"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1alpha2.RestartPolicyType) (len=4) "None"
+        	            	+(v1alpha2.RestartPolicyType) (len=32) "RecreateRoleInstanceOnPodRestart"
+        	            	 
+        	Test:       	TestL1_DeprecatedRestartPolicyGoesInertAfterDefaulting
+        	Messages:   	the webhook should keep restartPolicyConfig.type in sync with the deprecated field it resolved from
+--- FAIL: TestL1_DeprecatedRestartPolicyGoesInertAfterDefaulting (0.00s)
+=== RUN   TestL1_Canary_ConfigTypeShadowsLaterLegacyEdits
+--- PASS: TestL1_Canary_ConfigTypeShadowsLaterLegacyEdits (0.00s)
+=== RUN   TestL1_Control_WithoutDefaulterLegacyEditsTakeEffect
+--- PASS: TestL1_Control_WithoutDefaulterLegacyEditsTakeEffect (0.00s)
+=== RUN   TestL2_Canary_OneAlphaObjectBreaksTheWholeList
+    l2_alpha_upgrade_test.go:197: typed GET of the un-migrated object: json: cannot unmarshal object into Go struct field RoleInstanceSpec.spec.restartPolicy of type v1alpha2.RestartPolicyType
+    l2_alpha_upgrade_test.go:207: typed LIST over 1 bad + 1 healthy object: json: cannot unmarshal object into Go struct field RoleInstanceSpec.items.spec.restartPolicy of type v1alpha2.RestartPolicyType
+    l2_alpha_upgrade_test.go:213: items returned alongside the LIST error: 2 (a failed LIST is what strands an informer, not an empty slice)
+--- PASS: TestL2_Canary_OneAlphaObjectBreaksTheWholeList (8.27s)
+=== RUN   TestL2_Canary_ControllerCacheNeverSyncs
+[controller-runtime] log.SetLogger(...) was never called; logs will not be displayed.
+Detected at:
+	>  goroutine 308 [running]:
+	>  runtime/debug.Stack()
+	>  	/usr/local/go/src/runtime/debug/stack.go:26 +0x5e
+	>  sigs.k8s.io/controller-runtime/pkg/log.eventuallyFulfillRoot()
+	>  	/root/rbg424/vendor/sigs.k8s.io/controller-runtime/pkg/log/log.go:60 +0xcd
+	>  sigs.k8s.io/controller-runtime/pkg/log.(*delegatingLogSink).Enabled(0xc000488e40, 0x3)
+	>  	/root/rbg424/vendor/sigs.k8s.io/controller-runtime/pkg/log/deleg.go:111 +0x32
+	>  github.com/go-logr/logr.Logger.Info({{0x1e50280?, 0xc000488e40?}, 0xc0004c5540?}, {0x1b81377, 0x12}, {0xc00055ab40, 0x6, 0x6})
+	>  	/root/rbg424/vendor/github.com/go-logr/logr/logr.go:276 +0x6e
+	>  k8s.io/client-go/tools/cache.(*Reflector).RunWithContext(0xc0002cc0f0, {0x1e4b970, 0xc0006115f0})
+	>  	/root/rbg424/vendor/k8s.io/client-go/tools/cache/reflector.go:364 +0x385
+	>  k8s.io/client-go/tools/cache.(*controller).RunWithContext.(*Group).StartWithContext.func3()
+	>  	/root/rbg424/vendor/k8s.io/apimachinery/pkg/util/wait/wait.go:63 +0x1f
+	>  k8s.io/apimachinery/pkg/util/wait.(*Group).Start.func1()
+	>  	/root/rbg424/vendor/k8s.io/apimachinery/pkg/util/wait/wait.go:72 +0x4c
+	>  created by k8s.io/apimachinery/pkg/util/wait.(*Group).Start in goroutine 302
+	>  	/root/rbg424/vendor/k8s.io/apimachinery/pkg/util/wait/wait.go:70 +0x73
+--- PASS: TestL2_Canary_ControllerCacheNeverSyncs (32.48s)
+=== RUN   TestL2_Canary_StoredRestartPolicyIsPrunedToEmptyOnRead
+    l2_alpha_upgrade_test.go:274: before upgrade: spec.restartPolicy=map[string]interface {}{"baseDelaySeconds":30, "maxDelaySeconds":600, "type":"RecreateRoleInstanceOnPodRestart"}
+    l2_alpha_upgrade_test.go:283: after upgrade: spec.restartPolicy=map[string]interface {}{} (found=true)
+--- PASS: TestL2_Canary_StoredRestartPolicyIsPrunedToEmptyOnRead (7.72s)
+=== RUN   TestL2_Canary_JSONPatchMoveSilentlyDropsThePolicy
+--- PASS: TestL2_Canary_JSONPatchMoveSilentlyDropsThePolicy (7.81s)
+=== RUN   TestL2_MergePatchMigrationPreservesThePolicy
+--- PASS: TestL2_MergePatchMigrationPreservesThePolicy (8.27s)
+=== RUN   TestL2_UnrelatedWritesToAnUnmigratedObjectAreAccepted
+--- PASS: TestL2_UnrelatedWritesToAnUnmigratedObjectAreAccepted (8.35s)
+=== RUN   TestL2_KubectlEditOfDeprecatedFieldIsSilentlyIgnored
+    l2_webhook_inert_test.go:172: 
+        	Error Trace:	/root/rbg424/test/verify/pr424/l2_webhook_inert_test.go:172
+        	Error:      	Not equal: 
+        	            	expected: "None"
+        	            	actual  : "RecreateRoleInstanceOnPodRestart"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1alpha2.RestartPolicyType) (len=4) "None"
+        	            	+(v1alpha2.RestartPolicyType) (len=32) "RecreateRoleInstanceOnPodRestart"
+        	            	 
+        	Test:       	TestL2_KubectlEditOfDeprecatedFieldIsSilentlyIgnored
+        	Messages:   	effective policy after editing the deprecated field to None
+    l2_webhook_inert_test.go:174: 
+        	Error Trace:	/root/rbg424/test/verify/pr424/l2_webhook_inert_test.go:174
+        	Error:      	Not equal: 
+        	            	expected: "None"
+        	            	actual  : "RecreateRoleInstanceOnPodRestart"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1alpha2.RestartPolicyType) (len=4) "None"
+        	            	+(v1alpha2.RestartPolicyType) (len=32) "RecreateRoleInstanceOnPodRestart"
+        	            	 
+        	Test:       	TestL2_KubectlEditOfDeprecatedFieldIsSilentlyIgnored
+        	Messages:   	stored restartPolicyConfig.type after editing the deprecated field to None
+--- FAIL: TestL2_KubectlEditOfDeprecatedFieldIsSilentlyIgnored (16.77s)
+=== RUN   TestL2_TargetedJSONPatchOfDeprecatedFieldIsSilentlyIgnored
+    l2_webhook_inert_test.go:205: 
+        	Error Trace:	/root/rbg424/test/verify/pr424/l2_webhook_inert_test.go:205
+        	Error:      	Not equal: 
+        	            	expected: "None"
+        	            	actual  : "RecreateRoleInstanceOnPodRestart"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1alpha2.RestartPolicyType) (len=4) "None"
+        	            	+(v1alpha2.RestartPolicyType) (len=32) "RecreateRoleInstanceOnPodRestart"
+        	            	 
+        	Test:       	TestL2_TargetedJSONPatchOfDeprecatedFieldIsSilentlyIgnored
+        	Messages:   	effective policy after patching the deprecated restartPolicy to None
+--- FAIL: TestL2_TargetedJSONPatchOfDeprecatedFieldIsSilentlyIgnored (17.63s)
+=== RUN   TestL2_Control_FullMergePatchReplacingRolesDoesTakeEffect
+--- PASS: TestL2_Control_FullMergePatchReplacingRolesDoesTakeEffect (17.53s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/verify/pr424	125.101s
+FAIL

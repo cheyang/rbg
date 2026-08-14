@@ -1,0 +1,2 @@
+rbgs-controller-manager-57c56fc4d8-7r4ft   1/1   Running   0     64s   10.39.55.173    cn-hongkong.10.39.55.151    <none>   <none>
+rbgs-controller-manager-57c56fc4d8-jf685   1/1   Running   0     52s   10.167.14.228   cn-hongkong.10.167.14.221   <none>   <none>

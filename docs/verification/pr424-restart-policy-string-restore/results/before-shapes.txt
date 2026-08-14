@@ -1,0 +1,4 @@
+default nginx-cluster-backend-0 -> {"baseDelaySeconds": 30, "maxDelaySeconds": 600, "type": "None"}
+default nginx-cluster-backend-1 -> {"baseDelaySeconds": 30, "maxDelaySeconds": 600, "type": "None"}
+default nginx-cluster-backend-2 -> {"baseDelaySeconds": 30, "maxDelaySeconds": 600, "type": "None"}
+default nginx-cluster-frontend-0 -> {"baseDelaySeconds": 30, "maxDelaySeconds": 600, "type": "None"}

@@ -1,0 +1,32 @@
+===== which CRDs are still on the PR schema? =====
+roleinstances: PR schema
+roleinstancesets: main schema
+rolebasedgroups: PR schema
+rolebasedgroupsets: PR schema
+===== force-restore the main CRDs =====
+rolebasedgroups: customresourcedefinition.apiextensions.k8s.io/rolebasedgroups.workloads.x-k8s.io serverside-applied
+rolebasedgroupsets: customresourcedefinition.apiextensions.k8s.io/rolebasedgroupsets.workloads.x-k8s.io serverside-applied
+roleinstances: customresourcedefinition.apiextensions.k8s.io/roleinstances.workloads.x-k8s.io serverside-applied
+roleinstancesets: customresourcedefinition.apiextensions.k8s.io/roleinstancesets.workloads.x-k8s.io serverside-applied
+===== verify =====
+roleinstances: main schema
+roleinstancesets: main schema
+rolebasedgroups: main schema
+rolebasedgroupsets: main schema
+===== now restore the RoleInstance restartPolicy objects =====
+roleinstance.workloads.x-k8s.io/nginx-cluster-backend-0 patched
+roleinstance.workloads.x-k8s.io/nginx-cluster-backend-1 patched
+roleinstance.workloads.x-k8s.io/nginx-cluster-backend-2 patched
+roleinstance.workloads.x-k8s.io/nginx-cluster-frontend-0 patched
+nginx-cluster-backend-0 restartPolicy= {"baseDelaySeconds": 30, "maxDelaySeconds": 600, "type": "None"} restartPolicyConfig= null
+nginx-cluster-backend-1 restartPolicy= {"baseDelaySeconds": 30, "maxDelaySeconds": 600, "type": "None"} restartPolicyConfig= null
+nginx-cluster-backend-2 restartPolicy= {"baseDelaySeconds": 30, "maxDelaySeconds": 600, "type": "None"} restartPolicyConfig= null
+nginx-cluster-frontend-0 restartPolicy= {"baseDelaySeconds": 30, "maxDelaySeconds": 600, "type": "None"} restartPolicyConfig= null
+===== final health =====
+rolebasedgroup/rbgs-controller:v0.8.0-0c00546d
+NAMESPACE   NAME            READY   AGE
+default     nginx-cluster   True    5d17h
+rbgs-controller-manager-669cf975fb-j9gls decode errors = 0
+rbgs-controller-manager-669cf975fb-pl8lb decode errors = 0
+no rbg mutating webhook (good)
+ROLLBACK2_DONE
