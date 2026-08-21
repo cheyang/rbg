@@ -1,0 +1,71 @@
+=== RUN   TestPR396_GetCommonLabelsFromRole_IsNeverNilOrEmpty
+=== RUN   TestPR396_GetCommonLabelsFromRole_IsNeverNilOrEmpty/normal_rbg_and_role
+    pr396_verify_test.go:225: labels = map[rbg.workloads.x-k8s.io/group-name:test-rbg rbg.workloads.x-k8s.io/group-uid:6bc54a85beabe0c39e8fc92afe50660142a0f54d rbg.workloads.x-k8s.io/role-name:worker]
+=== RUN   TestPR396_GetCommonLabelsFromRole_IsNeverNilOrEmpty/zero-valued_RoleBasedGroup_and_zero-valued_RoleSpec_(empty_names)
+    pr396_verify_test.go:225: labels = map[rbg.workloads.x-k8s.io/group-name: rbg.workloads.x-k8s.io/group-uid:42099b4af021e53fd8fd4e056c2568d7c2e3ffa8 rbg.workloads.x-k8s.io/role-name:]
+=== RUN   TestPR396_GetCommonLabelsFromRole_IsNeverNilOrEmpty/zero-valued_RoleBasedGroup_with_a_named_role
+    pr396_verify_test.go:225: labels = map[rbg.workloads.x-k8s.io/group-name: rbg.workloads.x-k8s.io/group-uid:42099b4af021e53fd8fd4e056c2568d7c2e3ffa8 rbg.workloads.x-k8s.io/role-name:only-role-name]
+=== RUN   TestPR396_GetCommonLabelsFromRole_IsNeverNilOrEmpty/named_rbg_with_zero-valued_role
+    pr396_verify_test.go:225: labels = map[rbg.workloads.x-k8s.io/group-name:rbg-only rbg.workloads.x-k8s.io/group-uid:a6636378f290b4648bab03ea5c313c750c50302a rbg.workloads.x-k8s.io/role-name:]
+--- PASS: TestPR396_GetCommonLabelsFromRole_IsNeverNilOrEmpty (0.00s)
+    --- PASS: TestPR396_GetCommonLabelsFromRole_IsNeverNilOrEmpty/normal_rbg_and_role (0.00s)
+    --- PASS: TestPR396_GetCommonLabelsFromRole_IsNeverNilOrEmpty/zero-valued_RoleBasedGroup_and_zero-valued_RoleSpec_(empty_names) (0.00s)
+    --- PASS: TestPR396_GetCommonLabelsFromRole_IsNeverNilOrEmpty/zero-valued_RoleBasedGroup_with_a_named_role (0.00s)
+    --- PASS: TestPR396_GetCommonLabelsFromRole_IsNeverNilOrEmpty/named_rbg_with_zero-valued_role (0.00s)
+=== RUN   TestPR396_MapsCloneNilThenWritePanics
+=== RUN   TestPR396_MapsCloneNilThenWritePanics/maps.Clone(nil)_returns_nil
+=== RUN   TestPR396_MapsCloneNilThenWritePanics/writing_to_the_nil_clone_panics
+    pr396_verify_test.go:259: MECHANISM CONFIRMED: panic = assignment to entry in nil map
+=== RUN   TestPR396_MapsCloneNilThenWritePanics/maps.Clone_of_a_non-nil_EMPTY_map_returns_non-nil_and_is_writable
+--- PASS: TestPR396_MapsCloneNilThenWritePanics (0.00s)
+    --- PASS: TestPR396_MapsCloneNilThenWritePanics/maps.Clone(nil)_returns_nil (0.00s)
+    --- PASS: TestPR396_MapsCloneNilThenWritePanics/writing_to_the_nil_clone_panics (0.00s)
+    --- PASS: TestPR396_MapsCloneNilThenWritePanics/maps.Clone_of_a_non-nil_EMPTY_map_returns_non-nil_and_is_writable (0.00s)
+=== RUN   TestPR396_ConstructPodTemplateSpec_LabelsNonNil
+=== RUN   TestPR396_ConstructPodTemplateSpec_LabelsNonNil/A_production_podLabels_from_GetCommonLabelsFromRole
+    pr396_verify_test.go:311: production .Labels = map[rbg.workloads.x-k8s.io/group-name:test-rbg rbg.workloads.x-k8s.io/group-uid:6bc54a85beabe0c39e8fc92afe50660142a0f54d rbg.workloads.x-k8s.io/role-name:worker]
+=== RUN   TestPR396_ConstructPodTemplateSpec_LabelsNonNil/B_control_nil_podLabels_leaves_Labels_nil_and_clone_write_panics
+    pr396_verify_test.go:334: CONTROL panic reproduced: assignment to entry in nil map
+=== RUN   TestPR396_ConstructPodTemplateSpec_LabelsNonNil/C_control_empty_podLabels_also_leaves_Labels_nil
+=== RUN   TestPR396_ConstructPodTemplateSpec_LabelsNonNil/D_template_labels_alone_make_Labels_non_nil
+--- PASS: TestPR396_ConstructPodTemplateSpec_LabelsNonNil (0.11s)
+    --- PASS: TestPR396_ConstructPodTemplateSpec_LabelsNonNil/A_production_podLabels_from_GetCommonLabelsFromRole (0.01s)
+    --- PASS: TestPR396_ConstructPodTemplateSpec_LabelsNonNil/B_control_nil_podLabels_leaves_Labels_nil_and_clone_write_panics (0.00s)
+    --- PASS: TestPR396_ConstructPodTemplateSpec_LabelsNonNil/C_control_empty_podLabels_also_leaves_Labels_nil (0.00s)
+    --- PASS: TestPR396_ConstructPodTemplateSpec_LabelsNonNil/D_template_labels_alone_make_Labels_non_nil (0.00s)
+=== RUN   TestPR396_ProductionPaths_NoPanic
+=== RUN   TestPR396_ProductionPaths_NoPanic/constructRoleInstanceTemplateFromStandalonePattern_line440
+    pr396_verify_test.go:383: standalone component labels = map[rbg.workloads.x-k8s.io/component-size:1 rbg.workloads.x-k8s.io/group-name:test-rbg rbg.workloads.x-k8s.io/group-uid:6bc54a85beabe0c39e8fc92afe50660142a0f54d rbg.workloads.x-k8s.io/role-name:worker]
+=== RUN   TestPR396_ProductionPaths_NoPanic/constructRoleInstanceTemplateByLeaderWorkerPattern_line396_400
+    pr396_verify_test.go:399: leader labels = map[rbg.workloads.x-k8s.io/component-name:leader rbg.workloads.x-k8s.io/component-size:4 rbg.workloads.x-k8s.io/group-name:test-rbg rbg.workloads.x-k8s.io/group-uid:6bc54a85beabe0c39e8fc92afe50660142a0f54d rbg.workloads.x-k8s.io/role-name:lwp]
+    pr396_verify_test.go:400: worker labels = map[rbg.workloads.x-k8s.io/component-name:worker rbg.workloads.x-k8s.io/component-size:4 rbg.workloads.x-k8s.io/group-name:test-rbg rbg.workloads.x-k8s.io/group-uid:6bc54a85beabe0c39e8fc92afe50660142a0f54d rbg.workloads.x-k8s.io/role-name:lwp]
+=== RUN   TestPR396_ProductionPaths_NoPanic/constructRoleInstanceTemplateByCustomComponentsPattern_line303
+    pr396_verify_test.go:418: component[0] labels = map[rbg.workloads.x-k8s.io/component-size:2 rbg.workloads.x-k8s.io/group-name:test-rbg rbg.workloads.x-k8s.io/group-uid:6bc54a85beabe0c39e8fc92afe50660142a0f54d rbg.workloads.x-k8s.io/role-name:cc]
+    pr396_verify_test.go:419: component[1] labels = map[rbg.workloads.x-k8s.io/component-size:3 rbg.workloads.x-k8s.io/group-name:test-rbg rbg.workloads.x-k8s.io/group-uid:6bc54a85beabe0c39e8fc92afe50660142a0f54d rbg.workloads.x-k8s.io/role-name:cc]
+=== RUN   TestPR396_ProductionPaths_NoPanic/full_constructRoleInstanceSetApplyConfiguration_with_groupset_labels
+=== RUN   TestPR396_ProductionPaths_NoPanic/full_constructRoleInstanceSetApplyConfiguration_with_groupset_labels/sa
+=== RUN   TestPR396_ProductionPaths_NoPanic/full_constructRoleInstanceSetApplyConfiguration_with_groupset_labels/lwp
+=== RUN   TestPR396_ProductionPaths_NoPanic/full_constructRoleInstanceSetApplyConfiguration_with_groupset_labels/cc
+--- PASS: TestPR396_ProductionPaths_NoPanic (0.01s)
+    --- PASS: TestPR396_ProductionPaths_NoPanic/constructRoleInstanceTemplateFromStandalonePattern_line440 (0.00s)
+    --- PASS: TestPR396_ProductionPaths_NoPanic/constructRoleInstanceTemplateByLeaderWorkerPattern_line396_400 (0.00s)
+    --- PASS: TestPR396_ProductionPaths_NoPanic/constructRoleInstanceTemplateByCustomComponentsPattern_line303 (0.00s)
+    --- PASS: TestPR396_ProductionPaths_NoPanic/full_constructRoleInstanceSetApplyConfiguration_with_groupset_labels (0.01s)
+        --- PASS: TestPR396_ProductionPaths_NoPanic/full_constructRoleInstanceSetApplyConfiguration_with_groupset_labels/sa (0.00s)
+        --- PASS: TestPR396_ProductionPaths_NoPanic/full_constructRoleInstanceSetApplyConfiguration_with_groupset_labels/lwp (0.00s)
+        --- PASS: TestPR396_ProductionPaths_NoPanic/full_constructRoleInstanceSetApplyConfiguration_with_groupset_labels/cc (0.00s)
+=== RUN   TestPR396_LeaderWorker_NoLabelCrossContamination
+    pr396_verify_test.go:491: leader template labels = map[rbg.workloads.x-k8s.io/component-name:leader rbg.workloads.x-k8s.io/component-size:4 rbg.workloads.x-k8s.io/group-name:test-rbg rbg.workloads.x-k8s.io/group-uid:6bc54a85beabe0c39e8fc92afe50660142a0f54d rbg.workloads.x-k8s.io/role-name:lwp]
+    pr396_verify_test.go:492: worker template labels = map[rbg.workloads.x-k8s.io/component-name:worker rbg.workloads.x-k8s.io/component-size:4 rbg.workloads.x-k8s.io/group-name:test-rbg rbg.workloads.x-k8s.io/group-uid:6bc54a85beabe0c39e8fc92afe50660142a0f54d rbg.workloads.x-k8s.io/role-name:lwp]
+--- PASS: TestPR396_LeaderWorker_NoLabelCrossContamination (0.00s)
+=== RUN   TestPR396_MatchLabelsNotMutatedByPodReconciler
+=== RUN   TestPR396_MatchLabelsNotMutatedByPodReconciler/A_control_uncloned_matchLabels_IS_mutated
+    pr396_verify_test.go:556: CONTROL: uncloned matchLabels after the call = map[rbg.workloads.x-k8s.io/group-name:test-rbg rbg.workloads.x-k8s.io/group-uid:6bc54a85beabe0c39e8fc92afe50660142a0f54d rbg.workloads.x-k8s.io/groupset-index:0 rbg.workloads.x-k8s.io/groupset-name:my-set rbg.workloads.x-k8s.io/role-name:worker]
+=== RUN   TestPR396_MatchLabelsNotMutatedByPodReconciler/B_production_path_leaves_selector_matchLabels_clean
+    pr396_verify_test.go:572: selector = map[rbg.workloads.x-k8s.io/group-name:test-rbg rbg.workloads.x-k8s.io/group-uid:6bc54a85beabe0c39e8fc92afe50660142a0f54d rbg.workloads.x-k8s.io/role-name:worker]
+    pr396_verify_test.go:573: pod template labels = map[rbg.workloads.x-k8s.io/component-size:1 rbg.workloads.x-k8s.io/group-name:test-rbg rbg.workloads.x-k8s.io/group-uid:6bc54a85beabe0c39e8fc92afe50660142a0f54d rbg.workloads.x-k8s.io/groupset-index:0 rbg.workloads.x-k8s.io/groupset-name:my-set rbg.workloads.x-k8s.io/role-name:worker]
+--- PASS: TestPR396_MatchLabelsNotMutatedByPodReconciler (0.00s)
+    --- PASS: TestPR396_MatchLabelsNotMutatedByPodReconciler/A_control_uncloned_matchLabels_IS_mutated (0.00s)
+    --- PASS: TestPR396_MatchLabelsNotMutatedByPodReconciler/B_production_path_leaves_selector_matchLabels_clean (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.384s

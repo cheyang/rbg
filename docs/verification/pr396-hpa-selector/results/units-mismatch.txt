@@ -1,0 +1,31 @@
+=== RUN   TestVerifyPR396_ScaleSubresourceUnitsDisagree
+=== RUN   TestVerifyPR396_ScaleSubresourceUnitsDisagree/1P1D_(2_pods_per_group)
+2026-08-21T08:58:34+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"replicas": 2, "readyReplicas": 2}
+    pr396_verify_test.go:222: groups=2 podsPerGroup=2 -> status.replicas=2, selector matched 4 pods
+    pr396_verify_test.go:224: at usageRatio=1.50: HPA writes spec.replicas=6 (groups); correct would be 3
+    pr396_verify_test.go:228: R1-F1 REPRODUCED: scale-subresource units disagree. status.replicas counts GROUPS (2) but status.selector matches PODS (4), and HPA computes ceil(usageRatio*podCount) then writes it to spec.replicas, which this CRD defines as a group count. At usageRatio=1.50 it would set spec.replicas=6 instead of 3 -- a 2.0x overshoot, i.e. off by the pods-per-group factor (2).
+=== RUN   TestVerifyPR396_ScaleSubresourceUnitsDisagree/2P3D_(5_pods_per_group)
+2026-08-21T08:58:34+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"replicas": 2, "readyReplicas": 2}
+    pr396_verify_test.go:222: groups=2 podsPerGroup=5 -> status.replicas=2, selector matched 10 pods
+    pr396_verify_test.go:224: at usageRatio=1.50: HPA writes spec.replicas=15 (groups); correct would be 3
+    pr396_verify_test.go:228: R1-F1 REPRODUCED: scale-subresource units disagree. status.replicas counts GROUPS (2) but status.selector matches PODS (10), and HPA computes ceil(usageRatio*podCount) then writes it to spec.replicas, which this CRD defines as a group count. At usageRatio=1.50 it would set spec.replicas=15 instead of 3 -- a 5.0x overshoot, i.e. off by the pods-per-group factor (5).
+=== RUN   TestVerifyPR396_ScaleSubresourceUnitsDisagree/single-pod_group_(the_only_shape_that_works)
+2026-08-21T08:58:34+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"replicas": 3, "readyReplicas": 3}
+    pr396_verify_test.go:222: groups=3 podsPerGroup=1 -> status.replicas=3, selector matched 3 pods
+    pr396_verify_test.go:224: at usageRatio=1.50: HPA writes spec.replicas=5 (groups); correct would be 5
+--- FAIL: TestVerifyPR396_ScaleSubresourceUnitsDisagree (0.10s)
+    --- FAIL: TestVerifyPR396_ScaleSubresourceUnitsDisagree/1P1D_(2_pods_per_group) (0.10s)
+    --- FAIL: TestVerifyPR396_ScaleSubresourceUnitsDisagree/2P3D_(5_pods_per_group) (0.00s)
+    --- PASS: TestVerifyPR396_ScaleSubresourceUnitsDisagree/single-pod_group_(the_only_shape_that_works) (0.00s)
+=== RUN   TestVerifyPR396_EquilibriumIsOffByPodsPerGroup
+    pr396_verify_test.go:264: iter 0: groups=2 pods=4 usageRatio=2.000 -> HPA wants 8 groups
+    pr396_verify_test.go:264: iter 1: groups=8 pods=16 usageRatio=0.500 -> HPA wants 8 groups
+    pr396_verify_test.go:279: R1-F1 CONSEQUENCE: with 2 pods per group, a load needing 8 pods (= 4 groups) drives the loop to settle at 8 groups -- 2.0x over-provisioned. HPA multiplies the ratio by the POD count but writes the product into spec.replicas, which counts GROUPS, so the loop's fixed point is off by the pods-per-group factor and utilization settles at ~1/2 of target.
+--- FAIL: TestVerifyPR396_EquilibriumIsOffByPodsPerGroup (0.00s)
+=== RUN   TestVerifyPR396_PreexistingPodsBreakHPAEntirely
+2026-08-21T08:58:34+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"replicas": 2, "readyReplicas": 2}
+    pr396_verify_test.go:336: R1-F2 REPRODUCED: on upgrade, status.selector ("rbg.workloads.x-k8s.io/groupset-name=rbgs") is published immediately but no existing Pod carries rbg.workloads.x-k8s.io/groupset-name, so the selector matches 0 pods and HPA fails with "no pods returned by selector while calculating replica count" until every Pod in the set has been re-created. Nothing in the PR sequences this, warns about it, or documents that adopting the feature triggers a full re-roll of every RoleBasedGroupSet-owned Pod.
+--- FAIL: TestVerifyPR396_PreexistingPodsBreakHPAEntirely (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.403s
+FAIL

@@ -1,0 +1,99 @@
+{
+  "topic": "pr396-hpa-selector",
+  "pr": "https://github.com/sgl-project/rbg/pull/396",
+  "reviewedHead": "6f14e37a0296ccd74ec697627695377e03414993",
+  "baseSha": "b2b92ba5",
+  "round": 1,
+  "note": "Reviewer-private verification harness. Production code is untouched on this branch; the only additions are internal/controller/workloads/pr396_verify_test.go, pkg/reconciler/pr396_verify_test.go and this docs/verification tree.",
+  "prStateWhenReviewed": {
+    "state": "open",
+    "mergeableState": "dirty",
+    "reviewDecision": "CHANGES_REQUESTED",
+    "priorReviewId": 4893426270,
+    "priorReviewScope": "rebase request plus a request for unit + e2e test coverage; contains neither F1 nor F2"
+  },
+  "environment": {
+    "sandbox": "remote Linux sandbox, go1.24.1",
+    "cluster": "not required for this harness"
+  },
+  "harnessPaths": [
+    "internal/controller/workloads/pr396_verify_test.go",
+    "pkg/reconciler/pr396_verify_test.go",
+    "docs/verification/pr396-hpa-selector"
+  ],
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ ./pkg/reconciler/ -run 'TestVerifyPR396|TestPR396' -count=1 -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "blocking",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR396_ScaleSubresourceUnitsDisagree",
+        "TestVerifyPR396_EquilibriumIsOffByPodsPerGroup"
+      ],
+      "claim": "The scale subresource's three paths disagree on a unit. spec.replicas and status.replicas count child RoleBasedGroups, but status.selector matches Pods, and the HPA controller derives the replica count it writes back from the Pod count: GetResourceReplicas returns int32(math.Ceil(usageRatio * float64(readyPodCount))) and that value is written to spec.replicas, which this CRD defines as a group count. Every scale decision is therefore off by the pods-per-group factor.",
+      "measured": [
+        "groups=2 podsPerGroup=2, usageRatio=1.50 -> HPA writes 6 groups, correct is 3 (2.0x)",
+        "groups=2 podsPerGroup=5, usageRatio=1.50 -> HPA writes 15 groups, correct is 3 (5.0x)",
+        "groups=3 podsPerGroup=1 -> 5 vs 5 (CONTROL passes; one pod per group is the only shape where the units coincide)"
+      ],
+      "closedLoop": "A load needing 8 pods (4 groups) starting from 2 groups settles at 8 groups and never scales back down, because ceil(0.5*16)=8. Utilization settles at ~1/podsPerGroup of target: the set is permanently over-provisioned by that factor. The loop has a wrong fixed point, not a transient overshoot.",
+      "notFixableBy": "Pointing the selector at child RoleBasedGroups instead of Pods yields zero Pods and the hard error 'no pods returned by selector while calculating replica count'. status.replicas and the selector must agree on one unit, or the feature needs Object/External metrics rather than Resource metrics.",
+      "authority": "k8s pkg/controller/podautoscaler/replica_calculator.go release-1.32, archived verbatim at results/k8s-replica_calculator-1.32.go"
+    },
+    {
+      "id": "F2",
+      "severity": "major",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyPR396_PreexistingPodsBreakHPAEntirely"],
+      "claim": "status.selector is published as soon as the new controller reconciles, but the groupset-name label only reaches Pods when their templates are re-rendered. Until then the selector matches zero Pods and GetResourceReplicas fails with 'no pods returned by selector while calculating replica count', so HPA cannot scale the set in either direction. Nothing in the PR sequences this, warns about it, or documents that adopting the feature triggers a full re-roll of every RoleBasedGroupSet-owned Pod.",
+      "control": "A Pod built by the new code path does match the selector, so the negative result is not a broken-selector artefact."
+    },
+    {
+      "id": "F3",
+      "severity": "non-blocking",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestPR396_MatchLabelsNotMutatedByPodReconciler"],
+      "claim": "The maps.Clone(matchLabels) guards this PR adds are load-bearing, not a readability refactor. The PR's own new code in pod_reconciler.go writes groupSetLabels into the CALLER's podLabels map, and constructRoleInstanceSetApplyConfiguration reuses the same matchLabels for spec.selector.matchLabels -- a RoleInstanceSet selector is immutable. Without the clone, groupset labels leak into an immutable selector, repairable only by deleting and recreating the workload. Having ConstructPodTemplateSpecApplyConfiguration copy its argument would make the invariant local instead of a contract with all eight call sites.",
+      "controls": [
+        "A: calling the real function with an uncloned map grows it from 3 to 5 keys -- the mutation is real",
+        "B: through the production path the selector stays exactly 3 keys while the Pod template does receive the groupset labels"
+      ]
+    },
+    {
+      "id": "D1",
+      "severity": "disproved",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestPR396_GetCommonLabelsFromRole_IsNeverNilOrEmpty",
+        "TestPR396_MapsCloneNilThenWritePanics",
+        "TestPR396_ConstructPodTemplateSpec_LabelsNonNil",
+        "TestPR396_ProductionPaths_NoPanic"
+      ],
+      "claim": "DISPROVED -- Copilot's four 'maps.Clone returns nil, writing to the clone panics' comments are false positives on REACHABILITY grounds, not because the mechanism is wrong. The mechanism is separately proved (maps.Clone(nil) is nil; writing panics 'assignment to entry in nil map'), so the finding must not be dismissed as 'maps.Clone is safe'. It is unreachable because .Labels is populated by WithLabels(podLabels), the generated WithLabels allocates whenever len(entries)>0, and all eight production call sites pass rbg.GetCommonLabelsFromRole(role) -- a 3-key map literal that is never nil or empty, verified even for a zero-valued RoleBasedGroup and RoleSpec.",
+      "linchpin": "If GetCommonLabelsFromRole ever returns nil or empty, all four findings become real reachable panics. TestPR396_GetCommonLabelsFromRole_IsNeverNilOrEmpty guards exactly that.",
+      "residualSuggestion": "A one-line defensive `if x == nil { x = map[string]string{} }` would enforce the invariant locally; the failure mode if a future caller passes empty labels is a controller crash-loop, not a validation error."
+    },
+    {
+      "id": "D2",
+      "severity": "disproved",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestPR396_LeaderWorker_NoLabelCrossContamination"],
+      "claim": "DISPROVED -- my own round-1 hypothesis that this PR fixes leader/worker label cross-contamination is WRONG. The same assertions run at base b2b92ba5 and head 6f14e37a produce byte-identical leader/worker label maps, and the aliasing sentinel check passes on base too. The generated WithLabels copies entries into a freshly allocated map rather than aliasing the argument, so each apply-config already had its own map before this PR. The real hazard the clones address is F3, which the PR itself introduces."
+    }
+  ],
+  "harnessDefectsFixed": [
+    "TestVerifyPR396_EquilibriumIsOffByPodsPerGroup initially PASSED VACUOUSLY: it started the control loop at usageRatio=1.0, inside HPA's default tolerance band (0.1), so GetResourceReplicas returns currentReplicas unchanged and the loop broke on iteration 0 without exercising the arithmetic. Rewritten to start from a perturbed state, it reproduces the wrong fixed point. General lesson: testing a controller with a tolerance band from its equilibrium tests nothing."
+  ],
+  "liveNote": "No cluster needed. F1's arithmetic is the HPA controller's own formula applied to two values read from production code; F2 is a label-selector match. An end-to-end confirmation would be the e2e the existing CHANGES_REQUESTED already asks for -- deploy an RBGS with 2 groups of 2 pods, attach an HPA on CPU, drive load past the tolerance band, and observe spec.replicas jump by the pods-per-group factor and then refuse to scale back down."
+}
