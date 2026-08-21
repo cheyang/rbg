@@ -1,0 +1,9 @@
+{
+  "reviewId": 4988889502,
+  "url": "https://github.com/sgl-project/rbg/pull/396#pullrequestreview-4988889502",
+  "event": "COMMENT",
+  "commitId": "6f14e37a0296ccd74ec697627695377e03414993",
+  "whyCommentNotRequestChanges": "cheyang already had a CHANGES_REQUESTED standing on this same head (review 4893426270), so the PR was already blocked. A second CHANGES_REQUESTED would not change the mechanical state; the body states plainly that F1 is blocking.",
+  "published": ["F1", "F2", "F3", "D1"],
+  "heldBack": ["D2 -- my own disproved round-1 hypothesis about leader/worker label contamination; of no value to the author"]
+}
