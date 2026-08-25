@@ -1,0 +1,65 @@
+=== F9: nothing watches CoordinatedPolicy ===
+
+-- SetupWithManager of the RBG controller: what does it watch? --
+func (r *RoleBasedGroupReconciler) SetupWithManager(mgr ctrl.Manager, options controller.Options, enableDeprecatedWorkloadTypes bool) error {
+	r.enableDeprecatedWorkloadTypes = enableDeprecatedWorkloadTypes
+	runtimeController = ctrl.NewControllerManagedBy(mgr).
+		WithOptions(options).
+		For(&workloadsv1alpha2.RoleBasedGroup{}, builder.WithPredicates(RBGPredicate())).
+		Owns(&workloadsv1alpha2.RoleInstanceSet{}, builder.WithPredicates(WorkloadPredicate())).
+		Owns(&corev1.Service{}).
+		Owns(&workloadsv1alpha2.RoleBasedGroupScalingAdapter{}, builder.MatchEveryOwner, builder.WithPredicates(RBGScalingAdapterPredicate())).
+		Watches(&workloadsv1alpha2.RoleBasedGroup{}, handler.Funcs{
+			// CreateFunc, UpdateFunc, GenericFunc are intentionally nil (no-op).
+			// .For() already handles reconcile enqueue for those event types.
+			// This Watches exists solely for the DeleteFunc side-effect below.
+			//
+			// Clean up in-place scheduling bindings when an RBG is deleted.
+			// We don't enqueue a reconcile here — .For() already does that.
+			// This handler exists purely for the side-effect of freeing
+			// in-memory bindings using the UID (which is only available
+			// from the delete event, not from a subsequent Get).
+			DeleteFunc: func(ctx context.Context, e event.DeleteEvent, q workqueue.TypedRateLimitingInterface[reconcile.Request]) {
+				if e.Object != nil && r.NodeBindings != nil {
+					uid := string(e.Object.GetUID())
+					r.NodeBindings.EvictByUID(uid)
+				}
+			},
+		}).
+		Named("workloads-rolebasedgroup")
+
+	if enableDeprecatedWorkloadTypes {
+		runtimeController.Owns(&appsv1.StatefulSet{}, builder.WithPredicates(WorkloadPredicate()))
+		runtimeController.Owns(&appsv1.Deployment{}, builder.WithPredicates(WorkloadPredicate()))
+
+		err := utils.CheckCrdExists(r.apiReader, utils.LwsCrdName)
+		if err == nil {
+			watchedWorkload.LoadOrStore(utils.LwsCrdName, struct{}{})
+			runtimeController.Owns(&lwsv1.LeaderWorkerSet{}, builder.WithPredicates(WorkloadPredicate()))
+		}
+	}
+	err := utils.CheckCrdExists(r.apiReader, scheduler.KubePodGroupCrdName)
+	if err == nil {
+		watchedWorkload.LoadOrStore(scheduler.KubePodGroupCrdName, struct{}{})
+		runtimeController.Owns(&schev1alpha1.PodGroup{})
+	}
+	err = utils.CheckCrdExists(r.apiReader, scheduler.VolcanoPodGroupCrdName)
+	if err == nil {
+		watchedWorkload.LoadOrStore(scheduler.VolcanoPodGroupCrdName, struct{}{})
+		runtimeController.Owns(&volcanoschedulingv1beta1.PodGroup{})
+	}
+
+	return runtimeController.Complete(r)
+}
+
+-- any Watches/Owns of CoordinatedPolicy anywhere (non-test)? --
+(NONE - CoordinatedPolicy is never watched)
+
+-- the PR e2e test concedes it --
+390-			}, utils.Timeout, utils.Interval).Should(gomega.Succeed())
+391-
+392:			// Touch RBG Spec to trigger reconciliation (controller doesn't watch CoordinatedPolicy)
+393-			updateRbgV2(f, rbg, func(rbg *workloadsv1alpha2.RoleBasedGroup) {
+394-				rbg.Spec.Roles[0].Replicas = ptr.To(int32(1))
+395-			})
+396-

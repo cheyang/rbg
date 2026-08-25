@@ -1,0 +1,65 @@
+=== F10: the CoordinatedPolicy gang path never enables RoleInstance-level gang enforcement ===
+
+-- documented contract (api/workloads/constants/annotation.go) --
+	// RoleInstanceGangSchedulingAnnotationKey enables gang-scheduling aware behavior at the
+	// RoleInstance level when set to "true". It is derived automatically from the RBG-level
+	// GangSchedulingAnnotationKey annotation during RoleInstanceSet reconciliation, but users
+	// can also set it explicitly in role.Annotations within the RBG spec.
+	//
+	// NOTE: This annotation must NOT be set on the RBG object (metadata.annotations) directly
+	// when GangSchedulingAnnotationKey is already set, as they are mutually exclusive at the
+	// RBG level. Use either GangSchedulingAnnotationKey (group-level) or set
+	// RoleInstanceGangSchedulingAnnotationKey per role via role.Annotations, not both.
+	//
+	// When enabled, the RoleInstance controller enforces gang-scheduling constraints:
+	//   1. If any orphan pod (not yet GC'd) exists, pod creation fails immediately instead
+	//      of silently skipping — preventing partial group startup.
+	//   2. If an in-place update cannot be applied to a pod, all pods of the instance are
+	//      recreated atomically so the PodGroup minimum member requirement is met.
+	//
+	// Example: rbg.workloads.x-k8s.io/role-instance-gang-scheduling: "true"
+	RoleInstanceGangSchedulingAnnotationKey = RBGPrefix + "role-instance-gang-scheduling"
+
+-- every non-test reference to RoleInstanceGangSchedulingAnnotationKey on PR head --
+pkg/reconciler/roleinstance/sync/instance_scale.go:767:	return instance.Annotations[constants.RoleInstanceGangSchedulingAnnotationKey] == "true"
+pkg/reconciler/roleinstanceset/statelessmode/core/implement.go:216:		constants.RoleInstanceGangSchedulingAnnotationKey,
+pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_utils.go:217:	if v, ok := currentSet.Annotations[constants.RoleInstanceGangSchedulingAnnotationKey]; ok {
+pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_utils.go:218:		instance.Annotations[constants.RoleInstanceGangSchedulingAnnotationKey] = v
+internal/controller/workloads/rolebasedgroup_controller.go:288:		rbg.Annotations[constants.RoleInstanceGangSchedulingAnnotationKey] == "true" {
+internal/controller/workloads/rolebasedgroup_controller.go:293:			constants.RoleInstanceGangSchedulingAnnotationKey,
+internal/controller/workloads/rolebasedgroup_controller.go:295:			constants.RoleInstanceGangSchedulingAnnotationKey,
+
+-- every non-test reference to GangSchedulingAnnotationKey on PR head --
+pkg/scheduler/common/gang_strategy.go:50:	if rbg.Annotations[constants.GangSchedulingAnnotationKey] == "true" {
+internal/controller/workloads/rolebasedgroup_controller.go:287:	if rbg.Annotations[constants.GangSchedulingAnnotationKey] == "true" &&
+internal/controller/workloads/rolebasedgroup_controller.go:292:			constants.GangSchedulingAnnotationKey,
+internal/controller/workloads/rolebasedgroup_controller.go:294:			constants.GangSchedulingAnnotationKey,
+
+CONCLUSION 1: no code writes RoleInstanceGangSchedulingAnnotationKey based on
+GangSchedulingAnnotationKey. The two write sites (statefulmode:218, statelessmode:216)
+only PROPAGATE an already-present value from RoleInstanceSet to RoleInstance.
+So the doc claim "derived automatically from the RBG-level GangSchedulingAnnotationKey"
+is unfulfilled. Pre-existing, but the PR restates it.
+
+CONCLUSION 2 (PR-specific): pkg/scheduler/common/gang_strategy.go is the only new
+consumer of gang config, and it reads GangSchedulingAnnotationKey / CoordinatedPolicy
+purely to build a PodGroup. Nothing in the CoordinatedPolicy path sets the
+RoleInstance-level flag, so instance_scale.go:767 gang enforcement (orphan-pod
+check + atomic pod recreation) stays OFF for gang enabled via CoordinatedPolicy.
+This matters more, not less, under subGroupPolicy: a Volcano subGroup IS one
+RoleInstance, so non-atomic instance recreation breaks the subGroup minimum.
+
+-- the enforcement that stays off (pkg/reconciler/roleinstance/sync/instance_scale.go) --
+	return instance.Namespace + "/" + instance.Name
+}
+
+// isGangSchedulingEnabled reports whether gang-scheduling constraints are active for the
+// given RoleInstance. The annotation is derived from the parent RBG's gang-scheduling
+// annotation during RoleInstanceSet reconciliation, or set directly via role.Annotations.
+func isGangSchedulingEnabled(instance *workloadsv1alpha2.RoleInstance) bool {
+	return instance.Annotations[constants.RoleInstanceGangSchedulingAnnotationKey] == "true"
+}
+
+// allNamedComponentsReady returns true when every component named in depNames
+// has ReadyReplicas >= Size (and Size > 0) in the RoleInstance's componentStatuses.
+// It is used during scale-out to gate creation of a dependent component's pods:

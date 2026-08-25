@@ -1,0 +1,67 @@
+ok  	sigs.k8s.io/rbgs/pkg/component-discovery	0.235s
+ok  	sigs.k8s.io/rbgs/pkg/coordination/coordinationscaling	0.129s
+ok  	sigs.k8s.io/rbgs/pkg/dependency	0.285s
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.328s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance	0.130s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/clientdapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	0.160s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/readiness	0.319s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/specifieddelete	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod	0.155s
+?   	sigs.k8s.io/rbgs/pkg/inplace/pod/clientadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/inplaceupdate	0.312s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/readiness	0.272s
+ok  	sigs.k8s.io/rbgs/pkg/port-allocator	0.197s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.564s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.392s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	0.173s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.168s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/lifecycle	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.296s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.207s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode	0.136s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/core	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/sync	0.348s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/utils	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/utils/revisionadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/scale	0.173s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler	0.288s
+--- FAIL: TestVerifyF7_MultipleGangRulesSilentlyDropAllButFirst (0.00s)
+    verify_gang_strategy_test.go:149: CONTRACT RED: two gang rules were declared (prefill and decode) but the resolved strategy is map[prefill:2] — the second rule was silently discarded. Expected the rules to be merged, or the configuration rejected as ambiguous.
+--- FAIL: TestVerifyF8_CoordinatedPolicyReadErrorIsSwallowed (0.00s)
+    verify_gang_strategy_test.go:185: CONTRACT RED: the CoordinatedPolicy read failed with a non-NotFound error, yet GetGangStrategy returned nil ("gang not enabled") and reported no error. A configured gang would silently vanish and the PodGroup would be deleted. Expected the error to be propagated so the caller can requeue.
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/scheduler/common	0.303s
+?   	sigs.k8s.io/rbgs/pkg/scheduler/k8s-scheduler-plugin	[no test files]
+--- FAIL: TestVerifyF2b_MinMemberMustNeverCollapseToZeroWhenGangRequested (0.00s)
+    verify_gang_subgroup_test.go:203: CONTRACT RED: gang requested via minReplicas=map[prefil:2] but calculateGangMinimum() = 0; a gang that protects zero pods should be rejected (webhook per KEP-430) or surfaced as a reconcile error, not silently accepted
+--- FAIL: TestVerifyF4_MinReplicasExceedingRoleReplicasIsUnsatisfiable (0.00s)
+    verify_gang_subgroup_test.go:334: CONTRACT RED: minMember=5 exceeds the total pods the RBG will ever create (GetGroupSize()=2) because minReplicas=5 > replicas=2; the gang is unsatisfiable by construction and all pods stay Pending. Expected admission rejection or a clamp to replicas.
+--- FAIL: TestVerifyF5_NonPositiveMinReplicasAccepted (0.00s)
+    --- FAIL: TestVerifyF5_NonPositiveMinReplicasAccepted/zero (0.00s)
+        verify_gang_subgroup_test.go:359: CONTRACT RED: minReplicas=0 accepted, emitting a subGroupPolicy with minSubGroups=0 and minMember=0; KEP-430 required value > 0 validation
+    --- FAIL: TestVerifyF5_NonPositiveMinReplicasAccepted/negative (0.00s)
+        verify_gang_subgroup_test.go:373: CONTRACT RED: negative minReplicas=-3 accepted, producing minMember=-3 and minSubGroups=-3; KEP-430 required value > 0 validation
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/scheduler/volcano	0.191s
+ok  	sigs.k8s.io/rbgs/pkg/utils	0.330s
+?   	sigs.k8s.io/rbgs/pkg/utils/client	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/expectations	0.083s
+?   	sigs.k8s.io/rbgs/pkg/utils/fieldindex	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/history	0.159s
+?   	sigs.k8s.io/rbgs/pkg/utils/ratelimiter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/requeueduration	0.069s
+?   	sigs.k8s.io/rbgs/pkg/utils/revisionadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/webhook	0.258s
+?   	sigs.k8s.io/rbgs/pkg/webhook/cert/generator	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/webhook/cert/writer	6.661s
+?   	sigs.k8s.io/rbgs/api/workloads/constants	[no test files]
+?   	sigs.k8s.io/rbgs/api/workloads/pub/inplace_update	[no test files]
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.163s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.289s
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	7.438s
+FAIL

@@ -1,0 +1,23 @@
+=== P0 premise check: does per-role gang minimum exist on the BASE branch? ===
+base sha: 993491fba9bfdf377d3cd18c8833da20ce0ec87b
+
+--- git show $BASE:pkg/scheduler/volcano/manager.go | MinMember / SubGroup ---
+119:			MinMember:         int32(rbg.GetGroupSize()),
+139:	if podGroup.Spec.MinMember != int32(rbg.GetGroupSize()) ||
+148:			podGroup.Spec.MinMember = int32(rbg.GetGroupSize())
+
+--- git show $BASE:pkg/scheduler/k8s-scheduler-plugin/manager.go | MinMember ---
+136:			MinMember:              int32(rbg.GetGroupSize()),
+155:	desiredMinMember := int32(rbg.GetGroupSize())
+157:	if podGroup.Spec.MinMember != desiredMinMember ||
+168:			podGroup.Spec.MinMember = desiredMinMember
+
+--- any subGroupPolicy anywhere on base? ---
+993491fba9bfdf377d3cd18c8833da20ce0ec87b:pkg/reconciler/lws_reconciler.go:278:	// TODO support SubGroupPolicy
+
+--- any per-role gang knob on base? (minReplicas in api/) ---
+(none: no MinReplicas field in the API on base)
+
+--- the ONLY gang switch on base ---
+993491fba9bfdf377d3cd18c8833da20ce0ec87b:api/workloads/constants/annotation.go:37:	GangSchedulingAnnotationKey = RBGPrefix + "group-gang-scheduling"
+993491fba9bfdf377d3cd18c8833da20ce0ec87b:api/workloads/constants/annotation.go:112:	RoleInstanceGangSchedulingAnnotationKey = RBGPrefix + "role-instance-gang-scheduling"

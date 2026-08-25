@@ -1,0 +1,158 @@
+{
+  "topic": "pr434-gang-scheduling",
+  "pr": "https://github.com/sgl-project/rbg/pull/434",
+  "prHeadFetch": { "remote": "upstream", "ref": "pull/434/head" },
+  "reviewedSha": "9d3f4b193e82240e51878b0837dccb1cea8ab4ab",
+
+  "harnessPaths": [
+    "docs/verification/pr434-gang-scheduling",
+    "pkg/scheduler/volcano/verify_gang_subgroup_test.go",
+    "pkg/scheduler/common/verify_gang_strategy_test.go"
+  ],
+
+  "premise": {
+    "id": "P0",
+    "claim": "RBG only supports all-or-nothing group-level gang scheduling; there is no way to express a per-role minimum (e.g. start once 2 of 4 prefill instances can be placed), which is what KEP-430 asks for.",
+    "reportedComponent": "pkg/scheduler (gang scheduling / PodGroup construction)",
+    "patchedComponent": "pkg/scheduler/{volcano,k8s-scheduler-plugin,common}, api/workloads/v1alpha2 (CoordinatedPolicy)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "On base, pkg/scheduler/volcano/manager.go and pkg/scheduler/k8s-scheduler-plugin/manager.go both hardcode MinMember = rbg.GetGroupSize() with no subGroupPolicy and no per-role knob; the only switch is the boolean annotation workloads.x-k8s.io/group-gang-scheduling. KEP PR sgl-project/rbg#430 is merged, so the design is accepted upstream. See results/P0-base-no-per-role-minimum.txt",
+    "match": [],
+    "notCovered": "Role-level gang is reachable only on Volcano >= 1.14 (implemented entirely via spec.subGroupPolicy). On scheduler-plugins the same minReplicas config returns a hard error, so the KEP goal is half delivered. Acceptable as a first step, but it should be documented rather than surfaced as a runtime error."
+  },
+
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/scheduler/volcano/ ./pkg/scheduler/common/ -run '^TestVerify' -json"
+    }
+  },
+
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "major",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestVerifyF1_MatchLabelKeysEmittedForWorkloadTypesThatNeverSetTheLabel"],
+      "claim": "buildSubGroupPolicy always sets MatchLabelKeys=[rolebasedgroup.workloads.x-k8s.io/role-instance-name], but that label is only written on the RoleInstanceSet path. For roles backed by Deployment/StatefulSet the label is absent, so Volcano cannot partition the role into per-instance subGroups and the declared subGroupSize/minSubGroups describe a partition that does not exist.",
+      "observed": "GREEN on PR head - the key is emitted for every workload type, including Deployment and StatefulSet."
+    },
+    {
+      "id": "F2",
+      "severity": "major",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestVerifyF2_UnknownRoleNameInMinReplicasSilentlyYieldsZeroMinMember"],
+      "claim": "calculateGangMinimum only sums roles present in rbg.Spec.Roles. A minReplicas map keyed by a role name that does not exist (typo, renamed role) yields minMember=0 and an empty subGroupPolicy, silently turning gang scheduling off instead of failing validation.",
+      "observed": "GREEN on PR head - minMember collapses to 0 with no error and no event."
+    },
+    {
+      "id": "F2b",
+      "severity": "major",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyF2b_MinMemberMustNeverCollapseToZeroWhenGangRequested"],
+      "claim": "Same defect as F2 stated as the intended contract: when gang scheduling is requested, minMember must never be 0.",
+      "observed": "RED on PR head - the contract is violated."
+    },
+    {
+      "id": "F3",
+      "severity": "moderate",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestVerifyF3_ExcludedRoleStillGetsPodGroupAnnotation"],
+      "claim": "InjectPodSchedulingFields ignores its role argument, so every role gets schedulerName=volcano plus the PodGroup annotation - including roles the gang strategy deliberately excluded from minReplicas. Those pods are counted by Volcano against a minMember that does not budget for them.",
+      "observed": "GREEN on PR head - the excluded role is still joined to the PodGroup."
+    },
+    {
+      "id": "F3b",
+      "severity": "minor",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestVerifyF3b_RoleParameterDoesNotAffectInjection"],
+      "claim": "The role parameter newly added to GangScheduler.InjectPodSchedulingFields is dead in both implementations - passing different roles (or nil) produces identical output.",
+      "observed": "GREEN on PR head - the argument is unused."
+    },
+    {
+      "id": "F4",
+      "severity": "moderate",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyF4_MinReplicasExceedingRoleReplicasIsUnsatisfiable"],
+      "claim": "minReplicas is never checked against the role's own replicas. minReplicas[role] > *role.Replicas produces a minMember larger than the number of pods the RBG will ever create, so the gang can never be satisfied and all pods stay Pending forever.",
+      "observed": "RED on PR head - no clamp, no rejection."
+    },
+    {
+      "id": "F5",
+      "severity": "minor",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyF5_NonPositiveMinReplicasAccepted"],
+      "claim": "Zero and negative minReplicas values are accepted. Zero emits a meaningless subGroupPolicy entry (minSubGroups=0); negative produces a negative contribution to minMember. No CRD-level minimum marker on the field either.",
+      "observed": "RED on PR head - both values pass through unvalidated."
+    },
+    {
+      "id": "F6",
+      "severity": "moderate",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestVerifyF6_GangStrategyIgnoresPolicyRuleRoleScope"],
+      "claim": "GetGangStrategy discards CoordinatedPolicyRule.Roles. A rule scoped to a subset of roles is applied as if it were group-wide, so the API's own scoping field has no effect on gang scheduling.",
+      "observed": "GREEN on PR head - the rule's Roles list is never read."
+    },
+    {
+      "id": "F7",
+      "severity": "moderate",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyF7_MultipleGangRulesSilentlyDropAllButFirst"],
+      "claim": "GetGangStrategy returns on the FIRST policy rule carrying Scheduling.Gang. A CoordinatedPolicy declaring two gang rules - a natural way to express per-role minimums given that Roles exists on the rule - has all but the first silently dropped, with no error, event, or status condition.",
+      "observed": "RED on PR head - only the first rule's MinReplicas survives."
+    },
+    {
+      "id": "F8",
+      "severity": "minor",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyF8_CoordinatedPolicyReadErrorIsSwallowed"],
+      "claim": "GetGangStrategy treats any error from the CoordinatedPolicy read as 'no policy' (err == nil guard). A transient API failure or an RBAC denial is indistinguishable from absence, so gang scheduling silently degrades to the annotation path or to off.",
+      "observed": "RED on PR head - an injected Internal error is swallowed and nil is returned."
+    },
+    {
+      "id": "F9",
+      "severity": "moderate",
+      "polarity": "n/a",
+      "layer": "code-read",
+      "match": [],
+      "claim": "Nothing watches CoordinatedPolicy. Editing or deleting the gang strategy does not trigger a reconcile of the owning RBG; the PodGroup keeps its stale minMember/subGroupPolicy until something else touches the RBG.",
+      "observed": "Confirmed by code reading, not a harness test: no Watches/Owns for CoordinatedPolicy in the RBG controller's SetupWithManager, and test/e2e/testcase/v1alpha2/gang_scheduling.go carries the comment \"controller doesn't watch CoordinatedPolicy\" plus an rbg.Spec poke that exists only to force reconciliation. See results/F9-no-coordinatedpolicy-watch.txt"
+    },
+    {
+      "id": "F10",
+      "severity": "major",
+      "polarity": "n/a",
+      "layer": "code-read",
+      "match": [],
+      "claim": "Gang scheduling enabled through the new CoordinatedPolicy path never turns on the RoleInstance-level gang enforcement that the annotation path documents: the orphan-pod check and atomic all-pods-of-an-instance recreation gated by RoleInstanceGangSchedulingAnnotationKey. This matters more under subGroupPolicy, not less, because a Volcano subGroup IS exactly one RoleInstance - non-atomic instance recreation breaks the very subGroup minimum the PR introduces. Separately, the documented claim that this annotation 'is derived automatically from the RBG-level GangSchedulingAnnotationKey annotation during RoleInstanceSet reconciliation' is unfulfilled: no code writes it from the group annotation, the two write sites only propagate an already-present value.",
+      "observed": "Confirmed by code reading. pkg/scheduler/common/gang_strategy.go is the only new consumer of gang config and builds a PodGroup only; nothing in the CoordinatedPolicy path sets the RoleInstance flag read at pkg/reconciler/roleinstance/sync/instance_scale.go:767. See results/F10-coordinatedpolicy-skips-roleinstance-gang.txt"
+    },
+    {
+      "id": "BASELINE",
+      "severity": "n/a",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyBaseline_HappyPathSubGroupPolicy",
+        "TestVerifyBaseline_GangStrategyResolutionOrder"
+      ],
+      "claim": "Harness-bites check: the happy path must be GREEN, otherwise the RED results above could be harness bugs rather than product defects.",
+      "observed": "GREEN on PR head - the harness reads the real API correctly."
+    }
+  ],
+
+  "liveNote": "L3 was NOT run this round: the sandbox cluster has no Volcano CRDs, so subGroupPolicy behavior cannot be observed. With Volcano >= 1.14 installed, capture two signals: (1) create an RBG whose CoordinatedPolicy sets minReplicas on a role using workloadType=Deployment/StatefulSet and check whether its pods ever leave Pending - the emitted subGroupPolicy.matchLabelKeys references rolebasedgroup.workloads.x-k8s.io/role-instance-name, a label those paths never write (F1); (2) create an RBG with a typo'd role name in minReplicas and read back the PodGroup - spec.minMember must not be 0 (F2)."
+}

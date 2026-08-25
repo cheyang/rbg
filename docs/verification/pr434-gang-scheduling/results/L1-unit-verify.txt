@@ -1,0 +1,59 @@
+=== RUN   TestVerifyF1_MatchLabelKeysEmittedForWorkloadTypesThatNeverSetTheLabel
+=== RUN   TestVerifyF1_MatchLabelKeysEmittedForWorkloadTypesThatNeverSetTheLabel/apps/v1/StatefulSet
+    verify_gang_subgroup_test.go:130: CANARY GREEN: role "prefill" (workloadType=apps/v1/StatefulSet) gets MatchLabelKeys=[rbg.workloads.x-k8s.io/role-instance-name], but pods of this workload type never carry rbg.workloads.x-k8s.io/role-instance-name
+=== RUN   TestVerifyF1_MatchLabelKeysEmittedForWorkloadTypesThatNeverSetTheLabel/apps/v1/Deployment
+    verify_gang_subgroup_test.go:130: CANARY GREEN: role "prefill" (workloadType=apps/v1/Deployment) gets MatchLabelKeys=[rbg.workloads.x-k8s.io/role-instance-name], but pods of this workload type never carry rbg.workloads.x-k8s.io/role-instance-name
+=== RUN   TestVerifyF1_MatchLabelKeysEmittedForWorkloadTypesThatNeverSetTheLabel/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet
+    verify_gang_subgroup_test.go:130: CANARY GREEN: role "prefill" (workloadType=leaderworkerset.x-k8s.io/v1/LeaderWorkerSet) gets MatchLabelKeys=[rbg.workloads.x-k8s.io/role-instance-name], but pods of this workload type never carry rbg.workloads.x-k8s.io/role-instance-name
+--- PASS: TestVerifyF1_MatchLabelKeysEmittedForWorkloadTypesThatNeverSetTheLabel (0.00s)
+    --- PASS: TestVerifyF1_MatchLabelKeysEmittedForWorkloadTypesThatNeverSetTheLabel/apps/v1/StatefulSet (0.00s)
+    --- PASS: TestVerifyF1_MatchLabelKeysEmittedForWorkloadTypesThatNeverSetTheLabel/apps/v1/Deployment (0.00s)
+    --- PASS: TestVerifyF1_MatchLabelKeysEmittedForWorkloadTypesThatNeverSetTheLabel/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet (0.00s)
+=== RUN   TestVerifyF2_UnknownRoleNameInMinReplicasSilentlyYieldsZeroMinMember
+    verify_gang_subgroup_test.go:173: CANARY GREEN: minReplicas with only unknown role names produced minMember=0 and subGroupPolicy=0 entries — the PodGroup would be created gang-protecting nothing, with no error and no webhook rejection
+--- PASS: TestVerifyF2_UnknownRoleNameInMinReplicasSilentlyYieldsZeroMinMember (0.00s)
+=== RUN   TestVerifyF2b_MinMemberMustNeverCollapseToZeroWhenGangRequested
+    verify_gang_subgroup_test.go:203: CONTRACT RED: gang requested via minReplicas=map[prefil:2] but calculateGangMinimum() = 0; a gang that protects zero pods should be rejected (webhook per KEP-430) or surfaced as a reconcile error, not silently accepted
+--- FAIL: TestVerifyF2b_MinMemberMustNeverCollapseToZeroWhenGangRequested (0.00s)
+=== RUN   TestVerifyF3_ExcludedRoleStillGetsPodGroupAnnotation
+    verify_gang_subgroup_test.go:260: CANARY GREEN: role "sidecar-only" is excluded from minReplicas (minMember=2 counts only prefill, no subGroup entry) yet its pods are annotated scheduling.k8s.io/group-name=rbg-c and pinned to schedulerName=volcano — they join the gang they are documented to be excluded from
+--- PASS: TestVerifyF3_ExcludedRoleStillGetsPodGroupAnnotation (0.00s)
+=== RUN   TestVerifyF3b_RoleParameterDoesNotAffectInjection
+    verify_gang_subgroup_test.go:307: CANARY GREEN: InjectPodSchedulingFields ignores its `role` argument entirely — included, excluded and nil roles all inject identically
+--- PASS: TestVerifyF3b_RoleParameterDoesNotAffectInjection (0.00s)
+=== RUN   TestVerifyF4_MinReplicasExceedingRoleReplicasIsUnsatisfiable
+    verify_gang_subgroup_test.go:334: CONTRACT RED: minMember=5 exceeds the total pods the RBG will ever create (GetGroupSize()=2) because minReplicas=5 > replicas=2; the gang is unsatisfiable by construction and all pods stay Pending. Expected admission rejection or a clamp to replicas.
+--- FAIL: TestVerifyF4_MinReplicasExceedingRoleReplicasIsUnsatisfiable (0.00s)
+=== RUN   TestVerifyF5_NonPositiveMinReplicasAccepted
+=== RUN   TestVerifyF5_NonPositiveMinReplicasAccepted/zero
+    verify_gang_subgroup_test.go:359: CONTRACT RED: minReplicas=0 accepted, emitting a subGroupPolicy with minSubGroups=0 and minMember=0; KEP-430 required value > 0 validation
+=== RUN   TestVerifyF5_NonPositiveMinReplicasAccepted/negative
+    verify_gang_subgroup_test.go:373: CONTRACT RED: negative minReplicas=-3 accepted, producing minMember=-3 and minSubGroups=-3; KEP-430 required value > 0 validation
+--- FAIL: TestVerifyF5_NonPositiveMinReplicasAccepted (0.00s)
+    --- FAIL: TestVerifyF5_NonPositiveMinReplicasAccepted/zero (0.00s)
+    --- FAIL: TestVerifyF5_NonPositiveMinReplicasAccepted/negative (0.00s)
+=== RUN   TestVerifyBaseline_HappyPathSubGroupPolicy
+--- PASS: TestVerifyBaseline_HappyPathSubGroupPolicy (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/scheduler/volcano	0.222s
+=== RUN   TestVerifyF6_GangStrategyIgnoresPolicyRuleRoleScope
+    verify_gang_strategy_test.go:111: CANARY GREEN: rule Roles=[prefill] but the returned strategy still carries minReplicas=map[decode:1 prefill:2] including out-of-scope role 'decode'; policy.Roles is never consulted
+--- PASS: TestVerifyF6_GangStrategyIgnoresPolicyRuleRoleScope (0.09s)
+=== RUN   TestVerifyF7_MultipleGangRulesSilentlyDropAllButFirst
+    verify_gang_strategy_test.go:149: CONTRACT RED: two gang rules were declared (prefill and decode) but the resolved strategy is map[prefill:2] — the second rule was silently discarded. Expected the rules to be merged, or the configuration rejected as ambiguous.
+--- FAIL: TestVerifyF7_MultipleGangRulesSilentlyDropAllButFirst (0.00s)
+=== RUN   TestVerifyF8_CoordinatedPolicyReadErrorIsSwallowed
+    verify_gang_strategy_test.go:185: CONTRACT RED: the CoordinatedPolicy read failed with a non-NotFound error, yet GetGangStrategy returned nil ("gang not enabled") and reported no error. A configured gang would silently vanish and the PodGroup would be deleted. Expected the error to be propagated so the caller can requeue.
+--- FAIL: TestVerifyF8_CoordinatedPolicyReadErrorIsSwallowed (0.00s)
+=== RUN   TestVerifyBaseline_GangStrategyResolutionOrder
+=== RUN   TestVerifyBaseline_GangStrategyResolutionOrder/no_policy,_no_annotation_->_nil
+=== RUN   TestVerifyBaseline_GangStrategyResolutionOrder/annotation_only_->_empty_strategy
+=== RUN   TestVerifyBaseline_GangStrategyResolutionOrder/policy_takes_priority_over_annotation
+--- PASS: TestVerifyBaseline_GangStrategyResolutionOrder (0.01s)
+    --- PASS: TestVerifyBaseline_GangStrategyResolutionOrder/no_policy,_no_annotation_->_nil (0.00s)
+    --- PASS: TestVerifyBaseline_GangStrategyResolutionOrder/annotation_only_->_empty_strategy (0.00s)
+    --- PASS: TestVerifyBaseline_GangStrategyResolutionOrder/policy_takes_priority_over_annotation (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/scheduler/common	0.229s
+FAIL
+EXIT=1
