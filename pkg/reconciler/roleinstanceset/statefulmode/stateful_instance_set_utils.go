@@ -169,8 +169,11 @@ func newVersionedInstance(
 			Labels:      make(map[string]string),
 			Annotations: make(map[string]string),
 		},
-		// Copy the RoleInstanceSpec from RoleInstanceTemplate
-		Spec: setToUse.Spec.RoleInstanceTemplate.RoleInstanceSpec,
+		// Deep copy the RoleInstanceSpec from RoleInstanceTemplate. A shallow copy
+		// would share the Components slice (and each component's Template.Labels
+		// map) across every instance built from this set, so the per-instance
+		// identity labels written below would overwrite each other.
+		Spec: *setToUse.Spec.RoleInstanceTemplate.RoleInstanceSpec.DeepCopy(),
 	}
 
 	// Set basic identity
