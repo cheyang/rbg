@@ -1,0 +1,105 @@
+PR-434 (sgl-project/rbg) — KEP-430 two-level gang scheduling
+LIVE L3 END-TO-END VERIFICATION RESULTS
+================================================================
+
+Environment
+-----------
+Cluster:    3-node ACK (cn-hongkong), k8s v1.36.1-aliyun.1, containerd
+Scheduler:  Volcano 1.14.4 (volcano-system healthy)
+Controller: rolebasedgroup/rbgs-controller:v434-verify3
+            = PR-434 branch rebased onto upstream/main, head 74bc1004
+            (reported version string: v0.8.0-74bc1004)
+            + test-only env-gated field-selector cache scope
+              (RBG_TEST_WATCH_NAMESPACE=v434-verify) so the controller
+              LISTs only the test namespace and never touches the live
+              nginx-cluster RBG in `default`.
+Namespace:  v434-verify (7 CoordinatedPolicy + RBG pairs)
+Flags:      --scheduler-name=volcano (already on the live deployment)
+
+Why the rebase + field selector
+--------------------------------
+The original PR-434 branch predates the restartPolicy structuring that
+shipped in the cluster's installed CRD/controller (v0.8.0-0c00546d, #418).
+Running the raw PR binary cluster-wide failed every typed LIST with
+  json: cannot unmarshal object into Go struct field ...restartPolicy
+because the live RoleInstance/RoleInstanceSet objects store restartPolicy
+as an OBJECT while the PR binary expected a string — a version-skew
+artifact of the test setup, NOT a gang finding, but it globally blocked
+reconciliation.
+
+Rebasing onto upstream/main succeeded with ZERO conflicts (clean, so the
+PR is cleanly mergeable). Upstream/main re-typed `restartPolicy` as a
+string and moved the object to a new `restartPolicyConfig` key, so the
+rebased binary decodes the live objects fine. To guarantee the live
+workload is never touched, cacheOptions() was patched (test-only,
+env-gated) to add a field selector metadata.namespace=v434-verify on the
+RBG / RoleInstanceSet / RoleInstance informers. This yields a single
+FILTERED SharedIndexInformer (no multiNamespaceInformer wrapper, so the
+hard type assertions in stateful_instance_set_controller.go:103-104 still
+hold — no panic) and excludes the nginx objects from the LIST entirely.
+
+Result: controller cache synced with NO unmarshal errors and NO panic;
+it reconciled only the v434-verify namespace.
+
+Observed PodGroups (kubectl get podgroups.scheduling.volcano.sh)
+---------------------------------------------------------------
+NAME          minMember   phase      pods
+baseline-ok   2           Running    prefill-0/1 Running          (sanity OK)
+f2-typo       <none>(0)   Running    prefill-0/1 Running
+f3-excluded   1           Running    prefill-0 + sidecar-0 Running
+f4-exceeds    5           Inqueue    prefill-0/1 PENDING (forever)
+f5-zero       <none>(0)   Running    prefill-0/1 Running
+f6-scope      2           Running    prefill-0 + decode-0 Running
+f7-tworules   1           Running    prefill-0 + decode-0 Running
+
+Finding-by-finding live confirmation
+-------------------------------------
+BASELINE  minMember=2, both pods Running under schedulerName=volcano.
+          The happy path works, so every red below is a product bug, not
+          an environmental artifact.
+
+F2  Role-name typo (`prefil` vs real `prefill`): PodGroup created with
+    minMember=<none>/0. The typo silently DISABLES the gang constraint
+    instead of being rejected. CONFIRMED.
+
+F3  Excluded role still scheduled by volcano: minReplicas names only
+    `prefill` (minMember=1), yet BOTH f3-excluded-prefill-0 AND
+    f3-excluded-sidecar-0 carry spec.schedulerName=volcano and the
+    annotation scheduling.k8s.io/group-name=f3-excluded — the excluded
+    sidecar is bound into the same PodGroup whose minMember does not
+    budget for it. CONFIRMED.
+
+F4  minReplicas(5) > role replicas(2): PodGroup minMember=5 while only 2
+    pods are ever created. The gang is unsatisfiable by construction;
+    both pods stay Pending FOREVER (phase Inqueue). CONFIRMED — this is
+    the most damaging: a single typo'd number wedges the whole group.
+
+F5  minReplicas=0: accepted (no validation rejection), PodGroup
+    minMember=<none>/0. CONFIRMED.
+
+F6  `roles` scope ignored: policy scope is ["prefill"] ONLY, but
+    minReplicas also names `decode`. PodGroup minMember=2 (=prefill 1 +
+    decode 1) — decode joined the gang despite being out of the declared
+    scope. The REQUIRED `roles` field is never read. CONFIRMED.
+
+F7  Multiple gang rules: two rules (gang-prefill:1, gang-decode:1).
+    PodGroup minMember=1 — only the FIRST rule survived; the second
+    (decode) was silently dropped. Would be 2 if both counted. CONFIRMED.
+
+F9  CoordinatedPolicy edits do not reconcile: patched baseline-ok policy
+    prefill 2->3. PodGroup minMember STAYED 2 (policy now reads 3). Even
+    after forcing an RBG reconcile (annotate poke) the PodGroup minMember
+    remained 2 — the policy->PodGroup linkage is effectively one-shot and
+    never re-derived. CONFIRMED (and stronger than predicted).
+
+Live-workload safety
+--------------------
+Throughout: nginx-cluster (default ns) RBG READY=True 19d, pods 4/4
+Running 12d — untouched at every step (the field selector means the test
+controller never watches or reconciles it).
+
+Note on layered evidence
+-------------------------
+Every conclusion above already has deterministic L1/L2 CONTRACT/CANARY
+unit evidence against the real PR-434 code; this L3 run is corroborating
+end-to-end confirmation on a live Volcano cluster, not the sole basis.

@@ -1,0 +1,304 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: v434-verify
+---
+# ============================================================================
+# BASELINE — happy path. A well-formed per-role minimum on a RoleInstanceSet
+# role should produce a sane PodGroup and actually run.
+# Expect: minMember=2, subGroupPolicy[prefill], pods Running.
+# If this does not come up, every red below is environmental, not a product bug.
+# ============================================================================
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: CoordinatedPolicy
+metadata:
+  name: baseline-ok
+  namespace: v434-verify
+spec:
+  policies:
+    - name: gang
+      roles: ["prefill"]
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              prefill: 2
+---
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: baseline-ok
+  namespace: v434-verify
+spec:
+  roles:
+    - name: prefill
+      replicas: 2
+      template:
+        spec:
+          containers:
+            - name: app
+              image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+              resources:
+                requests: { cpu: 10m, memory: 16Mi }
+---
+# ============================================================================
+# F2 — a role name that does not exist in the RBG silently disables gang.
+# Expect if correct: rejected, or minMember over the real roles.
+# Expect on PR head: PodGroup with minMember=0 and empty subGroupPolicy.
+# ============================================================================
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: CoordinatedPolicy
+metadata:
+  name: f2-typo
+  namespace: v434-verify
+spec:
+  policies:
+    - name: gang
+      roles: ["prefill"]
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              prefil: 2          # typo: the real role is "prefill"
+---
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: f2-typo
+  namespace: v434-verify
+spec:
+  roles:
+    - name: prefill
+      replicas: 2
+      template:
+        spec:
+          containers:
+            - name: app
+              image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+              resources:
+                requests: { cpu: 10m, memory: 16Mi }
+---
+# ============================================================================
+# F4 — minReplicas greater than the role's own replicas.
+# Expect if correct: rejected, or clamped to replicas.
+# Expect on PR head: minMember=5 while only 2 pods are ever created, so the
+# gang is unsatisfiable by construction and the pods stay Pending forever.
+# ============================================================================
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: CoordinatedPolicy
+metadata:
+  name: f4-exceeds
+  namespace: v434-verify
+spec:
+  policies:
+    - name: gang
+      roles: ["prefill"]
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              prefill: 5         # role has replicas: 2
+---
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: f4-exceeds
+  namespace: v434-verify
+spec:
+  roles:
+    - name: prefill
+      replicas: 2
+      template:
+        spec:
+          containers:
+            - name: app
+              image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+              resources:
+                requests: { cpu: 10m, memory: 16Mi }
+---
+# ============================================================================
+# F5 — zero minReplicas.
+# Expect if correct: rejected by validation.
+# Expect on PR head: accepted, yielding minSubGroups=0 / minMember=0.
+# ============================================================================
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: CoordinatedPolicy
+metadata:
+  name: f5-zero
+  namespace: v434-verify
+spec:
+  policies:
+    - name: gang
+      roles: ["prefill"]
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              prefill: 0
+---
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: f5-zero
+  namespace: v434-verify
+spec:
+  roles:
+    - name: prefill
+      replicas: 2
+      template:
+        spec:
+          containers:
+            - name: app
+              image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+              resources:
+                requests: { cpu: 10m, memory: 16Mi }
+---
+# ============================================================================
+# F3 — a role excluded from minReplicas still gets schedulerName=volcano and
+# the PodGroup annotation, so Volcano counts its pods against a minMember that
+# does not budget for them.
+# Expect if correct: sidecar scheduled by the default scheduler / not counted.
+# Expect on PR head: sidecar pods also carry schedulerName=volcano.
+# ============================================================================
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: CoordinatedPolicy
+metadata:
+  name: f3-excluded
+  namespace: v434-verify
+spec:
+  policies:
+    - name: gang
+      roles: ["prefill"]
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              prefill: 1         # "sidecar" deliberately omitted
+---
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: f3-excluded
+  namespace: v434-verify
+spec:
+  roles:
+    - name: prefill
+      replicas: 1
+      template:
+        spec:
+          containers:
+            - name: app
+              image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+              resources:
+                requests: { cpu: 10m, memory: 16Mi }
+    - name: sidecar
+      replicas: 1
+      template:
+        spec:
+          containers:
+            - name: app
+              image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+              resources:
+                requests: { cpu: 10m, memory: 16Mi }
+---
+# ============================================================================
+# F6 — `roles` is a REQUIRED field on a policy rule, yet GetGangStrategy never
+# reads it. Here the rule is scoped to ["prefill"] only, but minReplicas also
+# names "decode".
+# Expect if correct: decode is out of scope, so it is not part of the gang.
+# Expect on PR head: the scope is ignored and decode joins the gang anyway.
+# ============================================================================
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: CoordinatedPolicy
+metadata:
+  name: f6-scope
+  namespace: v434-verify
+spec:
+  policies:
+    - name: gang
+      roles: ["prefill"]         # scope says prefill ONLY
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              prefill: 1
+              decode: 1          # out of the declared scope
+---
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: f6-scope
+  namespace: v434-verify
+spec:
+  roles:
+    - name: prefill
+      replicas: 1
+      template:
+        spec:
+          containers:
+            - name: app
+              image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+              resources:
+                requests: { cpu: 10m, memory: 16Mi }
+    - name: decode
+      replicas: 1
+      template:
+        spec:
+          containers:
+            - name: app
+              image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+              resources:
+                requests: { cpu: 10m, memory: 16Mi }
+---
+# ============================================================================
+# F7 — two gang rules; only the first should survive.
+# Expect if correct: merged, or rejected as ambiguous.
+# Expect on PR head: decode's rule is silently dropped from minMember.
+# ============================================================================
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: CoordinatedPolicy
+metadata:
+  name: f7-tworules
+  namespace: v434-verify
+spec:
+  policies:
+    - name: gang-prefill
+      roles: ["prefill"]
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              prefill: 1
+    - name: gang-decode
+      roles: ["decode"]
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              decode: 1
+---
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: f7-tworules
+  namespace: v434-verify
+spec:
+  roles:
+    - name: prefill
+      replicas: 1
+      template:
+        spec:
+          containers:
+            - name: app
+              image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+              resources:
+                requests: { cpu: 10m, memory: 16Mi }
+    - name: decode
+      replicas: 1
+      template:
+        spec:
+          containers:
+            - name: app
+              image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+              resources:
+                requests: { cpu: 10m, memory: 16Mi }

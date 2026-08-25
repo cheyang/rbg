@@ -34,12 +34,13 @@
   "findings": [
     {
       "id": "F1",
-      "severity": "major",
+      "severity": "minor",
       "polarity": "canary",
       "layer": "unit",
       "match": ["TestVerifyF1_MatchLabelKeysEmittedForWorkloadTypesThatNeverSetTheLabel"],
       "claim": "buildSubGroupPolicy always sets MatchLabelKeys=[rolebasedgroup.workloads.x-k8s.io/role-instance-name], but that label is only written on the RoleInstanceSet path. For roles backed by Deployment/StatefulSet the label is absent, so Volcano cannot partition the role into per-instance subGroups and the declared subGroupSize/minSubGroups describe a partition that does not exist.",
-      "observed": "GREEN on PR head - the key is emitted for every workload type, including Deployment and StatefulSet."
+      "observed": "GREEN on PR head - the key is emitted for every workload type, including Deployment and StatefulSet.",
+      "severityNote": "Downgraded major->minor: RBG no longer supports Deployment/StatefulSet roles, so the missing label only affects deprecated workload types fresh installs will not use."
     },
     {
       "id": "F2",
@@ -154,5 +155,5 @@
     }
   ],
 
-  "liveNote": "L3 was NOT run this round: the sandbox cluster has no Volcano CRDs, so subGroupPolicy behavior cannot be observed. With Volcano >= 1.14 installed, capture two signals: (1) create an RBG whose CoordinatedPolicy sets minReplicas on a role using workloadType=Deployment/StatefulSet and check whether its pods ever leave Pending - the emitted subGroupPolicy.matchLabelKeys references rolebasedgroup.workloads.x-k8s.io/role-instance-name, a label those paths never write (F1); (2) create an RBG with a typo'd role name in minReplicas and read back the PodGroup - spec.minMember must not be 0 (F2)."
+  "liveNote": "L3 WAS run this round on a 3-node ACK cluster (k8s v1.36.1) with Volcano 1.14.4 and --scheduler-name=volcano. The original PR branch predates the restartPolicy structuring in the cluster's installed CRD, so the raw PR binary failed every typed LIST with a decode error (setup version-skew, not a gang finding). The branch was rebased onto upstream/main (ZERO conflicts - clean merge signal) and deployed with a test-only env-gated field selector metadata.namespace=v434-verify on the RBG/RoleInstanceSet/RoleInstance informers, so the controller reconciled only the test namespace and never touched the live nginx-cluster RBG. Observed PodGroups matched predictions exactly: baseline-ok minMember=2 (2 Running); f2-typo minMember=0 (F2); f3-excluded minMember=1 but excluded sidecar still schedulerName=volcano and joined group f3-excluded (F3); f4-exceeds minMember=5 with only 2 pods, Pending forever (F4); f5-zero minMember=0 accepted (F5); f6-scope minMember=2 - decode joined despite scope=[prefill] (F6); f7-tworules minMember=1 - second rule dropped (F7). F9 live: editing CoordinatedPolicy prefill 2->3 left PodGroup minMember=2 even after an RBG reconcile poke. Cluster restored afterward to controller v0.8.0-0c00546d, test namespace deleted, nginx-cluster confirmed READY 4/4 untouched. Full transcript in l3/L3-results.txt, manifests in l3/cases-rebased.yaml."
 }
