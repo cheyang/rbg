@@ -1,0 +1,40 @@
+=== L1 Unit Test Results (all 4 layers) ===
+Date: 2026-08-26
+PR head: e16dca84bfe2d2ed3909a658d04283d7b53789ac
+Go version: go1.24.1 linux/amd64
+
+--- pkg/utils ---
+=== RUN   TestSetMatchesRevision
+=== RUN   TestSetMatchesRevision/IdenticalBytes_SemanticallyEqual
+=== RUN   TestSetMatchesRevision/LegacyCreationTimestamp_SemanticallyEqual
+=== RUN   TestSetMatchesRevision/TrulyDifferentSpec_ReturnsFalse
+=== RUN   TestSetMatchesRevision/CacheHit_SecondCallReturnsTrue
+=== RUN   TestSetMatchesRevision/NilExistingRevision_ReturnsFalse
+=== RUN   TestSetMatchesRevision/NilProposedRevision_ReturnsFalse
+=== RUN   TestSetMatchesRevision/NilCache_ReturnsFalseNoPanic
+=== RUN   TestSetMatchesRevision/CorruptedExistingRevision_ReturnsFalse
+--- PASS: TestSetMatchesRevision (0.00s)
+PASS ok sigs.k8s.io/rbgs/pkg/utils 0.156s
+
+--- pkg/reconciler/roleinstance/revision ---
+PASS ok sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision 0.234s (8/8 subtests)
+
+--- pkg/reconciler/roleinstanceset/statefulmode ---
+PASS ok sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode 0.248s (8/8 subtests)
+
+--- pkg/reconciler/roleinstanceset/statelessmode/revision ---
+PASS ok sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision 0.302s (8/8 subtests)
+
+=== Build ===
+go build ./... — PASS
+
+=== Full package test suite (regression check) ===
+sigs.k8s.io/rbgs/pkg/utils                                     PASS 0.446s
+sigs.k8s.io/rbgs/pkg/reconciler/roleinstance                    PASS 0.166s
+sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision           PASS 0.175s
+sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode    PASS 0.212s
+sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode   PASS 0.134s
+sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision PASS 0.280s
+sigs.k8s.io/rbgs/internal/controller/workloads                  PASS 7.140s
+
+SUMMARY: 32/32 SetMatchesRevision subtests PASS, 0 regressions in affected packages.

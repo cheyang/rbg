@@ -1,0 +1,42 @@
+{
+  "pr": "https://github.com/sgl-project/rbg/pull/433",
+  "topic": "pr433-revision-semantic-equality",
+  "premise": {
+    "claim": "ControllerRevision serialization drift across client-go versions causes EqualRevision byte comparison to return false for semantically identical revisions, triggering spurious rollouts",
+    "verdict": "Confirmed",
+    "evidence": "Unit test LegacyCreationTimestamp_SemanticallyEqual proves the mechanism",
+    "runsAgainst": "head"
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "claim": "No linked issue — PR body says fixes #NNNN (placeholder)",
+      "severity": "question",
+      "layer": null,
+      "tests": [],
+      "polarity": null,
+      "verdict": "Question — ask author"
+    },
+    {
+      "id": "F2",
+      "claim": "SetMatchesRevision duplicated across 4 packages with near-identical logic",
+      "severity": "nit",
+      "layer": null,
+      "tests": [],
+      "polarity": null,
+      "verdict": "Nit — mirrors upstream pattern, acceptable"
+    }
+  ],
+  "layers": [
+    {
+      "kind": "unit",
+      "cmd": "go test ./pkg/utils/... ./pkg/reconciler/roleinstance/revision/... ./pkg/reconciler/roleinstanceset/statefulmode/... ./pkg/reconciler/roleinstanceset/statelessmode/revision/... -v -run TestSetMatchesRevision -count=1"
+    }
+  ],
+  "harnessPaths": [
+    "pkg/utils/revision_utils_test.go",
+    "pkg/reconciler/roleinstance/revision/instance_revision_test.go",
+    "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_helper_test.go",
+    "pkg/reconciler/roleinstanceset/statelessmode/revision/revision_test.go"
+  ]
+}
