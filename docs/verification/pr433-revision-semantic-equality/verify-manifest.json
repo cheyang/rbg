@@ -47,9 +47,10 @@
     },
     {
       "kind": "live",
-      "cmd": "bash /tmp/pr433-l3-v3.sh",
+      "cmd": "bash /tmp/pr433-l3-r2.sh",
       "sandbox": "43.99.38.217",
-      "liveNote": "End-to-end RBG->RIS->ControllerRevision reconciliation validated on managed ACK cluster. Controller restart after drift-injection attempt does not create spurious revisions (PASS). Exact byte-drift (creationTimestamp:null vs omission) cannot be reproduced via K8s API on this cluster version — the API server normalizes null values in RawExtension on create. This is an environment limitation; the semantic equality code path is exhaustively tested at L1 (32/32 subtests green)."
+      "runsAgainst": "12915120",
+      "liveNote": "Round 2 (head 12915120): controller rebuilt from ./cmd/rbgs, run out-of-cluster against managed ACK. RBG->RIS reconciled; 2 ControllerRevisions created (RV 65905655/65905661). Over ~13 min continuous reconcile the revision set + resourceVersions stayed identical and RIS resourceVersion (65905664) did not churn — PASS, no spurious rollout end-to-end. As in round 1, the F3 semantic-equality branch itself is not reachable at L3 because the API server normalizes creationTimestamp:null in RawExtension on store; F3 is proven at unit layer with polarity (revert -> FAIL). Pod leg did not fully materialize this run (out-of-cluster + port-allocator disabled), which does not bear on the revision/rollout signal."
     }
   ],
   "harnessPaths": [

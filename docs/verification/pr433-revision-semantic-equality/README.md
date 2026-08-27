@@ -33,7 +33,39 @@ The author pushed `129151205a2f` ("fix: keep persisted revision for role hashes 
 | All 4 `SetMatchesRevision` layers | ✅ 32/32 subtests green |
 | Full package suite | ✅ 15/15 packages `ok`, `go build ./...` PASS, no regressions |
 
-**Round-2 verdict:** the round-1 blocker (F3) is fixed and proven; only the non-blocking `fixes #NNNN` placeholder (F1) remains. **Ready to merge** once the PR body link is cleaned up.
+### L3 — live end-to-end regression (round 2, sandbox 43.99.38.217)
+
+Controller rebuilt from head `12915120` (`go build ./cmd/rbgs`), run out-of-cluster
+(`--enable-webhooks=none --enable-port-allocator=false`) against the managed ACK cluster.
+Fresh namespace `pr433-r2`, `RoleBasedGroup` with a 2-replica `worker` role
+(`standalonePattern`, nginx:1.25-alpine).
+
+| Phase | Observation |
+|-------|-------------|
+| RBG → RIS created | `test-rbg` → RIS `test-rbg-worker` (DESIRED=2) |
+| ControllerRevisions created | 2 — `test-rbg-54d589b959-1` (RV 65905655), `test-rbg-worker-8545b55495` (RV 65905661) |
+| RIS resourceVersion BEFORE | 65905664 |
+| Continuous reconcile | fixed controller ran **~13 min** continuously reconciling the RBG |
+| ControllerRevisions AFTER | **2, identical names + identical RVs** (65905655 / 65905661) — zero spurious revision |
+| RIS resourceVersion AFTER | **65905664 — unchanged** (no rollout / no churn) |
+
+**L3 result: PASS** — over ~13 min of continuous reconciliation on the fixed head, no
+spurious `ControllerRevision` was created and no `resourceVersion` churn occurred on the
+`RoleInstanceSet`. This is the end-to-end regression signal (steady-state, no spurious
+rollout).
+
+**Scope honesty (unchanged from round 1):** L3 on this cluster cannot exercise the F3
+*semantic-equality branch* itself — the managed ACK API server normalizes
+`creationTimestamp: null` out of `RawExtension` on store, so the exact cross-version byte
+drift cannot be planted through any K8s API path. F3 is proven at the unit layer with
+polarity (revert → FAIL); L3 here confirms the fixed controller introduces no rollout
+regression end-to-end. A plain restart/reconcile with one serializer takes the trivial
+`EqualRevision == true` path, which is what this live run validates.
+
+**Round-2 verdict:** the round-1 blocker (F3) is fixed and proven (unit + polarity), L3
+end-to-end regression is clean, and the F2 nit is addressed. Only the non-blocking
+`fixes #NNNN` placeholder (F1) remains. **Ready to merge** once the PR body link is
+cleaned up.
 
 ## Test Results (sandbox 43.99.38.217)
 
