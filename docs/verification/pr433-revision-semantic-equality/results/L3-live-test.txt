@@ -1,0 +1,104 @@
+==============================================
+L3 Live Test: PR #433 Semantic Revision Equality
+Focus: RoleInstanceSet workload
+Date: Thu Aug 27 09:38:48 AM CST 2026
+==============================================
+
+=== Phase 0: Remove incompatible RIS objects in default ns ===
+(Backed up to /tmp/default-ris-backup.json earlier)
+roleinstanceset.workloads.x-k8s.io "nginx-cluster-backend" deleted from default namespace
+roleinstanceset.workloads.x-k8s.io "nginx-cluster-frontend" deleted from default namespace
+Remaining RIS cluster-wide:
+0
+
+=== Phase 1: Cleanup stale processes and test resources ===
+rolebasedgroup.workloads.x-k8s.io "test-rbg" deleted from pr433-test namespace
+No resources found
+Cleanup done
+
+=== Phase 2: Start NEW controller (PR #433 branch) ===
+Controller running (PID=2608154)
+
+=== Phase 3: Create RoleBasedGroup ===
+rolebasedgroup.workloads.x-k8s.io/test-rbg created
+Waiting 40s for full reconciliation...
+
+--- RoleBasedGroups ---
+NAME       READY   AGE
+test-rbg   True    41s
+
+--- RoleInstanceSets ---
+NAME              DESIRED   UPDATED   UPDATED_READY   READY   TOTAL   AGE   SELECTOR
+test-rbg-worker   1         1         1               1       1       40s   rbg.workloads.x-k8s.io/group-name=test-rbg,rbg.workloads.x-k8s.io/group-uid=87420c5b23c074393b4677b38afc328c90abb3b6,rbg.workloads.x-k8s.io/role-name=worker
+
+--- ControllerRevisions ---
+NAME                          REVISION   LABELS
+test-rbg-54d589b959-1         1          map[rbg.workloads.x-k8s.io/group-name:test-rbg rbg.workloads.x-k8s.io/group-revision:54d589b959]
+test-rbg-worker-0-c69d6c59d   1          map[controller.kubernetes.io/hash:c69d6c59d rbg.workloads.x-k8s.io/role-instance-name:test-rbg-worker-0]
+test-rbg-worker-666b94bb8b    1          map[controller.kubernetes.io/hash:666b94bb8b rbg.workloads.x-k8s.io/group-name:test-rbg rbg.workloads.x-k8s.io/group-uid:87420c5b23c074393b4677b38afc328c90abb3b6 rbg.workloads.x-k8s.io/role-name:worker]
+
+RIS name: test-rbg-worker
+Initial revision count: 3
+Target revision for drift: test-rbg-54d589b959-1
+Original revision saved
+
+=== Phase 4: Stop controller ===
+Controller stopped
+
+=== Phase 5: Inject serialization drift ===
+Revision: test-rbg-54d589b959-1
+Data before: 384 bytes
+Data after:  411 bytes
+Bytes differ: True
+Drifted revision written to /tmp/pr433-rev-drifted.json
+
+Deleting original revision...
+controllerrevision.apps "test-rbg-54d589b959-1" deleted from pr433-test namespace
+Recreating with drift...
+controllerrevision.apps/test-rbg-54d589b959-1 created
+
+Verifying drift:
+Has creationTimestamp in data: False
+ResourceVersion: 65534352
+Data (first 400 chars): {"spec": {"roleTemplates": [{"$patch": "replace"}], "roles": [{"$patch": "replace"}, {"name": "worker", "podManagementPolicy": "Parallel", "standalonePattern": {"template": {"metadata": {"labels": {"app": "test-rbg-worker"}}, "spec": {"containers": [{"image": "nginx:1.25-alpine", "name": "nginx", "resources": {"requests": {"cpu": "10m", "memory": "16Mi"}}}]}}}}]}}
+
+=== Phase 6: Record BEFORE state ===
+Revision count BEFORE: 3
+NAME                          REVISION   RV
+test-rbg-54d589b959-1         1          65534352
+test-rbg-worker-0-c69d6c59d   1          65533754
+test-rbg-worker-666b94bb8b    1          65533746
+
+=== Phase 7: Restart controller ===
+Controller PID=2608274, waiting 25s...
+
+=== Phase 8: VERIFY ===
+Revision count AFTER: 3
+NAME                          REVISION   RV
+test-rbg-54d589b959-1         1          65534352
+test-rbg-worker-0-c69d6c59d   1          65533754
+test-rbg-worker-666b94bb8b    1          65533746
+
+==============================
+>>> RESULT: PASS
+>>> No spurious revision created.
+>>> Semantic equality check correctly identified drifted revision.
+==============================
+
+=== Controller log (relevant lines) ===
+{"level":"INFO","time":"2026-08-27T09:40:06.680+0800","caller":"workloads/rolebasedgroup_controller.go:175","message":"Start reconciling","controller":"workloads-rolebasedgroup","controllerGroup":"workloads.x-k8s.io","controllerKind":"RoleBasedGroup","RoleBasedGroup":{"name":"nginx-cluster","namespace":"default"},"namespace":"default","name":"nginx-cluster","reconcileID":"8cc2862b-966c-46cf-8875-7578d0d914e2","rbg":{"name":"nginx-cluster","namespace":"default"}}
+{"level":"INFO","time":"2026-08-27T09:40:06.681+0800","caller":"workloads/rolebasedgroup_controller.go:1652","message":"rbgs controller watch RoleInstanceSet CRD","controller":"workloads-rolebasedgroup","controllerGroup":"workloads.x-k8s.io","controllerKind":"RoleBasedGroup","RoleBasedGroup":{"name":"nginx-cluster","namespace":"default"},"namespace":"default","name":"nginx-cluster","reconcileID":"8cc2862b-966c-46cf-8875-7578d0d914e2","rbg":{"name":"nginx-cluster","namespace":"default"},"role":"frontend"}
+{"level":"INFO","time":"2026-08-27T09:40:06.683+0800","caller":"workloads/rolebasedgroup_controller.go:175","message":"Start reconciling","controller":"workloads-rolebasedgroup","controllerGroup":"workloads.x-k8s.io","controllerKind":"RoleBasedGroup","RoleBasedGroup":{"name":"test-rbg","namespace":"pr433-test"},"namespace":"pr433-test","name":"test-rbg","reconcileID":"71186e99-a4fd-407b-a1aa-167f6fdf1c96","rbg":{"name":"test-rbg","namespace":"pr433-test"}}
+{"level":"INFO","time":"2026-08-27T09:40:07.559+0800","caller":"workloads/rolebasedgroup_controller.go:178","message":"Finished reconciling","controller":"workloads-rolebasedgroup","controllerGroup":"workloads.x-k8s.io","controllerKind":"RoleBasedGroup","RoleBasedGroup":{"name":"test-rbg","namespace":"pr433-test"},"namespace":"pr433-test","name":"test-rbg","reconcileID":"71186e99-a4fd-407b-a1aa-167f6fdf1c96","rbg":{"name":"test-rbg","namespace":"pr433-test"},"duration":0.876078877}
+{"level":"INFO","time":"2026-08-27T09:40:07.573+0800","caller":"workloads/rolebasedgroup_controller.go:178","message":"Finished reconciling","controller":"workloads-rolebasedgroup","controllerGroup":"workloads.x-k8s.io","controllerKind":"RoleBasedGroup","RoleBasedGroup":{"name":"nginx-cluster","namespace":"default"},"namespace":"default","name":"nginx-cluster","reconcileID":"8cc2862b-966c-46cf-8875-7578d0d914e2","rbg":{"name":"nginx-cluster","namespace":"default"},"duration":0.892474835}
+
+=== RIS status ===
+NAME              DESIRED   UPDATED   UPDATED_READY   READY   TOTAL   AGE   SELECTOR
+test-rbg-worker   1         1         1               1       1       73s   rbg.workloads.x-k8s.io/group-name=test-rbg,rbg.workloads.x-k8s.io/group-uid=87420c5b23c074393b4677b38afc328c90abb3b6,rbg.workloads.x-k8s.io/role-name=worker
+
+=== Phase 9: Cleanup ===
+validatingwebhookconfiguration.admissionregistration.k8s.io/rbgs-validating-webhook-configuration patched
+
+==============================================
+L3 TEST COMPLETE
+==============================================

@@ -31,6 +31,12 @@
     {
       "kind": "unit",
       "cmd": "go test ./pkg/utils/... ./pkg/reconciler/roleinstance/revision/... ./pkg/reconciler/roleinstanceset/statefulmode/... ./pkg/reconciler/roleinstanceset/statelessmode/revision/... -v -run TestSetMatchesRevision -count=1"
+    },
+    {
+      "kind": "live",
+      "cmd": "bash /tmp/pr433-l3-v3.sh",
+      "sandbox": "43.99.38.217",
+      "liveNote": "End-to-end RBG->RIS->ControllerRevision reconciliation validated on managed ACK cluster. Controller restart after drift-injection attempt does not create spurious revisions (PASS). Exact byte-drift (creationTimestamp:null vs omission) cannot be reproduced via K8s API on this cluster version — the API server normalizes null values in RawExtension on create. This is an environment limitation; the semantic equality code path is exhaustively tested at L1 (32/32 subtests green)."
     }
   ],
   "harnessPaths": [

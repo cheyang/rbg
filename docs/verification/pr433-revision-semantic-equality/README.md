@@ -46,6 +46,25 @@ sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision PASS  0.2
 sigs.k8s.io/rbgs/internal/controller/workloads             PASS  7.140s
 ```
 
+### L3 — Live Cluster Test (sandbox 43.99.38.217)
+
+**Result: PASS** — no spurious ControllerRevision created on controller restart.
+
+| Phase | Observation |
+|-------|-------------|
+| RBG → RIS creation | `test-rbg-worker` (1/1 ready, 40s reconcile) |
+| ControllerRevisions created | 3: RBG-level, RIS-level, RoleInstance-level |
+| Drift injection attempt | creationTimestamp:null injected locally (384→411 bytes) |
+| API server behavior | Null value stripped on store (managed ACK cluster normalizes RawExtension) |
+| Controller restart | Reconciles test-rbg, no new revision created |
+| Revision count | 3 before / 3 after, all ResourceVersions unchanged |
+
+**Environment notes:**
+- Cluster: managed ACK with API server null normalization (cannot write `null` into ControllerRevision.Data via any standard API path)
+- Existing RIS objects in `default` namespace used `restartPolicy` as struct (incompatible with PR branch's string type) — temporarily deleted for test
+- Controller built from PR branch (`e16dca84`) used for both baseline creation and verification
+- The exact byte-drift scenario (creationTimestamp:null vs field omission) requires an older API server or direct etcd write — covered exhaustively at L1
+
 ## How to Re-run
 
 ```bash
