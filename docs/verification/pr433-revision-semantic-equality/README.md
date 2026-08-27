@@ -16,8 +16,24 @@
 | ID | Claim | Layer | Polarity | Verdict |
 |----|-------|-------|----------|---------|
 | P0 | Serialization drift causes spurious revision creation | Unit | contract | **Confirmed** — `LegacyCreationTimestamp_SemanticallyEqual` passes |
-| F1 | No linked issue (placeholder `fixes #NNNN`) | — | — | **Question** — No tracked issue |
-| F2 | Code duplication across 4 layers | — | — | **Nit** — Mirrors upstream pattern |
+| F3 | `handleRevisions` keeps fresh role hash after semantic match → spurious rollout persists | Unit | canary | **Fixed (round 2, `12915120`)** — one-line `expectedRevision = currentRevision`; polarity confirmed by revert |
+| F1 | No linked issue (placeholder `fixes #NNNN`) | — | — | **Question** — still open |
+| F2 | Code / test-helper duplication across 4 layers | — | — | **Addressed** — helper hoisted to `test/utils/revision.go` |
+
+## Round 2 — re-review of `e16dca84..129151205a2f`
+
+The author pushed `129151205a2f` ("fix: keep persisted revision for role hashes on semantic match") in response to the round-1 `REQUEST_CHANGES`. Delta re-review:
+
+| Item | Result |
+|------|--------|
+| F3 fix present | ✅ `expectedRevision = currentRevision` added right after the semantic-match log line |
+| Regression test added | ✅ `Test_HandleRevisions_SemanticallyEqualRevisionKeepsPersistedRoleHash` (author's own, equivalent to our fork test) |
+| Test polarity | ✅ Reverting the one-line fix flips the test to **FAIL** (fresh `7f54c9ffd5` ≠ persisted `5bf9dcc5d5`) |
+| F2 nit resolved | ✅ `withLegacyCreationTimestamp` extracted to `test/utils/revision.go`, 4 copies + new test share it |
+| All 4 `SetMatchesRevision` layers | ✅ 32/32 subtests green |
+| Full package suite | ✅ 15/15 packages `ok`, `go build ./...` PASS, no regressions |
+
+**Round-2 verdict:** the round-1 blocker (F3) is fixed and proven; only the non-blocking `fixes #NNNN` placeholder (F1) remains. **Ready to merge** once the PR body link is cleaned up.
 
 ## Test Results (sandbox 43.99.38.217)
 

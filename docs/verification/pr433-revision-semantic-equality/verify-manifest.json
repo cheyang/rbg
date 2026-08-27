@@ -7,7 +7,20 @@
     "evidence": "Unit test LegacyCreationTimestamp_SemanticallyEqual proves the mechanism",
     "runsAgainst": "head"
   },
+  "rounds": [
+    { "round": 1, "head": "e16dca84bfe2d2ed3909a658d04283d7b53789ac", "verdict": "REQUEST_CHANGES (F3 blocker)" },
+    { "round": 2, "head": "129151205a2f55691aed0486bc30005374873f77", "verdict": "F3 Fixed — all layers green" }
+  ],
   "findings": [
+    {
+      "id": "F3",
+      "claim": "handleRevisions: after SetMatchesRevision returns true (semantic match), the code did NOT reassign expectedRevision = currentRevision, so GetRolesRevisionHash used the freshly-serialized revision. The role hash then disagreed with the persisted RIS labels, re-triggering the exact spurious rollout the PR set out to prevent.",
+      "severity": "blocker",
+      "layer": "unit",
+      "tests": ["internal/controller/workloads/rolebasedgroup_controller_test.go::Test_HandleRevisions_SemanticallyEqualRevisionKeepsPersistedRoleHash"],
+      "polarity": "canary",
+      "verdict": "Fixed in 12915120 — one-line `expectedRevision = currentRevision` added. Polarity confirmed: reverting the fix flips the test to FAIL (returns fresh hash 7f54c9ffd5 instead of persisted 5bf9dcc5d5)."
+    },
     {
       "id": "F1",
       "claim": "No linked issue — PR body says fixes #NNNN (placeholder)",
@@ -15,16 +28,16 @@
       "layer": null,
       "tests": [],
       "polarity": null,
-      "verdict": "Question — ask author"
+      "verdict": "Question — ask author (still open)"
     },
     {
       "id": "F2",
-      "claim": "SetMatchesRevision duplicated across 4 packages with near-identical logic",
+      "claim": "SetMatchesRevision / test helper duplicated across 4 packages with near-identical logic",
       "severity": "nit",
       "layer": null,
       "tests": [],
       "polarity": null,
-      "verdict": "Nit — mirrors upstream pattern, acceptable"
+      "verdict": "Addressed in 12915120 — legacy-timestamp helper extracted to test/utils/revision.go, shared by all 4 tests + new controller test"
     }
   ],
   "layers": [
