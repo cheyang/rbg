@@ -1,0 +1,49 @@
+{
+  "topic": "pr439-restartpolicy-identity",
+  "pr": "https://github.com/sgl-project/rbg/pull/439",
+  "harnessPaths": [
+    "docs/verification/pr439-restartpolicy-identity",
+    "pkg/reconciler/roleinstanceset_reconciler_test.go"
+  ],
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/ ./pkg/reconciler/roleinstanceset/statefulmode/... ./pkg/inplace/instance/... -run 'TestRoleInstanceSetReconciler_RestartPolicyTemplateRepresentation|TestNewVersionedInstanceIdentityIsPerOrdinal|TestInjectIdentityLabelsIntoComponents|TestPatchUpdateSpecKeepsIdentity' -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "title": "restartPolicy template representation must keep the string unless backoff delays are configured",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestRoleInstanceSetReconciler_RestartPolicyTemplateRepresentation"],
+      "biteCheck": "revert pkg/reconciler/roleinstanceset_reconciler.go gate to unconditional WithRestartPolicyConfig; the legacy-string and config-type-only subtests must FAIL (red). scripts/bite-check.sh automates this."
+    },
+    {
+      "id": "F2",
+      "title": "per-ordinal identity labels survive a single reconcile (DeepCopy, not struct-assignment, of the shared template)",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestNewVersionedInstanceIdentityIsPerOrdinal"],
+      "biteCheck": "revert DeepCopy to struct assignment in newVersionedInstance; ordinal 0 must get the highest ordinal's labels (red)."
+    },
+    {
+      "id": "F3",
+      "title": "in-place update re-injects ordinal identity labels after the spec is replaced by the shared template",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestPatchUpdateSpecKeepsIdentity"],
+      "biteCheck": "remove the InjectIdentityLabelsIntoComponents call in InjectVersionedRoleInstanceSpec; pod-template labels must come back empty (red)."
+    },
+    {
+      "id": "F4",
+      "title": "GetRawRestartBackoff returns a live pointer, not a copy (safe today; callers only nil-check)",
+      "polarity": "contract",
+      "layer": "none",
+      "match": [],
+      "note": "nit only; no test, no fix required."
+    }
+  ],
+  "liveNote": "L3 attempt documented in results/f1-live-reproduction.txt. The in-cluster manager (v0.8.0-0c00546d, OLDER than the PR base a747e804) reproduces a restartPolicy-representation failure: it stores restartPolicy as an OBJECT in the RoleInstanceSet template, the RoleInstance CRD requires a STRING, so RoleInstance creation is rejected (FailedCreate, 0 pods). This confirms the code area has live round-trip problems, but is NOT cleanly attributable to the PR-base code (the in-cluster build predates a747e804) and a PR-manager deployment was NOT safe on this shared cluster (blast radius includes default/nginx-cluster, a 23-day-old non-test RBG). The PR's actual claim — revision-hash stability via string preservation — is proven at the unit layer (F1 contract + bite check)."
+}

@@ -356,6 +356,129 @@ func TestRoleInstanceSetReconciler_LeaderWorkerPattern_TemplateIsolation(t *test
 	assert.Equal(t, "COMMON", roleTemplate.Template.Spec.Containers[0].Env[0].Name)
 }
 
+// TestRoleInstanceSetReconciler_RestartPolicyTemplateRepresentation covers the
+// upgrade-stability fix: the RoleInstanceSet template must keep carrying the deprecated
+// restartPolicy string for a role that configured no backoff delays, and only switch to
+// restartPolicyConfig when the role actually set a delay the string cannot express.
+//
+// Polarity: contract. On the pre-fix code (unconditional WithRestartPolicyConfig) the
+// no-backoff case FAILS because the string is empty and the config is populated; on the
+// fixed code it PASSES.
+func TestRoleInstanceSetReconciler_RestartPolicyTemplateRepresentation(t *testing.T) {
+	scheme := runtime.NewScheme()
+	_ = corev1.AddToScheme(scheme)
+	_ = workloadsv1alpha2.AddToScheme(scheme)
+
+	cases := []struct {
+		name             string
+		setup            func(rw *wrappersv2.LeaderWorkerRoleWrapper)
+		wantString       bool // expect RoleInstanceTemplate.RestartPolicy (deprecated) set
+		wantConfig       bool // expect RoleInstanceTemplate.RestartPolicyConfig set
+		wantBaseDelay    *int32
+		wantMaxDelay     *int32
+	}{
+		{
+			name: "legacy string, no backoff delays -> template keeps the string",
+			// A v0.7.0 role stored only the deprecated string; the controller must not
+			// rewrite it into restartPolicyConfig, or the revision hash moves and the
+			// role rolls on upgrade with nothing to roll to.
+			setup: func(rw *wrappersv2.LeaderWorkerRoleWrapper) {
+				rw.WithLegacyRestartPolicy(workloadsv1alpha2.RecreateRoleInstanceOnPodRestart)
+			},
+			wantString: true,
+			wantConfig: false,
+		},
+		{
+			name: "restartPolicyConfig type only, no delays -> template keeps the string",
+			// A config that carries only the type expresses nothing the string cannot,
+			// so the string form is used to avoid rewriting the stored template.
+			setup: func(rw *wrappersv2.LeaderWorkerRoleWrapper) {
+				rw.WithRestartPolicy(workloadsv1alpha2.RecreateRoleInstanceOnPodRestart)
+			},
+			wantString: true,
+			wantConfig: false,
+		},
+		{
+			name: "backoff delays configured -> template carries restartPolicyConfig",
+			// Delays can only live in the config, so the config form is written.
+			setup: func(rw *wrappersv2.LeaderWorkerRoleWrapper) {
+				rw.WithBaseDelaySeconds(45).WithMaxDelaySeconds(900)
+			},
+			wantString: false,
+			wantConfig: true,
+			wantBaseDelay: ptr.To(int32(45)),
+			wantMaxDelay:  ptr.To(int32(900)),
+		},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			role := wrappersv2.BuildLeaderWorkerRole("restart-policy-" + sanitizeName(tc.name)).
+				WithReplicas(1).
+				WithSize(1).
+				WithWorkload("workloads.x-k8s.io/v1alpha2", "RoleInstanceSet")
+			tc.setup(role)
+
+			roleSpec := role.Obj()
+			rbg := wrappersv2.BuildBasicRoleBasedGroup("restart-policy-rbg-"+sanitizeName(tc.name), "default").
+				WithRoles([]workloadsv1alpha2.RoleSpec{roleSpec}).
+				Obj()
+
+			fakeClient := fake.NewClientBuilder().WithScheme(scheme).Build()
+			reconciler := NewRoleInstanceSetReconciler(scheme, fakeClient)
+
+			ctx := context.Background()
+			if err := reconciler.Reconciler(ctx, rbg, &roleSpec, nil, "test-revision"); err != nil {
+				t.Fatalf("Reconciler failed: %v", err)
+			}
+
+			ris := &workloadsv1alpha2.RoleInstanceSet{}
+			if err := fakeClient.Get(ctx, types.NamespacedName{
+				Name:      rbg.GetWorkloadName(&roleSpec),
+				Namespace: rbg.Namespace,
+			}, ris); err != nil {
+				t.Fatalf("get RoleInstanceSet: %v", err)
+			}
+
+			tpl := ris.Spec.RoleInstanceTemplate
+			hasString := tpl.RestartPolicy != ""
+			hasConfig := tpl.RestartPolicyConfig != nil
+			if hasString != tc.wantString {
+				t.Errorf("deprecated restartPolicy string set=%v, want %v (value=%q)",
+					hasString, tc.wantString, tpl.RestartPolicy)
+			}
+			if hasConfig != tc.wantConfig {
+				t.Errorf("restartPolicyConfig set=%v, want %v", hasConfig, tc.wantConfig)
+			}
+			if tc.wantConfig {
+				if tc.wantBaseDelay != nil && (tpl.RestartPolicyConfig.BaseDelaySeconds == nil ||
+					*tpl.RestartPolicyConfig.BaseDelaySeconds != *tc.wantBaseDelay) {
+					t.Errorf("base delay = %v, want %d", tpl.RestartPolicyConfig.BaseDelaySeconds, *tc.wantBaseDelay)
+				}
+				if tc.wantMaxDelay != nil && (tpl.RestartPolicyConfig.MaxDelaySeconds == nil ||
+					*tpl.RestartPolicyConfig.MaxDelaySeconds != *tc.wantMaxDelay) {
+					t.Errorf("max delay = %v, want %d", tpl.RestartPolicyConfig.MaxDelaySeconds, *tc.wantMaxDelay)
+				}
+			}
+		})
+	}
+}
+
+func sanitizeName(s string) string {
+	out := make([]byte, 0, len(s))
+	for _, r := range s {
+		switch {
+		case r >= 'a' && r <= 'z', r >= '0' && r <= '9':
+			out = append(out, byte(r))
+		case r >= 'A' && r <= 'Z':
+			out = append(out, byte(r+32))
+		default:
+			out = append(out, '-')
+		}
+	}
+	return string(out)
+}
+
 func TestRoleInstanceSetReconciler_RoundsUpMaxUnavailableWhenMaxSurgeIsZero(t *testing.T) {
 	scheme := runtime.NewScheme()
 	_ = corev1.AddToScheme(scheme)

@@ -1,0 +1,12 @@
+== F1 bite: revert restart-policy gate -> expect F1 subtests RED ==
+  RED on broken code (expected) ✔
+  GREEN on fixed code ✔
+== F2 bite: revert DeepCopy -> expect TestNewVersionedInstanceIdentityIsPerOrdinal RED ==
+  RED on broken code (expected) ✔
+  GREEN on fixed code ✔
+== F3 bite: remove InjectIdentityLabelsIntoComponents call -> expect TestPatchUpdateSpecKeepsIdentity RED ==
+  RED on broken code (expected) ✔
+  GREEN on fixed code ✔
+
+bite-check: all three fixes proven necessary (red when reverted) and sufficient (green when applied).
+Production diff after restore (must be empty):

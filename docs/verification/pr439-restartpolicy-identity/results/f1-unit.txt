@@ -1,0 +1,11 @@
+=== F1 UNIT: contract test on PR code (expect PASS) ===
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyTemplateRepresentation
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyTemplateRepresentation/legacy_string,_no_backoff_delays_->_template_keeps_the_string
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyTemplateRepresentation/restartPolicyConfig_type_only,_no_delays_->_template_keeps_the_string
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyTemplateRepresentation/backoff_delays_configured_->_template_carries_restartPolicyConfig
+--- PASS: TestRoleInstanceSetReconciler_RestartPolicyTemplateRepresentation (0.13s)
+    --- PASS: TestRoleInstanceSetReconciler_RestartPolicyTemplateRepresentation/legacy_string,_no_backoff_delays_->_template_keeps_the_string (0.11s)
+    --- PASS: TestRoleInstanceSetReconciler_RestartPolicyTemplateRepresentation/restartPolicyConfig_type_only,_no_delays_->_template_keeps_the_string (0.00s)
+    --- PASS: TestRoleInstanceSetReconciler_RestartPolicyTemplateRepresentation/backoff_delays_configured_->_template_carries_restartPolicyConfig (0.01s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	(cached)

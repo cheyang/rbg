@@ -1,0 +1,22 @@
+=== F1 LIVE REPRODUCTION: in-cluster manager v0.8.0-0c00546d (pre-PR, has #394 unconditional config write) ===
+RBG: pr439-verify/pr439-f2-identity (LWP, size=1, replicas=2, no restart policy configured)
+
+--- RoleInstanceSet stored template restartPolicy (written by buggy manager) ---
+restartPolicy      = {"type": "RecreateRoleInstanceOnPodRestart"}
+restartPolicyConfig= null
+
+--- RoleInstance CRD requires spec.restartPolicy to be a STRING ---
+RoleInstance.spec.restartPolicy type= string enum= ['None', 'RecreateRoleInstanceOnPodRestart']
+
+--- FailedCreate events (buggy manager cannot create RoleInstances) ---
+LAST SEEN   TYPE      REASON                  OBJECT                                     MESSAGE
+5m14s       Warning   FailedCreate            roleinstanceset/pr439-f2-identity-worker   create RoleInstance pr439-f2-identity-worker-0 in RoleInstanceSet pr439-f2-identity-worker failed error: RoleInstance.workloads.x-k8s.io "pr439-f2-identity-worker-0" is invalid: [spec.restartPolicy: Invalid value: "object": spec.restartPolicy in body must be of type string: "object", spec.restartPolicy: Unsupported value: {}: supported values: "None", "RecreateRoleInstanceOnPodRestart", <nil>: Invalid value: null: some validation rules were not checked because the object was invalid; correct the existing errors to complete validation]
+
+--- Pods created (expect 0) ---
+
+=== Cluster blast radius (why PR-manager deployment was NOT safe) ===
+NAMESPACE      NAME                READY   AGE
+default        nginx-cluster       True    23d
+pr433-test     test-rbg            True    2d2h
+pr439-verify   pr439-f2-identity   False   10m
+default/nginx-cluster is a 23d-old non-test RBG -> cluster-wide PR manager would reconcile it.

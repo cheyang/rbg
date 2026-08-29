@@ -1,0 +1,21 @@
+=== F2/F3 UNIT (PR author tests) ===
+=== RUN   TestNewVersionedInstanceIdentityIsPerOrdinal
+--- PASS: TestNewVersionedInstanceIdentityIsPerOrdinal (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	(cached)
+=== RUN   TestInjectIdentityLabelsIntoComponents
+=== RUN   TestInjectIdentityLabelsIntoComponents/identity_is_copied_onto_a_template_that_has_none
+=== RUN   TestInjectIdentityLabelsIntoComponents/another_ordinal's_identity_is_overwritten,_not_merged
+=== RUN   TestInjectIdentityLabelsIntoComponents/a_stateless_instance_has_no_identity_to_copy
+--- PASS: TestInjectIdentityLabelsIntoComponents (0.00s)
+    --- PASS: TestInjectIdentityLabelsIntoComponents/identity_is_copied_onto_a_template_that_has_none (0.00s)
+    --- PASS: TestInjectIdentityLabelsIntoComponents/another_ordinal's_identity_is_overwritten,_not_merged (0.00s)
+    --- PASS: TestInjectIdentityLabelsIntoComponents/a_stateless_instance_has_no_identity_to_copy (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance	(cached)
+=== RUN   TestPatchUpdateSpecKeepsIdentity
+--- PASS: TestPatchUpdateSpecKeepsIdentity (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	(cached)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/readiness	(cached) [no tests to run]
