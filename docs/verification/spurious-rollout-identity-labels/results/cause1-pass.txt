@@ -1,0 +1,15 @@
+=== Cause-1 test PASS on PR head ===
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyShapePreserved
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/no_backoff_configured_keeps_the_deprecated_restartPolicy_string
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/legacy_restartPolicy_string_stays_the_string_form
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/restartPolicyConfig_with_type_only_stays_the_string_form
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/restartPolicyConfig_with_delays_writes_the_config_form
+--- PASS: TestRoleInstanceSetReconciler_RestartPolicyShapePreserved (0.14s)
+    --- PASS: TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/no_backoff_configured_keeps_the_deprecated_restartPolicy_string (0.12s)
+    --- PASS: TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/legacy_restartPolicy_string_stays_the_string_form (0.01s)
+    --- PASS: TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/restartPolicyConfig_with_type_only_stays_the_string_form (0.00s)
+    --- PASS: TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/restartPolicyConfig_with_delays_writes_the_config_form (0.01s)
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyStableAcrossReconciles
+--- PASS: TestRoleInstanceSetReconciler_RestartPolicyStableAcrossReconciles (0.01s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.386s

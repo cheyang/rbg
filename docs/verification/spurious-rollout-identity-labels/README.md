@@ -22,8 +22,9 @@ Layers run against the **code under review** (`1cf0b055`, PR head = origin/pr/43
 | F1 | `newVersionedInstance` deep-copies `RoleInstanceSpec` so per-ordinal identity labels don't alias across instances (highest ordinal would otherwise win) and the shared set template stays clean | 1 | **Confirmed (fixed)** | PASS on `1cf0b055`; FAIL when `DeepCopy()` reverted to bare struct assignment — ordinal 0 got `test-set-1` and the shared template was polluted. `results/F1-pass.txt`, `results/F1-reverted-fail.txt` |
 | F2 | `InjectVersionedRoleInstanceSpec` re-injects identity labels after the spec is replaced by the shared template, so an in-place update does not drop ordinal identity from the pod template | 1 | **Confirmed (fixed)** | PASS on `1cf0b055`; FAIL when `InjectIdentityLabelsIntoComponents(instance)` is removed — pod-template identity labels came back `""`. `results/F2-pass.txt`, `results/F2-reverted-fail.txt` |
 | F3 | Identity labels survive a real in-place pod image update on the *running pod* (not just the spec) | 2 | **Uncovered** | No envtest exercises in-place pod image update; spec→pod derivation is mechanical K8s (pod labels come from the template) but is not asserted at integration level. See "F3" below. |
+| F4 | Cause 1 (restart-policy upgrade fix): no-backoff / legacy-string / type-only role keeps the deprecated `restartPolicy` string (`RestartPolicyConfig` nil); only a backoff-configured role writes config; stable across two reconciles | 1 | **Confirmed (fixed)** | PASS on `1cf0b055`; with the fix reverted to unconditional `restartPolicyConfig`, the three no-backoff cases FAIL (`RestartPolicyConfig must be nil`). `results/cause1-pass.txt`, `results/cause1-reverted-fail.txt` |
 
-No `blocker`/`major` findings survived verification — the PR's two correctness fixes are
+No `blocker`/`major` findings survived verification — the PR's correctness fixes (identity F1/F2 + restart-policy F4) are
 proven by contract tests that bite. Overall review verdict: **COMMENT** (no change-requesting
 finding). The `e2e-test-manifest` CI failure on the PR is flaky on `main` (failures on
 2026-08-26 and 2026-08-27 main runs) and is not attributed to this PR.
@@ -57,6 +58,30 @@ finding). The `e2e-test-manifest` CI failure on the PR is flaky on `main` (failu
   `pod template statefulset.kubernetes.io/pod-name is "" after the update, expected "set-0"`.
 - Artifacts: `results/F2-pass.txt`, `results/F2-reverted-fail.txt`.
 
+### F4 — restart-policy shape preserved on upgrade (contract, unit) — Cause 1
+- **Mechanism:** pre-fix, the reconciler always wrote `restartPolicyConfig` (type + defaulted
+  delays 30/600) into the stored template. A v0.7.0 install stored the deprecated
+  `restartPolicy` string, so upgrading to that code flipped the template form string→config,
+  moving the revision hash and rolling the role with nothing to roll to.
+- **Fix under review:** `pkg/reconciler/roleinstanceset_reconciler.go:163` — keep the legacy
+  string unless the role actually configures a backoff delay (`GetRawRestartBackoff()` with a
+  set delay); only then write `restartPolicyConfig`. v0.7.0 has no backoff field, so every
+  v0.7.0-origin role lands in the string branch — byte-for-byte what v0.7.0 stored.
+- **Why #433's `SetMatchesRevision` does NOT cover this:** it re-serializes the stored
+  revision with the current client-go format and compares bytes; it absorbs serialization
+  drift (`creationTimestamp: null` vs omitted) but a string↔config field-form flip produces
+  genuinely different bytes even after re-serialization → still a new revision → still a
+  rollout. So this fix is necessary, not redundant.
+- **Test:** `pkg/reconciler/roleinstanceset_reconciler_restartpolicy_test.go` —
+  `TestRoleInstanceSetReconciler_RestartPolicyShapePreserved` (4-case table: no-backoff /
+  legacy-string / type-only-config all keep the string form; backoff-config writes config) +
+  `TestRoleInstanceSetReconciler_RestartPolicyStableAcrossReconciles` (two reconciles → same form).
+- **Harness-bites:** reverting the branch to unconditional `restartPolicyConfig` makes the
+  three no-backoff cases FAIL with `RestartPolicyConfig must be nil`; the backoff case and the
+  stability test pass both ways (expected — config is correct there, and within a version the
+  form is stable regardless).
+- Artifacts: `results/cause1-pass.txt`, `results/cause1-reverted-fail.txt`.
+
 ### F3 — identity survival on the running pod through a real in-place update (integration, UNCOVERED)
 - **What is missing:** the repo's envtest suite (`test/envtest/testcase/...`, Ginkgo) covers
   restart-policy recreation, backoff, and shared-service selection, but **no `It` exercises an
@@ -85,6 +110,7 @@ finding). The `e2e-test-manifest` CI failure on the PR is flaky on `main` (failu
   mutate` doc removes a future footgun.
 - **(gap)** add an envtest that triggers an in-place image update and asserts identity labels
   survive on the running pod (closes F3).
+- **(closed on this branch)** the missing Cause-1 regression test — `pkg/reconciler/roleinstanceset_reconciler_restartpolicy_test.go` (F4) — lives on this verify branch and can be pasted straight into the PR.
 
 ## Continuing after the fix (possibly on another machine)
 
@@ -98,6 +124,7 @@ untouched), so it grafts onto whatever the fixed code is.
    git checkout <fixed-branch>
    git checkout verify/spurious-rollout-identity-labels -- \
      docs/verification/spurious-rollout-identity-labels \
+     pkg/reconciler/roleinstanceset_reconciler_restartpolicy_test.go \
      pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_utils_test.go \
      pkg/inplace/instance/inplaceupdate/inplace_update_defaults_test.go \
      pkg/inplace/instance/instance_util_test.go

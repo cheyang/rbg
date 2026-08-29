@@ -4,6 +4,7 @@
   "_prHeadFetch_note": "pr (URL) is the source of truth for the current head; re-verify.sh fetches pull/439/head from the repo URL so no local remote name is needed.",
   "harnessPaths": [
     "docs/verification/spurious-rollout-identity-labels",
+    "pkg/reconciler/roleinstanceset_reconciler_restartpolicy_test.go",
     "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_utils_test.go",
     "pkg/inplace/instance/inplaceupdate/inplace_update_defaults_test.go",
     "pkg/inplace/instance/instance_util_test.go"
@@ -11,7 +12,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/reconciler/roleinstanceset/statefulmode/... ./pkg/inplace/instance/inplaceupdate/... ./pkg/inplace/instance/... -run 'TestNewVersionedInstanceIdentityIsPerOrdinal|TestPatchUpdateSpecKeepsIdentity|TestInjectIdentityLabelsIntoComponents' -v"
+      "cmd": "go test ./pkg/reconciler/ ./pkg/reconciler/roleinstanceset/statefulmode/... ./pkg/inplace/instance/inplaceupdate/... ./pkg/inplace/instance/... -run 'TestRoleInstanceSetReconciler_RestartPolicy|TestNewVersionedInstanceIdentityIsPerOrdinal|TestPatchUpdateSpecKeepsIdentity|TestInjectIdentityLabelsIntoComponents' -v"
     },
     "integration": {
       "kind": "none",
@@ -40,6 +41,13 @@
       "layer": "integration",
       "match": [],
       "summary": "UNCOVERED: no envtest asserts identity labels survive a real in-place pod image update on the running pod. Spec-level proof is F2; pod-level derivation is mechanical K8s (pod labels come from template) but unverified by integration."
+    },
+    {
+      "id": "F4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestRoleInstanceSetReconciler_RestartPolicyShapePreserved", "TestRoleInstanceSetReconciler_RestartPolicyStableAcrossReconciles"],
+      "summary": "Cause 1 (restart-policy upgrade fix): a no-backoff / legacy-string / type-only role keeps the deprecated restartPolicy string (RestartPolicyConfig nil), only a backoff-configured role writes the config; representation stable across two reconciles. PASS on fix; the three no-backoff cases FAIL when the fix is reverted to unconditional restartPolicyConfig."
     }
   ],
   "liveNote": "L3 not run (no KUBECONFIG). If a live cluster is provided: roll a RoleInstanceSet with >1 replica, trigger an in-place image update, and assert each running pod keeps statefulset.kubernetes.io/pod-name=<set>-<ordinal> and rbg.workloads.x-k8s.io/role-instance-index=<ordinal> through the update."

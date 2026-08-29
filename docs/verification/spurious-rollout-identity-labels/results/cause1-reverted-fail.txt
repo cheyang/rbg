@@ -1,0 +1,76 @@
+=== Cause-1 test with fix reverted (expect FAIL on no-backoff cases) ===
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyShapePreserved
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/no_backoff_configured_keeps_the_deprecated_restartPolicy_string
+    roleinstanceset_reconciler_restartpolicy_test.go:147: 
+        	Error Trace:	/root/.cache/github-code-review/repos/sgl-project/rbg/pkg/reconciler/roleinstanceset_reconciler_restartpolicy_test.go:147
+        	Error:      	Expected nil, but got: &v1alpha2.RestartPolicyConfig{Type:"RecreateRoleInstanceOnPodRestart", BaseDelaySeconds:(*int32)(0xc000012b08), MaxDelaySeconds:(*int32)(0xc000012b0c)}
+        	Test:       	TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/no_backoff_configured_keeps_the_deprecated_restartPolicy_string
+        	Messages:   	RestartPolicyConfig must be nil so the legacy string form is preserved (no spurious revision flip on upgrade)
+    roleinstanceset_reconciler_restartpolicy_test.go:156: 
+        	Error Trace:	/root/.cache/github-code-review/repos/sgl-project/rbg/pkg/reconciler/roleinstanceset_reconciler_restartpolicy_test.go:156
+        	Error:      	Not equal: 
+        	            	expected: "RecreateRoleInstanceOnPodRestart"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1alpha2.RestartPolicyType) (len=32) "RecreateRoleInstanceOnPodRestart"
+        	            	+(v1alpha2.RestartPolicyType) ""
+        	            	 
+        	Test:       	TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/no_backoff_configured_keeps_the_deprecated_restartPolicy_string
+        	Messages:   	deprecated restartPolicy string field
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/legacy_restartPolicy_string_stays_the_string_form
+    roleinstanceset_reconciler_restartpolicy_test.go:147: 
+        	Error Trace:	/root/.cache/github-code-review/repos/sgl-project/rbg/pkg/reconciler/roleinstanceset_reconciler_restartpolicy_test.go:147
+        	Error:      	Expected nil, but got: &v1alpha2.RestartPolicyConfig{Type:"RecreateRoleInstanceOnPodRestart", BaseDelaySeconds:(*int32)(0xc0009e5718), MaxDelaySeconds:(*int32)(0xc0009e571c)}
+        	Test:       	TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/legacy_restartPolicy_string_stays_the_string_form
+        	Messages:   	RestartPolicyConfig must be nil so the legacy string form is preserved (no spurious revision flip on upgrade)
+    roleinstanceset_reconciler_restartpolicy_test.go:156: 
+        	Error Trace:	/root/.cache/github-code-review/repos/sgl-project/rbg/pkg/reconciler/roleinstanceset_reconciler_restartpolicy_test.go:156
+        	Error:      	Not equal: 
+        	            	expected: "RecreateRoleInstanceOnPodRestart"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1alpha2.RestartPolicyType) (len=32) "RecreateRoleInstanceOnPodRestart"
+        	            	+(v1alpha2.RestartPolicyType) ""
+        	            	 
+        	Test:       	TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/legacy_restartPolicy_string_stays_the_string_form
+        	Messages:   	deprecated restartPolicy string field
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/restartPolicyConfig_with_type_only_stays_the_string_form
+    roleinstanceset_reconciler_restartpolicy_test.go:147: 
+        	Error Trace:	/root/.cache/github-code-review/repos/sgl-project/rbg/pkg/reconciler/roleinstanceset_reconciler_restartpolicy_test.go:147
+        	Error:      	Expected nil, but got: &v1alpha2.RestartPolicyConfig{Type:"None", BaseDelaySeconds:(*int32)(0xc00022ffac), MaxDelaySeconds:(*int32)(0xc00022ffc0)}
+        	Test:       	TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/restartPolicyConfig_with_type_only_stays_the_string_form
+        	Messages:   	RestartPolicyConfig must be nil so the legacy string form is preserved (no spurious revision flip on upgrade)
+    roleinstanceset_reconciler_restartpolicy_test.go:156: 
+        	Error Trace:	/root/.cache/github-code-review/repos/sgl-project/rbg/pkg/reconciler/roleinstanceset_reconciler_restartpolicy_test.go:156
+        	Error:      	Not equal: 
+        	            	expected: "None"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1alpha2.RestartPolicyType) (len=4) "None"
+        	            	+(v1alpha2.RestartPolicyType) ""
+        	            	 
+        	Test:       	TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/restartPolicyConfig_with_type_only_stays_the_string_form
+        	Messages:   	deprecated restartPolicy string field
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/restartPolicyConfig_with_delays_writes_the_config_form
+--- FAIL: TestRoleInstanceSetReconciler_RestartPolicyShapePreserved (0.15s)
+    --- FAIL: TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/no_backoff_configured_keeps_the_deprecated_restartPolicy_string (0.12s)
+    --- FAIL: TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/legacy_restartPolicy_string_stays_the_string_form (0.01s)
+    --- FAIL: TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/restartPolicyConfig_with_type_only_stays_the_string_form (0.00s)
+    --- PASS: TestRoleInstanceSetReconciler_RestartPolicyShapePreserved/restartPolicyConfig_with_delays_writes_the_config_form (0.00s)
+=== RUN   TestRoleInstanceSetReconciler_RestartPolicyStableAcrossReconciles
+--- PASS: TestRoleInstanceSetReconciler_RestartPolicyStableAcrossReconciles (0.01s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.400s
+FAIL
