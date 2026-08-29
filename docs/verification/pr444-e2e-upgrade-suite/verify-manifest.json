@@ -1,0 +1,41 @@
+{
+  "topic": "pr444-e2e-upgrade-suite",
+  "pr": "https://github.com/sgl-project/rbg/pull/444",
+  "harnessPaths": [
+    "docs/verification/pr444-e2e-upgrade-suite",
+    "test/e2e/upgrade/verify_harness_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Every existing e2e suite installs the version under test from scratch, so none can catch an upgrade-only regression where helm upgrade disturbs already-running workloads.",
+    "reportedComponent": "CI / e2e coverage of the upgrade path",
+    "patchedComponent": "new suite test/e2e/upgrade + release-test.yml e2e-test-upgrade job",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "static",
+    "verdict": "confirmed",
+    "evidence": "Coverage premise, not a runtime symptom: the base branch (main @ 97fea1a) ships no upgrade-compatibility suite, and the two motivating regressions (#433 revision-serialization spurious rollout, #439 spurious-rollout/identity-labels) were both MERGED after being found by hand, not by CI. See results/premise.txt.",
+    "match": []
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/e2e/upgrade/ -run 'TestVerifyHarness' -json"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "canary",   "layer": "unit", "match": ["TestVerifyHarness_H1_SettleGuardMissesLabelChurn_Canary"] },
+    { "id": "F4", "polarity": "contract", "layer": "unit", "match": ["TestVerifyHarness_H2_RestartsIgnoresNewContainer_Contract"] },
+    { "id": "F5", "polarity": "canary",   "layer": "unit", "match": ["TestVerifyHarness_H3_PhaseNotAsserted_Canary"] },
+    { "id": "F8", "polarity": "canary",   "layer": "unit", "match": ["TestVerifyHarness_H4_EmptyRestartConfigFolds_Canary"] }
+  ],
+  "staticFindings": [
+    { "id": "F2", "severity": "major", "layer": "static", "verdict": "confirmed-gap", "evidence": "upgrade.go restartController (~268-271) calls waitControllerRolledOut + waitValidatingWebhookCABundle only; waitForUpgradeReady (142-148) calls all three incl. waitCRDConversionCABundle. Impact (stale conversion caBundle -> phase-4 v1alpha1 TLS error) not demonstrated; needs a live cluster. liveNote below." },
+    { "id": "F3", "severity": "minor", "layer": "static", "verdict": "confirmed-gap", "evidence": "install.go teardownFromRelease (~292-298) issues Delete per CRD with no wait-for-NotFound; helm uninstall --wait does not cover CRDs (chart does not own them), so cascading CRD deletion finishes after teardown returns." },
+    { "id": "F6", "severity": "minor", "layer": "static", "verdict": "confirmed-gap", "evidence": "specs.go phase-4 v1alpha1 pod-churn check (~679-683) compares against phase-1 `before`, not a local pre-annotation baseline like storedSpecDiff does with storedBefore." },
+    { "id": "F7", "severity": "minor", "layer": "static", "verdict": "plausible-narrow", "evidence": "install.go requireCleanCluster (~106-108) checks CRDs are registered, not leftover custom resources; narrow: requires a prior failed run whose CRDs were deleted while CRs hung on finalizers." },
+    { "id": "F9", "severity": "nit", "layer": "static", "verdict": "confirmed-diagnosis", "evidence": "specs.go:282-288 mid-rollout partition check cannot distinguish 'partition removed by upgrade' from 'partition ignored'; the comment acknowledges the ambiguity." },
+    { "id": "F10", "severity": "nit", "layer": "static", "verdict": "plausible", "evidence": "snapshot.go checkStillReady (~1003-1026) iterates beforeSnap.ReadyByRole only; a role with no before status entry is never compared." }
+  ],
+  "liveNote": "L3 needs a real kind cluster with no rbgs install + published from/to images: `make test-e2e-upgrade`. Only signal worth adding for F2: after restartController in phase 3, read a v1alpha1 fixture through the conversion webhook and confirm no TLS error while the CRD conversion caBundle is still the pre-restart value. F3/F7 are observable via a back-to-back second `make test-e2e-upgrade` run hitting requireCleanCluster."
+}

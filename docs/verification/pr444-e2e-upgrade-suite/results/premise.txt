@@ -1,0 +1,20 @@
+P0 premise verdict: CONFIRMED (coverage premise, runsAgainst=base)
+
+Claim: every existing e2e suite installs the version under test from scratch, so none
+can catch an upgrade-only regression (helm upgrade disturbing already-running workloads).
+
+Evidence (base branch = main @ 97fea1a2130b3e397d69b4257ee975aa57d72e5a):
+- Existing e2e suites under test/e2e/ install one version from scratch; none performs an
+  in-place helm upgrade of a running release.
+- The two motivating regressions were found by hand, not by CI:
+    #433 [MERGED] "ControllerRevision serialization drift causes spurious rollouts across
+         different client-go versions ... triggers unnecessary rolling updates on every
+         reconcile" — an upgrade-only class of bug.
+    #439 [MERGED] spurious rollout / identity labels.
+- No closing issue (#N) on the PR; #433/#439 are motivation references. Tests-only PR;
+  the problem-establishment step is the carve-out, so this premise is recorded but not a
+  gate.
+
+This is a coverage gap, not a runtime symptom to reproduce, so the "base" check is the
+absence of an equivalent suite + the hand-found history. The PR's fix (a new suite) is
+reviewed on its detector merits in the table above.
