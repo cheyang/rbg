@@ -2,7 +2,35 @@
 
 **PR:** https://github.com/sgl-project/rbg/pull/444
 **Branch (this harness):** `verify/pr444-e2e-upgrade-suite` (reviewer's fork)
-**PR head reviewed this round:** `06d5b4df52709724d3621df644d30dedcd5bbdf4`
+**PR head reviewed this round:** `3f854c12759386117e310c9e34ec0ad7c6317911`
+**Previous round:** `06d5b4df52709724d3621df644d30dedcd5bbdf4`
+
+## Round 2 re-verify (3f854c12) — all findings Still-broken
+
+Delta: one commit (`3f854c12` "fold leader-only endpoints only where the narrowing
+happened") tightening `checkServicesStable` so the leaderOnly fold applies only when the
+selector actually narrowed. Same risk-class as F8, but **not a fix for any of the 10
+findings** — `specs.go` (F1), `restartController` (F2), `checkNoRestarts` (F4),
+`hasDefaultRestartDelays` (F8) were all untouched. No new findings. Full detail:
+`results/round2.txt`.
+
+| Finding | Round 1 | Round 2 | Note |
+|---------|---------|---------|------|
+| F1 | canary PASS (gap) | canary PASS (gap) | Still-broken |
+| F4 | contract FAIL (repro) | contract FAIL (repro) | Still-broken |
+| F5 | canary PASS (gap) | canary PASS (gap) | Still-broken |
+| F8 | canary PASS (gap) | canary PASS (gap) | Still-broken |
+| F2/F3/F6/F7/F9/F10 | static | static, lines unchanged | Still-broken |
+
+**Live layer (L3) this round** (kubectl against the running cluster, read-only): the
+cluster already runs rbgs at the current version with a live controller, so the upgrade
+suite itself can't run here (`requireCleanCluster` would refuse; no helm/kind). For **F2**
+I corroborated the substrate: the CRD conversion `caBundle` is populated and is
+byte-identical to the validating-webhook `caBundle` (one CA, re-patched by the controller
+together on cert rotation), served by the live controller at `rbgs-webhook-service`. This
+confirms `waitCRDConversionCABundle` is a correct gate to add. The race itself was **not
+reproduced** — that needs restarting the shared production controller, a disruptive action
+declined on a non-test cluster.
 **Layers run:** unit (deterministic). No `KUBECONFIG` was provided, so the live e2e
 layer (L3) was not run; F2/F3/F7 carry a `liveNote` instead. Production/test code under
 review is **untouched** — the only added file is `test/e2e/upgrade/verify_harness_test.go`.

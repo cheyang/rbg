@@ -1,0 +1,40 @@
+Round 2 — re-verify against PR head 3f854c12 (delta: 1 commit since 06d5b4df)
+=====================================================================================
+
+Delta commit: 3f854c12 "e2e: fold leader-only endpoints only where the narrowing happened"
+Delta files: preflight.go, snapshot.go (checkServicesStable), upgrade.go (runHelmUpgrade).
+Delta review: a correctness TIGHTENING of the leaderOnly endpoint fold — it now only
+folds non-leader endpoints when the Service's selector actually shows the leader
+narrowing, so a lost endpoint on a selector that never moved is still reported. Same
+risk class as F8 (recordedRewrites hiding real changes), but it is NOT a fix for any of
+the 10 findings. No new findings. The upgrade.go hunk adds a comment justifying the
+portAllocator --set (feature enabled on both sides, not toggled by the hop). Honest
+scope disclosure in preflight.go.
+
+Unit harness (re-run on 3f854c12 with verify_harness_test.go grafted):
+  go test ./test/e2e/upgrade/ -run 'TestVerifyHarness' -v
+  H1 / F1 (canary)   PASS  -> Still-broken (gap present; settle guard still omits checkPodMetadataStable)
+  H2 / F4 (contract) FAIL  -> Still-broken (checkNoRestarts still ignores after-only containers)
+  H3 / F5 (canary)   PASS  -> Still-broken (Phase still not asserted)
+  H4 / F8 (canary)   PASS  -> Still-broken (hasDefaultRestartDelays still folds absent config)
+Static findings F2/F3/F6/F7/F9/F10: unchanged — delta did not touch the cited lines.
+
+Live layer (L3) — read-only against the running cluster (kubectl available):
+  Cluster is NOT clean for the upgrade suite (rbgs CRDs already installed at current
+  version; no helm/kind), so `make test-e2e-upgrade` cannot run here. requireCleanCluster
+  would refuse. No destructive actions taken on the shared cluster.
+
+  F2 substrate corroboration (read-only):
+    - rolebasedgroups / rolebasedgroupsets CRDs have a Webhook conversion config with a
+      populated caBundle (1127 bytes), pointing at rbgs-webhook-service.rbg-system:/convert.
+    - The conversion CRD caBundle is byte-identical to the validating-webhook caBundle
+      => one CA, rotated and re-patched by the controller together. So the conversion
+      caBundle IS written on a controller restart, which makes waitCRDConversionCABundle a
+      correct, non-racing gate to add (F2's proposed fix is sound).
+    - Webhook served by the live controller pod (endpoint 10.39.55.184:9443).
+    - No cert-manager here (the 3d2f1eec caBundle-race fix is CI/kind-specific).
+    - Race NOT reproduced: doing so requires restarting the shared production controller,
+      which is a disruptive action declined on a non-test cluster.
+
+Verdict unchanged: COMMENT. All 10 findings Still-broken; the new commit improved an
+unrelated detector rather than addressing any finding.
