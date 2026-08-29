@@ -1,12 +1,18 @@
 === RUN   TestVerifyHarness_H1_SettleGuardMissesLabelChurn_Canary
 --- PASS: TestVerifyHarness_H1_SettleGuardMissesLabelChurn_Canary (0.00s)
 === RUN   TestVerifyHarness_H2_RestartsIgnoresNewContainer_Contract
-    verify_harness_test.go:123: checkNoRestarts did not report a newly-appeared container sidecar; it only iterates before's containers, so `after`-only containers are invisible
+    verify_harness_test.go:124: checkNoRestarts did not report a newly-appeared container sidecar; it only iterates before's containers, so `after`-only containers are invisible
 --- FAIL: TestVerifyHarness_H2_RestartsIgnoresNewContainer_Contract (0.00s)
 === RUN   TestVerifyHarness_H3_PhaseNotAsserted_Canary
 --- PASS: TestVerifyHarness_H3_PhaseNotAsserted_Canary (0.00s)
 === RUN   TestVerifyHarness_H4_EmptyRestartConfigFolds_Canary
 --- PASS: TestVerifyHarness_H4_EmptyRestartConfigFolds_Canary (0.00s)
+=== RUN   TestVerifyHarness_H5_MidRolloutExcludedFromAllDetectors_Canary
+--- PASS: TestVerifyHarness_H5_MidRolloutExcludedFromAllDetectors_Canary (0.00s)
+=== RUN   TestVerifyHarness_H6_RBGGenerationNeverCompared_Canary
+--- PASS: TestVerifyHarness_H6_RBGGenerationNeverCompared_Canary (0.00s)
+=== RUN   TestVerifyHarness_H7_OwnerSourcesOmitsScalingAdapter_Canary
+--- PASS: TestVerifyHarness_H7_OwnerSourcesOmitsScalingAdapter_Canary (0.00s)
 FAIL
-FAIL	sigs.k8s.io/rbgs/test/e2e/upgrade	0.013s
+FAIL	sigs.k8s.io/rbgs/test/e2e/upgrade	0.011s
 FAIL

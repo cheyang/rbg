@@ -35,6 +35,33 @@ declined on a non-test cluster.
 layer (L3) was not run; F2/F3/F7 carry a `liveNote` instead. Production/test code under
 review is **untouched** — the only added file is `test/e2e/upgrade/verify_harness_test.go`.
 
+## Round 2b — A/B/C promoted from inspection to runnable tests
+
+A reviewer-challenge round (largely Copilot-sourced) argued four of the findings —
+**A** (mid-rollout fixture excluded from every detector), **B** (`RBGSnapshot.Generation`
+captured but never compared), **C** (`ownerSources` omits `ScalingAdapter`), **D**
+(`captureAll` lists `RoleBasedGroupList` only, so the RBGSet root is never captured) —
+are *silent false-passes*, i.e. a real upgrade regression slips through green. I had
+originally filed those as code-inspection-only and overstated them as "verified." That
+was wrong. I now have **runnable tests** for three of the four:
+
+| Finding | Round 2 (inspection) | Round 2b (runnable) | Bites-check |
+|---------|----------------------|---------------------|-------------|
+| A | inspection | **H5 canary PASS** — `countSurvivors` returns the partition while a surviving pod's restartCount bumped + label rewrote; the settle detectors (run with the mid-rollout RBG in the skip list, exactly as specs.go does) report nothing; the same detectors without the skip DO catch it. Silent false-pass reproduced. | arm (c): drift is detectable when not excluded |
+| B | inspection | **H6 canary PASS** — snapshots differing only in `RBGSnapshot.Generation` (1→2, stored spec rewritten — the #433 mechanism) are reported by no detector. Silent false-pass reproduced. | applied a Generation comparison to `checkSameRBGSet` → H6 flipped FAIL → reverted → PASS |
+| C | inspection | **H7 canary PASS** — `ownerSources()` returns RIS/RI/Deploy/STS/LWS, no `ScalingAdapter`; a ScalingAdapter-backed RBG's owner is never captured. | appended `ScalingAdapter` to `ownerSources()` → H7 flipped FAIL → reverted → PASS |
+| D | inspection | still inspection-only — `captureAll` is a capture-path gap needing a fake controller-runtime client; `test/e2e` has no `fake.NewClientBuilder` usage, so a runnable capture test is a larger lift not done this round. | — |
+
+Raw output: `results/unit-run.txt` (H1–H7; canaries PASS, H2 contract FAIL = reproduction).
+Production code is **untouched** (every bites-check was applied and reverted; `git diff
+snapshot.go` is empty).
+
+**Verdict implication.** A, B, C, D are `major` and three of them (A/B/C) now have
+runnable proof that a real upgrade regression can pass green. Under the severity policy,
+`major` → `REQUEST_CHANGES`. The earlier COMMENT verdict was wrong to call these
+non-silent; the corrected verdict is **REQUEST_CHANGES**. *Not yet posted* — gated on
+explicit user confirmation (see end of file).
+
 ## Premise (P0) — Confirmed
 
 Coverage premise, not a runtime symptom: the base branch ships no upgrade-compatibility

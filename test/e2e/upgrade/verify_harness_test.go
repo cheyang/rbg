@@ -31,6 +31,7 @@ limitations under the License.
 package upgrade
 
 import (
+	"strings"
 	"testing"
 
 	corev1 "k8s.io/api/core/v1"
@@ -168,5 +169,132 @@ func TestVerifyHarness_H4_EmptyRestartConfigFolds_Canary(t *testing.T) {
 	if !hasDefaultRestartDelays(map[string]any{}) {
 		t.Fatal("hasDefaultRestartDelays(no fields) returned false; the fold no longer applies to " +
 			"an absent config — if the fix now requires fields to be present, invert this canary")
+	}
+}
+
+// --- H5: the mid-rollout fixture is excluded from every detector (canary) ---------
+//
+// specs.go puts the mid-rollout RBG into the `mutated` list and passes it as the
+// skip set to BOTH the phase-3 settle comparison (`exclude(first, mutated...)`) and
+// `runDetectors(..., mutated)`. So the only thing the suite asserts about the
+// mid-rollout pods is countSurvivors — which checks only "is this UID still here",
+// nothing about restart counts, labels, phase or owner refs.
+//
+// Consequence: if the upgrade disturbs a mid-rollout pod in any way OTHER than
+// deleting-and-recreating it under a new UID (restart count bumped, label rewritten,
+// phase flipped to Failed), countSurvivors still returns the partition count and no
+// detector ever sees the pod — the suite goes green on a real regression.
+//
+// This test reproduces that silent pass end to end:
+//   (a) countSurvivors reports the full partition despite the drift,
+//   (b) the settle detectors, run with the mid-rollout RBG in the skip list exactly
+//       as specs.go does, report nothing,
+//   (c) the SAME detectors run WITHOUT the skip DO catch the drift — proving the gap
+//       is the exclusion, not a missing capability.
+//
+// Canary: PASSES today (the mid-rollout drift is invisible); flips red once the
+// suite stops blanket-excluding the mid-rollout fixture and runs the detectors on it
+// (or adds a dedicated mid-rollout drift detector) — invert it then.
+func TestVerifyHarness_H5_MidRolloutExcludedFromAllDetectors_Canary(t *testing.T) {
+	const rbg = "midroll"
+	before := onePodSnapshot(rbg, "role", "pod-0",
+		podFacts("uid-1", "node-a", map[string]int32{"app": 0}, map[string]string{"ord": "0"}, corev1.PodRunning))
+	// Same UID (survivor), but the upgrade bumped the app container's restart count
+	// AND rewrote a label — the kind of disturbance countSurvivors cannot see.
+	after := onePodSnapshot(rbg, "role", "pod-0",
+		podFacts("uid-1", "node-a", map[string]int32{"app": 3}, map[string]string{"ord": "REWRITTEN"}, corev1.PodRunning))
+
+	midRollPodsBefore := before[rbg].Roles["role"]
+	midRollPodsAfter := after[rbg].Roles["role"]
+
+	// (a) The partition check the suite DOES run: survives == partition despite drift.
+	survivors := countSurvivors(midRollPodsBefore, midRollPodsAfter)
+	if survivors != len(midRollPodsBefore) {
+		t.Fatalf("countSurvivors saw %d survivors, want %d (the drift should be invisible to it)",
+			survivors, len(midRollPodsBefore))
+	}
+
+	// (b) The phase-3 settle path exactly as specs.go wires it: exclude the mid-rollout
+	// RBG from both samples, then the three settle detectors. They see nothing.
+	quietFirst := exclude(before, rbg)
+	quietAfter := exclude(after, rbg)
+	settle := &findings{}
+	checkSameRBGSet(settle, quietFirst, quietAfter)
+	checkNoPodChurn(settle, quietFirst, quietAfter)
+	checkNoRestarts(settle, quietFirst, quietAfter)
+	if hasFinding(settle) {
+		t.Fatalf("settle detectors reported something on excluded mid-rollout RBG (%v) — "+
+			"if the exclusion is gone, invert this canary", settle.sections)
+	}
+
+	// (c) The drift IS detectable: the same detectors run on the un-excluded samples
+	// catch it. (checkNoRestarts flags the bumped restart count; checkPodMetadataStable
+	// the label.) This proves the gap is the blanket exclusion, not a blind detector.
+	seen := &findings{}
+	checkNoRestarts(seen, before, after)
+	checkPodMetadataStable(seen, before, after)
+	if !hasFinding(seen) {
+		t.Fatal("the mid-rollout drift was not detectable even without exclusion — harness is stale")
+	}
+}
+
+// --- H6: RBGSnapshot.Generation is captured but never compared (canary) ------------
+//
+// captureRBG records rbg.Generation into RBGSnapshot.Generation (snapshot.go:167),
+// but that field is only ever written out in the dump (snapshot.go:1197) — no detector
+// reads it. The owner-generation check in checkOwnersStable (snapshot.go:842) compares
+// ownerFacts.Generation (the owning RoleInstanceSet/Deployment/etc.), a DIFFERENT field.
+// So an RBG whose own .Generation increments across the upgrade — meaning the stored
+// spec was rewritten, the exact mechanism behind the #433 revision-serialization
+// spurious rollout — is never flagged.
+//
+// Canary: PASSES today (the RBG's own generation is not asserted anywhere); flips red
+// once a detector compares RBGSnapshot.Generation before->after — invert it then.
+func TestVerifyHarness_H6_RBGGenerationNeverCompared_Canary(t *testing.T) {
+	const rbg = "rbg"
+	base := onePodSnapshot(rbg, "role", "pod-0",
+		podFacts("uid-1", "node-a", map[string]int32{"app": 0}, map[string]string{"ord": "0"}, corev1.PodRunning))
+
+	// before: generation 1. after: everything identical except the RBG's own generation
+	// bumped to 2 (stored spec rewritten). Pods, owners, UID, everything else unchanged.
+	before := map[string]RBGSnapshot{rbg: base[rbg]}
+	afterSnap := base[rbg]
+	afterSnap.Generation = 2
+	after := map[string]RBGSnapshot{rbg: afterSnap}
+	if before[rbg].Generation == after[rbg].Generation {
+		t.Fatal("test setup: generation did not actually change")
+	}
+
+	// Every non-framework detector. None reads RBGSnapshot.Generation.
+	fs := &findings{}
+	checkSameRBGSet(fs, before, after)
+	checkNoPodChurn(fs, before, after)
+	checkNoRestarts(fs, before, after)
+	checkPodMetadataStable(fs, before, after)
+	checkOwnersStable(fs, before, after, nil)
+	checkNoRevisionExplosion(fs, before, after)
+	checkStillReady(fs, before, after)
+	if hasFinding(fs) {
+		t.Fatalf("a Generation-only change (1->2) was reported (%v) — if RBGSnapshot.Generation "+
+			"is now compared, invert this canary into a contract test", fs.sections)
+	}
+}
+
+// --- H7: ownerSources omits ScalingAdapter (canary) -------------------------------
+//
+// ownerSources() returns the workload kinds an RBG can own and that the suite lists
+// when it captures owners. ScalingAdapter is not among them, so an RBG backed by a
+// ScalingAdapter has its owning workload never captured — its owner generation and
+// UID are invisible to checkOwnersStable. This is a capture-path gap (the field is
+// absent from the snapshot, so it cannot be diffed with a unit harness); this canary
+// runs the real ownerSources() and asserts the omission, flipping red once the kind
+// is added.
+func TestVerifyHarness_H7_OwnerSourcesOmitsScalingAdapter_Canary(t *testing.T) {
+	for _, src := range ownerSources() {
+		if strings.Contains(src.kind, "ScalingAdapter") {
+			t.Fatalf("ownerSources now lists %s — the capture-path gap is closed, "+
+				"invert this canary into a contract test that a ScalingAdapter-backed RBG "+
+				"has its owner captured", src.kind)
+		}
 	}
 }
