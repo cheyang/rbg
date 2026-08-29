@@ -1,0 +1,5 @@
+=== F2 PASS on PR head ===
+=== RUN   TestPatchUpdateSpecKeepsIdentity
+--- PASS: TestPatchUpdateSpecKeepsIdentity (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	(cached)

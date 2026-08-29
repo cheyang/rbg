@@ -1,0 +1,46 @@
+{
+  "topic": "spurious-rollout-identity-labels",
+  "pr": "https://github.com/sgl-project/rbg/pull/439",
+  "_prHeadFetch_note": "pr (URL) is the source of truth for the current head; re-verify.sh fetches pull/439/head from the repo URL so no local remote name is needed.",
+  "harnessPaths": [
+    "docs/verification/spurious-rollout-identity-labels",
+    "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_utils_test.go",
+    "pkg/inplace/instance/inplaceupdate/inplace_update_defaults_test.go",
+    "pkg/inplace/instance/instance_util_test.go"
+  ],
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/roleinstanceset/statefulmode/... ./pkg/inplace/instance/inplaceupdate/... ./pkg/inplace/instance/... -run 'TestNewVersionedInstanceIdentityIsPerOrdinal|TestPatchUpdateSpecKeepsIdentity|TestInjectIdentityLabelsIntoComponents' -v"
+    },
+    "integration": {
+      "kind": "none",
+      "cmd": "echo 'F3 uncovered: existing envtest suite (test/envtest/testcase) does not exercise in-place pod image update; see README F3'",
+      "report": ""
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestNewVersionedInstanceIdentityIsPerOrdinal"],
+      "summary": "DeepCopy of RoleInstanceSpec in newVersionedInstance prevents shared-slice aliasing of identity labels across ordinals."
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestPatchUpdateSpecKeepsIdentity"],
+      "summary": "InjectIdentityLabelsIntoComponents in InjectVersionedRoleInstanceSpec keeps per-ordinal identity when the whole spec is replaced by the shared template during in-place update."
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [],
+      "summary": "UNCOVERED: no envtest asserts identity labels survive a real in-place pod image update on the running pod. Spec-level proof is F2; pod-level derivation is mechanical K8s (pod labels come from template) but unverified by integration."
+    }
+  ],
+  "liveNote": "L3 not run (no KUBECONFIG). If a live cluster is provided: roll a RoleInstanceSet with >1 replica, trigger an in-place image update, and assert each running pod keeps statefulset.kubernetes.io/pod-name=<set>-<ordinal> and rbg.workloads.x-k8s.io/role-instance-index=<ordinal> through the update."
+}

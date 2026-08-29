@@ -1,0 +1,8 @@
+=== F2 FAIL with identity injection removed ===
+=== RUN   TestPatchUpdateSpecKeepsIdentity
+    inplace_update_defaults_test.go:752: pod template statefulset.kubernetes.io/pod-name is "" after the update, expected "set-0"
+    inplace_update_defaults_test.go:756: pod template rbg.workloads.x-k8s.io/role-instance-index is "" after the update, expected "0"
+--- FAIL: TestPatchUpdateSpecKeepsIdentity (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	0.214s
+FAIL

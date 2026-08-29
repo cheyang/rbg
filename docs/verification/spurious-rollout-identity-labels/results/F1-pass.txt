@@ -1,0 +1,5 @@
+=== F1 PASS on PR head ===
+=== RUN   TestNewVersionedInstanceIdentityIsPerOrdinal
+--- PASS: TestNewVersionedInstanceIdentityIsPerOrdinal (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	(cached)

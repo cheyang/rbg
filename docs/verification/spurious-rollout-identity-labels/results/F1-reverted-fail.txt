@@ -1,0 +1,10 @@
+=== F1 FAIL with DeepCopy reverted ===
+=== RUN   TestNewVersionedInstanceIdentityIsPerOrdinal
+    stateful_instance_set_utils_test.go:50: ordinal 0: pod template statefulset.kubernetes.io/pod-name is "test-set-1", expected "test-set-0"
+    stateful_instance_set_utils_test.go:55: ordinal 0: pod template rbg.workloads.x-k8s.io/role-instance-index is "1", expected "0"
+    stateful_instance_set_utils_test.go:63: the set's shared template was given statefulset.kubernetes.io/pod-name="test-set-1", which belongs to one ordinal only
+    stateful_instance_set_utils_test.go:63: the set's shared template was given rbg.workloads.x-k8s.io/role-instance-index="1", which belongs to one ordinal only
+--- FAIL: TestNewVersionedInstanceIdentityIsPerOrdinal (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.267s
+FAIL
