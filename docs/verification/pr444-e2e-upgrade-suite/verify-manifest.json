@@ -24,24 +24,142 @@
     }
   },
   "findings": [
-    { "id": "F1", "polarity": "canary",   "layer": "unit", "match": ["TestVerifyHarness_H1_SettleGuardMissesLabelChurn_Canary"] },
-    { "id": "F4", "polarity": "contract", "layer": "unit", "match": ["TestVerifyHarness_H2_RestartsIgnoresNewContainer_Contract"] },
-    { "id": "F5", "polarity": "canary",   "layer": "unit", "match": ["TestVerifyHarness_H3_PhaseNotAsserted_Canary"] },
-    { "id": "F8", "polarity": "canary",   "layer": "unit", "match": ["TestVerifyHarness_H4_EmptyRestartConfigFolds_Canary"] },
-    { "id": "A",  "polarity": "canary",   "layer": "unit", "match": ["TestVerifyHarness_H5_MidRolloutExcludedFromAllDetectors_Canary"] },
-    { "id": "B",  "polarity": "canary",   "layer": "unit", "match": ["TestVerifyHarness_H6_RBGGenerationNeverCompared_Canary"] },
-    { "id": "C",  "polarity": "canary",   "layer": "unit", "match": ["TestVerifyHarness_H7_OwnerSourcesOmitsScalingAdapter_Canary"] }
+    {
+      "id": "F4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyHarness_H2_RestartsIgnoresNewContainer_Contract"
+      ],
+      "round3": "Fixed (contract green)"
+    },
+    {
+      "id": "F5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyHarness_H3_PhaseFlipReported_Contract"
+      ],
+      "round3": "Fixed (canary flipped -> inverted to contract)"
+    },
+    {
+      "id": "F8",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyHarness_H4_EmptyRestartConfigNotFolded_Contract"
+      ],
+      "round3": "Fixed (canary flipped -> inverted to contract)"
+    },
+    {
+      "id": "A",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyHarness_H5_MidRolloutExcludedFromAllDetectors_Canary"
+      ],
+      "round3": "Still-broken (canary PASS)"
+    },
+    {
+      "id": "B",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyHarness_H6_RBGGenerationCompared_Contract"
+      ],
+      "round3": "Fixed (canary flipped -> inverted to contract)"
+    },
+    {
+      "id": "C",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyHarness_H7_OwnerSourcesListsScalingAdapter_Contract"
+      ],
+      "round3": "Fixed (canary flipped -> inverted to contract)"
+    }
   ],
   "staticFindings": [
-    { "id": "F2", "severity": "major", "layer": "static", "verdict": "confirmed-gap", "evidence": "upgrade.go restartController (~268-271) calls waitControllerRolledOut + waitValidatingWebhookCABundle only; waitForUpgradeReady (142-148) calls all three incl. waitCRDConversionCABundle. Impact (stale conversion caBundle -> phase-4 v1alpha1 TLS error) not demonstrated; needs a live cluster. liveNote below." },
-    { "id": "F3", "severity": "minor", "layer": "static", "verdict": "confirmed-gap", "evidence": "install.go teardownFromRelease (~292-298) issues Delete per CRD with no wait-for-NotFound; helm uninstall --wait does not cover CRDs (chart does not own them), so cascading CRD deletion finishes after teardown returns." },
-    { "id": "F6", "severity": "minor", "layer": "static", "verdict": "confirmed-gap", "evidence": "specs.go phase-4 v1alpha1 pod-churn check (~679-683) compares against phase-1 `before`, not a local pre-annotation baseline like storedSpecDiff does with storedBefore." },
-    { "id": "F7", "severity": "minor", "layer": "static", "verdict": "plausible-narrow", "evidence": "install.go requireCleanCluster (~106-108) checks CRDs are registered, not leftover custom resources; narrow: requires a prior failed run whose CRDs were deleted while CRs hung on finalizers." },
-    { "id": "F9", "severity": "nit", "layer": "static", "verdict": "confirmed-diagnosis", "evidence": "specs.go:282-288 mid-rollout partition check cannot distinguish 'partition removed by upgrade' from 'partition ignored'; the comment acknowledges the ambiguity." },
-    { "id": "F10", "severity": "nit", "layer": "static", "verdict": "plausible", "evidence": "snapshot.go checkStillReady (~1003-1026) iterates beforeSnap.ReadyByRole only; a role with no before status entry is never compared." },
-    { "id": "D",  "severity": "major", "layer": "static", "verdict": "confirmed-gap", "evidence": "snapshot.go captureAll (~151) lists RoleBasedGroupList only; the RoleBasedGroupSet root is never captured, so its generation/UID churn across the upgrade is invisible. Capture-path gap (needs a fake controller-runtime client to make runnable; test/e2e has no fake.NewClientBuilder usage), so verified by inspection, not a unit test." },
-    { "id": "G",  "severity": "major", "layer": "static", "verdict": "confirmed-gap", "evidence": "upgrade.go waitCRDConversionCABundle (~194-208) only asserts the caBundle is found + NotBeEmpty; non-empty != correct, so a stale/wrong bundle still passes the gate. Needs a live cluster to prove the stale-bundle failure mode." },
-    { "id": "E",  "severity": "nit", "layer": "static", "verdict": "confirmed", "evidence": ".github/workflows/release-test.yml ~408 comment still says 'no --set overrides' after line 189 added --set controller.features.portAllocator.enabled=true." }
+    {
+      "id": "F1",
+      "severity": "major",
+      "layer": "static",
+      "verdict": "fixed",
+      "round3": "Fixed (addressed differently)",
+      "evidence": "specs.go phase-3 settle no longer uses a fixed 3-detector window; it loops on waitQuiesced (two samples settleDuration apart must agree) before the before/after comparison. The misattribution-while-moving concern is addressed; the proposed checkPodMetadataStable wiring was not taken. H1 retained as a regression guard, not a live finding."
+    },
+    {
+      "id": "F2",
+      "severity": "major",
+      "layer": "static",
+      "verdict": "fixed",
+      "round3": "Fixed",
+      "evidence": "upgrade.go restartController (now ~278-282) calls waitControllerRolledOut + waitValidatingWebhookCABundle + waitCRDConversionCABundle, matching waitForUpgradeReady."
+    },
+    {
+      "id": "F3",
+      "severity": "minor",
+      "layer": "static",
+      "verdict": "fixed",
+      "evidence": "install.go teardownFromRelease (~292-298) issues Delete per CRD with no wait-for-NotFound; helm uninstall --wait does not cover CRDs (chart does not own them), so cascading CRD deletion finishes after teardown returns.",
+      "round3": "Fixed (teardownFromRelease now waits for CRDs NotFound via a listOwnedCRDs loop)"
+    },
+    {
+      "id": "F6",
+      "severity": "minor",
+      "layer": "static",
+      "verdict": "fixed",
+      "evidence": "specs.go phase-4 v1alpha1 pod-churn check (~679-683) compares against phase-1 `before`, not a local pre-annotation baseline like storedSpecDiff does with storedBefore.",
+      "round3": "Fixed (v1alpha1 spec takes a local baseline via captureAll at annotation time, not phase-1 before)"
+    },
+    {
+      "id": "F7",
+      "severity": "minor",
+      "layer": "static",
+      "verdict": "plausible-narrow",
+      "evidence": "install.go requireCleanCluster (~106-108) checks CRDs are registered, not leftover custom resources; narrow: requires a prior failed run whose CRDs were deleted while CRs hung on finalizers.",
+      "round3": "Still-broken (requireCleanCluster still checks CRDs registered, not leftover CRs; narrow)"
+    },
+    {
+      "id": "F9",
+      "severity": "nit",
+      "layer": "static",
+      "verdict": "confirmed-diagnosis",
+      "evidence": "specs.go:282-288 mid-rollout partition check cannot distinguish 'partition removed by upgrade' from 'partition ignored'; the comment acknowledges the ambiguity.",
+      "round3": "Still-broken (mid-rollout partition ambiguity; comment still acknowledges it; nit)"
+    },
+    {
+      "id": "F10",
+      "severity": "nit",
+      "layer": "static",
+      "verdict": "fixed",
+      "evidence": "snapshot.go checkStillReady (~1003-1026) iterates beforeSnap.ReadyByRole only; a role with no before status entry is never compared.",
+      "round3": "Fixed (checkStillReady now iterates afterSnap.ReadyByRole too)"
+    },
+    {
+      "id": "D",
+      "severity": "major",
+      "layer": "static",
+      "verdict": "fixed",
+      "evidence": "snapshot.go captureAll (~151) lists RoleBasedGroupList only; the RoleBasedGroupSet root is never captured, so its generation/UID churn across the upgrade is invisible. Capture-path gap (needs a fake controller-runtime client to make runnable; test/e2e has no fake.NewClientBuilder usage), so verified by inspection, not a unit test.",
+      "round3": "Fixed (captureAll lists RoleBasedGroupSetList; roots share RBGSnapshot, carry Kind, generation compared)"
+    },
+    {
+      "id": "G",
+      "severity": "major",
+      "layer": "static",
+      "verdict": "confirmed-gap",
+      "evidence": "upgrade.go waitCRDConversionCABundle (~194-208) only asserts the caBundle is found + NotBeEmpty; non-empty != correct, so a stale/wrong bundle still passes the gate. Needs a live cluster to prove the stale-bundle failure mode.",
+      "round3": "Still-broken (waitCRDConversionCABundle still only found + NotBeEmpty; non-empty != correct; narrow)"
+    },
+    {
+      "id": "E",
+      "severity": "nit",
+      "layer": "static",
+      "verdict": "fixed",
+      "evidence": ".github/workflows/release-test.yml ~408 comment still says 'no --set overrides' after line 189 added --set controller.features.portAllocator.enabled=true.",
+      "round3": "Fixed (stale 'no --set overrides' comment removed)"
+    }
   ],
   "liveNote": "L3 needs a real kind cluster with no rbgs install + published from/to images: `make test-e2e-upgrade`. Only signal worth adding for F2: after restartController in phase 3, read a v1alpha1 fixture through the conversion webhook and confirm no TLS error while the CRD conversion caBundle is still the pre-restart value. F3/F7 are observable via a back-to-back second `make test-e2e-upgrade` run hitting requireCleanCluster."
 }

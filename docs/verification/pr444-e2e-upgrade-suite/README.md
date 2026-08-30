@@ -2,8 +2,47 @@
 
 **PR:** https://github.com/sgl-project/rbg/pull/444
 **Branch (this harness):** `verify/pr444-e2e-upgrade-suite` (reviewer's fork)
-**PR head reviewed this round:** `3f854c12759386117e310c9e34ec0ad7c6317911`
-**Previous round:** `06d5b4df52709724d3621df644d30dedcd5bbdf4`
+**PR head reviewed this round:** `125a22671fa4` (round 3)
+**Previous rounds:** `3f854c12` (round 2/2b), `06d5b4df` (round 1)
+
+## Round 3 re-verify (125a2267) — author fixed 12 of 16 findings; verdict now COMMENT
+
+The PR moved by one commit since round 2b: `125a2267` "e2e: wait for the upgraded
+controller to go quiet before attributing anything." It touched specs.go, snapshot.go,
+upgrade.go, install.go, preflight.go, fixtures.go, release-test.yml — and it addresses
+the large majority of the round-2b findings directly. I re-ran the unit harness against the
+new head (production code untouched; every bites-check applied and reverted) and re-read
+the cited lines for the static findings.
+
+| Finding | Round 2b | Round 3 | Evidence |
+|---------|----------|---------|----------|
+| A | canary PASS (gap) | **Still-broken** (canary PASS) | H5: mid-rollout fixture still in `mutated`, still excluded from every detector; only `countSurvivors` (UID) runs on it. specs.go:245,313 |
+| B | canary PASS (gap) | **Fixed** | H6 flipped → inverted to contract (green). `checkOwnersStable` now compares `afterSnap.Generation - beforeSnap.Generation` (snapshot.go ~965). Reverse-bites: removing the check flips H6 red. |
+| C | canary PASS (gap) | **Fixed** | H7 flipped → inverted to contract (green). `ownerSources` now lists `RoleBasedGroupScalingAdapter` (snapshot.go ~161). Reverse-bites: dropping it flips H7 red. |
+| D | inspection (gap) | **Fixed** (static) | `captureAll` now lists `RoleBasedGroupSetList`; roots share `RBGSnapshot`, carry `Kind`, and `checkOwnersStable` covers them (snapshot.go ~183-200). |
+| F1 | canary PASS (gap) | **Fixed** (addressed differently) | phase-3 settle no longer uses a fixed 3-detector window; it loops on `waitQuiesced` (two samples settleDuration apart must agree). The proposed `checkPodMetadataStable` wiring wasn't taken, but the misattribution-while-moving concern is addressed. H1 retained as a regression guard, not a live finding. |
+| F2 | static (gap) | **Fixed** (static) | `restartController` now calls `waitCRDConversionCABundle` (upgrade.go ~282), matching `waitForUpgradeReady`. |
+| F3 | static (gap) | **Fixed** (static) | `teardownFromRelease` now loops on `listOwnedCRDs` until empty before returning (install.go ~305+). |
+| F4 | contract FAIL (repro) | **Fixed** | H2 contract now green — `checkNoRestarts` reports after-only containers (reverse loop added). |
+| F5 | canary PASS (gap) | **Fixed** | H3 flipped → inverted to contract: a Running→Failed flip is now reported. |
+| F6 | static (gap) | **Fixed** (static) | the v1alpha1 spec now takes a local baseline via `captureAll` at annotation time, not the phase-1 `before` (specs.go). |
+| F7 | static (narrow) | **Still-broken** (narrow) | `requireCleanCluster` still checks CRDs registered, not leftover CRs. |
+| F8 | canary PASS (gap) | **Fixed** | H4 flipped → inverted to contract: `hasDefaultRestartDelays` now requires both fields present and matching (`!present` short-circuits to false). |
+| F9 | nit (diagnosis) | **Still-broken** (nit) | mid-rollout partition ambiguity; comment still acknowledges it. |
+| F10 | nit (plausible) | **Fixed** (static) | `checkStillReady` now iterates `afterSnap.ReadyByRole` too. |
+| G | static (gap) | **Still-broken** (narrow) | `waitCRDConversionCABundle` still only checks `found + NotBeEmpty`; non-empty ≠ correct. |
+| E | nit | **Fixed** (static) | stale "no --set overrides" comment removed from release-test.yml. |
+
+**12 Fixed, 4 Still-broken.** The four remaining — A, F7, F9, G — are all narrow
+(mid-rollout designed-to-churn partition, leftover-CR edge, acknowledged partition
+ambiguity, non-empty-vs-correct caBundle). None is the kind of clean silent-false-pass
+B/C/D were. **Verdict on 125a2267: COMMENT** (the blocking majors B/C/D/F1/F2 are all
+fixed; remaining items are minor/nit). The earlier REQUEST_CHANGES review was posted
+against the prior head `3f854c1` and is now stale on the fixed code — the corrected
+verdict is COMMENT, not changes-requested. Not yet posted; gated on user confirmation.
+
+Raw output: `results/unit-run.txt` (H1 guard green, H2/H3/H4/H6/H7 contracts green,
+H5 the lone live canary).
 
 ## Round 2 re-verify (3f854c12) — all findings Still-broken
 

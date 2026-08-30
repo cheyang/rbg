@@ -66,17 +66,18 @@ func findingCount(fs *findings) int { return len(fs.sections) }
 // hasFinding reports whether any detector recorded a problem.
 func hasFinding(fs *findings) bool { return findingCount(fs) > 0 }
 
-// --- H1: settle guard omits the metadata detector (contract for the gap) ----------
+// --- H1: settle detectors individually don't catch label drift (retained guard) ----
 //
-// specs.go's phase-3 settle guard runs only checkSameRBGSet + checkNoPodChurn +
-// checkNoRestarts. A pod whose IDENTITY is intact but whose LABELS the controller is
-// still rewriting passes that guard, so the suite cannot say "the controller is still
-// moving things" — it falls through to the before-vs-after comparison and blames the
-// upgrade. The detector that *would* catch it (checkPodMetadataStable) exists and works;
-// it is simply not wired into the settle path.
+// F1 was FIXED on head 125a2267: specs.go's phase-3 settle no longer uses a fixed
+// 3-detector window — it now loops on waitQuiesced (two samples settleDuration apart
+// must agree) before the before/after comparison. So the misattribution-while-moving
+// concern F1 raised is addressed by a different mechanism than the proposed
+// checkPodMetadataStable wiring.
 //
-// This is a canary: it PASSES today (the settle guard reports nothing for a pure label
-// drift) and flips red once the author adds checkPodMetadataStable to the settle path.
+// This test is RETAINED as a regression guard, not a live finding: it documents that the
+// three settle detectors individually still don't catch a pure label drift (so a future
+// change that re-introduces a fixed-window settle without the full detector set would
+// slip past). F1 is marked Fixed in the manifest and is NOT counted as a live finding.
 func TestVerifyHarness_H1_SettleGuardMissesLabelChurn_Canary(t *testing.T) {
 	before := onePodSnapshot("rbg", "role", "pod-0",
 		podFacts("uid-1", "node-a", map[string]int32{"app": 0}, map[string]string{"ord": "0"}, corev1.PodRunning))
@@ -126,49 +127,42 @@ func TestVerifyHarness_H2_RestartsIgnoresNewContainer_Contract(t *testing.T) {
 	}
 }
 
-// --- H3: PodFacts.Phase and OwnerUIDs are captured but never asserted on (canary) ----
+// --- H3: a pod flipping Phase Running->Failed is now reported (contract) ----------
 //
-// No detector compares pod Phase between snapshots. A pod that flips Running -> Failed
-// without being deleted (same UID) is invisible to checkNoPodChurn; this exercises every
-// non-framework detector on a snapshot that differs ONLY in Phase.
-//
-// Canary: PASSES today (Phase is not asserted anywhere); flips red once a Phase detector
-// is added — invert it then.
-func TestVerifyHarness_H3_PhaseNotAsserted_Canary(t *testing.T) {
+// Round 2 canary (Phase was captured but never asserted) FLIPPED on the fix head
+// (125a2267): a detector now compares Phase. Inverted to a contract that asserts the
+// intended behavior — a Running->Failed flip under the same UID MUST be reported.
+func TestVerifyHarness_H3_PhaseFlipReported_Contract(t *testing.T) {
 	before := onePodSnapshot("rbg", "role", "pod-0",
 		podFacts("uid-1", "node-a", map[string]int32{"app": 0}, map[string]string{"ord": "0"}, corev1.PodRunning))
 	after := onePodSnapshot("rbg", "role", "pod-0",
 		podFacts("uid-1", "node-a", map[string]int32{"app": 0}, map[string]string{"ord": "0"}, corev1.PodFailed))
 
-	// Every detector the upgrade/settle paths call that does not need a live client.
 	fs := &findings{}
 	checkSameRBGSet(fs, before, after)
 	checkNoPodChurn(fs, before, after)
 	checkNoRestarts(fs, before, after)
 	checkPodMetadataStable(fs, before, after)
-	checkOwnersStable(fs, before, after, nil) // nil bumps = no recorded generation rewrites
+	checkOwnersStable(fs, before, after, nil)
 	checkNoRevisionExplosion(fs, before, after)
 	checkStillReady(fs, before, after)
-	if hasFinding(fs) {
-		t.Fatalf("a Phase-only change (Running->Failed) was reported (%v) — if Phase is now "+
-			"asserted, invert this canary into a contract test", fs.sections)
+	if !hasFinding(fs) {
+		t.Fatal("a Phase-only change (Running->Failed) was not reported — Phase is no longer " +
+			"asserted; if this regressed, restore the Phase comparison")
 	}
 }
 
-// --- H4: hasDefaultRestartDelays folds an empty/absent config (canary) --------------
+// --- H4: hasDefaultRestartDelays no longer folds an absent config (contract) ------
 //
-// hasDefaultRestartDelays returns true when a delay field is ABSENT (treated as matching
-// the default). The restartPolicyConfig fold then deletes restartPolicyConfig from the
-// stored spec, so a conversion bug that writes an empty config is hidden behind the
-// surviving restartPolicy string.
-//
-// Canary: PASSES today (absent == default == fold applies); flips red once the fix
-// requires both fields to be PRESENT and matching.
-func TestVerifyHarness_H4_EmptyRestartConfigFolds_Canary(t *testing.T) {
-	// Both delay fields absent — the condition under which an empty config would be folded.
-	if !hasDefaultRestartDelays(map[string]any{}) {
-		t.Fatal("hasDefaultRestartDelays(no fields) returned false; the fold no longer applies to " +
-			"an absent config — if the fix now requires fields to be present, invert this canary")
+// Round 2 canary (absent field treated as matching default) FLIPPED on the fix head
+// (125a2267): hasDefaultRestartDelays now requires both delay fields PRESENT and matching.
+// Inverted to a contract asserting the intended behavior — an absent config must NOT be
+// folded (a conversion bug that wrote one must surface, not hide behind the surviving
+// restartPolicy string).
+func TestVerifyHarness_H4_EmptyRestartConfigNotFolded_Contract(t *testing.T) {
+	if hasDefaultRestartDelays(map[string]any{}) {
+		t.Fatal("hasDefaultRestartDelays(no fields) returned true; an absent config is folded again " +
+			"— if this regressed, restore the `!present` short-circuit")
 	}
 }
 
@@ -238,25 +232,18 @@ func TestVerifyHarness_H5_MidRolloutExcludedFromAllDetectors_Canary(t *testing.T
 	}
 }
 
-// --- H6: RBGSnapshot.Generation is captured but never compared (canary) ------------
+// --- H6: RBGSnapshot.Generation is now compared (contract) ------------------------
 //
-// captureRBG records rbg.Generation into RBGSnapshot.Generation (snapshot.go:167),
-// but that field is only ever written out in the dump (snapshot.go:1197) — no detector
-// reads it. The owner-generation check in checkOwnersStable (snapshot.go:842) compares
-// ownerFacts.Generation (the owning RoleInstanceSet/Deployment/etc.), a DIFFERENT field.
-// So an RBG whose own .Generation increments across the upgrade — meaning the stored
-// spec was rewritten, the exact mechanism behind the #433 revision-serialization
-// spurious rollout — is never flagged.
-//
-// Canary: PASSES today (the RBG's own generation is not asserted anywhere); flips red
-// once a detector compares RBGSnapshot.Generation before->after — invert it then.
-func TestVerifyHarness_H6_RBGGenerationNeverCompared_Canary(t *testing.T) {
+// Round 2 canary (Generation captured but never compared) FLIPPED on the fix head
+// (125a2267): checkOwnersStable now compares afterSnap.Generation - beforeSnap.Generation.
+// Inverted to a contract asserting the intended behavior — an RBG whose own .Generation
+// increments across the upgrade (stored spec rewritten, the #433 mechanism) MUST be
+// reported.
+func TestVerifyHarness_H6_RBGGenerationCompared_Contract(t *testing.T) {
 	const rbg = "rbg"
 	base := onePodSnapshot(rbg, "role", "pod-0",
 		podFacts("uid-1", "node-a", map[string]int32{"app": 0}, map[string]string{"ord": "0"}, corev1.PodRunning))
 
-	// before: generation 1. after: everything identical except the RBG's own generation
-	// bumped to 2 (stored spec rewritten). Pods, owners, UID, everything else unchanged.
 	before := map[string]RBGSnapshot{rbg: base[rbg]}
 	afterSnap := base[rbg]
 	afterSnap.Generation = 2
@@ -265,7 +252,6 @@ func TestVerifyHarness_H6_RBGGenerationNeverCompared_Canary(t *testing.T) {
 		t.Fatal("test setup: generation did not actually change")
 	}
 
-	// Every non-framework detector. None reads RBGSnapshot.Generation.
 	fs := &findings{}
 	checkSameRBGSet(fs, before, after)
 	checkNoPodChurn(fs, before, after)
@@ -274,27 +260,27 @@ func TestVerifyHarness_H6_RBGGenerationNeverCompared_Canary(t *testing.T) {
 	checkOwnersStable(fs, before, after, nil)
 	checkNoRevisionExplosion(fs, before, after)
 	checkStillReady(fs, before, after)
-	if hasFinding(fs) {
-		t.Fatalf("a Generation-only change (1->2) was reported (%v) — if RBGSnapshot.Generation "+
-			"is now compared, invert this canary into a contract test", fs.sections)
+	if !hasFinding(fs) {
+		t.Fatal("a Generation-only change (0->2) was not reported — RBGSnapshot.Generation is " +
+			"no longer compared; if this regressed, restore the generation check in checkOwnersStable")
 	}
 }
 
-// --- H7: ownerSources omits ScalingAdapter (canary) -------------------------------
+// --- H7: ownerSources now lists ScalingAdapter (contract) -------------------------
 //
-// ownerSources() returns the workload kinds an RBG can own and that the suite lists
-// when it captures owners. ScalingAdapter is not among them, so an RBG backed by a
-// ScalingAdapter has its owning workload never captured — its owner generation and
-// UID are invisible to checkOwnersStable. This is a capture-path gap (the field is
-// absent from the snapshot, so it cannot be diffed with a unit harness); this canary
-// runs the real ownerSources() and asserts the omission, flipping red once the kind
-// is added.
-func TestVerifyHarness_H7_OwnerSourcesOmitsScalingAdapter_Canary(t *testing.T) {
+// Round 2 canary (ownerSources omitted ScalingAdapter) FLIPPED on the fix head
+// (125a2267): the kind is now listed. Inverted to a contract asserting the intended
+// behavior — a ScalingAdapter-backed RBG's owning workload MUST be captured so
+// checkOwnersStable can see its UID/generation churn.
+func TestVerifyHarness_H7_OwnerSourcesListsScalingAdapter_Contract(t *testing.T) {
+	found := false
 	for _, src := range ownerSources() {
 		if strings.Contains(src.kind, "ScalingAdapter") {
-			t.Fatalf("ownerSources now lists %s — the capture-path gap is closed, "+
-				"invert this canary into a contract test that a ScalingAdapter-backed RBG "+
-				"has its owner captured", src.kind)
+			found = true
 		}
+	}
+	if !found {
+		t.Fatal("ownerSources does not list a ScalingAdapter kind — a ScalingAdapter-backed RBG's " +
+			"owner is not captured; if this regressed, restore the ScalingAdapter list entry")
 	}
 }
