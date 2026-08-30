@@ -73,22 +73,32 @@ limitations under the License.
 // against a cluster already running the version under test every assertion here would
 // pass vacuously.
 //
-// The version upgraded TO is whatever the chart in the working tree ships by default,
-// so the upgrade this suite runs is the `helm upgrade` a user runs, with no overrides
-// at all. That is why it belongs to the release gate rather than the per-PR e2e
-// workflow: the chart carries the published images only once a release bumps it.
-// RBGS_TO_* overrides the target for a local build.
+// The version upgraded TO is whatever the chart in the working tree ships by default, so
+// the images this suite upgrades to are the ones a user gets. That is why it belongs to
+// the release gate rather than the per-PR e2e workflow: the chart carries the published
+// images only once a release bumps it. RBGS_TO_* overrides the target for a local build.
+//
+// One value is deliberately not a chart default: portAllocator is enabled, on the v0.7.0
+// install and on the upgrade alike, which is how the other e2e workflows install rbgs. So
+// this is a feature-enabled upgrade rather than a stock one. What it is not is a feature
+// being toggled by the hop, which would put a configuration change inside the interval
+// every assertion here attributes to the upgrade.
 //
 // What this suite does NOT prove:
 //   - Only the v0.7.0 -> current single hop. Nothing about v0.6.x -> current.
 //   - Nothing about storage version migration: both versions store v1alpha2. If a
 //     future release changes the storage version, this suite will not cover it.
-//   - Single-node, single-replica controller: nothing about leader election
-//     handover, multi-node scheduling, or rollout behavior under real load.
+//   - Single node, and nothing about leader election. The chart ships
+//     controller.replicaCount 2 with --leader-elect on both versions, so the upgrade
+//     does replace a two-replica Deployment -- but nothing here observes which replica
+//     holds the lease, and the per-start rewrite accounting in recordedRewrites assumes
+//     one leader start per rollout. Nothing about multi-node scheduling either, or
+//     rollout behavior under real load.
 //   - Only the field combinations in fixtures.go. Gang scheduling, GPU/model
 //     workloads, PVC-backed roles and large LeaderWorkerSet sizes are excluded.
-//   - The settle window in phase 3 bounds the observation. A regression that only
-//     rolls pods on a later periodic resync would not be seen here.
+//   - The observation ends when two samples taken settleDuration apart agree, so it
+//     bounds what is seen: a regression that only rolls pods on a later periodic resync
+//     would not be caught here.
 //   - Nothing about downgrade, and nothing about a v0.7.0 controller reading
 //     objects after the new CRDs land.
 package upgrade
