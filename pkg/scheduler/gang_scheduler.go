@@ -26,6 +26,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	workloadsv1alpha2 "sigs.k8s.io/rbgs/api/workloads/v1alpha2"
+	"sigs.k8s.io/rbgs/pkg/scheduler/common"
 	kubeschedulerplugin "sigs.k8s.io/rbgs/pkg/scheduler/k8s-scheduler-plugin"
 	volcanoplugin "sigs.k8s.io/rbgs/pkg/scheduler/volcano"
 )
@@ -34,6 +35,10 @@ const (
 	// KubePodGroupLabelKey is the pod label key used by the kube scheduler-plugins PodGroup.
 	// Kept here for external consumers (e.g. e2e tests).
 	KubePodGroupLabelKey = kubeschedulerplugin.LabelKey
+
+	// KubePodGroupUpstreamLabelKey is the pod label key upstream scheduler-plugins
+	// coscheduling reads. Kept here for external consumers (e.g. e2e tests).
+	KubePodGroupUpstreamLabelKey = kubeschedulerplugin.UpstreamLabelKey
 
 	// VolcanoPodGroupAnnotationKey is the pod annotation key used by Volcano PodGroup.
 	// Kept here for external consumers (e.g. e2e tests).
@@ -64,17 +69,20 @@ const (
 // Implementations are selected at controller startup based on the --scheduler-name flag.
 type GangScheduler interface {
 	// ReconcilePodGroup creates/updates/deletes the PodGroup for the given RBG.
-	// gangStrategy is nil for annotation-compat basic gang; non-nil for CoordinatedPolicy
-	// gang (MinReplicas may be empty for basic gang, non-empty for per-role minimums).
+	// gangStrategy is the resolved strategy returned by common.GetGangStrategy.
 	//
 	// The implementation decides internally:
-	// - gangStrategy == nil -> minMember = GetGroupSize() (annotation compat)
-	// - gangStrategy != nil && MinReplicas empty -> minMember = GetGroupSize() (basic gang)
-	// - gangStrategy != nil && MinReplicas non-empty -> subGroupPolicy (if supported)
+	// - gangStrategy == nil -> gang disabled, delete any existing PodGroup
+	// - gangStrategy.MinReplicas empty -> all-or-nothing gang over the roles the
+	//   strategy covers, i.e. minMember = common.GangSize (the legacy annotation
+	//   resolves to a strategy covering every role)
+	// - gangStrategy.MinReplicas non-empty -> subGroupPolicy (if supported): each
+	//   named role is held to its minimum, and covered roles absent from the map
+	//   participate in full
 	ReconcilePodGroup(
 		ctx context.Context,
 		rbg *workloadsv1alpha2.RoleBasedGroup,
-		gangStrategy *workloadsv1alpha2.GangSchedulingStrategy,
+		gangStrategy *common.GangStrategy,
 		runtimeController *builder.TypedBuilder[reconcile.Request],
 		watchedWorkload *sync.Map,
 		apiReader client.Reader,
@@ -82,28 +90,33 @@ type GangScheduler interface {
 
 	// InjectPodSchedulingFields injects scheduler-specific fields into the pod template:
 	// - the PodGroup annotation (Volcano) or label (scheduler-plugins) that ties the pod
-	//   to its PodGroup
-	// - pod.spec.schedulerName, only where the scheduler name is a fixed contract.
-	//   Volcano sets it ("volcano"); scheduler-plugins does not, because its profile name
-	//   is chosen at deploy time and cannot be known here.
+	//   to its PodGroup, only for roles the gang covers
+	// - pod.spec.schedulerName, for every role, so a single scheduler owns the whole
+	//   group. Volcano sets it unconditionally ("volcano"); scheduler-plugins sets it
+	//   only when a profile name was configured via --scheduler-profile-name, since its
+	//   profile name is chosen at deploy time.
 	//
-	// gangStrategy is the gang scheduling strategy for the RBG, as returned by
+	// gangStrategy is the resolved gang scheduling strategy for the RBG, as returned by
 	// common.GetGangStrategy. It is nil when gang scheduling is not enabled, in which
 	// case implementations must inject nothing.
 	InjectPodSchedulingFields(
 		rbg *workloadsv1alpha2.RoleBasedGroup,
 		role *workloadsv1alpha2.RoleSpec,
-		gangStrategy *workloadsv1alpha2.GangSchedulingStrategy,
+		gangStrategy *common.GangStrategy,
 		pts *coreapplyv1.PodTemplateSpecApplyConfiguration,
 	)
 }
 
 // NewGangScheduler returns a GangScheduler for the given plugin type.
+// schedulerProfileName is the kube-scheduler profile name running the coscheduling
+// plugin; it only applies to KubeSchedulerPlugin and may be empty, in which case
+// pod.spec.schedulerName is left untouched. Volcano ignores it because its scheduler
+// name is a fixed contract.
 // Returns an error if the plugin type is not supported.
-func NewGangScheduler(schedulerName SchedulerPluginType, c client.Client) (GangScheduler, error) {
+func NewGangScheduler(schedulerName SchedulerPluginType, c client.Client, schedulerProfileName string) (GangScheduler, error) {
 	switch schedulerName {
 	case KubeSchedulerPlugin:
-		return kubeschedulerplugin.New(c), nil
+		return kubeschedulerplugin.New(c, schedulerProfileName), nil
 	case VolcanoSchedulerPlugin:
 		return volcanoplugin.New(c), nil
 	default:

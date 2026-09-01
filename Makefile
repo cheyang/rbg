@@ -103,8 +103,8 @@ test-chart: ## Render the Helm chart with helm template and assert the deprecate
 # CertManager is installed by default; skip with:
 # - CERT_MANAGER_INSTALL_SKIP=true
 .PHONY: test-e2e
-test-e2e:  ## Run the e2e tests (excludes volcano-only specs; runs against a scheduler-plugins controller).
-	go test ./test/e2e/ -v -ginkgo.v --ginkgo.fail-fast --ginkgo.label-filter='!volcano' -timeout 30m
+test-e2e:  ## Run the e2e tests (default scheduler only; gang specs live in the labelled suites below).
+	go test ./test/e2e/ -v -ginkgo.v --ginkgo.fail-fast --ginkgo.label-filter='!volcano && !scheduler-plugins' -timeout 30m
 
 # Runs the Volcano-only gang scheduling specs. Requires the controller deployed with
 # --scheduler-name=volcano (helm: controller.features.gangScheduling.schedulerName=volcano)
@@ -113,6 +113,16 @@ test-e2e:  ## Run the e2e tests (excludes volcano-only specs; runs against a sch
 test-e2e-volcano: ## Run the Volcano gang scheduling e2e suite.
 	go test ./test/e2e/ -v -ginkgo.v --ginkgo.fail-fast --ginkgo.label-filter='volcano' -timeout 30m
 
+# Runs the scheduler-plugins gang scheduling specs. Requires scheduler-plugins installed and
+# the controller deployed with --scheduler-name=scheduler-plugins plus
+# --scheduler-profile-name=<the scheduler-plugins profile> (helm:
+# controller.features.gangScheduling.schedulerName / .schedulerProfileName). The
+# as-a-second-scheduler chart uses the profile name scheduler-plugins-scheduler; when
+# scheduler-plugins replaces the default scheduler, leave the profile name empty.
+.PHONY: test-e2e-scheduler-plugins
+test-e2e-scheduler-plugins: ## Run the scheduler-plugins gang scheduling e2e suite.
+	go test ./test/e2e/ -v -ginkgo.v --ginkgo.fail-fast --ginkgo.label-filter='scheduler-plugins' -timeout 30m
+
 # Runs against a cluster where the chart was installed with
 # controller.deprecatedWorkloadTypes.enabled=false. A BeforeSuite preflight fails fast
 # with setup instructions if that precondition is not met, so do not point this at an
@@ -120,6 +130,22 @@ test-e2e-volcano: ## Run the Volcano gang scheduling e2e suite.
 .PHONY: test-e2e-deprecated-disabled
 test-e2e-deprecated-disabled: ## Run the deprecated-workload-types-disabled e2e suite.
 	go test ./test/e2e/apicompat/ -v -ginkgo.v --ginkgo.fail-fast -timeout 30m
+
+# Runs against a throwaway cluster with NO rbgs install: the suite installs v0.7.0
+# itself from a git worktree of the tag, upgrades it in place to the chart in this tree,
+# then removes it again. Teardown deletes the workloads.x-k8s.io CRDs, which cascades to
+# every object of those kinds. The upgrade target defaults to the chart's own image
+# values, so no variables are needed to test a release; set RBGS_TO_TAG to point at a
+# local build instead. A BeforeSuite check fails fast with cleanup instructions if the
+# cluster is not clean. See test/e2e/upgrade.
+# The timeout is larger than the other suites because one run installs v0.7.0, creates the
+# fixtures, waits out a full helm upgrade, then settles before asserting.
+.PHONY: test-e2e-upgrade
+test-e2e-upgrade: ## Run the v0.7.0 -> current upgrade-compatibility e2e suite.
+	# 60m, not 40m: the five readiness gates can spend 5m each on top of the v0.7.0
+	# install, fixture startup, the helm upgrade, the settle window and phase 4. A go
+	# test timeout that fires first reports a panic instead of the gate's own message.
+	go test ./test/e2e/upgrade/ -v -ginkgo.v --ginkgo.fail-fast -timeout 60m
 
 .PHONY: lint
 lint: golangci-lint ## Run golangci-lint linter
@@ -327,7 +353,8 @@ ENVTEST_K8S_VERSION ?= 1.31.0
 ## Tool Versions
 KUSTOMIZE_VERSION ?= v5.5.0
 CONTROLLER_TOOLS_VERSION ?= v0.17.2
-GOLANGCI_LINT_VERSION ?= v1.63.4
+GOLANGCI_LINT_VERSION ?= v2.13.1
+SETUP_ENVTEST_VERSION ?= v0.24.1
 
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary.
@@ -342,13 +369,13 @@ $(CONTROLLER_GEN): $(LOCALBIN)
 .PHONY: golangci-lint
 golangci-lint: $(GOLANGCI_LINT) ## Download golangci-lint locally if necessary.
 $(GOLANGCI_LINT): $(LOCALBIN)
-	$(call go-install-tool,$(GOLANGCI_LINT),github.com/golangci/golangci-lint/cmd/golangci-lint,$(GOLANGCI_LINT_VERSION))
+	$(call go-install-tool,$(GOLANGCI_LINT),github.com/golangci/golangci-lint/v2/cmd/golangci-lint,$(GOLANGCI_LINT_VERSION))
 
 .PHONY: setup-envtest
 setup-envtest: $(SETUP_ENVTEST) ## Download setup-envtest locally if necessary.
 $(SETUP_ENVTEST): $(LOCALBIN)
 	@echo "Installing setup-envtest..."
-	GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@latest
+	GOBIN=$(LOCALBIN) go install sigs.k8s.io/controller-runtime/tools/setup-envtest@$(SETUP_ENVTEST_VERSION)
 
 # go-install-tool will 'go install' any package with custom target and name of binary, if it doesn't exist
 # $1 - target path with name of binary

@@ -44,6 +44,7 @@ import (
 	"k8s.io/client-go/tools/record"
 	"k8s.io/client-go/util/workqueue"
 	"k8s.io/klog/v2"
+	"k8s.io/utils/lru"
 	"k8s.io/utils/ptr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/builder"
@@ -72,6 +73,12 @@ import (
 	volcanoschedulingv1beta1 "volcano.sh/apis/pkg/apis/scheduling/v1beta1"
 )
 
+// incompatibleGangConfigRequeue is how often a RoleBasedGroup whose gang
+// configuration cannot be satisfied is re-examined. CR edits already re-enqueue
+// through the watches, so this exists for the changes that do not: a Volcano upgrade
+// or a --scheduler-name switch. It is a slow backstop rather than a retry loop.
+const incompatibleGangConfigRequeue = 5 * time.Minute
+
 var (
 	runtimeController *builder.TypedBuilder[reconcile.Request]
 	watchedWorkload   sync.Map
@@ -98,22 +105,26 @@ type RoleBasedGroupReconciler struct {
 	// still enabled. When false, Deployment/StatefulSet/LeaderWorkerSet are skipped
 	// in cleanup paths (deleteOrphanRoles) to avoid forbidden errors when RBAC is removed.
 	enableDeprecatedWorkloadTypes bool
+	// revisionEqualityCache caches semantic revision equality results to avoid
+	// expensive ApplyRevision + getRBGPatch reconstruction on every reconcile.
+	revisionEqualityCache *lru.Cache
 }
 
-func NewRoleBasedGroupReconciler(mgr ctrl.Manager, schedulerName scheduler.SchedulerPluginType, bindings *instancesync.NodeBindingStore) (*RoleBasedGroupReconciler, error) {
+func NewRoleBasedGroupReconciler(mgr ctrl.Manager, schedulerName scheduler.SchedulerPluginType, schedulerProfileName string, bindings *instancesync.NodeBindingStore) (*RoleBasedGroupReconciler, error) {
 	c := utilclient.NewClientWithUserAgent(mgr, "rolebasedgroup")
-	gangScheduler, err := scheduler.NewGangScheduler(schedulerName, c)
+	gangScheduler, err := scheduler.NewGangScheduler(schedulerName, c, schedulerProfileName)
 	if err != nil {
 		return nil, err
 	}
 	return &RoleBasedGroupReconciler{
-		client:             c,
-		apiReader:          mgr.GetAPIReader(),
-		scheme:             mgr.GetScheme(),
-		recorder:           mgr.GetEventRecorderFor("RoleBasedGroup"),
-		workloadReconciler: make(map[string]reconciler.WorkloadReconciler),
-		gangScheduler:      gangScheduler,
-		NodeBindings:       bindings,
+		client:                c,
+		apiReader:             mgr.GetAPIReader(),
+		scheme:                mgr.GetScheme(),
+		recorder:              mgr.GetEventRecorderFor("RoleBasedGroup"),
+		workloadReconciler:    make(map[string]reconciler.WorkloadReconciler),
+		NodeBindings:          bindings,
+		revisionEqualityCache: lru.New(utils.MaxRevisionEqualityCacheEntries),
+		gangScheduler:         gangScheduler,
 	}, nil
 }
 
@@ -194,8 +205,10 @@ func (r *RoleBasedGroupReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	// shouldUseLegacyDiscoveryConfig checks rbg.Status.RoleStatuses to determine if
 	// this is a new RBG. If roleStatuses is populated first, it will incorrectly
 	// use legacy mode for new RBGs.
-	if needRequeue, err := r.ensureDiscoveryConfigMode(ctx, rbg); err != nil || needRequeue {
-		return ctrl.Result{Requeue: true}, err
+	if needRequeue, err := r.ensureDiscoveryConfigMode(ctx, rbg); err != nil {
+		return ctrl.Result{}, err
+	} else if needRequeue {
+		return ctrl.Result{RequeueAfter: time.Second}, nil
 	}
 
 	// Step 3: Reconcile refined discovery ConfigMap.
@@ -224,10 +237,40 @@ func (r *RoleBasedGroupReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		return ctrl.Result{}, err
 	}
 
-	// Step 7: Reconcile PodGroup for gang scheduling (annotation-driven).
-	if err := r.reconcilePodGroup(ctx, rbg); err != nil {
-		r.recorder.Event(rbg, corev1.EventTypeWarning, FailedReconcilePodGroup, err.Error())
+	// Step 7: Reconcile PodGroup for gang scheduling.
+	// The strategy is resolved once here and carried on ctx so that the PodGroup
+	// spec and every role's pod template built in Step 8 agree on one value.
+	ctx, gangStrategy, gangErr := gangcommon.ResolveGangStrategy(ctx, r.client, rbg)
+	if gangErr == nil {
+		gangErr = r.reconcilePodGroup(ctx, rbg, gangStrategy)
+	}
+	if gangErr != nil && !gangcommon.IsIncompatibleGangConfig(gangErr) {
+		r.recorder.Event(rbg, corev1.EventTypeWarning, FailedReconcilePodGroup, gangErr.Error())
+		return ctrl.Result{}, gangErr
+	}
+	if err := r.setGangConfiguredCondition(ctx, rbg, gangStrategy, gangErr); err != nil {
 		return ctrl.Result{}, err
+	}
+	if gangErr != nil {
+		// A gang configuration the current RBG cannot satisfy is not transient: only a
+		// user or operator change resolves it, and CR edits already re-enqueue through
+		// the watches in SetupWithManager, so the workqueue's 5ms-and-doubling error
+		// backoff would only burn reconciles.
+		//
+		// Roles are deliberately left untouched: the PodGroup was not written, so
+		// creating their pods now would place them with no gang protection at all,
+		// which is the outcome gang scheduling exists to prevent. Cleanup still runs,
+		// because it only deletes workloads the user already removed from the spec and
+		// leaving them running would leak their accelerators for as long as the
+		// configuration stays broken.
+		if err := r.cleanup(ctx, rbg); err != nil {
+			return ctrl.Result{}, err
+		}
+		return ctrl.Result{RequeueAfter: incompatibleGangConfigRequeue}, nil
+	}
+
+	if raised := raiseScalingTargetsToGangMinimum(scalingTargets, rbg, gangStrategy); len(raised) > 0 {
+		logger.V(1).Info("Raised coordinated scaling targets to the gang minimum", "roles", raised)
 	}
 
 	// Step 8: Reconcile roles, do create/update actions for roles.
@@ -259,14 +302,24 @@ func (r *RoleBasedGroupReconciler) handleRevisions(ctx context.Context, rbg *wor
 	}
 
 	if !utils.EqualRevision(currentRevision, expectedRevision) {
-		logger.Info("Current revision need to be updated")
-		if err := r.client.Create(ctx, expectedRevision); err != nil {
-			logger.Error(err, fmt.Sprintf("Failed to create revision %v", expectedRevision))
-			r.recorder.Event(rbg, corev1.EventTypeWarning, FailedCreateRevision, "Failed create revision for RoleBasedGroup")
-			return nil, err
+		// If raw bytes differ but the revision is semantically equivalent, avoid
+		// triggering a spurious revision creation. This handles serialization drift
+		// across client-go versions (e.g., "creationTimestamp": null vs omitted).
+		if utils.SetMatchesRevision(rbg, expectedRevision, currentRevision, r.revisionEqualityCache) {
+			logger.V(4).Info("Revision bytes differ but are semantically equal, skipping creation")
+			// Keep using the persisted revision so downstream role hashes stay
+			// stable across serializer-only changes.
+			expectedRevision = currentRevision
 		} else {
-			logger.Info(fmt.Sprintf("Create revision [%s] successfully", expectedRevision.Name))
-			r.recorder.Event(rbg, corev1.EventTypeNormal, SucceedCreateRevision, "Successful create revision for RoleBasedGroup")
+			logger.Info("Current revision need to be updated")
+			if err := r.client.Create(ctx, expectedRevision); err != nil {
+				logger.Error(err, fmt.Sprintf("Failed to create revision %v", expectedRevision))
+				r.recorder.Event(rbg, corev1.EventTypeWarning, FailedCreateRevision, "Failed create revision for RoleBasedGroup")
+				return nil, err
+			} else {
+				logger.Info(fmt.Sprintf("Create revision [%s] successfully", expectedRevision.Name))
+				r.recorder.Event(rbg, corev1.EventTypeNormal, SucceedCreateRevision, "Successful create revision for RoleBasedGroup")
+			}
 		}
 	}
 
@@ -449,16 +502,11 @@ func (r *RoleBasedGroupReconciler) reconcileRefinedDiscoveryConfigMap(
 func (r *RoleBasedGroupReconciler) reconcilePodGroup(
 	ctx context.Context,
 	rbg *workloadsv1alpha2.RoleBasedGroup,
+	gangStrategy *gangcommon.GangStrategy,
 ) error {
 	if r.gangScheduler == nil {
 		return nil
 	}
-
-	// Fetch the gang scheduling strategy from the CoordinatedPolicy (if any).
-	// This is shared with PodReconciler via common.GetGangStrategy so that
-	// InjectPodSchedulingFields receives the gangStrategy directly, without
-	// relying on annotations as a compatibility flag.
-	gangStrategy := gangcommon.GetGangStrategy(ctx, r.client, rbg)
 
 	return r.gangScheduler.ReconcilePodGroup(ctx, rbg, gangStrategy, runtimeController, &watchedWorkload, r.apiReader)
 }
@@ -791,6 +839,60 @@ func (r *RoleBasedGroupReconciler) updateRBGStatus(
 
 }
 
+// setGangConfiguredCondition records the outcome of the gang configuration on the RBG
+// and emits the warning event only on a transition. Reconciles are driven by workload
+// churn as well as by RequeueAfter, so a level-triggered event here would fire at the
+// churn rate and drain the object's event budget: the client-go spam filter is keyed on
+// object plus event type rather than reason, so it would silence every other warning on
+// the same RoleBasedGroup. The condition is the durable surface; the event is the edge.
+func (r *RoleBasedGroupReconciler) setGangConfiguredCondition(
+	ctx context.Context,
+	rbg *workloadsv1alpha2.RoleBasedGroup,
+	gangStrategy *gangcommon.GangStrategy,
+	cause error,
+) error {
+	conditionType := string(workloadsv1alpha2.RoleBasedGroupGangConfigured)
+
+	var changed bool
+	switch {
+	case cause != nil:
+		changed = apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
+			Type:               conditionType,
+			Status:             metav1.ConditionFalse,
+			LastTransitionTime: metav1.Now(),
+			Reason:             IncompatibleGangConfig,
+			Message:            cause.Error(),
+			ObservedGeneration: rbg.Generation,
+		})
+	case gangStrategy == nil:
+		// Gang scheduling is off for this RBG; a stale condition would be misleading.
+		changed = apimeta.RemoveStatusCondition(&rbg.Status.Conditions, conditionType)
+	default:
+		changed = apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
+			Type:               conditionType,
+			Status:             metav1.ConditionTrue,
+			LastTransitionTime: metav1.Now(),
+			Reason:             "GangConfigured",
+			Message:            "Gang scheduling configuration is satisfiable",
+			ObservedGeneration: rbg.Generation,
+		})
+	}
+	if !changed {
+		return nil
+	}
+
+	if err := utils.PatchObjectApplyConfiguration(
+		ctx, r.client, toRBGApplyConfigurationForStatus(rbg), utils.PatchStatus); err != nil {
+		return err
+	}
+	// Emitted only after the condition is durably recorded, so a failed patch retries
+	// both together rather than leaving a warning whose condition never landed.
+	if cause != nil {
+		r.recorder.Event(rbg, corev1.EventTypeWarning, IncompatibleGangConfig, cause.Error())
+	}
+	return nil
+}
+
 func toRBGApplyConfigurationForStatus(rbg *workloadsv1alpha2.RoleBasedGroup) *applyconfiguration.RoleBasedGroupApplyConfiguration {
 	if rbg == nil {
 		return nil
@@ -1052,6 +1154,16 @@ func (r *RoleBasedGroupReconciler) SetupWithManager(mgr ctrl.Manager, options co
 				}
 			},
 		}).
+		Watches(&workloadsv1alpha2.CoordinatedPolicy{}, handler.EnqueueRequestsFromMapFunc(
+			// A CoordinatedPolicy is matched to its RBG by identical namespace/name, so
+			// changing or deleting one must reconcile that RBG. Without this the PodGroup
+			// keeps a stale minMember/subGroupPolicy until an unrelated RBG event fires.
+			func(_ context.Context, obj client.Object) []reconcile.Request {
+				return []reconcile.Request{
+					{NamespacedName: types.NamespacedName{Namespace: obj.GetNamespace(), Name: obj.GetName()}},
+				}
+			},
+		), builder.WithPredicates(predicate.GenerationChangedPredicate{})).
 		Named("workloads-rolebasedgroup")
 
 	if enableDeprecatedWorkloadTypes {
@@ -1083,6 +1195,9 @@ func (r *RoleBasedGroupReconciler) CheckCrdExists() error {
 	crds := []string{
 		"rolebasedgroups.workloads.x-k8s.io",
 		"clusterengineruntimeprofiles.workloads.x-k8s.io",
+		// Read on every reconcile and watched in SetupWithManager, so its absence
+		// would fail the watch registration rather than degrade gracefully.
+		"coordinatedpolicies.workloads.x-k8s.io",
 	}
 
 	for _, crd := range crds {
@@ -1091,6 +1206,43 @@ func (r *RoleBasedGroupReconciler) CheckCrdExists() error {
 		}
 	}
 	return nil
+}
+
+// raiseScalingTargetsToGangMinimum lifts every coordinated scaling target that sits
+// below the replica count its gang needs, and returns the role names it changed, sorted.
+//
+// Coordination scaling paces a role up in batches bounded by maxSkew and will not start
+// the next batch until the current replicas are Scheduled or Ready. A gang-covered role
+// held below its gang minimum reaches neither: the PodGroup withholds scheduling until
+// the whole gang can be placed at once. So scaling waits for a readiness that gang
+// scheduling is withholding, and gang scheduling waits for replicas that scaling will
+// not create — the group stays Pending forever with no error to point at.
+//
+// The gang minimum wins because it is the harder constraint. Exceeding maxSkew only
+// loosens how gradually a role ramps, while starving the gang blocks the group outright.
+//
+// Only roles already present in targets are touched: it holds exactly the roles a
+// CoordinatedPolicy paces, and every other role runs at its desired replicas, which is
+// never below its gang minimum.
+func raiseScalingTargetsToGangMinimum(
+	targets map[string]int32,
+	rbg *workloadsv1alpha2.RoleBasedGroup,
+	gangStrategy *gangcommon.GangStrategy,
+) []string {
+	if len(targets) == 0 || gangStrategy == nil {
+		return nil
+	}
+
+	raised := make([]string, 0, len(targets))
+	for roleName, minimum := range gangcommon.GangMinimumReplicas(rbg, gangStrategy) {
+		if target, paced := targets[roleName]; !paced || target >= minimum {
+			continue
+		}
+		targets[roleName] = minimum
+		raised = append(raised, roleName)
+	}
+	sort.Strings(raised)
+	return raised
 }
 
 // handleCoordinationStrategies calculates coordination scaling targets and rolling update strategies.

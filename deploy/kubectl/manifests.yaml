@@ -8777,9 +8777,7 @@ spec:
                             gang:
                               description: |-
                                 Gang defines the gang scheduling coordination for roles.
-                                When present, gang scheduling is enabled for the roles in this policy rule.
-
-                                When scheduling.
+                                When present, gang scheduling is enabled for the RoleBasedGroup.
                               properties:
                                 minReplicas:
                                   additionalProperties:
@@ -16379,7 +16377,7 @@ spec:
                       type: object
                     components:
                       description: Components describe the components that will be
-                        created.
+                        created. Component names must be unique.
                       items:
                         properties:
                           name:
@@ -16405,6 +16403,9 @@ spec:
                         - template
                         type: object
                       type: array
+                      x-kubernetes-list-map-keys:
+                      - name
+                      x-kubernetes-list-type: map
                     dependencies:
                       description: Dependencies of the role
                       items:
@@ -32801,6 +32802,8 @@ spec:
                         custom components.
                       properties:
                         components:
+                          description: Components describe the components that will
+                            be created. Component names must be unique.
                           items:
                             properties:
                               annotations:
@@ -32840,6 +32843,9 @@ spec:
                             - template
                             type: object
                           type: array
+                          x-kubernetes-list-map-keys:
+                          - name
+                          x-kubernetes-list-type: map
                         restartPolicy:
                           description: |-
                             RestartPolicy defines the restart policy when pod failures happen.
@@ -57353,7 +57359,7 @@ spec:
                           type: object
                         components:
                           description: Components describe the components that will
-                            be created.
+                            be created. Component names must be unique.
                           items:
                             properties:
                               name:
@@ -57379,6 +57385,9 @@ spec:
                             - template
                             type: object
                           type: array
+                          x-kubernetes-list-map-keys:
+                          - name
+                          x-kubernetes-list-type: map
                         dependencies:
                           description: Dependencies of the role
                           items:
@@ -74139,6 +74148,9 @@ spec:
                                 with custom components.
                               properties:
                                 components:
+                                  description: Components describe the components
+                                    that will be created. Component names must be
+                                    unique.
                                   items:
                                     properties:
                                       annotations:
@@ -74179,6 +74191,9 @@ spec:
                                     - template
                                     type: object
                                   type: array
+                                  x-kubernetes-list-map-keys:
+                                  - name
+                                  x-kubernetes-list-type: map
                                 restartPolicy:
                                   description: |-
                                     RestartPolicy defines the restart policy when pod failures happen.
@@ -97883,7 +97898,7 @@ spec:
               components:
                 description: Components is a list of components, each of which specifies
                   a component and the number of replicas and template for RoleInstance
-                  that match the component.
+                  that match the component. Component names must be unique.
                 items:
                   properties:
                     annotations:
@@ -97922,6 +97937,9 @@ spec:
                   - template
                   type: object
                 type: array
+                x-kubernetes-list-map-keys:
+                - name
+                x-kubernetes-list-type: map
               readinessGates:
                 description: ReadinessGates is an optional list of PodReadinessGates
                   for the whole RoleInstance.
@@ -98826,7 +98844,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: rolebasedgroup/rbgs-controller:v0.8.0-ba7b952e
+        image: rolebasedgroup/rbgs-controller:v0.8.0-16705159
         imagePullPolicy: IfNotPresent
         name: rbgs
         resources:
@@ -98882,4 +98900,24 @@ webhooks:
     - UPDATE
     resources:
     - rolebasedgroupsets
+  sideEffects: None
+- admissionReviewVersions:
+  - v1
+  clientConfig:
+    service:
+      name: rbgs-webhook-service
+      namespace: rbgs-system
+      path: /validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy
+  failurePolicy: Fail
+  name: vcoordinatedpolicy.kb.io
+  rules:
+  - apiGroups:
+    - workloads.x-k8s.io
+    apiVersions:
+    - v1alpha2
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - coordinatedpolicies
   sideEffects: None

@@ -17,37 +17,49 @@ limitations under the License.
 package workloads
 
 import (
+	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"math"
+	"reflect"
 	"strings"
+	"sync"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
 	"k8s.io/apimachinery/pkg/util/sets"
+	coreapplyv1 "k8s.io/client-go/applyconfigurations/core/v1"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/record"
+	"k8s.io/utils/lru"
 	"k8s.io/utils/ptr"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/rbgs/pkg/reconciler"
+	"sigs.k8s.io/rbgs/pkg/scheduler/common"
 
 	"sigs.k8s.io/rbgs/api/workloads/constants"
 	workloadsv1alpha2 "sigs.k8s.io/rbgs/api/workloads/v1alpha2"
 	"sigs.k8s.io/rbgs/pkg/scale"
 	"sigs.k8s.io/rbgs/pkg/utils"
+	testutils "sigs.k8s.io/rbgs/test/utils"
 	"sigs.k8s.io/rbgs/test/wrappers"
 	wrappersv2 "sigs.k8s.io/rbgs/test/wrappers/v1alpha2"
 )
@@ -2102,4 +2114,279 @@ func TestCalculateScalingForAllCoordination_MultipleCoordinations(t *testing.T) 
 			}
 		})
 	}
+}
+
+func Test_HandleRevisions_SemanticallyEqualRevisionKeepsPersistedRoleHash(t *testing.T) {
+	testScheme := runtime.NewScheme()
+	_ = clientgoscheme.AddToScheme(testScheme)
+	_ = workloadsv1alpha2.AddToScheme(testScheme)
+
+	rbg := wrappersv2.BuildBasicRoleBasedGroup("test-rbg", "default").Obj()
+	rbg.Generation = 1
+
+	ctx := ctrl.LoggerInto(context.TODO(), zap.New().WithValues("env", "unit-test"))
+	fakeClient := fake.NewClientBuilder().WithScheme(testScheme).WithObjects(rbg).Build()
+
+	// A revision persisted by an older client-go: same spec, but its patch spells
+	// out "creationTimestamp": null instead of omitting it.
+	persistedRevision, err := utils.NewRevision(ctx, fakeClient, rbg, nil)
+	if err != nil {
+		t.Fatalf("NewRevision() error = %v", err)
+	}
+	legacyPatch, err := testutils.WithLegacyCreationTimestamp(persistedRevision.Data.Raw)
+	if err != nil {
+		t.Fatalf("WithLegacyCreationTimestamp() error = %v", err)
+	}
+	if bytes.Equal(legacyPatch, persistedRevision.Data.Raw) {
+		t.Fatalf("drift injection must actually change the patch bytes")
+	}
+	persistedRevision.Data.Raw = legacyPatch
+	if err := fakeClient.Create(ctx, persistedRevision); err != nil {
+		t.Fatalf("failed to seed persisted revision: %v", err)
+	}
+
+	freshRevision, err := utils.NewRevision(ctx, fakeClient, rbg, persistedRevision)
+	if err != nil {
+		t.Fatalf("NewRevision() error = %v", err)
+	}
+	persistedHash, err := utils.GetRolesRevisionHash(persistedRevision)
+	if err != nil {
+		t.Fatalf("GetRolesRevisionHash(persisted) error = %v", err)
+	}
+	freshHash, err := utils.GetRolesRevisionHash(freshRevision)
+	if err != nil {
+		t.Fatalf("GetRolesRevisionHash(fresh) error = %v", err)
+	}
+	if reflect.DeepEqual(persistedHash, freshHash) {
+		t.Fatalf("fixture is not exercising the regression: legacy and fresh role hashes are identical")
+	}
+
+	r := &RoleBasedGroupReconciler{
+		client:                fakeClient,
+		apiReader:             fakeClient,
+		scheme:                testScheme,
+		recorder:              record.NewFakeRecorder(10),
+		revisionEqualityCache: lru.New(utils.MaxRevisionEqualityCacheEntries),
+	}
+
+	gotHash, err := r.handleRevisions(ctx, rbg)
+	if err != nil {
+		t.Fatalf("handleRevisions() error = %v", err)
+	}
+
+	if !reflect.DeepEqual(gotHash, persistedHash) {
+		t.Errorf("handleRevisions() hash = %v, want persisted revision hash %v", gotHash, persistedHash)
+	}
+
+	revisionList := &appsv1.ControllerRevisionList{}
+	if err := fakeClient.List(ctx, revisionList, client.InNamespace(rbg.Namespace)); err != nil {
+		t.Fatalf("failed to list revisions: %v", err)
+	}
+	if len(revisionList.Items) != 1 {
+		t.Errorf("expected no new ControllerRevision, got %d revisions", len(revisionList.Items))
+	}
+}
+
+// TestRaiseScalingTargetsToGangMinimum pins the resolution of the deadlock between
+// coordination scaling and gang scheduling: maxSkew pacing must not park a gang-covered
+// role below the minimum its PodGroup waits for, because nothing would ever schedule and
+// the pacing itself waits on scheduling.
+func TestRaiseScalingTargetsToGangMinimum(t *testing.T) {
+	rbg := wrappersv2.BuildBasicRoleBasedGroup("test-rbg", "default").
+		WithRoles([]workloadsv1alpha2.RoleSpec{
+			wrappersv2.BuildStandaloneRole("prefill").WithReplicas(4).Obj(),
+			wrappersv2.BuildStandaloneRole("decode").WithReplicas(2).Obj(),
+		}).Obj()
+
+	tests := []struct {
+		name        string
+		targets     map[string]int32
+		strategy    *common.GangStrategy
+		wantTargets map[string]int32
+		wantRaised  []string
+	}{
+		{
+			name:     "gang disabled leaves the pacing alone",
+			targets:  map[string]int32{"prefill": 2},
+			strategy: nil,
+			// maxSkew is the only constraint, so the half-scaled batch stands.
+			wantTargets: map[string]int32{"prefill": 2},
+		},
+		{
+			name:        "no coordinated roles is a no-op",
+			targets:     map[string]int32{},
+			strategy:    &common.GangStrategy{},
+			wantTargets: map[string]int32{},
+		},
+		{
+			name:        "an all-or-nothing gang needs every replica",
+			targets:     map[string]int32{"prefill": 2, "decode": 1},
+			strategy:    &common.GangStrategy{},
+			wantTargets: map[string]int32{"prefill": 4, "decode": 2},
+			wantRaised:  []string{"decode", "prefill"},
+		},
+		{
+			name:        "a per-role gang needs only its minimum",
+			targets:     map[string]int32{"prefill": 1},
+			strategy:    &common.GangStrategy{Roles: sets.New("prefill"), MinReplicas: map[string]int32{"prefill": 3}},
+			wantTargets: map[string]int32{"prefill": 3},
+			wantRaised:  []string{"prefill"},
+		},
+		{
+			name:     "a role outside the gang keeps its paced target",
+			targets:  map[string]int32{"prefill": 2, "decode": 1},
+			strategy: &common.GangStrategy{Roles: sets.New("prefill")},
+			// decode is not in the gang, so its pods are never counted in minMember.
+			wantTargets: map[string]int32{"prefill": 4, "decode": 1},
+			wantRaised:  []string{"prefill"},
+		},
+		{
+			name:        "a target already above the minimum is untouched",
+			targets:     map[string]int32{"prefill": 4},
+			strategy:    &common.GangStrategy{Roles: sets.New("prefill"), MinReplicas: map[string]int32{"prefill": 3}},
+			wantTargets: map[string]int32{"prefill": 4},
+		},
+		{
+			// Only paced roles are in the map; an absent role already runs at its desired
+			// replicas, so inserting it here would create a target nothing asked for.
+			name:        "an uncoordinated role is not added to the map",
+			targets:     map[string]int32{"prefill": 1},
+			strategy:    &common.GangStrategy{},
+			wantTargets: map[string]int32{"prefill": 4},
+			wantRaised:  []string{"prefill"},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			raised := raiseScalingTargetsToGangMinimum(tt.targets, rbg, tt.strategy)
+			if len(tt.wantRaised) == 0 {
+				assert.Empty(t, raised)
+			} else {
+				assert.Equal(t, tt.wantRaised, raised)
+			}
+			assert.Equal(t, tt.wantTargets, tt.targets)
+		})
+	}
+}
+
+// stubGangScheduler lets a test drive Step 7 of Reconcile without a real PodGroup CRD.
+type stubGangScheduler struct {
+	err error
+}
+
+func (s *stubGangScheduler) ReconcilePodGroup(
+	context.Context,
+	*workloadsv1alpha2.RoleBasedGroup,
+	*common.GangStrategy,
+	*builder.TypedBuilder[reconcile.Request],
+	*sync.Map,
+	client.Reader,
+) error {
+	return s.err
+}
+
+func (s *stubGangScheduler) InjectPodSchedulingFields(
+	*workloadsv1alpha2.RoleBasedGroup,
+	*workloadsv1alpha2.RoleSpec,
+	*common.GangStrategy,
+	*coreapplyv1.PodTemplateSpecApplyConfiguration,
+) {
+}
+
+// TestReconcileIncompatibleGangConfig pins the retry and notification policy for a gang
+// configuration the RBG cannot satisfy: a fixed requeue instead of the workqueue's error
+// backoff, and one event per transition rather than one per reconcile.
+func TestReconcileIncompatibleGangConfig(t *testing.T) {
+	testScheme := runtime.NewScheme()
+	require.NoError(t, clientgoscheme.AddToScheme(testScheme))
+	require.NoError(t, workloadsv1alpha2.AddToScheme(testScheme))
+
+	rbg := wrappersv2.BuildBasicRoleBasedGroup("test-rbg", "default").Obj()
+	rbg.Annotations = map[string]string{constants.GangSchedulingAnnotationKey: "true"}
+
+	fakeClient := fake.NewClientBuilder().
+		WithScheme(testScheme).
+		WithObjects(rbg).
+		WithStatusSubresource(&workloadsv1alpha2.RoleBasedGroup{}).
+		Build()
+	recorder := record.NewFakeRecorder(50)
+	stub := &stubGangScheduler{}
+
+	r := &RoleBasedGroupReconciler{
+		client:             fakeClient,
+		apiReader:          fakeClient,
+		scheme:             testScheme,
+		recorder:           recorder,
+		workloadReconciler: make(map[string]reconciler.WorkloadReconciler),
+		gangScheduler:      stub,
+	}
+	ctx := ctrl.LoggerInto(context.TODO(), zap.New().WithValues("env", "unit-test"))
+	request := reconcile.Request{NamespacedName: types.NamespacedName{Name: "test-rbg", Namespace: "default"}}
+
+	gangConfigured := func() *metav1.Condition {
+		got := &workloadsv1alpha2.RoleBasedGroup{}
+		require.NoError(t, fakeClient.Get(ctx, request.NamespacedName, got))
+		return apimeta.FindStatusCondition(
+			got.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupGangConfigured))
+	}
+	drainEvents := func() []string {
+		var events []string
+		for {
+			select {
+			case e := <-recorder.Events:
+				events = append(events, e)
+			default:
+				return events
+			}
+		}
+	}
+
+	stub.err = common.NewIncompatibleGangConfigError("minReplicas for role %q is unsatisfiable", "test-role")
+	result, err := r.Reconcile(ctx, request)
+	require.NoError(t, err)
+	assert.Equal(t, incompatibleGangConfigRequeue, result.RequeueAfter)
+	condition := gangConfigured()
+	require.NotNil(t, condition)
+	assert.Equal(t, metav1.ConditionFalse, condition.Status)
+	assert.Equal(t, IncompatibleGangConfig, condition.Reason)
+	assert.Contains(t, drainEvents(), "Warning IncompatibleGangConfig minReplicas for role \"test-role\" is unsatisfiable")
+
+	// The condition has not moved, so a reconcile triggered by unrelated workload churn
+	// must stay silent instead of spending the object's event budget.
+	result, err = r.Reconcile(ctx, request)
+	require.NoError(t, err)
+	assert.Equal(t, incompatibleGangConfigRequeue, result.RequeueAfter)
+	for _, event := range drainEvents() {
+		assert.NotContains(t, event, IncompatibleGangConfig)
+	}
+
+	stub.err = nil
+	result, err = r.Reconcile(ctx, request)
+	require.NoError(t, err)
+	assert.Zero(t, result.RequeueAfter)
+	condition = gangConfigured()
+	require.NotNil(t, condition)
+	assert.Equal(t, metav1.ConditionTrue, condition.Status)
+
+	// Turning gang scheduling off must drop the condition: a leftover True would keep
+	// claiming the group is gang scheduled.
+	current := &workloadsv1alpha2.RoleBasedGroup{}
+	require.NoError(t, fakeClient.Get(ctx, request.NamespacedName, current))
+	gangAnnotation := current.Annotations[constants.GangSchedulingAnnotationKey]
+	delete(current.Annotations, constants.GangSchedulingAnnotationKey)
+	require.NoError(t, fakeClient.Update(ctx, current))
+	_, err = r.Reconcile(ctx, request)
+	require.NoError(t, err)
+	assert.Nil(t, gangConfigured())
+
+	require.NoError(t, fakeClient.Get(ctx, request.NamespacedName, current))
+	current.Annotations[constants.GangSchedulingAnnotationKey] = gangAnnotation
+	require.NoError(t, fakeClient.Update(ctx, current))
+
+	stub.err = errors.New("podgroup apiserver hiccup")
+	result, err = r.Reconcile(ctx, request)
+	require.Error(t, err)
+	assert.Zero(t, result.RequeueAfter)
+	assert.Contains(t, drainEvents(), "Warning FailedReconcilePodGroup podgroup apiserver hiccup")
 }

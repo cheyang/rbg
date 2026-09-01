@@ -35,13 +35,14 @@ import (
 	workloadsv1alpha2client "sigs.k8s.io/rbgs/client-go/applyconfiguration/workloads/v1alpha2"
 	portallocator "sigs.k8s.io/rbgs/pkg/port-allocator"
 	"sigs.k8s.io/rbgs/pkg/scheduler"
+	"sigs.k8s.io/rbgs/pkg/scheduler/common"
 	"sigs.k8s.io/rbgs/pkg/utils"
 )
 
 type RoleInstanceSetReconciler struct {
-	scheme          *runtime.Scheme
-	client          client.Client
-	gangScheduler   scheduler.GangScheduler
+	scheme        *runtime.Scheme
+	client        client.Client
+	gangScheduler scheduler.GangScheduler
 }
 
 var _ WorkloadReconciler = &RoleInstanceSetReconciler{}
@@ -159,13 +160,39 @@ func (r *RoleInstanceSetReconciler) constructRoleInstanceSetApplyConfiguration(
 		roleInstanceSetAnnotation[constants.RoleInstancePatternKey] = string(constants.StatefulPattern)
 	}
 
+	// Derive the RoleInstance-level gang flag for every role the gang covers.
+	// A Volcano subGroup is exactly one RoleInstance, so without this the instance's
+	// pods can be recreated non-atomically and drop the subGroup below subGroupSize —
+	// the guarantee that subGroupPolicy depends on. An explicit value on the role wins.
+	if role.Annotations[constants.RoleInstanceGangSchedulingAnnotationKey] == "" {
+		gangStrategy, err := common.GetGangStrategy(ctx, r.client, rbg)
+		if err != nil {
+			return nil, fmt.Errorf("failed to resolve gang scheduling strategy: %w", err)
+		}
+		if common.RoleInGang(role, gangStrategy) {
+			roleInstanceSetAnnotation[constants.RoleInstanceGangSchedulingAnnotationKey] = "true"
+		}
+	}
+
 	// 1. construct role instance configuration
-	restartPolicyApplyConfig := workloadsv1alpha2client.RestartPolicyConfig().
-		WithType(role.GetRestartPolicy()).
-		WithBaseDelaySeconds(role.GetBaseDelaySeconds()).
-		WithMaxDelaySeconds(role.GetMaxDelaySeconds())
-	roleInstanceTemplateConfig := workloadsv1alpha2client.RoleInstanceTemplate().
-		WithRestartPolicyConfig(restartPolicyApplyConfig)
+	//
+	// The template keeps carrying the deprecated restartPolicy string unless the role
+	// configures backoff delays, which that string cannot express. Writing
+	// restartPolicyConfig unconditionally instead would rewrite the stored template of
+	// every role a v0.7.0 install created, moving the RoleInstanceSet revision hash and
+	// rolling the role on upgrade with nothing to roll to: RoleInstanceSpec's getters
+	// fold the string in and default the delays to these very values.
+	roleInstanceTemplateConfig := workloadsv1alpha2client.RoleInstanceTemplate()
+	if backoff := role.GetRawRestartBackoff(); backoff != nil &&
+		(backoff.BaseDelaySeconds != nil || backoff.MaxDelaySeconds != nil) {
+		restartPolicyApplyConfig := workloadsv1alpha2client.RestartPolicyConfig().
+			WithType(role.GetRestartPolicy()).
+			WithBaseDelaySeconds(role.GetBaseDelaySeconds()).
+			WithMaxDelaySeconds(role.GetMaxDelaySeconds())
+		roleInstanceTemplateConfig.WithRestartPolicyConfig(restartPolicyApplyConfig)
+	} else {
+		roleInstanceTemplateConfig.WithRestartPolicy(role.GetRestartPolicy())
+	}
 	var constructErr error
 	switch {
 	case role.GetStandalonePattern() != nil:
@@ -371,7 +398,7 @@ func (r *RoleInstanceSetReconciler) constructRoleInstanceTemplateByLeaderWorkerP
 
 	leaderPodReconciler := NewPodReconciler(r.scheme, r.client)
 	leaderPodReconciler.SetGangScheduler(r.gangScheduler)
-	leaderPodReconciler.SetInjectors([]string{"config", "sidecar", "common_env", "lwp_env"})
+	leaderPodReconciler.SetInjectors([]string{configInjector, sidecarInjector, commonEnvInjector, lwpEnvInjector})
 	leaderTemplateApplyCfg, err := leaderPodReconciler.ConstructPodTemplateSpecApplyConfiguration(
 		ctx, rbg, role, matchLabels, leaderTemp,
 	)
@@ -390,7 +417,7 @@ func (r *RoleInstanceSetReconciler) constructRoleInstanceTemplateByLeaderWorkerP
 	workerPodReconciler := NewPodReconciler(r.scheme, r.client)
 	workerPodReconciler.SetGangScheduler(r.gangScheduler)
 	// workerTemplate do not need to inject sidecar
-	workerPodReconciler.SetInjectors([]string{"config", "common_env", "lwp_env"})
+	workerPodReconciler.SetInjectors([]string{configInjector, commonEnvInjector, lwpEnvInjector})
 	workerTemplateApplyCfg, err := workerPodReconciler.ConstructPodTemplateSpecApplyConfiguration(
 		ctx, rbg, role, matchLabels, workerTemp,
 	)

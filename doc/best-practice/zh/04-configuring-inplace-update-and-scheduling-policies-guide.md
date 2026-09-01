@@ -84,7 +84,7 @@ kubectl patch rbg inplace-update-demo --type='json' \
 5. 容器就绪后，Pod 恢复 Ready 状态
 
 同时满足以下原地升级行为：
-- 按序号从高到低逐个更新实例（1 → 0），两个实例更新间隔约 30 秒
+- 按序号从高到低逐个更新实例（1 → 0），当前实例完成 drain、容器重启并恢复 Ready 后才更新下一个
 - `type: InPlaceIfPossible`：仅变更镜像，触发原地升级
 - Pod 不离开当前节点，AGE 不会重置
 - 容器的 RESTARTS 计数增加
@@ -341,7 +341,7 @@ kubectl get pods -l rbg.workloads.x-k8s.io/group-name=inplace-scheduling-require
 ```
 
 ```bash
-# 确认所有 Pod 使用新镜像
+# 确认所有 Pod 已包含新增环境变量
 kubectl get pods -l rbg.workloads.x-k8s.io/group-name=inplace-scheduling-required -o jsonpath='{range .items[*]}{.metadata.name}{"="}{.spec.containers[0].env[?(@.name=="new_env")].value}{"\n"}{end}'
 
 > inplace-scheduling-required-backend-0=test

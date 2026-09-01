@@ -85,7 +85,7 @@ func ComputeSubGroupSize(role *RoleSpec) int32 {
 	if role.IsLeaderWorkerPattern() {
 		lwp := role.GetLeaderWorkerPattern()
 		if lwp != nil && lwp.Size != nil {
-			return *lwp.Size
+			return max(*lwp.Size, 1)
 		}
 		return 1
 	}
@@ -93,9 +93,13 @@ func ComputeSubGroupSize(role *RoleSpec) int32 {
 		ccp := role.GetCustomComponentsPattern()
 		var total int32
 		for _, c := range ccp.Components {
-			if c.Size != nil {
-				total += *c.Size
+			// An omitted size means one pod, matching the GetComponentSize contract
+			// the RoleInstanceSet controller uses to build the pods.
+			if c.Size == nil {
+				total++
+				continue
 			}
+			total += *c.Size
 		}
 		return max(total, 1)
 	}
@@ -232,10 +236,10 @@ func (r *RoleSpec) GetCustomComponentsPattern() *CustomComponentsPattern {
 // It checks both StandalonePattern and LeaderWorkerPattern.
 func (r *RoleSpec) GetTemplate() *corev1.PodTemplateSpec {
 	if r.StandalonePattern != nil {
-		return r.StandalonePattern.TemplateSource.Template
+		return r.StandalonePattern.Template
 	}
 	if r.LeaderWorkerPattern != nil {
-		return r.LeaderWorkerPattern.TemplateSource.Template
+		return r.LeaderWorkerPattern.Template
 	}
 	return nil
 }
@@ -244,10 +248,10 @@ func (r *RoleSpec) GetTemplate() *corev1.PodTemplateSpec {
 // It checks both StandalonePattern and LeaderWorkerPattern.
 func (r *RoleSpec) GetTemplateRef() *TemplateRef {
 	if r.StandalonePattern != nil {
-		return r.StandalonePattern.TemplateSource.TemplateRef
+		return r.StandalonePattern.TemplateRef
 	}
 	if r.LeaderWorkerPattern != nil {
-		return r.LeaderWorkerPattern.TemplateSource.TemplateRef
+		return r.LeaderWorkerPattern.TemplateRef
 	}
 	return nil
 }
@@ -269,11 +273,11 @@ func (r *RoleSpec) GetEffectiveTemplateName() string {
 // GetTemplatePatch returns the template patch for this role.
 // It checks TemplateRef.Patch in both StandalonePattern and LeaderWorkerPattern.
 func (r *RoleSpec) GetTemplatePatch() *runtime.RawExtension {
-	if r.StandalonePattern != nil && r.StandalonePattern.TemplateSource.TemplateRef != nil {
-		return r.StandalonePattern.TemplateSource.TemplateRef.Patch
+	if r.StandalonePattern != nil && r.StandalonePattern.TemplateRef != nil {
+		return r.StandalonePattern.TemplateRef.Patch
 	}
-	if r.LeaderWorkerPattern != nil && r.LeaderWorkerPattern.TemplateSource.TemplateRef != nil {
-		return r.LeaderWorkerPattern.TemplateSource.TemplateRef.Patch
+	if r.LeaderWorkerPattern != nil && r.LeaderWorkerPattern.TemplateRef != nil {
+		return r.LeaderWorkerPattern.TemplateRef.Patch
 	}
 	return nil
 }
@@ -357,6 +361,23 @@ func (r *RoleSpec) GetRawRestartPolicyType() RestartPolicyType {
 		return resolveRestartPolicyConfig(ccp.RestartPolicyConfig, ccp.RestartPolicy, "").Type
 	}
 	return ""
+}
+
+// GetRawRestartBackoff returns the restart backoff delays the role's pattern set, or
+// nil when it set none. Unlike GetBaseDelaySeconds / GetMaxDelaySeconds it applies no
+// defaults, so a caller can tell a role that configured backoff from one that merely
+// inherits the defaults.
+func (r *RoleSpec) GetRawRestartBackoff() *RestartPolicyConfig {
+	if r == nil {
+		return nil
+	}
+	if lwp := r.LeaderWorkerPattern; lwp != nil {
+		return lwp.RestartPolicyConfig
+	}
+	if ccp := r.CustomComponentsPattern; ccp != nil {
+		return ccp.RestartPolicyConfig
+	}
+	return nil
 }
 
 // Default values for restart policy delay configuration.

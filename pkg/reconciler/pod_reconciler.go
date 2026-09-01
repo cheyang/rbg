@@ -38,6 +38,13 @@ import (
 	"sigs.k8s.io/rbgs/pkg/utils"
 )
 
+const (
+	configInjector    = "config"
+	sidecarInjector   = "sidecar"
+	commonEnvInjector = "common_env"
+	lwpEnvInjector    = "lwp_env"
+)
+
 type PodReconciler struct {
 	scheme        *runtime.Scheme
 	client        client.Client
@@ -87,25 +94,25 @@ func (r *PodReconciler) ConstructPodTemplateSpecApplyConfiguration(
 	// inject objects
 	injector := discovery.NewDefaultInjector(r.scheme, r.client)
 	if r.injectObjects == nil {
-		r.injectObjects = []string{"config", "sidecar", "common_env"}
+		r.injectObjects = []string{configInjector, sidecarInjector, commonEnvInjector}
 	}
-	if utils.ContainsString(r.injectObjects, "config") {
+	if utils.ContainsString(r.injectObjects, configInjector) {
 		if err := injector.InjectConfig(ctx, &podTemplateSpec, rbg, role); err != nil {
 			return nil, fmt.Errorf("failed to inject config: %w", err)
 		}
 	}
-	if utils.ContainsString(r.injectObjects, "sidecar") {
+	if utils.ContainsString(r.injectObjects, sidecarInjector) {
 		// The sidecar containers also need rbg-related envs, so inject them first
 		if err := injector.InjectSidecar(ctx, &podTemplateSpec, rbg, role); err != nil {
 			return nil, fmt.Errorf("failed to inject sidecar: %w", err)
 		}
 	}
-	if utils.ContainsString(r.injectObjects, "common_env") {
+	if utils.ContainsString(r.injectObjects, commonEnvInjector) {
 		if err := injector.InjectEnv(ctx, &podTemplateSpec, rbg, role); err != nil {
 			return nil, fmt.Errorf("failed to inject env vars: %w", err)
 		}
 	}
-	if utils.ContainsString(r.injectObjects, "lwp_env") {
+	if utils.ContainsString(r.injectObjects, lwpEnvInjector) {
 		if err := injector.InjectLeaderWorkerSetEnv(ctx, &podTemplateSpec, rbg, role); err != nil {
 			return nil, fmt.Errorf("failed to inject env vars: %w", err)
 		}
@@ -138,7 +145,10 @@ func (r *PodReconciler) ConstructPodTemplateSpecApplyConfiguration(
 
 	// Inject gang-scheduling labels/annotations if a GangScheduler is configured.
 	if r.gangScheduler != nil {
-		gangStrategy := common.GetGangStrategy(ctx, r.client, rbg)
+		gangStrategy, err := common.GetGangStrategy(ctx, r.client, rbg)
+		if err != nil {
+			return nil, fmt.Errorf("failed to resolve gang scheduling strategy: %w", err)
+		}
 		r.gangScheduler.InjectPodSchedulingFields(rbg, role, gangStrategy, podTemplateApplyConfiguration)
 	}
 
@@ -263,6 +273,15 @@ func objectMetaEqual(meta1, meta2 metav1.ObjectMeta) (bool, error) {
 }
 
 func podSpecEqual(spec1, spec2 corev1.PodSpec) (bool, error) {
+	// Compared explicitly because gang scheduling rewrites it: a role leaving the gang
+	// must fall back to the default scheduler, and nothing else here would notice.
+	// The desired spec leaves it empty when gang is off, while the live one has been
+	// defaulted by the apiserver, so both sides need the default filled in.
+	if defaultedSchedulerName(spec1.SchedulerName) != defaultedSchedulerName(spec2.SchedulerName) {
+		return false, fmt.Errorf("podTemplate schedulerName not equal: %q vs %q",
+			spec1.SchedulerName, spec2.SchedulerName)
+	}
+
 	if equal, err := containersEqual(spec1.InitContainers, spec2.InitContainers); !equal {
 		return false, fmt.Errorf("podTemplate initContainers not equal: %s", err.Error())
 	}
@@ -276,6 +295,13 @@ func podSpecEqual(spec1, spec2 corev1.PodSpec) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func defaultedSchedulerName(name string) string {
+	if name == "" {
+		return corev1.DefaultSchedulerName
+	}
+	return name
 }
 
 func containersEqual(containers1, containers2 []corev1.Container) (bool, error) {

@@ -10,7 +10,7 @@ controller:
   imagePullSecrets: []
   image:
     repository: rolebasedgroup/rbgs-controller
-    tag: "v0.8.0-ba7b952e"
+    tag: "v0.8.0-16705159"
     pullPolicy: IfNotPresent
   resources:
     limits:
@@ -55,6 +55,12 @@ controller:
     gangScheduling:
       # schedulerName selects the gang scheduling scheduler: scheduler-plugins | volcano.
       schedulerName: scheduler-plugins
+      # schedulerProfileName is the kube-scheduler profile running the coscheduling
+      # plugin, injected as pod.spec.schedulerName for gang-scheduled pods. Only used
+      # with schedulerName=scheduler-plugins; the upstream chart uses
+      # scheduler-plugins-scheduler. Leave empty when scheduler-plugins is the
+      # cluster's default scheduler or the role template sets schedulerName itself.
+      schedulerProfileName: ""
     # portAllocator configures dynamic port allocation to pods.
     portAllocator:
       # Whether to enable the port allocator feature.
@@ -89,7 +95,7 @@ crdUpgrade:
   # CRD Upgrader image configuration
   image:
     repository: rolebasedgroup/rbgs-upgrade-crd
-    tag: "v0.8.0-ba7b952e"
+    tag: "v0.8.0-16705159"
     pullPolicy: IfNotPresent
   # Tolerations for CRD Upgrader Job pod
   tolerations:
