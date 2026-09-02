@@ -1,11 +1,87 @@
 # Verification — sgl-project/rbg#434 (Implement KEP-430: two-level gang scheduling)
 
 Reviewer-side evidence harness for [PR #434](https://github.com/sgl-project/rbg/pull/434).
-Reviewed head: `9d3f4b193e82240e51878b0837dccb1cea8ab4ab`.
+Reviewed head: `bd9ee4ddde7340fd134b122078b4d6e57edb6e8c` (round 3; the PR was
+force-pushed and fully reworked since round 2's `9d3f4b19`).
 
 **Production code is untouched.** This branch adds only test files and this
 directory, so a red test is unambiguously the PR's behavior and not a patched
 variant of it.
+
+## Round 3 — the reworked head fixes everything (current)
+
+The PR was force-pushed; round 2's reviewed sha `9d3f4b19` is **not an ancestor**
+of the new head `bd9ee4dd`, so this was a full re-review plus a full test sweep.
+The gang design was rewritten end to end — `MergeGangStrategies` (union of roles
+across rules, max-minimum wins, all-or-nothing rules subsume only their own
+roles), `ResolveGangStrategy` (resolve-once, carried on the reconcile context),
+`GangSize` / `GangMinimumReplicas` / `UnknownGangRoles` / `RoleInGang`,
+`IncompatibleGangConfigError` (non-retryable, 5-minute requeue), a `GangConfigured`
+status condition, a `CoordinatedPolicy` admission webhook, a `Watches` on
+`CoordinatedPolicy`, `raiseScalingTargetsToGangMinimum`, and RoleInstance
+gang-annotation derivation in the RoleInstanceSet reconciler. **All ten round-2
+findings (F1–F10) are addressed at the code level**, as are the four review
+comments posted on 2026-09-01.
+
+Round-3 polarity flipped: the harness now asserts the **fixed** behavior, so
+every test must PASS (a failure would mean a regression). The two round-2 harness
+files were deleted (they target removed APIs and collide with the author's new
+helper names) and replaced by three contract-test files keyed to the same
+findings.
+
+| Layer | What ran | Result |
+|-------|----------|--------|
+| L1 unit (macOS + Linux sandbox) | 18 `TestVerifyR3*` across `pkg/scheduler/{common,volcano}` + `api/workloads/v1alpha2` | **18/18 PASS**, `HARNESS_RC=0` |
+| L2 full sweep (Linux sandbox) | `go test ./pkg/... ./api/... ./internal/...` with harness in place | **`FULL_RC=0`**, zero failures (incl. `internal/controller/workloads` 10.7s) |
+| L3 live (3-node ACK + Volcano 1.14.4) | 6 policy+RBG pairs + 2 admission negatives, controller image `v434-r3` | **8/8 as predicted** — see table below |
+
+Round-3 live results (namespace `v434-r3`, controller `v434-r3` = verify branch
+`ce931129`, production code byte-identical to `bd9ee4dd`, plus a test-only
+env-gated namespace field selector):
+
+| case | intent (round-2 finding) | observed | verdict |
+|------|--------------------------|----------|---------|
+| r3-min | baseline per-role minimums + F10 derivation | PodGroup `minMember=3`, `subGroupPolicy[prefill(2/1),decode(1/1)]` with `matchLabelKeys=[role-instance-name]`, 4/4 Running, both RIS annotated `role-instance-gang-scheduling=true`, `GangConfigured=True` | fixed |
+| r3-merge | F7 (two rules must merge) | `minMember=2`, `subGroupPolicy` for both prefill+decode, 2/2 Running | fixed |
+| r3-scope | F3/F6 (scope honored) | `minMember=1`, `subGroupPolicy` prefill-only; excluded sidecar NOT enrolled in the gang (gets its own Volcano default group), prefill RIS annotated / sidecar not, both Running | fixed |
+| r3-typo | F2 (unknown role rejected) | `GangConfigured=False` / `IncompatibleGangConfig`, message names `[prefil]`, no PodGroup/RIS/pods, quiet 5-min requeue (0 log mentions in a 45s window) | fixed |
+| r3-exceeds | F4 (minimum > replicas rejected) | `GangConfigured=False`, message "can never be satisfied", no PodGroup/RIS/pods | fixed |
+| r3-watch | F9 (policy edit propagates) | after patching `prefill` 1→2, PodGroup `minMember` 1→2 within 30s **with the RBG untouched** (resourceVersion unchanged) | fixed |
+| r3-adm-zero | F5 at admission | webhook DENIED: `minReplicas[prefill]: must be at least 1, got 0` | fixed |
+| r3-adm-oos | F6 at admission | webhook DENIED: `minReplicas[decode]: role is not listed in spec.policies[0].roles [prefill], so the minimum would be silently ignored` | fixed |
+
+F1 (non-RIS backing rejected) and F8 (policy read error propagates) are decidable
+at L1 only and pass there; they are not exercisable live without deprecated
+workload types / fault injection.
+
+One setup caveat worth recording: on the first pass the two admission negatives
+were **accepted**, because the cluster's `rbgs-validating-webhook-configuration`
+is the old v0.8.0 chart config that routes only `rolebasedgroups` — swapping just
+the controller image does not update the VWC, so the API server never called the
+(present, running) `ValidateCoordinatedPolicyGang` handler. This is a **setup
+artifact, not a product gap**: the PR ships the `coordinatedpolicies` rule in
+`config/webhook/manifests.yaml` and registers it in `main.go`. After adding the
+PR's rule to the live VWC, both negatives were correctly denied; the VWC was
+restored at teardown. The practical note for reviewers: the webhook only enforces
+on installs that apply the PR's updated VWC/chart.
+
+The cluster was fully restored and verified afterward: `v434-r3` deleted, image
+back to `v0.8.0-0c00546d`, env removed, VWC back to one webhook, no stray
+PodGroups, and the two pre-existing live RBGs (`default/nginx-cluster`,
+`pr433-test/test-rbg`) untouched at `READY=True`. Full transcript in
+`l3/L3-results-r3.txt`; cases in `l3/cases-r3.yaml`; raw observation snapshot in
+`results/L3-round3-observations.txt`; L1/L2 sandbox log in
+`results/L1-L2-round3-sandbox.txt`.
+
+**Verdict: APPROVE-leaning.** The reworked head fixes every round-2 finding, with
+L1 (18/18), the full suite (rc=0) and L3 (8/8 live) all green and no new defects.
+The only open items are documentation-level: the scheduler-plugins path returns a
+hard runtime error for per-role `minReplicas` (the KEP goal is half-delivered off
+Volcano) — reasonable as a first step but should be called out — and the admission
+webhook only enforces on installs that ship the updated VWC.
+
+The round-2 detail below is retained as the historical record of what the defects
+were before the rework.
 
 ## Premise (P0) — Confirmed
 

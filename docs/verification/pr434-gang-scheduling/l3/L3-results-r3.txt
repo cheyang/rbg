@@ -1,0 +1,147 @@
+PR-434 (sgl-project/rbg) — KEP-430 two-level gang scheduling
+ROUND-3 LIVE (L3) VERIFICATION RESULTS — reworked head bd9ee4dd
+================================================================
+
+Environment
+-----------
+Cluster:    3-node ACK, k8s v1.36.1-aliyun, containerd
+Scheduler:  Volcano 1.14.4 (subGroupPolicy supported), --scheduler-name=volcano
+Controller: rolebasedgroup/rbgs-controller:v434-r3
+            = verify/pr434-gang-scheduling @ ce931129 (production code
+              byte-identical to PR head bd9ee4dd) + test-only env-gated field
+              selector RBG_TEST_WATCH_NAMESPACE=v434-r3 on the RBG /
+              RoleInstanceSet / RoleInstance informers (no-op when unset).
+            image digest sha256:36547df0d8f3d7cd31b28586945ae9f00f0858a97b0ac066ad58f044b7865182
+Namespace:  v434-r3 (6 CoordinatedPolicy + RBG pairs, 2 admission negatives)
+Isolation:  The two pre-existing live RBGs (default/nginx-cluster 27d,
+            pr433-test/test-rbg) were excluded from the informer LIST by the
+            field selector and confirmed untouched (READY=True) after teardown.
+
+Why L3 again
+------------
+Round 2 proved ten defects live. The PR was force-pushed and fully reworked;
+L1/L2 now assert the fixed behavior and pass. L3 re-runs the same scenarios
+live to confirm the fixes hold end to end, plus two behaviors unit tests cannot
+exercise: policy-edit propagation through the new Watches(CoordinatedPolicy)
+(F9) and rejection surfacing as the GangConfigured condition with no retry
+storm (F2/F4).
+
+Observed PodGroups (kubectl get podgroups.scheduling.volcano.sh -n v434-r3)
+--------------------------------------------------------------------------
+NAME          minMember   subGroupPolicy     phase     finding
+r3-min        3           prefill,decode     Running   BASELINE + F10
+r3-merge      2           prefill,decode     Running   F7 fixed
+r3-scope      1           prefill            Running   F3/F6 fixed
+r3-watch      2 (was 1)   prefill            Running   F9 fixed
+r3-typo       <none>      —                  —         F2 fixed (rejected)
+r3-exceeds    <none>      —                  —         F4 fixed (rejected)
+(+ podgroup-5a8545f5-... minMember=1 no-SGP: a Volcano AUTO-CREATED default
+   group for r3-scope's excluded sidecar pod, which keeps schedulerName=volcano
+   but is NOT enrolled in the r3-scope gang — this is the correct F3 behavior.)
+
+r3-min subGroupPolicy detail
+----------------------------
+prefill: minSubGroups=2 subGroupSize=1 matchLabelKeys=[rbg.workloads.x-k8s.io/role-instance-name]
+decode:  minSubGroups=1 subGroupSize=1 matchLabelKeys=[rbg.workloads.x-k8s.io/role-instance-name]
+minMember=3 = prefill(2) + decode(1). 4/4 pods Running.
+
+Finding-by-finding live confirmation (all round-2 defects now FIXED)
+--------------------------------------------------------------------
+BASELINE  r3-min: minMember=3, two subGroupPolicy entries with per-instance
+          matchLabelKeys, GangConfigured=True, 4/4 Running under volcano.
+          The happy path works, so every rejection below is intended behavior.
+
+F1  (minor, non-RIS backing rejected) — not exercised live: RBG roles here are
+    RoleInstanceSet-backed (standalonePattern). Covered by L1 TestVerifyR3_F1.
+
+F2  (was: typo'd role -> minMember=0, gang silently off) — FIXED.
+    r3-typo: CoordinatedPolicy minReplicas key "prefil" (consistent typo, so it
+    passes admission's scope check). Observed: GangConfigured=False,
+    Reason=IncompatibleGangConfig, message
+      "gang scheduling references roles that do not exist in the RoleBasedGroup:
+       [prefil]; fix the role names in CoordinatedPolicy v434-r3/r3-typo"
+    NO PodGroup, NO RoleInstanceSet, NO pods created (roles deliberately left
+    untouched). Retry-storm check: after the initial create settled, 0 further
+    log mentions of r3-typo in a 45s window (5-minute RequeueAfter, not the
+    workqueue's 5ms error backoff).
+
+F4  (was: minReplicas>replicas -> minMember=5, pods Pending forever) — FIXED.
+    r3-exceeds: prefill replicas=2, minReplicas=5. Observed: GangConfigured=
+    False, IncompatibleGangConfig, message
+      "gang scheduling minReplicas for role \"prefill\" is 5 but the role only
+       has 2 replicas, so the gang can never be satisfied; lower the minimum in
+       CoordinatedPolicy v434-r3/r3-exceeds, or raise the role's replicas ..."
+    NO PodGroup, NO RIS, NO pods. Same quiet 5-minute requeue.
+
+F3/F6 (was: rule.Roles ignored, excluded role still joined gang) — FIXED.
+    r3-scope: rule roles=[prefill] minReplicas prefill:1; RBG has prefill(1) +
+    sidecar(1). Observed: r3-scope PodGroup minMember=1 with subGroupPolicy
+    ONLY for prefill. prefill pod annotation group-name=r3-scope; sidecar pod
+    is NOT in r3-scope (it gets a separate Volcano auto-default group). Both
+    pods schedulerName=volcano, both Running. RoleInGang honored the scope.
+
+F7  (was: only first gang rule survives) — FIXED.
+    r3-merge: two rules gang-prefill{prefill:1} + gang-decode{decode:1}.
+    Observed: single PodGroup minMember=2 with subGroupPolicy for BOTH prefill
+    and decode. Both rules merged. 2/2 Running.
+
+F9  (was: editing CoordinatedPolicy did not propagate) — FIXED.
+    r3-watch: started at minReplicas prefill:1 -> PodGroup minMember=1. Patched
+    the CoordinatedPolicy to prefill:2 and, WITHOUT touching the RBG (RBG
+    resourceVersion unchanged: 72038215 before and after), the PodGroup
+    minMember went 1 -> 2 within 30s via the new Watches(CoordinatedPolicy).
+
+F10 (was: CoordinatedPolicy path never enabled RoleInstance-level gang) — FIXED.
+    Every gang-covered RoleInstanceSet carries
+    rbg.workloads.x-k8s.io/role-instance-gang-scheduling=true, derived during
+    RIS reconciliation: r3-min-{prefill,decode}, r3-merge-{prefill,decode},
+    r3-scope-prefill, r3-watch-prefill all =true. r3-scope-sidecar (outside the
+    rule scope) =<none>, correctly NOT derived.
+
+F5  (was: zero/negative minReplicas accepted) — FIXED AT ADMISSION.
+    Live webhook denial on CREATE:
+      "admission webhook \"vcoordinatedpolicy.kb.io\" denied the request:
+       spec.policies[0].strategy.scheduling.gang.minReplicas[prefill]:
+       must be at least 1, got 0"
+
+F6  (out-of-scope minimum) — FIXED AT ADMISSION.
+    Live webhook denial on CREATE:
+      "admission webhook \"vcoordinatedpolicy.kb.io\" denied the request:
+       spec.policies[0].strategy.scheduling.gang.minReplicas[decode]: role is
+       not listed in spec.policies[0].roles [prefill], so the minimum would be
+       silently ignored"
+
+IMPORTANT setup note on the admission negatives
+-----------------------------------------------
+On the first pass the two admission negatives were ACCEPTED. Root cause: the
+cluster's rbgs-validating-webhook-configuration is the 27-day-old v0.8.0 chart
+config, which routes ONLY `rolebasedgroups` to the webhook — it predates
+PR-434 and has no `coordinatedpolicies` rule. Swapping just the controller
+image does not update the VWC, so the API server never called the (present and
+running) ValidateCoordinatedPolicyGang handler. This is a SETUP ARTIFACT of the
+image-only swap, NOT a product gap: PR-434 ships the wiring in
+config/webhook/manifests.yaml (webhook `vcoordinatedpolicy.kb.io`, path
+/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy, resources
+[coordinatedpolicies], operations CREATE/UPDATE), and main.go registers it via
+CoordinatedPolicy.SetupWebhookWithManager. To prove the fix live, the PR's
+coordinatedpolicies rule was added to the live VWC (reusing the same
+service/caBundle); both negatives were then correctly DENIED with the messages
+above. The VWC was restored to its original single-webhook state at teardown.
+
+F8  (policy read error swallowed) — not exercisable live without fault
+    injection; covered by L1 TestVerifyR3_F8 with an interceptor.
+
+Teardown / cluster restoration (verified)
+-----------------------------------------
+- namespace v434-r3 deleted (NotFound).
+- controller image restored to rolebasedgroup/rbgs-controller:v0.8.0-0c00546d,
+  RBG_TEST_WATCH_NAMESPACE env removed (only POD_NAMESPACE remains).
+- VWC restored to 1 webhook (vrolebasedgroup.kb.io -> rolebasedgroups); the
+  appended vcoordinatedpolicy.kb.io removed.
+- No stray r3/v434 PodGroups anywhere.
+- default/nginx-cluster (27d) and pr433-test/test-rbg (6d) both READY=True,
+  untouched throughout. Controller pod 1/1 Running after restore.
+
+Verdict: every round-2 finding that has a live surface (F2,F3,F4,F5,F6,F7,F9,
+F10) is FIXED on the reworked head bd9ee4dd. F1/F8 are decidable at L1 only and
+pass there. No new live defects observed.

@@ -1,0 +1,293 @@
+# Round-3 live cases — namespace v434-r3.
+#
+# The PR was force-pushed and fully reworked (head bd9ee4dd). All ten round-2
+# findings are addressed at the code level, so every case that reproduced a
+# defect in round 2 now asserts the FIXED behavior live on
+# ACK v1.36.1 + Volcano 1.14.4 + --scheduler-name=volcano.
+#
+# Binding convention: a CoordinatedPolicy binds the same-name, same-namespace
+# RoleBasedGroup. Pod (gang enrolment) annotation: scheduling.k8s.io/group-name.
+# Labels: rbg.workloads.x-k8s.io/{group-name,role-name,role-instance-name}.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: v434-r3
+---
+# r3-min — per-role minimums happy path (round-2 BASELINE + F10 derivation).
+# Expect: GangConfigured=True; PodGroup minMember=3 (prefill 2 + decode 1);
+#         subGroupPolicy[2]: prefill minSubGroups=2/subGroupSize=1,
+#         decode minSubGroups=1/subGroupSize=1, each with
+#         matchLabelKeys=[rbg.workloads.x-k8s.io/role-instance-name];
+#         all 4 pods Running under schedulerName=volcano;
+#         BOTH RoleInstanceSets annotated
+#         rbg.workloads.x-k8s.io/role-instance-gang-scheduling=true (F10).
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: CoordinatedPolicy
+metadata:
+  name: r3-min
+  namespace: v434-r3
+spec:
+  policies:
+    - name: gang
+      roles: ["prefill", "decode"]
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              prefill: 2
+              decode: 1
+---
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: r3-min
+  namespace: v434-r3
+spec:
+  roles:
+    - name: prefill
+      replicas: 2
+      standalonePattern:
+        template:
+          spec:
+            containers:
+              - name: app
+                image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+                resources:
+                  requests: { cpu: 10m, memory: 16Mi }
+    - name: decode
+      replicas: 2
+      standalonePattern:
+        template:
+          spec:
+            containers:
+              - name: app
+                image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+                resources:
+                  requests: { cpu: 10m, memory: 16Mi }
+---
+# r3-merge — two gang rules must merge, not first-wins (round-2 F7, fixed).
+# Expect: PodGroup minMember=2 and subGroupPolicy entries for BOTH rules;
+#         2 pods Running.
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: CoordinatedPolicy
+metadata:
+  name: r3-merge
+  namespace: v434-r3
+spec:
+  policies:
+    - name: gang-prefill
+      roles: ["prefill"]
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              prefill: 1
+    - name: gang-decode
+      roles: ["decode"]
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              decode: 1
+---
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: r3-merge
+  namespace: v434-r3
+spec:
+  roles:
+    - name: prefill
+      replicas: 1
+      standalonePattern:
+        template:
+          spec:
+            containers:
+              - name: app
+                image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+                resources:
+                  requests: { cpu: 10m, memory: 16Mi }
+    - name: decode
+      replicas: 1
+      standalonePattern:
+        template:
+          spec:
+            containers:
+              - name: app
+                image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+                resources:
+                  requests: { cpu: 10m, memory: 16Mi }
+---
+# r3-scope — a role outside the rule's scope keeps the gang scheduler but must
+# NOT join the PodGroup (round-2 F3/F6, fixed).
+# Expect: minMember=1; ONE subGroupPolicy entry (prefill); prefill RIS template
+#         carries scheduling.k8s.io/group-name=r3-scope, sidecar's does NOT;
+#         BOTH pods schedulerName=volcano; both Running.
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: CoordinatedPolicy
+metadata:
+  name: r3-scope
+  namespace: v434-r3
+spec:
+  policies:
+    - name: gang
+      roles: ["prefill"]
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              prefill: 1
+---
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: r3-scope
+  namespace: v434-r3
+spec:
+  roles:
+    - name: prefill
+      replicas: 1
+      standalonePattern:
+        template:
+          spec:
+            containers:
+              - name: app
+                image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+                resources:
+                  requests: { cpu: 10m, memory: 16Mi }
+    - name: sidecar
+      replicas: 1
+      standalonePattern:
+        template:
+          spec:
+            containers:
+              - name: app
+                image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+                resources:
+                  requests: { cpu: 10m, memory: 16Mi }
+---
+# r3-typo — an unknown role name (consistent typo, so admission's scope check
+# passes) must be REJECTED at reconcile, not collapse to minMember=0
+# (round-2 F2, fixed).
+# Expect: admission succeeds; GangConfigured=False reason=IncompatibleGangConfig,
+#         message names "prefil"; NO PodGroup; NO RoleInstanceSet created
+#         (roles deliberately untouched); no error-backoff storm in controller
+#         logs (5-minute RequeueAfter instead).
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: CoordinatedPolicy
+metadata:
+  name: r3-typo
+  namespace: v434-r3
+spec:
+  policies:
+    - name: gang
+      roles: ["prefil"]
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              prefil: 1
+---
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: r3-typo
+  namespace: v434-r3
+spec:
+  roles:
+    - name: prefill
+      replicas: 2
+      standalonePattern:
+        template:
+          spec:
+            containers:
+              - name: app
+                image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+                resources:
+                  requests: { cpu: 10m, memory: 16Mi }
+---
+# r3-exceeds — minReplicas above the role's replicas must be REJECTED
+# (round-2 F4, fixed; round-2 live behavior was minMember=5 and pods Pending
+# forever).
+# Expect: GangConfigured=False, message "can never be satisfied"; NO PodGroup;
+#         NO RoleInstanceSet; no retry storm.
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: CoordinatedPolicy
+metadata:
+  name: r3-exceeds
+  namespace: v434-r3
+spec:
+  policies:
+    - name: gang
+      roles: ["prefill"]
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              prefill: 5
+---
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: r3-exceeds
+  namespace: v434-r3
+spec:
+  roles:
+    - name: prefill
+      replicas: 2
+      standalonePattern:
+        template:
+          spec:
+            containers:
+              - name: app
+                image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+                resources:
+                  requests: { cpu: 10m, memory: 16Mi }
+---
+# r3-watch — editing the CoordinatedPolicy must propagate to the PodGroup
+# without poking the RBG (round-2 F9, fixed via Watches(CoordinatedPolicy)).
+# Start: minReplicas prefill:1 -> PodGroup minMember=1, pods Running.
+# Then patch the policy to prefill:2 and, WITHOUT touching the RBG, expect
+# PodGroup minMember=2 within ~60s.
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: CoordinatedPolicy
+metadata:
+  name: r3-watch
+  namespace: v434-r3
+spec:
+  policies:
+    - name: gang
+      roles: ["prefill"]
+      strategy:
+        scheduling:
+          gang:
+            minReplicas:
+              prefill: 1
+---
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: r3-watch
+  namespace: v434-r3
+spec:
+  roles:
+    - name: prefill
+      replicas: 2
+      standalonePattern:
+        template:
+          spec:
+            containers:
+              - name: app
+                image: registry.cn-hangzhou.aliyuncs.com/acs/pause:3.9
+                resources:
+                  requests: { cpu: 10m, memory: 16Mi }
+---
+# Admission negatives (NOT part of this file's apply; each must be rejected by
+# the validating webhook when applied individually — see L3-plan-r3.md):
+#
+#   r3-adm-zero:  minReplicas {prefill: 0}
+#     -> denied with "must be at least 1, got 0" (round-2 F5, fixed)
+#
+#   r3-adm-oos:   rule roles=[prefill] with minReplicas {decode: 1}
+#     -> denied with "role is not listed in spec.policies[0].roles"
+#        (round-2 F6, fixed)

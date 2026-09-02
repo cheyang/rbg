@@ -2,12 +2,18 @@
   "topic": "pr434-gang-scheduling",
   "pr": "https://github.com/sgl-project/rbg/pull/434",
   "prHeadFetch": { "remote": "upstream", "ref": "pull/434/head" },
-  "reviewedSha": "9d3f4b193e82240e51878b0837dccb1cea8ab4ab",
+  "reviewedSha": "bd9ee4ddde7340fd134b122078b4d6e57edb6e8c",
+  "round": 3,
+  "previousReviewedSha": "9d3f4b193e82240e51878b0837dccb1cea8ab4ab",
 
   "harnessPaths": [
     "docs/verification/pr434-gang-scheduling",
-    "pkg/scheduler/volcano/verify_gang_subgroup_test.go",
-    "pkg/scheduler/common/verify_gang_strategy_test.go"
+    "pkg/scheduler/common/verify_r3_gang_strategy_test.go",
+    "pkg/scheduler/volcano/verify_r3_gang_subgroup_test.go",
+    "api/workloads/v1alpha2/verify_r3_gang_admission_test.go",
+    "docs/verification/pr434-gang-scheduling/l3/cases-r3.yaml",
+    "docs/verification/pr434-gang-scheduling/l3/L3-plan-r3.md",
+    "docs/verification/pr434-gang-scheduling/l3/L3-results-r3.txt"
   ],
 
   "premise": {
@@ -27,11 +33,33 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/scheduler/volcano/ ./pkg/scheduler/common/ -run '^TestVerify' -json"
+      "cmd": "go test ./pkg/scheduler/common/ ./pkg/scheduler/volcano/ ./api/workloads/v1alpha2/ -run '^TestVerifyR3' -count=1 -json"
     }
   },
 
-  "findings": [
+  "round3": {
+    "trigger": "PR force-pushed; previousReviewedSha 9d3f4b19 is NOT an ancestor of reviewedSha bd9ee4dd. Full re-review + full test sweep.",
+    "rework": "The gang design was rewritten: MergeGangStrategies (union of roles across rules, max-minimum wins, all-or-nothing rules subsume only their own roles), ResolveGangStrategy (resolve-once, carried on ctx keyed by ObjectKey), GangSize/GangMinimumReplicas/UnknownGangRoles/RoleInGang, IncompatibleGangConfigError (non-retryable, 5-minute RequeueAfter), GangConfigured status condition, CoordinatedPolicy admission webhook (ValidateCoordinatedPolicyGang + vcoordinatedpolicy.kb.io VWC rule in config/webhook/manifests.yaml), Watches(CoordinatedPolicy) with GenerationChangedPredicate, raiseScalingTargetsToGangMinimum, and RoleInstance gang-annotation derivation in the RIS reconciler. All ten round-2 findings (F1-F10) are addressed at the code level, plus the four 2026-09-01 review-comment scenarios.",
+    "harness": "Round-2 harness files (verify_gang_strategy_test.go, verify_gang_subgroup_test.go) were deleted - they target removed APIs and collide with the author's new helper names. Replaced with three contract-test files keyed to the same findings, asserting the FIXED behavior (must PASS): pkg/scheduler/common/verify_r3_gang_strategy_test.go, pkg/scheduler/volcano/verify_r3_gang_subgroup_test.go, api/workloads/v1alpha2/verify_r3_gang_admission_test.go.",
+    "l1l2": {
+      "harness": "18/18 TestVerifyR3* PASS on macOS AND on the Linux sandbox (43.99.38.217, go1.25 via GOTOOLCHAIN=auto, -mod=vendor). HARNESS_RC=0.",
+      "fullSuite": "go test ./pkg/... ./api/... ./internal/... on the sandbox: FULL_RC=0, zero failures with the harness in place (incl. internal/controller/workloads 10.7s).",
+      "evidence": "results/L1-L2-round3-sandbox.txt"
+    },
+    "l3": {
+      "environment": "3-node ACK k8s v1.36.1-aliyun, Volcano 1.14.4, --scheduler-name=volcano. Controller image rolebasedgroup/rbgs-controller:v434-r3 = verify branch ce931129 (production code == PR head bd9ee4dd) + test-only env-gated field selector RBG_TEST_WATCH_NAMESPACE=v434-r3. The PR now sits on current main, so the round-2 restartPolicy decode skew is gone.",
+      "isolation": "Two pre-existing live RBGs (default/nginx-cluster 27d, pr433-test/test-rbg) excluded from the informer LIST by the field selector; both confirmed READY=True and untouched after teardown.",
+      "results": "All round-2 findings with a live surface are FIXED: F2 (r3-typo -> GangConfigured=False, no PodGroup/RIS/pods, quiet 5-min requeue), F4 (r3-exceeds -> rejected 'can never be satisfied'), F3/F6 (r3-scope -> minMember=1, subGroupPolicy prefill-only, excluded sidecar NOT enrolled in the gang), F7 (r3-merge -> minMember=2, both rules merged), F9 (r3-watch -> policy edit prefill 1->2 propagated PodGroup minMember 1->2 with the RBG untouched, resourceVersion unchanged), F10 (all gang-covered RIS annotated role-instance-gang-scheduling=true; out-of-scope sidecar correctly not annotated), F5+F6 at admission (live webhook DENIED minReplicas 0 and out-of-scope decode). BASELINE r3-min minMember=3, two subGroupPolicy entries with per-instance matchLabelKeys, 4/4 Running.",
+      "admissionSetupNote": "The admission negatives were ACCEPTED on the first pass because the cluster's rbgs-validating-webhook-configuration is the old v0.8.0 chart config routing only rolebasedgroups - swapping just the image does not update the VWC. This is a SETUP ARTIFACT, not a product gap: the PR ships the coordinatedpolicies rule in config/webhook/manifests.yaml and registers it in main.go. After adding the PR's rule to the live VWC, both negatives were correctly DENIED. VWC restored at teardown.",
+      "f1f8": "F1 (non-RIS backing rejected) and F8 (policy read error propagates) are decidable at L1 only and pass there; not exercisable live without deprecated workload types / fault injection.",
+      "teardown": "namespace v434-r3 deleted; controller image restored to v0.8.0-0c00546d; RBG_TEST_WATCH_NAMESPACE env removed; VWC restored to its single rolebasedgroups webhook; no stray PodGroups; nginx-cluster and pr433-test READY and untouched; controller 1/1 Running.",
+      "evidence": "l3/L3-results-r3.txt, l3/cases-r3.yaml, results/L3-round3-observations.txt"
+    },
+    "verdict": "APPROVE-leaning. The reworked head fixes every round-2 finding; L1 (18/18) + full suite (rc=0) + L3 (8/8 live cases) all green. No new defects. Remaining items are documentation-level: the scheduler-plugins path returns a hard runtime error for per-role minReplicas (KEP goal half-delivered off Volcano) - acceptable as a first step but should be called out; and the CoordinatedPolicy validating webhook only enforces on installs that apply the PR's updated VWC.",
+    "note": "The top-level 'findings' array and 'liveNote' are the CURRENT round-3 record (contract polarity against the reworked head bd9ee4dd; PASS = fixed). The round-2 historical record (canary/contract polarity against the pre-rework head 9d3f4b19) is preserved under 'round2Findings' and 'liveNoteRound2'."
+  },
+
+  "round2Findings": [
     {
       "id": "F1",
       "severity": "minor",
@@ -155,5 +183,163 @@
     }
   ],
 
-  "liveNote": "L3 WAS run this round on a 3-node ACK cluster (k8s v1.36.1) with Volcano 1.14.4 and --scheduler-name=volcano. The original PR branch predates the restartPolicy structuring in the cluster's installed CRD, so the raw PR binary failed every typed LIST with a decode error (setup version-skew, not a gang finding). The branch was rebased onto upstream/main (ZERO conflicts - clean merge signal) and deployed with a test-only env-gated field selector metadata.namespace=v434-verify on the RBG/RoleInstanceSet/RoleInstance informers, so the controller reconciled only the test namespace and never touched the live nginx-cluster RBG. Observed PodGroups matched predictions exactly: baseline-ok minMember=2 (2 Running); f2-typo minMember=0 (F2); f3-excluded minMember=1 but excluded sidecar still schedulerName=volcano and joined group f3-excluded (F3); f4-exceeds minMember=5 with only 2 pods, Pending forever (F4); f5-zero minMember=0 accepted (F5); f6-scope minMember=2 - decode joined despite scope=[prefill] (F6); f7-tworules minMember=1 - second rule dropped (F7). F9 live: editing CoordinatedPolicy prefill 2->3 left PodGroup minMember=2 even after an RBG reconcile poke. Cluster restored afterward to controller v0.8.0-0c00546d, test namespace deleted, nginx-cluster confirmed READY 4/4 untouched. Full transcript in l3/L3-results.txt, manifests in l3/cases-rebased.yaml."
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "minor",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_F1_NonRoleInstanceSetBackingIsRejected"],
+      "claim": "Round-2 F1 (MatchLabelKeys emitted for workload types that never write the role-instance-name label). FIXED: per-role gang is only offered on the RoleInstanceSet path; a non-RIS backing is rejected rather than silently emitting a partition that cannot exist.",
+      "observed": "PASS on reviewedSha bd9ee4dd."
+    },
+    {
+      "id": "F2",
+      "severity": "major",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_F2_UnknownRoleNameIsRejectedNotCollapsedToZero"],
+      "claim": "Round-2 F2 (unknown role name in minReplicas silently yields minMember=0). FIXED: UnknownGangRoles surfaces the typo, the RBG sets GangConfigured=False with an IncompatibleGangConfig message, and no PodGroup is built.",
+      "observed": "PASS on reviewedSha bd9ee4dd."
+    },
+    {
+      "id": "F2b",
+      "severity": "major",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_F2b_AllZeroCoveredRolesRejected"],
+      "claim": "Round-2 F2b (minMember must never collapse to 0 when gang is requested). FIXED: a gang strategy whose covered roles all resolve to 0 is rejected as incompatible.",
+      "observed": "PASS on reviewedSha bd9ee4dd."
+    },
+    {
+      "id": "F3",
+      "severity": "moderate",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_F3_ExcludedRoleGetsSchedulerNameButNoPodGroupAnnotation"],
+      "claim": "Round-2 F3 (InjectPodSchedulingFields ignored its role argument, enrolling excluded roles into the PodGroup). FIXED: RoleInGang gates enrollment - an excluded role gets schedulerName=volcano but is not annotated into the gang PodGroup, so it is not counted against minMember.",
+      "observed": "PASS on reviewedSha bd9ee4dd."
+    },
+    {
+      "id": "F4",
+      "severity": "moderate",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_F4_MinReplicasAboveReplicasRejected"],
+      "claim": "Round-2 F4 (minReplicas > role.Replicas produced an unsatisfiable minMember, pods Pending forever). FIXED: the config is rejected as incompatible ('can never be satisfied') instead of building an impossible PodGroup.",
+      "observed": "PASS on reviewedSha bd9ee4dd."
+    },
+    {
+      "id": "F5",
+      "severity": "minor",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_F5_MinReplicasBelowOneRejected", "TestVerifyR3_F5_AdmissionRejectsNonPositiveMinimums"],
+      "claim": "Round-2 F5 (zero/negative minReplicas accepted). FIXED: rejected both at the CoordinatedPolicy admission webhook and in strategy resolution.",
+      "observed": "PASS on reviewedSha bd9ee4dd."
+    },
+    {
+      "id": "F6",
+      "severity": "moderate",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_F6_RuleScopeIsHonored", "TestVerifyR3_F6_AdmissionRejectsOutOfScopeMinimums"],
+      "claim": "Round-2 F6 (CoordinatedPolicyRule.Roles scoping discarded). FIXED: a rule's minimums apply only to its scoped roles; out-of-scope minimums are rejected at admission and ignored in the merged strategy.",
+      "observed": "PASS on reviewedSha bd9ee4dd."
+    },
+    {
+      "id": "F7",
+      "severity": "moderate",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_F7_MultipleGangRulesAreMergedNotDropped"],
+      "claim": "Round-2 F7 (only the first gang rule survived). FIXED: MergeGangStrategies unions roles across all gang rules, max-minimum wins per role.",
+      "observed": "PASS on reviewedSha bd9ee4dd."
+    },
+    {
+      "id": "F8",
+      "severity": "minor",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_F8_PolicyReadErrorPropagates"],
+      "claim": "Round-2 F8 (CoordinatedPolicy read error swallowed as 'no policy'). FIXED: the error propagates from ResolveGangStrategy instead of degrading silently.",
+      "observed": "PASS on reviewedSha bd9ee4dd."
+    },
+    {
+      "id": "F9",
+      "severity": "moderate",
+      "polarity": "n/a",
+      "layer": "live",
+      "match": [],
+      "claim": "Round-2 F9 (nothing watched CoordinatedPolicy; edits left a stale PodGroup). FIXED: the RBG controller adds Watches(CoordinatedPolicy) with GenerationChangedPredicate. Verified live via case r3-watch - editing prefill minimum 1->2 propagated PodGroup minMember 1->2 with the RBG untouched (resourceVersion unchanged).",
+      "observed": "Confirmed live on reviewedSha bd9ee4dd (l3/L3-results-r3.txt)."
+    },
+    {
+      "id": "F10",
+      "severity": "major",
+      "polarity": "n/a",
+      "layer": "live",
+      "match": [],
+      "claim": "Round-2 F10 (CoordinatedPolicy path never derived the RoleInstance-level gang annotation). FIXED: the RIS reconciler derives rbg.workloads.x-k8s.io/role-instance-gang-scheduling=true for gang-covered roles. Verified live - all covered RIS annotated true, out-of-scope sidecar left unannotated.",
+      "observed": "Confirmed live on reviewedSha bd9ee4dd (l3/L3-results-r3.txt)."
+    },
+    {
+      "id": "N1",
+      "severity": "n/a",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_N1_AllOrNothingRuleDoesNotAbsorbOtherRulesMinimums"],
+      "claim": "New-behavior contract: an all-or-nothing (whole-group) rule subsumes only its own roles and does not absorb the per-role minimums declared by other rules.",
+      "observed": "PASS on reviewedSha bd9ee4dd."
+    },
+    {
+      "id": "N2",
+      "severity": "n/a",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_N2_ContextCacheDoesNotLeakAcrossRBGs"],
+      "claim": "New-behavior contract: the resolve-once GangStrategy carried on ctx is keyed per-RBG and does not leak across different RBGs reconciled in the same context.",
+      "observed": "PASS on reviewedSha bd9ee4dd."
+    },
+    {
+      "id": "N3",
+      "severity": "n/a",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_N3_PolicyWithoutGangFallsBackToAnnotation"],
+      "claim": "New-behavior contract: a CoordinatedPolicy with no gang section falls back to the legacy group-gang-scheduling annotation path unchanged.",
+      "observed": "PASS on reviewedSha bd9ee4dd."
+    },
+    {
+      "id": "N5",
+      "severity": "n/a",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_N5_MergedPolicyEndToEndToPodGroupSpec"],
+      "claim": "New-behavior end-to-end contract: a merged multi-rule policy resolves to the correct PodGroup minMember and subGroupPolicy spec.",
+      "observed": "PASS on reviewedSha bd9ee4dd."
+    },
+    {
+      "id": "SP",
+      "severity": "n/a",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_SchedulerPluginsRejectsPerRoleMinimumsAtAdmission"],
+      "claim": "scheduler-plugins path: per-role minReplicas is rejected at admission (hard error) since subGroupPolicy is a Volcano-only capability. Documents the KEP goal being half-delivered off Volcano.",
+      "observed": "PASS on reviewedSha bd9ee4dd."
+    },
+    {
+      "id": "BASELINE",
+      "severity": "n/a",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyR3_Baseline_WholeGroupGangSize", "TestVerifyR3_Baseline_HappyPathSubGroupPolicy"],
+      "claim": "Harness-bites check: the happy paths must PASS, otherwise the contract results above could be harness bugs rather than real product behavior.",
+      "observed": "PASS on reviewedSha bd9ee4dd - the harness reads the real API correctly."
+    }
+  ],
+
+  "liveNote": "L3 (round 3) WAS run on reviewedSha bd9ee4dd: 3-node ACK k8s v1.36.1-aliyun, Volcano 1.14.4, --scheduler-name=volcano. Controller image rolebasedgroup/rbgs-controller:v434-r3 = verify branch ce931129 (production code == PR head) + test-only env-gated field selector RBG_TEST_WATCH_NAMESPACE=v434-r3, so two pre-existing live RBGs (default/nginx-cluster, pr433-test/test-rbg) were excluded from the informer LIST and left untouched. All 8 live cases matched predictions: r3-min minMember=3 (subGroupPolicy prefill 2/1 + decode 1/1, per-instance matchLabelKeys, 4/4 Running); r3-merge minMember=2 (both rules merged); r3-scope minMember=1 (prefill-only; excluded sidecar NOT enrolled, own auto-default podgroup); r3-typo GangConfigured=False, no PodGroup/RIS/pods, quiet 5-min requeue; r3-exceeds rejected 'can never be satisfied'; r3-watch policy edit prefill 1->2 propagated PodGroup minMember 1->2 with RBG resourceVersion unchanged; admission webhook DENIED minReplicas=0 and out-of-scope decode minimum. Admission negatives were initially ACCEPTED because the cluster's rbgs-validating-webhook-configuration is the old v0.8.0 chart routing only rolebasedgroups - a SETUP ARTIFACT, not a product gap; the PR ships the coordinatedpolicies rule in config/webhook/manifests.yaml + main.go, and after adding it to the live VWC both negatives were DENIED. Cluster fully restored: image v0.8.0-0c00546d, RBG_TEST_WATCH_NAMESPACE removed, VWC back to its single webhook, ns v434-r3 deleted, no stray PodGroups, both live RBGs READY=True, controller 1/1 Running. Full transcript in l3/L3-results-r3.txt, manifests in l3/cases-r3.yaml, observations in results/L3-round3-observations.txt.",
+
+  "liveNoteRound2": "L3 WAS run this round on a 3-node ACK cluster (k8s v1.36.1) with Volcano 1.14.4 and --scheduler-name=volcano. The original PR branch predates the restartPolicy structuring in the cluster's installed CRD, so the raw PR binary failed every typed LIST with a decode error (setup version-skew, not a gang finding). The branch was rebased onto upstream/main (ZERO conflicts - clean merge signal) and deployed with a test-only env-gated field selector metadata.namespace=v434-verify on the RBG/RoleInstanceSet/RoleInstance informers, so the controller reconciled only the test namespace and never touched the live nginx-cluster RBG. Observed PodGroups matched predictions exactly: baseline-ok minMember=2 (2 Running); f2-typo minMember=0 (F2); f3-excluded minMember=1 but excluded sidecar still schedulerName=volcano and joined group f3-excluded (F3); f4-exceeds minMember=5 with only 2 pods, Pending forever (F4); f5-zero minMember=0 accepted (F5); f6-scope minMember=2 - decode joined despite scope=[prefill] (F6); f7-tworules minMember=1 - second rule dropped (F7). F9 live: editing CoordinatedPolicy prefill 2->3 left PodGroup minMember=2 even after an RBG reconcile poke. Cluster restored afterward to controller v0.8.0-0c00546d, test namespace deleted, nginx-cluster confirmed READY 4/4 untouched. Full transcript in l3/L3-results.txt, manifests in l3/cases-rebased.yaml."
 }

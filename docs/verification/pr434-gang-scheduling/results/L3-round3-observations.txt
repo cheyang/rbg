@@ -1,0 +1,47 @@
+########## L3 ROUND-3 FINAL OBSERVATIONS (Wed Sep  2 02:12:34 AM UTC 2026) ##########
+## controller image under test:
+rolebasedgroup/rbgs-controller:v434-r3
+## PodGroups (volcano):
+NAME                                            MIN   SGP              PHASE
+podgroup-5a8545f5-e223-4b5e-84e3-c0fe363c4756   1     <none>           Running
+r3-merge                                        2     prefill,decode   Running
+r3-min                                          3     prefill,decode   Running
+r3-scope                                        1     prefill          Running
+r3-watch                                        2     prefill          Running
+## r3-min subGroupPolicy detail:
+prefill: minSubGroups=2 subGroupSize=1 matchLabelKeys=["rbg.workloads.x-k8s.io/role-instance-name"]
+decode: minSubGroups=1 subGroupSize=1 matchLabelKeys=["rbg.workloads.x-k8s.io/role-instance-name"]
+## r3-watch AFTER patch (expect minMember=2):
+minMember=2
+## RBG GangConfigured:
+NAME         GANG    REASON
+r3-exceeds   False   IncompatibleGangConfig
+r3-merge     True    GangConfigured
+r3-min       True    GangConfigured
+r3-scope     True    GangConfigured
+r3-typo      False   IncompatibleGangConfig
+r3-watch     True    GangConfigured
+## RIS gang annotation:
+NAME               GANGANN
+r3-merge-decode    true
+r3-merge-prefill   true
+r3-min-decode      true
+r3-min-prefill     true
+r3-scope-prefill   true
+r3-scope-sidecar   <none>
+r3-watch-prefill   true
+## Pods:
+NAME                 SCHED     GRP                                             PHASE
+r3-merge-decode-0    volcano   r3-merge                                        Running
+r3-merge-prefill-0   volcano   r3-merge                                        Running
+r3-min-decode-0      volcano   r3-min                                          Running
+r3-min-decode-1      volcano   r3-min                                          Running
+r3-min-prefill-0     volcano   r3-min                                          Running
+r3-min-prefill-1     volcano   r3-min                                          Running
+r3-scope-prefill-0   volcano   r3-scope                                        Running
+r3-scope-sidecar-0   volcano   podgroup-5a8545f5-e223-4b5e-84e3-c0fe363c4756   Running
+r3-watch-prefill-0   volcano   r3-watch                                        Running
+r3-watch-prefill-1   volcano   r3-watch                                        Running
+## admission negatives exist? (expect none):
+Error from server (NotFound): coordinatedpolicies.workloads.x-k8s.io "r3-adm-zero" not found
+Error from server (NotFound): coordinatedpolicies.workloads.x-k8s.io "r3-adm-oos" not found

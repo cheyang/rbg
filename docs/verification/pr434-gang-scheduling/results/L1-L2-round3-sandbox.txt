@@ -1,0 +1,104 @@
+Round 3 (PR head bd9ee4dd, verify branch ce931129) — sandbox 43.99.38.217 (Linux, go1.25 via GOTOOLCHAIN=auto, -mod=vendor)
+Run: 2026-09-01 22:03-22:07 CST
+
+=== HARNESS Tue Sep  1 10:03:28 PM CST 2026 ===
+=== RUN   TestVerifyR3_F2_UnknownRoleNameIsRejectedNotCollapsedToZero
+--- PASS: TestVerifyR3_F2_UnknownRoleNameIsRejectedNotCollapsedToZero (0.00s)
+=== RUN   TestVerifyR3_F6_RuleScopeIsHonored
+--- PASS: TestVerifyR3_F6_RuleScopeIsHonored (0.00s)
+=== RUN   TestVerifyR3_F7_MultipleGangRulesAreMergedNotDropped
+--- PASS: TestVerifyR3_F7_MultipleGangRulesAreMergedNotDropped (0.00s)
+=== RUN   TestVerifyR3_N1_AllOrNothingRuleDoesNotAbsorbOtherRulesMinimums
+--- PASS: TestVerifyR3_N1_AllOrNothingRuleDoesNotAbsorbOtherRulesMinimums (0.00s)
+=== RUN   TestVerifyR3_F8_PolicyReadErrorPropagates
+--- PASS: TestVerifyR3_F8_PolicyReadErrorPropagates (0.13s)
+=== RUN   TestVerifyR3_N2_ContextCacheDoesNotLeakAcrossRBGs
+--- PASS: TestVerifyR3_N2_ContextCacheDoesNotLeakAcrossRBGs (0.00s)
+=== RUN   TestVerifyR3_N3_PolicyWithoutGangFallsBackToAnnotation
+--- PASS: TestVerifyR3_N3_PolicyWithoutGangFallsBackToAnnotation (0.00s)
+=== RUN   TestVerifyR3_F2b_AllZeroCoveredRolesRejected
+--- PASS: TestVerifyR3_F2b_AllZeroCoveredRolesRejected (0.00s)
+=== RUN   TestVerifyR3_Baseline_WholeGroupGangSize
+--- PASS: TestVerifyR3_Baseline_WholeGroupGangSize (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/common	0.365s
+=== RUN   TestVerifyR3_F1_NonRoleInstanceSetBackingIsRejected
+=== RUN   TestVerifyR3_F1_NonRoleInstanceSetBackingIsRejected/apps/v1/StatefulSet
+=== RUN   TestVerifyR3_F1_NonRoleInstanceSetBackingIsRejected/apps/v1/Deployment
+--- PASS: TestVerifyR3_F1_NonRoleInstanceSetBackingIsRejected (0.00s)
+    --- PASS: TestVerifyR3_F1_NonRoleInstanceSetBackingIsRejected/apps/v1/StatefulSet (0.00s)
+    --- PASS: TestVerifyR3_F1_NonRoleInstanceSetBackingIsRejected/apps/v1/Deployment (0.00s)
+=== RUN   TestVerifyR3_F3_ExcludedRoleGetsSchedulerNameButNoPodGroupAnnotation
+--- PASS: TestVerifyR3_F3_ExcludedRoleGetsSchedulerNameButNoPodGroupAnnotation (0.00s)
+=== RUN   TestVerifyR3_F4_MinReplicasAboveReplicasRejected
+--- PASS: TestVerifyR3_F4_MinReplicasAboveReplicasRejected (0.00s)
+=== RUN   TestVerifyR3_F5_MinReplicasBelowOneRejected
+--- PASS: TestVerifyR3_F5_MinReplicasBelowOneRejected (0.00s)
+=== RUN   TestVerifyR3_N5_MergedPolicyEndToEndToPodGroupSpec
+--- PASS: TestVerifyR3_N5_MergedPolicyEndToEndToPodGroupSpec (0.00s)
+=== RUN   TestVerifyR3_Baseline_HappyPathSubGroupPolicy
+--- PASS: TestVerifyR3_Baseline_HappyPathSubGroupPolicy (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/volcano	0.139s
+=== RUN   TestVerifyR3_F5_AdmissionRejectsNonPositiveMinimums
+--- PASS: TestVerifyR3_F5_AdmissionRejectsNonPositiveMinimums (0.00s)
+=== RUN   TestVerifyR3_F6_AdmissionRejectsOutOfScopeMinimums
+--- PASS: TestVerifyR3_F6_AdmissionRejectsOutOfScopeMinimums (0.00s)
+=== RUN   TestVerifyR3_SchedulerPluginsRejectsPerRoleMinimumsAtAdmission
+--- PASS: TestVerifyR3_SchedulerPluginsRejectsPerRoleMinimumsAtAdmission (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.127s
+HARNESS_RC=0
+=== FULL SUITE Tue Sep  1 10:06:45 PM CST 2026 ===
+ok  	sigs.k8s.io/rbgs/pkg/component-discovery	0.242s
+ok  	sigs.k8s.io/rbgs/pkg/coordination/coordinationscaling	0.138s
+ok  	sigs.k8s.io/rbgs/pkg/dependency	0.566s
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.338s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance	0.163s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/clientdapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	0.209s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/readiness	0.448s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/specifieddelete	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod	0.218s
+?   	sigs.k8s.io/rbgs/pkg/inplace/pod/clientadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/inplaceupdate	0.318s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/readiness	0.265s
+ok  	sigs.k8s.io/rbgs/pkg/port-allocator	0.206s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.968s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.163s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	0.148s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.177s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	0.210s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.501s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.246s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode	0.140s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/core	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision	0.174s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/sync	0.408s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/utils	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/utils/revisionadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/scale	0.152s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler	0.503s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/common	0.474s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/k8s-scheduler-plugin	0.386s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/volcano	0.399s
+ok  	sigs.k8s.io/rbgs/pkg/utils	0.422s
+?   	sigs.k8s.io/rbgs/pkg/utils/client	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/expectations	0.103s
+?   	sigs.k8s.io/rbgs/pkg/utils/fieldindex	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/history	0.228s
+?   	sigs.k8s.io/rbgs/pkg/utils/ratelimiter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/requeueduration	0.060s
+?   	sigs.k8s.io/rbgs/pkg/utils/revisionadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/webhook	0.407s
+?   	sigs.k8s.io/rbgs/pkg/webhook/cert/generator	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/webhook/cert/writer	4.275s
+?   	sigs.k8s.io/rbgs/api/workloads/constants	[no test files]
+?   	sigs.k8s.io/rbgs/api/workloads/pub/inplace_update	[no test files]
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.269s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.418s
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	10.714s
+FULL_RC=0
