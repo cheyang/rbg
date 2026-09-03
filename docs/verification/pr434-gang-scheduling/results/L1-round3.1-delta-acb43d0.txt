@@ -1,0 +1,77 @@
+Round 3.1 — incremental re-check of head acb43d0 (delta bd9ee4dd..acb43d0)
+===========================================================================
+
+Date: 2026-09-03 (Asia/Shanghai)
+Previous reviewed head: bd9ee4ddde7340fd134b122078b4d6e57edb6e8c
+New PR head:            acb43d010b6f39086cc093517f6c7cb3384e2f3c  ("make manifests")
+Ancestry:               bd9ee4dd IS an ancestor of acb43d0 -> INCREMENTAL (1 commit), not a force-push rewrite.
+Verify branch HEAD:     ff9471bd (merge of acb43d0 into the round-3 verify branch)
+
+Delta contents (git diff --stat bd9ee4dd..acb43d0)
+--------------------------------------------------
+ api/workloads/v1alpha2/coordinatedpolicy_types.go    | 20 +++++----- (GODOC COMMENT ONLY, no logic)
+ config/crd/bases/workloads.x-k8s.io_coordinatedpolicies.yaml | 2 ++ (regenerated description)
+ deploy/kubectl/manifests.yaml                        | 2 ++ (regenerated description)
+ test/e2e/testcase/v1alpha2/gang_scheduling.go        | 2 +- (e2e test value: Scaling MaxSkew Int32(1) -> String("50%"))
+
+Assessment: the delta touches NO production gang logic. The only Go change is a
+godoc comment reword on the SchedulingCoordinationStrategy.Gang field; the two YAML
+changes are the CRD descriptions regenerated from that comment (config/crd/bases and
+deploy/kubectl/manifests.yaml stay in sync -> `make manifests` was run completely);
+the single e2e change is a test-only MaxSkew value in the Scaling strategy. Every
+code path verified in round 3 (pkg/scheduler/*, internal/controller/*,
+pkg/reconciler/*) is byte-identical between bd9ee4dd and acb43d0.
+
+L1 contract harness re-run against the merged head (macOS, go1.25.1, -mod=vendor)
+---------------------------------------------------------------------------------
+cmd: go test ./pkg/scheduler/common/ ./pkg/scheduler/volcano/ ./api/workloads/v1alpha2/ -run '^TestVerifyR3' -count=1
+
+  ok  sigs.k8s.io/rbgs/pkg/scheduler/common      0.823s
+  ok  sigs.k8s.io/rbgs/pkg/scheduler/volcano     0.481s
+  ok  sigs.k8s.io/rbgs/api/workloads/v1alpha2    0.354s
+
+  PASS: 18   FAIL: 0   HARNESS_RC=0  -> no regression from the delta.
+
+CI on acb43d0 (gh pr checks): ALL PASS
+--------------------------------------
+  build, unit-test, envtest, lint, markdown-check, copyright-check, check-changes,
+  e2e-test, e2e-test-manifest, e2e-test-deprecated-disabled,
+  e2e-test-volcano-gang, e2e-test-scheduler-plugins-gang.
+
+Reconciliation with the 2026-09-01 reviewer comments (all against e4f9449a/7fb3302b)
+------------------------------------------------------------------------------------
+The 09-01 review round (cheyang R3 + Copilot) predates bd9ee4dd. Mapping each open
+comment to the commit that resolved it:
+
+  cheyang  gang_strategy.go:283  all-or-nothing rule absorbs other rules' minimums
+  Copilot  gang_strategy.go:284  (same)
+    -> FIXED in bd9ee4dd: MergeGangStrategies replaced the GLOBAL bool `allOrNothing`
+       with a PER-ROLE set `allOrNothingRoles`; only a rule's own roles are subsumed,
+       other rules' per-role minimums survive in `merged`. Asserted by
+       TestVerifyR3_N1_AllOrNothingRuleDoesNotAbsorbOtherRulesMinimums (PASS).
+
+  cheyang  scheduler.go:162  every covered role at replicas:0 -> GangSize "minMember 0"
+    -> FIXED in bd9ee4dd: GangMinimumReplicas rewritten to iterate all covered roles
+       (configured minimum if present, else full replicas) instead of returning
+       MinReplicas verbatim. Asserted by TestVerifyR3_F2b_AllZeroCoveredRolesRejected (PASS).
+
+  Copilot  helper.go:103  omitted component size counted as zero
+    -> FIXED in bd9ee4dd: ComputeSubGroupSize now defaults an omitted size to 1
+       (`if c.Size == nil { total++; continue }`), matching GetComponentSize.
+
+  Copilot  deploy/helm/rbgs/README.md:189  `helm get values --set ...` fails
+    -> FIXED in bd9ee4dd: the --set flags were removed from the verify snippet.
+
+  cheyang  coordinatedpolicy_types.go:74  /  Copilot :75  godoc contradicts implemented scope
+    -> FIXED in acb43d0 (this delta): the Gang field godoc was reworded ("A rule may
+       only name roles listed in its own spec.policies[].roles...") and the CRD
+       descriptions regenerated to match.
+
+  cheyang  gang_scheduling.go:340  e2e pairs gang with rollingUpdate, not scaling
+    -> ADDRESSED in bd9ee4dd (added Strategy.Scaling to the e2e CoordinatedPolicy) and
+       refined in acb43d0 (MaxSkew 1 -> "50%" so the scaling constraint actually bites
+       at low replica counts; also answers NoobDream2568's earlier "this is a no-op" note).
+
+Verdict (unchanged): APPROVE-leaning. All round-2 findings fixed at bd9ee4dd, all
+09-01 reviewer comments addressed by bd9ee4dd + acb43d0, CI green, L1 18/18 against
+the current head. Remaining items are documentation-level only.

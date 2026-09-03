@@ -1,14 +1,42 @@
 # Verification — sgl-project/rbg#434 (Implement KEP-430: two-level gang scheduling)
 
 Reviewer-side evidence harness for [PR #434](https://github.com/sgl-project/rbg/pull/434).
-Reviewed head: `bd9ee4ddde7340fd134b122078b4d6e57edb6e8c` (round 3; the PR was
-force-pushed and fully reworked since round 2's `9d3f4b19`).
+Reviewed head: `acb43d010b6f39086cc093517f6c7cb3384e2f3c` (round 3.1 — one
+incremental commit on top of round 3's `bd9ee4dd`; round 2's pre-rework head was
+`9d3f4b19`).
 
 **Production code is untouched.** This branch adds only test files and this
 directory, so a red test is unambiguously the PR's behavior and not a patched
 variant of it.
 
-## Round 3 — the reworked head fixes everything (current)
+## Round 3.1 — incremental head `acb43d0` (current)
+
+The PR advanced by a single commit, `acb43d0` "make manifests", and this time
+`bd9ee4dd` **is an ancestor** of the new head, so it is a delta re-review rather
+than another full re-sweep. The delta touches four files and **no production gang
+logic**: a godoc reword on `SchedulingCoordinationStrategy.Gang`, the CRD
+descriptions regenerated from it (`config/crd/bases` and `deploy/kubectl/manifests.yaml`
+stay in sync, so `make manifests` was run completely), and one e2e test value
+(`Scaling.MaxSkew` `Int32(1)` → `String("50%")`). Every path verified in round 3
+(`pkg/scheduler/*`, `internal/controller/*`, `pkg/reconciler/*`) is byte-identical
+between the two heads.
+
+L1 contract harness re-ran against the merged head: **18/18 `TestVerifyR3*` PASS,
+`HARNESS_RC=0`** — no regression (`results/L1-round3.1-delta-acb43d0.txt`). CI on
+`acb43d0` is **all green**, including `e2e-test-volcano-gang` and
+`e2e-test-scheduler-plugins-gang`.
+
+This head also closes out the 2026-09-01 reviewer round (cheyang R3 + Copilot,
+both filed against the earlier `e4f9449a`). The substantive logic comments —
+`gang_strategy.go:283/284` (an all-or-nothing rule absorbing other rules'
+per-role minimums) and `scheduler.go:162` (every covered role at `replicas: 0`) —
+were already fixed in `bd9ee4dd` (asserted by `TestVerifyR3_N1` and
+`TestVerifyR3_F2b`); `helper.go:103` (omitted component size counted as zero) and
+the helm `README:189` snippet were fixed in `bd9ee4dd` too; and the godoc
+contradiction at `coordinatedpolicy_types.go:74/75` is exactly what `acb43d0`
+reworded. **Verdict stays APPROVE-leaning.**
+
+## Round 3 — the reworked head fixes everything
 
 The PR was force-pushed; round 2's reviewed sha `9d3f4b19` is **not an ancestor**
 of the new head `bd9ee4dd`, so this was a full re-review plus a full test sweep.

@@ -2,9 +2,10 @@
   "topic": "pr434-gang-scheduling",
   "pr": "https://github.com/sgl-project/rbg/pull/434",
   "prHeadFetch": { "remote": "upstream", "ref": "pull/434/head" },
-  "reviewedSha": "bd9ee4ddde7340fd134b122078b4d6e57edb6e8c",
-  "round": 3,
-  "previousReviewedSha": "9d3f4b193e82240e51878b0837dccb1cea8ab4ab",
+  "reviewedSha": "acb43d010b6f39086cc093517f6c7cb3384e2f3c",
+  "round": 3.1,
+  "previousReviewedSha": "bd9ee4ddde7340fd134b122078b4d6e57edb6e8c",
+  "round2HeadBeforeRework": "9d3f4b193e82240e51878b0837dccb1cea8ab4ab",
 
   "harnessPaths": [
     "docs/verification/pr434-gang-scheduling",
@@ -13,7 +14,8 @@
     "api/workloads/v1alpha2/verify_r3_gang_admission_test.go",
     "docs/verification/pr434-gang-scheduling/l3/cases-r3.yaml",
     "docs/verification/pr434-gang-scheduling/l3/L3-plan-r3.md",
-    "docs/verification/pr434-gang-scheduling/l3/L3-results-r3.txt"
+    "docs/verification/pr434-gang-scheduling/l3/L3-results-r3.txt",
+    "docs/verification/pr434-gang-scheduling/results/L1-round3.1-delta-acb43d0.txt"
   ],
 
   "premise": {
@@ -57,6 +59,15 @@
     },
     "verdict": "APPROVE-leaning. The reworked head fixes every round-2 finding; L1 (18/18) + full suite (rc=0) + L3 (8/8 live cases) all green. No new defects. Remaining items are documentation-level: the scheduler-plugins path returns a hard runtime error for per-role minReplicas (KEP goal half-delivered off Volcano) - acceptable as a first step but should be called out; and the CoordinatedPolicy validating webhook only enforces on installs that apply the PR's updated VWC.",
     "note": "The top-level 'findings' array and 'liveNote' are the CURRENT round-3 record (contract polarity against the reworked head bd9ee4dd; PASS = fixed). The round-2 historical record (canary/contract polarity against the pre-rework head 9d3f4b19) is preserved under 'round2Findings' and 'liveNoteRound2'."
+  },
+
+  "round3_1": {
+    "trigger": "PR head advanced bd9ee4dd -> acb43d0. This time bd9ee4dd IS an ancestor of acb43d0 (1 incremental commit, message 'make manifests'), so this is a delta re-review, not a full re-sweep.",
+    "delta": "git diff bd9ee4dd..acb43d0 touches 4 files with NO production gang logic: coordinatedpolicy_types.go (Gang field godoc comment reword only), config/crd/bases/workloads.x-k8s.io_coordinatedpolicies.yaml + deploy/kubectl/manifests.yaml (CRD descriptions regenerated from that comment, both in sync -> make manifests run completely), and test/e2e/testcase/v1alpha2/gang_scheduling.go (test-only Scaling MaxSkew Int32(1) -> String('50%')). Every code path verified in round 3 (pkg/scheduler/*, internal/controller/*, pkg/reconciler/*) is byte-identical between the two heads.",
+    "l1Recheck": "L1 contract harness re-run against the merged head (verify branch ff9471bd, macOS go1.25.1 -mod=vendor): 18/18 TestVerifyR3* PASS, HARNESS_RC=0. No regression. Evidence: results/L1-round3.1-delta-acb43d0.txt.",
+    "ci": "gh pr checks on acb43d0: ALL PASS (build, unit-test, envtest, lint, markdown-check, copyright-check, e2e-test + e2e-test-manifest + e2e-test-deprecated-disabled + e2e-test-volcano-gang + e2e-test-scheduler-plugins-gang).",
+    "reviewerCommentsReconciled": "The 2026-09-01 review round (cheyang R3 at 03:15 + Copilot at 07:48) was filed against e4f9449a/7fb3302b, i.e. BEFORE bd9ee4dd. Each open comment maps to a resolving commit: gang_strategy.go:283/284 (all-or-nothing rule absorbing other rules' minimums) FIXED in bd9ee4dd via the global-bool -> per-role-set rewrite of MergeGangStrategies (asserted by TestVerifyR3_N1, PASS); scheduler.go:162 (all covered roles at replicas:0) FIXED in bd9ee4dd via the GangMinimumReplicas rewrite (asserted by TestVerifyR3_F2b, PASS); helper.go:103 (omitted component size counted as zero) FIXED in bd9ee4dd (ComputeSubGroupSize defaults nil size to 1); helm README:189 (helm get values --set fails) FIXED in bd9ee4dd (--set flags removed); coordinatedpolicy_types.go:74/75 (godoc contradicts implemented scope) FIXED in acb43d0 (this delta, godoc reworded + CRD regenerated); gang_scheduling.go:340 (e2e pairs gang with rollingUpdate not scaling) ADDRESSED in bd9ee4dd (Strategy.Scaling added) and refined in acb43d0 (MaxSkew 1 -> 50% so it bites at low replicas).",
+    "verdict": "APPROVE-leaning, unchanged. Round-2 findings all fixed at bd9ee4dd, the 09-01 reviewer comments all addressed by bd9ee4dd + acb43d0, CI green, L1 18/18 against the current head. Remaining items are documentation-level only (scheduler-plugins hard-errors on per-role minReplicas; CoordinatedPolicy webhook enforcement requires installs to apply the PR's updated VWC)."
   },
 
   "round2Findings": [
