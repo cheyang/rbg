@@ -6,7 +6,7 @@
 # volcano-gang.yaml) and no coordination at all.
 #
 # In this example the group has three tiers:
-#   - coordinator: at least 1 of 2 replicas must be schedulable
+#   - router:       at least 1 of 2 replicas must be schedulable
 #   - prefill:     at least 2 of 4 replicas must be schedulable
 #   - decode:      at least 2 of 6 replicas must be schedulable
 # So the whole group can start with 5 pods instead of waiting for all 12.

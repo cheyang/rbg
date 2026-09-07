@@ -838,9 +838,9 @@ func TestComputeSubGroupSize(t *testing.T) {
 			want: 1,
 		},
 		{
-			name: "customComponents pattern with no components falls back to 1",
+			name: "customComponents pattern with no components returns 0",
 			role: &RoleSpec{Pattern: Pattern{CustomComponentsPattern: &CustomComponentsPattern{}}},
-			want: 1,
+			want: 0,
 		},
 	}
 

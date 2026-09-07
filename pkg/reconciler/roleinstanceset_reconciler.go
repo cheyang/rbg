@@ -28,6 +28,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 	metaapplyv1 "k8s.io/client-go/applyconfigurations/meta/v1"
+	"k8s.io/utils/ptr"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/rbgs/api/workloads/constants"
@@ -351,11 +352,11 @@ func (r *RoleInstanceSetReconciler) constructRoleInstanceTemplateByCustomCompone
 			WithComponents(workloadsv1alpha2client.RoleInstanceComponent().
 				WithName(component.Name).
 				WithServiceName(svcName).
-				WithSize(*component.Size).
+				WithSize(ptr.Deref(component.Size, 1)).
 				WithAnnotations(component.Annotations).
 				WithLabels(component.Labels).
 				WithTemplate(podTemplateApplyConfiguration.WithLabels(map[string]string{
-					constants.ComponentSizeLabelKey: fmt.Sprintf("%d", *component.Size),
+					constants.ComponentSizeLabelKey: fmt.Sprintf("%d", ptr.Deref(component.Size, 1)),
 				})))
 	}
 	return nil
