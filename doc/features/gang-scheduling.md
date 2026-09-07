@@ -179,9 +179,11 @@ spec:
 - Each `minReplicas` must also name an existing role and must not exceed that role's
   `replicas`. Both depend on the RoleBasedGroup, so they are enforced when the PodGroup is
   built rather than at admission time (see [Interaction with scaling](#interaction-with-scaling)).
-- When several rules declare a gang strategy, their `roles` are unioned and the per-role
-  minimums are merged with the largest value winning for a role appearing in more than one
-  rule. A rule with an empty `minReplicas` makes that union all-or-nothing.
+- When several rules declare a gang strategy, all-or-nothing rules cover their
+  listed roles; per-role rules cover the roles named in their `minReplicas` map.
+  The covered roles are the union across all rules, and per-role minimums are
+  merged with the largest value winning for a role appearing in more than one rule.
+  A rule with an empty `minReplicas` makes its own roles all-or-nothing.
 - The CoordinatedPolicy takes precedence over the `group-gang-scheduling` annotation.
 
 **`minReplicas` requires `--scheduler-name=volcano` with Volcano >= 1.14.** It maps to the

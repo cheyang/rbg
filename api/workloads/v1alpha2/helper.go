@@ -101,7 +101,7 @@ func ComputeSubGroupSize(role *RoleSpec) int32 {
 			}
 			total += *c.Size
 		}
-		return max(total, 1)
+		return total
 	}
 	// StandalonePattern or unspecified
 	return 1

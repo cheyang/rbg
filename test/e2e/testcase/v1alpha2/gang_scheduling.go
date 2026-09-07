@@ -464,6 +464,15 @@ func runGangSchedulingBackend(f *framework.Framework, b gangBackend) {
 				gomega.Expect(found).To(gomega.BeTrue(), "subGroupPolicy should set matchLabelKeys")
 				gomega.Expect(matchLabelKeys).To(gomega.Equal([]string{constants.RoleInstanceNameLabelKey}))
 
+				// Verify minMember reflects the per-role minimums: prefill=2, decode=1,
+				// both standalone (subGroupSize=1), so minMember must be 3. This is the
+				// KEP-430 defining guarantee: the gang dispatches when the per-role
+				// minimums are met, not when every replica is ready.
+				minMember, found, _ := unstructured.NestedInt64(pg.Object, "spec", "minMember")
+				gomega.Expect(found).To(gomega.BeTrue(), "PodGroup should have minMember")
+				gomega.Expect(minMember).To(gomega.Equal(int64(3)),
+					"minMember should be 3 (2 prefill + 1 decode)")
+
 				b.expectPodMarker(f, rbg, rbg.Spec.Roles[0])
 
 				// Verify pods eventually become ready

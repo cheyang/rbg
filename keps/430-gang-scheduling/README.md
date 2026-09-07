@@ -204,10 +204,11 @@ type GangSchedulingStrategy struct {
     // gang is all-or-nothing over the roles the enclosing policy rule
     // lists, and minMember is their combined pod count.
     //
-    // Several policy rules may each declare a gang strategy. The covered roles
-    // are the union of every declaring rule's roles, and minReplicas maps are
-    // merged across rules, taking the maximum when the same role appears more
-    // than once. Roles covered only by an all-or-nothing rule participate in
+    // Several policy rules may each declare a gang strategy. All-or-nothing
+    // rules cover their listed roles; per-role rules cover the roles named in
+    // their minReplicas map. The covered roles are the union across all rules,
+    // and minReplicas maps are merged by taking the maximum when the same role
+    // appears more than once. Roles covered only by an all-or-nothing rule participate in
     // full; the per-role minimums other rules declare still apply to the roles
     // those rules name.
     //
