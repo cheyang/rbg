@@ -1,15 +1,64 @@
 # Verification — sgl-project/rbg#434 (Implement KEP-430: two-level gang scheduling)
 
 Reviewer-side evidence harness for [PR #434](https://github.com/sgl-project/rbg/pull/434).
-Reviewed head: `acb43d010b6f39086cc093517f6c7cb3384e2f3c` (round 3.1 — one
-incremental commit on top of round 3's `bd9ee4dd`; round 2's pre-rework head was
-`9d3f4b19`).
+Reviewed head: `11ea20c91ae37480eef6f203a8862425f7d66f5e` (round 3.2 — one
+incremental commit on top of round 3.1's `acb43d0`; round 3 was `bd9ee4dd`,
+round 2's pre-rework head was `9d3f4b19`).
 
 **Production code is untouched.** This branch adds only test files and this
 directory, so a red test is unambiguously the PR's behavior and not a patched
 variant of it.
 
-## Round 3.1 — incremental head `acb43d0` (current)
+## Round 3.2 — incremental head `11ea20c9` (current)
+
+The PR advanced by one commit, `11ea20c9` "Address review feedback on component
+sizing and gang coverage docs", and `acb43d0` **is an ancestor** — another delta
+re-review. Unlike round 3.1, this delta **touches production code**, so it was
+re-verified rather than waved through:
+
+- `api/workloads/v1alpha2/helper.go` — `ComputeSubGroupSize` drops the
+  `return max(total, 1)` floor for `return total`, so a `customComponentsPattern`
+  with an **empty** components list now yields `0` instead of `1`
+  (`helper_test.go` updated to `want: 0`).
+- `pkg/reconciler/roleinstanceset_reconciler.go` — `WithSize(*component.Size)`
+  → `WithSize(ptr.Deref(component.Size, 1))` (and the same for the component-size
+  label). This is a **genuine nil-deref fix**: `InstanceComponent.Size` is
+  optional, so a component that omits `Size` previously panicked.
+- Plus godoc reword, `doc/features/gang-scheduling.md`, KEP README, one example,
+  and +9 lines of e2e gang coverage.
+
+L1 harness re-ran against the merged head (`036e0cf7`): **18/18 `TestVerifyR3*`
+PASS, `HARNESS_RC=0`**, and the full affected packages
+(`./api/workloads/v1alpha2/ ./pkg/scheduler/... ./pkg/reconciler/...`) are green
+including the updated `TestComputeSubGroupSize`.
+
+Because dropping the floor makes `ComputeSubGroupSize` return `0` and
+`CustomComponentsPattern.Components` is `+optional` with **no `MinItems`
+validation** (the RBG webhook does not reject an empty list), a probe
+(`verify_r32_subgroupsize_zero_probe_test.go`) checked how the `0` flows into the
+gang math:
+
+| case | observed | verdict |
+|------|----------|---------|
+| single covered role with empty components | `minMember` collapses to 0 → the existing `if minMember == 0` guard **rejects** it (`IncompatibleGangConfigError`, same protection as F2b) | safe |
+| healthy role + empty-components role | `minMember` counts only the healthy role (correct), **but** `buildGangSpec` still emits a `SubGroupPolicy{SubGroupSize: 0, MinSubGroups: 1}` for the empty role | new minor observation (N6) |
+
+**N6 (minor, non-blocking).** `buildGangSpec` emits a degenerate
+`SubGroupPolicy` with `SubGroupSize: 0` for a gang-covered role whose
+`customComponentsPattern` has no components. It is asymmetric with the
+`if minReplicas == 0 { continue }` guard two lines above; a symmetric skip (or a
+`MinItems=1` admission rule on `components`) would be cleaner. This is a **net
+improvement over the previous head**: before `11ea20c9` the `max(total,1)` floor
+counted a phantom pod for a zero-pod role, inflating `minMember` so the gang
+could never be satisfied (pods Pending forever). Volcano's tolerance of
+`subGroupSize=0` was **not** exercised at L3 (degenerate edge case); the finding
+rests on the L1 probe plus code reading.
+
+**Verdict stays APPROVE-leaning** — the delta fixes a real panic and removes the
+phantom-pod inflation, with one minor cosmetic observation left.
+
+## Round 3.1 — incremental head `acb43d0`
+
 
 The PR advanced by a single commit, `acb43d0` "make manifests", and this time
 `bd9ee4dd` **is an ancestor** of the new head, so it is a delta re-review rather

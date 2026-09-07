@@ -1,0 +1,14 @@
+=== RUN   TestVerifyR32_EmptyCustomComponentsSubGroupSize
+    verify_r32_subgroupsize_zero_probe_test.go:60: ComputeSubGroupSize(empty customComponents) = 0
+--- PASS: TestVerifyR32_EmptyCustomComponentsSubGroupSize (0.00s)
+=== RUN   TestVerifyR32_Probe_SingleEmptyRoleGangIsRejected
+    verify_r32_subgroupsize_zero_probe_test.go:71: single empty role: minMember=0 policies=0 err=gang scheduling resolved to minMember 0, which would provide no gang guarantee; the roles it covers in CoordinatedPolicy default/rbg are all scaled to zero
+--- PASS: TestVerifyR32_Probe_SingleEmptyRoleGangIsRejected (0.00s)
+=== RUN   TestVerifyR32_Probe_MixedEmptyRoleEmitsZeroSubGroup
+    verify_r32_subgroupsize_zero_probe_test.go:91: mixed: minMember=1, 2 subGroupPolicy entries
+    verify_r32_subgroupsize_zero_probe_test.go:93:   subGroupPolicy name="prefill" subGroupSize=1 minSubGroups=1
+    verify_r32_subgroupsize_zero_probe_test.go:93:   subGroupPolicy name="ghost" subGroupSize=0 minSubGroups=1
+    verify_r32_subgroupsize_zero_probe_test.go:105: FINDING: empty-customComponents role emitted a SubGroupPolicy with subGroupSize=0
+--- PASS: TestVerifyR32_Probe_MixedEmptyRoleEmitsZeroSubGroup (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/volcano	0.372s

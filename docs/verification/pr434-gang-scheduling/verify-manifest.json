@@ -2,9 +2,10 @@
   "topic": "pr434-gang-scheduling",
   "pr": "https://github.com/sgl-project/rbg/pull/434",
   "prHeadFetch": { "remote": "upstream", "ref": "pull/434/head" },
-  "reviewedSha": "acb43d010b6f39086cc093517f6c7cb3384e2f3c",
-  "round": 3.1,
-  "previousReviewedSha": "bd9ee4ddde7340fd134b122078b4d6e57edb6e8c",
+  "reviewedSha": "11ea20c91ae37480eef6f203a8862425f7d66f5e",
+  "round": 3.2,
+  "previousReviewedSha": "acb43d010b6f39086cc093517f6c7cb3384e2f3c",
+  "round3Head": "bd9ee4ddde7340fd134b122078b4d6e57edb6e8c",
   "round2HeadBeforeRework": "9d3f4b193e82240e51878b0837dccb1cea8ab4ab",
 
   "harnessPaths": [
@@ -15,7 +16,9 @@
     "docs/verification/pr434-gang-scheduling/l3/cases-r3.yaml",
     "docs/verification/pr434-gang-scheduling/l3/L3-plan-r3.md",
     "docs/verification/pr434-gang-scheduling/l3/L3-results-r3.txt",
-    "docs/verification/pr434-gang-scheduling/results/L1-round3.1-delta-acb43d0.txt"
+    "docs/verification/pr434-gang-scheduling/results/L1-round3.1-delta-acb43d0.txt",
+    "pkg/scheduler/volcano/verify_r32_subgroupsize_zero_probe_test.go",
+    "docs/verification/pr434-gang-scheduling/results/L1-round3.2-subgroupsize-zero-probe.txt"
   ],
 
   "premise": {
@@ -68,6 +71,30 @@
     "ci": "gh pr checks on acb43d0: ALL PASS (build, unit-test, envtest, lint, markdown-check, copyright-check, e2e-test + e2e-test-manifest + e2e-test-deprecated-disabled + e2e-test-volcano-gang + e2e-test-scheduler-plugins-gang).",
     "reviewerCommentsReconciled": "The 2026-09-01 review round (cheyang R3 at 03:15 + Copilot at 07:48) was filed against e4f9449a/7fb3302b, i.e. BEFORE bd9ee4dd. Each open comment maps to a resolving commit: gang_strategy.go:283/284 (all-or-nothing rule absorbing other rules' minimums) FIXED in bd9ee4dd via the global-bool -> per-role-set rewrite of MergeGangStrategies (asserted by TestVerifyR3_N1, PASS); scheduler.go:162 (all covered roles at replicas:0) FIXED in bd9ee4dd via the GangMinimumReplicas rewrite (asserted by TestVerifyR3_F2b, PASS); helper.go:103 (omitted component size counted as zero) FIXED in bd9ee4dd (ComputeSubGroupSize defaults nil size to 1); helm README:189 (helm get values --set fails) FIXED in bd9ee4dd (--set flags removed); coordinatedpolicy_types.go:74/75 (godoc contradicts implemented scope) FIXED in acb43d0 (this delta, godoc reworded + CRD regenerated); gang_scheduling.go:340 (e2e pairs gang with rollingUpdate not scaling) ADDRESSED in bd9ee4dd (Strategy.Scaling added) and refined in acb43d0 (MaxSkew 1 -> 50% so it bites at low replicas).",
     "verdict": "APPROVE-leaning, unchanged. Round-2 findings all fixed at bd9ee4dd, the 09-01 reviewer comments all addressed by bd9ee4dd + acb43d0, CI green, L1 18/18 against the current head. Remaining items are documentation-level only (scheduler-plugins hard-errors on per-role minReplicas; CoordinatedPolicy webhook enforcement requires installs to apply the PR's updated VWC)."
+  },
+
+  "round3_2": {
+    "trigger": "PR head advanced acb43d0 -> 11ea20c9 ('Address review feedback on component sizing and gang coverage docs'). acb43d0 IS an ancestor of 11ea20c9 (1 incremental commit), so a delta re-review. Unlike round 3.1, this delta DOES touch production code.",
+    "delta": "8 files. Production: api/workloads/v1alpha2/helper.go (ComputeSubGroupSize drops the `return max(total,1)` floor -> `return total`, so an empty customComponents list now yields 0 instead of 1; helper_test.go updated to want:0) and pkg/reconciler/roleinstanceset_reconciler.go (`WithSize(*component.Size)` -> `WithSize(ptr.Deref(component.Size,1))` and the same for the ComponentSizeLabelKey, fixing a nil-deref panic when a component omits the optional Size). Non-production: coordinatedpolicy_types.go godoc reword, doc/features/gang-scheduling.md, keps/430 README, examples/basic/rbg/scheduling/volcano-gang-tiered.yaml, and +9 lines of e2e gang coverage.",
+    "reconcilerFix": "The ptr.Deref change is a genuine robustness fix: InstanceComponent.Size is optional, so a customComponents role with a component that omits Size would previously panic on *component.Size in constructRoleInstanceTemplateByCustomComponents. It now defaults to 1, matching the ComputeSubGroupSize nil-size handling added in bd9ee4dd.",
+    "l1Recheck": "Merged into verify branch 036e0cf7. L1 harness 18/18 TestVerifyR3* PASS (HARNESS_RC=0). Full affected packages green: go test ./api/workloads/v1alpha2/ ./pkg/scheduler/... ./pkg/reconciler/... all ok (PKG_RC=0), including the updated TestComputeSubGroupSize (want:0).",
+    "probe": {
+      "why": "Dropping the max(total,1) floor makes ComputeSubGroupSize return 0 for an empty customComponents list. CustomComponentsPattern.Components is +optional with NO MinItems validation and the RBG webhook does not reject an empty list, so the 0 is reachable and flows into the gang math (helper.go GetGroupSize, gang_strategy.go GangSize, volcano/scheduler.go buildGangSpec).",
+      "file": "pkg/scheduler/volcano/verify_r32_subgroupsize_zero_probe_test.go",
+      "results": "(1) Single covered role with empty components -> minMember collapses to 0 -> the existing `if minMember==0` guard REJECTS it as IncompatibleGangConfigError ('resolved to minMember 0'), same protection as F2b. No new defect. (2) Mixed healthy role + empty-customComponents role -> minMember counts only the healthy role (correct: 1), but buildGangSpec STILL emits a SubGroupPolicy entry {Name:ghost, SubGroupSize:0, MinSubGroups:1} for the empty role.",
+      "evidence": "results/L1-round3.2-subgroupsize-zero-probe.txt"
+    },
+    "newFinding": {
+      "id": "N6",
+      "severity": "minor",
+      "polarity": "observation",
+      "layer": "unit",
+      "match": ["TestVerifyR32_Probe_MixedEmptyRoleEmitsZeroSubGroup"],
+      "claim": "buildGangSpec emits a degenerate SubGroupPolicy{SubGroupSize:0} for a gang-covered role whose customComponentsPattern lists no components (reachable because Components is +optional with no MinItems validation). It is asymmetric with the existing `if minReplicas == 0 { continue }` guard two lines up, which skips zero-replica roles. Suggested: skip (or reject at admission) a covered role with subGroupSize 0 the same way.",
+      "assessment": "NON-BLOCKING and a NET IMPROVEMENT over the previous head. Before 11ea20c9 the max(total,1) floor counted a phantom pod for a zero-pod role, inflating minMember so the gang could never be satisfied (pods Pending forever, an F4-class outcome). After the change minMember is arithmetically correct; the only residue is the odd subGroupSize=0 entry. Whether Volcano tolerates subGroupSize=0 was NOT confirmed at L3 (edge case, degenerate config); flagged as minor.",
+      "notVerifiedAtL3": "Volcano's acceptance of a SubGroupPolicy with subGroupSize=0 was not exercised on a live cluster this round; the finding rests on the L1 probe plus code reading."
+    },
+    "verdict": "APPROVE-leaning, essentially unchanged. The delta is a net improvement (fixes a real nil-deref panic and removes phantom-pod inflation of minMember). One new MINOR, non-blocking observation (N6: subGroupSize=0 subGroupPolicy entry for an empty-customComponents gang role; suggest a symmetric skip or MinItems=1 admission validation). All prior findings remain fixed; L1 18/18 + affected packages green."
   },
 
   "round2Findings": [
