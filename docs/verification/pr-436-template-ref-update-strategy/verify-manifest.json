@@ -1,0 +1,74 @@
+{
+  "pr": "https://github.com/sgl-project/rbg/pull/436",
+  "topic": "pr-436-template-ref-update-strategy",
+  "headSha": "3ec863130589a1ad3f6e7516f493bd32276914c6",
+  "mergeBase": "a747e8048eaf065c9d929d71872767b914ba9fdf",
+  "repo": "sgl-project/rbg",
+  "headBranch": "fix-template-ref-update-strategy",
+  "baseBranch": "main",
+  "layers": ["unit", "envtest", "live-kubectl"],
+  "liveCluster": "kubernetes-admin@cn-hongkong (ACK), reviewed with kubectl; CRDs restored to pre-PR state after verification",
+  "envtestAssets": "setup-envtest k8s/1.31.0-linux-amd64",
+  "verifiedAt": "2026-09-07",
+  "findings": [
+    {
+      "id": "F1",
+      "title": "Enum vs default-omitted create path",
+      "severity": "verified-safe",
+      "claim": "Adding Enum to optional type field (no CRD default) does not break relying on the documented 'Default is InPlaceIfPossible'.",
+      "layer": "live-kubectl",
+      "result": "PASS",
+      "evidence": "A1: RBG with rolloutStrategy.rollingUpdate present and type omitted -> admitted; stored type empty (runtime default path intact). roleinstancesets CRD enum active during test."
+    },
+    {
+      "id": "F2",
+      "title": "Upgrade hazard for objects storing a now-invalid type",
+      "severity": "disproven",
+      "claim": "Pre-existing objects storing an out-of-enum type become un-updatable after CRD upgrade.",
+      "layer": "live-kubectl",
+      "result": "DISPROVEN",
+      "evidence": "T4: non-touching patch (replicas) on stored-bogus RIS succeeds. T5: re-apply of same invalid value succeeds. T6: patch to a DIFFERENT invalid value rejected. T7: self-heal invalid->valid succeeds. k8s tolerates legacy values; only NEW violations and value CHANGES are blocked. No wedging."
+    },
+    {
+      "id": "F3",
+      "title": "Intended enum rejections land at CRD admission",
+      "severity": "verified",
+      "layer": "live-kubectl+envtest",
+      "result": "PASS",
+      "evidence": "A3: RBG invalid rollingUpdate.type rejected with enum message. T1: fresh RIS invalid type rejected. T3: update introducing invalid type rejected. envtest: 'Should reject v1alpha2 role rolloutStrategy with invalid update type' PASS; 'Should reject RoleInstanceSet with invalid update strategy type' PASS."
+    },
+    {
+      "id": "F4",
+      "title": "templateRef without patch reaches Ready",
+      "severity": "verified",
+      "layer": "envtest+live",
+      "result": "PASS",
+      "evidence": "envtest (PR-head controller, real apiserver): 'Should allow v1alpha2 templateRef without patch' -> Ready, PASS. Live cluster: deployed controller v0.8.0-0c00546d already lacks the removed check (RBG templateRef-without-patch reached Ready=True), so the relaxation is a no-op on this cluster but correct for main; the removed check is confirmed present on mergeBase via diff."
+    },
+    {
+      "id": "F4-side",
+      "title": "Explicit empty type \"\" now rejected (side effect)",
+      "severity": "minor",
+      "layer": "live-kubectl",
+      "result": "observed",
+      "evidence": "A4: RBG rollingUpdate.type=\"\" rejected by enum. Users relying on type:\"\" for default must omit the field instead (A1 shows omission still works). Minor behavioral change, acceptable."
+    },
+    {
+      "id": "F5",
+      "title": "v1alpha1 left inconsistent (still requires patch)",
+      "severity": "minor",
+      "layer": "source",
+      "result": "open",
+      "evidence": "v1alpha1/roletemplate_validation.go:134 still rejects templateRef without templatePatch while v1alpha2 no longer does. Question for author whether v1alpha1 is intentionally exempt."
+    },
+    {
+      "id": "F6",
+      "title": "No e2e; envtest unverified by author",
+      "severity": "minor",
+      "layer": "unit+envtest",
+      "result": "closed",
+      "evidence": "go test ./api/workloads/v1alpha2 ./pkg/reconciler -> ok. envtest 3 new cases -> 3 Passed | 0 Failed. e2e still absent for this functional change (closed by integration+live, not by adding e2e)."
+    }
+  ],
+  "verdict": "COMMENT"
+}
