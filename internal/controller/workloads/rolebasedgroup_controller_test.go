@@ -2390,3 +2390,114 @@ func TestReconcileIncompatibleGangConfig(t *testing.T) {
 	assert.Zero(t, result.RequeueAfter)
 	assert.Contains(t, drainEvents(), "Warning FailedReconcilePodGroup podgroup apiserver hiccup")
 }
+
+// OrderScheduled must wait for every Pod in the current replica batch, including
+// when a role replica creates more than one Pod.
+func TestCalculateScalingForAllCoordination_OrderScheduled(t *testing.T) {
+	patterns := []struct {
+		name           string
+		pattern        workloadsv1alpha2.Pattern
+		podsPerReplica int
+	}{
+		{
+			name:           "standalone",
+			pattern:        workloadsv1alpha2.Pattern{StandalonePattern: &workloadsv1alpha2.StandalonePattern{}},
+			podsPerReplica: 1,
+		},
+		{
+			name:           "leader worker",
+			pattern:        workloadsv1alpha2.Pattern{LeaderWorkerPattern: &workloadsv1alpha2.LeaderWorkerPattern{Size: ptr.To(int32(4))}},
+			podsPerReplica: 4,
+		},
+		{
+			name: "custom components",
+			pattern: workloadsv1alpha2.Pattern{CustomComponentsPattern: &workloadsv1alpha2.CustomComponentsPattern{
+				Components: []workloadsv1alpha2.InstanceComponent{
+					{Name: "leader", Size: ptr.To(int32(1))},
+					{Name: "worker", Size: ptr.To(int32(3))},
+				},
+			}},
+			podsPerReplica: 4,
+		},
+		{
+			name: "custom component with default size",
+			pattern: workloadsv1alpha2.Pattern{CustomComponentsPattern: &workloadsv1alpha2.CustomComponentsPattern{
+				Components: []workloadsv1alpha2.InstanceComponent{
+					{Name: "leader"},
+					{Name: "worker", Size: ptr.To(int32(3))},
+				},
+			}},
+			podsPerReplica: 4,
+		},
+		{
+			name:    "empty custom components",
+			pattern: workloadsv1alpha2.Pattern{CustomComponentsPattern: &workloadsv1alpha2.CustomComponentsPattern{}},
+		},
+		{
+			name: "zero sized custom component",
+			pattern: workloadsv1alpha2.Pattern{CustomComponentsPattern: &workloadsv1alpha2.CustomComponentsPattern{
+				Components: []workloadsv1alpha2.InstanceComponent{{Name: "worker", Size: ptr.To(int32(0))}},
+			}},
+		},
+	}
+
+	const currentReplicas int32 = 2
+	const desiredReplicas int32 = 4
+	for _, pattern := range patterns {
+		t.Run(pattern.name, func(t *testing.T) {
+			role := workloadsv1alpha2.RoleSpec{Pattern: pattern.pattern}
+			role.Name = "prefill"
+			role.Replicas = ptr.To(desiredReplicas)
+			rbg := &workloadsv1alpha2.RoleBasedGroup{
+				ObjectMeta: metav1.ObjectMeta{Name: "scheduled-batch", Namespace: "default"},
+				Spec:       workloadsv1alpha2.RoleBasedGroupSpec{Roles: []workloadsv1alpha2.RoleSpec{role}},
+			}
+			policy := &workloadsv1alpha2.CoordinatedPolicy{
+				Spec: workloadsv1alpha2.CoordinatedPolicySpec{Policies: []workloadsv1alpha2.CoordinatedPolicyRule{{
+					Roles: []string{role.Name},
+					Strategy: workloadsv1alpha2.CoordinatedPolicyStrategy{Scaling: &workloadsv1alpha2.ScalingCoordinationStrategy{
+						MaxSkew:     ptr.To(intstr.FromString("50%")),
+						Progression: workloadsv1alpha2.OrderScheduledProgression,
+					}},
+				}}},
+			}
+			statuses := []workloadsv1alpha2.RoleStatus{{Name: role.Name, Replicas: currentReplicas}}
+			podCount := int(currentReplicas) * pattern.podsPerReplica
+			scheduledCounts := []int{0}
+			if podCount > 0 {
+				scheduledCounts = append(scheduledCounts, podCount-1, podCount)
+				if pattern.podsPerReplica > 1 {
+					scheduledCounts = append(scheduledCounts, pattern.podsPerReplica)
+				}
+			}
+			for _, scheduledPods := range scheduledCounts {
+				t.Run(fmt.Sprintf("%d of %d Pods scheduled", scheduledPods, podCount), func(t *testing.T) {
+					scheme := runtime.NewScheme()
+					require.NoError(t, clientgoscheme.AddToScheme(scheme))
+					objects := make([]client.Object, 0, podCount)
+					for i := 0; i < podCount; i++ {
+						pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{
+							Name: fmt.Sprintf("prefill-%d", i), Namespace: rbg.Namespace,
+							Labels: map[string]string{
+								constants.GroupNameLabelKey: rbg.Name,
+								constants.RoleNameLabelKey:  role.Name,
+							},
+						}}
+						if i < scheduledPods {
+							pod.Spec.NodeName = "node-1"
+						}
+						objects = append(objects, pod)
+					}
+					r := &RoleBasedGroupReconciler{client: fake.NewClientBuilder().WithScheme(scheme).WithObjects(objects...).Build()}
+					targets, err := r.CalculateScalingForAllCoordination(context.Background(), rbg, policy, statuses)
+					require.NoError(t, err)
+					want := currentReplicas
+					if podCount > 0 && scheduledPods == podCount {
+						want = desiredReplicas
+					}
+					assert.Equal(t, want, targets[role.Name])
+				})
+			}
+		})
+	}
+}

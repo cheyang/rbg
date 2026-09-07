@@ -1375,12 +1375,21 @@ func (r *RoleBasedGroupReconciler) CalculateScalingForAllCoordination(
 	return result, nil
 }
 
-// getScheduledReplicas queries the number of scheduled pods (with nodeName) for a given role.
+// getScheduledReplicas converts scheduled Pods into the replica units used by RoleStatus.
 func (r *RoleBasedGroupReconciler) getScheduledReplicas(
 	ctx context.Context,
 	rbg *workloadsv1alpha2.RoleBasedGroup,
 	roleName string,
 ) (int32, error) {
+	role, err := rbg.GetRole(roleName)
+	if err != nil {
+		return 0, err
+	}
+	podsPerReplica := workloadsv1alpha2.ComputeSubGroupSize(role)
+	if podsPerReplica == 0 {
+		return 0, nil
+	}
+
 	podList := &corev1.PodList{}
 	labelSelector := client.MatchingLabels{
 		constants.GroupNameLabelKey: rbg.Name,
@@ -1398,7 +1407,10 @@ func (r *RoleBasedGroupReconciler) getScheduledReplicas(
 		}
 	}
 
-	return scheduled, nil
+	// CurrentReplicas counts instances for multi-Pod patterns. Keep the comparison
+	// in replica units so the next batch waits for currentReplicas * podsPerReplica
+	// scheduled Pods, rather than advancing after only currentReplicas Pods.
+	return scheduled / podsPerReplica, nil
 }
 
 // CalculateRollingUpdateForAllCoordination calculates rolling update strategies for all coordination policies.
