@@ -1337,7 +1337,7 @@ func (r *RoleBasedGroupReconciler) CalculateScalingForAllCoordination(
 			}
 
 			// Query scheduled replicas from pods
-			scheduled, err := r.getScheduledReplicas(ctx, rbg, roleName)
+			scheduled, err := r.getScheduledReplicas(ctx, rbg, roleName, current)
 			if err != nil {
 				return nil, fmt.Errorf("failed to query scheduled replicas for role %s: %w", roleName, err)
 			}
@@ -1380,14 +1380,17 @@ func (r *RoleBasedGroupReconciler) getScheduledReplicas(
 	ctx context.Context,
 	rbg *workloadsv1alpha2.RoleBasedGroup,
 	roleName string,
+	currentReplicas int32,
 ) (int32, error) {
 	role, err := rbg.GetRole(roleName)
 	if err != nil {
-		return 0, err
+		// A separate policy may still reference a role removed from the RBG.
+		return 0, nil
 	}
 	podsPerReplica := workloadsv1alpha2.ComputeSubGroupSize(role)
 	if podsPerReplica == 0 {
-		return 0, nil
+		// With no Pods to schedule, every current replica satisfies OrderScheduled.
+		return currentReplicas, nil
 	}
 
 	podList := &corev1.PodList{}

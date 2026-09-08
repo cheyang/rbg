@@ -126,6 +126,8 @@ replicas with four Pods each require eight scheduled Pods before the next batch
 can proceed. Standalone replicas require one Pod each; leader-worker replicas use
 their `size`, and custom-component replicas use the sum of their component sizes.
 
+An empty custom-component list or components whose sizes are all zero produce no Pods. Such roles satisfy `OrderScheduled` without waiting for scheduling; the normal `maxSkew` batch limits still apply. `OrderReady` continues to use the reported ready replica count.
+
 ### Example: Simple Coordinated Scaling
 
 ```yaml
