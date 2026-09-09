@@ -1,0 +1,6 @@
+## BASE (v0.8.0 controller, enum CRD) — pr463-rbg-recreate (type=Recreate)
+- RBG stored type: Recreate
+- RIS pr463-rbg-recreate-worker present? Error from server (NotFound): roleinstancesets.workloads.x-k8s.io "pr463-rbg-recreate-worker" not found
+NO
+- RIS list in pr463-test:
+No resources found in pr463-test namespace.

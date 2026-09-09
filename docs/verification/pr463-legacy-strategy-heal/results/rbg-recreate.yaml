@@ -1,0 +1,26 @@
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: pr463-rbg-recreate
+  namespace: pr463-test
+spec:
+  roles:
+  - name: worker
+    replicas: 1
+    rolloutStrategy:
+      type: RollingUpdate
+      rollingUpdate:
+        type: Recreate
+    standalonePattern:
+      template:
+        metadata:
+          labels:
+            app: pr463-rbg-recreate
+        spec:
+          containers:
+          - image: nginx:1.25-alpine
+            name: nginx
+            resources:
+              requests:
+                cpu: 10m
+                memory: 16Mi

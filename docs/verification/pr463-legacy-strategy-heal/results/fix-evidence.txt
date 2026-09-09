@@ -1,0 +1,7 @@
+## FIX (PR binary webhooks=none, enum CRD) — pr463-rbg-recreate (RBG type=Recreate)
+- RBG stored type (unchanged, webhooks disabled): Recreate
+- RIS pr463-rbg-recreate-worker created? roleinstanceset.workloads.x-k8s.io/pr463-rbg-recreate-worker
+- RIS updateStrategy.type (healed by reconciler): RecreatePod
+- RIS status:
+NAME                        DESIRED   UPDATED   UPDATED_READY   READY   TOTAL   AGE
+pr463-rbg-recreate-worker   1         1         1               1       1       40s

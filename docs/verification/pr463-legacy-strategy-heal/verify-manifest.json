@@ -1,0 +1,52 @@
+{
+  "topic": "pr463-legacy-strategy-heal",
+  "pr": "https://github.com/sgl-project/rbg/pull/463",
+  "prHeadFetch": { "remote": "https://github.com/sgl-project/rbg.git", "ref": "pull/463/head" },
+  "mergeBase": "07fc643f46a3ed6029c1f90a4e4e67de3cb5fabe",
+  "premise": {
+    "id": "P0",
+    "claim": "After #436's enum, a RoleInstanceSet carrying updateStrategy.type 'Recreate' or '' fails spec writes with 422; the v0.8.0 controller copies the legacy value from an RBG into the RIS verbatim, so the RIS is never created (422 on SSA-apply).",
+    "runsAgainst": "base",
+    "verdict": "Confirmed",
+    "evidence": "results/enum-rejection-matrix.txt + results/base-evidence.txt (live ACK API server, k8s v1.36.1)"
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "summary": "Core premise: enum rejects legacy values; PR self-heals on write",
+      "severity": "blocker",
+      "tests": [
+        { "name": "enum-rejection-matrix (live API server)", "polarity": "contract", "layer": "live", "result": "RED on base (422 for Recreate/\"\") -> GREEN premise" },
+        { "name": "base-controller-recreate-flow (live, v0.8.0)", "polarity": "canary", "layer": "live", "result": "RIS absent + 422 log (base) -> Confirmed" },
+        { "name": "reconciler-normalize-live (PR binary, webhooks=none)", "polarity": "contract", "layer": "live", "result": "RIS created type=RecreatePod (fix) -> Confirmed" },
+        { "name": "TestNormalizeUpdateStrategyType / *Defaulter_Default", "polarity": "contract", "layer": "unit", "result": "GREEN" }
+      ],
+      "verdict": "Confirmed (reconciler path live; webhook path unit-level + e2e-upgrade phase 4)"
+    },
+    {
+      "id": "F2",
+      "summary": "failurePolicy: Fail on new RIS mutating webhook",
+      "severity": "major",
+      "tests": [
+        { "name": "observed-existing-validating-webhook-fail", "polarity": "contract", "layer": "live", "result": "cluster already runs vrolebasedgroup.kb.io with failurePolicy=Fail (RIS create blocked when controller scaled to 0) -> same established pattern" }
+      ],
+      "verdict": "Not-a-new-risk-class: RIS extends the existing Fail-webhook pattern already used by RBG/RBGS. Bootstrapping gated by caBundle in CI."
+    },
+    {
+      "id": "F3",
+      "summary": "RIS defaulter vs reconciler normalization redundancy",
+      "severity": "nit",
+      "tests": [],
+      "verdict": "Acknowledged (harmless; reconciler already normalizes before SSA, defaulter covers direct user writes)"
+    },
+    {
+      "id": "F4",
+      "summary": "snapshot objectBumps accounts only for the Recreate fixture's RIS repair",
+      "severity": "minor",
+      "tests": [],
+      "verdict": "Not-reproduced (requires v0.7.0->current upgrade e2e lane; internally consistent if v0.8.0 defaulted empty->InPlaceIfPossible in the RIS)"
+    }
+  ],
+  "liveNote": "Cluster: ACK cn-hongkong, k8s v1.36.1, 3 nodes, running v0.8.0 (pre-enum, webhook-less validating only). enum was temporarily patched onto the RIS CRD for the premise/fix A/B and fully restored after. The webhook-heal admission path is proven at unit level (defaulter.Default) and transitively by the live reconciler proof (same NormalizeUpdateStrategyType); live admission-chain serving was not feasible out-of-cluster (API server cannot reach a host webhook). The PR's own e2e upgrade suite phase 4 is the intended admission-chain proof.",
+  "envtestNote": "test/envtest harness does NOT wire admission webhooks (no WebhookInstallOptions; SetupRBGController sets up only the reconciler). envtest proves CRD-schema behavior (valid types accepted, update-path works) on a real isolated kube-apiserver, not the webhook heal."
+}

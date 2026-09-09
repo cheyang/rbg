@@ -1,0 +1,12 @@
+--- type="Recreate" ---
+The RoleInstanceSet "nginx-cluster-backend" is invalid: spec.updateStrategy.type: Unsupported value: "Recreate": supported values: "RecreatePod", "InPlaceIfPossible", "InPlaceOnly"
+--- type="" ---
+The RoleInstanceSet "nginx-cluster-backend" is invalid: spec.updateStrategy.type: Unsupported value: "": supported values: "RecreatePod", "InPlaceIfPossible", "InPlaceOnly"
+--- type="Garbage" ---
+The RoleInstanceSet "nginx-cluster-backend" is invalid: spec.updateStrategy.type: Unsupported value: "Garbage": supported values: "RecreatePod", "InPlaceIfPossible", "InPlaceOnly"
+--- type="RecreatePod" ---
+roleinstanceset.workloads.x-k8s.io/nginx-cluster-backend patched
+--- type="InPlaceIfPossible" ---
+roleinstanceset.workloads.x-k8s.io/nginx-cluster-backend patched (no change)
+--- type="InPlaceOnly" ---
+roleinstanceset.workloads.x-k8s.io/nginx-cluster-backend patched

@@ -1,0 +1,25 @@
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: pr463-rbg
+  namespace: pr463-test
+spec:
+  roles:
+  - minReadySeconds: 0
+    name: worker
+    podManagementPolicy: Parallel
+    replicas: 1
+    standalonePattern:
+      template:
+        metadata:
+          labels:
+            app: test-rbg-worker
+        spec:
+          containers:
+          - image: nginx:1.25-alpine
+            name: nginx
+            resources:
+              requests:
+                cpu: 10m
+                memory: 16Mi
+

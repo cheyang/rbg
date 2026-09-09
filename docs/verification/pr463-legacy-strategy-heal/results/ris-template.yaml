@@ -1,0 +1,88 @@
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleInstanceSet
+metadata:
+  annotations:
+    rbg.workloads.x-k8s.io/role-instance-pattern: Stateful
+    rbg.workloads.x-k8s.io/role-size: "1"
+  labels:
+    rbg.workloads.x-k8s.io/group-name: test-rbg
+    rbg.workloads.x-k8s.io/role-name: worker
+    rbg.workloads.x-k8s.io/role-revision-worker: 5f684c5dd
+    rbg.workloads.x-k8s.io/role-type: PodTemplate
+  name: pr463-ris
+  ownerReferences:
+  - apiVersion: workloads.x-k8s.io/v1alpha2
+    blockOwnerDeletion: true
+    controller: true
+    kind: RoleBasedGroup
+    name: test-rbg
+spec:
+  minReadySeconds: 0
+  podManagementPolicy: Parallel
+  revisionHistoryLimit: 10
+  roleInstanceTemplate:
+    components:
+    - name: worker
+      serviceName: s-pr463-ris
+      size: 1
+      template:
+        metadata:
+          labels:
+            app: pr463-ris
+            rbg.workloads.x-k8s.io/component-size: "1"
+            rbg.workloads.x-k8s.io/group-name: test-rbg
+            rbg.workloads.x-k8s.io/role-name: worker
+        spec:
+          containers:
+          - env:
+            - name: RBG_COMPONENT_INDEX
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['rbg.workloads.x-k8s.io/component-id']
+            - name: RBG_COMPONENT_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['rbg.workloads.x-k8s.io/component-name']
+            - name: RBG_GROUP_NAME
+              value: test-rbg
+            - name: RBG_ROLE_INDEX
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['rbg.workloads.x-k8s.io/role-instance-index']
+            - name: RBG_ROLE_INSTANCE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['rbg.workloads.x-k8s.io/role-instance-name']
+            - name: RBG_ROLE_NAME
+              value: worker
+            image: nginx:1.25-alpine
+            name: nginx
+            resources:
+              requests:
+                cpu: 10m
+                memory: 16Mi
+            volumeMounts:
+            - mountPath: /etc/rbg
+              name: rbg-cluster-config
+              readOnly: true
+          volumes:
+          - configMap:
+              items:
+              - key: config.yaml
+                path: config.yaml
+              name: test-rbg
+            name: rbg-cluster-config
+    restartPolicy:
+  selector:
+    matchLabels:
+      rbg.workloads.x-k8s.io/group-name: test-rbg
+      rbg.workloads.x-k8s.io/role-name: worker
+  updateStrategy:
+    maxSurge: 0
+    maxUnavailable: 1
+    partition: 0
+    paused: false
+  collisionCount: 0
+  currentRevision: pr463-ris-666b94bb8b
+  expectedUpdatedReplicas: 1
+  updatedReplicas: 0
