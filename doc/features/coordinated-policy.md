@@ -120,14 +120,6 @@ Coordinated scaling ensures roles scale together during scale-out operations.
 | `OrderScheduled` | Proceed when pods are scheduled (faster, less safe) |
 | `OrderReady` | Proceed when pods are fully ready (slower, safer) |
 
-For a role that is still scaling out, `OrderScheduled` waits for the Pod count
-represented by its current replicas to be scheduled. For example, two current
-replicas with four Pods each require eight scheduled Pods before the next batch
-can proceed. Standalone replicas require one Pod each; leader-worker replicas use
-their `size`, and custom-component replicas use the sum of their component sizes.
-
-An empty custom-component list or components whose sizes are all zero produce no Pods. Such roles satisfy `OrderScheduled` without waiting for scheduling; the normal `maxSkew` batch limits still apply. `OrderReady` continues to use the reported ready replica count.
-
 ### Example: Simple Coordinated Scaling
 
 ```yaml

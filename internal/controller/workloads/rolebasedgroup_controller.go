@@ -1336,18 +1336,19 @@ func (r *RoleBasedGroupReconciler) CalculateScalingForAllCoordination(
 				}
 			}
 
-			// Query scheduled replicas from pods
-			scheduled, err := r.getScheduledReplicas(ctx, rbg, roleName, current)
+			// Count scheduled Pods and the Pods expected from the current replicas.
+			scheduled, expected, err := r.getPodSchedulingCounts(ctx, rbg, roleName, current)
 			if err != nil {
-				return nil, fmt.Errorf("failed to query scheduled replicas for role %s: %w", roleName, err)
+				return nil, fmt.Errorf("failed to query Pod scheduling counts for role %s: %w", roleName, err)
 			}
 
 			roleStates[roleName] = coordinationscaling.RoleScalingState{
-				RoleName:          roleName,
-				DesiredReplicas:   desired,
-				CurrentReplicas:   current,
-				ScheduledReplicas: scheduled,
-				ReadyReplicas:     ready,
+				RoleName:        roleName,
+				DesiredReplicas: desired,
+				CurrentReplicas: current,
+				ScheduledPods:   scheduled,
+				ExpectedPods:    expected,
+				ReadyReplicas:   ready,
 			}
 		}
 
@@ -1375,22 +1376,23 @@ func (r *RoleBasedGroupReconciler) CalculateScalingForAllCoordination(
 	return result, nil
 }
 
-// getScheduledReplicas converts scheduled Pods into the replica units used by RoleStatus.
-func (r *RoleBasedGroupReconciler) getScheduledReplicas(
+// getPodSchedulingCounts returns scheduled Pods and the expected Pod count for the
+// current replicas. The expectation includes Pods that have not been created yet.
+func (r *RoleBasedGroupReconciler) getPodSchedulingCounts(
 	ctx context.Context,
 	rbg *workloadsv1alpha2.RoleBasedGroup,
 	roleName string,
 	currentReplicas int32,
-) (int32, error) {
+) (scheduledPods, expectedPods int64, err error) {
 	role, err := rbg.GetRole(roleName)
 	if err != nil {
 		// A separate policy may still reference a role removed from the RBG.
-		return 0, nil
+		return 0, 0, nil
 	}
 	podsPerReplica := workloadsv1alpha2.ComputeSubGroupSize(role)
-	if podsPerReplica == 0 {
-		// With no Pods to schedule, every current replica satisfies OrderScheduled.
-		return currentReplicas, nil
+	expectedPods = int64(currentReplicas) * int64(podsPerReplica)
+	if expectedPods == 0 {
+		return 0, 0, nil
 	}
 
 	podList := &corev1.PodList{}
@@ -1398,22 +1400,19 @@ func (r *RoleBasedGroupReconciler) getScheduledReplicas(
 		constants.GroupNameLabelKey: rbg.Name,
 		constants.RoleNameLabelKey:  roleName,
 	}
-
 	if err := r.client.List(ctx, podList, client.InNamespace(rbg.Namespace), labelSelector); err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
-	var scheduled int32
 	for _, pod := range podList.Items {
+		if pod.DeletionTimestamp != nil {
+			continue
+		}
 		if pod.Spec.NodeName != "" {
-			scheduled++
+			scheduledPods++
 		}
 	}
-
-	// CurrentReplicas counts instances for multi-Pod patterns. Keep the comparison
-	// in replica units so the next batch waits for currentReplicas * podsPerReplica
-	// scheduled Pods, rather than advancing after only currentReplicas Pods.
-	return scheduled / podsPerReplica, nil
+	return scheduledPods, expectedPods, nil
 }
 
 // CalculateRollingUpdateForAllCoordination calculates rolling update strategies for all coordination policies.

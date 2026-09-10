@@ -2430,6 +2430,27 @@ func TestCalculateScalingForAllCoordination_OrderScheduled(t *testing.T) {
 			podsPerReplica: 4,
 		},
 		{
+			name: "negative component size",
+			pattern: workloadsv1alpha2.Pattern{CustomComponentsPattern: &workloadsv1alpha2.CustomComponentsPattern{
+				Components: []workloadsv1alpha2.InstanceComponent{{Name: "component0", Size: ptr.To(int32(2))}, {Name: "component1", Size: ptr.To(int32(-1))}},
+			}},
+			podsPerReplica: 2,
+		},
+		{
+			name: "component sizes cancel",
+			pattern: workloadsv1alpha2.Pattern{CustomComponentsPattern: &workloadsv1alpha2.CustomComponentsPattern{
+				Components: []workloadsv1alpha2.InstanceComponent{{Name: "component0", Size: ptr.To(int32(2))}, {Name: "component1", Size: ptr.To(int32(-2))}},
+			}},
+			podsPerReplica: 2,
+		},
+		{
+			name: "only negative component",
+			pattern: workloadsv1alpha2.Pattern{CustomComponentsPattern: &workloadsv1alpha2.CustomComponentsPattern{
+				Components: []workloadsv1alpha2.InstanceComponent{{Name: "component0", Size: ptr.To(int32(-1))}},
+			}},
+			podsPerReplica: 0,
+		},
+		{
 			name:    "empty custom components",
 			pattern: workloadsv1alpha2.Pattern{CustomComponentsPattern: &workloadsv1alpha2.CustomComponentsPattern{}},
 		},
@@ -2463,19 +2484,33 @@ func TestCalculateScalingForAllCoordination_OrderScheduled(t *testing.T) {
 			}
 			statuses := []workloadsv1alpha2.RoleStatus{{Name: role.Name, Replicas: currentReplicas}}
 			podCount := int(currentReplicas) * pattern.podsPerReplica
-			scheduledCounts := []int{0}
+			type schedulingCase struct {
+				name           string
+				scheduledPods  int
+				missingPod     bool
+				terminatingPod bool
+			}
+			cases := []schedulingCase{{name: "none scheduled"}}
 			if podCount > 0 {
-				scheduledCounts = append(scheduledCounts, podCount-1, podCount)
+				cases = append(cases,
+					schedulingCase{name: "one unscheduled", scheduledPods: podCount - 1},
+					schedulingCase{name: "all scheduled", scheduledPods: podCount},
+					schedulingCase{name: "one not created yet", scheduledPods: podCount - 1, missingPod: true},
+					schedulingCase{name: "terminating Pod cannot fill gap", scheduledPods: podCount - 1, terminatingPod: true},
+				)
 				if pattern.podsPerReplica > 1 {
-					scheduledCounts = append(scheduledCounts, pattern.podsPerReplica)
+					cases = append(cases, schedulingCase{name: "one replica worth scheduled", scheduledPods: pattern.podsPerReplica})
 				}
 			}
-			for _, scheduledPods := range scheduledCounts {
-				t.Run(fmt.Sprintf("%d of %d Pods scheduled", scheduledPods, podCount), func(t *testing.T) {
+			for _, tc := range cases {
+				t.Run(tc.name, func(t *testing.T) {
 					scheme := runtime.NewScheme()
 					require.NoError(t, clientgoscheme.AddToScheme(scheme))
 					objects := make([]client.Object, 0, podCount)
 					for i := 0; i < podCount; i++ {
+						if tc.missingPod && i == podCount-1 {
+							continue
+						}
 						pod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{
 							Name: fmt.Sprintf("prefill-%d", i), Namespace: rbg.Namespace,
 							Labels: map[string]string{
@@ -2483,16 +2518,24 @@ func TestCalculateScalingForAllCoordination_OrderScheduled(t *testing.T) {
 								constants.RoleNameLabelKey:  role.Name,
 							},
 						}}
-						if i < scheduledPods {
+						if i < tc.scheduledPods {
 							pod.Spec.NodeName = "node-1"
 						}
 						objects = append(objects, pod)
+					}
+					if tc.terminatingPod {
+						oldPod := objects[0].(*corev1.Pod).DeepCopy()
+						oldPod.Name = "terminating-old-pod"
+						oldPod.Spec.NodeName = "node-1"
+						oldPod.DeletionTimestamp = ptr.To(metav1.Now())
+						oldPod.Finalizers = []string{"test.rbg/hold"}
+						objects = append(objects, oldPod)
 					}
 					r := &RoleBasedGroupReconciler{client: fake.NewClientBuilder().WithScheme(scheme).WithObjects(objects...).Build()}
 					targets, err := r.CalculateScalingForAllCoordination(context.Background(), rbg, policy, statuses)
 					require.NoError(t, err)
 					want := currentReplicas
-					if scheduledPods == podCount {
+					if tc.scheduledPods == podCount {
 						want = desiredReplicas
 					}
 					assert.Equal(t, want, targets[role.Name])
