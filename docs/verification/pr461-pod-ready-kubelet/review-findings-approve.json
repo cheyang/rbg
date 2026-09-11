@@ -1,0 +1,10 @@
+{
+  "blockingIssues": [],
+  "nonBlockingRisks": [],
+  "questions": [],
+  "missingTests": [],
+  "optionalImprovements": [],
+  "publishableSummary": {
+    "body": "Approving. Round 2 (05d465d7) addressed both KWOK companion findings from the prior review and production code is unchanged. `pod-running` now writes `Ready=False` so only the gate-aware `pod-ready` stage promotes a pod to Ready=True — the bypass where a gated-out pod could be briefly exposed Ready is closed. `teardown-kwok.sh` now deletes `pod-ready-blocked`, so the new stage no longer leaks after uninstall. The core fix is unchanged and still proven: base wrote the kubelet-owned `Ready` from `addNotReadyKey`/`removeNotReadyKey` (a second writer → kubelet republished the stale value on its 10s sync), and removing those two `UpdatePodReadyCondition` calls so the controller writes only the readiness gate restores the single-writer invariant; the rewritten tests bite (verified: they fail on buggy base, pass on this head). Unit layer green on 05d465d7; regression scan of the pod-running Ready=False change shows no stuck-state path. No blockers or majors remain. Verified on branch verify/pr461-pod-ready-kubelet — evidence under docs/verification/pr461-pod-ready-kubelet/. (Note: two duplicate CHANGES_REQUESTED reviews from the prior round are still on the PR; GitHub can't delete submitted reviews via API — please dismiss one manually.)"
+  }
+}
