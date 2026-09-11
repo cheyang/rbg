@@ -49,6 +49,37 @@ without the patch, because the question is whether the problem exists today.
 | B4 | KWOK `pod-ready-blocked` + gate-aware `pod-ready` emulate kubelet | static | Favorable (live KWOK not run) | jq syntax matches existing stage; logic emulates derivation; documented missing-gate gap acceptable. Recommend author run stress/e2e |
 | B5 | Aggregation latency for Pod-Ready readers (~1s on return-to-rotation) | static | Acceptable (documented cost, not a regression) | `node_binding.go isPodRunningAndReady` reads Pod Ready; flap (which fed RIS readyReplicas 1→0) is removed |
 
+## Round 2 — author fixes (`05d465d7`, reviewed `a0a4fa39..05d465d7`)
+
+The author amended the PR to address exactly the two KWOK companion findings from round 1.
+Delta = 2 files, +7/-2, **production code untouched**:
+
+| ID | Round-1 verdict | Round-2 verdict | What changed |
+|----|-----------------|-----------------|---------------|
+| B4a (pod-running bypass, was **major** → REQUEST_CHANGES) | Blocking | **Fixed** | `kwok-stage.yaml:84` `pod-running` now writes `Ready=False` (was `True`), with a comment; only the gate-aware `pod-ready` stage promotes to `Ready=True`. Bypass closed. |
+| B4b (pod-ready-blocked teardown leak, nit) | Leak | **Fixed** | `teardown-kwok.sh` now deletes `pod-ready-blocked`. |
+| B1/B2 (production fix) | Confirmed | Unchanged (still pass) | Production untouched; `go test ./pkg/inplace/pod/readiness/...` green on `05d465d7` — `results/L1-prhead-round2-05d465d7.txt`. |
+| B3/B5 | Acceptable | Unchanged | No production change; residual notes still hold. |
+
+Regression scan of the `pod-running Ready=False` change (no stuck state): `pod-running` matches
+phase=Pending + podIP → sets Running/ContainersReady/Ready=False; `pod-ready` then matches
+(Ready≠True, no gate False) and promotes Ready=True after 1s; `pod-ready-blocked` flips to False
+when Ready=True + any gate False. A pod gated out before reaching Ready stays Ready=False (correct);
+one gated out after Ready flips back via `pod-ready-blocked`. Faithful to kubelet. No new finding.
+
+**All change-requesting findings resolved.** The prior REQUEST_CHANGES reason (the B4a major) no
+longer applies; a follow-up review (COMMENT resolving, or APPROVE) can clear it. Two duplicate
+CHANGES_REQUESTED reviews from round 1 (03:01:08Z + 03:01:17Z) are still on the PR — GitHub can't
+delete submitted reviews via API; one should be dismissed/cleared manually when posting the
+resolution.
+
+`re-verify.sh` unit layer: green on `05d465d7` (the script's B1/B2 "HARNESS-UPDATE" status is a
+graft tooling artifact — `harnessPaths` lists only the docs dir, not the PR's own test files,
+which are present on the head; direct `go test` confirms pass). B4a/B4b are static findings,
+re-verified by inspection of the `a0a4fa39..05d465d7` diff.
+
+## Summary (round 1)
+
 **No blockers, no majors.** The premise is confirmed (mechanism), the fix is proven correct at
 the unit layer, and the remaining items are minor validation gaps / acceptable design notes. The
 suggested review verdict is therefore **COMMENT**, not REQUEST_CHANGES.
