@@ -1,0 +1,27 @@
+--- FAIL: TestAddNotReadyKey_LeavesReadyConditionToKubelet (0.00s)
+    pod_readiness_utils_test.go:249: controller write modified condition Ready, which it does not own:
+          before: {Type:Ready ObservedGeneration:0 Status:True LastProbeTime:0001-01-01 00:00:00 +0000 UTC LastTransitionTime:2026-01-01 00:00:00 +0000 UTC Reason:KubeletManaged Message:owned by kubelet; the controller must not rewrite this condition}
+          after:  {Type:Ready ObservedGeneration:0 Status:False LastProbeTime:0001-01-01 00:00:00 +0000 UTC LastTransitionTime:2026-09-11 10:25:22.999195785 +0800 CST m=+0.005772261 Reason:ReadinessGatesNotReady Message:the status of pod readiness gate "InstancePodReady" is not "True", but False}
+    pod_readiness_utils_test.go:251: Ready must be left untouched at True; controller wrote False
+--- FAIL: TestRemoveNotReadyKey_LeavesReadyConditionToKubelet (0.00s)
+    pod_readiness_utils_test.go:285: controller write modified condition Ready, which it does not own:
+          before: {Type:Ready ObservedGeneration:0 Status:False LastProbeTime:0001-01-01 00:00:00 +0000 UTC LastTransitionTime:2026-01-01 00:00:00 +0000 UTC Reason:KubeletManaged Message:owned by kubelet; the controller must not rewrite this condition}
+          after:  {Type:Ready ObservedGeneration:0 Status:True LastProbeTime:0001-01-01 00:00:00 +0000 UTC LastTransitionTime:2026-09-11 10:25:22.999521056 +0800 CST m=+0.006097542 Reason: Message:}
+    pod_readiness_utils_test.go:287: Ready must be left untouched at False for kubelet to flip; controller wrote True
+--- FAIL: TestAddNotReadyKey_GateCondition (0.00s)
+    --- FAIL: TestAddNotReadyKey_GateCondition/gate_condition_absent_is_created_as_False_with_the_key (0.00s)
+        pod_readiness_utils_test.go:369: controller write modified condition Ready, which it does not own:
+              before: {Type:Ready ObservedGeneration:0 Status:True LastProbeTime:0001-01-01 00:00:00 +0000 UTC LastTransitionTime:2026-01-01 00:00:00 +0000 UTC Reason:KubeletManaged Message:owned by kubelet; the controller must not rewrite this condition}
+              after:  {Type:Ready ObservedGeneration:0 Status:False LastProbeTime:0001-01-01 00:00:00 +0000 UTC LastTransitionTime:2026-09-11 10:25:22.999792755 +0800 CST m=+0.006369231 Reason:ReadinessGatesNotReady Message:the status of pod readiness gate "InstancePodReady" is not "True", but False}
+    --- FAIL: TestAddNotReadyKey_GateCondition/gate_condition_True_gains_the_key_and_flips_to_False (0.00s)
+        pod_readiness_utils_test.go:369: controller write modified condition Ready, which it does not own:
+              before: {Type:Ready ObservedGeneration:0 Status:True LastProbeTime:0001-01-01 00:00:00 +0000 UTC LastTransitionTime:2026-01-01 00:00:00 +0000 UTC Reason:KubeletManaged Message:owned by kubelet; the controller must not rewrite this condition}
+              after:  {Type:Ready ObservedGeneration:0 Status:False LastProbeTime:0001-01-01 00:00:00 +0000 UTC LastTransitionTime:2026-09-11 10:25:22.999836246 +0800 CST m=+0.006412732 Reason:ReadinessGatesNotReady Message:the status of pod readiness gate "InstancePodReady" is not "True", but False}
+--- FAIL: TestRemoveNotReadyKey_GateCondition (0.00s)
+    --- FAIL: TestRemoveNotReadyKey_GateCondition/removing_the_last_key_flips_the_gate_back_to_True (0.00s)
+        pod_readiness_utils_test.go:468: controller write modified condition Ready, which it does not own:
+              before: {Type:Ready ObservedGeneration:0 Status:False LastProbeTime:0001-01-01 00:00:00 +0000 UTC LastTransitionTime:2026-01-01 00:00:00 +0000 UTC Reason:KubeletManaged Message:owned by kubelet; the controller must not rewrite this condition}
+              after:  {Type:Ready ObservedGeneration:0 Status:True LastProbeTime:0001-01-01 00:00:00 +0000 UTC LastTransitionTime:2026-09-11 10:25:22.999895628 +0800 CST m=+0.006472114 Reason: Message:}
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/inplace/pod/readiness	0.008s
+FAIL

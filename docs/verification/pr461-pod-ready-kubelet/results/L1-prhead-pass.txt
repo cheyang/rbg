@@ -1,0 +1,28 @@
+=== RUN   TestAddNotReadyKey_LeavesReadyConditionToKubelet
+--- PASS: TestAddNotReadyKey_LeavesReadyConditionToKubelet (0.00s)
+=== RUN   TestRemoveNotReadyKey_LeavesReadyConditionToKubelet
+--- PASS: TestRemoveNotReadyKey_LeavesReadyConditionToKubelet (0.00s)
+=== RUN   TestAddNotReadyKey_GateCondition
+=== RUN   TestAddNotReadyKey_GateCondition/gate_condition_absent_is_created_as_False_with_the_key
+=== RUN   TestAddNotReadyKey_GateCondition/gate_condition_True_gains_the_key_and_flips_to_False
+=== RUN   TestAddNotReadyKey_GateCondition/key_already_present_is_a_no-op_with_no_status_write
+=== RUN   TestAddNotReadyKey_GateCondition/pod_without_the_readiness_gate_is_left_alone
+--- PASS: TestAddNotReadyKey_GateCondition (0.00s)
+    --- PASS: TestAddNotReadyKey_GateCondition/gate_condition_absent_is_created_as_False_with_the_key (0.00s)
+    --- PASS: TestAddNotReadyKey_GateCondition/gate_condition_True_gains_the_key_and_flips_to_False (0.00s)
+    --- PASS: TestAddNotReadyKey_GateCondition/key_already_present_is_a_no-op_with_no_status_write (0.00s)
+    --- PASS: TestAddNotReadyKey_GateCondition/pod_without_the_readiness_gate_is_left_alone (0.00s)
+=== RUN   TestRemoveNotReadyKey_GateCondition
+=== RUN   TestRemoveNotReadyKey_GateCondition/removing_the_last_key_flips_the_gate_back_to_True
+=== RUN   TestRemoveNotReadyKey_GateCondition/removing_one_of_two_keys_keeps_the_gate_False
+=== RUN   TestRemoveNotReadyKey_GateCondition/unknown_key_is_a_no-op_with_no_status_write
+=== RUN   TestRemoveNotReadyKey_GateCondition/gate_condition_absent_is_a_no-op_with_no_status_write
+=== RUN   TestRemoveNotReadyKey_GateCondition/pod_without_the_readiness_gate_is_left_alone
+--- PASS: TestRemoveNotReadyKey_GateCondition (0.00s)
+    --- PASS: TestRemoveNotReadyKey_GateCondition/removing_the_last_key_flips_the_gate_back_to_True (0.00s)
+    --- PASS: TestRemoveNotReadyKey_GateCondition/removing_one_of_two_keys_keeps_the_gate_False (0.00s)
+    --- PASS: TestRemoveNotReadyKey_GateCondition/unknown_key_is_a_no-op_with_no_status_write (0.00s)
+    --- PASS: TestRemoveNotReadyKey_GateCondition/gate_condition_absent_is_a_no-op_with_no_status_write (0.00s)
+    --- PASS: TestRemoveNotReadyKey_GateCondition/pod_without_the_readiness_gate_is_left_alone (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/readiness	0.009s

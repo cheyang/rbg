@@ -1,0 +1,21 @@
+## L3 live premise repro — blocked (cluster state, NOT this PR)
+
+Controller image: rolebasedgroup/rbgs-controller:v0.8.0-0c00546d
+v0.8.0 tag has the bug path (UpdatePodReadyCondition at lines 65,100 of pod_readiness_utils.go):
+65:		util.UpdatePodReadyCondition(newPod)
+100:		util.UpdatePodReadyCondition(newPod)
+
+### Controller is NOT reconciling (applied RBG flap in pr461-repro → no status, no pod):
+flap status.absent=
+No resources found in pr461-repro namespace.
+
+### Root cause (controller logs) — legacy restartPolicy string form on leftover RIs:
+error: failed to list *v1alpha2.RoleInstance: json: cannot unmarshal string into Go struct field RoleInstanceSpec.items.spec.restartPolicy of type v1alpha2.RestartPolicyConfig
+
+### Offending RoleInstances (all leftover test resources, restartPolicy="None" string):
+### Offending RoleInstances (all leftover test resources, restartPolicy="None" string):
+  default/nginx-cluster-backend-0: restartPolicy="None"
+  default/nginx-cluster-backend-1: restartPolicy="None"
+  default/nginx-cluster-backend-2: restartPolicy="None"
+  default/nginx-cluster-frontend-0: restartPolicy="None"
+  pr433-test/test-rbg-worker-0: restartPolicy="None"

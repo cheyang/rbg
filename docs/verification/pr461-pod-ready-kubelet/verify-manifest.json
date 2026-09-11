@@ -1,0 +1,37 @@
+{
+  "topic": "pr461-pod-ready-kubelet",
+  "pr": "https://github.com/sgl-project/rbg/pull/461",
+  "harnessPaths": [
+    "docs/verification/pr461-pod-ready-kubelet"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Pod Ready flaps because the controller writes a kubelet-owned condition: the controller writes Ready, becomes a second writer, kubelet's status-manager cache diverges, and kubelet republishes the stale value on its 10s sync (issue #460).",
+    "reportedComponent": "pkg/inplace/pod/readiness (addNotReadyKey / removeNotReadyKey -> UpdatePodReadyCondition)",
+    "patchedComponent": "pkg/inplace/pod/readiness (remove the two UpdatePodReadyCondition calls)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "Mechanism proven at unit layer: base branch calls util.UpdatePodReadyCondition in addNotReadyKey/removeNotReadyKey (a second writer of kubelet-owned Ready). Harness-bites check: the PR's contract tests FAIL against buggy base (controller rewrites Ready) and PASS on the PR head. See results/L1-bites-buggy-base-fails.txt + results/L1-prhead-pass.txt. Live *symptom* (25-35ms stale republish) NOT reproduced: the ACK controller is blocked by a pre-existing legacy-data issue unrelated to this PR (5 leftover test RoleInstances carry restartPolicy=\"None\" string, which v0.8.0 cannot unmarshal, breaking the RoleInstance watch for the whole cluster). Not-refuted, not a blocker. See results/L3-blocked-legacy-data.txt.",
+    "match": ["TestAddNotReadyKey_LeavesReadyConditionToKubelet", "TestRemoveNotReadyKey_LeavesReadyConditionToKubelet"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/inplace/pod/readiness/... -run 'TestAddNotReadyKey|TestRemoveNotReadyKey' -v"
+    },
+    "integration": {
+      "_note": "Not needed: the readiness utils are pure status-transition logic over an in-memory Adapter; the unit layer fully decides every finding. No envtest layer was added because it would exercise nothing the unit layer does not.",
+      "kind": "none"
+    }
+  },
+  "findings": [
+    { "id": "B1", "polarity": "contract", "layer": "unit", "match": ["TestAddNotReadyKey_LeavesReadyConditionToKubelet", "TestAddNotReadyKey_GateCondition"], "note": "addNotReadyKey no longer writes Ready (only the gate). Fails on base (controller writes Ready=False), passes on PR. Bites confirmed." },
+    { "id": "B2", "polarity": "contract", "layer": "unit", "match": ["TestRemoveNotReadyKey_LeavesReadyConditionToKubelet", "TestRemoveNotReadyKey_GateCondition"], "note": "removeNotReadyKey no longer writes Ready. Fails on base (controller writes Ready=True -> the stale-True republish root cause), passes on PR. Bites confirmed." },
+    { "id": "B3", "polarity": "contract", "layer": "static", "match": [], "note": "Remaining inplace callers (inplace_update.go updateCondition, roleinstance inplaceupdate.go updateInstanceReadyCondition) still write Ready=False via UpdatePodReadyCondition. PR body claims this is safe because a spec/label write follows in the same reconcile, forcing kubelet to re-sync and refresh its cache. Static trace CONFIRMS: onlyUpdateRevision calls updateInstanceReadyCondition then sets the revision-hash LABEL + UpdatePod in the same function; Update() calls updateCondition then updatePodInPlace (spec patch) in the same function. Justification holds. Residual risk = sub-second window between the status and spec API calls (far smaller than the readiness-utils case, which had NO accompanying spec write). Not a blocker." },
+    { "id": "B4", "polarity": "contract", "layer": "static", "match": [], "note": "KWOK stage fidelity: new pod-ready-blocked + gate-aware pod-ready. Static check: jq expressions match the existing pod-ready stage syntax; logic emulates kubelet (promote Ready=True only when no gate is False; flip Ready=False when any gate is False; strategic-merge preserves controller-owned gates). Documented missing-gate fidelity gap is acceptable (controller injects both gates at creation). Live KWOK verification needs the stress suite (not run here) — recommend author confirm stress/e2e green with the new stages." },
+    { "id": "B5", "polarity": "contract", "layer": "static", "match": [], "note": "Aggregation latency: consumers reading Pod Ready (e.g. node_binding.go isPodRunningAndReady) see Ready ~1s later on return-to-rotation (kubelet derivation cadence). This is the documented cost of the fix, not a regression. The flap itself (which WAS visible in RIS readyReplicas 1->0) is removed. Acceptable." }
+  ],
+  "liveNote": "L3 live flap repro was BLOCKED by a pre-existing cluster-state issue (5 leftover test RoleInstances with restartPolicy=\"None\" string break the v0.8.0 RoleInstance watch cluster-wide; the controller never reconciles a freshly applied RBG). This is unrelated to PR #461. To attempt the live flap: delete/patch the 5 leftover RIs (default/nginx-cluster-*-*, pr433-test/test-rbg-worker-0) to unblock the watch, then apply the issue #460 Variant-A repro (RBG flap + kubectl get -w on the replacement pod) and watch for the 25-35ms Ready True->False->True republish. Only do this with explicit cluster-owner OK (the leftover RIs are not this session's resources)."
+}
