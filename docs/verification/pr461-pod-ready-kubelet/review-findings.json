@@ -2,15 +2,15 @@
   "nonBlockingRisks": [
     {
       "path": "test/stress/templates/kwok-stage.yaml",
-      "line": 84,
-      "severity": "minor",
-      "body": "The new gate-aware `pod-ready` stage is correct, but `pod-running` (here) still writes `Ready=True` unconditionally on the Pending→Running transition, with no gate check. So a pod the controller has gated out (any readiness gate False) can still be briefly exposed as Ready by `pod-running`, then later flipped back to False by `pod-ready-blocked`. That is exactly the flap class this PR removes in production, so the stress sim currently does not faithfully guard against its own regression. Cheapest fix: have `pod-running` write `Ready=False` (set ContainersReady/Initialized/phase=Running only) and let only the gate-aware `pod-ready` stage promote to `Ready=True` — so every Ready=True promotion goes through the gate check. Worth folding into this PR since the KWOK companion is part of the change."
+      "line": 126,
+      "severity": "major",
+      "body": "Blocking merge on the KWOK companion, not the production code. The gate-aware check you added here in `pod-ready` is correct — but `pod-running` (line 84, unchanged by this PR) still writes `Ready=True` unconditionally on the Pending→Running transition, with no gate check. So a pod the controller has gated out (any readiness gate False) can still be briefly exposed as Ready by `pod-running`, then later flipped back to False by `pod-ready-blocked` — exactly the flap class this PR removes in production, so the stress sim does not faithfully guard against its own regression. Cheapest fix: have `pod-running` write `Ready=False` (set ContainersReady/Initialized/phase=Running only) and let only this gate-aware `pod-ready` stage promote to `Ready=True`, so every Ready=True promotion goes through the gate check. Please fold this in before merge — the KWOK companion is part of this change."
     },
     {
-      "path": "test/stress/scripts/teardown-kwok.sh",
-      "line": 31,
+      "path": "test/stress/templates/kwok-stage.yaml",
+      "line": 169,
       "severity": "nit",
-      "body": "The new `pod-ready-blocked` stage is not in the teardown — lines here delete `pod-initialize`, `pod-running`, `pod-ready`, `pod-delete` but omit `pod-ready-blocked`, so the stage leaks after uninstall. Add `kubectl delete stage pod-ready-blocked --ignore-not-found=true` next to the others."
+      "body": "This new `pod-ready-blocked` stage is not in the sibling teardown script: `test/stress/scripts/teardown-kwok.sh` (lines 29-32) deletes `pod-initialize`, `pod-running`, `pod-ready`, `pod-delete` but omits `pod-ready-blocked`, so the stage leaks after uninstall. Add `kubectl delete stage pod-ready-blocked --ignore-not-found=true` next to the other deletes. (teardown-kwok.sh isn't in this PR's diff, so I'm anchoring the note here on the stage that's missing its cleanup line.)"
     },
     {
       "path": "pkg/inplace/pod/readiness/pod_readiness_utils.go",
