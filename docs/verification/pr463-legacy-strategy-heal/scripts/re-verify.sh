@@ -47,6 +47,13 @@ echo "=== L1: unit tests (defaulters, conversion, reconciler, certmanager) ==="
 go test ./api/workloads/v1alpha2/... ./api/workloads/v1alpha1/... ./pkg/reconciler/... ./pkg/webhook/... 2>&1 | tail -25
 
 echo
+echo "=== L1: B1 harness (RBGS parent/child strategy non-convergence) ==="
+echo "  Polarity: contract tests (NeedsUpdate/NonConvergence) RED on buggy = reproduction;"
+echo "            canaries (UpdateExistingRBGs/newRBGForSet write Recreate) GREEN on buggy."
+echo "  Fixed => contracts flip GREEN; canaries flip RED (invert them to assert RecreatePod)."
+go test ./internal/controller/workloads/ -run 'TestB1' -v 2>&1 | tail -40
+
+echo
 echo "=== L2: envtest (real isolated kube-apiserver) ==="
 if command -v setup-envtest >/dev/null 2>&1; then
   export KUBEBUILDER_ASSETS="$(setup-envtest use 1.36.2 -p path)"

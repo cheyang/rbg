@@ -1,0 +1,30 @@
+=== RUN   TestB1_NeedsUpdate_LegacyParentVsHealedChild_Diverges
+    rolebasedgroupset_b1_test.go:129: needsUpdate(legacyParent=Recreate, healedChild=RecreatePod) = true (want false: semantically equal)
+    rolebasedgroupset_b1_test.go:130: 
+        	Error Trace:	/home/ecs-user/rbg/internal/controller/workloads/rolebasedgroupset_b1_test.go:130
+        	Error:      	Should be false
+        	Test:       	TestB1_NeedsUpdate_LegacyParentVsHealedChild_Diverges
+        	Messages:   	a healed child (RecreatePod) must be up-to-date vs. a legacy parent (Recreate); rolesEqual uses reflect.DeepEqual with no semantic normalization, so the controller sees a permanent divergence
+--- FAIL: TestB1_NeedsUpdate_LegacyParentVsHealedChild_Diverges (0.04s)
+=== RUN   TestB1_NonConvergence_AcrossSimulatedReconciles
+    rolebasedgroupset_b1_test.go:153: iter 0: needsUpdate(parent=Recreate, child=RecreatePod) = true
+    rolebasedgroupset_b1_test.go:157: iter 0: needsUpdate returned true after the child was healed to RecreatePod; the RBGS layer never converges (legacy parent is never healed, child is re-healed every Update)
+    rolebasedgroupset_b1_test.go:153: iter 1: needsUpdate(parent=Recreate, child=RecreatePod) = true
+    rolebasedgroupset_b1_test.go:157: iter 1: needsUpdate returned true after the child was healed to RecreatePod; the RBGS layer never converges (legacy parent is never healed, child is re-healed every Update)
+    rolebasedgroupset_b1_test.go:153: iter 2: needsUpdate(parent=Recreate, child=RecreatePod) = true
+    rolebasedgroupset_b1_test.go:157: iter 2: needsUpdate returned true after the child was healed to RecreatePod; the RBGS layer never converges (legacy parent is never healed, child is re-healed every Update)
+    rolebasedgroupset_b1_test.go:153: iter 3: needsUpdate(parent=Recreate, child=RecreatePod) = true
+    rolebasedgroupset_b1_test.go:157: iter 3: needsUpdate returned true after the child was healed to RecreatePod; the RBGS layer never converges (legacy parent is never healed, child is re-healed every Update)
+    rolebasedgroupset_b1_test.go:153: iter 4: needsUpdate(parent=Recreate, child=RecreatePod) = true
+    rolebasedgroupset_b1_test.go:157: iter 4: needsUpdate returned true after the child was healed to RecreatePod; the RBGS layer never converges (legacy parent is never healed, child is re-healed every Update)
+--- FAIL: TestB1_NonConvergence_AcrossSimulatedReconciles (0.00s)
+=== RUN   TestB1_UpdateExistingRBGs_WritesLegacyValueBack
+2026-09-11T18:39:42+08:00	INFO	Successfully updated RoleBasedGroup	{"name": "legacy-set-0"}
+    rolebasedgroupset_b1_test.go:188: updateExistingRBGs wrote child strategy type = "Recreate" (canary: buggy code writes the legacy value back)
+--- PASS: TestB1_UpdateExistingRBGs_WritesLegacyValueBack (0.00s)
+=== RUN   TestB1_newRBGForSet_CopiesLegacyValueVerbatim
+    rolebasedgroupset_b1_test.go:202: newRBGForSet child strategy type = "Recreate" (canary: buggy code copies the legacy value verbatim)
+--- PASS: TestB1_newRBGForSet_CopiesLegacyValueVerbatim (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.049s
+FAIL

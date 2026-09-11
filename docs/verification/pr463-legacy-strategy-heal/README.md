@@ -31,6 +31,31 @@ the RBG layer prevents the invalid value from reaching the RIS. Verified live �
 | F2 | failurePolicy=Fail on new RIS mutating webhook | live (ACK) | observation | — | Cluster already runs `vrolebasedgroup.kb.io` with failurePolicy=Fail: scaling the controller to 0 blocked all RBG creates ("no endpoints"). RIS extends the established Fail-webhook pattern; not a new risk class. | **Not-a-new-risk-class** |
 | F3 | RIS defaulter vs reconciler redundancy | review | — | — | Acknowledged; harmless (reconciler normalizes before SSA; defaulter covers direct user writes). | **nit** |
 | F4 | snapshot objectBumps accounts only for Recreate fixture's RIS | — | — | — | Not-reproduced (needs v0.7.0->current upgrade e2e). Internally consistent iff v0.8.0 defaulted ""->InPlaceIfPossible in the RIS. | **Not-reproduced** |
+| B1 | RBGS parent/child strategy non-convergence on the legacy-upgrade path (`rolesEqual` raw DeepEqual; `updateExistingRBGs`/`newRBGForSet` copy parent verbatim) | unit | contract (repro) + canary | needsUpdate stays true across reconciles (parent Recreate ≠ healed child RecreatePod); controller writes `Recreate` back | `results/b1-unit.txt`: `TestB1_NeedsUpdate_*=RED` (reproduction), `TestB1_NonConvergence_*` RED across 5 simulated reconciles, `TestB1_UpdateExistingRBGs_*`/`TestB1_newRBGForSet_*` canaries GREEN (write/copy `Recreate`). Harness-bites: applied `normalizedRolesCopy` + semantic compare → contracts GREEN, canaries FLIP; reverted. | **Confirmed (unit)** |
+
+## Round 2 (head `b8e770eb`) — RBGS-layer gap
+
+Round 1 verified the RBG→RIS link (P0/F1) and the webhook heal; it did **not** audit the RBGS
+controller's compare/copy path. Round 2 (after commit `b8e770e "fix"`, a certmanager dedup +
+e2e slice-helper refactor that does **not** touch the RBGS controller) audited that path and
+found B1: the PR heals at admission and at the RBG→RIS reconciler boundary, but **not** at the
+RBGS→RBG boundary. A legacy pre-webhook RBGS whose stored `GroupTemplate` still carries
+`Recreate` is never healed (the controller only does `Status().Update`, which doesn't trigger
+the spec defaulter), and every reconcile re-issues a child `Update` that the webhook heals back
+to `RecreatePod` → `needsUpdate` stays true → RBGS-layer non-convergence on the very legacy-
+upgrade path the PR targets. The RIS stays valid (reconciler normalizes before SSA), so the
+PR's stated break IS fixed and there's no data corruption — this is a control-loop-churn /
+non-convergence defect, not a re-introduction of the RIS 422.
+
+**Fix refinement proven by the harness:** normalizing only the write path (`updateExistingRBGs`/
+`newRBGForSet`) is **insufficient** for convergence — the parent stays `Recreate`, so `rolesEqual`
+still sees a divergence. The fix **must** also normalize in the compare (`rolesEqual`), or the
+controller keeps re-issuing Updates.
+
+**Limitation:** the hot-loop *rate* (does a no-op webhook-healed `Update` re-queue via `Owns`?)
+is not proven this round — `test/envtest/testutil/setup.go` wires no admission webhooks, so the
+existing envtest cannot observe it; needs a webhook-wired envtest or a live run (ACK). The
+non-convergence itself is unit-proven and holds regardless of the loop rate.
 
 ## What was actually run (live, on ACK cn-hongkong)
 

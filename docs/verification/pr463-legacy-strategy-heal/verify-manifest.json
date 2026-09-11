@@ -1,7 +1,10 @@
 {
   "topic": "pr463-legacy-strategy-heal",
   "pr": "https://github.com/sgl-project/rbg/pull/463",
-  "prHeadFetch": { "remote": "https://github.com/sgl-project/rbg.git", "ref": "pull/463/head" },
+  "prHeadFetch": {
+    "remote": "https://github.com/sgl-project/rbg.git",
+    "ref": "pull/463/head"
+  },
   "mergeBase": "07fc643f46a3ed6029c1f90a4e4e67de3cb5fabe",
   "premise": {
     "id": "P0",
@@ -16,10 +19,30 @@
       "summary": "Core premise: enum rejects legacy values; PR self-heals on write",
       "severity": "blocker",
       "tests": [
-        { "name": "enum-rejection-matrix (live API server)", "polarity": "contract", "layer": "live", "result": "RED on base (422 for Recreate/\"\") -> GREEN premise" },
-        { "name": "base-controller-recreate-flow (live, v0.8.0)", "polarity": "canary", "layer": "live", "result": "RIS absent + 422 log (base) -> Confirmed" },
-        { "name": "reconciler-normalize-live (PR binary, webhooks=none)", "polarity": "contract", "layer": "live", "result": "RIS created type=RecreatePod (fix) -> Confirmed" },
-        { "name": "TestNormalizeUpdateStrategyType / *Defaulter_Default", "polarity": "contract", "layer": "unit", "result": "GREEN" }
+        {
+          "name": "enum-rejection-matrix (live API server)",
+          "polarity": "contract",
+          "layer": "live",
+          "result": "RED on base (422 for Recreate/\"\") -> GREEN premise"
+        },
+        {
+          "name": "base-controller-recreate-flow (live, v0.8.0)",
+          "polarity": "canary",
+          "layer": "live",
+          "result": "RIS absent + 422 log (base) -> Confirmed"
+        },
+        {
+          "name": "reconciler-normalize-live (PR binary, webhooks=none)",
+          "polarity": "contract",
+          "layer": "live",
+          "result": "RIS created type=RecreatePod (fix) -> Confirmed"
+        },
+        {
+          "name": "TestNormalizeUpdateStrategyType / *Defaulter_Default",
+          "polarity": "contract",
+          "layer": "unit",
+          "result": "GREEN"
+        }
       ],
       "verdict": "Confirmed (reconciler path live; webhook path unit-level + e2e-upgrade phase 4)"
     },
@@ -28,7 +51,12 @@
       "summary": "failurePolicy: Fail on new RIS mutating webhook",
       "severity": "major",
       "tests": [
-        { "name": "observed-existing-validating-webhook-fail", "polarity": "contract", "layer": "live", "result": "cluster already runs vrolebasedgroup.kb.io with failurePolicy=Fail (RIS create blocked when controller scaled to 0) -> same established pattern" }
+        {
+          "name": "observed-existing-validating-webhook-fail",
+          "polarity": "contract",
+          "layer": "live",
+          "result": "cluster already runs vrolebasedgroup.kb.io with failurePolicy=Fail (RIS create blocked when controller scaled to 0) -> same established pattern"
+        }
       ],
       "verdict": "Not-a-new-risk-class: RIS extends the existing Fail-webhook pattern already used by RBG/RBGS. Bootstrapping gated by caBundle in CI."
     },
@@ -45,8 +73,43 @@
       "severity": "minor",
       "tests": [],
       "verdict": "Not-reproduced (requires v0.7.0->current upgrade e2e lane; internally consistent if v0.8.0 defaulted empty->InPlaceIfPossible in the RIS)"
+    },
+    {
+      "id": "B1",
+      "summary": "RBGS parent/child strategy non-convergence on the legacy-upgrade path: rolesEqual uses reflect.DeepEqual and updateExistingRBGs/newRBGForSet copy the parent GroupTemplate verbatim, so a legacy Recreate parent vs a webhook-healed RecreatePod child never converges (needsUpdate stays true across reconciles). RIS stays safe (reconciler normalizes before SSA).",
+      "severity": "major",
+      "round": 2,
+      "head": "b8e770ebdc993019628c4a0baa20aab9a7eba2d0",
+      "tests": [
+        {
+          "name": "TestB1_NeedsUpdate_LegacyParentVsHealedChild_Diverges",
+          "polarity": "contract",
+          "layer": "unit",
+          "result": "RED on PR head (needsUpdate=true for healed child vs legacy parent) -> reproduction"
+        },
+        {
+          "name": "TestB1_NonConvergence_AcrossSimulatedReconciles",
+          "polarity": "contract",
+          "layer": "unit",
+          "result": "RED on PR head (needsUpdate stays true across 5 simulated reconciles) -> non-convergence"
+        },
+        {
+          "name": "TestB1_UpdateExistingRBGs_WritesLegacyValueBack",
+          "polarity": "canary",
+          "layer": "unit",
+          "result": "GREEN on PR head (writes un-normalized Recreate back); FLIPS to RED after fix (child gets RecreatePod)"
+        },
+        {
+          "name": "TestB1_newRBGForSet_CopiesLegacyValueVerbatim",
+          "polarity": "canary",
+          "layer": "unit",
+          "result": "GREEN on PR head (copies Recreate verbatim); FLIPS to RED after fix (child gets RecreatePod)"
+        }
+      ],
+      "harnessBites": "Applied proposed fix (normalizedRolesCopy + semantic compare in rolesEqual): contracts -> GREEN, canaries -> FLIP (Red). Reverted; production diff empty. Refinement: copy-only normalization is INSUFFICIENT for convergence (parent stays Recreate); the fix MUST also normalize in rolesEqual/compare.",
+      "verdict": "Confirmed (unit, deterministic). Live hot-loop RATE (no-op Update -> Owns re-queue) not proven this round; non-convergence itself is unit-proven and holds regardless."
     }
   ],
   "liveNote": "Cluster: ACK cn-hongkong, k8s v1.36.1, 3 nodes, running v0.8.0 (pre-enum, webhook-less validating only). enum was temporarily patched onto the RIS CRD for the premise/fix A/B and fully restored after. The webhook-heal admission path is proven at unit level (defaulter.Default) and transitively by the live reconciler proof (same NormalizeUpdateStrategyType); live admission-chain serving was not feasible out-of-cluster (API server cannot reach a host webhook). The PR's own e2e upgrade suite phase 4 is the intended admission-chain proof.",
-  "envtestNote": "test/envtest harness does NOT wire admission webhooks (no WebhookInstallOptions; SetupRBGController sets up only the reconciler). envtest proves CRD-schema behavior (valid types accepted, update-path works) on a real isolated kube-apiserver, not the webhook heal."
+  "envtestNote": "test/envtest harness does NOT wire admission webhooks (no WebhookInstallOptions; SetupRBGController sets up only the reconciler). envtest proves CRD-schema behavior (valid types accepted, update-path works) on a real isolated kube-apiserver, not the webhook heal. B1 (round 2) is unit-only: test/envtest/testutil/setup.go wires no admission webhooks (no WebhookInstallOptions), so the hot-loop rate cannot be observed in envtest; only the compare/copy non-convergence is unit-proven."
 }
