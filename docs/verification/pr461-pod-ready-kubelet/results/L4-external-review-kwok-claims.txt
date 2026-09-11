@@ -1,0 +1,12 @@
+## External-review claim verification (KWOK companion)
+
+Claim 1 — pod-running bypasses gate-aware Ready:
+  pod-running (test/stress/templates/kwok-stage.yaml:84) writes Ready="True" unconditionally;
+  gate-aware check is only in pod-ready (lines 124-129). CONFIRMED via grep + stage read.
+  -> a gate=False pod can be briefly exposed Ready before pod-ready-blocked flips it back.
+
+Claim 2 — pod-ready-blocked missing from teardown:
+  teardown-kwok.sh:29-32 deletes pod-initialize, pod-running, pod-ready, pod-delete only;
+  pod-ready-blocked absent. CONFIRMED.
+
+Both are test/stress infra, not production. Production fix (pkg/inplace/pod/readiness) unaffected.
