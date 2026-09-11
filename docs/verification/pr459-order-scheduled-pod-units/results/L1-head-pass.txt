@@ -1,0 +1,162 @@
+=== HEAD (PR #459 cyf/feat/fix-order-scheduled-units) — contract tests PASS ===
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/standalone
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/standalone/none_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/standalone/one_unscheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/standalone/all_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/standalone/one_not_created_yet
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/standalone/terminating_Pod_cannot_fill_gap
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/leader_worker
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/leader_worker/none_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/leader_worker/one_unscheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/leader_worker/all_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/leader_worker/one_not_created_yet
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/leader_worker/terminating_Pod_cannot_fill_gap
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/leader_worker/one_replica_worth_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/custom_components
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/custom_components/none_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/custom_components/one_unscheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/custom_components/all_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/custom_components/one_not_created_yet
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/custom_components/terminating_Pod_cannot_fill_gap
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/custom_components/one_replica_worth_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/custom_component_with_default_size
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/custom_component_with_default_size/none_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/custom_component_with_default_size/one_unscheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/custom_component_with_default_size/all_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/custom_component_with_default_size/one_not_created_yet
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/custom_component_with_default_size/terminating_Pod_cannot_fill_gap
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/custom_component_with_default_size/one_replica_worth_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/negative_component_size
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/negative_component_size/none_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/negative_component_size/one_unscheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/negative_component_size/all_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/negative_component_size/one_not_created_yet
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/negative_component_size/terminating_Pod_cannot_fill_gap
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/negative_component_size/one_replica_worth_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/component_sizes_cancel
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/component_sizes_cancel/none_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/component_sizes_cancel/one_unscheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/component_sizes_cancel/all_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/component_sizes_cancel/one_not_created_yet
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/component_sizes_cancel/terminating_Pod_cannot_fill_gap
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/component_sizes_cancel/one_replica_worth_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/only_negative_component
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/only_negative_component/none_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/empty_custom_components
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/empty_custom_components/none_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/zero_sized_custom_component
+=== RUN   TestCalculateScalingForAllCoordination_OrderScheduled/zero_sized_custom_component/none_scheduled
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+--- PASS: TestCalculateScalingForAllCoordination_OrderScheduled (0.09s)
+    --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/standalone (0.04s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/standalone/none_scheduled (0.04s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/standalone/one_unscheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/standalone/all_scheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/standalone/one_not_created_yet (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/standalone/terminating_Pod_cannot_fill_gap (0.00s)
+    --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/leader_worker (0.01s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/leader_worker/none_scheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/leader_worker/one_unscheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/leader_worker/all_scheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/leader_worker/one_not_created_yet (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/leader_worker/terminating_Pod_cannot_fill_gap (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/leader_worker/one_replica_worth_scheduled (0.00s)
+    --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/custom_components (0.01s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/custom_components/none_scheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/custom_components/one_unscheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/custom_components/all_scheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/custom_components/one_not_created_yet (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/custom_components/terminating_Pod_cannot_fill_gap (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/custom_components/one_replica_worth_scheduled (0.00s)
+    --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/custom_component_with_default_size (0.01s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/custom_component_with_default_size/none_scheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/custom_component_with_default_size/one_unscheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/custom_component_with_default_size/all_scheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/custom_component_with_default_size/one_not_created_yet (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/custom_component_with_default_size/terminating_Pod_cannot_fill_gap (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/custom_component_with_default_size/one_replica_worth_scheduled (0.00s)
+    --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/negative_component_size (0.01s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/negative_component_size/none_scheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/negative_component_size/one_unscheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/negative_component_size/all_scheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/negative_component_size/one_not_created_yet (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/negative_component_size/terminating_Pod_cannot_fill_gap (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/negative_component_size/one_replica_worth_scheduled (0.00s)
+    --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/component_sizes_cancel (0.01s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/component_sizes_cancel/none_scheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/component_sizes_cancel/one_unscheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/component_sizes_cancel/all_scheduled (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/component_sizes_cancel/one_not_created_yet (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/component_sizes_cancel/terminating_Pod_cannot_fill_gap (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/component_sizes_cancel/one_replica_worth_scheduled (0.00s)
+    --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/only_negative_component (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/only_negative_component/none_scheduled (0.00s)
+    --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/empty_custom_components (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/empty_custom_components/none_scheduled (0.00s)
+    --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/zero_sized_custom_component (0.00s)
+        --- PASS: TestCalculateScalingForAllCoordination_OrderScheduled/zero_sized_custom_component/none_scheduled (0.00s)
+=== RUN   TestCalculateScalingForAllCoordination_MissingRole
+=== RUN   TestCalculateScalingForAllCoordination_MissingRole/removed_role_has_0_stale_replicas
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["removed", "prefill"], "maxSkew": "50%"}
+=== RUN   TestCalculateScalingForAllCoordination_MissingRole/removed_role_has_2_stale_replicas
+2026-09-11T12:09:23+08:00	DEBUG	Processing coordination scaling	{"roles": ["removed", "prefill"], "maxSkew": "50%"}
+--- PASS: TestCalculateScalingForAllCoordination_MissingRole (0.00s)
+    --- PASS: TestCalculateScalingForAllCoordination_MissingRole/removed_role_has_0_stale_replicas (0.00s)
+    --- PASS: TestCalculateScalingForAllCoordination_MissingRole/removed_role_has_2_stale_replicas (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.106s
+
+=== RUN   TestComputeSubGroupSize_ClampsNegativeSizes
+=== RUN   TestComputeSubGroupSize_ClampsNegativeSizes/single_negative_component_contributes_zero
+=== RUN   TestComputeSubGroupSize_ClampsNegativeSizes/positive_and_negative_cancel_to_the_positive_remainder
+=== RUN   TestComputeSubGroupSize_ClampsNegativeSizes/negative_component_does_not_shrink_a_larger_positive_total
+--- PASS: TestComputeSubGroupSize_ClampsNegativeSizes (0.00s)
+    --- PASS: TestComputeSubGroupSize_ClampsNegativeSizes/single_negative_component_contributes_zero (0.00s)
+    --- PASS: TestComputeSubGroupSize_ClampsNegativeSizes/positive_and_negative_cancel_to_the_positive_remainder (0.00s)
+    --- PASS: TestComputeSubGroupSize_ClampsNegativeSizes/negative_component_does_not_shrink_a_larger_positive_total (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.008s

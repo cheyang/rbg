@@ -1,0 +1,36 @@
+{
+  "topic": "pr459-order-scheduled-pod-units",
+  "pr": "https://github.com/sgl-project/rbg/pull/459",
+  "harnessPaths": [
+    "docs/verification/pr459-order-scheduled-pod-units",
+    "api/workloads/v1alpha2/helper_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "OrderScheduled compares ScheduledReplicas (a raw scheduled Pod count) against RoleStatus.Replicas (a replica count), so for multi-Pod-per-replica roles (LeaderWorker / CustomComponents) the progression gate passes as soon as a fraction of the current batch is scheduled: with two current replicas of four Pods each, four scheduled Pods already satisfy 4 >= 2 and the next scaling batch advances even though half the current batch is still unscheduled. (PR #459 §Ⅰ.)",
+    "reportedComponent": "internal/controller/workloads/rolebasedgroup_controller.go (getScheduledReplicas) + pkg/coordination/coordinationscaling/scaler.go (canProceedToNextBatch, OrderScheduled branch)",
+    "patchedComponent": "same files — getScheduledReplicas replaced by getPodSchedulingCounts (scheduledPods + expectedPods); OrderScheduled now compares ScheduledPods < ExpectedPods",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "The PR's own contract test TestCalculateScalingForAllCoordination_OrderScheduled, grafted onto the merge-base (07fc643f) and run, FAILS for every multi-Pod partial-scheduling case (leader_worker / custom_components / custom_component_with_default_size / negative_component_size / component_sizes_cancel — the 'one unscheduled', 'one not created yet', 'terminating Pod cannot fill gap', 'one replica worth scheduled' subcases) AND for the zero-Pod-per-replica cases (only_negative_component / empty_custom_components / zero_sized_custom_component), which on base are permanently stuck (0 < currentReplicas can never be satisfied when a role creates no Pods). 'none scheduled' and 'all scheduled' boundaries pass, as expected. See results/L1-base-bites-fails.txt. Live reproduction not attempted: the bug is a pure count-unit mismatch in a calculation function, fully decided at the unit layer; no cluster is needed (and the ACK cluster is blocked by legacy RI data, see [[rbg-ack-cluster-state]]).",
+    "match": ["TestCalculateScalingForAllCoordination_OrderScheduled"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ ./api/workloads/v1alpha2/ -run 'TestCalculateScalingForAllCoordination_OrderScheduled|TestCalculateScalingForAllCoordination_MissingRole|TestComputeSubGroupSize_ClampsNegativeSizes' -json -count=1"
+    },
+    "integration": {
+      "_note": "Not needed: CalculateScalingForAllCoordination is a pure calculation over (rbg, policy, roleStatuses, listed Pods). The unit layer exercises the real getPodSchedulingCounts against a controller-runtime fake client, which fully decides every finding. No envtest layer was added because it would exercise nothing the unit layer does not.",
+      "kind": "none"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestCalculateScalingForAllCoordination_OrderScheduled"], "note": "Fix correctness: the OrderScheduled gate now waits for ALL expected Pods of the current batch (scheduledPods < expectedPods where expectedPods = currentReplicas * ComputeSubGroupSize). Single-Pod (standalone) behavior preserved (expectedPods == currentReplicas). Zero-Pod roles satisfy the gate naturally (expectedPods==0). Terminating Pods excluded. Bites confirmed: FAILS on base, PASSES on PR head." },
+    { "id": "F2", "polarity": "contract", "layer": "unit", "match": ["TestComputeSubGroupSize_ClampsNegativeSizes"], "note": "Latent blast-radius fix bundled in: ComputeSubGroupSize now clamps non-positive InstanceComponent.Size to 0 via max(*c.Size,0), matching the RoleInstance controller's actual pod creation (its build loop is bounded by the raw size, so a negative size yields zero Pods) and fixing gang sizing (pkg/scheduler/common/gang_strategy.go, pkg/scheduler/volcano/scheduler.go) which previously under-counted on negative sizes. InstanceComponent.Size has NO +kubebuilder:validation:Minimum=0 marker, so negatives are API-reachable — the clamp is not dead code. Bites confirmed: FAILS on base (2+(-2)=0, 5+(-1)=4, single -1 -> -1), PASSES on head (2, 5, 0). Existing TestComputeSubGroupSize still passes on base (clamping only changes negative-input behavior). NOTE: instance_status.go:152 (componentSize += *component.Size) remains unclamped on a separate path — out of scope for this PR." },
+    { "id": "F3", "polarity": "contract", "layer": "unit", "match": ["TestCalculateScalingForAllCoordination_MissingRole"], "note": "Regression guard (not a bite): the new getPodSchedulingCounts calls rbg.GetRole(roleName), which can error for a role removed from the RBG but still referenced by a separate CoordinatedPolicy. The error is swallowed (returns 0,0,nil) so the removed role is skipped in the gate (desired=0 via GetRoleReplicasV2) and the remaining roles still scale. PASSES on both base and head — confirms the added GetRole error path does not regress the prior behavior of not failing on a removed role." }
+  ],
+  "liveNote": "L3 live not needed and not attempted: the defect is a count-unit mismatch in a pure calculation (CalculateScalingForAllCoordination), fully proven at the unit layer with the controller-runtime fake client exercising the real getPodSchedulingCounts. The ACK cluster is additionally blocked by pre-existing legacy RoleInstance restartPolicy data unrelated to this PR (see [[rbg-ack-cluster-state]]). A real-cluster progression repro would add no signal beyond results/L1-base-bites-fails.txt + L1-head-pass.txt."
+}
