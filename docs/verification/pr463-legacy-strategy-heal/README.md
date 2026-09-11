@@ -83,6 +83,47 @@ non-convergence itself is unit-proven and holds regardless of the loop rate.
 > the string form to unblock the run and restored after. The unrelated `restartPolicy` errors
 > in v0.8.0 logs are pre-existing and **not** caused by this PR.
 
+### Round 2 live attempt — B1 hot-loop rate (in-cluster PR deploy)
+
+A full in-cluster deploy of the PR was attempted on the same ACK cluster to reproduce
+B1's hot-loop end-to-end (parent `Recreate` ≠ webhook-healed child `RecreatePod` →
+perpetual child Update). Steps completed:
+
+- Built the PR image from `pr463-head` (`b8e770eb`) via ko → `ttl.sh/cheyang-rbgs-pr463:6b`
+  (binary at `/ko-app/rbgs`; first build had been off the wrong branch `verify/pr461-*`,
+  rebuilt from the correct head). Deploy `command` patched `/manager` → `/ko-app/rbgs`.
+- Created the legacy RBGS `pr463-legacy-set` in `pr463-verify` under v0.8.0 (no RBGS
+  defaulter then) → parent GroupTemplate stored `rollingUpdate.type: Recreate` (verified).
+- Applied a MutatingWebhookConfiguration (`rbgs-mutating-webhook-configuration`) scoped
+  via `namespaceSelector` to `pr463-verify` only (safety on the shared cluster: live
+  `nginx-cluster`/`test-rbg` objects in other namespaces are never invoked, so the
+  no-caBundle window cannot block their writes). `failurePolicy: Fail` kept as shipped.
+- Granted `rbgs-controller-role` `get/list/patch/watch` on `mutatingwebhookconfigurations`
+  (v0.8.0 RBAC covered only validating webhooks; the PR cert-manager needs mutating to
+  patch caBundle). With it, the cert-manager patched caBundle (length 4514) — confirmed.
+
+**Blocked — controller never reconciled the RBGS.** Under the PR image the RoleInstance
+informer *syncs* (the PR's `restartPolicy` is string-typed, matching the stored RI data),
+but the **RoleInstanceSet** informer fails to list: stored RISes carry
+`roleInstanceTemplate.restartPolicy` as an *object* (`{type: None}`), which the PR's
+string-typed `RestartPolicyType` cannot unmarshal → `cache.WaitForCacheSync` never
+completes → no workers start → the RBGS controller never creates the child RBG → no
+hot-loop. This is the **same legacy-`restartPolicy` class** round 1 worked around by
+temporarily patching the 3 live RISes to the string form. That is a mutation of live
+`nginx-cluster`/`test-rbg` RIS spec data and was **not** re-executed here without an
+explicit per-action OK; the unit layer already proves the mechanism deterministically,
+so the live layer is confirmatory, not load-bearing.
+
+**Outcome.** Live hot-loop RATE remains **unproven** (same limitation as round 1's
+admission path). B1 stands **Confirmed (unit, deterministic)** — the divergence and
+repeated child-Update mechanism are unit-proven and hold regardless of cluster rate.
+Cluster fully restored to original v0.8.0 state (image `v0.8.0-0c00546d`, command
+`/manager`, RBAC rule removed, mutating webhook config deleted, `pr463-verify` ns
+deleted). To pursue the live rate: replicate round 1's RIS `restartPolicy` patch
+(object → string) on the 3 RISes, deploy the PR image + scoped mutating webhook, and
+observe the controller's `newRBGForSet` create the child (healed `RecreatePod`) then
+re-issue child Updates against the un-healed `Recreate` parent.
+
 ## How to re-run
 
 ### Unit + envtest (any machine)
