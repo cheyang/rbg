@@ -1,7 +1,7 @@
 # Verification — PR 463: heal legacy update strategy types via a mutating webhook
 
 PR: https://github.com/sgl-project/rbg/pull/463
-Branch: `verify/pr463-legacy-strategy-heal` (based on PR head `1e4f70f7`)
+Branch: `verify/pr463-legacy-strategy-heal` (based on PR head `1e4f70f7`; re-verified through `9c95973c`)
 Base: `main` (`07fc643`)
 
 ## Premise verdict (top of file, as required)
@@ -31,7 +31,7 @@ the RBG layer prevents the invalid value from reaching the RIS. Verified live �
 | F2 | failurePolicy=Fail on new RIS mutating webhook | live (ACK) | observation | — | Cluster already runs `vrolebasedgroup.kb.io` with failurePolicy=Fail: scaling the controller to 0 blocked all RBG creates ("no endpoints"). RIS extends the established Fail-webhook pattern; not a new risk class. | **Not-a-new-risk-class** |
 | F3 | RIS defaulter vs reconciler redundancy | review | — | — | Acknowledged; harmless (reconciler normalizes before SSA; defaulter covers direct user writes). | **nit** |
 | F4 | snapshot objectBumps accounts only for Recreate fixture's RIS | — | — | — | Not-reproduced (needs v0.7.0->current upgrade e2e). Internally consistent iff v0.8.0 defaulted ""->InPlaceIfPossible in the RIS. | **Not-reproduced** |
-| B1 | RBGS parent/child strategy non-convergence on the legacy-upgrade path (`rolesEqual` raw DeepEqual; `updateExistingRBGs`/`newRBGForSet` copy parent verbatim) | unit | contract (repro) + canary | needsUpdate stays true across reconciles (parent Recreate ≠ healed child RecreatePod); controller writes `Recreate` back | `results/b1-unit.txt`: `TestB1_NeedsUpdate_*=RED` (reproduction), `TestB1_NonConvergence_*` RED across 5 simulated reconciles, `TestB1_UpdateExistingRBGs_*`/`TestB1_newRBGForSet_*` canaries GREEN (write/copy `Recreate`). Harness-bites: applied `normalizedRolesCopy` + semantic compare → contracts GREEN, canaries FLIP; reverted. | **Confirmed (unit)** |
+| B1 | RBGS parent/child strategy non-convergence on the legacy-upgrade path (`rolesEqual` raw DeepEqual; `updateExistingRBGs`/`newRBGForSet` copy parent verbatim) | unit | contract (repro) + canary | needsUpdate stays true across reconciles (parent Recreate ≠ healed child RecreatePod); controller writes `Recreate` back | **Round 2 (b8e770eb):** `TestB1_NeedsUpdate_*=RED` (reproduction), `TestB1_NonConvergence_*` RED across 5 reconciles, canaries GREEN (write/copy `Recreate`); harness-bites applied → contracts GREEN, canaries FLIP; reverted. **Round 3 (9c95973c):** contracts now GREEN (needsUpdate=false, converges across 5 iters), canaries FLIP RED (child gets RecreatePod) — exactly the harness-bites prediction. Author's own convergence tests (`TestNewRBGForSet_NormalizesLegacyStrategyType`, `TestRoleBasedGroupSetReconciler_updateExistingRBGs_NormalizesLegacyStrategy`) PASS. | **Fixed (round 3)** |
 
 ## Round 2 (head `b8e770eb`) — RBGS-layer gap
 
@@ -56,6 +56,64 @@ controller keeps re-issuing Updates.
 is not proven this round — `test/envtest/testutil/setup.go` wires no admission webhooks, so the
 existing envtest cannot observe it; needs a webhook-wired envtest or a live run (ACK). The
 non-convergence itself is unit-proven and holds regardless of the loop rate.
+
+## Round 3 (head `9c95973c`) — B1 FIXED; all review findings addressed
+
+The author pushed 4 new fix commits responding to the round-2 REQUEST_CHANGES review. The
+PR was rebased (old SHAs changed); `.last-reviewed` advanced `b8e770eb` → `9c95973c`.
+
+**B1 = Fixed.** Commit `f79aa490` adds exactly the harness-bites fix (normalize in *both*
+compare and copy, as the refinement required — copy-only is insufficient):
+
+- `rolesEqual` (`rolebasedgroupset_controller.go:~349`) now deep-copies both sides via
+  `deepCopyRoles` (proper `DeepCopyInto`, not the prior shallow `copy`) and runs
+  `normalizeRolloutUpdateTypes` on *both* before `reflect.DeepEqual`. So a legacy `Recreate`
+  parent and a webhook-healed `RecreatePod` child compare equal → `needsUpdate` goes false.
+- `updateExistingRBGs` / `newRBGForSet` write `normalizedGroupTemplateRoles(rbgset)` — deep
+  copy + normalize of the parent `GroupTemplate.Spec.Roles` — so children are created/updated
+  already canonical (`RecreatePod`), matching what the webhook would heal to. No divergence.
+
+Harness re-verification (my B1 tests grafted onto `9c95973c`):
+- Contracts `TestB1_NeedsUpdate_LegacyParentVsHealedChild_Diverges` and
+  `TestB1_NonConvergence_AcrossSimulatedReconciles` → **GREEN** (`needsUpdate=false`,
+  converges across 5 simulated reconciles).
+- Canaries `TestB1_UpdateExistingRBGs_WritesLegacyValueBack` and
+  `TestB1_newRBGForSet_CopiesLegacyValueVerbatim` → **FLIP to RED** (child now `RecreatePod`,
+  not the legacy `Recreate`). This is exactly the harness-bites prediction: a canary is fixed
+  *only when it flips to fail*. Per polarity rules the canaries should now be inverted
+  (assert `RecreatePod`) or retired — the author's own convergence tests supersede them, so
+  the harness canary layer is retired here in favor of the in-tree contracts.
+
+**Coverage gaps (round-2 major) = Addressed:**
+
+- *Webhook-wired envtest* (the gap: `test/envtest/testutil/setup.go` wired no admission
+  webhooks). New `test/envtest/testcase/webhook/` wires `WebhookInstallOptions` + registers
+  the RBG/RBGS/RIS mutating webhooks + a webhook server in the test manager.
+  `TestWebhookDefaulting` PASS (31.79s) — now proves the admission heal path (Recreate/"" on
+  RBG, RBGS, and RIS writes are healed) at the integration layer, not just unit.
+- *Legacy RBGS convergence fixture* (the gap: upgrade fixtures carried legacy `Recreate`
+  only on standalone RBGs, never on an RBGS `GroupTemplate`). New `legacySetV2`
+  (`test/e2e/upgrade/fixtures.go` + `specs.go`) is a v1alpha2 RBGS whose `GroupTemplate`
+  carries legacy `Recreate`, with a convergence assertion — exactly the B1 scenario as an
+  in-tree e2e fixture.
+
+**Other findings:** F1–F4 unchanged (premise Confirmed, reconciler path proven live, F2 not-a-
+new-risk-class, F3 nit, F4 not-reproduced). RBGS defaulter `+7` is a comment-only clarification
+(no logic change). `pkg/webhook/certmanager.go` `+104` addresses the cert-manager review
+findings (`conn.Close` error check; `MutatingWebhookConfigurationName` constant; retry helpers).
+
+**No regressions.** Full suite green:
+- `go test ./internal/controller/workloads/...` → ok (3.595s) — incl. author's convergence tests.
+- `go test ./api/workloads/v1alpha2/... ./api/workloads/v1alpha1/... ./pkg/reconciler/...
+  ./pkg/webhook/...` → all ok.
+- `go test ./test/envtest/testcase/webhook/` → ok (`TestWebhookDefaulting` PASS, 31.79s).
+
+**Verdict.** B1 (the only major/blocking finding) is Fixed and verified; both coverage gaps
+are addressed with in-tree tests that pass; no regressions. The PR is **mergeable** from this
+review's findings — the round-2 REQUEST_CHANGES should become APPROVE (pending final human
+sign-off). The live hot-loop *rate* (round-2 limitation) remains unproven by choice (would
+require mutating live `nginx-cluster`/`test-rbg` RIS spec data — not done without explicit
+per-action OK), but the unit + webhook-wired envtest now cover the mechanism deterministically.
 
 ## What was actually run (live, on ACK cn-hongkong)
 
