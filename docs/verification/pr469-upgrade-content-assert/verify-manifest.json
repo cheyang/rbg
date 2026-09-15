@@ -1,0 +1,47 @@
+{
+  "topic": "pr469-upgrade-content-assert",
+  "pr": "https://github.com/sgl-project/rbg/pull/469",
+  "prHeadFetch": {
+    "remote": "https://github.com/sgl-project/rbg.git",
+    "ref": "pull/469/head"
+  },
+  "mergeBase": "c500c963dca6823ef505694a535f08249528e997",
+  "kind": "tests-only",
+  "premise": {
+    "id": "P0",
+    "claim": "PR #469 encodes that the legacy-set child RoleBasedGroup (up-legacy-set-0) is healed from the v1alpha1 'Recreate' spelling to 'RecreatePod' on the upgraded controller's first reconcile, via the RBGS controller re-applying the child from its normalized groupTemplate (updateExistingRBGs). Phase 3 asserts child.Type == RecreatePod; snapshot.go records healRoleStrategyTypes for 'RoleBasedGroup/up-legacy-set-0' and revisionAdds=1 for it.",
+    "runsAgainst": "base (reconciler logic is tests-only-identical at base and head)",
+    "verdict": "Refuted",
+    "evidence": "results/premise-unit.txt — needsUpdate(legacy parent Recreate, legacy child Recreate) == false; rolesEqual normalizes both sides (#463), so the legacy child is never in rbgsToUpdate, updateExistingRBGs is never called for it, and its stored spec stays 'Recreate' (not RecreatePod). normalizedGroupTemplateRoles does yield RecreatePod, isolating the cause to the closed needsUpdate gate, not a missing normalize."
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "summary": "Recorded child-heal + phase-3 RecreatePod assertion are refuted: the legacy-set child is NOT re-applied on upgrade (needsUpdate=false), so its stored strategy type stays 'Recreate'",
+      "severity": "blocker",
+      "tests": [
+        {
+          "name": "TestPR469_LegacyChildNotReapplied_RefutesPremise (unit, contract)",
+          "polarity": "contract",
+          "layer": "unit",
+          "result": "PASS -> needsUpdate==false for (parent Recreate, child Recreate); re-apply gate closed; premise refuted"
+        },
+        {
+          "name": "TestPR469_NormalizedGroupTemplateDoesHeal (unit, canary)",
+          "polarity": "canary",
+          "layer": "unit",
+          "result": "PASS -> normalizedGroupTemplateRoles yields RecreatePod and leaves the source untouched; only the gate blocks the heal"
+        },
+        {
+          "name": "RoleBasedGroupSetReconciler_needsUpdate (existing suite)",
+          "polarity": "contract",
+          "layer": "unit",
+          "result": "GREEN — existing case 'legacy strategy spelling differs only' (parent Recreate, child RecreatePod) already asserts false; the upgrade case (parent Recreate, child Recreate) is the same gate"
+        }
+      ]
+    }
+  ],
+  "harnessBites": "Not yet required at the live layer. The unit gate is decisive for the RBGS-re-apply mechanism the PR cites. A live e2e run would additionally confirm no other writer heals the child, but is gated behind /release-test against published images (not per-PR CI) and the ACK cluster's legacy restartPolicy data.",
+  "limitation": "Live e2e (RunUpgradeSpecs) is not run in per-PR CI; it runs only via issue_comment /release-test against the chart's default published images, not the PR head. So the recorded expectations are not exercised by PR CI and would surface only at release-test time. See [[rbg-pr463-verification]] coverage gap.",
+  "clusterContext": "rbg-ack-cluster-state"
+}
