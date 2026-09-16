@@ -1,0 +1,36 @@
+{
+  "blockingIssues": [
+    {
+      "path": "test/e2e/upgrade/specs.go",
+      "line": 479,
+      "severity": "blocker",
+      "confidence": "high",
+      "body": "This asserts the legacy-set child's stored `rolloutStrategy.rollingUpdate.type` is healed to `RecreatePod` on upgrade, but that heal does not happen via the mechanism the PR cites. `updateExistingRBGs` is only reached for children where `needsUpdate` is true, and `needsUpdate` delegates to `rolesEqual`, which (#463's convergence fix) deep-copies and normalizes **both** the parent template and the child before `reflect.DeepEqual`. The child was written by v0.7.0 with `Recreate` copied verbatim from a legacy template, and the parent template is also `Recreate`, so after normalization they compare equal \u2192 `needsUpdate` returns false \u2192 the child is never re-applied \u2192 its stored value stays `Recreate`. This also regresses the prior assertion (`== LegacyRecreateUpdateStrategyType`, \"leaves the child alone\"), which matched the real behavior.\n\nI proved this at the unit level on a checkout of this PR's base: `needsUpdate(parent=Recreate, child=Recreate)` returns false (the existing suite's \"legacy strategy spelling differs only\" case is the same gate). `normalizedGroupTemplateRoles` does yield `RecreatePod`, so the barrier is the closed `needsUpdate` gate, not a missing normalize.\n\nEither revert this assertion to `== LegacyRecreateUpdateStrategyType` (the child is not healed on upgrade), or \u2014 if healing the existing legacy child on upgrade is actually desired \u2014 make that a separate behavior change in the reconciler (it's out of scope for a tests-only PR, and re-opening `needsUpdate` for legacy spellings risks the B1 hot-loop #463 fixed)."
+    },
+    {
+      "path": "test/e2e/upgrade/snapshot.go",
+      "line": 941,
+      "severity": "blocker",
+      "confidence": "high",
+      "body": "The recorded `healRoleStrategyTypes` for `RoleBasedGroup/up-legacy-set-0` asserts the child's after-spec is `RecreatePod`. Since the child is not re-applied on upgrade (see the phase-3 comment), `compareWithExpected(before=Recreate, heal\u2192RecreatePod, after=Recreate)` produces a non-empty `cmp.Diff` and `checkOwnersStable` flags the child as a finding \u2014 so this recording makes the upgrade spec fail rather than pass. Drop this entry (the child stays `Recreate`)."
+    },
+    {
+      "path": "test/e2e/upgrade/snapshot.go",
+      "line": 951,
+      "severity": "blocker",
+      "confidence": "high",
+      "body": "`revisionAdds[up-legacy-set-0] = 1` is contingent on the child's spec being healed (that heal is what moves the RBG-layer revision hash). Since the child is not re-applied, no new revision is stamped and this entry is stale \u2014 the \"recorded new ControllerRevision(s) never appeared\" branch of `checkNoRevisionExplosion` fires. Drop this entry too."
+    }
+  ],
+  "nonBlockingRisks": [],
+  "questions": [],
+  "missingTests": [],
+  "optionalImprovements": [],
+  "publishableSummary": {
+    "body": "Requesting changes. The headline of this PR \u2014 encoding the #463 legacy-strategy heal as expected post-upgrade content \u2014 is correct for the RoleInstanceSet layer (the webhook heals stored RISes on write) but does not hold for the legacy-set **child RoleBasedGroup**, and the suite records the opposite.\n\nThe refuted premise: phase 3 asserts the legacy-set child is healed `Recreate \u2192 RecreatePod` on the upgraded controller's first reconcile, and `snapshot.go` records `healRoleStrategyTypes` + `revisionAdds=1` for it, citing the RBGS controller re-applying the child via `updateExistingRBGs`. But `updateExistingRBGs` is gated by `needsUpdate`, and `needsUpdate \u2192 rolesEqual` normalizes **both** parent and child before `DeepEqual` (#463's convergence fix). The legacy child (stored `Recreate`, as v0.7.0 wrote it) under a legacy parent (`Recreate`) normalizes equal, so `needsUpdate` returns false, the child is never re-applied, and its stored type stays `Recreate`.\n\nThis is the same gate #463 added on purpose \u2014 to stop re-issuing child updates for spelling-only deltas \u2014 so the two are in tension: the fix that converges the post-heal steady state also prevents the initial re-apply that would heal the child.\n\nI proved this at the unit level on the PR's base (reconciler logic is tests-only-identical at base and head): `needsUpdate(parent=Recreate, child=Recreate)` returns false, while `normalizedGroupTemplateRoles` does yield `RecreatePod` \u2014 so the cause is the closed gate, not a missing normalize. `newRBGForSet` and a direct `updateExistingRBGs` call do normalize (the existing tests prove it), but the reconcile loop only calls `updateExistingRBGs` for `needsUpdate=true` children, which the legacy child is not. That's the gap.\n\nNet effect: the recorded `healRoleStrategyTypes` would make `checkOwnersStable` flag the child, phase 3's `child==RecreatePod` fails (and regresses the prior correct `==Recreate` assertion), and `revisionAdds=1` is stale. Since `RunUpgradeSpecs` only runs via `/release-test` against published images \u2014 not in per-PR CI, not against the PR head \u2014 these wrong expectations wouldn't be caught at PR time and would surface as a red release gate later.\n\nThe generation\u2192content migration itself is sound and the pure functions (`compareWithExpected`, `healStoredStrategyType`, `describeAddedRevisionChange`, `revisionDataDiff`) are correct; the set-template-stays-`Recreate` assertion is right; dropping the per-start LeaderWorkerSet allowance is right (that patch is content-equal). Only the recorded child-heal is wrong.\n\nSuggested fix: revert the phase-3 child assertion to `== LegacyRecreateUpdateStrategyType` (\"leaves the child alone\") and drop the `healRoleStrategyTypes` + `revisionAdds` entries for `RoleBasedGroup/up-legacy-set-0`. Evidence and the unit harness are on branch `verify/pr469-upgrade-content-assert` under `docs/verification/pr469-upgrade-content-assert/`."
+  },
+  "retracted": "2026-09-16",
+  "retractionReason": "All three blocker findings disproven by live ACK upgrade e2e: child up-legacy-set-0 IS healed Recreate->RecreatePod on upgrade (gen 1->2, new ControllerRevision up-legacy-set-0-6bfc548975-2). Root cause of the unit refutation error: the premise test built roles with only rollingUpdate.type set, but the real v0.7.0-written child carries maxSurge/maxUnavailable/partition (nil in the template); rolesEqual only normalizes type, so needsUpdate=true -> updateExistingRBGs re-applies -> defaulter webhook heals. Review 5218859076 dismissed; corrective APPROVE 5222346968 posted.",
+  "correctiveReviewId": "5222346968",
+  "dismissedReviewId": "5218859076"
+}

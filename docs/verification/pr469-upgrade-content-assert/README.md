@@ -1,5 +1,29 @@
 # PR #469 verification — `pr469-upgrade-content-assert`
 
+> ## ⚠️ RETRACTED (2026-09-16) — the unit-level refutation below was DISPROVEN by a live ACK upgrade e2e
+>
+> A live `v0.7.0 → upgraded controller` run on ACK showed the legacy-set child
+> `up-legacy-set-0` **IS** healed `Recreate → RecreatePod` on upgrade (generation 1→2, new
+> ControllerRevision `up-legacy-set-0-6bfc548975-2`). All three blocker findings below
+> (`specs.go:479`, `snapshot.go:941`, `snapshot.go:951`) are therefore **wrong**; the PR's
+> phase-3 assertion, `healRoleStrategyTypes`, and `revisionAdds=1` are **correct**.
+>
+> **Root cause of the unit error:** `pr469_legacy_child_heal_premise_test.go` built parent and
+> child roles with only `rollingUpdate.type` set, so after `rolesEqual` normalizes `type` the
+> two sides were `DeepEqual` → `needsUpdate=false`. The real v0.7.0-written child carries
+> `maxSurge:0 / maxUnavailable:1 / partition:0` (v0.7.0 defaulting), while the template role
+> has those fields **nil**; `normalizeRolloutUpdateTypes` does not touch them, so the sides
+> differ → `needsUpdate=true` → `updateExistingRBGs` re-applies → the mutating
+> `RoleBasedGroupDefaulter` webhook heals `Recreate→RecreatePod`. The unit test input was
+> unrepresentative; the live test is the gold standard.
+>
+> **Review action:** the REQUEST_CHANGES review (id `5218859076`) was **dismissed** and a
+> corrective **APPROVE** (id `5222346968`) posted on PR #469 with the evidence. The full
+> `make test-e2e-upgrade` could not complete on the ACK cluster (phase 1 `up-lws` needs the
+> LeaderWorkerSet CRD, not installed there), so the decisive observation was a targeted manual
+> repro of the legacy-set premise. The text below is the original (wrong) analysis, kept for
+> the record.
+
 **PR:** https://github.com/sgl-project/rbg/pull/469
 **Title:** test(upgrade): assert expected post-upgrade content instead of counting rewrites
 **Kind:** tests-only (e2e upgrade suite refactor). Premise-establishment step skipped per
