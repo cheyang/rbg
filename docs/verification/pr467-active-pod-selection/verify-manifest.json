@@ -1,0 +1,45 @@
+{
+  "topic": "pr467-active-pod-selection",
+  "pr": "https://github.com/sgl-project/rbg/pull/467",
+  "harnessPaths": [
+    "docs/verification/pr467-active-pod-selection",
+    "test/e2e/testcase/v1alpha2/restart_policy_activepod_unit_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "CI job e2e-test failed in the restart-policy stability test while waiting for a Pod to be recreated with a new UID; the test selected podList.Items[0] as the failure target, but Pod list order is not stable and the list may contain terminal Pods, so the intended active Pod is never failed and the expected recreation never happens.",
+    "reportedComponent": "test/e2e/testcase/v1alpha2 restart-policy stability e2e (shared e2e selection logic)",
+    "patchedComponent": "test/e2e/testcase/v1alpha2/restart_policy_stability.go (findActivePod + filterActivePods)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "Cited base-run 34807912107 (PR #466 e2e) failed: '[FAILED] Timed out after 150.001s. / pods should be recreated with new UIDs' on pod e2e-backoff-test-role-1-0-*. Mechanism proven at L1: naive Items[0] selection picks a terminal pod when one leads the slice (results/harness-bite-naive-red.txt); controller deletes+recreates all pods on RecreateInstanceOnPodRestart (instance_scale.go:109-120), async deletion leaves a lingering terminal/terminating pod in the next List. See results/.",
+    "match": ["TestActivePodPremiseNaiveItemsZeroCanPickTerminal"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "GOFLAGS=-mod=vendor go test ./test/e2e/testcase/v1alpha2/ -run 'TestActivePod' -count=1 -v"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "title": "No unit test for findActivePod / filterActivePods selection semantics",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestActivePodFindActiveSkipsTerminalAndDeleting",
+        "TestActivePodFilterExcludesTerminalAndDeleting",
+        "TestActivePodFilterEquivalenceToInlinePredicate"
+      ]
+    }
+  ],
+  "findingsNits": [
+    { "id": "F2", "title": "findActivePod and filterActivePods duplicate the IsPodActive iteration", "resolution": "style nit, no test; optionally delegate one to the other" },
+    { "id": "F3", "title": "findActivePod returns a pointer aliasing the input slice", "resolution": "style nit, no test; add a one-line aliasing note to the doc comment" }
+  ],
+  "harnessBites": "Applied naive 'return &pods[0]' to findActivePod: TestActivePodFindActiveSkipsTerminalAndDeleting and TestActivePodPremiseNaiveItemsZeroCanPickTerminal flip to FAIL (results/harness-bite-naive-red.txt). Reverted; production diff empty.",
+  "liveNote": "L3 (live e2e) would run the full Kind e2e suite to confirm the restart-policy/backoff specs no longer time out; not run here (no KUBECONFIG). Post-fix CI e2e-test on PR #467 is already green."
+}

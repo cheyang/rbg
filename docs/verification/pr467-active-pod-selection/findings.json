@@ -1,0 +1,34 @@
+{
+  "missingTests": [
+    {
+      "title": "No unit test for findActivePod / filterActivePods selection semantics",
+      "path": "test/e2e/testcase/v1alpha2/restart_policy_stability.go",
+      "line": 636,
+      "severity": "minor",
+      "confidence": "high",
+      "body": "The new findActivePod helper and the refactored filterActivePods are exercised only indirectly by the e2e scenarios. The very property this PR fixes — that selection must skip terminal/terminating pods and never return one — is not asserted anywhere. A focused table-driven unit test over findActivePod (mixed terminal/active/deleting pods, all-terminal → nil, ordering-independence) would pin the predicate behavior and regress cheaply if IsPodActive semantics ever drift. The e2e path cannot reliably assert the non-deterministic-selection property because the list contents at the selection point are themselves non-deterministic.",
+      "evidence": "findActivePod (restart_policy_stability.go:654-661) and filterActivePods (:636-645) have no _test.go coverage; PR body section IV states 'No standalone unit test file is added; the helper is covered by the e2e scenarios.'",
+      "why": "The fix's correctness rests entirely on findActivePod returning an active pod and nil otherwise. Without a direct test, a future change to the predicate (or a different IsPodActive definition after a k8s upgrade) could silently reintroduce the flake with no unit-level signal."
+    }
+  ],
+  "optionalImprovements": [
+    {
+      "title": "findActivePod and filterActivePods duplicate the IsPodActive iteration",
+      "path": "test/e2e/testcase/v1alpha2/restart_policy_stability.go",
+      "line": 654,
+      "severity": "nit",
+      "confidence": "high",
+      "body": "nit: findActivePod and filterActivePods each open-code the `for i := range pods { if kubecontroller.IsPodActive(...) }` loop. One could delegate to the other (e.g. findActivePod returns &filterActivePods(pods)[0]) so there is a single source of truth for 'active' selection. The current form is fine and avoids an allocation; only worth it if you prefer one predicate site.",
+      "evidence": "filterActivePods (:636-645) and findActivePod (:654-661) both iterate pods calling kubecontroller.IsPodActive."
+    },
+    {
+      "title": "findActivePod returns a pointer aliasing the input slice",
+      "path": "test/e2e/testcase/v1alpha2/restart_policy_stability.go",
+      "line": 654,
+      "severity": "nit",
+      "confidence": "high",
+      "body": "nit: findActivePod returns &pods[i], a pointer into the caller's slice backing array. All current callers pass a fresh PodList.Items and do not mutate it afterwards, so this is safe today. A one-line note in the doc comment ('returns a pointer into pods; callers must not mutate the slice while holding it') would keep it safe as the helper gets reused.",
+      "evidence": "findActivePod returns &pods[i] (line 660). Callers: runRestartPolicyRecreateTest, runRestartPolicyNoneReplaceTest, runRestartBackoffDelayTest (x2), runRestartBackoffSpecChangeTest (x2)."
+    }
+  ]
+}

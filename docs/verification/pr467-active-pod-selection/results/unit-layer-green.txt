@@ -1,0 +1,24 @@
+=== RUN   TestActivePodFindActiveSkipsTerminalAndDeleting
+=== RUN   TestActivePodFindActiveSkipsTerminalAndDeleting/terminal-leading_then_running
+=== RUN   TestActivePodFindActiveSkipsTerminalAndDeleting/deleting-leading_then_running
+=== RUN   TestActivePodFindActiveSkipsTerminalAndDeleting/succeeded_present_then_running
+=== RUN   TestActivePodFindActiveSkipsTerminalAndDeleting/all_terminal_returns_nil
+=== RUN   TestActivePodFindActiveSkipsTerminalAndDeleting/all_deleting_returns_nil
+=== RUN   TestActivePodFindActiveSkipsTerminalAndDeleting/single_running
+=== RUN   TestActivePodFindActiveSkipsTerminalAndDeleting/empty_returns_nil
+--- PASS: TestActivePodFindActiveSkipsTerminalAndDeleting (0.00s)
+    --- PASS: TestActivePodFindActiveSkipsTerminalAndDeleting/terminal-leading_then_running (0.00s)
+    --- PASS: TestActivePodFindActiveSkipsTerminalAndDeleting/deleting-leading_then_running (0.00s)
+    --- PASS: TestActivePodFindActiveSkipsTerminalAndDeleting/succeeded_present_then_running (0.00s)
+    --- PASS: TestActivePodFindActiveSkipsTerminalAndDeleting/all_terminal_returns_nil (0.00s)
+    --- PASS: TestActivePodFindActiveSkipsTerminalAndDeleting/all_deleting_returns_nil (0.00s)
+    --- PASS: TestActivePodFindActiveSkipsTerminalAndDeleting/single_running (0.00s)
+    --- PASS: TestActivePodFindActiveSkipsTerminalAndDeleting/empty_returns_nil (0.00s)
+=== RUN   TestActivePodFilterExcludesTerminalAndDeleting
+--- PASS: TestActivePodFilterExcludesTerminalAndDeleting (0.00s)
+=== RUN   TestActivePodFilterEquivalenceToInlinePredicate
+--- PASS: TestActivePodFilterEquivalenceToInlinePredicate (0.00s)
+=== RUN   TestActivePodPremiseNaiveItemsZeroCanPickTerminal
+--- PASS: TestActivePodPremiseNaiveItemsZeroCanPickTerminal (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/e2e/testcase/v1alpha2	0.010s
