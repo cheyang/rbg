@@ -1,0 +1,44 @@
+{
+  "pr": "https://github.com/sgl-project/rbg/pull/470",
+  "topic": "pr470-requeue-unhealthy-rollout",
+  "prHeadFetch": { "remote": "https://github.com/sgl-project/rbg.git", "ref": "pull/470/head" },
+  "premise": {
+    "id": "P0",
+    "claim": "A Stateful RoleInstanceSet rollout stalls when fresh-unhealthy instances exhaust the maxUnavailable budget, because the base controller schedules no requeue after the 10s unhealthy window expires.",
+    "runsAgainst": "base",
+    "layer": ["unit", "live"],
+    "verdict": "Confirmed",
+    "evidence": [
+      "unit: TestUpdateStatefulInstanceSetRetriesUnhealthyRollout fails on base with retry=0s (no requeue pushed) — results/unit-head.txt (base run grafts the test onto merge-base c500c963).",
+      "live: BASE binary against the cluster — 'Rolling update budget exhausted' at stateful_instance_set_control.go:618 with NO RequeueAfter; updated=0 for the full 35s observation window (rollout never resumes) — results/live-base-timeline.log, results/live-base-signals.log."
+    ]
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "summary": "Requeue scheduled only from the first budget-exhausted target; a healthy blocker (no unhealthy-since entry) suppresses the requeue even when a different freshly-unhealthy target has a pending window (mixed-config stall persists).",
+      "severity": "major",
+      "file": "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go",
+      "line": 617,
+      "polarity": "canary",
+      "layer": "unit",
+      "test": "TestF1MixedHealthyBlockerStillStalls",
+      "testFile": "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control_f1_test.go",
+      "verdict": "Confirmed",
+      "evidence": "Canary PASSES on PR head (wait=0, no requeue) — the fix returns on the healthy highest-ordinal blocker and never reaches ord 0's pending window. Harness-bites check: a naive 'scan all stalled targets' patch flips the canary to fail (wait≈5s), then reverted (production diff empty). Note: not a regression — base behaves identically; the fix is narrower than the general stall class."
+    },
+    {
+      "id": "F2",
+      "summary": "max(time.Until(first.Add(stableUnhealthyDuration)), time.Nanosecond) — the 1ns floor is effectively dead: once the window expired, isStablyUnhealthy is true -> isFree -> the target never reaches this branch.",
+      "severity": "nit",
+      "file": "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go",
+      "line": 622,
+      "polarity": "n/a",
+      "layer": "review",
+      "verdict": "Confirmed (cosmetic)",
+      "evidence": "isStablyUnhealthy (line 125) checks time.Since(first) >= stableUnhealthyDuration; an expired window flips isFree before the budget-exhausted branch, so the 1ns floor is unreachable except via clock skew."
+    }
+  ],
+  "liveNote": "HEAD: 'Finished syncing InstanceSet' result RequeueAfter≈7.21e9 ns (~7.2s, the remaining unhealthy window); requeue fires ~7s later, RIs become stably-unhealthy -> free -> replaced -> ready=2 at t+11s. BASE: no RequeueAfter, updated=0 for 35s+.",
+  "cluster": "ACK 3-node (cn-hongkong), KUBECONFIG ~/.kube/config, CRDs v1alpha2. In-cluster rbgs-controller-manager scaled to 0 during the test, restored to 2 after."
+}

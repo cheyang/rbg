@@ -1,0 +1,46 @@
+[20:45:54] apply rev1 (failing readinessProbe)
+[20:45:55] both RIs RoleInstanceReady=False (freshly unhealthy) at poll #2 — applying rev2 NOW
+[20:45:57] rev2 applied at 1789562757
+[20:45:58] t+1s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[20:45:59] t+2s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[20:46:00] t+3s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[20:46:01] t+4s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[20:46:03] t+5s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[20:46:04] t+6s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[20:46:05] t+7s  replicas=2 ready=0 updated=2 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[20:46:06] t+8s  replicas=2 ready=0 updated=2 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[20:46:07] t+9s  replicas=2 ready=0 updated=2 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[20:46:08] t+10s  replicas=2 ready=0 updated=2 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[20:46:09] t+11s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:10] t+12s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:11] t+13s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:12] t+14s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:13] t+15s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:14] t+16s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:15] t+17s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:16] t+18s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:17] t+19s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:18] t+20s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:19] t+21s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:20] t+22s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:21] t+23s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:22] t+24s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:23] t+25s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:25] t+26s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:26] t+27s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:27] t+28s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:28] t+29s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:29] t+30s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:30] t+31s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:31] t+32s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:32] t+33s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:33] t+34s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:34] t+35s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[20:46:34] === controller signal lines (budget exhausted / RequeueAfter / Finished syncing) ===
+[20:46:34] === final RI / pod state ===
+NAME          READY   AGE
+ris-stall-0   True    29s
+ris-stall-1   True    29s
+NAME                 READY   STATUS    RESTARTS   AGE   IP             NODE                       NOMINATED NODE   READINESS GATES
+ris-stall-0-main-0   1/1     Running   0          29s   10.39.55.180   cn-hongkong.10.39.55.150   <none>           2/2
+ris-stall-1-main-0   1/1     Running   0          29s   10.39.55.194   cn-hongkong.10.39.55.150   <none>           2/2

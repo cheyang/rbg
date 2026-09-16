@@ -1,0 +1,14 @@
+I0916 20:47:37.092197 1253555 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="122.134611ms"
+I0916 20:47:37.101574 1253555 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="9.302886ms"
+I0916 20:48:06.136877 1253555 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="36.855044ms"
+I0916 20:48:06.145207 1253555 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="8.252242ms"
+I0916 20:48:06.186859 1253555 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="12.237163ms"
+I0916 20:48:06.197809 1253555 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="10.878718ms"
+I0916 20:48:06.206256 1253555 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="8.397017ms"
+I0916 20:48:06.216161 1253555 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="9.858175ms"
+I0916 20:48:07.075266 1253555 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[1,0] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=2
+I0916 20:48:07.075283 1253555 stateful_instance_set_control.go:618] "Rolling update budget exhausted" instanceSet="pr470-verify/ris-stall" instance="pr470-verify/ris-stall-1" initialBaseUnavail=2 newlyUnavail=0 effectiveBudget=2
+I0916 20:48:07.086089 1253555 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="20.190574ms"
+I0916 20:48:07.086489 1253555 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[1,0] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=2
+I0916 20:48:07.086496 1253555 stateful_instance_set_control.go:618] "Rolling update budget exhausted" instanceSet="pr470-verify/ris-stall" instance="pr470-verify/ris-stall-1" initialBaseUnavail=2 newlyUnavail=0 effectiveBudget=2
+I0916 20:48:07.096293 1253555 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="10.117143ms"
