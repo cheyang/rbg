@@ -3,6 +3,8 @@
   "topic": "pr471-discovery-configmap-fqdn",
   "prHeadSha": "861d02c5aa25185b14137466b727f2521fbf09e1",
   "baseSha": "0aff5f65a7b94a54aff4f83fb978e3a264e7bc9e",
+  "scope": "RoleInstanceSet only; LWS/LeaderWorkerSet is NOT a supported workload type and is out of scope.",
+  "verdict": "COMMENT",
   "premise": {
     "id": "P0",
     "claim": "On the base branch the discovery ConfigMap instances[].address for LWP/CCP roles does not match any real Pod, and size = role.replicas (not actual pod count).",
@@ -13,18 +15,6 @@
     "evidence": "results/01-base-configmap-premise.txt"
   },
   "findings": [
-    {
-      "id": "F1",
-      "severity": "blocker",
-      "summary": "LWS branch emits contiguous ordinals instead of the LWS naming contract; wrong for size>1, misroutes group-1 leader, and regresses leader naming vs base.",
-      "claim": "Under LWP-on-LeaderWorkerSet with size>1, buildInstances should emit leader={name}-{leaderIndex} and worker={name}-{leaderIndex}-{workerIndex} (vendored LWS API doc), but emits {name}-{i*size} / {name}-{i*size+j+1}.",
-      "layer": "unit+doc",
-      "polarity": "contract",
-      "tests": ["pkg/discovery/lws_naming_canary_test.go::TestLWS_NamingContract", "pkg/discovery/config_builder_test.go::TestConfigBuilder_Build/leader_worker_pattern_with_size=2_on_LeaderWorkerSet (PR's own; bug-canary, must be inverted)"],
-      "verdict": "Confirmed",
-      "evidence": "results/04-lws-naming-contract-canary.txt",
-      "liveNote": "LWS CRD/controller not installed on the provided cluster; proven via in-repo vendored LWS API docs + unit canary, not a live LWS run. LWS pod subdomain also unverified."
-    },
     {
       "id": "F2",
       "severity": "none",

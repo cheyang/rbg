@@ -4,10 +4,10 @@
 #   <fixed-ref> = a git ref with the fix applied (defaults to the current PR head fetched from the
 #   manifest's `pr` URL, so no sha is needed on a fresh machine).
 #
-# Runs the L1 unit layer (deterministic, cross-machine) and prints per-finding status, honoring
-# polarity: TestLWS_NamingContract is a CONTRACT test (RED on buggy PR head = reproduction; should
-# flip to PASS when fixed). The PR's own `...on_LeaderWorkerSet` subtest is a BUG-CANARY (asserts the
-# wrong behavior); when fixed it flips to RED and must be inverted — reported as "needs-invert".
+# Scope: RoleInstanceSet only (LWS/LeaderWorkerSet is NOT supported by this project; out of scope).
+#
+# Runs the L1 unit layer (deterministic, cross-machine) and prints per-finding status. The PR's
+# own ConfigBuilder unit tests are contract tests and should stay green.
 #
 # The L3 live layer (TestLiveProbe_ConfigMapVsPods) needs a cluster: set KUBECONFIG, deploy the
 # 3-pattern RBG via deploy_scenario.sh, and run it with RBG_LIVE_PROBE=1. It is not run here.
@@ -49,23 +49,7 @@ echo ">> PR's own ConfigBuilder tests (expect green):"
 if go test ./pkg/discovery/ -run TestConfigBuilder -count=1 2>&1 | tail -3; then
   echo "[F2/F4 unit] OK (PR tests green)"
 else
-  echo "[F2/F4 unit] PR tests red — inspect (may include the F1 bug-canary flipping, which is expected after a fix)"
-fi
-
-echo
-echo ">> F1 contract canary TestLWS_NamingContract (RED on buggy PR head; PASS when fixed):"
-if go test ./pkg/discovery/ -run TestLWS_NamingContract -count=1 2>&1 | tail -3; then
-  echo "[F1] FIXED — contract canary is green"
-else
-  echo "[F1] STILL-BROKEN — contract canary is red (the LWS contiguous-ordinal bug reproduces)"
-fi
-
-echo
-echo ">> F1 PR bug-canary (the PR's own on_LeaderWorkerSet subtest):"
-if go test ./pkg/discovery/ -run 'TestConfigBuilder_Build/leader_worker_pattern_with_size=2_on_LeaderWorkerSet' -count=1 2>&1 | tail -3; then
-  echo "[F1 canary] still asserts OLD (wrong) behavior — if the fix landed, INVERT this test's expected"
-else
-  echo "[F1 canary] flipped to red — the fix changed the output; invert the expected and re-run"
+  echo "[F2/F4 unit] PR tests red — inspect"
 fi
 
 echo
@@ -73,8 +57,7 @@ echo "================ L3 live layer (manual) ================"
 echo "Set KUBECONFIG, run scripts/deploy_scenario.sh, then:"
 echo "  RBG_LIVE_PROBE=1 go test ./pkg/discovery/ -run TestLiveProbe_ConfigMapVsPods -v -count=1"
 echo
-echo "Per-finding summary:"
+echo "Per-finding summary (scope: RoleInstanceSet only; LWS out of scope):"
 echo "  P0 premise            — see results/01 (live, against base controller)"
-echo "  F1 LWS naming         — CONTRACT canary above (RED=broken / PASS=fixed)"
 echo "  F2 LWP-RIS / F3 CCP / F4 size — live probe results/02"
 echo "  F5 worker non-resolve — live nslookup results/03"
