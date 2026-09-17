@@ -1,0 +1,11 @@
+=== ROUND 2 unit evidence (head 2efff36a) ===
+--- author contract test on FIX head (expect PASS) ---
+--- PASS: TestUpdateStatefulInstanceSetRetriesUnhealthyRollout (0.00s)
+PASS
+--- on BASE c500c963 (expect FAIL: retry=0s, want <=4s) ---
+Aborting
+    stateful_instance_set_control_test.go:1012: retry = 0s, want a positive delay of at most 4s
+--- FAIL: TestUpdateStatefulInstanceSetRetriesUnhealthyRollout (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.012s
+FAIL

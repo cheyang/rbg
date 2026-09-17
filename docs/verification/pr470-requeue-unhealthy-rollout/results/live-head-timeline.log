@@ -1,46 +1,86 @@
-[20:45:54] apply rev1 (failing readinessProbe)
-[20:45:55] both RIs RoleInstanceReady=False (freshly unhealthy) at poll #2 — applying rev2 NOW
-[20:45:57] rev2 applied at 1789562757
-[20:45:58] t+1s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
-[20:45:59] t+2s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
-[20:46:00] t+3s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
-[20:46:01] t+4s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
-[20:46:03] t+5s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
-[20:46:04] t+6s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
-[20:46:05] t+7s  replicas=2 ready=0 updated=2 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
-[20:46:06] t+8s  replicas=2 ready=0 updated=2 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
-[20:46:07] t+9s  replicas=2 ready=0 updated=2 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
-[20:46:08] t+10s  replicas=2 ready=0 updated=2 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
-[20:46:09] t+11s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:10] t+12s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:11] t+13s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:12] t+14s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:13] t+15s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:14] t+16s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:15] t+17s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:16] t+18s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:17] t+19s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:18] t+20s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:19] t+21s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:20] t+22s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:21] t+23s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:22] t+24s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:23] t+25s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:25] t+26s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:26] t+27s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:27] t+28s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:28] t+29s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:29] t+30s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:30] t+31s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:31] t+32s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:32] t+33s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:33] t+34s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:34] t+35s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
-[20:46:34] === controller signal lines (budget exhausted / RequeueAfter / Finished syncing) ===
-[20:46:34] === final RI / pod state ===
+[22:01:58] apply rev1 (failing readinessProbe)
+[22:01:59] both RIs RoleInstanceReady=False (freshly unhealthy) at poll #2 — applying rev2 NOW
+[22:01:59] rev2 applied at 1789653719
+[22:02:00] t+1s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[22:02:01] t+2s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[22:02:02] t+3s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[22:02:03] t+4s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[22:02:04] t+5s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[22:02:05] t+6s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[22:02:06] t+7s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[22:02:07] t+8s  replicas=2 ready=0 updated=0 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[22:02:08] t+9s  replicas=2 ready=0 updated=2 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[22:02:09] t+10s  replicas=2 ready=0 updated=2 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[22:02:10] t+11s  replicas=2 ready=0 updated=2 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[22:02:11] t+12s  replicas=2 ready=0 updated=2 currentRev=ris-stall-56b88bf5d7 updateRev=ris-stall-7f748f5454
+[22:02:12] t+13s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:13] t+14s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:15] t+15s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:16] t+16s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:17] t+17s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:18] t+18s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:19] t+19s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:20] t+20s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:21] t+21s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:22] t+22s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:23] t+23s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:24] t+24s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:25] t+25s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:26] t+26s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:27] t+27s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:28] t+28s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:29] t+29s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:30] t+30s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:31] t+31s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:32] t+32s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:33] t+33s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:34] t+34s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:35] t+35s  replicas=2 ready=2 updated=2 currentRev=ris-stall-7f748f5454 updateRev=ris-stall-7f748f5454
+[22:02:35] === controller signal lines (budget exhausted / RequeueAfter / Finished syncing) ===
+I0917 22:01:58.598923 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="9.257245ms"
+I0917 22:01:58.605675 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="6.70098ms"
+I0917 22:01:58.674362 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="7.90659ms"
+I0917 22:01:58.681896 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="7.486086ms"
+I0917 22:01:59.343726 1468752 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[1,0] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=2
+I0917 22:01:59.343745 1468752 stateful_instance_set_control.go:626] "Rolling update budget exhausted" instanceSet="pr470-verify/ris-stall" instance="pr470-verify/ris-stall-1" initialBaseUnavail=2 newlyUnavail=0 effectiveBudget=2
+I0917 22:01:59.343749 1468752 stateful_instance_set_control.go:626] "Rolling update budget exhausted" instanceSet="pr470-verify/ris-stall" instance="pr470-verify/ris-stall-0" initialBaseUnavail=2 newlyUnavail=0 effectiveBudget=2
+I0917 22:01:59.351314 1468752 stateful_instance_set_controller.go:164] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="14.779407ms" result={"Requeue":false,"RequeueAfter":9200854475}
+I0917 22:01:59.351670 1468752 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[1,0] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=2
+I0917 22:01:59.351677 1468752 stateful_instance_set_control.go:626] "Rolling update budget exhausted" instanceSet="pr470-verify/ris-stall" instance="pr470-verify/ris-stall-1" initialBaseUnavail=2 newlyUnavail=0 effectiveBudget=2
+I0917 22:01:59.351681 1468752 stateful_instance_set_control.go:626] "Rolling update budget exhausted" instanceSet="pr470-verify/ris-stall" instance="pr470-verify/ris-stall-0" initialBaseUnavail=2 newlyUnavail=0 effectiveBudget=2
+I0917 22:01:59.358951 1468752 stateful_instance_set_controller.go:164] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="7.572089ms" result={"Requeue":false,"RequeueAfter":9192922704}
+I0917 22:02:08.554478 1468752 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[1,0] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=2
+I0917 22:02:08.554499 1468752 stateful_instance_set_control.go:765] "Updating instance" instanceSet="pr470-verify/ris-stall" instance="pr470-verify/ris-stall-1" from="ris-stall-56b88bf5d7" to="ris-stall-7f748f5454" isSurge=false free=true
+I0917 22:02:08.564311 1468752 stateful_instance_set_control.go:765] "Updating instance" instanceSet="pr470-verify/ris-stall" instance="pr470-verify/ris-stall-0" from="ris-stall-56b88bf5d7" to="ris-stall-7f748f5454" isSurge=false free=true
+I0917 22:02:08.582441 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="29.334926ms"
+I0917 22:02:08.595475 1468752 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=2
+I0917 22:02:08.602951 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="20.470684ms"
+I0917 22:02:08.603269 1468752 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=2
+I0917 22:02:08.609640 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="6.638158ms"
+I0917 22:02:08.610774 1468752 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=2
+I0917 22:02:08.617457 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="7.007891ms"
+I0917 22:02:08.617769 1468752 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=2
+I0917 22:02:08.624826 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="7.326081ms"
+I0917 22:02:09.389316 1468752 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=2
+I0917 22:02:09.396907 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="7.965722ms"
+I0917 22:02:09.397224 1468752 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=2
+I0917 22:02:09.404127 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="7.168406ms"
+I0917 22:02:09.626656 1468752 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=2
+I0917 22:02:09.632881 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="6.536965ms"
+I0917 22:02:09.633240 1468752 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=2
+I0917 22:02:09.639605 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="6.67091ms"
+I0917 22:02:12.616340 1468752 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=1
+I0917 22:02:12.623901 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="7.89747ms"
+I0917 22:02:12.624824 1468752 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=1
+I0917 22:02:12.633376 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="9.428021ms"
+I0917 22:02:12.641717 1468752 stateful_instance_set_control.go:593] "Progress rolling update" instanceSet="pr470-verify/ris-stall" targets=[] maxUnavailable=2 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=2 initialBaseUnavail=0
+I0917 22:02:12.649304 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="7.89786ms"
+I0917 22:02:12.657373 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="8.031014ms"
+I0917 22:02:12.664326 1468752 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="pr470-verify/ris-stall" elapsedTime="6.916828ms"
+[22:02:35] === final RI / pod state ===
 NAME          READY   AGE
-ris-stall-0   True    29s
-ris-stall-1   True    29s
+ris-stall-0   True    28s
+ris-stall-1   True    28s
 NAME                 READY   STATUS    RESTARTS   AGE   IP             NODE                       NOMINATED NODE   READINESS GATES
-ris-stall-0-main-0   1/1     Running   0          29s   10.39.55.180   cn-hongkong.10.39.55.150   <none>           2/2
-ris-stall-1-main-0   1/1     Running   0          29s   10.39.55.194   cn-hongkong.10.39.55.150   <none>           2/2
+ris-stall-0-main-0   1/1     Running   0          27s   10.39.55.196   cn-hongkong.10.39.55.150   <none>           2/2
+ris-stall-1-main-0   1/1     Running   0          27s   10.39.55.180   cn-hongkong.10.39.55.150   <none>           2/2

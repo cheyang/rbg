@@ -2,6 +2,10 @@
   "pr": "https://github.com/sgl-project/rbg/pull/470",
   "topic": "pr470-requeue-unhealthy-rollout",
   "prHeadFetch": { "remote": "https://github.com/sgl-project/rbg.git", "ref": "pull/470/head" },
+  "rounds": [
+    { "n": 1, "head": "ec577f76", "date": "2026-09-16", "verdict": "REQUEST_CHANGES", "summary": "premise+fix Confirmed unit+live; F1 mixed-config gap Confirmed (canary, major); F2 nit." },
+    { "n": 2, "head": "2efff36a", "date": "2026-09-17", "verdict": "COMMENT", "summary": "F1 FIXED by follow-up commit 423b4118 (return->continue); proven by author's deterministic contract test; round-1 canary retired as order-dependent. P0 premise+fix re-confirmed live. New commit 2efff36a (rollback-resume) bundled, own tests pass." }
+  ],
   "premise": {
     "id": "P0",
     "claim": "A Stateful RoleInstanceSet rollout stalls when fresh-unhealthy instances exhaust the maxUnavailable budget, because the base controller schedules no requeue after the 10s unhealthy window expires.",
@@ -9,23 +13,23 @@
     "layer": ["unit", "live"],
     "verdict": "Confirmed",
     "evidence": [
-      "unit: TestUpdateStatefulInstanceSetRetriesUnhealthyRollout fails on base with retry=0s (no requeue pushed) — results/unit-head.txt (base run grafts the test onto merge-base c500c963).",
-      "live: BASE binary against the cluster — 'Rolling update budget exhausted' at stateful_instance_set_control.go:618 with NO RequeueAfter; updated=0 for the full 35s observation window (rollout never resumes) — results/live-base-timeline.log, results/live-base-signals.log."
+      "unit: TestUpdateStatefulInstanceSetRetriesUnhealthyRollout fails on base (c500c963) with 'retry = 0s, want a positive delay of at most 4s' (no requeue pushed) — results/unit-head.txt.",
+      "live (round 1 + round 2, reproducible): BASE binary (c500c963) against the cluster — 'Rolling update budget exhausted' at stateful_instance_set_control.go:618 with NO RequeueAfter; updated=0 for the full 35s observation window (rollout never resumes) — results/live-base-timeline.log, results/live-base-signals.log."
     ]
   },
   "findings": [
     {
       "id": "F1",
-      "summary": "Requeue scheduled only from the first budget-exhausted target; a healthy blocker (no unhealthy-since entry) suppresses the requeue even when a different freshly-unhealthy target has a pending window (mixed-config stall persists).",
+      "summary": "Requeue scheduled only from the first budget-exhausted target; a healthy blocker (no unhealthy-since entry) suppressed the requeue even when a different freshly-unhealthy target had a pending window (mixed-config stall persists).",
       "severity": "major",
       "file": "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go",
       "line": 617,
       "polarity": "canary",
       "layer": "unit",
-      "test": "TestF1MixedHealthyBlockerStillStalls",
-      "testFile": "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control_f1_test.go",
-      "verdict": "Confirmed",
-      "evidence": "Canary PASSES on PR head (wait=0, no requeue) — the fix returns on the healthy highest-ordinal blocker and never reaches ord 0's pending window. Harness-bites check: a naive 'scan all stalled targets' patch flips the canary to fail (wait≈5s), then reverted (production diff empty). Note: not a regression — base behaves identically; the fix is narrower than the general stall class."
+      "test": "TestUpdateStatefulInstanceSetRetriesUnhealthyRollout (author's modified contract, commit 423b4118)",
+      "testFile": "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control_test.go",
+      "verdict": "Fixed (round 2)",
+      "evidence": "Commit 423b4118 ('check lower rollout targets after a budget block') changes the budget-exhausted branch from `return status, nil` to `continue`, so lower freshly-unhealthy targets are no longer blocked by a healthy higher-ordinal stopper. Proven by the author's modified contract test, which now asserts assertWait(reconcile(), 4*time.Second) for the healthy-blocker + lower-unhealthy case: FAILS on base ('retry = 0s, want a positive delay of at most 4s', stateful_instance_set_control_test.go:1012) and PASSES on the fix head (wait=4s), deterministic across 3 isolated runs. The round-1 reviewer canary (TestF1MixedHealthyBlockerStillStalls) is RETIRED: it was order-dependent (leaked global instanceUnhealthySince/durationStore state) — it yielded wait=0 in isolation on BOTH base and fix head, so its round-1 'flip' on the full suite was a false positive; it did not reliably isolate F1. The author's contract test subsumes the guard."
     },
     {
       "id": "F2",
@@ -36,9 +40,20 @@
       "polarity": "n/a",
       "layer": "review",
       "verdict": "Confirmed (cosmetic)",
-      "evidence": "isStablyUnhealthy (line 125) checks time.Since(first) >= stableUnhealthyDuration; an expired window flips isFree before the budget-exhausted branch, so the 1ns floor is unreachable except via clock skew."
+      "evidence": "isStablyUnhealthy (line 125) checks time.Since(first) >= stableUnhealthyDuration; an expired window flips isFree before the budget-exhausted branch (now line 626 on head), so the 1ns floor is unreachable except via clock skew. Unchanged by the round-2 commits."
+    },
+    {
+      "id": "O1",
+      "summary": "Scope expansion: commit 2efff36a ('resume early stateful rollbacks') broadens computeTopology.inRollout via hasStaleBaseInstance + existingSurge-protects-unready-base, adding a distinct rollback-resume behavior beyond issue #464's all-unhealthy repro.",
+      "severity": "observation",
+      "file": "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_utils.go",
+      "line": 558,
+      "polarity": "n/a",
+      "layer": "review",
+      "verdict": "Noted (not a blocker)",
+      "evidence": "Adds hasStaleBaseInstance and reworks inRollout to stay true when a stale base instance still needs a revision change even with matching revisions, or when existing surge protects an unready base. New stateful_instance_set_rollback_test.go (197 lines) covers rollback retry / partition / pause / surge cleanup — all PASS on head. The live all-unhealthy repro (maxSurge=0) recovers cleanly (ready=2), no regression. Not a defect, but the PR now carries two fix classes; flagging for author/maintainer awareness."
     }
   ],
-  "liveNote": "HEAD: 'Finished syncing InstanceSet' result RequeueAfter≈7.21e9 ns (~7.2s, the remaining unhealthy window); requeue fires ~7s later, RIs become stably-unhealthy -> free -> replaced -> ready=2 at t+11s. BASE: no RequeueAfter, updated=0 for 35s+.",
-  "cluster": "ACK 3-node (cn-hongkong), KUBECONFIG ~/.kube/config, CRDs v1alpha2. In-cluster rbgs-controller-manager scaled to 0 during the test, restored to 2 after."
+  "liveNote": "Round 2, HEAD 2efff36a: budget-exhausted log now at stateful_instance_set_control.go:626 (the `continue` branch); 'Finished syncing InstanceSet' result={\"Requeue\":false,\"RequeueAfter\":9200854475} (~9.2s, the remaining unhealthy window); requeue fires ~9s later, RIs become stably-unhealthy -> free=true -> replaced with rev2 pods -> ready=2 updated=2 currentRev=rev2. BASE c500c963: 'Rolling update budget exhausted' at line 618, NO RequeueAfter, updated=0 for 35s+.",
+  "cluster": "ACK 3-node (cn-hongkong), KUBECONFIG ~/.kube/config, CRDs v1alpha2. In-cluster rbgs-controller-manager scaled to 0 during the test, restored to 2 after. Legacy restartPolicy blockers (RI string-form, RIS object-form) that previously blocked the controller are now cleared."
 }

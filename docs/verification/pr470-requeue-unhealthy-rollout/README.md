@@ -1,53 +1,78 @@
 # PR #470 verification — retry stateful rollouts after the unhealthy window
 
 PR: https://github.com/sgl-project/rbg/pull/470 (`fix: retry stateful rollouts after the unhealthy window`, fixes #464)
-Branch: `verify/pr470-requeue-unhealthy-rollout` (based on PR head `ec577f76`). Production code untouched; the only added file is the F1 canary test.
+Branch: `verify/pr470-requeue-unhealthy-rollout` (based on PR head `2efff36a`, round 2). Production code untouched.
 
-## Premise (P0) — Confirmed
+## Round summary
+
+- **Round 1 (head `ec577f76`, 2026-09-16):** premise P0 + fix Confirmed (unit + live); F1
+  mixed-config gap filed as major (canary); F2 nit. Verdict: REQUEST_CHANGES (not published).
+- **Round 2 (head `2efff36a`, 2026-09-17):** the author pushed two follow-up commits.
+  `423b4118` ("check lower rollout targets after a budget block") fixes F1 by changing the
+  budget-exhausted branch from `return` to `continue`; proven by the author's modified
+  contract test (fails on base, passes on fix, deterministic in isolation). `2efff36a`
+  ("resume early stateful rollbacks") adds a distinct rollback-resume behavior with its own
+  passing tests (scope expansion, noted, not a blocker). P0 premise + fix re-confirmed live
+  on the new head. The round-1 reviewer canary is **retired** (it was order-dependent).
+  Verdict: **COMMENT**.
+
+## Premise (P0) — Confirmed (re-confirmed round 2)
 
 > A Stateful RoleInstanceSet rollout stalls when fresh-unhealthy instances exhaust the
 > maxUnavailable budget, because the base controller schedules no requeue after the 10s
 > unhealthy window expires.
 
-- **Unit (against base `c500c963`):** `TestUpdateStatefulInstanceSetRetriesUnhealthyRollout`
-  (the PR's own test, grafted onto base *without* the fix) fails with `retry = 0s, want a
-  positive delay of at most 10s`. The base budget-exhausted branch only logs + returns; no
-  `durationStore.Push`. → premise mechanism is real.
-- **Live (against base binary on the cluster):** `Rolling update budget exhausted` at
-  `stateful_instance_set_control.go:618` with **no `RequeueAfter`**; `updated=0` for the full
-  35s observation window — the rollout never resumes past the 10s window.
+- **Unit (against base `c500c963`):** the PR's own test, grafted onto base *without* the fix,
+  fails with `retry = 0s, want a positive delay of at most 4s` (round-2 wording; round-1 said
+  "at most 10s"). The base budget-exhausted branch only logs + returns; no `durationStore.Push`.
+  → premise mechanism is real.
+- **Live (against base binary on the cluster, round 1 + round 2):** `Rolling update budget
+  exhausted` at `stateful_instance_set_control.go:618` with **no `RequeueAfter`**;
+  `updated=0` for the full 35s observation window — the rollout never resumes past the 10s
+  window. `results/live-base-timeline.log`, `results/live-base-signals.log`.
 
-## Fix (HEAD) — Confirmed live
+## Fix (HEAD) — Confirmed live (re-confirmed round 2 on `2efff36a`)
 
-On the PR head binary: the budget-exhausted branch pushes
-`RequeueAfter: 7211329726` ns ≈ **7.2s** (the remaining unhealthy window). The requeue fires
-~7s later; the RIs are now stably-unhealthy → `isFree` → replaced with rev2 pods (no failing
-probe) → `ready=2`, `currentRev=rev2` at **t+11s**.
+On the PR head binary: the budget-exhausted branch (now `continue`, line 626 on head) pushes
+`RequeueAfter: 9200854475` ns ≈ **9.2s** (the remaining unhealthy window). The requeue fires
+~9s later; the RIs become stably-unhealthy → `isFree` → replaced with rev2 pods (no failing
+probe) → `ready=2`, `currentRev=rev2`. Round 1 observed `RequeueAfter≈7.2s` on `ec577f76`;
+the value varies with the remaining window at apply time — the key signal is a positive
+`RequeueAfter` and a resumed rollout. `results/live-head-signals.log`, `results/live-head-timeline.log`.
 
 ## Observed-vs-expected table
 
 | id | claim | layer | polarity | verdict | evidence |
 | --- | --- | --- | --- | --- | --- |
 | P0 | base stalls (no requeue after 10s window) | unit + live | contract | **Confirmed** | base test `retry=0s`; live `updated=0` × 35s, no RequeueAfter |
-| F1 | fix only requeues from the first budget-exhausted target; healthy blocker + different fresh-unhealthy target still stalls | unit | canary | **Confirmed** | `TestF1MixedHealthyBlockerStillStalls` PASS on head (wait=0); flips to fail under a "scan all targets" patch |
+| F1 | fix only requeues from the first budget-exhausted target; healthy blocker + different fresh-unhealthy target still stalls | unit | canary | **Fixed (round 2)** | commit `423b4118` `return`→`continue`; author's contract test fails on base (`retry=0s, want ≤4s`) / passes on fix (`wait=4s`), 3/3 isolated runs; round-1 canary retired (order-dependent) |
 | F2 | 1ns floor in `max(...)` is dead code | review | n/a | **Confirmed (cosmetic)** | `isStablyUnhealthy` flips `isFree` before the branch once the window expired |
+| O1 | scope expansion: `2efff36a` rollback-resume broadens `inRollout` | review | n/a | **Noted (not a blocker)** | new `hasStaleBaseInstance` + surge-protects-unready-base; rollback tests (197 lines) pass; live repro recovers cleanly |
 
-## F1 — the fix is narrower than the general stall class
+## F1 — fixed by the author's follow-up commit (round 2)
 
-`buildUpdateTargets` iterates **highest-ordinal first**. The fix pushes a requeue only for
-*the first target that trips* `!isFree && initialBaseUnavail+newlyUnavail >= effectiveBudget`,
-and only if *that* target has an `instanceUnhealthySince` entry. A healthy blocker has its
-entry deleted by `observeInstanceHealth`, so when it is the first exhausted target the code
-pushes **nothing** even if a lower ordinal is freshly-unhealthy with a pending 10s window.
+`buildUpdateTargets` iterates **highest-ordinal first**. On the round-1 head (`ec577f76`) the
+fix pushed a requeue only for *the first target that tripped*
+`!isFree && initialBaseUnavail+newlyUnavail >= effectiveBudget`, and only if *that* target had
+an `instanceUnhealthySince` entry. A healthy blocker has its entry deleted by
+`observeInstanceHealth`, so when it was the first exhausted target the code pushed **nothing**
+even if a lower ordinal was freshly-unhealthy with a pending 10s window — the mixed-config
+rollout stalled.
 
-`TestF1MixedHealthyBlockerStillStalls` (canary) constructs exactly that: ord 1 healthy at
-currentRev, ord 0 freshly unhealthy, `maxUnavailable=1`. On the PR head `Pop(key)==0` (no
-requeue) — the mixed-config rollout still stalls.
+Commit `423b4118` ("check lower rollout targets after a budget block") changes the
+budget-exhausted branch from `return status, nil` to `continue`, so the loop keeps scanning
+lower targets and lets the earliest-expiring pending window schedule the retry. The author's
+modified `TestUpdateStatefulInstanceSetRetriesUnhealthyRollout` now asserts
+`assertWait(reconcile(), 4*time.Second)` for the healthy-blocker + lower-unhealthy case;
+it **FAILS on base** (`retry = 0s, want a positive delay of at most 4s`,
+`stateful_instance_set_control_test.go:1012`) and **PASSES on the fix head** (`wait=4s`),
+deterministic across 3 isolated runs.
 
-This is **not a regression** (base behaves identically) and is outside the issue #464 repro
-(all-unhealthy), so it does not block the PR. A more robust fix would scan all stalled targets
-for the earliest expiring window; the canary flips to fail under such a patch and should then
-be inverted into a contract test.
+The round-1 reviewer canary (`TestF1MixedHealthyBlockerStillStalls`) is **retired**. It was
+order-dependent — it relied on leaked global `instanceUnhealthySince`/`durationStore` state
+from other tests in the same binary. In isolation it yielded `wait=0` on **both** base and
+fix head, so it did not reliably isolate F1; its round-2 "flip" on the full suite was a false
+positive from test-order pollution. The author's contract test subsumes the guard.
 
 ## Layers & how to run
 
@@ -56,8 +81,18 @@ be inverted into a contract test.
 ```bash
 cd <rbg checkout>
 GOFLAGS=-mod=vendor go test -count=1 \
-  -run 'TestUpdateStatefulInstanceSetRetriesUnhealthyRollout|TestF1MixedHealthyBlockerStillStalls' \
+  -run 'TestUpdateStatefulInstanceSetRetriesUnhealthyRollout|TestProgressUpdateBudget' \
   ./pkg/reconciler/roleinstanceset/statefulmode/
+```
+
+Round-2 F1 proof (author's contract test, fails on base / passes on fix):
+
+```bash
+git checkout 2efff36a   # PR head (round 2)
+GOFLAGS=-mod=vendor go test -count=1 -run TestUpdateStatefulInstanceSetRetriesUnhealthyRollout ./pkg/reconciler/roleinstanceset/statefulmode/   # expect PASS (wait=4s)
+git checkout c500c963 && git checkout 2efff36a -- pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control_test.go
+GOFLAGS=-mod=vendor go test -count=1 -run TestUpdateStatefulInstanceSetRetriesUnhealthyRollout ./pkg/reconciler/roleinstanceset/statefulmode/   # expect FAIL: retry=0s, want ≤4s
+git checkout .   # restore
 ```
 
 P0 premise on base (graft the PR's test onto the merge-base *without* the fix):
