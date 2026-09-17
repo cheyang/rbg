@@ -1,0 +1,33 @@
+# F1 (LWS branch naming) — contract canary: pkg/discovery/lws_naming_canary_test.go
+# The vendored LWS API doc (vendor/sigs.k8s.io/lws/api/leaderworkerset/v1/leaderworkerset_types.go,
+# LeaderWorkerSetSpec) states the authoritative pod-naming contract:
+#   leader pod : leaderWorkerSetName-{leaderIndex}              (leaderIndex in [0, Replicas-1])
+#   worker pod : leaderWorkerSetName-{leaderIndex}-{workerIndex}(workerIndex in [1, Size-1])
+# so for Replicas=2, Size=2 the four real pods are: {w}-0, {w}-0-1, {w}-1, {w}-1-1.
+#
+# The PR's buildInstances LWS branch emits CONTIGUOUS ordinals: {w}-0, {w}-1, {w}-2, {w}-3.
+# Run on PR head (861d02c5):  RED  (reproduction)
+#   --- FAIL: TestLWS_NamingContract
+#   ... PR emits "1","2","3" where the contract wants "0-1","1","1-1"
+#
+# Harness-bites check (temporarily applied the proposed fix to config_builder.go):
+#   - canary TestLWS_NamingContract        -> GREEN (so the test bites the right path)
+#   - PR's own TestConfigBuilder_Build/
+#     leader_worker_pattern_with_size=2_on_LeaderWorkerSet -> RED (it codifies the WRONG behavior;
+#     it is a bug-canary that must be inverted when the fix lands)
+#   Production code then reverted (git diff vs pr/471 empty).
+#
+# VERDICT: F1 CONFIRMED — proven correctness + regression defect (blocker).
+#   For size>1, every emitted LWS address except group-0's leader is wrong:
+#     - "...-1" (PR's "worker of group 0") is actually the LEADER of group 1 -> misroutes consumers.
+#     - "...-2"/"...-3" match no pod at all.
+#   Base used {w}-{i} for every pattern, which was CORRECT for LWS leaders (by accident) and simply
+#   omitted workers; the PR both regresses leader naming (for size>1) and adds wrong worker names.
+#
+# NOTE on live repro: the provided cluster does NOT have the leaderworkerset CRD/controller installed
+#   (only rbg-system + volcano), so the LWS path cannot be exercised end-to-end here. This is an
+#   ENVIRONMENT limitation, not uncertainty: the in-repo vendored LWS API documentation is the
+#   authoritative source of truth and it settles the naming contract. Recommend the author (or a
+#   cluster with LWS installed) also verify the LWS pod SUBDOMAIN, since
+#   GetCompatibleHeadlessServiceName may return a service name that differs from the LWS controller's
+#   own headless service that governs the pods' subdomain.

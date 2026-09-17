@@ -1,0 +1,14 @@
+# F5 live DNS resolvability — one-shot busybox nslookup probe (namespace rbg-verify-pr471)
+# (command: nslookup <fqdn> from a busybox:1.36 pod, cluster DNS 169.254.20.10)
+=== prefill LEADER (expect resolve) ===
+Name: discovery-cm-test-prefill-0-0.s-discovery-cm-test-prefill.rbg-verify-pr471.svc.cluster.local
+Address: 10.39.55.190
+
+=== prefill WORKER (expect FAIL — LeaderOnly worker has no hostname/subdomain) ===
+** server can't find discovery-cm-test-prefill-0-1.s-discovery-cm-test-prefill.rbg-verify-pr471.svc.cluster.local: NXDOMAIN
+
+=== decode WORKER (expect resolve — CCP workers carry hostname/subdomain) ===
+Name: discovery-cm-test-decode-0-worker-0.s-discovery-cm-test-decode.rbg-verify-pr471.svc.cluster.local
+Address: 10.39.55.187
+# VERDICT: matches the PR's contract — LWP-RIS workers don't resolve under default LeaderOnly;
+#          CCP workers do. Leaders resolve.

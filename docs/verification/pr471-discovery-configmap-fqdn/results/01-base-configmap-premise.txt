@@ -1,0 +1,40 @@
+# P0 premise — base (pre-fix) controller, live cluster
+# Controller: rolebasedgroup/rbgs-controller:v0.8.0-0c00546d (= git 0c00546d, ancestor of upstream/main,
+#             identical config_builder.go to base branch 0aff5f6). RBG: discovery-cm-test (3 roles:
+#             router Standalone x2, prefill LWP-RIS size2 x1, decode CCP leader1+worker1 x1).
+# Live pods created by the base controller (pod naming is identical between base and PR — the PR
+# only edits config_builder.go):
+#   discovery-cm-test-router-0     hostname=self subdomain=s-discovery-cm-test-router   (resolves)
+#   discovery-cm-test-router-1     hostname=self subdomain=s-discovery-cm-test-router   (resolves)
+#   discovery-cm-test-prefill-0-0   hostname=self subdomain=s-discovery-cm-test-prefill  (resolves)
+#   discovery-cm-test-prefill-0-1   hostname=""   subdomain=""                          (NOT resolvable — LeaderOnly worker)
+#   discovery-cm-test-decode-0-leader-0  hostname=self subdomain=s-discovery-cm-test-decode (resolves)
+#   discovery-cm-test-decode-0-worker-0   hostname=self subdomain=s-discovery-cm-test-decode (resolves)
+#
+# Base (pre-fix) discovery ConfigMap written by the installed controller:
+group:
+  name: discovery-cm-test
+  roles:
+  - router
+  - prefill
+  - decode
+  size: 3
+roles:
+  decode:
+    instances:
+    - address: discovery-cm-test-decode-0.s-discovery-cm-test-decode
+    size: 1
+  prefill:
+    instances:
+    - address: discovery-cm-test-prefill-0.s-discovery-cm-test-prefill
+    size: 1
+  router:
+    instances:
+    - address: discovery-cm-test-router-0.s-discovery-cm-test-router
+    - address: discovery-cm-test-router-1.s-discovery-cm-test-router
+    size: 2
+# VERDICT: premise CONFIRMED.
+#   - prefill address "discovery-cm-test-prefill-0.s-..." matches NO pod (real pods are ...-0-0 / ...-0-1).
+#   - decode  address "discovery-cm-test-decode-0.s-..."  matches NO pod (real pods are ...-0-leader-0 / ...-0-worker-0).
+#   - size:1 per role while the actual pod count is 2 for prefill/decode (size = role.replicas, not pod count).
+#   (Standalone router was already correct in base — one instance per pod, size = replicas.)

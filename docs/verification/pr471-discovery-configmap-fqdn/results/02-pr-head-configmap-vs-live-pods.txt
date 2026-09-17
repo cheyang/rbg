@@ -1,0 +1,45 @@
+# F2/F3/F4/F5 fix — PR-head ConfigBuilder output vs LIVE pods
+# Method: pkg/discovery/live_probe_test.go (RBG_LIVE_PROBE=1). It reads the live RBG
+# discovery-cm-test + live headless Services from the cluster (real KUBECONFIG), runs the
+# PR-head discovery.NewConfigBuilder — the EXACT code the RBG reconciler calls at
+# internal/controller/workloads/rolebasedgroup_controller.go:477 — and cross-checks every
+# generated address against the real live Pods (name match + resolvability via hostname/subdomain).
+#
+# PR-head ConfigBuilder output (built from live cluster state):
+group:
+  name: discovery-cm-test
+  roles:
+  - router
+  - prefill
+  - decode
+  size: 3
+roles:
+  decode:
+    instances:
+    - address: discovery-cm-test-decode-0-leader-0.s-discovery-cm-test-decode
+    - address: discovery-cm-test-decode-0-worker-0.s-discovery-cm-test-decode
+    size: 2
+  prefill:
+    instances:
+    - address: discovery-cm-test-prefill-0-0.s-discovery-cm-test-prefill
+    - address: discovery-cm-test-prefill-0-1.s-discovery-cm-test-prefill
+    size: 2
+  router:
+    instances:
+    - address: discovery-cm-test-router-0.s-discovery-cm-test-router
+    - address: discovery-cm-test-router-1.s-discovery-cm-test-router
+    size: 2
+#
+# Cross-check result: 0 address/pod mismatches. TEST PASSED.
+#   decode   leader  -> pod discovery-cm-test-decode-0-leader-0   EXISTS + resolves
+#   decode   worker  -> pod discovery-cm-test-decode-0-worker-0   EXISTS + resolves
+#   prefill  leader  -> pod discovery-cm-test-prefill-0-0          EXISTS + resolves
+#   prefill  worker  -> pod discovery-cm-test-prefill-0-1          EXISTS (canonical name ok) but NOT resolvable: hostname="" subdomain=""
+#   router   x2      -> pods discovery-cm-test-router-{0,1}        EXISTS + resolve
+#
+# VERDICT:
+#   F2 (LWP-RIS naming)      CONFIRMED live — addresses match real pods; size=2 (=pod count).
+#   F3 (CCP naming)          CONFIRMED live — leader+worker addresses match real pods; both resolve.
+#   F4 (size=pod count)      CONFIRMED live+unit — size=2 for each 2-pod role (was 1 in base).
+#   F5 (worker non-resolve)  CONFIRMED live (design note) — LWP-RIS worker FQDN is canonical but
+#                            NXDOMAIN under default LeaderOnly; matches PR's documented caveat.

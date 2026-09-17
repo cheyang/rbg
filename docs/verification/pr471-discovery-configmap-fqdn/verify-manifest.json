@@ -1,0 +1,77 @@
+{
+  "pr": "https://github.com/sgl-project/rbg/pull/471",
+  "topic": "pr471-discovery-configmap-fqdn",
+  "prHeadSha": "861d02c5aa25185b14137466b727f2521fbf09e1",
+  "baseSha": "0aff5f65a7b94a54aff4f83fb978e3a264e7bc9e",
+  "premise": {
+    "id": "P0",
+    "claim": "On the base branch the discovery ConfigMap instances[].address for LWP/CCP roles does not match any real Pod, and size = role.replicas (not actual pod count).",
+    "runsAgainst": "base",
+    "layer": "live",
+    "polarity": "contract",
+    "verdict": "Confirmed",
+    "evidence": "results/01-base-configmap-premise.txt"
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "blocker",
+      "summary": "LWS branch emits contiguous ordinals instead of the LWS naming contract; wrong for size>1, misroutes group-1 leader, and regresses leader naming vs base.",
+      "claim": "Under LWP-on-LeaderWorkerSet with size>1, buildInstances should emit leader={name}-{leaderIndex} and worker={name}-{leaderIndex}-{workerIndex} (vendored LWS API doc), but emits {name}-{i*size} / {name}-{i*size+j+1}.",
+      "layer": "unit+doc",
+      "polarity": "contract",
+      "tests": ["pkg/discovery/lws_naming_canary_test.go::TestLWS_NamingContract", "pkg/discovery/config_builder_test.go::TestConfigBuilder_Build/leader_worker_pattern_with_size=2_on_LeaderWorkerSet (PR's own; bug-canary, must be inverted)"],
+      "verdict": "Confirmed",
+      "evidence": "results/04-lws-naming-contract-canary.txt",
+      "liveNote": "LWS CRD/controller not installed on the provided cluster; proven via in-repo vendored LWS API docs + unit canary, not a live LWS run. LWS pod subdomain also unverified."
+    },
+    {
+      "id": "F2",
+      "severity": "none",
+      "summary": "LWP-on-RoleInstanceSet addresses match real pods for size1 and size2.",
+      "layer": "live",
+      "polarity": "contract",
+      "tests": ["pkg/discovery/live_probe_test.go::TestLiveProbe_ConfigMapVsPods"],
+      "verdict": "Confirmed",
+      "evidence": "results/02-pr-head-configmap-vs-live-pods.txt"
+    },
+    {
+      "id": "F3",
+      "severity": "none",
+      "summary": "CCP addresses match real pods; leader+worker both resolve.",
+      "layer": "live",
+      "polarity": "contract",
+      "tests": ["pkg/discovery/live_probe_test.go::TestLiveProbe_ConfigMapVsPods"],
+      "verdict": "Confirmed",
+      "evidence": "results/02-pr-head-configmap-vs-live-pods.txt, results/03-live-dns-nslookup.txt"
+    },
+    {
+      "id": "F4",
+      "severity": "none",
+      "summary": "size = actual pod count per role (was role.replicas).",
+      "layer": "unit+live",
+      "polarity": "contract",
+      "tests": ["pkg/discovery/config_builder_test.go::TestConfigBuilder_Build", "pkg/discovery/live_probe_test.go::TestLiveProbe_ConfigMapVsPods"],
+      "verdict": "Confirmed",
+      "evidence": "results/02-pr-head-configmap-vs-live-pods.txt"
+    },
+    {
+      "id": "F5",
+      "severity": "comment",
+      "summary": "LWP-RIS worker FQDN is canonical but NXDOMAIN under default LeaderOnly (documented PR caveat, not a defect).",
+      "layer": "live",
+      "polarity": "contract",
+      "tests": ["pkg/discovery/live_probe_test.go::TestLiveProbe_ConfigMapVsPods"],
+      "verdict": "Confirmed",
+      "evidence": "results/03-live-dns-nslookup.txt",
+      "liveNote": "Resolvability depends on sharedServiceSelection policy; only leader checked for DNS by design."
+    }
+  ],
+  "liveCluster": {
+    "controllerImage": "rolebasedgroup/rbgs-controller:v0.8.0-0c00546d",
+    "controllerGitCommit": "0c00546d",
+    "controllerIsBaseEquivalent": true,
+    "lwsInstalled": false,
+    "blocker": "PR-head RoleInstanceSet informer cannot decode legacy restartPolicy object-form data on existing RoleInstances; live ConfigMap rewrite blocked, so fix is proven via direct ConfigBuilder run against live cluster state."
+  }
+}
