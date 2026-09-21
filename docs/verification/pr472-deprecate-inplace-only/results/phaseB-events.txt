@@ -1,0 +1,25 @@
+12s         Normal    AllocIPSucceed               pod/pr472-abtest-ipc-1             Alloc IP 10.39.55.180/16 took 687.959902ms
+10s         Normal    AllocIPSucceed               pod/pr472-abtest-ipc-1             Alloc IP 10.39.55.185/16 took 47.916461ms
+10s         Warning   InspectFailed                pod/pr472-abtest-ipc-1             Failed to inspect image "": rpc error: code = Canceled desc = context canceled
+10s         Warning   Failed                       pod/pr472-abtest-ipc-1             Error: ImageInspectError
+9s          Warning   Failed                       pod/pr472-abtest-ipc-0             Error: ImageInspectError
+9s          Warning   InspectFailed                pod/pr472-abtest-ipc-0             Failed to inspect image "": rpc error: code = Canceled desc = context canceled
+9s          Normal    AllocIPSucceed               pod/pr472-abtest-ipc-0             Alloc IP 10.39.55.167/16 took 1.066846491s
+7s          Warning   Failed                       pod/pr472-abtest-ipc-0             Error: ImageInspectError
+7s          Warning   Failed                       pod/pr472-abtest-ipc-1             Error: ImageInspectError
+7s          Warning   InspectFailed                pod/pr472-abtest-ipc-0             Failed to inspect image "": rpc error: code = Canceled desc = context canceled
+7s          Normal    AllocIPSucceed               pod/pr472-abtest-ipc-1             Alloc IP 10.39.55.185/16 took 736.062055ms
+7s          Normal    AllocIPSucceed               pod/pr472-abtest-ipc-0             Alloc IP 10.39.55.187/16 took 35.605014ms
+7s          Warning   InspectFailed                pod/pr472-abtest-ipc-1             Failed to inspect image "": rpc error: code = Canceled desc = context canceled
+5s          Warning   Failed                       pod/pr472-abtest-ipc-1             Error: ImageInspectError
+5s          Normal    AllocIPSucceed               pod/pr472-abtest-ipc-1             Alloc IP 10.39.55.180/16 took 48.553648ms
+5s          Warning   InspectFailed                pod/pr472-abtest-ipc-1             Failed to inspect image "": rpc error: code = Canceled desc = context canceled
+4s          Warning   Failed                       pod/pr472-abtest-ipc-0             Error: ImageInspectError
+4s          Warning   InspectFailed                pod/pr472-abtest-ipc-0             Failed to inspect image "": rpc error: code = Canceled desc = context canceled
+4s          Normal    AllocIPSucceed               pod/pr472-abtest-ipc-0             Alloc IP 10.39.55.187/16 took 1.059845815s
+2s          Warning   InspectFailed                pod/pr472-abtest-ipc-1             Failed to inspect image "": rpc error: code = Canceled desc = context canceled
+2s          Warning   Failed                       pod/pr472-abtest-ipc-1             Error: ImageInspectError
+2s          Normal    AllocIPSucceed               pod/pr472-abtest-ipc-1             Alloc IP 10.39.55.192/16 took 680.608831ms
+1s          Normal    AllocIPSucceed               pod/pr472-abtest-ipc-0             Alloc IP 10.39.55.167/16 took 1.039234708s
+1s          Warning   InspectFailed                pod/pr472-abtest-ipc-0             Failed to inspect image "": rpc error: code = Canceled desc = context canceled
+1s          Warning   Failed                       pod/pr472-abtest-ipc-0             Error: ImageInspectError

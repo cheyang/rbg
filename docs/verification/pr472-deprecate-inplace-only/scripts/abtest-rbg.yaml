@@ -1,0 +1,53 @@
+# A/B premise test for PR #472 (deprecate InPlaceOnly).
+# Two roles, identical spec EXCEPT the rollingUpdate.type:
+#   ipo = InPlaceOnly (the deprecated value)
+#   ipc = InPlaceIfPossible (the recommended value the note steers users toward)
+# Premise claim P0 (PR body + deprecation note): "InPlaceOnly is not separately
+# implemented and behaves identically to InPlaceIfPossible" -- i.e. both fall
+# back to Pod recreation (rather than fail) when an in-place-incompatible change
+# is applied, and both in-place update when an image-only change is applied.
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: pr472-abtest
+  namespace: pr472-verify
+spec:
+  roles:
+    - name: ipo            # InPlaceOnly
+      replicas: 2
+      rolloutStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          type: InPlaceOnly
+          maxUnavailable: 1
+          maxSurge: 0
+      standalonePattern:
+        template:
+          metadata:
+            labels:
+              appVersion: v1
+          spec:
+            containers:
+              - name: nginx
+                image: anolis-registry.cn-zhangjiakou.cr.aliyuncs.com/openanolis/nginx:1.14.1-8.6
+                ports:
+                  - containerPort: 80
+    - name: ipc            # InPlaceIfPossible
+      replicas: 2
+      rolloutStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          type: InPlaceIfPossible
+          maxUnavailable: 1
+          maxSurge: 0
+      standalonePattern:
+        template:
+          metadata:
+            labels:
+              appVersion: v1
+          spec:
+            containers:
+              - name: nginx
+                image: anolis-registry.cn-zhangjiakou.cr.aliyuncs.com/openanolis/nginx:1.14.1-8.6
+                ports:
+                  - containerPort: 80

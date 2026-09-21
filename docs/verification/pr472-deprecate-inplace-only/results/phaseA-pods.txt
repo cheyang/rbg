@@ -1,0 +1,4 @@
+pr472-abtest-ipc-0	Running	anolis-registry.cn-zhangjiakou.cr.aliyuncs.com/openanolis/nginx@sha256:55dcb729c46f2028126f2a57417712c4d77a947ecb409e445bf0c2e59d100640
+pr472-abtest-ipc-1	Running	docker.io/library/nginx@sha256:ef8676b33d681f272ba429b27658bdd7e640963279714c96bddf1dc76307f7b6
+pr472-abtest-ipo-0	Running	docker.io/library/nginx@sha256:ef8676b33d681f272ba429b27658bdd7e640963279714c96bddf1dc76307f7b6
+pr472-abtest-ipo-1	Running	docker.io/library/nginx@sha256:ef8676b33d681f272ba429b27658bdd7e640963279714c96bddf1dc76307f7b6

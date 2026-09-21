@@ -1,0 +1,90 @@
+-- t=5s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=49087200	ready=True	ph=Running
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=df682e04	ready=True	ph=Running
+-- t=10s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=49087200	ready=True	ph=Running
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=df682e04	ready=True	ph=Running
+-- t=15s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=49087200	ready=True	ph=Running
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=df682e04	ready=True	ph=Running
+-- t=20s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=49087200	ready=True	ph=Running
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=df682e04	ready=True	ph=Running
+-- t=25s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=49087200	ready=True	ph=Running
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=df682e04	ready=False	ph=Succeeded
+-- t=30s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=49087200	ready=True	ph=Running
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=df682e04	ready=False	ph=Succeeded
+-- t=35s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=49087200	ready=False	ph=Succeeded
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=df682e04	ready=False	ph=Succeeded
+-- t=40s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=49087200	ready=False	ph=Succeeded
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=df682e04	ready=False	ph=Succeeded
+-- t=45s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=49087200	ready=False	ph=Succeeded
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=1d0184a4	ready=False	ph=Pending
+-- t=50s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=49087200	ready=False	ph=Succeeded
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=1d0184a4	ready=False	ph=Pending
+-- t=55s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=49087200	ready=False	ph=Succeeded
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=1d0184a4	ready=False	ph=Pending
+-- t=60s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=49087200	ready=False	ph=Succeeded
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=1d0184a4	ready=False	ph=Pending
+-- t=65s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=d1a33029	ready=False	ph=Pending
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=1d0184a4	ready=False	ph=Pending
+-- t=70s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=d1a33029	ready=False	ph=Pending
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=1d0184a4	ready=False	ph=Pending
+-- t=75s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=d1a33029	ready=False	ph=Pending
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=1d0184a4	ready=False	ph=Pending
+-- t=80s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=d1a33029	ready=False	ph=Pending
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=1d0184a4	ready=False	ph=Pending
+-- t=85s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=d1a33029	ready=False	ph=Pending
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=1d0184a4	ready=False	ph=Pending
+-- t=90s --
+iso-ipc-r-0	uid=2d01779c	ready=True	ph=Running
+iso-ipc-r-1	uid=d1a33029	ready=False	ph=Pending
+iso-ipo-r-0	uid=92532612	ready=True	ph=Running
+iso-ipo-r-1	uid=1d0184a4	ready=False	ph=Pending

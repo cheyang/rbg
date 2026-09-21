@@ -1,0 +1,47 @@
+{
+  "pr": "https://github.com/sgl-project/rbg/pull/472",
+  "topic": "pr472-deprecate-inplace-only",
+  "prHeadFetch": { "remote": "https://github.com/sgl-project/rbg.git", "ref": "pull/472/head" },
+  "mergeBase": "0aff5f65a7b94a54aff4f83fb978e3a264e7bc9e",
+  "premise": {
+    "id": "P0",
+    "claim": "InPlaceOnly is not separately implemented and behaves identically to InPlaceIfPossible (both in-place update on an image-only change; both fall back to Pod recreation rather than fail on an in-place-incompatible change).",
+    "runsAgainst": "base",
+    "layer": "live+code",
+    "verdict": "Confirmed",
+    "evidence": "Code: no `case InPlaceOnly`/strategy-specific branch exists; the two runtime branch points (stateful_instance_set_control.go:788, statelessmode/sync/update.go:182) use `Type != RecreatePod`, treating InPlaceOnly and InPlaceIfPossible identically; inPlaceUpdateInstance returns (false,nil) on CanUpdateInPlace=false -> caller recreates (no fail). The one divergence (ValidateInstanceSetUpdate, statelessmode/core/implement.go:162, guards on ==InPlaceIfPossible) has NO production caller (dead code). Live A/B on ACK cluster (installed v0.8.0-0c00546d, pre-enum v1alpha2 CRDs): Phase A image-only change -> both in-place (pod names unchanged, imageID changed); Phase B isolated containerPort change -> both fell back to recreation and converged Ready identically. See results/."
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "title": "ValidateInstanceSetUpdate diverges for InPlaceOnly but is dead code (no runtime effect)",
+      "severity": "minor",
+      "layer": "code",
+      "polarity": "contract",
+      "claim": "ValidateInstanceSetUpdate (statelessmode/core/implement.go:162) runs its component-size-replace-patch guard only when Type==InPlaceIfPossible, so an InPlaceOnly set would skip it; this contradicts the deprecation note's 'behaves identically' if the guard were ever wired into a validating webhook.",
+      "verdict": "Confirmed-as-dead-code",
+      "evidence": "grep shows the method is declared in core/api.go:49, implemented in implement.go:162, stubbed in update_test.go:154, and has ZERO production call sites. No runtime effect today; the note's 'identical' claim holds at runtime. Not touched by this PR.",
+      "proposedFix": "Optional: either delete the dead ValidateInstanceSetUpdate, or change the guard to `Type == RecreatePod -> skip` so InPlaceOnly and InPlaceIfPossible are validated identically if it is ever wired in. Out of scope for a doc-only deprecation PR."
+    },
+    {
+      "id": "F2",
+      "title": "rolling-update example removes the `router` role (scope creep beyond deprecation)",
+      "severity": "nit",
+      "layer": "code",
+      "polarity": "n/a",
+      "claim": "examples/basic/rbg/update-strategy/rolling-update.yaml deletes the entire `router` role (-24 lines) and flips `decode` from InPlaceOnly to RecreatePod. Removing a role is unrelated to deprecating InPlaceOnly.",
+      "verdict": "Confirmed",
+      "evidence": "diff: the `decode` role switched InPlaceOnly->RecreatePod (in scope) but the `router` role was deleted entirely (out of scope).",
+      "proposedFix": "If the goal is only to stop demonstrating InPlaceOnly, switch `decode` to InPlaceIfPossible (the value the note steers users toward) and keep `router`. Or confirm the role removal is intentional."
+    }
+  ],
+  "backwardsCompat": {
+    "verdict": "Confirmed",
+    "evidence": "Live: InPlaceOnly accepted by pre-enum v1alpha2 CRD and pods reconciled to Ready. Diff: the enum value InPlaceOnly is retained in all regenerated CRDs (rolebasedgroups, rolebasedgroupsets, roleinstancesets) and deploy/kubectl/manifests.yaml; only the description text gains a deprecation note. existing CRs with InPlaceOnly are not rejected."
+  },
+  "crdRegenConsistency": {
+    "verdict": "Confirmed",
+    "evidence": "The 'Note: InPlaceOnly is deprecated; use InPlaceIfPossible.' description line was added to all 3 CRD bases and all 3 matching blocks in deploy/kubectl/manifests.yaml; enum lists unchanged."
+  },
+  "liveNote": "Live layer run against ACK cluster (3 nodes, v1.36.1-aliyun.1), installed controller rolebasedgroup/rbgs-controller:v0.8.0-0c00546d with pre-enum v1alpha2 CRDs. Since PR #472 is comment/CRD-description-only (zero behavior change), the installed controller is a valid proxy for the PR-branch InPlaceOnly behavior. Re-run: KUBECONFIG=<cluster> bash scripts/live_abtest.sh (idempotent; creates+deletes ns pr472-verify)."
+}
