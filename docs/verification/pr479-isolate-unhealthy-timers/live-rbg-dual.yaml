@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pr479-verify
+---
+# Minimal dual-role RBG reproducing PR #479's premise:
+#  - two standalone RoleInstanceSet roles (prefill, decode), 1 replica each
+#  - podManagementPolicy: Parallel
+#  - rolloutStrategy RollingUpdate, maxUnavailable=1, maxSurge=0, RecreatePod
+#  - pod template with a FAILING readiness probe (nginx serving /healthz -> 404)
+#    so each RoleInstance is unhealthy (RoleInstanceReady=False) during rollout
+#    and consumes the unavailable budget, gating progress on isStablyUnhealthy
+#    (the 10s unhealthy window that #479 isolates per-set).
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroup
+metadata:
+  name: pr479-dual
+  namespace: pr479-verify
+  labels:
+    app: pr479-dual
+spec:
+  roles:
+    - name: prefill
+      replicas: 1
+      podManagementPolicy: Parallel
+      rolloutStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          type: RecreatePod
+          maxUnavailable: 1
+          maxSurge: 0
+      standalonePattern:
+        template:
+          metadata:
+            labels:
+              app: pr479-dual
+              role: prefill
+          spec:
+            containers:
+              - name: prefill
+                image: anolis-registry.cn-zhangjiakou.cr.aliyuncs.com/openanolis/nginx:1.14.1-8.6
+                ports:
+                  - containerPort: 80
+                readinessProbe:
+                  httpGet:
+                    path: /healthz-nonexistent
+                    port: 80
+                  periodSeconds: 5
+                  failureThreshold: 3
+    - name: decode
+      replicas: 1
+      podManagementPolicy: Parallel
+      rolloutStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          type: RecreatePod
+          maxUnavailable: 1
+          maxSurge: 0
+      standalonePattern:
+        template:
+          metadata:
+            labels:
+              app: pr479-dual
+              role: decode
+          spec:
+            containers:
+              - name: decode
+                image: anolis-registry.cn-zhangjiakou.cr.aliyuncs.com/openanolis/nginx:1.14.1-8.6
+                ports:
+                  - containerPort: 80
+                readinessProbe:
+                  httpGet:
+                    path: /healthz-nonexistent
+                    port: 80
+                  periodSeconds: 5
+                  failureThreshold: 3

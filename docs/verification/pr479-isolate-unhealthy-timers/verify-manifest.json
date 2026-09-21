@@ -1,0 +1,35 @@
+{
+  "pr": "https://github.com/sgl-project/rbg/pull/479",
+  "title": "fix: isolate unhealthy timers by RoleInstanceSet",
+  "topic": "pr479-isolate-unhealthy-timers",
+  "branch": "verify/pr479-isolate-unhealthy-timers",
+  "baseCommit": "1a9653adbe20776deabad367c38a0a0c471bfc72",
+  "headCommit": "5a322f23752452e0b842b50b7003a9619fe3c2fd",
+  "premise": "observeInstanceHealth keys instanceUnhealthySince by RoleInstance UID only and its cleanup deletes any UID absent from the current set's instances; reconciling set B wipes set A's unhealthy start time (and vice versa), so neither set's 10s unhealthy window matures under interleaving and both rollouts stay stuck on the old template. #470's timed retries bring the controller back but cannot help while the start time keeps being deleted.",
+  "verdicts": {
+    "P0_premise_base": "CONFIRMED",
+    "P0_fix_head": "CONFIRMED",
+    "harness_bites": "CONFIRMED",
+    "live_AB": "CONFIRMED"
+  },
+  "harness": {
+    "unit_head": "pkg/reconciler/roleinstanceset/statefulmode/premise_crossset_head_test.go",
+    "unit_base_record": "docs/verification/pr479-isolate-unhealthy-timers/premise_crossset_base_test.go",
+    "live_manifest": "docs/verification/pr479-isolate-unhealthy-timers/live-rbg-dual.yaml",
+    "live_logs": "base-controller.log / head-controller.log (captured during run)"
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "minor",
+      "summary": "pruneInstanceHealth ranges the entire global map and does a lister Get per entry on every Reconcile (O(N) per reconcile), even when only this set's entries exist.",
+      "category": "efficiency"
+    },
+    {
+      "id": "F2",
+      "severity": "minor",
+      "summary": "pruneInstanceHealth treats informer-cache IsNotFound as definitive and deletes OTHER sets' timers; a transient cache desync (existing set momentarily absent from cache) would wipe another set's timer — the same cross-set reset class the PR fixes, triggered by cache inconsistency rather than the cleanup loop.",
+      "category": "correctness/edge-case"
+    }
+  ]
+}
