@@ -48,6 +48,29 @@ The full L1 unit sweep on the head (all of `api/...` + `internal/controller/work
 only the three contract tests fail; every PR test and every canary passes
 (`results/unit-head.txt`).
 
+## Round 2 — second reviewer's three P1s, independently verified
+
+A follow-up review (by a different reviewer, unpublished) raised three P1 findings against
+the same head. Each was re-derived from the code and then proven with a contract probe in
+`internal/controller/workloads/verify_pr474_rollout_test.go` (`results/unit-head-round2.txt`):
+
+| ID | Claim | Verdict | Evidence |
+|----|-------|---------|----------|
+| F9 (their P1-1) | surge reclaimed earlier in the same reconcile still counts in the delete budget (`readySurge` reads the pre-reclaim snapshot) | **Confirmed**: 3 serving base + 1 ready surge, `maxUnavailable: 1`, `maxSurge` 1→0 → surge reclaimed AND 2 serving base deleted, leaving 1 serving instead of ≥2 | `TestVerifyPR474_ReclaimedSurgeDoesNotWidenBudget` RED on head ("2 is not ≤ 1"); green with `children.surge = keptSurge` |
+| F10 (their P1-2) | a retained surge group never follows subsequent template changes | **Confirmed**: `maxUnavailable: 0, maxSurge: 1`, surge stuck unready on superseded template B, template corrected to C → budget stays 0, no base can roll, repeated reconciles never recover; the same omission stalls a standing canary on the old template | `TestVerifyPR474_SurgeGroupFollowsTemplateChanges` RED on head (stale surge never deleted) |
+| F11 (their P1-3) | a budget-blocked serving group `break`s the loop, skipping budget-free repair of broken lower-ordinal groups | **Confirmed**: s-2 serving on bad template B (budget-blocked), s-1 stuck unready on B → s-1 never replaced → the rollback wedges permanently. The author's `NotServingOutdatedBypassesBudgetOnly` only covers the broken group at the highest ordinal | `TestVerifyPR474_BudgetBlockedServingGroupDoesNotStopBrokenRepair` RED on head; green with `break`→`continue`, and the author's full test package still passes under that change |
+
+Harness-bites for round 2: minimal fixes applied per finding, all three probes flipped green,
+then reverted; production diff empty again.
+
+Their other adjustments, evaluated: the F6 fix direction is better than my original wording
+(fix the status/`Rolling` reporting, do NOT scope `rolloutComplete`'s serving requirement —
+the surge is load-bearing protection when a held-back group breaks); the F5 fix should
+validate the raw IntOrString (a negative percentage can round to 0 and escape a
+resolved-value check) and can additionally live in the CRD as CEL
+(`x-kubernetes-validations`), not only in the webhook; the CI-timeout note is moot after
+main merged #485 (30m→45m).
+
 ## Harness-bites check (done this round)
 
 The three contract tests were proven to detect their fixes: with a minimal

@@ -105,7 +105,35 @@
         "TestVerifyPR474_PausedScaleOnlyPropagatesTemplateMetadata"
       ],
       "note": "while paused, a replicas-only in-place scale also syncs template labels/annotations, contradicting 'paused freezes template propagation'. Canary pins it."
+    },
+    {
+      "id": "F9",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_ReclaimedSurgeDoesNotWidenBudget"
+      ],
+      "note": "P1 (second reviewer, independently confirmed): surge reclaimed earlier in the same reconcile still counts in the delete budget (readySurge reads the pre-reclaim snapshot). 3 serving base + 1 ready surge + maxUnavailable=1 + maxSurge 1->0: surge deleted, then TWO serving base groups deleted, leaving 1 serving instead of >=2. RED on head; green with children.surge = keptSurge after reclamation."
+    },
+    {
+      "id": "F10",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_SurgeGroupFollowsTemplateChanges"
+      ],
+      "note": "P1 (second reviewer, independently confirmed): a retained surge group is never reconciled against subsequent template changes (classifyRolloutChildren covers base only, warmUp only fills missing ordinals). maxUnavailable=0 + surge stuck unready on a superseded template -> budget stays 0 -> rollout wedges even after the template is corrected; standing canary (partition==replicas) also stalls on the old template. RED on head."
+    },
+    {
+      "id": "F11",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_BudgetBlockedServingGroupDoesNotStopBrokenRepair"
+      ],
+      "note": "P1 (second reviewer, independently confirmed): the budget-exhausted `break` skips lower-ordinal not-serving outdated groups that the PR documents as free to replace. s-2 serving/budget-blocked + s-1 stuck unready on a bad template -> s-1 never repaired -> permanent wedge (the rollback never happens). RED on head; green with break -> continue (existing PR tests still pass under it)."
     }
   ],
-  "liveNote": "L3 ran on a dedicated ACK cluster (3 nodes, v1.36-aliyun) reached via the remote sandbox: PR CRDs + chart-installed webhook stack; in-cluster controller scaled to 0 while the head/base binaries ran out-of-cluster on the sandbox (v1alpha1-conversion F1 test ran first with the in-cluster webhook up). The e2e window additionally drops CRD conversion to None because the e2e framework's AfterEach issues v1alpha1 DeleteAllOf calls that a dead conversion webhook would fail."
+  "liveNote": "L3 ran on a dedicated ACK cluster (3 nodes, v1.36-aliyun) reached via the remote sandbox: PR CRDs + chart-installed webhook stack; in-cluster controller scaled to 0 while the head/base binaries ran out-of-cluster on the sandbox (v1alpha1-conversion F1 test ran first with the in-cluster webhook up). The e2e window additionally drops CRD conversion to None because the e2e framework's AfterEach issues v1alpha1 DeleteAllOf calls that a dead conversion webhook would fail.",
+  "rounds": []
 }

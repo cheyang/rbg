@@ -204,3 +204,131 @@ func TestVerifyPR474_PausedScaleOnlyPropagatesTemplateMetadata(t *testing.T) {
 	assert.Equal(t, "new", after.Labels["team"],
 		"canary: template metadata propagated even though the rollout is paused")
 }
+
+// --- Round-2 findings (raised by a second reviewer, independently verified here) ---
+
+// F9/P1-1 (contract): surge reclaimed in the same reconcile must not still count
+// in the delete budget. reconcileRolling reclaims the excess surge group first,
+// but recreateOutdatedGroups computes readySurge from the snapshot taken at the
+// start of the reconcile, in which the just-deleted surge still reads as serving.
+//
+// Setup: replicas=3, all base outdated and serving, one ready surge group, and
+// maxSurge shrunk 1 -> 0 in the same update that changed the template. Correct:
+// the surge is reclaimed AND at most maxUnavailable(1) serving base group is
+// deleted, keeping >= 2 serving. On the PR head the phantom surge widens the
+// budget to 2, so TWO serving base groups are deleted, leaving 1 serving.
+func TestVerifyPR474_ReclaimedSurgeDoesNotWidenBudget(t *testing.T) {
+	scheme := rbgsTestScheme(t)
+
+	oldRoles := []workloadsv1alpha2.RoleSpec{{Name: "worker", Replicas: ptr.To(int32(1))}}
+	newRoles := []workloadsv1alpha2.RoleSpec{{Name: "worker", Replicas: ptr.To(int32(1)), MinReadySeconds: 10}}
+
+	// maxSurge is 0 now; the surge group at ordinal 3 is a leftover from maxSurge=1.
+	set := rollingTestSet("s", 3, newRoles, &workloadsv1alpha2.GroupSetRolloutStrategy{
+		MaxUnavailable: ptr.To(intstr.FromInt32(1)),
+		MaxSurge:       ptr.To(intstr.FromInt32(0)),
+	})
+	surge := rollingTestChild("s", 3, oldRoles, true)
+
+	c, deleted := countingDeleteClient(scheme, set,
+		rollingTestChild("s", 0, oldRoles, true),
+		rollingTestChild("s", 1, oldRoles, true),
+		rollingTestChild("s", 2, oldRoles, true),
+		surge,
+	)
+	r := &RoleBasedGroupSetReconciler{client: c, scheme: scheme, recorder: record.NewFakeRecorder(100)}
+
+	reconcileSet(t, r, "s")
+
+	baseDeleted := 0
+	for _, name := range *deleted {
+		if name != "s-3" {
+			baseDeleted++
+		}
+	}
+	assert.Contains(t, *deleted, "s-3", "the excess surge group is reclaimed")
+	assert.LessOrEqual(t, baseDeleted, 1,
+		"maxUnavailable=1 allows deleting at most one serving base group; the reclaimed surge must not widen the budget")
+}
+
+// F10/P1-2 (contract): a retained surge group must follow the current template.
+// classifyRolloutChildren only examines base groups and warmUpSurgeCapacity only
+// fills missing ordinals, so a surge group created from a superseded template is
+// kept forever. With maxUnavailable=0 and the surge never becoming ready (bad
+// template), the delete budget stays 0 and the rollout wedges permanently even
+// after the template is corrected.
+//
+// Setup: template is C; two base groups are ready on A; the surge group sits on
+// B (superseded) and never became ready. Correct: the stale surge is replaced
+// with one built from C. On the PR head nothing touches it and no base group
+// can roll (budget = 0 + 0).
+func TestVerifyPR474_SurgeGroupFollowsTemplateChanges(t *testing.T) {
+	scheme := rbgsTestScheme(t)
+
+	rolesA := []workloadsv1alpha2.RoleSpec{{Name: "worker", Replicas: ptr.To(int32(1))}}
+	rolesB := []workloadsv1alpha2.RoleSpec{{Name: "worker", Replicas: ptr.To(int32(1)), MinReadySeconds: 10}}
+	rolesC := []workloadsv1alpha2.RoleSpec{{Name: "worker", Replicas: ptr.To(int32(1)), MinReadySeconds: 20}}
+
+	set := rollingTestSet("s", 2, rolesC, &workloadsv1alpha2.GroupSetRolloutStrategy{
+		MaxUnavailable: ptr.To(intstr.FromInt32(0)),
+		MaxSurge:       ptr.To(intstr.FromInt32(1)),
+	})
+	staleSurge := rollingTestChild("s", 2, rolesB, false) // created from B, never ready
+
+	c, deleted := countingDeleteClient(scheme, set,
+		rollingTestChild("s", 0, rolesA, true),
+		rollingTestChild("s", 1, rolesA, true),
+		staleSurge,
+	)
+	r := &RoleBasedGroupSetReconciler{client: c, scheme: scheme, recorder: record.NewFakeRecorder(100)}
+
+	reconcileSet(t, r, "s")
+	reconcileSet(t, r, "s")
+
+	// The stale surge must be replaced so it is rebuilt from the current template C.
+	assert.Contains(t, *deleted, "s-2",
+		"the superseded surge group must be recreated so it picks up template C")
+	surge := &workloadsv1alpha2.RoleBasedGroup{}
+	err := c.Get(context.Background(), client.ObjectKey{Namespace: "default", Name: "s-2"}, surge)
+	if err == nil {
+		assert.True(t, r.rolesEqual(surge.Spec.Roles, rolesC),
+			"the surge group must carry the current template after the correction")
+	}
+}
+
+// F11/P1-3 (contract): a budget-blocked serving candidate must not stop the
+// budget-free repair of a lower-ordinal group that is already not serving. The
+// PR documents that the budget gates serving groups only ("holding it back would
+// slow a rollback to a healthy template for no gain"), but the `break` on a
+// budget-blocked serving group skips every lower ordinal, including broken ones.
+//
+// Setup: template is C; s-2 serving on B (outdated, budget-blocked); s-1 stuck
+// unready on B (outdated, free to replace); s-0 serving on B. With
+// maxUnavailable=1 the unavailable s-1 already fills the budget, so s-2 breaks
+// the loop and s-1 is never repaired: the rollback to C wedges permanently.
+// Correct: skip budget-blocked serving candidates, keep scanning lower ordinals.
+func TestVerifyPR474_BudgetBlockedServingGroupDoesNotStopBrokenRepair(t *testing.T) {
+	scheme := rbgsTestScheme(t)
+
+	rolesB := []workloadsv1alpha2.RoleSpec{{Name: "worker", Replicas: ptr.To(int32(1)), MinReadySeconds: 10}}
+	rolesC := []workloadsv1alpha2.RoleSpec{{Name: "worker", Replicas: ptr.To(int32(1)), MinReadySeconds: 20}}
+
+	set := rollingTestSet("s", 3, rolesC, &workloadsv1alpha2.GroupSetRolloutStrategy{
+		MaxUnavailable: ptr.To(intstr.FromInt32(1)),
+	})
+	c, deleted := countingDeleteClient(scheme, set,
+		rollingTestChild("s", 0, rolesB, true),
+		rollingTestChild("s", 1, rolesB, false), // stuck unready on the bad template
+		rollingTestChild("s", 2, rolesB, true),
+	)
+	r := &RoleBasedGroupSetReconciler{client: c, scheme: scheme, recorder: record.NewFakeRecorder(100)}
+
+	reconcileSet(t, r, "s")
+
+	assert.Contains(t, *deleted, "s-1",
+		"the not-serving s-1 consumes no budget and must be replaced even while serving s-2 is budget-blocked")
+	assert.NotContains(t, *deleted, "s-2",
+		"the serving s-2 is budget-blocked and must wait")
+	assert.NotContains(t, *deleted, "s-0",
+		"s-0 is behind the budget-blocked s-2 in this pass")
+}

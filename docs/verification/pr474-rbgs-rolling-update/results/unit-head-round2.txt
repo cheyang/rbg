@@ -1,0 +1,74 @@
+=== RUN   TestVerifyPR474_LegacySpellingReplicasOnlyScalesInPlace
+2026-09-26T00:23:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-09-26T00:23:47+08:00	INFO	Scaling RoleBasedGroups in place, roles differ only in replicas	{"rbgset": {"name":"s","namespace":"default"}, "count": 1}
+2026-09-26T00:23:47+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"s","namespace":"default"}, "name": "s-0"}
+2026-09-26T00:23:47+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"s","namespace":"default"}, "replicas": 1, "readyReplicas": 1, "updatedReplicas": 1}
+2026-09-26T00:23:47+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+--- PASS: TestVerifyPR474_LegacySpellingReplicasOnlyScalesInPlace (0.06s)
+=== RUN   TestVerifyPR474_NegativeMaxUnavailableStallsRollout
+2026-09-26T00:23:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-09-26T00:23:47+08:00	INFO	Unavailability budget exhausted, waiting before recreating more RoleBasedGroups	{"rbgset": {"name":"s","namespace":"default"}, "unavailable": 0, "budget": 0}
+2026-09-26T00:23:47+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"s","namespace":"default"}, "replicas": 3, "readyReplicas": 3, "updatedReplicas": 0}
+2026-09-26T00:23:47+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+--- PASS: TestVerifyPR474_NegativeMaxUnavailableStallsRollout (0.00s)
+=== RUN   TestVerifyPR474_HeldBackBrokenGroupPinsSurgeWhileStatusComplete
+2026-09-26T00:23:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-09-26T00:23:47+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"s","namespace":"default"}, "replicas": 3, "readyReplicas": 2, "updatedReplicas": 1}
+2026-09-26T00:23:47+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+--- PASS: TestVerifyPR474_HeldBackBrokenGroupPinsSurgeWhileStatusComplete (0.00s)
+=== RUN   TestVerifyPR474_PausedScaleOnlyPropagatesTemplateMetadata
+2026-09-26T00:23:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-09-26T00:23:47+08:00	INFO	Scaling RoleBasedGroups in place, roles differ only in replicas	{"rbgset": {"name":"s","namespace":"default"}, "count": 1}
+2026-09-26T00:23:47+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"s","namespace":"default"}, "name": "s-0"}
+2026-09-26T00:23:47+08:00	INFO	Rollout is paused, skipping template updates and keeping surge groups	{"rbgset": {"name":"s","namespace":"default"}}
+2026-09-26T00:23:47+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"s","namespace":"default"}, "replicas": 1, "readyReplicas": 1, "updatedReplicas": 1}
+2026-09-26T00:23:47+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+--- PASS: TestVerifyPR474_PausedScaleOnlyPropagatesTemplateMetadata (0.00s)
+=== RUN   TestVerifyPR474_ReclaimedSurgeDoesNotWidenBudget
+2026-09-26T00:23:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-09-26T00:23:47+08:00	INFO	Reclaiming surge RoleBasedGroups	{"rbgset": {"name":"s","namespace":"default"}, "count": 1}
+2026-09-26T00:23:47+08:00	INFO	Successfully deleted RoleBasedGroup	{"rbgset": {"name":"s","namespace":"default"}, "name": "s-3"}
+2026-09-26T00:23:47+08:00	INFO	Recreating outdated RoleBasedGroup	{"rbgset": {"name":"s","namespace":"default"}, "name": "s-2"}
+2026-09-26T00:23:47+08:00	INFO	Recreating outdated RoleBasedGroup	{"rbgset": {"name":"s","namespace":"default"}, "name": "s-1"}
+2026-09-26T00:23:47+08:00	INFO	Unavailability budget exhausted, waiting before recreating more RoleBasedGroups	{"rbgset": {"name":"s","namespace":"default"}, "unavailable": 2, "budget": 2}
+2026-09-26T00:23:47+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"s","namespace":"default"}, "replicas": 1, "readyReplicas": 1, "updatedReplicas": 0}
+2026-09-26T00:23:47+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+    verify_pr474_rollout_test.go:250: 
+        	Error Trace:	/tmp/rbg-pr474/internal/controller/workloads/verify_pr474_rollout_test.go:250
+        	Error:      	"2" is not less than or equal to "1"
+        	Test:       	TestVerifyPR474_ReclaimedSurgeDoesNotWidenBudget
+        	Messages:   	maxUnavailable=1 allows deleting at most one serving base group; the reclaimed surge must not widen the budget
+--- FAIL: TestVerifyPR474_ReclaimedSurgeDoesNotWidenBudget (0.00s)
+=== RUN   TestVerifyPR474_SurgeGroupFollowsTemplateChanges
+2026-09-26T00:23:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-09-26T00:23:47+08:00	INFO	Unavailability budget exhausted, waiting before recreating more RoleBasedGroups	{"rbgset": {"name":"s","namespace":"default"}, "unavailable": 0, "budget": 0}
+2026-09-26T00:23:47+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"s","namespace":"default"}, "replicas": 3, "readyReplicas": 2, "updatedReplicas": 0}
+2026-09-26T00:23:47+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-09-26T00:23:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-09-26T00:23:47+08:00	INFO	Unavailability budget exhausted, waiting before recreating more RoleBasedGroups	{"rbgset": {"name":"s","namespace":"default"}, "unavailable": 0, "budget": 0}
+2026-09-26T00:23:47+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+    verify_pr474_rollout_test.go:289: 
+        	Error Trace:	/tmp/rbg-pr474/internal/controller/workloads/verify_pr474_rollout_test.go:289
+        	Error:      	[]string{} does not contain "s-2"
+        	Test:       	TestVerifyPR474_SurgeGroupFollowsTemplateChanges
+        	Messages:   	the superseded surge group must be recreated so it picks up template C
+    verify_pr474_rollout_test.go:294: 
+        	Error Trace:	/tmp/rbg-pr474/internal/controller/workloads/verify_pr474_rollout_test.go:294
+        	Error:      	Should be true
+        	Test:       	TestVerifyPR474_SurgeGroupFollowsTemplateChanges
+        	Messages:   	the surge group must carry the current template after the correction
+--- FAIL: TestVerifyPR474_SurgeGroupFollowsTemplateChanges (0.00s)
+=== RUN   TestVerifyPR474_BudgetBlockedServingGroupDoesNotStopBrokenRepair
+2026-09-26T00:23:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-09-26T00:23:47+08:00	INFO	Unavailability budget exhausted, waiting before recreating more RoleBasedGroups	{"rbgset": {"name":"s","namespace":"default"}, "unavailable": 1, "budget": 1}
+2026-09-26T00:23:47+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"s","namespace":"default"}, "replicas": 3, "readyReplicas": 2, "updatedReplicas": 0}
+2026-09-26T00:23:47+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+    verify_pr474_rollout_test.go:328: 
+        	Error Trace:	/tmp/rbg-pr474/internal/controller/workloads/verify_pr474_rollout_test.go:328
+        	Error:      	[]string{} does not contain "s-1"
+        	Test:       	TestVerifyPR474_BudgetBlockedServingGroupDoesNotStopBrokenRepair
+        	Messages:   	the not-serving s-1 consumes no budget and must be replaced even while serving s-2 is budget-blocked
+--- FAIL: TestVerifyPR474_BudgetBlockedServingGroupDoesNotStopBrokenRepair (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.709s
+FAIL
