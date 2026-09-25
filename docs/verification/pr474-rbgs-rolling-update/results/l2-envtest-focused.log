@@ -1,0 +1,89 @@
+Running Suite: Admission Webhook Defaulting Suite - /root/work/rbg-pr474/repo/test/envtest/testcase/webhook
+===========================================================================================================
+Random Seed: [1m1790335521[0m
+
+Will run [1m5[0m of [1m13[0m specs
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m2026/09/25 19:25:31 http: TLS handshake error from 127.0.0.1:37766: EOF
+
+[38;5;243m------------------------------[0m
+[38;5;9m• [FAILED] [3.165 seconds][0m
+[0mPR474 verification: admission and conversion through the real API server [38;5;9m[1m[It] F1: spec.rolloutStrategy survives a v1alpha1 read-modify-write round trip[0m
+[38;5;243m/root/work/rbg-pr474/repo/test/envtest/testcase/webhook/verify_pr474_admission_test.go:178[0m
+
+  [38;5;243mTimeline >>[0m
+  2026-09-25T19:25:33+08:00	INFO	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+  2026-09-25T19:25:33+08:00	INFO	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+  2026-09-25T19:25:33+08:00	INFO	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+  [38;5;9m[FAILED][0m in [It] - /root/work/rbg-pr474/repo/test/envtest/testcase/webhook/verify_pr474_admission_test.go:201 [38;5;243m@ 09/25/26 19:25:33.642[0m
+  [38;5;243m<< Timeline[0m
+
+  [38;5;9m[FAILED] Expected success, but got an error:
+      <*errors.StatusError | 0xc002488e60>: 
+      RoleBasedGroupSet.workloads.x-k8s.io "f1-roundtrip" is invalid: spec.template.roles[0]: Invalid value: "object": template or templateRef must be set for non-InstanceSet workloads
+      {
+          ErrStatus: {
+              TypeMeta: {Kind: "", APIVersion: ""},
+              ListMeta: {
+                  SelfLink: "",
+                  ResourceVersion: "",
+                  Continue: "",
+                  RemainingItemCount: nil,
+              },
+              Status: "Failure",
+              Message: "RoleBasedGroupSet.workloads.x-k8s.io \"f1-roundtrip\" is invalid: spec.template.roles[0]: Invalid value: \"object\": template or templateRef must be set for non-InstanceSet workloads",
+              Reason: "Invalid",
+              Details: {
+                  Name: "f1-roundtrip",
+                  Group: "workloads.x-k8s.io",
+                  Kind: "RoleBasedGroupSet",
+                  UID: "",
+                  Causes: [
+                      {
+                          Type: "FieldValueInvalid",
+                          Message: "Invalid value: \"object\": template or templateRef must be set for non-InstanceSet workloads",
+                          Field: "spec.template.roles[0]",
+                      },
+                  ],
+                  RetryAfterSeconds: 0,
+              },
+              Code: 422,
+          },
+      }[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/root/work/rbg-pr474/repo/test/envtest/testcase/webhook/verify_pr474_admission_test.go:201[0m [38;5;243m@ 09/25/26 19:25:33.642[0m
+[38;5;243m------------------------------[0m
+[38;5;10m•[0m
+[38;5;243m------------------------------[0m
+[38;5;9m• [FAILED] [0.075 seconds][0m
+[0mPR474 verification: admission and conversion through the real API server [38;5;9m[1m[It] F2: an update that newly enables scalingAdapter is rejected[0m
+[38;5;243m/root/work/rbg-pr474/repo/test/envtest/testcase/webhook/verify_pr474_admission_test.go:222[0m
+
+  [38;5;9m[FAILED] an update that newly enables scalingAdapter must be rejected like a create
+  Expected an error to have occurred.  Got:
+      <nil>: nil[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/root/work/rbg-pr474/repo/test/envtest/testcase/webhook/verify_pr474_admission_test.go:231[0m [38;5;243m@ 09/25/26 19:25:35.465[0m
+[38;5;243m------------------------------[0m
+[38;5;9m• [FAILED] [0.325 seconds][0m
+[0mPR474 verification: admission and conversion through the real API server [38;5;9m[1m[It] F5: negative rollout budgets are rejected[0m
+[38;5;243m/root/work/rbg-pr474/repo/test/envtest/testcase/webhook/verify_pr474_admission_test.go:236[0m
+
+  [38;5;9m[FAILED] maxUnavailable=-1 must be rejected; today it is accepted and stalls the rollout
+  Expected an error to have occurred.  Got:
+      <nil>: nil[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/root/work/rbg-pr474/repo/test/envtest/testcase/webhook/verify_pr474_admission_test.go:244[0m [38;5;243m@ 09/25/26 19:25:35.485[0m
+[38;5;243m------------------------------[0m
+[38;5;10m•[0m
+
+[38;5;9m[1mSummarizing 3 Failures:[0m
+  [38;5;9m[FAIL][0m [0mPR474 verification: admission and conversion through the real API server [38;5;9m[1m[It] F1: spec.rolloutStrategy survives a v1alpha1 read-modify-write round trip[0m
+  [38;5;243m/root/work/rbg-pr474/repo/test/envtest/testcase/webhook/verify_pr474_admission_test.go:201[0m
+  [38;5;9m[FAIL][0m [0mPR474 verification: admission and conversion through the real API server [38;5;9m[1m[It] F2: an update that newly enables scalingAdapter is rejected[0m
+  [38;5;243m/root/work/rbg-pr474/repo/test/envtest/testcase/webhook/verify_pr474_admission_test.go:231[0m
+  [38;5;9m[FAIL][0m [0mPR474 verification: admission and conversion through the real API server [38;5;9m[1m[It] F5: negative rollout budgets are rejected[0m
+  [38;5;243m/root/work/rbg-pr474/repo/test/envtest/testcase/webhook/verify_pr474_admission_test.go:244[0m
+
+[38;5;9m[1mRan 5 of 13 Specs in 15.128 seconds[0m
+[38;5;9m[1mFAIL![0m -- [38;5;10m[1m2 Passed[0m | [38;5;9m[1m3 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m8 Skipped[0m
+--- FAIL: TestWebhookDefaulting (15.13s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/webhook	15.170s
+FAIL

@@ -1,0 +1,28 @@
+# Live scenario for PR #474 verification, head path: opt-in rolling update.
+apiVersion: workloads.x-k8s.io/v1alpha2
+kind: RoleBasedGroupSet
+metadata:
+  name: rollout-demo
+  namespace: pr474-verify
+spec:
+  replicas: 2
+  rolloutStrategy:
+    type: Recreate
+    maxUnavailable: 1
+    maxSurge: 0
+    partition: 0
+  groupTemplate:
+    labels:
+      app: rollout-demo
+    spec:
+      roles:
+      - name: worker
+        replicas: 1
+        rolloutStrategy:
+          type: RollingUpdate
+        standalonePattern:
+          template:
+            spec:
+              containers:
+              - name: nginx
+                image: registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest

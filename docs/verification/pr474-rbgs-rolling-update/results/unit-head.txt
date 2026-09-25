@@ -1,0 +1,42 @@
+## L1 unit layer on PR head 5bfa08b7 (GOCACHE=/tmp/gocache-pr474 go test -count=1)
+
+### $ go test ./api/... ./internal/controller/workloads/  (full packages; only the 3 harness contract tests fail)
+?   	sigs.k8s.io/rbgs/api/workloads/constants	[no test files]
+?   	sigs.k8s.io/rbgs/api/workloads/pub/inplace_update	[no test files]
+--- FAIL: TestVerifyPR474_RolloutStrategySurvivesV1alpha1RoundTrip (0.00s)
+    verify_pr474_conversion_test.go:81: 
+        	Error Trace:	/tmp/rbg-pr474/api/workloads/v1alpha1/verify_pr474_conversion_test.go:81
+        	Error:      	Expected value not to be nil.
+        	Test:       	TestVerifyPR474_RolloutStrategySurvivesV1alpha1RoundTrip
+        	Messages:   	spec.rolloutStrategy was dropped by the v1alpha1 round trip
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.704s
+--- FAIL: TestVerifyPR474_UpdateEnablingScalingAdapterRejected (0.00s)
+    verify_pr474_admission_test.go:78: 
+        	Error Trace:	/tmp/rbg-pr474/api/workloads/v1alpha2/verify_pr474_admission_test.go:78
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerifyPR474_UpdateEnablingScalingAdapterRejected
+        	Messages:   	update that newly enables scalingAdapter must be rejected, not just create
+--- FAIL: TestVerifyPR474_NegativeRolloutBudgetsRejected (0.00s)
+    --- FAIL: TestVerifyPR474_NegativeRolloutBudgetsRejected/negative_maxUnavailable_with_surge (0.00s)
+        verify_pr474_admission_test.go:117: 
+            	Error Trace:	/tmp/rbg-pr474/api/workloads/v1alpha2/verify_pr474_admission_test.go:117
+            	Error:      	An error is expected but got nil.
+            	Test:       	TestVerifyPR474_NegativeRolloutBudgetsRejected/negative_maxUnavailable_with_surge
+            	Messages:   	negative rollout budget value must be rejected
+    --- FAIL: TestVerifyPR474_NegativeRolloutBudgetsRejected/negative_maxSurge (0.00s)
+        verify_pr474_admission_test.go:117: 
+            	Error Trace:	/tmp/rbg-pr474/api/workloads/v1alpha2/verify_pr474_admission_test.go:117
+            	Error:      	An error is expected but got nil.
+            	Test:       	TestVerifyPR474_NegativeRolloutBudgetsRejected/negative_maxSurge
+            	Messages:   	negative rollout budget value must be rejected
+    --- FAIL: TestVerifyPR474_NegativeRolloutBudgetsRejected/negative_partition (0.00s)
+        verify_pr474_admission_test.go:117: 
+            	Error Trace:	/tmp/rbg-pr474/api/workloads/v1alpha2/verify_pr474_admission_test.go:117
+            	Error:      	An error is expected but got nil.
+            	Test:       	TestVerifyPR474_NegativeRolloutBudgetsRejected/negative_partition
+            	Messages:   	negative rollout budget value must be rejected
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha2	1.037s
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	4.869s
+FAIL

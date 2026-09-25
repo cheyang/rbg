@@ -1,0 +1,17 @@
+## P0 premise at unit layer, run against the BASE branch (merge-base fc201cdf, no patch)
+
+$ go test ./internal/controller/workloads/ -run TestRoleBasedGroupSetReconciler_Reconcile_OptimizedOrder -count=1 -v
+
+=== RUN   TestRoleBasedGroupSetReconciler_Reconcile_OptimizedOrder
+2026-09-25T21:46:30+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-09-25T21:46:30+08:00	INFO	Scaling down RoleBasedGroups, 4 -> 2	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "count": 2}
+2026-09-25T21:46:30+08:00	INFO	Successfully deleted RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "name": "test-rbgset-2"}
+2026-09-25T21:46:30+08:00	INFO	Successfully deleted RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "name": "test-rbgset-3"}
+2026-09-25T21:46:30+08:00	INFO	Updating existing RoleBasedGroups	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "count": 2}
+2026-09-25T21:46:30+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "name": "test-rbgset-0"}
+2026-09-25T21:46:30+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "name": "test-rbgset-1"}
+2026-09-25T21:46:30+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "replicas": 2, "readyReplicas": 0}
+2026-09-25T21:46:30+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+--- PASS: TestRoleBasedGroupSetReconciler_Reconcile_OptimizedOrder (0.05s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.905s

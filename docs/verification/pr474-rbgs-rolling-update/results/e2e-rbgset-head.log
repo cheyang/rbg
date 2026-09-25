@@ -1,0 +1,139 @@
+Running Suite: run rbg e2e test - /root
+=======================================
+Random Seed: [1m1790343945[0m
+
+Will run [1m11[0m of [1m131[0m specs
+[38;5;243m------------------------------[0m
+[0m[1m[BeforeSuite] [0m
+[38;5;243m/tmp/rbg-pr474/test/e2e/e2e_test.go:34[0m
+[38;5;10m[BeforeSuite] PASSED [0.042 seconds][0m
+[38;5;243m------------------------------[0m
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+[38;5;243m------------------------------[0m
+[0m[v1alpha2] Run role based controller e2e tests [38;5;243mrbgset controller [0m[1mcreate & delete rbgset[0m
+[38;5;243m/tmp/rbg-pr474/test/e2e/testcase/v1alpha2/rbgs.go:144[0m
+2026-09-25T21:45:45.440+0800	INFO	framework/rbgs_v2_expect.go:65	rbg v2 instance not equal, expected: 1, got: 0	{"rbgSet": "test"}
+2026-09-25T21:45:45.734+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+2026-09-25T21:45:45.740+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+2026-09-25T21:45:45.755+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+2026-09-25T21:45:46.009+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+2026-09-25T21:45:46.264+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+2026-09-25T21:45:46.518+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+2026-09-25T21:45:46.773+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+2026-09-25T21:45:47.029+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+2026-09-25T21:45:47.282+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+2026-09-25T21:45:47.539+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+[38;5;10m• [2.370 seconds][0m
+[38;5;243m------------------------------[0m
+[0m[v1alpha2] Run role based controller e2e tests [38;5;243mrbgset controller [0m[1mscaling rbgset[0m
+[38;5;243m/tmp/rbg-pr474/test/e2e/testcase/v1alpha2/rbgs.go:159[0m
+2026-09-25T21:45:47.809+0800	INFO	framework/rbgs_v2_expect.go:65	rbg v2 instance not equal, expected: 1, got: 0	{"rbgSet": "test"}
+2026-09-25T21:45:48.406+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+2026-09-25T21:45:48.409+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+2026-09-25T21:45:48.420+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-09-25T21:45:48.675+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-09-25T21:45:48.929+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-09-25T21:45:49.184+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-09-25T21:45:49.439+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-09-25T21:45:49.694+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+2026-09-25T21:45:49.949+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+2026-09-25T21:45:50.203+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+2026-09-25T21:45:50.456+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+[38;5;10m• [2.916 seconds][0m
+[38;5;243m------------------------------[0m
+[0m[v1alpha2] Run role based controller e2e tests [38;5;243mrbgset controller [0m[1mrole replicas change scales groups in place without recreating them[0m
+[38;5;243m/tmp/rbg-pr474/test/e2e/testcase/v1alpha2/rbgs.go:186[0m
+2026-09-25T21:46:26.914+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+2026-09-25T21:46:26.922+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+2026-09-25T21:46:26.937+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 4}
+2026-09-25T21:46:27.191+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 4}
+2026-09-25T21:46:27.445+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 4}
+2026-09-25T21:46:27.700+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 3}
+[38;5;10m• [37.243 seconds][0m
+[38;5;243m------------------------------[0m
+[0m[v1alpha2] Run role based controller e2e tests [38;5;243mrbgset controller [0m[1mexclusive-topology annotation propagates from groupTemplate and is removed with it[0m
+[38;5;243m/tmp/rbg-pr474/test/e2e/testcase/v1alpha2/rbgs.go:236[0m
+2026-09-25T21:46:28.267+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+2026-09-25T21:46:28.271+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+[38;5;10m• [0.334 seconds][0m
+[38;5;243m------------------------------[0m
+[0m[v1alpha2] Run role based controller e2e tests [38;5;243mrbgset controller [0m[1mrecreate rolling update replaces one group at a time[0m
+[38;5;243m/tmp/rbg-pr474/test/e2e/testcase/v1alpha2/rbgs.go:277[0m
+2026-09-25T21:47:09.834+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+2026-09-25T21:47:09.841+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+2026-09-25T21:47:09.853+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-09-25T21:47:10.108+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-09-25T21:47:10.362+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-09-25T21:47:10.616+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+[38;5;10m• [42.579 seconds][0m
+[38;5;243m------------------------------[0m
+[0m[v1alpha2] Run role based controller e2e tests [38;5;243mrbgset controller [0m[1msurge backs a zero maxUnavailable so ready groups never drop below replicas[0m
+[38;5;243m/tmp/rbg-pr474/test/e2e/testcase/v1alpha2/rbgs.go:337[0m
+2026-09-25T21:47:51.911+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+2026-09-25T21:47:51.919+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+2026-09-25T21:47:51.938+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-09-25T21:47:52.192+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-09-25T21:47:52.446+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-09-25T21:47:52.701+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+[38;5;10m• [42.083 seconds][0m
+[38;5;243m------------------------------[0m
+[0m[v1alpha2] Run role based controller e2e tests [38;5;243mrbgset controller [0m[1msurge group survives until the rollout completes[0m
+[38;5;243m/tmp/rbg-pr474/test/e2e/testcase/v1alpha2/rbgs.go:382[0m
+2026-09-25T21:48:31.953+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+2026-09-25T21:48:31.958+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+2026-09-25T21:48:31.968+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-09-25T21:48:32.222+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-09-25T21:48:32.476+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-09-25T21:48:32.731+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+[38;5;10m• [40.029 seconds][0m
+[38;5;243m------------------------------[0m
+[0m[v1alpha2] Run role based controller e2e tests [38;5;243mrbgset controller [0m[1mpaused holds the rollout still until it is lifted[0m
+[38;5;243m/tmp/rbg-pr474/test/e2e/testcase/v1alpha2/rbgs.go:443[0m
+2026-09-25T21:49:01.147+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+2026-09-25T21:49:01.156+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+2026-09-25T21:49:01.168+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+2026-09-25T21:49:01.424+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+2026-09-25T21:49:01.678+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+2026-09-25T21:49:01.932+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 1}
+[38;5;10m• [29.200 seconds][0m
+[38;5;243m------------------------------[0m
+[0m[v1alpha2] Run role based controller e2e tests [38;5;243mrbgset controller [0m[1mpartition rolls the upper ordinals first and releases the rest when lowered[0m
+[38;5;243m/tmp/rbg-pr474/test/e2e/testcase/v1alpha2/rbgs.go:502[0m
+2026-09-25T21:49:59.286+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+2026-09-25T21:49:59.290+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+2026-09-25T21:49:59.300+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 4}
+2026-09-25T21:49:59.554+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 4}
+2026-09-25T21:49:59.811+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 4}
+2026-09-25T21:50:00.065+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 3}
+[38;5;10m• [58.134 seconds][0m
+[38;5;243m------------------------------[0m
+[0m[v1alpha2] Run role based controller e2e tests [38;5;243mrbgset controller [0m[1msurge-backed partition rollout releases surge when the batch completes[0m
+[38;5;243m/tmp/rbg-pr474/test/e2e/testcase/v1alpha2/rbgs.go:574[0m
+2026-09-25T21:50:39.344+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+2026-09-25T21:50:39.353+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+2026-09-25T21:50:39.364+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 4}
+2026-09-25T21:50:39.619+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 4}
+2026-09-25T21:50:39.874+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 4}
+2026-09-25T21:50:40.128+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 3}
+[38;5;10m• [40.061 seconds][0m
+[38;5;243m------------------------------[0m
+[0m[v1alpha2] Run role based controller e2e tests [38;5;243mrbgset controller [0m[1mmaxUnavailable covering the batch rolls without ever creating surge[0m
+[38;5;243m/tmp/rbg-pr474/test/e2e/testcase/v1alpha2/rbgs.go:645[0m
+2026-09-25T21:51:18.398+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+2026-09-25T21:51:18.403+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+2026-09-25T21:51:18.422+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 4}
+2026-09-25T21:51:18.677+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 4}
+2026-09-25T21:51:18.932+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 4}
+2026-09-25T21:51:19.186+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 4}
+[38;5;10m• [39.059 seconds][0m
+[38;5;243m------------------------------[0m
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+[38;5;243m------------------------------[0m
+[0m[1m[AfterSuite] [0m
+[38;5;243m/tmp/rbg-pr474/test/e2e/e2e_test.go:40[0m
+[38;5;10m[AfterSuite] PASSED [0.010 seconds][0m
+[38;5;243m------------------------------[0m
+
+[38;5;10m[1mRan 11 of 131 Specs in 334.073 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m11 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m120 Skipped[0m
+PASS

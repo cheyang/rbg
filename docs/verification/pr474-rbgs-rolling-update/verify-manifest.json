@@ -1,0 +1,111 @@
+{
+  "topic": "pr474-rbgs-rolling-update",
+  "pr": "https://github.com/sgl-project/rbg/pull/474",
+  "harnessPaths": [
+    "docs/verification/pr474-rbgs-rolling-update",
+    "api/workloads/v1alpha1/verify_pr474_conversion_test.go",
+    "api/workloads/v1alpha2/verify_pr474_admission_test.go",
+    "internal/controller/workloads/verify_pr474_rollout_test.go",
+    "test/envtest/testcase/webhook/verify_pr474_admission_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "A RoleBasedGroupSet propagates spec.groupTemplate to its children un-paced: 'when the template changes, every outdated child is updated within a single reconcile, with no ordering and no availability gating. For a set of N groups that means all N groups can restart at once — availability might drop to zero for the whole set.' (PR body, Motivation)",
+    "reportedComponent": "RoleBasedGroupSet controller (internal/controller/workloads/rolebasedgroupset_controller.go)",
+    "patchedComponent": "same",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit + live",
+    "verdict": "confirmed",
+    "evidence": "base fc201cdf: Reconcile_OptimizedOrder updates all children in one pass (results/unit-base-p0.txt); live base binary on the fresh ACK cluster: both children carried the new template within 1s of the patch and readyGroups dropped to 0 for 3s (results/base-timeline.log); head binary paced the same change: demo-1 deleted 20:47:01.5, demo-0 at 20:47:05.9 after demo-1 was Ready, readyGroups never below 1 (results/head-timeline.log)",
+    "match": [
+      "TestRoleBasedGroupSetReconciler_Reconcile_OptimizedOrder",
+      "scripts/live-rollout.sh"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./api/... ./internal/controller/workloads/ -run 'TestVerifyPR474' -count=1"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=$(setup-envtest use 1.31.0 -p path) go test ./test/envtest/testcase/webhook/ -count=1 -ginkgo.focus 'PR474 verification' -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    },
+    "live": {
+      "kind": "script",
+      "cmd": "scripts/live-prepare.sh && scripts/live-conversion.sh && scripts/live-rollout.sh base && scripts/live-rollout.sh head && scripts/live-e2e.sh && scripts/live-restore.sh"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit+integration+live",
+      "match": [
+        "TestVerifyPR474_RolloutStrategySurvivesV1alpha1RoundTrip",
+        "F1: spec.rolloutStrategy survives a v1alpha1 read-modify-write round trip",
+        "scripts/live-conversion.sh"
+      ],
+      "note": "v1alpha1<->v1alpha2 conversion drops spec.rolloutStrategy (+ new status counters); any v1alpha1 full-object write silently reverts a rolling set to the un-paced static behavior."
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit+integration",
+      "match": [
+        "TestVerifyPR474_UpdateEnablingScalingAdapterRejected",
+        "F2: an update that newly enables scalingAdapter is rejected"
+      ],
+      "note": "the scalingAdapter-in-groupTemplate guard is create-only; an update that newly enables it is accepted, reaching the non-converging state the rule exists to prevent. Compat pinned by TestVerifyPR474_UpdateOnSetAlreadyCarryingAdapterAllowed (must stay green)."
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_LegacySpellingReplicasOnlyScalesInPlace"
+      ],
+      "note": "re-check of round-1 blocker: replicas-only diff on a legacy-spelling child must scale in place. PASSES on head (fixed)."
+    },
+    {
+      "id": "F5",
+      "polarity": "contract",
+      "layer": "unit+integration",
+      "match": [
+        "TestVerifyPR474_NegativeRolloutBudgetsRejected",
+        "F5: negative rollout budgets are rejected"
+      ],
+      "note": "webhook accepts negative maxSurge/maxUnavailable/partition; maxUnavailable=-1 with maxSurge>0 wedges the rollout forever (budget=-1+readySurge=0, no delete ever issued), see canary below."
+    },
+    {
+      "id": "F5-stall",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_NegativeMaxUnavailableStallsRollout"
+      ],
+      "note": "canary asserting the current stall: PASS today; flips when negative budgets are rejected/clamped."
+    },
+    {
+      "id": "F6",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_HeldBackBrokenGroupPinsSurgeWhileStatusComplete"
+      ],
+      "note": "partition>0 + held-back group not serving: rolloutComplete() requires ALL base serving so surge is never reclaimed, while the Rolling status condition reports RolloutComplete (held-back ordinals count in neither current nor updatedReady). Canary pins the mismatch."
+    },
+    {
+      "id": "F7",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_PausedScaleOnlyPropagatesTemplateMetadata"
+      ],
+      "note": "while paused, a replicas-only in-place scale also syncs template labels/annotations, contradicting 'paused freezes template propagation'. Canary pins it."
+    }
+  ],
+  "liveNote": "L3 ran on a dedicated ACK cluster (3 nodes, v1.36-aliyun) reached via the remote sandbox: PR CRDs + chart-installed webhook stack; in-cluster controller scaled to 0 while the head/base binaries ran out-of-cluster on the sandbox (v1alpha1-conversion F1 test ran first with the in-cluster webhook up). The e2e window additionally drops CRD conversion to None because the e2e framework's AfterEach issues v1alpha1 DeleteAllOf calls that a dead conversion webhook would fail."
+}

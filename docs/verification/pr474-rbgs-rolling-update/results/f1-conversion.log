@@ -1,0 +1,10 @@
+[20:32:49] in-cluster webhook serving conversion: OK
+rolebasedgroupset.workloads.x-k8s.io/f1-roundtrip created
+[20:32:51] stored v1alpha2 spec.rolloutStrategy:
+{"maxSurge":1,"maxUnavailable":1,"partition":0,"type":"Recreate"}
+Warning: workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+[20:32:52] v1alpha1 view: 1 rolloutStrategy occurrence(s) — the deprecated version has no such field
+rolebasedgroupset.workloads.x-k8s.io/f1-roundtrip replaced
+[20:32:54] after v1alpha1 replace: metadata.labels.verify-pr474=touched (the write landed)
+[20:32:54] after v1alpha1 replace: spec.rolloutStrategy=<EMPTY>
+[20:32:54] F1_LIVE_CONFIRMED: the v1alpha1 round trip silently dropped spec.rolloutStrategy
