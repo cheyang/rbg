@@ -24,6 +24,7 @@ import (
 	"math"
 	"reflect"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -33,8 +34,10 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/selection"
 	"k8s.io/apimachinery/pkg/types"
 	kerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -97,6 +100,7 @@ type RoleBasedGroupReconciler struct {
 	workloadReconciler map[string]reconciler.WorkloadReconciler
 	reconcilerMu       sync.RWMutex
 	gangScheduler      scheduler.GangScheduler
+	placementScheduler scheduler.PlacementScheduler
 	// NodeBindings is the in-place scheduling binding store, shared with
 	// the RoleInstance reconciler. Injected at wire-up time so both consumers
 	// operate on the same instance.
@@ -116,6 +120,7 @@ func NewRoleBasedGroupReconciler(mgr ctrl.Manager, schedulerName scheduler.Sched
 	if err != nil {
 		return nil, err
 	}
+	placementScheduler := scheduler.AsPlacementScheduler(gangScheduler)
 	return &RoleBasedGroupReconciler{
 		client:                c,
 		apiReader:             mgr.GetAPIReader(),
@@ -125,6 +130,7 @@ func NewRoleBasedGroupReconciler(mgr ctrl.Manager, schedulerName scheduler.Sched
 		NodeBindings:          bindings,
 		revisionEqualityCache: lru.New(utils.MaxRevisionEqualityCacheEntries),
 		gangScheduler:         gangScheduler,
+		placementScheduler:    placementScheduler,
 	}, nil
 }
 
@@ -150,6 +156,7 @@ func NewRoleBasedGroupReconciler(mgr ctrl.Manager, schedulerName scheduler.Sched
 // +kubebuilder:rbac:groups=apiextensions.k8s.io,resources=customresourcedefinitions,verbs=get;list;watch
 // +kubebuilder:rbac:groups=scheduling.x-k8s.io,resources=podgroups,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=scheduling.volcano.sh,resources=podgroups,verbs=get;list;watch;create;update;patch;delete
+// +kubebuilder:rbac:groups=topology.volcano.sh,resources=hypernodes,verbs=get;list;watch
 // +kubebuilder:rbac:groups=leaderworkerset.x-k8s.io,resources=leaderworkersets,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=leaderworkerset.x-k8s.io,resources=leaderworkersets/status,verbs=get;patch;update
 // +kubebuilder:rbac:groups=coordination.k8s.io,resources=leases,verbs=get;list;watch;create;update;patch;delete
@@ -237,32 +244,78 @@ func (r *RoleBasedGroupReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		return ctrl.Result{}, err
 	}
 
-	// Step 7: Reconcile PodGroup for gang scheduling.
-	// The strategy is resolved once here and carried on ctx so that the PodGroup
-	// spec and every role's pod template built in Step 8 agree on one value.
+	// Step 7: Resolve one scheduler-independent PlacementPlan, then let the
+	// scheduler compiler render its physical objects. Gang semantics remain KEP-430;
+	// topology is an attribute of the same logical placement group.
 	ctx, gangStrategy, gangErr := gangcommon.ResolveGangStrategy(ctx, r.client, rbg)
-	if gangErr == nil {
-		gangErr = r.reconcilePodGroup(ctx, rbg, gangStrategy)
-	}
 	if gangErr != nil && !gangcommon.IsIncompatibleGangConfig(gangErr) {
 		r.recorder.Event(rbg, corev1.EventTypeWarning, FailedReconcilePodGroup, gangErr.Error())
 		return ctrl.Result{}, gangErr
 	}
+
+	var (
+		placementPlan *gangcommon.PlacementPlan
+		placementErr  error
+		renderResult  *scheduler.PlacementRenderResult
+	)
+	if gangErr == nil {
+		placementPlan, placementErr = gangcommon.ResolvePlacementPlan(ctx, r.client, rbg, gangStrategy)
+		ctx = gangcommon.WithPlacementPlan(ctx, rbg, placementPlan)
+		// Run the reconcile-time guard even when the new plan has no topology. This is
+		// the bypass path for --enable-webhooks=none: deleting every constraint must
+		// still compare against the topology hash recorded when placement became active.
+		if placementErr == nil {
+			if err := r.validateTopologyImmutabilityFromStatus(rbg, placementPlan); err != nil {
+				placementErr = err
+			}
+		}
+		if placementErr == nil {
+			renderResult, placementErr = r.reconcilePlacement(ctx, rbg, placementPlan)
+		}
+		// A backend without the placement compiler reports gang-only failures through
+		// reconcilePodGroup. Keep those on the KEP-430 condition and event path, but
+		// retain placementErr so topology status still reports a render failure.
+		if placementErr != nil && gangcommon.IsIncompatibleGangConfig(placementErr) {
+			gangErr = placementErr
+		}
+	}
+	if gangErr == nil && placementErr != nil && !gangcommon.IsIncompatiblePlacementGroups(placementErr) &&
+		!gangcommon.IsSchedulerUnsupported(placementErr) && !gangcommon.IsTopologyTranslationError(placementErr) {
+		eventReason := FailedReconcilePlacement
+		if placementPlan == nil || !placementPlan.HasTopology() {
+			eventReason = FailedReconcilePodGroup
+		}
+		r.recorder.Event(rbg, corev1.EventTypeWarning, eventReason, placementErr.Error())
+		return ctrl.Result{}, placementErr
+	}
 	if err := r.setGangConfiguredCondition(ctx, rbg, gangStrategy, gangErr); err != nil {
 		return ctrl.Result{}, err
 	}
-	if gangErr != nil {
-		// A gang configuration the current RBG cannot satisfy is not transient: only a
-		// user or operator change resolves it, and CR edits already re-enqueue through
-		// the watches in SetupWithManager, so the workqueue's 5ms-and-doubling error
-		// backoff would only burn reconciles.
-		//
-		// Roles are deliberately left untouched: the PodGroup was not written, so
-		// creating their pods now would place them with no gang protection at all,
-		// which is the outcome gang scheduling exists to prevent. Cleanup still runs,
-		// because it only deletes workloads the user already removed from the spec and
-		// leaving them running would leak their accelerators for as long as the
-		// configuration stays broken.
+	if err := r.setPlacementConditions(ctx, rbg, placementPlan, placementErr, renderResult); err != nil {
+		return ctrl.Result{}, err
+	}
+
+	// Topology-active markers are sticky for the lifetime of an RBG. They advance only
+	// after a successful topology render, are not cleared by an unrelated gang failure
+	// or by scaling the covered roles to zero, and are cleared only when the RBG is
+	// recreated (detected through a new UID on the CoordinatedPolicy marker).
+	if gangErr == nil && placementErr == nil {
+		if placementPlan != nil && placementPlan.HasTopology() && renderResult != nil {
+			if err := r.setTopologyConstraintActiveCondition(ctx, rbg, placementPlan); err != nil {
+				return ctrl.Result{}, err
+			}
+		}
+		if err := r.setCoordinatedPolicyTopologyActiveCondition(ctx, rbg); err != nil {
+			return ctrl.Result{}, err
+		}
+	}
+	if gangErr != nil || placementErr != nil {
+		// A scheduling configuration the current RBG cannot satisfy is not transient:
+		// only a user or operator change resolves it, and CR edits already re-enqueue
+		// through the watches in SetupWithManager. Roles are deliberately left
+		// untouched: the scheduler objects were not written, so creating their pods
+		// now would place them with no gang or topology protection at all. Cleanup
+		// still runs so resources for roles removed from the spec are released.
 		if err := r.cleanup(ctx, rbg); err != nil {
 			return ctrl.Result{}, err
 		}
@@ -509,6 +562,329 @@ func (r *RoleBasedGroupReconciler) reconcilePodGroup(
 	}
 
 	return r.gangScheduler.ReconcilePodGroup(ctx, rbg, gangStrategy, runtimeController, &watchedWorkload, r.apiReader)
+}
+
+func (r *RoleBasedGroupReconciler) reconcilePlacement(
+	ctx context.Context,
+	rbg *workloadsv1alpha2.RoleBasedGroup,
+	plan *gangcommon.PlacementPlan,
+) (*scheduler.PlacementRenderResult, error) {
+	if r.placementScheduler == nil {
+		if plan == nil {
+			return nil, nil
+		}
+		if plan.HasTopology() {
+			return nil, gangcommon.NewSchedulerUnsupportedError(
+				"scheduler %T does not implement topology-aware scheduling", r.gangScheduler)
+		}
+		// Gang-only remains on the KEP-430 path when a backend has not implemented
+		// the placement compiler yet.
+		root := plan.Root
+		if groups := plan.TopLevelGroups(); len(groups) == 1 {
+			root = groups[0]
+		}
+		return nil, r.reconcilePodGroup(ctx, rbg, root.Gang)
+	}
+	return r.placementScheduler.ReconcilePlacement(
+		ctx, rbg, plan, runtimeController, &watchedWorkload, r.apiReader)
+}
+
+func (r *RoleBasedGroupReconciler) setPlacementConditions(
+	ctx context.Context,
+	rbg *workloadsv1alpha2.RoleBasedGroup,
+	plan *gangcommon.PlacementPlan,
+	cause error,
+	result *scheduler.PlacementRenderResult,
+) error {
+	if cause != nil {
+		reason := TopologyTranslationFailed
+		switch {
+		case gangcommon.IsIncompatiblePlacementGroups(cause):
+			reason = IncompatiblePlacementGroups
+		case gangcommon.IsSchedulerUnsupported(cause):
+			reason = SchedulerUnsupported
+		case gangcommon.IsIncompatibleGangConfig(cause):
+			reason = IncompatibleGangConfig
+		}
+		changed := apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
+			Type:               string(workloadsv1alpha2.RoleBasedGroupPlacementPlanReady),
+			Status:             metav1.ConditionFalse,
+			LastTransitionTime: metav1.Now(),
+			Reason:             reason,
+			Message:            cause.Error(),
+			ObservedGeneration: rbg.Generation,
+		})
+		changed = apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
+			Type:               string(workloadsv1alpha2.RoleBasedGroupTopologyTranslated),
+			Status:             metav1.ConditionFalse,
+			LastTransitionTime: metav1.Now(),
+			Reason:             reason,
+			Message:            cause.Error(),
+			ObservedGeneration: rbg.Generation,
+		}) || changed
+		changed = apimeta.RemoveStatusCondition(
+			&rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupPreferredAbsorbed)) || changed
+		if !changed {
+			return nil
+		}
+		if err := utils.PatchObjectApplyConfiguration(
+			ctx, r.client, toRBGApplyConfigurationForStatus(rbg), utils.PatchStatus); err != nil {
+			return err
+		}
+		r.recorder.Event(rbg, corev1.EventTypeWarning, reason, cause.Error())
+		return nil
+	}
+
+	if plan == nil || !plan.HasTopology() {
+		changed := false
+		changed = apimeta.RemoveStatusCondition(&rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupPlacementPlanReady)) || changed
+		changed = apimeta.RemoveStatusCondition(&rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupTopologyTranslated)) || changed
+		changed = apimeta.RemoveStatusCondition(&rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupPreferredAbsorbed)) || changed
+		if !changed {
+			return nil
+		}
+		return utils.PatchObjectApplyConfiguration(
+			ctx, r.client, toRBGApplyConfigurationForStatus(rbg), utils.PatchStatus)
+	}
+
+	if result == nil {
+		// A topology-bearing plan must produce a render result before it can be
+		// reported as translated. This path is defensive; the controller normally
+		// preserves placementErr when rendering fails.
+		changed := apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
+			Type:               string(workloadsv1alpha2.RoleBasedGroupTopologyTranslated),
+			Status:             metav1.ConditionFalse,
+			LastTransitionTime: metav1.Now(),
+			Reason:             TopologyTranslationFailed,
+			Message:            "Scheduler compiler did not return a topology render result",
+			ObservedGeneration: rbg.Generation,
+		})
+		changed = apimeta.RemoveStatusCondition(
+			&rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupPreferredAbsorbed)) || changed
+		if !changed {
+			return nil
+		}
+		if err := utils.PatchObjectApplyConfiguration(
+			ctx, r.client, toRBGApplyConfigurationForStatus(rbg), utils.PatchStatus); err != nil {
+			return err
+		}
+		r.recorder.Event(rbg, corev1.EventTypeWarning, TopologyTranslationFailed,
+			"Scheduler compiler did not return a topology render result")
+		return nil
+	}
+
+	changed := apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
+		Type:               string(workloadsv1alpha2.RoleBasedGroupPlacementPlanReady),
+		Status:             metav1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             "PlacementPlanReady",
+		Message:            "Placement plan is valid",
+		ObservedGeneration: rbg.Generation,
+	})
+	changed = apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
+		Type:               string(workloadsv1alpha2.RoleBasedGroupTopologyTranslated),
+		Status:             metav1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             "TopologyTranslated",
+		Message:            "Scheduler rendered the topology constraints",
+		ObservedGeneration: rbg.Generation,
+	}) || changed
+
+	if result != nil && result.PreferredAbsorbed {
+		changed = apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
+			Type:               string(workloadsv1alpha2.RoleBasedGroupPreferredAbsorbed),
+			Status:             metav1.ConditionTrue,
+			LastTransitionTime: metav1.Now(),
+			Reason:             PreferredAbsorbed,
+			Message:            "The scheduler could not anchor the preferred topology level; generic topology scoring is used",
+			ObservedGeneration: rbg.Generation,
+		}) || changed
+	} else {
+		changed = apimeta.RemoveStatusCondition(
+			&rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupPreferredAbsorbed)) || changed
+	}
+	if !changed {
+		return nil
+	}
+	if err := utils.PatchObjectApplyConfiguration(
+		ctx, r.client, toRBGApplyConfigurationForStatus(rbg), utils.PatchStatus); err != nil {
+		return err
+	}
+	if result != nil && result.PreferredAbsorbed {
+		r.recorder.Event(rbg, corev1.EventTypeWarning, PreferredAbsorbed,
+			"The scheduler could not anchor the preferred topology level; generic topology scoring is used")
+	}
+	return nil
+}
+
+func (r *RoleBasedGroupReconciler) setTopologyConstraintActiveCondition(
+	ctx context.Context,
+	rbg *workloadsv1alpha2.RoleBasedGroup,
+	plan *gangcommon.PlacementPlan,
+) error {
+	if plan == nil || !plan.HasTopology() {
+		return nil
+	}
+
+	// Once placement has become active the marker is sticky. Scaling a covered role to
+	// zero deletes pods but does not recreate the RBG, so it must not make topology
+	// mutable again.
+	condition := apimeta.FindStatusCondition(
+		rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupTopologyConstraintActive))
+	if condition != nil && condition.Status == metav1.ConditionTrue {
+		return nil
+	}
+
+	active, err := r.rbghasPodsForRoles(ctx, rbg, plan.TopologyCoveredRoles())
+	if err != nil {
+		return err
+	}
+	if !active {
+		return nil
+	}
+	if apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
+		Type:               string(workloadsv1alpha2.RoleBasedGroupTopologyConstraintActive),
+		Status:             metav1.ConditionTrue,
+		LastTransitionTime: metav1.Now(),
+		Reason:             "TopologyConstraintActive",
+		Message:            fmt.Sprintf("Topology constraints are active; hash=%s", plan.TopologySignature()),
+		ObservedGeneration: rbg.Generation,
+	}) {
+		return utils.PatchObjectApplyConfiguration(
+			ctx, r.client, toRBGApplyConfigurationForStatus(rbg), utils.PatchStatus)
+	}
+	return nil
+}
+
+func (r *RoleBasedGroupReconciler) validateTopologyImmutabilityFromStatus(
+	rbg *workloadsv1alpha2.RoleBasedGroup,
+	plan *gangcommon.PlacementPlan,
+) error {
+	condition := apimeta.FindStatusCondition(
+		rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupTopologyConstraintActive))
+	if condition == nil || condition.Status != metav1.ConditionTrue {
+		return nil
+	}
+
+	storedHash := conditionMessageValue(condition.Message, "hash")
+	if storedHash == "" {
+		// The marker is written only with a topology hash. A marker without one is
+		// malformed or predates this contract; fail closed rather than allowing an
+		// unverifiable in-place change when admission is bypassed.
+		return gangcommon.NewTopologyTranslationError(
+			"active topology constraint has no recorded topology hash; delete and recreate the workload to change it")
+	}
+	currentHash := plan.TopologySignature()
+	if storedHash != currentHash {
+		return gangcommon.NewTopologyTranslationError(
+			"topology constraints are immutable after a pod covered by them has been created; delete and recreate the workload to change them")
+	}
+	return nil
+}
+
+func conditionMessageValue(message, key string) string {
+	prefix := key + "="
+	index := strings.Index(message, prefix)
+	if index < 0 {
+		return ""
+	}
+	return strings.TrimSpace(message[index+len(prefix):])
+}
+
+func (r *RoleBasedGroupReconciler) rbghasPodsForRoles(
+	ctx context.Context,
+	rbg *workloadsv1alpha2.RoleBasedGroup,
+	roleNames []string,
+) (bool, error) {
+	if len(roleNames) == 0 {
+		return false, nil
+	}
+	groupRequirement, err := labels.NewRequirement(
+		constants.GroupNameLabelKey, selection.Equals, []string{rbg.Name})
+	if err != nil {
+		return false, err
+	}
+	roleRequirement, err := labels.NewRequirement(
+		constants.RoleNameLabelKey, selection.In, roleNames)
+	if err != nil {
+		return false, err
+	}
+	selector := labels.NewSelector().Add(*groupRequirement, *roleRequirement)
+	pods := &corev1.PodList{}
+	if err := r.client.List(ctx, pods, &client.ListOptions{
+		Namespace:     rbg.Namespace,
+		LabelSelector: selector,
+	}); err != nil {
+		return false, err
+	}
+	return len(pods.Items) > 0, nil
+}
+
+func (r *RoleBasedGroupReconciler) setCoordinatedPolicyTopologyActiveCondition(
+	ctx context.Context,
+	rbg *workloadsv1alpha2.RoleBasedGroup,
+) error {
+	policy := &workloadsv1alpha2.CoordinatedPolicy{}
+	err := r.client.Get(ctx, types.NamespacedName{Name: rbg.Name, Namespace: rbg.Namespace}, policy)
+	if err != nil {
+		if apierrors.IsNotFound(err) {
+			return nil
+		}
+		return err
+	}
+
+	changed := false
+	condition := apimeta.FindStatusCondition(
+		policy.Status.Conditions, workloadsv1alpha2.CoordinatedPolicyTopologyConstraintActive)
+	if condition != nil && condition.Status == metav1.ConditionTrue {
+		markerUID := conditionMessageValue(condition.Message, "rbgUID")
+		// A missing UID is an older marker; preserve it rather than making topology
+		// mutable. A different UID means the RBG was recreated, so this marker belongs
+		// to another workload lifecycle and may be cleared.
+		if markerUID == "" || markerUID == string(rbg.UID) {
+			return nil
+		}
+		if apimeta.RemoveStatusCondition(
+			&policy.Status.Conditions, workloadsv1alpha2.CoordinatedPolicyTopologyConstraintActive) {
+			changed = true
+		}
+	}
+
+	active := false
+	policyTopologyRoles := gangcommon.CoordinatedPolicyTopologyRoles(policy)
+	if len(policyTopologyRoles) > 0 {
+		var podsErr error
+		active, podsErr = r.rbghasPodsForRoles(ctx, rbg, policyTopologyRoles)
+		if podsErr != nil {
+			return podsErr
+		}
+	}
+
+	if active {
+		changed = apimeta.SetStatusCondition(&policy.Status.Conditions, metav1.Condition{
+			Type:               workloadsv1alpha2.CoordinatedPolicyTopologyConstraintActive,
+			Status:             metav1.ConditionTrue,
+			LastTransitionTime: metav1.Now(),
+			Reason:             "TopologyConstraintActive",
+			Message:            fmt.Sprintf("At least one pod covered by a topology rule exists; rbgUID=%s", rbg.UID),
+			ObservedGeneration: policy.Generation,
+		}) || changed
+	}
+	if !changed {
+		return nil
+	}
+
+	// Typed clients commonly leave TypeMeta empty, so derive the deterministic GVK
+	// rather than relying on the object returned by Get.
+	gvk := workloadsv1alpha2.GroupVersion.WithKind("CoordinatedPolicy")
+	status := applyconfiguration.CoordinatedPolicyStatus().
+		WithObservedGeneration(policy.Status.ObservedGeneration).
+		WithConditions(toConditionApplyConfigurations(policy.Status.Conditions)...)
+	applyPolicy := applyconfiguration.CoordinatedPolicy(policy.Name, policy.Namespace).
+		WithKind(gvk.Kind).
+		WithAPIVersion(gvk.GroupVersion().String()).
+		WithStatus(status)
+	return utils.PatchObjectApplyConfiguration(ctx, r.client, applyPolicy, utils.PatchStatus)
 }
 
 func (r *RoleBasedGroupReconciler) reconcileRoles(

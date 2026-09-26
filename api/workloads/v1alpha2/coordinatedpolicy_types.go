@@ -93,6 +93,13 @@ type SchedulingCoordinationStrategy struct {
 	//
 	// +optional
 	Gang *GangSchedulingStrategy `json:"gang,omitempty"`
+
+	// TopologyConstraint defines topology co-location for the roles listed in
+	// the enclosing policy rule's `roles` field. Roles not listed are
+	// unconstrained by this rule; list every role of the RoleBasedGroup for
+	// whole-group co-location.
+	// +optional
+	TopologyConstraint *TopologyConstraint `json:"topologyConstraint,omitempty"`
 }
 
 // GangSchedulingStrategy defines gang scheduling parameters per role.
@@ -178,6 +185,11 @@ const (
 	// OrderReadyProgression scales replicas in order based on readiness.
 	OrderReadyProgression ScalingProgression = "OrderReady"
 )
+
+// CoordinatedPolicyTopologyConstraintActive means a pod covered by one of the
+// policy's topology rules has been created. Admission uses this marker to enforce
+// topology immutability.
+const CoordinatedPolicyTopologyConstraintActive = "TopologyConstraintActive"
 
 // CoordinatedPolicyStatus defines the observed state of CoordinatedPolicy.
 type CoordinatedPolicyStatus struct {

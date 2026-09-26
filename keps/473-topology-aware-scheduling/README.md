@@ -178,7 +178,7 @@ Constraint types `required` and `preferred` are supported:
 | Check | Source | Notes |
 |---|---|---|
 | Level existence | Active scheduler's topology objects (HyperNode set / ClusterNetworkTopology / the configured KAI Topology CR) | Unknown identifier → `TopologyTranslated=False` + event, never silent degradation |
-| `preferred` not higher than `required` | Ordering from the same objects (Volcano tier integers, CR levels array order) | The pair is invalid if preferred is broader (higher in the tree) than required |
+| Required/preferred relative order | Not validated by RBG | Operators may use site-specific topology names; after both levels resolve, the scheduler interprets their relationship |
 | Child level equal to or narrower than parent | Ordering from the same objects | A child placement group must not require a broader domain than its parent; reversed nesting is rejected |
 | Dialect capability | Runtime CRD schema inspection (same pattern as KEP-430's `hasSubGroupPolicy`) | Older Volcano without `tierName`/subGroup `networkTopology`, or HyperNodes not maintaining tierName → explicit unsupported; no integer-tier fallback |
 | Topology identity | `TopologyConstraint.topologyName` on the API, with controller default for dialects that need one | KAI: the named `Topology` CR must exist; all constraints in one PlacementPlan must resolve to the same name. Missing or mismatched → `TopologyResourceUnresolved` / `IncompatibleTopologyNames`; no rendering |
@@ -292,7 +292,9 @@ spec:
 
 Topology constraints are mutable only before the PlacementPlan has been rendered and the first pod has been created. Once placement becomes active, `topologyName`, `pack.required`, and `pack.preferred` are immutable on the declaring Role or CoordinatedPolicy rule.
 
-The controller records placement activity in status, for example `TopologyConstraintActive=True`, so the validating webhook can enforce immutability without cross-resource reads. Reconcile applies the same guard if the webhook is bypassed.
+The controller records placement activity in status, for example `TopologyConstraintActive=True`, so the validating webhook can enforce immutability without cross-resource reads. Reconcile applies the same guard if the webhook is bypassed; it compares the topology signature recorded in the active marker, including the case where all topology constraints have been removed. An `RBGSet` update checks its template against children that already have `TopologyConstraintActive=True`, so a parent cannot persist a desired template that child admission will keep rejecting.
+
+The active marker is sticky for the lifetime of the workload. Scaling a covered role to zero deletes pods but does not recreate the RBG, so it does not make topology mutable again. The RBG marker is naturally reset when the RBG is recreated; the CoordinatedPolicy marker records the owning RBG UID so the controller can clear it only for a new RBG lifecycle.
 
 To change a topology constraint after placement, delete and recreate the affected workload. Rolling updates that change topology constraints are out of scope for this KEP. Running pods are never migrated or evicted by this controller.
 
@@ -530,10 +532,10 @@ spec:
 ### Observability
 
 - **CoordinatedPolicy / RBG / RoleInstance conditions**:
-  - `PlacementPlanReady` — `False` with reasons such as `IncompatiblePlacementGroups` (partially overlapping gang/topology scopes), `IncompatibleTopologyNames`, `RoleUnresolved`, `InvalidLevelOrder` (child broader than parent, or preferred broader than required).
+  - `PlacementPlanReady` — `False` with reasons such as `IncompatiblePlacementGroups` (partially overlapping gang/topology scopes), `IncompatibleTopologyNames`, `RoleUnresolved`, `InvalidLevelOrder` (child broader than parent).
   - `TopologyTranslated` — `False` with reasons such as `LevelUnresolved`, `TopologyResourceUnresolved` (KAI), `SchedulerUnsupported`.
   - `PreferredAbsorbed` — `True` when Volcano cannot anchor the preferred level and generic scoring is used instead.
-  - `TopologyConstraintActive` — `True` after the PlacementPlan has been rendered and the first pod has been created; admission uses this marker to enforce topology immutability.
+  - `TopologyConstraintActive` — `True` after the PlacementPlan has been rendered and the first pod has been created; admission uses this marker to enforce topology immutability. It remains `True` when covered roles scale to zero and is cleared only for a new workload lifecycle.
   - Each condition transition emits one warning event (edge-triggered, per the KEP-430 event-spam analysis).
 - **Placement gating is explicit.** While `PlacementPlanReady` or `TopologyTranslated` is false, Role create/update is paused; status explains why no new pod was created.
 - Placement outcomes themselves (which domain a group landed in) remain owned by the scheduler (e.g., Volcano's allocated-HyperNode bookkeeping); RBG status links failure *reasons* back to the declaring object.
@@ -562,7 +564,7 @@ spec:
 2. KEP-430 equivalence: gang-only inputs produce byte-for-byte the current single PodGroup rendering before topology features are enabled.
 3. Pass-through rendering: per-dialect rendering of the identifier string; Volcano rejects names found on no HyperNode (no integer fallback); KAI levels use node-label keys, and `topologyName` selects the Topology CR.
 4. Translation matrix: every API combination (`required`, `required+preferred`, `preferred`-only) × every dialect renders the expected dialect object; Volcano preferred cases report `PreferredAbsorbed`.
-5. Reconcile-time semantic validation: unknown level identifier, ordering violation, reversed parent/child nesting, missing or inconsistent `topologyName` → correct condition reasons; recovery when the topology object or the RBG is fixed.
+5. Reconcile-time semantic validation: unknown level identifier, reversed parent/child nesting, missing or inconsistent `topologyName` → correct condition reasons; recovery when the topology object or the RBG is fixed.
 6. Topology-only groups: Volcano `minMember: 0`, KAI `minSubGroup: 0`, and gang threshold fields omitted unless gang is configured.
 7. Mutability: topology fields can be updated before any pod exists and are rejected after the first pod is created.
 8. Volcano runtime detection: CRD schema inspection for `tierName` / subGroup `networkTopology`; unmaintained-tierName and unsupported paths.

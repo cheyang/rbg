@@ -53,6 +53,7 @@ func (r *RoleBasedGroupSet) SetupWebhookWithManager(mgr ctrl.Manager, enableDepr
 	return ctrl.NewWebhookManagedBy(mgr).
 		For(r).
 		WithValidator(&RoleBasedGroupSetValidator{
+			Client:                        mgr.GetClient(),
 			EnableDeprecatedWorkloadTypes: enableDeprecatedWorkloadTypes,
 		}).
 		WithDefaulter(&RoleBasedGroupSetDefaulter{}).

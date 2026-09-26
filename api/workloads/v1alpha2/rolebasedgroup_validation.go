@@ -19,9 +19,12 @@ package v1alpha2
 import (
 	"context"
 	"fmt"
+	"reflect"
 	"strings"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	apimeta "k8s.io/apimachinery/pkg/api/meta"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -305,4 +308,120 @@ func validateNoDeprecatedWorkloadTypes(fieldPath string, roles []RoleSpec) error
 	// Wrap once instead of repeating the hint per role: with several offending
 	// roles the hint is identical and would otherwise dominate the message.
 	return fmt.Errorf("%w; %s", utilerrors.NewAggregate(allErrs), deprecatedWorkloadTypeHint)
+}
+
+// ValidateRoleTopologyConstraints performs self-contained syntax validation on every
+// role-level instance topology constraint. Level existence and parent/child ordering
+// are scheduler-dialect-specific and are validated during reconcile.
+func ValidateRoleTopologyConstraints(rbg *RoleBasedGroup) error {
+	return validateRoleTopologyConstraints("spec.roles", rbg.Spec.Roles)
+}
+
+func validateRoleTopologyConstraints(fieldPath string, roles []RoleSpec) error {
+	var allErrs []error
+	for i := range roles {
+		role := &roles[i]
+		if role.InstanceTopologyConstraint == nil {
+			continue
+		}
+		if err := ValidateTopologyConstraint(
+			fmt.Sprintf("%s[%d].instanceTopologyConstraint", fieldPath, i),
+			role.InstanceTopologyConstraint,
+		); err != nil {
+			allErrs = append(allErrs, err)
+		}
+	}
+	return utilerrors.NewAggregate(allErrs)
+}
+
+// ValidateTopologyConstraint validates the non-dialect-specific parts of a topology
+// constraint. Empty strings are rejected because they are almost always typos, while
+// a missing object means the constraint is disabled.
+func ValidateTopologyConstraint(path string, constraint *TopologyConstraint) error {
+	if constraint == nil {
+		return nil
+	}
+	var errs []error
+	if constraint.TopologyName != nil {
+		if err := validateTopologyIdentifier(path+".topologyName", *constraint.TopologyName); err != nil {
+			errs = append(errs, err)
+		}
+	}
+	if constraint.Pack != nil {
+		if constraint.Pack.Required != nil {
+			if err := validateTopologyIdentifier(path+".pack.required", *constraint.Pack.Required); err != nil {
+				errs = append(errs, err)
+			}
+		}
+		if constraint.Pack.Preferred != nil {
+			if err := validateTopologyIdentifier(path+".pack.preferred", *constraint.Pack.Preferred); err != nil {
+				errs = append(errs, err)
+			}
+		}
+	}
+	return utilerrors.NewAggregate(errs)
+}
+
+func validateTopologyIdentifier(path, value string) error {
+	if strings.TrimSpace(value) == "" {
+		return fmt.Errorf("%s must not be empty", path)
+	}
+	if len(value) > 253 {
+		return fmt.Errorf("%s must be at most 253 characters, got %d", path, len(value))
+	}
+	return nil
+}
+
+// ValidateRoleTopologyImmutability rejects in-place changes after the controller has
+// recorded TopologyConstraintActive=True. Before that marker exists, a constraint may
+// still be corrected without recreating the workload.
+func ValidateRoleTopologyImmutability(oldRBG, newRBG *RoleBasedGroup) error {
+	if !TopologyConditionActive(oldRBG.Status.Conditions) {
+		return nil
+	}
+
+	oldRoles := make(map[string]*RoleSpec, len(oldRBG.Spec.Roles))
+	for i := range oldRBG.Spec.Roles {
+		oldRoles[oldRBG.Spec.Roles[i].Name] = &oldRBG.Spec.Roles[i]
+	}
+	newRoles := make(map[string]*RoleSpec, len(newRBG.Spec.Roles))
+	for i := range newRBG.Spec.Roles {
+		newRoles[newRBG.Spec.Roles[i].Name] = &newRBG.Spec.Roles[i]
+	}
+
+	// A role that carried a topology constraint cannot have that constraint removed
+	// or changed after placement becomes active.
+	for roleName, oldRole := range oldRoles {
+		newRole, exists := newRoles[roleName]
+		if !exists || !TopologyConstraintsEqual(oldRole.InstanceTopologyConstraint, newRole.InstanceTopologyConstraint) {
+			return fmt.Errorf(
+				"spec.roles[%s].instanceTopologyConstraint is immutable after a pod covered by a topology constraint has been created; delete and recreate the workload to change it",
+				roleName,
+			)
+		}
+	}
+
+	// Adding a role that never had a topology constraint is allowed; topology
+	// immutability must not block unrelated scale-out or role addition.
+	for roleName, newRole := range newRoles {
+		oldRole, exists := oldRoles[roleName]
+		if exists && !TopologyConstraintsEqual(oldRole.InstanceTopologyConstraint, newRole.InstanceTopologyConstraint) {
+			return fmt.Errorf(
+				"spec.roles[%s].instanceTopologyConstraint is immutable after a pod covered by a topology constraint has been created; delete and recreate the workload to change it",
+				roleName,
+			)
+		}
+	}
+	return nil
+}
+
+// TopologyConstraintActive reports whether the supplied status conditions contain
+// TopologyConstraintActive=True.
+func TopologyConditionActive(conditions []metav1.Condition) bool {
+	condition := apimeta.FindStatusCondition(conditions, string(RoleBasedGroupTopologyConstraintActive))
+	return condition != nil && condition.Status == metav1.ConditionTrue
+}
+
+func TopologyConstraintsEqual(left, right *TopologyConstraint) bool {
+	return reflect.DeepEqual(left, right)
 }
