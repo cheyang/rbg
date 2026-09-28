@@ -21,10 +21,12 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/sets"
 	coreapplyv1 "k8s.io/client-go/applyconfigurations/core/v1"
@@ -32,6 +34,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/builder"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
+	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/rbgs/api/workloads/constants"
 	workloadsv1alpha2 "sigs.k8s.io/rbgs/api/workloads/v1alpha2"
@@ -72,6 +75,101 @@ func TestNetworkTopologyForGroupPreferredOnly(t *testing.T) {
 	}
 	if !absorbed {
 		t.Fatal("expected preferred level to be reported as absorbed")
+	}
+}
+
+func TestBuildPlacementPodGroupSeparatesRootAndInstanceTopology(t *testing.T) {
+	standalone := standaloneRole("prefill", 2, constants.RoleInstanceSetWorkloadType)
+	leaderWorker := standaloneRole("prefill", 2, constants.RoleInstanceSetWorkloadType)
+	leaderWorker.Pattern = workloadsv1alpha2.Pattern{
+		LeaderWorkerPattern: &workloadsv1alpha2.LeaderWorkerPattern{Size: ptr.To(int32(4))},
+	}
+
+	tests := []struct {
+		name             string
+		role             workloadsv1alpha2.RoleSpec
+		group            *common.PlacementGroup
+		wantRoot         *volcanoschedulingv1beta1.NetworkTopologySpec
+		wantSubGroupSize int32
+		wantSubTopology  string
+	}{
+		{
+			name: "standalone instance topology stays on the subgroup",
+			role: standalone,
+			group: &common.PlacementGroup{
+				Scope: common.PlacementScope{
+					Roles:       []string{"prefill"},
+					PartitionBy: common.PartitionByRoleInstance,
+				},
+				Topology: &workloadsv1alpha2.TopologyConstraint{
+					Pack: &workloadsv1alpha2.TopologyPackConstraint{Required: ptr.To("rack")},
+				},
+			},
+			wantSubGroupSize: 1,
+			wantSubTopology:  "rack",
+		},
+		{
+			name: "leader-worker instance topology stays on the subgroup",
+			role: leaderWorker,
+			group: &common.PlacementGroup{
+				Scope: common.PlacementScope{
+					Roles:       []string{"prefill"},
+					PartitionBy: common.PartitionByRoleInstance,
+				},
+				Topology: &workloadsv1alpha2.TopologyConstraint{
+					Pack: &workloadsv1alpha2.TopologyPackConstraint{Required: ptr.To("rack")},
+				},
+			},
+			wantSubGroupSize: 4,
+			wantSubTopology:  "rack",
+		},
+		{
+			name: "whole-group topology stays on the PodGroup root",
+			role: standalone,
+			group: &common.PlacementGroup{
+				Scope: common.PlacementScope{
+					Roles:       []string{"prefill", "decode"},
+					PartitionBy: common.PartitionByNone,
+				},
+				Topology: &workloadsv1alpha2.TopologyConstraint{
+					Pack: &workloadsv1alpha2.TopologyPackConstraint{Required: ptr.To("block")},
+				},
+			},
+			wantRoot: &volcanoschedulingv1beta1.NetworkTopologySpec{
+				Mode:            volcanoschedulingv1beta1.HardNetworkTopologyMode,
+				HighestTierName: "block",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			rbg := rbgWithRoles(tt.role)
+			m := New(nil)
+			m.networkTopologySupported = true
+			m.networkTopologyProbedAt = time.Now()
+			m.topologySubGroupSupported = true
+			m.topologySubGroupProbedAt = time.Now()
+
+			got, _, err := m.buildPlacementPodGroup(context.Background(), rbg, tt.group, "test-pg", nil)
+			require.NoError(t, err)
+
+			if tt.wantRoot == nil {
+				require.Nil(t, got.Spec.NetworkTopology)
+			} else {
+				require.Equal(t, tt.wantRoot, got.Spec.NetworkTopology)
+			}
+
+			if tt.wantSubTopology == "" {
+				require.Empty(t, got.Spec.SubGroupPolicy)
+				return
+			}
+			require.Len(t, got.Spec.SubGroupPolicy, 1)
+			policy := got.Spec.SubGroupPolicy[0]
+			require.Equal(t, tt.wantSubGroupSize, ptr.Deref(policy.SubGroupSize, 0))
+			require.NotNil(t, policy.NetworkTopology)
+			require.Equal(t, tt.wantSubTopology, policy.NetworkTopology.HighestTierName)
+		})
 	}
 }
 
@@ -181,13 +279,27 @@ func TestReconcilePlacementNoTopologyDeletesStaleTopologyPodGroups(t *testing.T)
 
 func TestBoundedPlacementPodGroupName(t *testing.T) {
 	longName := strings.Repeat("a", 100)
-	suffix := strings.Repeat("b", 32)
-	got := boundedPlacementPodGroupName(longName, suffix)
-	if len(got) != 63 {
-		t.Fatalf("expected bounded name length 63, got %d", len(got))
+	got := boundedPlacementPodGroupName(longName, "r-prefill", "uid-a")
+	if len(got) != 26+1+len("r-prefill")+1+12 {
+		t.Fatalf("unexpected bounded name length %d: %q", len(got), got)
 	}
-	if got != longName[:30]+"-"+suffix {
+	if !strings.HasPrefix(got, longName[:26]+"-r-prefill-") {
 		t.Fatalf("unexpected bounded name %q", got)
+	}
+
+	otherRBG := boundedPlacementPodGroupName(longName, "r-prefill", "uid-b")
+	if got == otherRBG {
+		t.Fatalf("expected different RBG UIDs to produce different names, got %q", got)
+	}
+
+	otherPlacement := boundedPlacementPodGroupName(longName, "p-pd", "uid-a")
+	if got == otherPlacement {
+		t.Fatalf("expected different placement names to produce different names, got %q", got)
+	}
+
+	longSource := boundedPlacementPodGroupName(longName, "r-"+strings.Repeat("x", 100), "uid-a")
+	if !strings.Contains(longSource, "-r-"+strings.Repeat("x", 20)+"-") {
+		t.Fatalf("expected source name to be truncated to 20 characters, got %q", longSource)
 	}
 }
 
@@ -215,6 +327,55 @@ func TestLoadTopologyLevelsReportsMissingHyperNodeCRD(t *testing.T) {
 	require.Contains(t, err.Error(), HyperNodeCrdName)
 }
 
+func TestLoadTopologyLevelsReportsInconsistentTiers(t *testing.T) {
+	testScheme := runtime.NewScheme()
+	require.NoError(t, apiextensionsv1.AddToScheme(testScheme))
+	crd := &apiextensionsv1.CustomResourceDefinition{
+		ObjectMeta: metav1.ObjectMeta{Name: HyperNodeCrdName},
+		Status: apiextensionsv1.CustomResourceDefinitionStatus{
+			Conditions: []apiextensionsv1.CustomResourceDefinitionCondition{{
+				Type:   apiextensionsv1.Established,
+				Status: apiextensionsv1.ConditionTrue,
+			}},
+		},
+	}
+	c := fake.NewClientBuilder().
+		WithScheme(testScheme).
+		WithObjects(crd).
+		WithInterceptorFuncs(interceptor.Funcs{
+			List: func(_ context.Context, _ client.WithWatch, list client.ObjectList, _ ...client.ListOption) error {
+				hyperNodes := list.(*unstructured.UnstructuredList)
+				hyperNodes.SetAPIVersion("topology.volcano.sh/v1alpha1")
+				hyperNodes.SetKind("HyperNodeList")
+				hyperNodes.Items = []unstructured.Unstructured{
+					testHyperNode("rack-a", "rack", 1),
+					testHyperNode("rack-b", "rack", 2),
+				}
+				return nil
+			},
+		}).
+		Build()
+
+	_, err := New(c).loadTopologyLevels(context.Background(), c)
+	require.Error(t, err)
+	require.True(t, common.IsTopologyTranslationError(err), "expected TopologyTranslationError, got %v", err)
+	require.Contains(t, err.Error(), "maps to different tiers")
+}
+
+func testHyperNode(name, tierName string, tier int64) unstructured.Unstructured {
+	return unstructured.Unstructured{
+		Object: map[string]interface{}{
+			"apiVersion": "topology.volcano.sh/v1alpha1",
+			"kind":       "HyperNode",
+			"metadata":   map[string]interface{}{"name": name},
+			"spec": map[string]interface{}{
+				"tier":     tier,
+				"tierName": tierName,
+			},
+		},
+	}
+}
+
 func TestBuildTopologySubGroupsRejectsZeroSizeRole(t *testing.T) {
 	role := standaloneRole("prefill", 1, constants.RoleInstanceSetWorkloadType)
 	role.Pattern = workloadsv1alpha2.Pattern{
@@ -237,4 +398,36 @@ func TestBuildTopologySubGroupsRejectsZeroSizeRole(t *testing.T) {
 	require.Error(t, err)
 	require.True(t, common.IsTopologyTranslationError(err), "expected TopologyTranslationError, got %v", err)
 	require.Contains(t, err.Error(), "subgroup size must be at least 1")
+}
+
+func TestPlacementPodGroupNameUsesReadableSourceAndRBGIdentity(t *testing.T) {
+	rbgName := strings.Repeat("infer", 20)
+	first := &workloadsv1alpha2.RoleBasedGroup{
+		ObjectMeta: metav1.ObjectMeta{Name: rbgName, Namespace: "default", UID: "uid-a"},
+	}
+	second := first.DeepCopy()
+	second.UID = "uid-b"
+	group := &common.PlacementGroup{
+		ID:   "scope-id",
+		Name: "r-prefill",
+		Scope: common.PlacementScope{
+			Roles:       []string{"prefill"},
+			PartitionBy: common.PartitionByRoleInstance,
+		},
+		Topology: &workloadsv1alpha2.TopologyConstraint{
+			Pack: &workloadsv1alpha2.TopologyPackConstraint{Required: ptr.To("rack")},
+		},
+	}
+
+	firstName := placementPodGroupName(first, group, 0)
+	secondName := placementPodGroupName(second, group, 0)
+	if firstName == secondName {
+		t.Fatalf("expected RBG UID to distinguish same-named scopes, got %q", firstName)
+	}
+	if !strings.Contains(firstName, "-r-prefill-") {
+		t.Fatalf("expected readable placement name in %q", firstName)
+	}
+	if len(firstName) > 63 {
+		t.Fatalf("expected DNS-label-compatible name, got %q", firstName)
+	}
 }

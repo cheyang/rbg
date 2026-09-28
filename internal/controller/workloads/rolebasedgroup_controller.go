@@ -24,7 +24,6 @@ import (
 	"math"
 	"reflect"
 	"sort"
-	"strings"
 	"sync"
 	"time"
 
@@ -34,10 +33,8 @@ import (
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/apimachinery/pkg/selection"
 	"k8s.io/apimachinery/pkg/types"
 	kerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -260,9 +257,6 @@ func (r *RoleBasedGroupReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		ctx, rbg, placement.plan, placement.placementErr, placement.renderResult); err != nil {
 		return ctrl.Result{}, err
 	}
-	if err := r.updateTopologyActiveMarkers(ctx, rbg, placement); err != nil {
-		return ctrl.Result{}, err
-	}
 	if placement.gangErr != nil || placement.placementErr != nil {
 		return r.gateRolesUntilPlacementIsResolvable(ctx, rbg)
 	}
@@ -312,12 +306,6 @@ func (r *RoleBasedGroupReconciler) resolvePlacement(
 		phase.plan, phase.placementErr = gangcommon.ResolvePlacementPlan(
 			ctx, r.client, rbg, phase.gangStrategy)
 		ctx = gangcommon.WithPlacementPlan(ctx, rbg, phase.plan)
-		// Run the reconcile-time guard even when the new plan has no topology. This is
-		// the bypass path for --enable-webhooks=none: deleting every constraint must
-		// still compare against the declarations recorded when placement became active.
-		if phase.placementErr == nil {
-			phase.placementErr = r.validateTopologyImmutabilityFromStatus(rbg, phase.plan)
-		}
 		if phase.placementErr == nil {
 			phase.renderResult, phase.placementErr = r.reconcilePlacement(ctx, rbg, phase.plan)
 		}
@@ -339,22 +327,6 @@ func (r *RoleBasedGroupReconciler) resolvePlacement(
 		return ctx, phase, phase.placementErr
 	}
 	return ctx, phase, nil
-}
-
-func (r *RoleBasedGroupReconciler) updateTopologyActiveMarkers(
-	ctx context.Context,
-	rbg *workloadsv1alpha2.RoleBasedGroup,
-	placement placementReconcilePhase,
-) error {
-	if placement.gangErr != nil || placement.placementErr != nil {
-		return nil
-	}
-	if placement.plan != nil && placement.plan.HasTopology() && placement.renderResult != nil {
-		if err := r.setTopologyConstraintActiveCondition(ctx, rbg, placement.plan); err != nil {
-			return err
-		}
-	}
-	return r.setCoordinatedPolicyTopologyActiveCondition(ctx, rbg)
 }
 
 func (r *RoleBasedGroupReconciler) gateRolesUntilPlacementIsResolvable(
@@ -604,7 +576,10 @@ func (r *RoleBasedGroupReconciler) reconcilePlacement(
 ) (*scheduler.PlacementRenderResult, error) {
 	if r.placementScheduler == nil {
 		if plan == nil {
-			return nil, nil
+			// A nil plan means no gang or topology object should remain. Preserve the
+			// KEP-430 cleanup contract even for backends that have not implemented the
+			// placement compiler yet.
+			return nil, r.reconcilePodGroup(ctx, rbg, nil)
 		}
 		if plan.HasTopology() {
 			return nil, gangcommon.NewSchedulerUnsupportedError(
@@ -630,6 +605,14 @@ func (r *RoleBasedGroupReconciler) setPlacementConditions(
 	result *scheduler.PlacementRenderResult,
 ) error {
 	if cause != nil {
+		topologyFailure := (plan != nil && plan.HasTopology()) ||
+			gangcommon.IsTopologyTranslationError(cause) ||
+			gangcommon.IsIncompatiblePlacementGroups(cause) ||
+			gangcommon.IsSchedulerUnsupported(cause)
+		if !topologyFailure {
+			return r.removeTopologyCondition(ctx, rbg)
+		}
+
 		reason := TopologyTranslationFailed
 		switch {
 		case gangcommon.IsIncompatiblePlacementGroups(cause):
@@ -639,25 +622,14 @@ func (r *RoleBasedGroupReconciler) setPlacementConditions(
 		case gangcommon.IsIncompatibleGangConfig(cause):
 			reason = IncompatibleGangConfig
 		}
-		changed := apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
-			Type:               string(workloadsv1alpha2.RoleBasedGroupPlacementPlanReady),
-			Status:             metav1.ConditionFalse,
-			LastTransitionTime: metav1.Now(),
-			Reason:             reason,
-			Message:            cause.Error(),
-			ObservedGeneration: rbg.Generation,
-		})
-		changed = apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
+		if !apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
 			Type:               string(workloadsv1alpha2.RoleBasedGroupTopologyTranslated),
 			Status:             metav1.ConditionFalse,
 			LastTransitionTime: metav1.Now(),
 			Reason:             reason,
 			Message:            cause.Error(),
 			ObservedGeneration: rbg.Generation,
-		}) || changed
-		changed = apimeta.RemoveStatusCondition(
-			&rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupPreferredAbsorbed)) || changed
-		if !changed {
+		}) {
 			return nil
 		}
 		if err := utils.PatchObjectApplyConfiguration(
@@ -669,74 +641,29 @@ func (r *RoleBasedGroupReconciler) setPlacementConditions(
 	}
 
 	if plan == nil || !plan.HasTopology() {
-		changed := false
-		changed = apimeta.RemoveStatusCondition(&rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupPlacementPlanReady)) || changed
-		changed = apimeta.RemoveStatusCondition(&rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupTopologyTranslated)) || changed
-		changed = apimeta.RemoveStatusCondition(&rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupPreferredAbsorbed)) || changed
-		if !changed {
-			return nil
-		}
-		return utils.PatchObjectApplyConfiguration(
-			ctx, r.client, toRBGApplyConfigurationForStatus(rbg), utils.PatchStatus)
+		return r.removeTopologyCondition(ctx, rbg)
 	}
 
-	if result == nil {
-		// A topology-bearing plan must produce a render result before it can be
-		// reported as translated. This path is defensive; the controller normally
-		// preserves placementErr when rendering fails.
-		changed := apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
-			Type:               string(workloadsv1alpha2.RoleBasedGroupTopologyTranslated),
-			Status:             metav1.ConditionFalse,
-			LastTransitionTime: metav1.Now(),
-			Reason:             TopologyTranslationFailed,
-			Message:            "Scheduler compiler did not return a topology render result",
-			ObservedGeneration: rbg.Generation,
-		})
-		changed = apimeta.RemoveStatusCondition(
-			&rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupPreferredAbsorbed)) || changed
-		if !changed {
-			return nil
-		}
-		if err := utils.PatchObjectApplyConfiguration(
-			ctx, r.client, toRBGApplyConfigurationForStatus(rbg), utils.PatchStatus); err != nil {
-			return err
-		}
-		r.recorder.Event(rbg, corev1.EventTypeWarning, TopologyTranslationFailed,
-			"Scheduler compiler did not return a topology render result")
-		return nil
-	}
-
-	changed := apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
-		Type:               string(workloadsv1alpha2.RoleBasedGroupPlacementPlanReady),
-		Status:             metav1.ConditionTrue,
-		LastTransitionTime: metav1.Now(),
-		Reason:             "PlacementPlanReady",
-		Message:            "Placement plan is valid",
-		ObservedGeneration: rbg.Generation,
-	})
-	changed = apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
-		Type:               string(workloadsv1alpha2.RoleBasedGroupTopologyTranslated),
-		Status:             metav1.ConditionTrue,
-		LastTransitionTime: metav1.Now(),
-		Reason:             "TopologyTranslated",
-		Message:            "Scheduler rendered the topology constraints",
-		ObservedGeneration: rbg.Generation,
-	}) || changed
-
+	reason := "TopologyTranslated"
+	message := "Scheduler rendered the topology constraints"
 	if result != nil && result.PreferredAbsorbed {
-		changed = apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
-			Type:               string(workloadsv1alpha2.RoleBasedGroupPreferredAbsorbed),
-			Status:             metav1.ConditionTrue,
-			LastTransitionTime: metav1.Now(),
-			Reason:             PreferredAbsorbed,
-			Message:            "The scheduler could not anchor the preferred topology level; generic topology scoring is used",
-			ObservedGeneration: rbg.Generation,
-		}) || changed
-	} else {
-		changed = apimeta.RemoveStatusCondition(
-			&rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupPreferredAbsorbed)) || changed
+		reason = PreferredAbsorbed
+		message = "The scheduler could not anchor the preferred topology level; generic topology scoring is used"
 	}
-	if !changed {
+	conditionStatus := metav1.ConditionTrue
+	if result == nil {
+		conditionStatus = metav1.ConditionFalse
+		reason = TopologyTranslationFailed
+		message = "Scheduler compiler did not return a topology render result"
+	}
+	if !apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
+		Type:               string(workloadsv1alpha2.RoleBasedGroupTopologyTranslated),
+		Status:             conditionStatus,
+		LastTransitionTime: metav1.Now(),
+		Reason:             reason,
+		Message:            message,
+		ObservedGeneration: rbg.Generation,
+	}) {
 		return nil
 	}
 	if err := utils.PatchObjectApplyConfiguration(
@@ -750,224 +677,16 @@ func (r *RoleBasedGroupReconciler) setPlacementConditions(
 	return nil
 }
 
-func (r *RoleBasedGroupReconciler) setTopologyConstraintActiveCondition(
-	ctx context.Context,
-	rbg *workloadsv1alpha2.RoleBasedGroup,
-	plan *gangcommon.PlacementPlan,
-) error {
-	if plan == nil || !plan.HasTopology() {
-		return nil
-	}
-
-	// Once placement has become active the marker is sticky. It records per-declaration
-	// identities so adding a new topology-bearing role does not alter an existing active
-	// declaration. A newly added declaration joins the record only after one of its pods
-	// exists. Scaling a covered role to zero deletes pods but does not recreate the RBG,
-	// so it must not make an already-recorded declaration mutable again.
-	condition := apimeta.FindStatusCondition(
-		rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupTopologyConstraintActive))
-	activeDeclarations, err := r.activeTopologyDeclarations(ctx, rbg, plan, condition)
-	if err != nil {
-		return err
-	}
-	if len(activeDeclarations) == 0 {
-		return nil
-	}
-
-	record := gangcommon.FormatTopologyDeclarationRecord(activeDeclarations)
-	if condition != nil && condition.Status == metav1.ConditionTrue &&
-		conditionMessageValue(condition.Message, "declarations") == record {
-		return nil
-	}
-	if apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
-		Type:               string(workloadsv1alpha2.RoleBasedGroupTopologyConstraintActive),
-		Status:             metav1.ConditionTrue,
-		LastTransitionTime: metav1.Now(),
-		Reason:             "TopologyConstraintActive",
-		Message:            fmt.Sprintf("Topology constraints are active; declarations=%s", record),
-		ObservedGeneration: rbg.Generation,
-	}) {
-		return utils.PatchObjectApplyConfiguration(
-			ctx, r.client, toRBGApplyConfigurationForStatus(rbg), utils.PatchStatus)
-	}
-	return nil
-}
-
-func (r *RoleBasedGroupReconciler) activeTopologyDeclarations(
-	ctx context.Context,
-	rbg *workloadsv1alpha2.RoleBasedGroup,
-	plan *gangcommon.PlacementPlan,
-	condition *metav1.Condition,
-) (map[string]string, error) {
-	active := map[string]string{}
-	if condition != nil && condition.Status == metav1.ConditionTrue {
-		record := conditionMessageValue(condition.Message, "declarations")
-		if record == "" {
-			return nil, gangcommon.NewTopologyTranslationError(
-				"active topology constraint has no recorded declarations")
-		}
-		parsed, err := gangcommon.ParseTopologyDeclarationRecord(record)
-		if err != nil {
-			return nil, err
-		}
-		active = parsed
-	}
-
-	for _, declaration := range plan.TopologyDeclarations() {
-		if _, exists := active[declaration.ID]; exists {
-			continue
-		}
-		hasPods, err := r.rbghasPodsForRoles(ctx, rbg, declaration.Scope.Roles)
-		if err != nil {
-			return nil, err
-		}
-		if hasPods {
-			active[declaration.ID] = declaration.Signature
-		}
-	}
-	return active, nil
-}
-
-func (r *RoleBasedGroupReconciler) validateTopologyImmutabilityFromStatus(
-	rbg *workloadsv1alpha2.RoleBasedGroup,
-	plan *gangcommon.PlacementPlan,
-) error {
-	condition := apimeta.FindStatusCondition(
-		rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupTopologyConstraintActive))
-	if condition == nil || condition.Status != metav1.ConditionTrue {
-		return nil
-	}
-
-	storedRecord := conditionMessageValue(condition.Message, "declarations")
-	if storedRecord == "" {
-		// The marker is written only with per-declaration identities. A marker without
-		// them is malformed or predates this contract; fail closed rather than allowing
-		// an unverifiable in-place change when admission is bypassed.
-		return gangcommon.NewTopologyTranslationError(
-			"active topology constraint has no recorded declarations; delete and recreate the workload to change it")
-	}
-	storedDeclarations, err := gangcommon.ParseTopologyDeclarationRecord(storedRecord)
-	if err != nil {
-		return err
-	}
-
-	// Compare only declarations that were active when the marker was recorded. A new
-	// role or policy rule may introduce a new topology declaration; once pods for it
-	// are created, that declaration is added to the sticky marker and becomes immutable.
-	currentDeclarations := plan.TopologyDeclarationSignatures()
-	for scopeID, storedSignature := range storedDeclarations {
-		currentSignature, exists := currentDeclarations[scopeID]
-		if !exists || currentSignature != storedSignature {
-			return gangcommon.NewTopologyTranslationError(
-				"an active topology declaration is immutable; delete and recreate the workload to change or remove it")
-		}
-	}
-	return nil
-}
-
-func conditionMessageValue(message, key string) string {
-	prefix := key + "="
-	index := strings.Index(message, prefix)
-	if index < 0 {
-		return ""
-	}
-	return strings.TrimSpace(message[index+len(prefix):])
-}
-
-func (r *RoleBasedGroupReconciler) rbghasPodsForRoles(
-	ctx context.Context,
-	rbg *workloadsv1alpha2.RoleBasedGroup,
-	roleNames []string,
-) (bool, error) {
-	if len(roleNames) == 0 {
-		return false, nil
-	}
-	groupRequirement, err := labels.NewRequirement(
-		constants.GroupNameLabelKey, selection.Equals, []string{rbg.Name})
-	if err != nil {
-		return false, err
-	}
-	roleRequirement, err := labels.NewRequirement(
-		constants.RoleNameLabelKey, selection.In, roleNames)
-	if err != nil {
-		return false, err
-	}
-	selector := labels.NewSelector().Add(*groupRequirement, *roleRequirement)
-	pods := &corev1.PodList{}
-	if err := r.client.List(ctx, pods, &client.ListOptions{
-		Namespace:     rbg.Namespace,
-		LabelSelector: selector,
-	}); err != nil {
-		return false, err
-	}
-	return len(pods.Items) > 0, nil
-}
-
-func (r *RoleBasedGroupReconciler) setCoordinatedPolicyTopologyActiveCondition(
+func (r *RoleBasedGroupReconciler) removeTopologyCondition(
 	ctx context.Context,
 	rbg *workloadsv1alpha2.RoleBasedGroup,
 ) error {
-	policy := &workloadsv1alpha2.CoordinatedPolicy{}
-	err := r.client.Get(ctx, types.NamespacedName{Name: rbg.Name, Namespace: rbg.Namespace}, policy)
-	if err != nil {
-		if apierrors.IsNotFound(err) {
-			return nil
-		}
-		return err
-	}
-
-	changed := false
-	condition := apimeta.FindStatusCondition(
-		policy.Status.Conditions, workloadsv1alpha2.CoordinatedPolicyTopologyConstraintActive)
-	if condition != nil && condition.Status == metav1.ConditionTrue {
-		markerUID := conditionMessageValue(condition.Message, "rbgUID")
-		// A missing UID is an older marker; preserve it rather than making topology
-		// mutable. A different UID means the RBG was recreated, so this marker belongs
-		// to another workload lifecycle and may be cleared.
-		if markerUID == "" || markerUID == string(rbg.UID) {
-			return nil
-		}
-		if apimeta.RemoveStatusCondition(
-			&policy.Status.Conditions, workloadsv1alpha2.CoordinatedPolicyTopologyConstraintActive) {
-			changed = true
-		}
-	}
-
-	active := false
-	policyTopologyRoles := gangcommon.CoordinatedPolicyTopologyRoles(policy)
-	if len(policyTopologyRoles) > 0 {
-		var podsErr error
-		active, podsErr = r.rbghasPodsForRoles(ctx, rbg, policyTopologyRoles)
-		if podsErr != nil {
-			return podsErr
-		}
-	}
-
-	if active {
-		changed = apimeta.SetStatusCondition(&policy.Status.Conditions, metav1.Condition{
-			Type:               workloadsv1alpha2.CoordinatedPolicyTopologyConstraintActive,
-			Status:             metav1.ConditionTrue,
-			LastTransitionTime: metav1.Now(),
-			Reason:             "TopologyConstraintActive",
-			Message:            fmt.Sprintf("At least one pod covered by a topology rule exists; rbgUID=%s", rbg.UID),
-			ObservedGeneration: policy.Generation,
-		}) || changed
-	}
-	if !changed {
+	if !apimeta.RemoveStatusCondition(
+		&rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupTopologyTranslated)) {
 		return nil
 	}
-
-	// Typed clients commonly leave TypeMeta empty, so derive the deterministic GVK
-	// rather than relying on the object returned by Get.
-	gvk := workloadsv1alpha2.GroupVersion.WithKind("CoordinatedPolicy")
-	status := applyconfiguration.CoordinatedPolicyStatus().
-		WithObservedGeneration(policy.Status.ObservedGeneration).
-		WithConditions(toConditionApplyConfigurations(policy.Status.Conditions)...)
-	applyPolicy := applyconfiguration.CoordinatedPolicy(policy.Name, policy.Namespace).
-		WithKind(gvk.Kind).
-		WithAPIVersion(gvk.GroupVersion().String()).
-		WithStatus(status)
-	return utils.PatchObjectApplyConfiguration(ctx, r.client, applyPolicy, utils.PatchStatus)
+	return utils.PatchObjectApplyConfiguration(
+		ctx, r.client, toRBGApplyConfigurationForStatus(rbg), utils.PatchStatus)
 }
 
 func (r *RoleBasedGroupReconciler) reconcileRoles(

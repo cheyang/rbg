@@ -18,7 +18,10 @@ package volcano
 
 import (
 	"context"
+	"crypto/sha256"
+	"encoding/hex"
 	"fmt"
+	"sort"
 	"sync"
 	"time"
 
@@ -169,22 +172,58 @@ func placementPodGroupName(
 	if group.Gang != nil && !groupContainsTopology(group) && len(group.Scope.Roles) > 0 && group.Scope.PartitionBy == common.PartitionByNone {
 		return rbg.Name
 	}
+	placementName := placementGroupName(group)
+	if placementName == "" {
+		placementName = fmt.Sprintf("g-%d", index)
+	}
 	if group.ID != "" {
-		return boundedPlacementPodGroupName(rbg.Name, group.ID)
+		return boundedPlacementPodGroupName(rbg.Name, placementName, string(rbg.UID))
 	}
 	return fmt.Sprintf("%s-placement-%d", rbg.Name, index)
 }
 
-// boundedPlacementPodGroupName keeps generated names within the DNS-label limit
-// while still distinguishing RBGs whose names share a long prefix. The suffix is the
-// canonical scope hash, so the truncation cannot merge two different logical groups.
-func boundedPlacementPodGroupName(rbgName, suffix string) string {
-	const maxPrefixLength = 30
+func placementGroupName(group *common.PlacementGroup) string {
+	var names []string
+	var visit func(group *common.PlacementGroup)
+	visit = func(group *common.PlacementGroup) {
+		if group == nil {
+			return
+		}
+		if group.Name != "" {
+			names = append(names, group.Name)
+		}
+		for _, child := range group.Children {
+			visit(child)
+		}
+	}
+	visit(group)
+	sort.Strings(names)
+	if len(names) == 0 {
+		return ""
+	}
+	return names[0]
+}
+
+// boundedPlacementPodGroupName keeps generated names within the DNS-label limit while
+// retaining readable source identity and distinguishing RBGs whose names share a long
+// prefix. The placement budget includes the two-character "r-"/"p-" prefix, so a
+// source name is truncated to twenty readable characters. The UID hash is six bytes
+// (twelve hexadecimal characters), which separates same-named scopes from different
+// RBG lifecycles.
+func boundedPlacementPodGroupName(rbgName, placementName, rbgUID string) string {
+	const (
+		maxPrefixLength    = 26
+		maxPlacementLength = 22
+	)
 	prefix := rbgName
 	if len(prefix) > maxPrefixLength {
 		prefix = prefix[:maxPrefixLength]
 	}
-	return prefix + "-" + suffix
+	if len(placementName) > maxPlacementLength {
+		placementName = placementName[:maxPlacementLength]
+	}
+	uidHash := sha256.Sum256([]byte(rbgUID))
+	return prefix + "-" + placementName + "-" + hex.EncodeToString(uidHash[:6])
 }
 
 func groupContainsTopology(group *common.PlacementGroup) bool {
@@ -246,7 +285,8 @@ func (m *GangScheduler) loadTopologyLevels(ctx context.Context, reader client.Re
 		}
 		tier, _, _ := unstructured.NestedInt64(item.Object, "spec", "tier")
 		if existing, exists := levels[name]; exists && int64(existing) != tier {
-			return nil, fmt.Errorf("Volcano HyperNode tierName %q maps to different tiers %d and %d", name, existing, tier)
+			return nil, common.NewTopologyTranslationError(
+				"Volcano HyperNode tierName %q maps to different tiers %d and %d", name, existing, tier)
 		}
 		levels[name] = int(tier)
 	}
@@ -460,7 +500,7 @@ func (m *GangScheduler) buildPlacementPodGroup(
 	if err != nil {
 		return nil, false, err
 	}
-	networkTopology, rootAbsorbed := networkTopologyForGroup(group)
+	networkTopology, rootAbsorbed := rootNetworkTopologyForGroup(group)
 	if networkTopology != nil {
 		supported, supportErr := m.supportsNetworkTopology(ctx, apiReader)
 		if supportErr != nil {
@@ -604,6 +644,19 @@ func buildTopologySubGroups(
 		})
 	}
 	return policies, absorbed, nil
+}
+
+func rootNetworkTopologyForGroup(group *common.PlacementGroup) (
+	*volcanoschedulingv1beta1.NetworkTopologySpec,
+	bool,
+) {
+	// A per-instance placement scope is a collection of independent subgroups. Its
+	// topology belongs on each subgroup, not on the whole PodGroup; rendering it at
+	// both levels would accidentally require every RoleInstance to share one domain.
+	if group != nil && group.Scope.PartitionBy == common.PartitionByRoleInstance {
+		return nil, false
+	}
+	return networkTopologyForGroup(group)
 }
 
 func networkTopologyForGroup(group *common.PlacementGroup) (*volcanoschedulingv1beta1.NetworkTopologySpec, bool) {

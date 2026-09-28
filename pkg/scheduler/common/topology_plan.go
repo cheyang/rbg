@@ -24,7 +24,6 @@ import (
 	"fmt"
 	"slices"
 	"sort"
-	"strings"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -64,6 +63,11 @@ type PlacementScope struct {
 type PlacementGroup struct {
 	ID string
 
+	// Name is a short, human-readable identity derived from the declaring Role or
+	// CoordinatedPolicy rule. The physical PodGroup name uses it together with the
+	// RBG identity so names remain readable without relying on a long scope hash.
+	Name string
+
 	Scope PlacementScope
 
 	Gang *GangStrategy
@@ -76,189 +80,6 @@ type PlacementGroup struct {
 // HasTopology reports whether any node in the plan carries a topology constraint.
 func (p *PlacementPlan) HasTopology() bool {
 	return p != nil && groupHasTopology(p.Root)
-}
-
-// TopologySignature returns a stable aggregate hash of the topology constraints in
-// the plan. Gang attributes are deliberately excluded: gang-only changes must not
-// make an active topology constraint appear immutable.
-func (p *PlacementPlan) TopologySignature() string {
-	declarations := p.TopologyDeclarationSignatures()
-	if len(declarations) == 0 {
-		return ""
-	}
-
-	keys := make([]string, 0, len(declarations))
-	for key := range declarations {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-
-	hash := sha256.New()
-	for _, key := range keys {
-		_, _ = hash.Write([]byte(key))
-		_, _ = hash.Write([]byte{0})
-		_, _ = hash.Write([]byte(declarations[key]))
-		_, _ = hash.Write([]byte{0})
-	}
-	return hex.EncodeToString(hash.Sum(nil)[:16])
-}
-
-// TopologyDeclaration identifies one topology-bearing placement scope and its
-// constraint signature. The scope lets the controller check pod activity for that
-// declaration independently of other declarations.
-type TopologyDeclaration struct {
-	ID        string
-	Scope     PlacementScope
-	Signature string
-}
-
-// TopologyDeclarations returns the topology declarations in the plan, sorted by ID.
-func (p *PlacementPlan) TopologyDeclarations() []TopologyDeclaration {
-	var declarations []TopologyDeclaration
-	if p == nil {
-		return declarations
-	}
-
-	var visit func(group *PlacementGroup)
-	visit = func(group *PlacementGroup) {
-		if group == nil {
-			return
-		}
-		if group.Topology != nil {
-			declarations = append(declarations, TopologyDeclaration{
-				ID:        scopeID(group.Scope),
-				Scope:     group.Scope,
-				Signature: topologyConstraintSignature(group.Topology),
-			})
-		}
-		for _, child := range group.Children {
-			visit(child)
-		}
-	}
-	visit(p.Root)
-	sort.Slice(declarations, func(i, j int) bool {
-		return declarations[i].ID < declarations[j].ID
-	})
-	return declarations
-}
-
-// TopologyDeclarationSignatures maps each topology-bearing placement scope to a hash
-// of its constraint. Per-declaration identities let the controller distinguish a
-// change to an already-active declaration from an allowed newly added declaration.
-func (p *PlacementPlan) TopologyDeclarationSignatures() map[string]string {
-	topologyDeclarations := p.TopologyDeclarations()
-	declarations := make(map[string]string, len(topologyDeclarations))
-	for _, declaration := range topologyDeclarations {
-		declarations[declaration.ID] = declaration.Signature
-	}
-	return declarations
-}
-
-// TopologyDeclarationRecord renders declaration identities in a compact, stable form
-// suitable for storage in a status condition message.
-func (p *PlacementPlan) TopologyDeclarationRecord() string {
-	return FormatTopologyDeclarationRecord(p.TopologyDeclarationSignatures())
-}
-
-// FormatTopologyDeclarationRecord renders a declaration map in the same format as
-// TopologyDeclarationRecord.
-func FormatTopologyDeclarationRecord(declarations map[string]string) string {
-	keys := make([]string, 0, len(declarations))
-	for key := range declarations {
-		keys = append(keys, key)
-	}
-	sort.Strings(keys)
-
-	parts := make([]string, 0, len(keys))
-	for _, key := range keys {
-		parts = append(parts, key+":"+declarations[key])
-	}
-	return strings.Join(parts, ",")
-}
-
-// ParseTopologyDeclarationRecord parses the declaration record written by
-// TopologyDeclarationRecord.
-func ParseTopologyDeclarationRecord(record string) (map[string]string, error) {
-	declarations := map[string]string{}
-	if strings.TrimSpace(record) == "" {
-		return nil, NewTopologyTranslationError("active topology constraint has no recorded declarations")
-	}
-	for _, part := range strings.Split(record, ",") {
-		key, value, found := strings.Cut(part, ":")
-		if !found || key == "" || value == "" {
-			return nil, NewTopologyTranslationError("invalid active topology declaration record %q", part)
-		}
-		if _, exists := declarations[key]; exists {
-			return nil, NewTopologyTranslationError("duplicate active topology declaration %q", key)
-		}
-		declarations[key] = value
-	}
-	return declarations, nil
-}
-
-func topologyConstraintSignature(constraint *workloadsv1alpha2.TopologyConstraint) string {
-	hash := sha256.New()
-	if constraint.TopologyName != nil {
-		_, _ = hash.Write([]byte("topologyName\x00"))
-		_, _ = hash.Write([]byte(*constraint.TopologyName))
-		_, _ = hash.Write([]byte{0})
-	}
-	if constraint.Pack != nil {
-		if constraint.Pack.Required != nil {
-			_, _ = hash.Write([]byte("required\x00"))
-			_, _ = hash.Write([]byte(*constraint.Pack.Required))
-			_, _ = hash.Write([]byte{0})
-		}
-		if constraint.Pack.Preferred != nil {
-			_, _ = hash.Write([]byte("preferred\x00"))
-			_, _ = hash.Write([]byte(*constraint.Pack.Preferred))
-			_, _ = hash.Write([]byte{0})
-		}
-	}
-	return hex.EncodeToString(hash.Sum(nil)[:16])
-}
-
-// CoordinatedPolicyTopologyRoles returns the roles named by topology-bearing rules in
-// the supplied CoordinatedPolicy. RoleSpec instance constraints are deliberately not
-// included: the CoordinatedPolicy immutability marker must reflect only this policy's
-// own rules.
-func CoordinatedPolicyTopologyRoles(policy *workloadsv1alpha2.CoordinatedPolicy) []string {
-	if policy == nil {
-		return nil
-	}
-	roles := sets.New[string]()
-	for i := range policy.Spec.Policies {
-		rule := &policy.Spec.Policies[i]
-		if rule.Strategy.Scheduling == nil || rule.Strategy.Scheduling.TopologyConstraint == nil {
-			continue
-		}
-		roles.Insert(rule.Roles...)
-	}
-	return sets.List(roles)
-}
-
-// TopologyCoveredRoles returns the unique roles that are covered by a topology
-// constraint anywhere in the plan. It is used to scope pod-existence checks so an
-// unconstrained role cannot mark topology immutable.
-func (p *PlacementPlan) TopologyCoveredRoles() []string {
-	if p == nil {
-		return nil
-	}
-	roles := sets.New[string]()
-	var visit func(group *PlacementGroup)
-	visit = func(group *PlacementGroup) {
-		if group == nil {
-			return
-		}
-		if group.Topology != nil {
-			roles.Insert(group.Scope.Roles...)
-		}
-		for _, child := range group.Children {
-			visit(child)
-		}
-	}
-	visit(p.Root)
-	return sets.List(roles)
 }
 
 func groupHasTopology(group *PlacementGroup) bool {
@@ -376,6 +197,7 @@ func buildPlacementGroups(
 			}
 			nodes = append(nodes, &PlacementGroup{
 				ID:       scopeID(newPlacementScope(roles, PartitionByNone)),
+				Name:     "p-" + rule.Name,
 				Scope:    newPlacementScope(roles, PartitionByNone),
 				Gang:     nil,
 				Topology: rule.Strategy.Scheduling.TopologyConstraint,
@@ -393,6 +215,7 @@ func buildPlacementGroups(
 		scope := newPlacementScope([]string{role.Name}, PartitionByRoleInstance)
 		nodes = append(nodes, &PlacementGroup{
 			ID:       scopeID(scope),
+			Name:     "r-" + role.Name,
 			Scope:    scope,
 			Gang:     nil,
 			Topology: role.InstanceTopologyConstraint,
@@ -468,6 +291,9 @@ func insertPlacementGroup(roots []*PlacementGroup, node *PlacementGroup) []*Plac
 			// node contains root; absorb root and continue in case node contains
 			// more than one existing root.
 			node.Children = append(node.Children, root)
+			if node.Name == "" {
+				node.Name = root.Name
+			}
 			if !nodeInserted {
 				nodeInserted = true
 			}
@@ -487,6 +313,9 @@ func mergePlacementGroups(dst, src *PlacementGroup) {
 	}
 	if dst.Topology == nil {
 		dst.Topology = src.Topology
+	}
+	if dst.Name == "" {
+		dst.Name = src.Name
 	}
 	dst.Children = append(dst.Children, src.Children...)
 }

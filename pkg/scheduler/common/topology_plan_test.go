@@ -134,10 +134,16 @@ func TestResolvePlacementPlanRoleConstraintBecomesPerInstanceChild(t *testing.T)
 		t.Fatalf("expected one parent, got %d", len(plan.TopLevelGroups()))
 	}
 	parent := plan.TopLevelGroups()[0]
+	if parent.Name != "p-pd" {
+		t.Fatalf("expected policy placement name, got %q", parent.Name)
+	}
 	if len(parent.Children) != 1 {
 		t.Fatalf("expected one child, got %d", len(parent.Children))
 	}
 	child := parent.Children[0]
+	if child.Name != "r-prefill" {
+		t.Fatalf("expected role placement name, got %q", child.Name)
+	}
 	if child.Scope.PartitionBy != PartitionByRoleInstance {
 		t.Fatalf("expected per-instance child, got %q", child.Scope.PartitionBy)
 	}
@@ -255,78 +261,5 @@ func TestResolvePlacementPlanUnknownRoleReturnsTopologyTranslationError(t *testi
 	)
 	if !IsTopologyTranslationError(err) {
 		t.Fatalf("expected TopologyTranslationError, got %v", err)
-	}
-}
-
-func TestTopologyCoveredRolesReturnsOnlyTopologyRoles(t *testing.T) {
-	plan := &PlacementPlan{Root: &PlacementGroup{
-		Scope: PlacementScope{Roles: []string{"prefill", "decode"}},
-		Children: []*PlacementGroup{{
-			Scope:    PlacementScope{Roles: []string{"prefill"}, PartitionBy: PartitionByRoleInstance},
-			Topology: &workloadsv1alpha2.TopologyConstraint{},
-		}},
-	}}
-	got := plan.TopologyCoveredRoles()
-	if !slices.Equal(got, []string{"prefill"}) {
-		t.Fatalf("expected [prefill], got %v", got)
-	}
-}
-
-func TestScopeIDIsCollisionSafe(t *testing.T) {
-	first := newPlacementScope([]string{"a-b", "c"}, PartitionByNone)
-	second := newPlacementScope([]string{"a", "b-c"}, PartitionByNone)
-	if scopeID(first) == scopeID(second) {
-		t.Fatalf("expected distinct scope IDs, got %q for both", scopeID(first))
-	}
-}
-
-func TestCoordinatedPolicyTopologyRolesUsesOnlyPolicyRules(t *testing.T) {
-	policy := placementPolicy([]workloadsv1alpha2.CoordinatedPolicyRule{{
-		Name:  "pd",
-		Roles: []string{"prefill", "decode"},
-		Strategy: workloadsv1alpha2.CoordinatedPolicyStrategy{
-			Scheduling: &workloadsv1alpha2.SchedulingCoordinationStrategy{
-				TopologyConstraint: &workloadsv1alpha2.TopologyConstraint{},
-			},
-		},
-	}})
-	got := CoordinatedPolicyTopologyRoles(policy)
-	if !slices.Equal(got, []string{"decode", "prefill"}) {
-		t.Fatalf("expected [decode prefill], got %v", got)
-	}
-}
-
-func TestTopologySignatureIgnoresGangAndTracksTopology(t *testing.T) {
-	base := &PlacementPlan{Root: &PlacementGroup{
-		Scope: PlacementScope{Roles: []string{"prefill"}},
-		Gang:  &GangStrategy{Roles: sets.New("prefill")},
-		Topology: &workloadsv1alpha2.TopologyConstraint{
-			Pack: &workloadsv1alpha2.TopologyPackConstraint{Required: ptrTo("rack")},
-		},
-	}}
-
-	gangOnlyChange := &PlacementPlan{Root: &PlacementGroup{
-		Scope: PlacementScope{Roles: []string{"prefill"}},
-		Gang: &GangStrategy{
-			Roles:       sets.New("prefill"),
-			MinReplicas: map[string]int32{"prefill": 1},
-		},
-		Topology: &workloadsv1alpha2.TopologyConstraint{
-			Pack: &workloadsv1alpha2.TopologyPackConstraint{Required: ptrTo("rack")},
-		},
-	}}
-	if base.TopologySignature() != gangOnlyChange.TopologySignature() {
-		t.Fatal("expected topology signature to ignore gang changes")
-	}
-
-	topologyChange := &PlacementPlan{Root: &PlacementGroup{
-		Scope: PlacementScope{Roles: []string{"prefill"}},
-		Gang:  &GangStrategy{Roles: sets.New("prefill")},
-		Topology: &workloadsv1alpha2.TopologyConstraint{
-			Pack: &workloadsv1alpha2.TopologyPackConstraint{Required: ptrTo("block")},
-		},
-	}}
-	if base.TopologySignature() == topologyChange.TopologySignature() {
-		t.Fatal("expected topology signature to change when topology changes")
 	}
 }

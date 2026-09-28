@@ -62,7 +62,8 @@ type TemplateRef struct {
 // TopologyConstraint defines topology placement requirements. The field is reused
 // at two scopes: RoleSpec.InstanceTopologyConstraint packs the pods of one
 // RoleInstance, while CoordinatedPolicy scheduling topologyConstraint packs all
-// pods of the enclosing rule's roles.
+// pods of the enclosing rule's roles. Topology declarations are immutable for the
+// workload lifecycle.
 type TopologyConstraint struct {
 	// TopologyName names the scheduler's topology resource when the active
 	// dialect has one. Today this is the KAI Topology CR name. Volcano and
@@ -622,22 +623,10 @@ const (
 	// is absent when gang scheduling is disabled.
 	RoleBasedGroupGangConfigured RoleBasedGroupConditionType = "GangConfigured"
 
-	// RoleBasedGroupPlacementPlanReady means the scheduler-independent placement
-	// plan is valid. It is absent when no gang or topology constraint is configured.
-	RoleBasedGroupPlacementPlanReady RoleBasedGroupConditionType = "PlacementPlanReady"
-
-	// RoleBasedGroupTopologyTranslated means the scheduler compiler rendered the
-	// topology part of the placement plan without silent semantic loss.
+	// RoleBasedGroupTopologyTranslated means the scheduler resolved and rendered
+	// the topology part of the placement plan without silent semantic loss. The
+	// condition is absent when the RBG has no topology declarations.
 	RoleBasedGroupTopologyTranslated RoleBasedGroupConditionType = "TopologyTranslated"
-
-	// RoleBasedGroupPreferredAbsorbed means the scheduler could not anchor the
-	// preferred topology level and used its generic topology scoring instead.
-	RoleBasedGroupPreferredAbsorbed RoleBasedGroupConditionType = "PreferredAbsorbed"
-
-	// RoleBasedGroupTopologyConstraintActive means at least one pod covered by a
-	// topology constraint has been created. Admission uses this marker to enforce
-	// topology immutability.
-	RoleBasedGroupTopologyConstraintActive RoleBasedGroupConditionType = "TopologyConstraintActive"
 )
 
 // +kubebuilder:object:root=true

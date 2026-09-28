@@ -25401,7 +25401,9 @@ spec:
                         role into one topology domain.
                       properties:
                         pack:
-                          description: Pack specifies topology packing constraints.
+                          description: |-
+                            Pack specifies topology packing constraints. A non-nil TopologyConstraint
+                            must set at least one of Pack.required or Pack.preferred.
                           properties:
                             preferred:
                               description: |-

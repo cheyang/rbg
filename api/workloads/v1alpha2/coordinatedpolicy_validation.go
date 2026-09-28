@@ -22,8 +22,6 @@ import (
 	"sort"
 	"strings"
 
-	apimeta "k8s.io/apimachinery/pkg/api/meta"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 )
 
@@ -135,15 +133,10 @@ func ValidateCoordinatedPolicyTopology(policy *CoordinatedPolicy) error {
 	return utilerrors.NewAggregate(allErrs)
 }
 
-// ValidateCoordinatedPolicyTopologyImmutability rejects topology changes after the
-// controller has marked the same policy active. The status marker lets the webhook
-// enforce the rule without cross-resource reads.
+// ValidateCoordinatedPolicyTopologyImmutability rejects changes to the complete set of
+// topology-bearing policy rules. Topology is a launch-time placement contract, so the
+// rule set cannot be added to, removed from, or changed in place.
 func ValidateCoordinatedPolicyTopologyImmutability(oldPolicy, newPolicy *CoordinatedPolicy) error {
-	condition := apimeta.FindStatusCondition(oldPolicy.Status.Conditions, CoordinatedPolicyTopologyConstraintActive)
-	if condition == nil || condition.Status != metav1.ConditionTrue {
-		return nil
-	}
-
 	// Compare the complete topology-bearing rule set rather than a name-keyed map. The
 	// CRD does not require unique policy names, so duplicate names must not hide one of
 	// the rules from removal detection.
@@ -152,7 +145,7 @@ func ValidateCoordinatedPolicyTopologyImmutability(oldPolicy, newPolicy *Coordin
 		topologyRuleIdentities(newPolicy),
 	) {
 		return fmt.Errorf(
-			"spec.policies topology rules are immutable after a pod covered by one of them has been created; delete and recreate the affected workload to change them")
+			"spec.policies topology rules are immutable for the workload lifecycle; delete and recreate the affected workload to change them")
 	}
 	return nil
 }

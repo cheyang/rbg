@@ -23,8 +23,6 @@ import (
 	"strings"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	apimeta "k8s.io/apimachinery/pkg/api/meta"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -67,11 +65,11 @@ func ValidateRoleDependencies(rbg *RoleBasedGroup) error {
 
 func validateRoleDependencies(fieldPath string, roles []RoleSpec) error {
 	roleNames := make(map[string]struct{}, len(roles))
+	var allErrs []error
 	for i := range roles {
 		roleNames[roles[i].Name] = struct{}{}
 	}
 
-	var allErrs []error
 	graph := make(map[string][]string, len(roles))
 	for i := range roles {
 		role := &roles[i]
@@ -378,45 +376,37 @@ func validateTopologyIdentifier(path, value string) error {
 	return nil
 }
 
-// ValidateRoleTopologyImmutability rejects in-place changes after the controller has
-// recorded TopologyConstraintActive=True. Before that marker exists, a constraint may
-// still be corrected without recreating the workload.
+// ValidateRoleTopologyImmutability rejects changes to the set of role-level topology
+// declarations. Topology is a launch-time placement contract: adding, removing, or
+// changing a declaration requires deleting and recreating the RBG. Ordinary changes
+// to roles that never carry a topology constraint remain allowed.
 func ValidateRoleTopologyImmutability(oldRBG, newRBG *RoleBasedGroup) error {
-	if !TopologyConditionActive(oldRBG.Status.Conditions) {
-		return nil
+	oldTopologies := roleTopologyDeclarations(oldRBG.Spec.Roles)
+	newTopologies := roleTopologyDeclarations(newRBG.Spec.Roles)
+	if len(oldTopologies) != len(newTopologies) {
+		return fmt.Errorf(
+			"spec.roles topology constraints are immutable for the RoleBasedGroup lifecycle; delete and recreate the workload to add or remove one")
 	}
-
-	newRoles := make(map[string]*RoleSpec, len(newRBG.Spec.Roles))
-	for i := range newRBG.Spec.Roles {
-		newRoles[newRBG.Spec.Roles[i].Name] = &newRBG.Spec.Roles[i]
-	}
-
-	// A role that carried a topology constraint cannot have that constraint removed
-	// or changed after placement becomes active. Roles without a topology constraint
-	// remain ordinary RBG roles: deleting or renaming one does not change an active
-	// topology declaration.
-	for i := range oldRBG.Spec.Roles {
-		oldRole := &oldRBG.Spec.Roles[i]
-		if oldRole.InstanceTopologyConstraint == nil {
-			continue
-		}
-		newRole, exists := newRoles[oldRole.Name]
-		if !exists || !TopologyConstraintsEqual(oldRole.InstanceTopologyConstraint, newRole.InstanceTopologyConstraint) {
+	for roleName, oldConstraint := range oldTopologies {
+		newConstraint, exists := newTopologies[roleName]
+		if !exists || !TopologyConstraintsEqual(oldConstraint, newConstraint) {
 			return fmt.Errorf(
-				"spec.roles[%s].instanceTopologyConstraint is immutable after a pod covered by a topology constraint has been created; delete and recreate the workload to change it",
-				oldRole.Name,
+				"spec.roles[%s].instanceTopologyConstraint is immutable for the RoleBasedGroup lifecycle; delete and recreate the workload to change it",
+				roleName,
 			)
 		}
 	}
-
 	return nil
 }
 
-// TopologyConstraintActive reports whether the supplied status conditions contain
-// TopologyConstraintActive=True.
-func TopologyConditionActive(conditions []metav1.Condition) bool {
-	condition := apimeta.FindStatusCondition(conditions, string(RoleBasedGroupTopologyConstraintActive))
-	return condition != nil && condition.Status == metav1.ConditionTrue
+func roleTopologyDeclarations(roles []RoleSpec) map[string]*TopologyConstraint {
+	declarations := make(map[string]*TopologyConstraint, len(roles))
+	for i := range roles {
+		if roles[i].InstanceTopologyConstraint != nil {
+			declarations[roles[i].Name] = roles[i].InstanceTopologyConstraint
+		}
+	}
+	return declarations
 }
 
 func TopologyConstraintsEqual(left, right *TopologyConstraint) bool {
