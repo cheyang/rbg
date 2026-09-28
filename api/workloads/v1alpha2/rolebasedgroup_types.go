@@ -71,7 +71,8 @@ type TopologyConstraint struct {
 	// +optional
 	TopologyName *string `json:"topologyName,omitempty"`
 
-	// Pack specifies topology packing constraints.
+	// Pack specifies topology packing constraints. A non-nil TopologyConstraint
+	// must set at least one of Pack.required or Pack.preferred.
 	// +optional
 	Pack *TopologyPackConstraint `json:"pack,omitempty"`
 }

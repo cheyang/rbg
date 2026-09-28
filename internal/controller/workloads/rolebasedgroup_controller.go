@@ -247,82 +247,27 @@ func (r *RoleBasedGroupReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	// Step 7: Resolve one scheduler-independent PlacementPlan, then let the
 	// scheduler compiler render its physical objects. Gang semantics remain KEP-430;
 	// topology is an attribute of the same logical placement group.
-	ctx, gangStrategy, gangErr := gangcommon.ResolveGangStrategy(ctx, r.client, rbg)
-	if gangErr != nil && !gangcommon.IsIncompatibleGangConfig(gangErr) {
-		r.recorder.Event(rbg, corev1.EventTypeWarning, FailedReconcilePodGroup, gangErr.Error())
-		return ctrl.Result{}, gangErr
+	placementCtx, placement, transientErr := r.resolvePlacement(ctx, rbg)
+	if transientErr != nil {
+		return ctrl.Result{}, transientErr
 	}
-
-	var (
-		placementPlan *gangcommon.PlacementPlan
-		placementErr  error
-		renderResult  *scheduler.PlacementRenderResult
-	)
-	if gangErr == nil {
-		placementPlan, placementErr = gangcommon.ResolvePlacementPlan(ctx, r.client, rbg, gangStrategy)
-		ctx = gangcommon.WithPlacementPlan(ctx, rbg, placementPlan)
-		// Run the reconcile-time guard even when the new plan has no topology. This is
-		// the bypass path for --enable-webhooks=none: deleting every constraint must
-		// still compare against the topology hash recorded when placement became active.
-		if placementErr == nil {
-			if err := r.validateTopologyImmutabilityFromStatus(rbg, placementPlan); err != nil {
-				placementErr = err
-			}
-		}
-		if placementErr == nil {
-			renderResult, placementErr = r.reconcilePlacement(ctx, rbg, placementPlan)
-		}
-		// A backend without the placement compiler reports gang-only failures through
-		// reconcilePodGroup. Keep those on the KEP-430 condition and event path, but
-		// retain placementErr so topology status still reports a render failure.
-		if placementErr != nil && gangcommon.IsIncompatibleGangConfig(placementErr) {
-			gangErr = placementErr
-		}
-	}
-	if gangErr == nil && placementErr != nil && !gangcommon.IsIncompatiblePlacementGroups(placementErr) &&
-		!gangcommon.IsSchedulerUnsupported(placementErr) && !gangcommon.IsTopologyTranslationError(placementErr) {
-		eventReason := FailedReconcilePlacement
-		if placementPlan == nil || !placementPlan.HasTopology() {
-			eventReason = FailedReconcilePodGroup
-		}
-		r.recorder.Event(rbg, corev1.EventTypeWarning, eventReason, placementErr.Error())
-		return ctrl.Result{}, placementErr
-	}
-	if err := r.setGangConfiguredCondition(ctx, rbg, gangStrategy, gangErr); err != nil {
+	ctx = placementCtx
+	if err := r.setGangConfiguredCondition(
+		ctx, rbg, placement.gangStrategy, placement.gangErr); err != nil {
 		return ctrl.Result{}, err
 	}
-	if err := r.setPlacementConditions(ctx, rbg, placementPlan, placementErr, renderResult); err != nil {
+	if err := r.setPlacementConditions(
+		ctx, rbg, placement.plan, placement.placementErr, placement.renderResult); err != nil {
 		return ctrl.Result{}, err
 	}
-
-	// Topology-active markers are sticky for the lifetime of an RBG. They advance only
-	// after a successful topology render, are not cleared by an unrelated gang failure
-	// or by scaling the covered roles to zero, and are cleared only when the RBG is
-	// recreated (detected through a new UID on the CoordinatedPolicy marker).
-	if gangErr == nil && placementErr == nil {
-		if placementPlan != nil && placementPlan.HasTopology() && renderResult != nil {
-			if err := r.setTopologyConstraintActiveCondition(ctx, rbg, placementPlan); err != nil {
-				return ctrl.Result{}, err
-			}
-		}
-		if err := r.setCoordinatedPolicyTopologyActiveCondition(ctx, rbg); err != nil {
-			return ctrl.Result{}, err
-		}
+	if err := r.updateTopologyActiveMarkers(ctx, rbg, placement); err != nil {
+		return ctrl.Result{}, err
 	}
-	if gangErr != nil || placementErr != nil {
-		// A scheduling configuration the current RBG cannot satisfy is not transient:
-		// only a user or operator change resolves it, and CR edits already re-enqueue
-		// through the watches in SetupWithManager. Roles are deliberately left
-		// untouched: the scheduler objects were not written, so creating their pods
-		// now would place them with no gang or topology protection at all. Cleanup
-		// still runs so resources for roles removed from the spec are released.
-		if err := r.cleanup(ctx, rbg); err != nil {
-			return ctrl.Result{}, err
-		}
-		return ctrl.Result{RequeueAfter: incompatibleGangConfigRequeue}, nil
+	if placement.gangErr != nil || placement.placementErr != nil {
+		return r.gateRolesUntilPlacementIsResolvable(ctx, rbg)
 	}
 
-	if raised := raiseScalingTargetsToGangMinimum(scalingTargets, rbg, gangStrategy); len(raised) > 0 {
+	if raised := raiseScalingTargetsToGangMinimum(scalingTargets, rbg, placement.gangStrategy); len(raised) > 0 {
 		logger.V(1).Info("Raised coordinated scaling targets to the gang minimum", "roles", raised)
 	}
 
@@ -338,6 +283,94 @@ func (r *RoleBasedGroupReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 
 	r.recorder.Event(rbg, corev1.EventTypeNormal, Succeed, "ReconcileSucceed")
 	return ctrl.Result{}, nil
+}
+
+// placementReconcilePhase contains the scheduler-independent plan and its rendered
+// result. Classified configuration errors remain in gangErr/placementErr so they can
+// update conditions; the separately returned transient error uses normal controller
+// error backoff.
+type placementReconcilePhase struct {
+	gangStrategy *gangcommon.GangStrategy
+	plan         *gangcommon.PlacementPlan
+	renderResult *scheduler.PlacementRenderResult
+	gangErr      error
+	placementErr error
+}
+
+func (r *RoleBasedGroupReconciler) resolvePlacement(
+	ctx context.Context,
+	rbg *workloadsv1alpha2.RoleBasedGroup,
+) (context.Context, placementReconcilePhase, error) {
+	phase := placementReconcilePhase{}
+	ctx, phase.gangStrategy, phase.gangErr = gangcommon.ResolveGangStrategy(ctx, r.client, rbg)
+	if phase.gangErr != nil && !gangcommon.IsIncompatibleGangConfig(phase.gangErr) {
+		r.recorder.Event(rbg, corev1.EventTypeWarning, FailedReconcilePodGroup, phase.gangErr.Error())
+		return ctx, phase, phase.gangErr
+	}
+
+	if phase.gangErr == nil {
+		phase.plan, phase.placementErr = gangcommon.ResolvePlacementPlan(
+			ctx, r.client, rbg, phase.gangStrategy)
+		ctx = gangcommon.WithPlacementPlan(ctx, rbg, phase.plan)
+		// Run the reconcile-time guard even when the new plan has no topology. This is
+		// the bypass path for --enable-webhooks=none: deleting every constraint must
+		// still compare against the declarations recorded when placement became active.
+		if phase.placementErr == nil {
+			phase.placementErr = r.validateTopologyImmutabilityFromStatus(rbg, phase.plan)
+		}
+		if phase.placementErr == nil {
+			phase.renderResult, phase.placementErr = r.reconcilePlacement(ctx, rbg, phase.plan)
+		}
+		// A backend without the placement compiler reports gang-only failures through
+		// reconcilePodGroup. Keep those on the KEP-430 condition and event path, but
+		// retain placementErr so topology status still reports a render failure.
+		if phase.placementErr != nil && gangcommon.IsIncompatibleGangConfig(phase.placementErr) {
+			phase.gangErr = phase.placementErr
+		}
+	}
+
+	if phase.gangErr == nil && phase.placementErr != nil && !gangcommon.IsIncompatiblePlacementGroups(phase.placementErr) &&
+		!gangcommon.IsSchedulerUnsupported(phase.placementErr) && !gangcommon.IsTopologyTranslationError(phase.placementErr) {
+		eventReason := FailedReconcilePlacement
+		if phase.plan == nil || !phase.plan.HasTopology() {
+			eventReason = FailedReconcilePodGroup
+		}
+		r.recorder.Event(rbg, corev1.EventTypeWarning, eventReason, phase.placementErr.Error())
+		return ctx, phase, phase.placementErr
+	}
+	return ctx, phase, nil
+}
+
+func (r *RoleBasedGroupReconciler) updateTopologyActiveMarkers(
+	ctx context.Context,
+	rbg *workloadsv1alpha2.RoleBasedGroup,
+	placement placementReconcilePhase,
+) error {
+	if placement.gangErr != nil || placement.placementErr != nil {
+		return nil
+	}
+	if placement.plan != nil && placement.plan.HasTopology() && placement.renderResult != nil {
+		if err := r.setTopologyConstraintActiveCondition(ctx, rbg, placement.plan); err != nil {
+			return err
+		}
+	}
+	return r.setCoordinatedPolicyTopologyActiveCondition(ctx, rbg)
+}
+
+func (r *RoleBasedGroupReconciler) gateRolesUntilPlacementIsResolvable(
+	ctx context.Context,
+	rbg *workloadsv1alpha2.RoleBasedGroup,
+) (ctrl.Result, error) {
+	// A scheduling configuration the current RBG cannot satisfy is not transient:
+	// only a user or operator change resolves it, and CR edits already re-enqueue
+	// through the watches in SetupWithManager. Roles are deliberately left
+	// untouched: the scheduler objects were not written, so creating their pods
+	// now would place them with no gang or topology protection at all. Cleanup
+	// still runs so resources for roles removed from the spec are released.
+	if err := r.cleanup(ctx, rbg); err != nil {
+		return ctrl.Result{}, err
+	}
+	return ctrl.Result{RequeueAfter: incompatibleGangConfigRequeue}, nil
 }
 
 func (r *RoleBasedGroupReconciler) handleRevisions(ctx context.Context, rbg *workloadsv1alpha2.RoleBasedGroup) (map[string]string, error) {
@@ -726,20 +759,24 @@ func (r *RoleBasedGroupReconciler) setTopologyConstraintActiveCondition(
 		return nil
 	}
 
-	// Once placement has become active the marker is sticky. Scaling a covered role to
-	// zero deletes pods but does not recreate the RBG, so it must not make topology
-	// mutable again.
+	// Once placement has become active the marker is sticky. It records per-declaration
+	// identities so adding a new topology-bearing role does not alter an existing active
+	// declaration. A newly added declaration joins the record only after one of its pods
+	// exists. Scaling a covered role to zero deletes pods but does not recreate the RBG,
+	// so it must not make an already-recorded declaration mutable again.
 	condition := apimeta.FindStatusCondition(
 		rbg.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupTopologyConstraintActive))
-	if condition != nil && condition.Status == metav1.ConditionTrue {
-		return nil
-	}
-
-	active, err := r.rbghasPodsForRoles(ctx, rbg, plan.TopologyCoveredRoles())
+	activeDeclarations, err := r.activeTopologyDeclarations(ctx, rbg, plan, condition)
 	if err != nil {
 		return err
 	}
-	if !active {
+	if len(activeDeclarations) == 0 {
+		return nil
+	}
+
+	record := gangcommon.FormatTopologyDeclarationRecord(activeDeclarations)
+	if condition != nil && condition.Status == metav1.ConditionTrue &&
+		conditionMessageValue(condition.Message, "declarations") == record {
 		return nil
 	}
 	if apimeta.SetStatusCondition(&rbg.Status.Conditions, metav1.Condition{
@@ -747,13 +784,48 @@ func (r *RoleBasedGroupReconciler) setTopologyConstraintActiveCondition(
 		Status:             metav1.ConditionTrue,
 		LastTransitionTime: metav1.Now(),
 		Reason:             "TopologyConstraintActive",
-		Message:            fmt.Sprintf("Topology constraints are active; hash=%s", plan.TopologySignature()),
+		Message:            fmt.Sprintf("Topology constraints are active; declarations=%s", record),
 		ObservedGeneration: rbg.Generation,
 	}) {
 		return utils.PatchObjectApplyConfiguration(
 			ctx, r.client, toRBGApplyConfigurationForStatus(rbg), utils.PatchStatus)
 	}
 	return nil
+}
+
+func (r *RoleBasedGroupReconciler) activeTopologyDeclarations(
+	ctx context.Context,
+	rbg *workloadsv1alpha2.RoleBasedGroup,
+	plan *gangcommon.PlacementPlan,
+	condition *metav1.Condition,
+) (map[string]string, error) {
+	active := map[string]string{}
+	if condition != nil && condition.Status == metav1.ConditionTrue {
+		record := conditionMessageValue(condition.Message, "declarations")
+		if record == "" {
+			return nil, gangcommon.NewTopologyTranslationError(
+				"active topology constraint has no recorded declarations")
+		}
+		parsed, err := gangcommon.ParseTopologyDeclarationRecord(record)
+		if err != nil {
+			return nil, err
+		}
+		active = parsed
+	}
+
+	for _, declaration := range plan.TopologyDeclarations() {
+		if _, exists := active[declaration.ID]; exists {
+			continue
+		}
+		hasPods, err := r.rbghasPodsForRoles(ctx, rbg, declaration.Scope.Roles)
+		if err != nil {
+			return nil, err
+		}
+		if hasPods {
+			active[declaration.ID] = declaration.Signature
+		}
+	}
+	return active, nil
 }
 
 func (r *RoleBasedGroupReconciler) validateTopologyImmutabilityFromStatus(
@@ -766,18 +838,29 @@ func (r *RoleBasedGroupReconciler) validateTopologyImmutabilityFromStatus(
 		return nil
 	}
 
-	storedHash := conditionMessageValue(condition.Message, "hash")
-	if storedHash == "" {
-		// The marker is written only with a topology hash. A marker without one is
-		// malformed or predates this contract; fail closed rather than allowing an
-		// unverifiable in-place change when admission is bypassed.
+	storedRecord := conditionMessageValue(condition.Message, "declarations")
+	if storedRecord == "" {
+		// The marker is written only with per-declaration identities. A marker without
+		// them is malformed or predates this contract; fail closed rather than allowing
+		// an unverifiable in-place change when admission is bypassed.
 		return gangcommon.NewTopologyTranslationError(
-			"active topology constraint has no recorded topology hash; delete and recreate the workload to change it")
+			"active topology constraint has no recorded declarations; delete and recreate the workload to change it")
 	}
-	currentHash := plan.TopologySignature()
-	if storedHash != currentHash {
-		return gangcommon.NewTopologyTranslationError(
-			"topology constraints are immutable after a pod covered by them has been created; delete and recreate the workload to change them")
+	storedDeclarations, err := gangcommon.ParseTopologyDeclarationRecord(storedRecord)
+	if err != nil {
+		return err
+	}
+
+	// Compare only declarations that were active when the marker was recorded. A new
+	// role or policy rule may introduce a new topology declaration; once pods for it
+	// are created, that declaration is added to the sticky marker and becomes immutable.
+	currentDeclarations := plan.TopologyDeclarationSignatures()
+	for scopeID, storedSignature := range storedDeclarations {
+		currentSignature, exists := currentDeclarations[scopeID]
+		if !exists || currentSignature != storedSignature {
+			return gangcommon.NewTopologyTranslationError(
+				"an active topology declaration is immutable; delete and recreate the workload to change or remove it")
+		}
 	}
 	return nil
 }

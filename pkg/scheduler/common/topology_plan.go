@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"slices"
 	"sort"
+	"strings"
 
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -77,46 +78,142 @@ func (p *PlacementPlan) HasTopology() bool {
 	return p != nil && groupHasTopology(p.Root)
 }
 
-// TopologySignature returns a stable hash of the topology constraints in the plan.
-// Gang attributes are deliberately excluded: gang-only changes must not make an
-// active topology constraint appear immutable.
+// TopologySignature returns a stable aggregate hash of the topology constraints in
+// the plan. Gang attributes are deliberately excluded: gang-only changes must not
+// make an active topology constraint appear immutable.
 func (p *PlacementPlan) TopologySignature() string {
-	if p == nil || !p.HasTopology() {
+	declarations := p.TopologyDeclarationSignatures()
+	if len(declarations) == 0 {
 		return ""
 	}
 
-	parts := make([]string, 0, 8)
+	keys := make([]string, 0, len(declarations))
+	for key := range declarations {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	hash := sha256.New()
+	for _, key := range keys {
+		_, _ = hash.Write([]byte(key))
+		_, _ = hash.Write([]byte{0})
+		_, _ = hash.Write([]byte(declarations[key]))
+		_, _ = hash.Write([]byte{0})
+	}
+	return hex.EncodeToString(hash.Sum(nil)[:16])
+}
+
+// TopologyDeclaration identifies one topology-bearing placement scope and its
+// constraint signature. The scope lets the controller check pod activity for that
+// declaration independently of other declarations.
+type TopologyDeclaration struct {
+	ID        string
+	Scope     PlacementScope
+	Signature string
+}
+
+// TopologyDeclarations returns the topology declarations in the plan, sorted by ID.
+func (p *PlacementPlan) TopologyDeclarations() []TopologyDeclaration {
+	var declarations []TopologyDeclaration
+	if p == nil {
+		return declarations
+	}
+
 	var visit func(group *PlacementGroup)
 	visit = func(group *PlacementGroup) {
 		if group == nil {
 			return
 		}
 		if group.Topology != nil {
-			part := scopeID(group.Scope)
-			if group.Topology.TopologyName != nil {
-				part += "\x00" + *group.Topology.TopologyName
-			}
-			if group.Topology.Pack != nil {
-				if group.Topology.Pack.Required != nil {
-					part += "\x00required=" + *group.Topology.Pack.Required
-				}
-				if group.Topology.Pack.Preferred != nil {
-					part += "\x00preferred=" + *group.Topology.Pack.Preferred
-				}
-			}
-			parts = append(parts, part)
+			declarations = append(declarations, TopologyDeclaration{
+				ID:        scopeID(group.Scope),
+				Scope:     group.Scope,
+				Signature: topologyConstraintSignature(group.Topology),
+			})
 		}
 		for _, child := range group.Children {
 			visit(child)
 		}
 	}
 	visit(p.Root)
-	sort.Strings(parts)
+	sort.Slice(declarations, func(i, j int) bool {
+		return declarations[i].ID < declarations[j].ID
+	})
+	return declarations
+}
 
+// TopologyDeclarationSignatures maps each topology-bearing placement scope to a hash
+// of its constraint. Per-declaration identities let the controller distinguish a
+// change to an already-active declaration from an allowed newly added declaration.
+func (p *PlacementPlan) TopologyDeclarationSignatures() map[string]string {
+	topologyDeclarations := p.TopologyDeclarations()
+	declarations := make(map[string]string, len(topologyDeclarations))
+	for _, declaration := range topologyDeclarations {
+		declarations[declaration.ID] = declaration.Signature
+	}
+	return declarations
+}
+
+// TopologyDeclarationRecord renders declaration identities in a compact, stable form
+// suitable for storage in a status condition message.
+func (p *PlacementPlan) TopologyDeclarationRecord() string {
+	return FormatTopologyDeclarationRecord(p.TopologyDeclarationSignatures())
+}
+
+// FormatTopologyDeclarationRecord renders a declaration map in the same format as
+// TopologyDeclarationRecord.
+func FormatTopologyDeclarationRecord(declarations map[string]string) string {
+	keys := make([]string, 0, len(declarations))
+	for key := range declarations {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	parts := make([]string, 0, len(keys))
+	for _, key := range keys {
+		parts = append(parts, key+":"+declarations[key])
+	}
+	return strings.Join(parts, ",")
+}
+
+// ParseTopologyDeclarationRecord parses the declaration record written by
+// TopologyDeclarationRecord.
+func ParseTopologyDeclarationRecord(record string) (map[string]string, error) {
+	declarations := map[string]string{}
+	if strings.TrimSpace(record) == "" {
+		return nil, NewTopologyTranslationError("active topology constraint has no recorded declarations")
+	}
+	for _, part := range strings.Split(record, ",") {
+		key, value, found := strings.Cut(part, ":")
+		if !found || key == "" || value == "" {
+			return nil, NewTopologyTranslationError("invalid active topology declaration record %q", part)
+		}
+		if _, exists := declarations[key]; exists {
+			return nil, NewTopologyTranslationError("duplicate active topology declaration %q", key)
+		}
+		declarations[key] = value
+	}
+	return declarations, nil
+}
+
+func topologyConstraintSignature(constraint *workloadsv1alpha2.TopologyConstraint) string {
 	hash := sha256.New()
-	for _, part := range parts {
-		_, _ = hash.Write([]byte(part))
+	if constraint.TopologyName != nil {
+		_, _ = hash.Write([]byte("topologyName\x00"))
+		_, _ = hash.Write([]byte(*constraint.TopologyName))
 		_, _ = hash.Write([]byte{0})
+	}
+	if constraint.Pack != nil {
+		if constraint.Pack.Required != nil {
+			_, _ = hash.Write([]byte("required\x00"))
+			_, _ = hash.Write([]byte(*constraint.Pack.Required))
+			_, _ = hash.Write([]byte{0})
+		}
+		if constraint.Pack.Preferred != nil {
+			_, _ = hash.Write([]byte("preferred\x00"))
+			_, _ = hash.Write([]byte(*constraint.Pack.Preferred))
+			_, _ = hash.Write([]byte{0})
+		}
 	}
 	return hex.EncodeToString(hash.Sum(nil)[:16])
 }

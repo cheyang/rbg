@@ -34,8 +34,9 @@ import (
 // +kubebuilder:object:generate=false
 type RoleBasedGroupSetValidator struct {
 	// Client lists the RBGSet's children so topology updates can be checked against
-	// their TopologyConstraintActive markers.
-	Client client.Client
+	// their TopologyConstraintActive markers. It should be cache-backed, with a
+	// direct-API fallback only while the manager cache has not started yet.
+	Client client.Reader
 
 	// EnableDeprecatedWorkloadTypes reports whether the deprecated workload types
 	// (Deployment, StatefulSet, LeaderWorkerSet) are still accepted. When false,
@@ -159,7 +160,12 @@ func roleTopologyTemplateChanged(oldRBGS, newRBGS *RoleBasedGroupSet) (string, b
 
 	// A new role may carry a topology constraint, just as a new role may be added to an
 	// active RBG. Only topology attached to an already-existing role is immutable.
+	// Deleting or renaming a role that never carried topology is an ordinary template
+	// change and must not trigger the active-child check.
 	for roleName, oldRole := range oldRoles {
+		if oldRole.InstanceTopologyConstraint == nil {
+			continue
+		}
 		newRole, exists := newRoles[roleName]
 		if !exists || !TopologyConstraintsEqual(oldRole.InstanceTopologyConstraint, newRole.InstanceTopologyConstraint) {
 			return roleName, true

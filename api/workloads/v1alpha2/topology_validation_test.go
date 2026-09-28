@@ -18,11 +18,14 @@ package v1alpha2
 
 import (
 	"context"
+	stderrors "errors"
 	"strings"
 	"testing"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"sigs.k8s.io/controller-runtime/pkg/cache"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"sigs.k8s.io/rbgs/api/workloads/constants"
 )
@@ -158,6 +161,41 @@ func TestRoleTopologyImmutabilityAllowsNewRoleWithoutTopology(t *testing.T) {
 	}
 }
 
+func TestRoleTopologyImmutabilityAllowsDeletingRoleWithoutTopology(t *testing.T) {
+	old := &RoleBasedGroup{
+		Status: StatusWithTopologyConditionActive(),
+		Spec: RoleBasedGroupSpec{Roles: []RoleSpec{
+			{Name: "prefill", InstanceTopologyConstraint: &TopologyConstraint{
+				Pack: &TopologyPackConstraint{Required: ptrString("rack")},
+			}},
+			{Name: "router"},
+		}},
+	}
+	updated := old.DeepCopy()
+	updated.Spec.Roles = updated.Spec.Roles[:1]
+
+	if err := ValidateRoleTopologyImmutability(old, updated); err != nil {
+		t.Fatalf("expected deletion of a topology-free role to be allowed, got %v", err)
+	}
+}
+
+func TestRoleTopologyTemplateChangedIgnoresRolesWithoutTopology(t *testing.T) {
+	oldRBGS := &RoleBasedGroupSet{Spec: RoleBasedGroupSetSpec{
+		GroupTemplate: RoleBasedGroupTemplateSpec{Spec: RoleBasedGroupSpec{Roles: []RoleSpec{
+			{Name: "prefill", InstanceTopologyConstraint: &TopologyConstraint{
+				Pack: &TopologyPackConstraint{Required: ptrString("rack")},
+			}},
+			{Name: "router"},
+		}}},
+	}}
+	newRBGS := oldRBGS.DeepCopy()
+	newRBGS.Spec.GroupTemplate.Spec.Roles = newRBGS.Spec.GroupTemplate.Spec.Roles[:1]
+
+	if roleName, changed := roleTopologyTemplateChanged(oldRBGS, newRBGS); changed {
+		t.Fatalf("expected topology-free role deletion to be ignored, got change for %q", roleName)
+	}
+}
+
 func TestValidateCoordinatedPolicyTopologyRejectsDuplicateRuleNames(t *testing.T) {
 	policy := &CoordinatedPolicy{Spec: CoordinatedPolicySpec{Policies: []CoordinatedPolicyRule{
 		{
@@ -236,5 +274,89 @@ func TestRoleBasedGroupSetValidatorRejectsTopologyUpdateForActiveChild(t *testin
 	_, err := v.ValidateUpdate(context.Background(), oldRBGS, newRBGS)
 	if err == nil || !strings.Contains(err.Error(), "rbgs-0") {
 		t.Fatalf("expected active-child topology immutability error, got %v", err)
+	}
+}
+
+func TestValidateTopologyConstraintRejectsNoPackLevel(t *testing.T) {
+	tests := []struct {
+		name       string
+		constraint *TopologyConstraint
+	}{
+		{name: "empty object", constraint: &TopologyConstraint{}},
+		{name: "topology name only", constraint: &TopologyConstraint{TopologyName: ptrString("kai")}},
+		{name: "empty pack", constraint: &TopologyConstraint{Pack: &TopologyPackConstraint{}}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := ValidateTopologyConstraint("spec.roles[0].instanceTopologyConstraint", tt.constraint)
+			if err == nil || !strings.Contains(err.Error(), "at least one of required or preferred") {
+				t.Fatalf("expected empty topology error, got %v", err)
+			}
+		})
+	}
+}
+
+type listErrorReader struct {
+	err error
+}
+
+func (r *listErrorReader) Get(_ context.Context, _ client.ObjectKey, _ client.Object, _ ...client.GetOption) error {
+	return r.err
+}
+
+func (r *listErrorReader) List(_ context.Context, _ client.ObjectList, _ ...client.ListOption) error {
+	return r.err
+}
+
+func TestRoleBasedGroupSetValidatorFallsBackWhenCacheNotStarted(t *testing.T) {
+	testScheme := runtime.NewScheme()
+	if err := AddToScheme(testScheme); err != nil {
+		t.Fatal(err)
+	}
+
+	oldRBGS := &RoleBasedGroupSet{
+		ObjectMeta: metav1.ObjectMeta{Name: "rbgs", Namespace: "default"},
+		Spec: RoleBasedGroupSetSpec{
+			GroupTemplate: RoleBasedGroupTemplateSpec{
+				Spec: RoleBasedGroupSpec{Roles: []RoleSpec{{
+					Name:                       "prefill",
+					InstanceTopologyConstraint: &TopologyConstraint{Pack: &TopologyPackConstraint{Required: ptrString("rack")}},
+				}}},
+			},
+		},
+	}
+	newRBGS := oldRBGS.DeepCopy()
+	newRBGS.Spec.GroupTemplate.Spec.Roles[0].InstanceTopologyConstraint.Pack.Required = ptrString("block")
+	child := &RoleBasedGroup{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "rbgs-0",
+			Namespace: "default",
+			Labels:    map[string]string{constants.GroupSetNameLabelKey: "rbgs"},
+		},
+		Status: StatusWithTopologyConditionActive(),
+	}
+	direct := fake.NewClientBuilder().WithScheme(testScheme).WithObjects(child).Build()
+	v := &RoleBasedGroupSetValidator{
+		Client: newCacheStartupFallbackReader(
+			&listErrorReader{err: &cache.ErrCacheNotStarted{}},
+			direct,
+		),
+		EnableDeprecatedWorkloadTypes: true,
+	}
+
+	_, err := v.ValidateUpdate(context.Background(), oldRBGS, newRBGS)
+	if err == nil || !strings.Contains(err.Error(), "rbgs-0") {
+		t.Fatalf("expected cache-not-started fallback to find active child, got %v", err)
+	}
+}
+
+func TestCacheStartupFallbackReaderDoesNotMaskCacheErrors(t *testing.T) {
+	cacheErr := stderrors.New("cache list forbidden")
+	direct := fake.NewClientBuilder().Build()
+	reader := newCacheStartupFallbackReader(&listErrorReader{err: cacheErr}, direct)
+
+	err := reader.List(context.Background(), &RoleBasedGroupList{})
+	if !stderrors.Is(err, cacheErr) {
+		t.Fatalf("expected cache error to be returned, got %v", err)
 	}
 }

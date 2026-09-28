@@ -335,13 +335,19 @@ func validateRoleTopologyConstraints(fieldPath string, roles []RoleSpec) error {
 }
 
 // ValidateTopologyConstraint validates the non-dialect-specific parts of a topology
-// constraint. Empty strings are rejected because they are almost always typos, while
-// a missing object means the constraint is disabled.
+// constraint. A non-nil constraint must define a pack level; otherwise it would be
+// treated as topology-bearing without conveying a schedulable requirement. Empty
+// strings are rejected because they are almost always typos, while a missing object
+// means the constraint is disabled.
 func ValidateTopologyConstraint(path string, constraint *TopologyConstraint) error {
 	if constraint == nil {
 		return nil
 	}
 	var errs []error
+	if constraint.Pack == nil || (constraint.Pack.Required == nil && constraint.Pack.Preferred == nil) {
+		errs = append(errs, fmt.Errorf(
+			"%s.pack must specify at least one of required or preferred", path))
+	}
 	if constraint.TopologyName != nil {
 		if err := validateTopologyIdentifier(path+".topologyName", *constraint.TopologyName); err != nil {
 			errs = append(errs, err)
@@ -380,38 +386,29 @@ func ValidateRoleTopologyImmutability(oldRBG, newRBG *RoleBasedGroup) error {
 		return nil
 	}
 
-	oldRoles := make(map[string]*RoleSpec, len(oldRBG.Spec.Roles))
-	for i := range oldRBG.Spec.Roles {
-		oldRoles[oldRBG.Spec.Roles[i].Name] = &oldRBG.Spec.Roles[i]
-	}
 	newRoles := make(map[string]*RoleSpec, len(newRBG.Spec.Roles))
 	for i := range newRBG.Spec.Roles {
 		newRoles[newRBG.Spec.Roles[i].Name] = &newRBG.Spec.Roles[i]
 	}
 
 	// A role that carried a topology constraint cannot have that constraint removed
-	// or changed after placement becomes active.
-	for roleName, oldRole := range oldRoles {
-		newRole, exists := newRoles[roleName]
+	// or changed after placement becomes active. Roles without a topology constraint
+	// remain ordinary RBG roles: deleting or renaming one does not change an active
+	// topology declaration.
+	for i := range oldRBG.Spec.Roles {
+		oldRole := &oldRBG.Spec.Roles[i]
+		if oldRole.InstanceTopologyConstraint == nil {
+			continue
+		}
+		newRole, exists := newRoles[oldRole.Name]
 		if !exists || !TopologyConstraintsEqual(oldRole.InstanceTopologyConstraint, newRole.InstanceTopologyConstraint) {
 			return fmt.Errorf(
 				"spec.roles[%s].instanceTopologyConstraint is immutable after a pod covered by a topology constraint has been created; delete and recreate the workload to change it",
-				roleName,
+				oldRole.Name,
 			)
 		}
 	}
 
-	// Adding a role that never had a topology constraint is allowed; topology
-	// immutability must not block unrelated scale-out or role addition.
-	for roleName, newRole := range newRoles {
-		oldRole, exists := oldRoles[roleName]
-		if exists && !TopologyConstraintsEqual(oldRole.InstanceTopologyConstraint, newRole.InstanceTopologyConstraint) {
-			return fmt.Errorf(
-				"spec.roles[%s].instanceTopologyConstraint is immutable after a pod covered by a topology constraint has been created; delete and recreate the workload to change it",
-				roleName,
-			)
-		}
-	}
 	return nil
 }
 

@@ -173,10 +173,11 @@ Constraint types `required` and `preferred` are supported:
 
 `TopologyConstraint.topologyName` selects the scheduler's topology resource when a dialect has one. Today that is KAI's `Topology` CR; Volcano and Koordinator infer topology from their cluster-wide objects and do not consume the field. On KAI, a set `topologyName` wins over the controller default (`--kai-topology-name`); if neither is set, reconciliation reports `TopologyResourceUnresolved`. All topology constraints in one PlacementPlan must resolve to the same topology name, otherwise the plan is rejected as `IncompatibleTopologyNames`.
 
-**Validation runs at reconcile** (KEP-430 precedent: webhooks avoid cross-resource reads — the informer cache is not started when the webhook serves; admission checks syntax only):
+**Validation runs mostly at reconcile**, following the KEP-430 precedent of keeping normal admission checks syntax-only and avoiding broad cross-resource reads. The one cross-resource admission exception is the RBGSet immutability guard below: it lists children from the informer cache, and only falls back to a direct API read during the startup window in which controller-runtime has not yet started that cache; at steady state the request remains cache-backed.
 
 | Check | Source | Notes |
 |---|---|---|
+| Constraint shape | Admission | A non-nil `TopologyConstraint` must set at least one of `pack.required` or `pack.preferred`; `{}`, `topologyName` only, and `pack: {}` are rejected |
 | Level existence | Active scheduler's topology objects (HyperNode set / ClusterNetworkTopology / the configured KAI Topology CR) | Unknown identifier → `TopologyTranslated=False` + event, never silent degradation |
 | Required/preferred relative order | Not validated by RBG | Operators may use site-specific topology names; after both levels resolve, the scheduler interprets their relationship |
 | Child level equal to or narrower than parent | Ordering from the same objects | A child placement group must not require a broader domain than its parent; reversed nesting is rejected |
@@ -198,6 +199,8 @@ type TopologyConstraint struct {
 	TopologyName *string `json:"topologyName,omitempty"`
 
 	// Pack specifies topology packing constraints for each replica of the resource.
+	// A non-nil TopologyConstraint must set at least one of Pack.required or
+	// Pack.preferred.
 	// +optional
 	Pack *TopologyPackConstraint `json:"pack,omitempty"`
 }
@@ -292,7 +295,7 @@ spec:
 
 Topology constraints are mutable only before the PlacementPlan has been rendered and the first pod has been created. Once placement becomes active, `topologyName`, `pack.required`, and `pack.preferred` are immutable on the declaring Role or CoordinatedPolicy rule.
 
-The controller records placement activity in status, for example `TopologyConstraintActive=True`, so the validating webhook can enforce immutability without cross-resource reads. Reconcile applies the same guard if the webhook is bypassed; it compares the topology signature recorded in the active marker, including the case where all topology constraints have been removed. An `RBGSet` update checks its template against children that already have `TopologyConstraintActive=True`, so a parent cannot persist a desired template that child admission will keep rejecting.
+The controller records placement activity in status, for example `TopologyConstraintActive=True`, so the RoleBasedGroup and CoordinatedPolicy validating webhooks enforce immutability without cross-resource reads. Reconcile applies the same guard if the webhook is bypassed; it compares the per-declaration topology identities recorded in the active marker, including the case where an active declaration is removed. A newly added role or topology declaration is allowed to join an already-active RBG; once pods covered by that declaration are created, it is recorded and becomes immutable too. An `RBGSet` update checks its template against children that already have `TopologyConstraintActive=True` so a parent cannot persist a desired template that child admission will keep rejecting; this child lookup is cache-backed and uses direct API reads only while the cache has not yet started.
 
 The active marker is sticky for the lifetime of the workload. Scaling a covered role to zero deletes pods but does not recreate the RBG, so it does not make topology mutable again. The RBG marker is naturally reset when the RBG is recreated; the CoordinatedPolicy marker records the owning RBG UID so the controller can clear it only for a new RBG lifecycle.
 
