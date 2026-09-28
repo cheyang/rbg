@@ -1,0 +1,88 @@
+# Merged PR #394 head d0db8af0: restartPolicy is an OBJECT in both CRDs
+## roleinstances CRD (spec.restartPolicy)
+                description: |-
+                  RoleInstanceReadyPolicy specifies the policy for determining if the RoleInstance is ready.
+                  Defaults to `AllPodReady`
+                type: string
+              restartPolicy:
+                description: RestartPolicy defines the restart policy and backoff
+                  configuration for all pods within the RoleInstance.
+                properties:
+                  baseDelaySeconds:
+                    description: |-
+                      BaseDelaySeconds is the base delay between restart attempts (seconds).
+                      Subsequent attempts use exponential backoff: delay = min(base * 2^(restartCount-1), maxDelaySeconds).
+                    format: int32
+                    minimum: 0
+                    type: integer
+                  maxDelaySeconds:
+                    description: |-
+                      MaxDelaySeconds caps the exponential backoff delay (seconds).
+                      Default is 600.
+                    format: int32
+                    minimum: 0
+                    type: integer
+                  type:
+                    description: |-
+                      Type defines the restart policy when pod failures happen.
+                      Default is RecreateRoleInstanceOnPodRestart.
+                    enum:
+                    - None
+
+## rolebasedgroups CRD (leaderWorkerPattern.restartPolicy)
+                          description: RestartPolicy defines the restart policy and
+                            backoff configuration.
+                          properties:
+                            baseDelaySeconds:
+                              description: |-
+                                BaseDelaySeconds is the base delay between restart attempts (seconds).
+                                Subsequent attempts use exponential backoff: delay = min(base * 2^(restartCount-1), maxDelaySeconds).
+                              format: int32
+                              minimum: 0
+                              type: integer
+                            maxDelaySeconds:
+                              description: |-
+                                MaxDelaySeconds caps the exponential backoff delay (seconds).
+                                Default is 600.
+                              format: int32
+                              minimum: 0
+                              type: integer
+                            type:
+                              description: |-
+                                Type defines the restart policy when pod failures happen.
+                                Default is RecreateRoleInstanceOnPodRestart.
+                              enum:
+                              - None
+                              - RecreateRoleInstanceOnPodRestart
+                              type: string
+                          type: object
+                        sharedServiceSelection:
+                          description: SharedServiceSelection indicates the service
+                            policy of the role
+                          enum:
+                          - All
+                          - LeaderOnly
+                          type: string
+
+## but scripts/20-live-negative-delay.sh applies:
+metadata: { name: b4-ri, namespace: rbg-verify }
+spec:
+  restartPolicy: RecreateRoleInstanceOnPodRestart
+  baseDelaySeconds: -30
+  maxDelaySeconds: 600
+  components:
+    - name: main
+      size: 1
+      template:
+        spec:
+          containers:
+
+## and scripts/rbg-backoff.yaml applies:
+      leaderWorkerPattern:
+        size: 1
+        restartPolicy: RecreateRoleInstanceOnPodRestart
+        baseDelaySeconds: 60
+        maxDelaySeconds: 600
+        template:
+          spec:
+            containers:

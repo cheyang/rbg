@@ -1,0 +1,28 @@
+{
+  "topic": "pr5-harness-review",
+  "pr": "https://github.com/cheyang/rbg/pull/5",
+  "harnessPaths": [
+    "docs/verification/pr5-harness-review"
+  ],
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go vet ./pkg/reconciler/roleinstance/sync/ ./test/envtest/testcase/restart_policy/"
+    }
+  },
+  "premise": {
+    "id": "P0",
+    "runsAgainst": "base",
+    "claim": "The harness in cheyang/rbg#5 reproduces real bugs (B1,B2,B4,B5) in sgl-project/rbg#394 round-1 head 0c0fcc11, and its round-5 verdict table matches the merged head d0db8af0.",
+    "verdict": "Confirmed",
+    "evidence": "results/l1-base-round1-harness.txt, results/l2-base-round1-harness.txt, results/l1-merged-head.txt, results/reverify-vs-merged-head.txt"
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["vet"], "note": "PR #5 branch must compile its own tests against its base pr394-base; today go vet fails (undefined RestartPolicyConfig). See scripts/re-verify.sh." },
+    { "id": "F2", "polarity": "n/a", "layer": "docs", "match": [], "note": "Stale polarity docs (test headers + README section-4 table) — reasoning, see results/stale-docs.txt" },
+    { "id": "F3", "polarity": "n/a", "layer": "docs", "match": [], "note": "README references results/live-offbyone-evidence.log (absent) and results/reverify/ (gitignored) for rounds 2-5 raw evidence" },
+    { "id": "F4", "polarity": "n/a", "layer": "docs", "match": [], "note": "L3 scripts use round-1 flat restartPolicy schema; merged CRDs nest it as an object. See results/crd-schema-vs-l3-scripts.txt" },
+    { "id": "F5", "polarity": "n/a", "layer": "unit", "match": [], "note": "B4a hard contract failure means re-verify.sh can never exit 0 on merged code (RESULT: not all findings fixed, by design); see results/reverify-vs-merged-head.txt" }
+  ],
+  "liveNote": "L3 skipped per debate instructions (unit + integration layers only)."
+}

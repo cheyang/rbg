@@ -1,0 +1,7 @@
+# sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy
+# [sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy]
+vet: test/envtest/testcase/restart_policy/backoff_bug_verify_test.go:238:38: undefined: workloadsv1alpha2.RestartPolicyConfig
+# sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync
+# [sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync]
+vet: pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:165:38: undefined: workloadsv1alpha2.RestartPolicyConfig
+vet-exit=1

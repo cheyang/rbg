@@ -1,0 +1,37 @@
+=== RUN   TestRestartBackoffVerify_B1_Overflow
+    restart_backoff_verify_test.go:59: calculateRestartDelay(base=30, max=600, restartCount=6) = 600
+    restart_backoff_verify_test.go:59: calculateRestartDelay(base=30, max=600, restartCount=27) = 600
+    restart_backoff_verify_test.go:59: calculateRestartDelay(base=30, max=600, restartCount=50) = 600
+    restart_backoff_verify_test.go:59: calculateRestartDelay(base=30, max=600, restartCount=58) = 600
+    restart_backoff_verify_test.go:59: calculateRestartDelay(base=30, max=600, restartCount=59) = 600
+    restart_backoff_verify_test.go:59: calculateRestartDelay(base=30, max=600, restartCount=60) = 600
+    restart_backoff_verify_test.go:59: calculateRestartDelay(base=30, max=600, restartCount=61) = 600
+    restart_backoff_verify_test.go:59: calculateRestartDelay(base=30, max=600, restartCount=62) = 600
+    restart_backoff_verify_test.go:59: calculateRestartDelay(base=30, max=600, restartCount=63) = 600
+    restart_backoff_verify_test.go:59: calculateRestartDelay(base=30, max=600, restartCount=64) = 600
+    restart_backoff_verify_test.go:59: calculateRestartDelay(base=30, max=600, restartCount=100) = 600
+--- PASS: TestRestartBackoffVerify_B1_Overflow (0.00s)
+=== RUN   TestRestartBackoffVerify_B1_NoCapOverflow
+    restart_backoff_verify_test.go:81: calculateRestartDelay(base=10, max=0, restartCount=58) = 2147483647
+    restart_backoff_verify_test.go:81: calculateRestartDelay(base=10, max=0, restartCount=59) = 2147483647
+    restart_backoff_verify_test.go:81: calculateRestartDelay(base=10, max=0, restartCount=60) = 2147483647
+    restart_backoff_verify_test.go:81: calculateRestartDelay(base=10, max=0, restartCount=63) = 2147483647
+    restart_backoff_verify_test.go:81: calculateRestartDelay(base=10, max=0, restartCount=64) = 2147483647
+    restart_backoff_verify_test.go:81: calculateRestartDelay(base=10, max=0, restartCount=100) = 2147483647
+--- PASS: TestRestartBackoffVerify_B1_NoCapOverflow (0.00s)
+=== RUN   TestRestartBackoffVerify_B5_OffByOne
+    restart_backoff_verify_test.go:117: first realized backoff delay = 30s (base=30)
+--- PASS: TestRestartBackoffVerify_B5_OffByOne (0.00s)
+=== RUN   TestRestartBackoffVerify_B5_Count0IsUnreachableAtRuntime
+--- PASS: TestRestartBackoffVerify_B5_Count0IsUnreachableAtRuntime (0.00s)
+=== RUN   TestRestartBackoffVerify_B4_NegativeDelayBypass
+    restart_backoff_verify_test.go:204: checkRestartBackoff with base=-30 => 0s (expected >0 if validated)
+    restart_backoff_verify_test.go:205: 
+        	Error Trace:	/tmp/pr5-verify-merged/pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:205
+        	Error:      	"0s" is not greater than "0s"
+        	Test:       	TestRestartBackoffVerify_B4_NegativeDelayBypass
+        	Messages:   	negative baseDelaySeconds should NOT bypass backoff; a negative delay disables it
+--- FAIL: TestRestartBackoffVerify_B4_NegativeDelayBypass (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.011s
+FAIL

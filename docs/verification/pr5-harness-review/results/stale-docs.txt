@@ -1,0 +1,34 @@
+F2/F3 evidence — stale/contradictory documentation in PR #5 (head da0e366d):
+
+(1) pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go header:
+    "These tests encode the INTENDED contract. On the PR head they are expected
+     to FAIL — the failure is the reproduction/evidence that the bug is real."
+    Stale since round 3: on the current upstream head d0db8af0 only B4a fails;
+    B1/B5 tests PASS (see results/l1-merged-head.txt).
+
+(2) test/envtest/testcase/restart_policy/backoff_bug_verify_test.go header:
+    "On the PR head, B2 is expected to FAIL (bug reproduced)" and inline
+    "On the PR head the monotonic preserve keeps the old value (5/6), so this
+     assertion FAILS => bug reproduced."
+    Stale since round 4: B2 passes on d0db8af0 (see results/reverify-vs-merged-head.txt).
+
+(3) docs/verification/pr394-restart-backoff/README.md "Continuing" section 4
+    polarity table still lists B5_OffByOne / B5_Count0IsUnreachableAtRuntime as
+    "bug-canaries (assert the current 2×base behavior) ... FAIL — expected! ...
+    flip these assertions", but commit ecf0e69e already promoted them to
+    contract tests and verify-manifest.json says "contract". An operator
+    following section 4 on the merged head would read green B5 tests as broken
+    or invert an already-inverted assertion.
+
+(4) README §B5 references results/live-offbyone-evidence.log — file does not
+    exist in the tree. Round 2-5 raw outputs are cited as results/reverify/
+    but that path is listed in docs/verification/pr394-restart-backoff/.gitignore,
+    so no raw evidence for rounds 2-5 is committed; only round-1 artifacts are.
+
+(5) README "Continuing" claims: "Validated against the buggy pr-394: it reports
+    B1/B4a/B2/B4b STILL-BROKEN and B5 STILL-PRESENT — i.e. it still bites."
+    True for the round-1 harness (f592f533) only. With the current harness,
+    `re-verify.sh 0c0fcc11 --layers unit` reports HARNESS-UPDATE (did not
+    compile) for every finding — see results/reverify-vs-round1-head.txt.
+    The section-5 sanity procedure ("check out pr-394 ... confirm B1/B2/B4 go
+    red again") now yields compile errors, not red tests.

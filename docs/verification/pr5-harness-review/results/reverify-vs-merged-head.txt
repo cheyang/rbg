@@ -1,0 +1,25 @@
+re-verify: manifest = docs/verification/pr394-restart-backoff/verify-manifest.json
+re-verify: resolving PR head via 'git fetch https://github.com/sgl-project/rbg.git pull/394/head' (machine-independent)
+re-verify: current head = d0db8af0576ac70ce9849fa0cfe44096efd725c8
+re-verify: last-reviewed = d0db8af0576ac70ce9849fa0cfe44096efd725c8  (review delta = d0db8af0576ac70ce9849fa0cfe44096efd725c8..d0db8af0576ac70ce9849fa0cfe44096efd725c8)
+re-verify: fixed-ref=d0db8af0576ac70ce9849fa0cfe44096efd725c8  harness-from=da0e366d1065223d91cbe47cac94e063378ebba0
+re-verify: running layer 'unit' (gotest)
+re-verify: running layer 'integration' (ginkgo)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+B1     contract  unit         FIXED          pass=2 fail=0 miss=0
+B4a    contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+B5     contract  unit         FIXED          pass=1 fail=0 miss=0
+B2     contract  integration  FIXED          pass=1 fail=0 miss=0
+B4b    contract  integration  FIXED          pass=1 fail=0 miss=0
+
+Live layer (manual): L3 needs a real cluster: run scripts/00-setup.sh, start the controller, then scripts/10-live-backoff.sh. Fixed => controller logs 'delay=<base>' (not 2*base) at restartCount=1; crashed pod still preserved during the window.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/pr394-restart-backoff/results/reverify
+
+Review delta this round: d0db8af0576ac70ce9849fa0cfe44096efd725c8..d0db8af0576ac70ce9849fa0cfe44096efd725c8
+After reviewing that delta, advance the marker for the next round:
+  echo d0db8af0576ac70ce9849fa0cfe44096efd725c8 > docs/verification/pr394-restart-backoff/.last-reviewed && git add docs/verification/pr394-restart-backoff/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.
