@@ -1,0 +1,35 @@
+{
+  "topic": "pr5-harness-claude",
+  "pr": "https://github.com/cheyang/rbg/pull/5",
+  "reviewer": "claude",
+  "baseBranch": "pr394-base",
+  "baseSha": "0c0fcc1183b9fdd5ae705e06500515eedf6ced48",
+  "round1HarnessCommit": "f592f533",
+  "harnessPaths": ["docs/verification/pr5-harness-claude"],
+  "layers": {
+    "unit": {
+      "kind": "script",
+      "cmd": "bash docs/verification/pr5-harness-claude/scripts/10-compile-at-head.sh && bash docs/verification/pr5-harness-claude/scripts/20-round1-unit-repro.sh"
+    },
+    "integration": {
+      "kind": "script",
+      "cmd": "bash docs/verification/pr5-harness-claude/scripts/30-round1-envtest-repro.sh",
+      "note": "needs setup-envtest assets (auto-downloaded into bin/ on first use)"
+    },
+    "evidence": {
+      "kind": "script",
+      "cmd": "bash docs/verification/pr5-harness-claude/scripts/40-evidence-files.sh"
+    }
+  },
+  "findings": [
+    { "id": "F1", "severity": "major",   "layer": "unit",        "match": ["F1 CONFIRMED"],  "check": "harness test files must compile against the PR base" },
+    { "id": "F2", "severity": "minor",   "layer": "evidence",    "match": ["F2 CONFIRMED"],  "check": "README-referenced evidence files must exist on the branch" },
+    { "id": "F3", "severity": "minor",   "layer": "reasoning",   "match": [],                "check": "PR body must describe the head's test polarity, not round-1's" },
+    { "id": "F4", "severity": "nit",     "layer": "reasoning",   "match": [],                "check": "L3 scripts should match the CRD shape of the code they run against" }
+  ],
+  "premiseChecks": [
+    { "id": "P1", "layer": "unit",        "match": ["UNIT-REPRO REPRODUCED"],   "check": "round-1 unit evidence (B1/B5/B4a) regenerates at the base" },
+    { "id": "P2", "layer": "integration", "match": ["INTEG-REPRO REPRODUCED"],  "check": "round-1 envtest evidence (B2/B4b) regenerates at the base" }
+  ],
+  "liveNote": "No live/KUBECONFIG layer was run for PR #5 (debate setup, first round): unit + integration only."
+}

@@ -1,0 +1,10 @@
+=== F1: harness compile check at PR head (da0e366d) ===
+# sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync [sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync.test]
+pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:165:38: undefined: workloadsv1alpha2.RestartPolicyConfig
+pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:197:40: cannot use newInstance(30) (value of type *"sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstance) as context.Context value in argument to c.checkRestartBackoff: *"sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstance does not implement context.Context (missing method Deadline)
+pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:203:40: cannot use newInstance(-30) (value of type *"sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstance) as context.Context value in argument to c.checkRestartBackoff: *"sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstance does not implement context.Context (missing method Deadline)
+# sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy [sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy.test]
+test/envtest/testcase/restart_policy/backoff_bug_verify_test.go:238:38: undefined: workloadsv1alpha2.RestartPolicyConfig
+unit package build rc=1 (sync), integration package build rc=1 (restart_policy)
+control: base (0c0fcc1183b9fdd5ae705e06500515eedf6ced48) WITHOUT harness test files builds rc=0
+VERDICT: CONFIRMED — harness breaks the test build of its own base; base alone builds fine.

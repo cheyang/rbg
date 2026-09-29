@@ -1,0 +1,8 @@
+=== F2: evidence files referenced by the pr394 harness README ===
+  results/live-offbyone-evidence.log: MISSING (referenced at README.md:191)
+  results/reverify/: MISSING on a fresh clone (gitignored by docs/verification/pr394-restart-backoff/.gitignore)
+  README ref: 191:  See `results/live-offbyone-evidence.log`.
+  actual live B5 evidence (controller-backoff-lines.log):
+    I0716 20:46:13.411382   37493 instance_scale.go:443] Restart backoff: instance rbg-verify/backoff-demo-worker-0 waiting 1m59s (restartCount=1, delay=120s)
+    I0716 20:46:13.469615   37493 instance_scale.go:443] Restart backoff: instance rbg-verify/backoff-demo-worker-0 waiting 1m59s (restartCount=1, delay=120s)
+VERDICT: CONFIRMED — README references evidence not present on the branch.

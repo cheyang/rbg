@@ -1,0 +1,17 @@
+re-verify: PR head = da0e366d1065223d91cbe47cac94e063378ebba0
+re-verify: last-reviewed = <none>
+
+================  RE-VERIFY (PR #5 harness)  ================
+ID       CHECK        VERDICT
+F1       compile      F1 CONFIRMED
+F2       evidence     F2 CONFIRMED
+F3       body-stale   CONFIRMED
+P1       unit-repro   UNIT-REPRO REPRODUCED
+P2       integ-repro  INTEG-REPRO REPRODUCED
+
+F1/F2 are findings on the harness PR: REFUTED = the author fixed the branch.
+P1/P2 reproduce the round-1 bug evidence the PR exists to carry: they are
+expected to stay REPRODUCED while pr394-base is the round-1 PR #394 head, and
+to stop mattering once the harness is rebased on fixed code.
+Raw output: /home/ecs-user/.pr-debate/homes/claude/repos/cheyang/rbg/docs/verification/pr5-harness-claude/results/
+RESULT: harness findings still present.
