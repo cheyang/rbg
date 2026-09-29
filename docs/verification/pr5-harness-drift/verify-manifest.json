@@ -1,0 +1,26 @@
+{
+  "topic": "pr5-harness-drift",
+  "pr": "https://github.com/cheyang/rbg/pull/5",
+  "harnessPaths": ["docs/verification/pr5-harness-drift"],
+  "premise": {
+    "id": "P0",
+    "claim": "PR #5: 'Production code is untouched — this PR only adds tests, scripts and docs under docs/verification/pr394-restart-backoff/. Base of this PR is pr394-base (= PR #394 head 0c0fcc11), so the diff is just the harness.'",
+    "reportedComponent": "test harness for sgl-project/rbg PR #394 restart-backoff findings",
+    "patchedComponent": "pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go + test/envtest/testcase/restart_policy/backoff_bug_verify_test.go + docs/verification/pr394-restart-backoff/",
+    "componentMatch": true,
+    "runsAgainst": "pr-head",
+    "layer": "unit",
+    "verdict": "confirmed-with-drift",
+    "evidence": "Diff is indeed tests+docs only, but the harness at the PR head no longer compiles on the PR base (results/f1-compile-pr-head.txt); it targets upstream head d0db8af0 (results/f1-reverify-against-upstream-head.txt).",
+    "match": ["re-verify.sh F1"]
+  },
+  "layers": {
+    "unit": { "kind": "script", "cmd": "bash docs/verification/pr5-harness-drift/scripts/re-verify.sh" }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["F1"] },
+    { "id": "F2", "polarity": "contract", "layer": "unit", "match": ["F2"] },
+    { "id": "F3", "polarity": "contract", "layer": "unit", "match": ["F3"] }
+  ],
+  "liveNote": "No live layer: all findings are build/docs-level and verified without a cluster. F4 (manifest prHeadFetch remote) and F5 (teardown pkill) are nits verified by inspection only."
+}

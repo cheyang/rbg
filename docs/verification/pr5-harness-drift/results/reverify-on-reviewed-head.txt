@@ -1,0 +1,14 @@
+== F1: harness packages compile against the PR's base ==
+F1: FAIL (build errors:)
+pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:165:38: undefined: workloadsv1alpha2.RestartPolicyConfig
+pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:197:40: cannot use newInstance(30) (value of type *"sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstance) as context.Context value in argument to c.checkRestartBackoff: *"sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstance does not implement context.Context (missing method Deadline)
+pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:203:40: cannot use newInstance(-30) (value of type *"sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstance) as context.Context value in argument to c.checkRestartBackoff: *"sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstance does not implement context.Context (missing method Deadline)
+test/envtest/testcase/restart_policy/backoff_bug_verify_test.go:238:38: undefined: workloadsv1alpha2.RestartPolicyConfig
+== F2: README-referenced evidence is tracked ==
+  missing/untracked: results/live-offbyone-evidence.log
+  missing/untracked: results/reverify/
+F2: FAIL (2 referenced paths not tracked)
+== F3: Option B (cherry-pick round-1 harness) no longer unqualified ==
+F3: FAIL (README still recommends cherry-picking the round-1 harness, which does not compile on post-refactor heads)
+
+RESULT: 3 check(s) failing.

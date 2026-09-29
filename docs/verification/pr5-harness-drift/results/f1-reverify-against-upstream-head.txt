@@ -1,0 +1,18 @@
+# F1c: same harness via re-verify.sh against upstream PR#394 head d0db8af0 (the code it was adapted to)
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+B1     contract  unit         FIXED          pass=2 fail=0 miss=0
+B4a    contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+B5     contract  unit         FIXED          pass=1 fail=0 miss=0
+B2     contract  integration  FIXED          pass=1 fail=0 miss=0
+B4b    contract  integration  FIXED          pass=1 fail=0 miss=0
+
+Live layer (manual): L3 needs a real cluster: run scripts/00-setup.sh, start the controller, then scripts/10-live-backoff.sh. Fixed => controller logs 'delay=<base>' (not 2*base) at restartCount=1; crashed pod still preserved during the window.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/pr394-restart-backoff/results/reverify
+
+Review delta this round: d0db8af0576ac70ce9849fa0cfe44096efd725c8..d0db8af0576ac70ce9849fa0cfe44096efd725c8
+After reviewing that delta, advance the marker for the next round:
+  echo d0db8af0576ac70ce9849fa0cfe44096efd725c8 > docs/verification/pr394-restart-backoff/.last-reviewed && git add docs/verification/pr394-restart-backoff/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.

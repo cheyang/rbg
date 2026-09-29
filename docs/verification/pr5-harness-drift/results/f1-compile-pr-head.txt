@@ -1,0 +1,12 @@
+# F1a: compile check of the harness packages at the PR head (da0e366d) against base pr394-base
+# cmd: go test -count=1 -run XXXNONE ./pkg/reconciler/roleinstance/sync/ ./test/envtest/testcase/restart_policy/
+# sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync [sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync.test]
+pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:165:38: undefined: workloadsv1alpha2.RestartPolicyConfig
+pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:197:40: cannot use newInstance(30) (value of type *"sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstance) as context.Context value in argument to c.checkRestartBackoff: *"sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstance does not implement context.Context (missing method Deadline)
+pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:203:40: cannot use newInstance(-30) (value of type *"sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstance) as context.Context value in argument to c.checkRestartBackoff: *"sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstance does not implement context.Context (missing method Deadline)
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync [build failed]
+# sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy [sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy.test]
+test/envtest/testcase/restart_policy/backoff_bug_verify_test.go:238:38: undefined: workloadsv1alpha2.RestartPolicyConfig
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy [build failed]
+FAIL
+exit=1

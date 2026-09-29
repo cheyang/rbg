@@ -1,0 +1,14 @@
+# F1d: round-1 harness commit f592f533 (base+original harness) — unit layer compiles and reproduces the documented round-1 results
+=== RUN   TestRestartBackoffVerify_B1_Overflow
+--- FAIL: TestRestartBackoffVerify_B1_Overflow (0.00s)
+=== RUN   TestRestartBackoffVerify_B1_NoCapOverflow
+--- FAIL: TestRestartBackoffVerify_B1_NoCapOverflow (0.00s)
+=== RUN   TestRestartBackoffVerify_B5_OffByOne
+--- PASS: TestRestartBackoffVerify_B5_OffByOne (0.00s)
+=== RUN   TestRestartBackoffVerify_B5_Count0IsUnreachableAtRuntime
+--- PASS: TestRestartBackoffVerify_B5_Count0IsUnreachableAtRuntime (0.00s)
+=== RUN   TestRestartBackoffVerify_B4_NegativeDelayBypass
+--- FAIL: TestRestartBackoffVerify_B4_NegativeDelayBypass (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.012s
+FAIL

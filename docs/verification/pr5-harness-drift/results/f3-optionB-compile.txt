@@ -1,0 +1,15 @@
+# F3a: README Option B ('git cherry-pick f592f533') = round-1 harness grafted onto upstream head d0db8af0
+# sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync [sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync.test]
+pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:153:23: cannot use workloadsv1alpha2.RecreateRoleInstanceOnPodRestart (constant "RecreateRoleInstanceOnPodRestart" of string type "sigs.k8s.io/rbgs/api/workloads/v1alpha2".RestartPolicyType) as "sigs.k8s.io/rbgs/api/workloads/v1alpha2".RestartPolicyConfig value in struct literal
+pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:154:5: unknown field BaseDelaySeconds in struct literal of type "sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstanceSpec
+pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:155:5: unknown field MaxDelaySeconds in struct literal of type "sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstanceSpec
+pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:180:40: cannot use context.Background() (value of interface type context.Context) as *"sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstance value in argument to c.checkRestartBackoff
+pkg/reconciler/roleinstance/sync/restart_backoff_verify_test.go:186:40: cannot use context.Background() (value of interface type context.Context) as *"sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstance value in argument to c.checkRestartBackoff
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync [build failed]
+# sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy [sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy.test]
+test/envtest/testcase/restart_policy/backoff_bug_verify_test.go:235:23: cannot use workloadsv1alpha2.RecreateRoleInstanceOnPodRestart (constant "RecreateRoleInstanceOnPodRestart" of string type "sigs.k8s.io/rbgs/api/workloads/v1alpha2".RestartPolicyType) as "sigs.k8s.io/rbgs/api/workloads/v1alpha2".RestartPolicyConfig value in struct literal
+test/envtest/testcase/restart_policy/backoff_bug_verify_test.go:236:5: unknown field BaseDelaySeconds in struct literal of type "sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstanceSpec
+test/envtest/testcase/restart_policy/backoff_bug_verify_test.go:237:5: unknown field MaxDelaySeconds in struct literal of type "sigs.k8s.io/rbgs/api/workloads/v1alpha2".RoleInstanceSpec
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy [build failed]
+FAIL
+exit=1

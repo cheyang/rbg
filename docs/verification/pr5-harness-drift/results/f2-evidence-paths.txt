@@ -1,0 +1,13 @@
+# F2: README-referenced evidence paths vs files actually tracked in the PR
+TRACKED   results/
+TRACKED   results/b2-clobber-race-trace.log
+TRACKED   results/b2-clobber-round3-trace.log
+TRACKED   results/controller-backoff-lines.log
+TRACKED   results/layer1-gotest.txt
+TRACKED   results/layer2-envtest.txt
+TRACKED   results/live-backoff.log
+MISSING   results/live-offbyone-evidence.log
+MISSING   results/reverify/
+
+# .gitignore content:
+results/reverify/
