@@ -20,7 +20,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyPR488' -count=1 -v"
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyPR488' -count=1 -json"
     }
   },
   "findings": [
