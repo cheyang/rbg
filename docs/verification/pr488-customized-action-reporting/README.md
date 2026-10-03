@@ -11,6 +11,7 @@ Production code is untouched — the diff is purely additive (this dir + one `_t
 |-------|-------------------|------------|
 | 1. Unit | `buildWarmupPod` deadline semantics, `evaluateCustomizedActionPod` timeout mapping, `evaluateCustomizedActionResults` policy-insensitivity | `go test ./internal/controller/workloads/ -run 'TestVerifyPR488' -count=1 -v` |
 | 2. Integration (fake client) | full `Reconcile` on the `InvalidWarmupSpec` failure path → result-wipe behavior | same command (same package) |
+| 3. Live (real cluster) | PR-head manager on the dedicated Aliyun ACK test cluster: timeout kill, merged-pod deadline (R1), ImagePullFailed→Timeout sequence | see `results/live-layer.txt` (round 1, cluster state fully restored after) |
 
 > Test polarity: contract tests assert intended behavior (PASS on correct code).
 > `TestVerifyPR488_MergedPodDeadlineGovernsPreloadContainers`, `TestVerifyPR488_SmallestTimeoutWinsAcrossActions`,
@@ -38,12 +39,12 @@ Run against the **base** branch (`7ed1860c`), because the question is whether th
 | ID | Claim | Layer | Polarity | Verdict | Evidence |
 |----|-------|-------|----------|---------|----------|
 | P0 | Base lacks timeout / completion policy / execution-result reporting | static | — | **Confirmed** | `results/premise-p0-base-vs-head.txt` |
-| R1 | `timeoutSeconds` becomes a Pod-level `ActiveDeadlineSeconds` on the **merged** warmup Pod — it bounds image-preload containers in the same Pod, the smallest timeout across actions truncates the rest, and (per k8s semantics) the clock includes scheduling + image-pull time | 1 | canary | **Confirmed (mechanism, as designed & documented)** | `results/unit-layer.txt`; `results/static-r2-r3.txt` n/a; field comment in `rolebasedgroupwarmup_types.go` says "limits execution of the merged warmup Pod… smallest configured timeout is used". The PR's own e2e (`reports image pull failure before customized action timeout`) demonstrates the deadline firing during an image pull and being reported as `Timeout`. |
+| R1 | `timeoutSeconds` becomes a Pod-level `ActiveDeadlineSeconds` on the **merged** warmup Pod — it bounds image-preload containers in the same Pod, the smallest timeout across actions truncates the rest, and (per k8s semantics) the clock includes scheduling + image-pull time | 1+3 | canary | **Confirmed (mechanism, as designed & documented)** | `results/unit-layer.txt`; **live**: `results/live-layer.txt` scenario B — pod `verify-b-merged-wfr8c` carried `image-preload-0` + `custom-1` with `ADS=3`, failed `DeadlineExceeded`, warmup `reason=Timeout`. Field comment in `rolebasedgroupwarmup_types.go` says "limits execution of the merged warmup Pod… smallest configured timeout is used". The PR's own e2e (`reports image pull failure before customized action timeout`) demonstrates the deadline firing during an image pull and being reported as `Timeout`. |
 | R2 | `completionPolicy` is accepted, validated and defaulted but never read by any evaluation code (AllSucceeded semantics hard-coded) | 1 + static | canary | **Confirmed** | `results/static-r2-r3.txt` (only API def + validation sites); `TestVerifyPR488_CompletionPolicyDoesNotAffectEvaluation` proves results are identical with/without the field |
 | R3 | Issue #486 acceptance criterion says condition `type: CustomizedAction`; PR implements two conditions `CustomizedActionComplete` / `CustomizedActionFailed` | static | — | **Confirmed (deviation, deliberate per PR summary "mutually exclusive terminal conditions")** | `results/static-r2-r3.txt`; needs maintainer sign-off since merging auto-closes #486 |
 | R4 | `InvalidWarmupSpec` / `InvalidTarget` failure paths pass `desiredNodes=nil` → previously reported `CustomizedActionResults` and the `CustomizedActionComplete` condition are wiped from status | 2 | canary | **Confirmed** | `TestVerifyPR488_InvalidSpecWipesExistingCustomizedActionResults`; `results/unit-layer.txt` |
 | T1 | PR's own unit tests pass locally | 1 | — | **Green** | `results/pr-own-tests.txt` (`internal/controller/workloads`, `api/workloads/...` all ok; `go build ./...` clean) |
-| Timeout→reason mapping | `DeadlineExceeded` pod → result State=Failed, Reason=Timeout (issue acceptance criterion) | 1 | contract | **Confirmed** | `TestVerifyPR488_DeadlineExceededMapsToTimeout` |
+| Timeout→reason mapping | `DeadlineExceeded` pod → result State=Failed, Reason=Timeout (issue acceptance criterion) | 1+3 | contract | **Confirmed (incl. live)** | `TestVerifyPR488_DeadlineExceededMapsToTimeout`; **live** `results/live-layer.txt` scenario A — pod ADS=3 killed `DeadlineExceeded`, status `reason=Timeout`, `CustomizedActionFailed=True` condition, Warning event with node/pod/message. Scenario C reproduced the `ImagePullFailed → Timeout` event sequence. |
 
 ### Cleared during review (no finding raised)
 - **RBAC / security**: no RBAC or permission changes; pods are built exactly as before (user securityContext preserved); Events recorded via the existing recorder. No new attack surface.
@@ -105,8 +106,11 @@ Polarity table for this round:
 | `TestVerifyPR488_InvalidSpecWipesExistingCustomizedActionResults` | canary | PASS | flips FAIL if results are preserved → invert |
 
 Layer prerequisites: `go` ≥ repo toolchain (1.27), repo vendored deps (no network needed for L1/L2).
-L3 (live cluster) was not run — no `KUBECONFIG` in this environment; the PR author ran the labeled
-e2e (`--ginkgo.label-filter=customized-action`) against Minikube and CI `e2e-test` is green.
+L3 was run in round 1 against the dedicated Aliyun ACK test cluster (3 nodes, k8s v1.36.2): old
+controller scaled 2→0, PR-head CRD applied, PR-head manager run out-of-cluster
+(`--enable-webhooks none`), scenarios in a throwaway `pr488-verify` namespace. Cluster state fully
+restored afterwards (CRD from backup, controller 2/2 Running, namespace deleted). If re-running L3,
+follow the same recipe and restore in reverse order; capture to `results/live-layer.txt`.
 
 Kickoff prompt for a fresh agent resuming from this branch alone:
 
