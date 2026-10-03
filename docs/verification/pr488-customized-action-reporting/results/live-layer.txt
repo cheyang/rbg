@@ -1,0 +1,55 @@
+L3 live-layer evidence for PR #488 (round 1)
+============================================
+Cluster: dedicated Aliyun ACK test cluster, 3 nodes (cn-hongkong.10.215.180.124/.125, cn-hongkong.10.88.45.99), k8s v1.36.2-aliyun.1.
+Setup: in-cluster rbgs-controller-manager scaled 2->0; PR-head CRD applied (backup restored after); PR-head manager (b5eadcb7) built and run out-of-cluster with --enable-webhooks none; scenarios scoped to namespace pr488-verify.
+Cluster state fully restored after the run (CRD from backup, controller back to 2, namespace deleted).
+
+Scenario A — timeoutSeconds=3, container "sleep 300" (node .124)
+----------------------------------------------------------------
+$ kubectl get pods -o jsonpath: verify-a-timeout-f52r6 ADS=3 containers=custom-0
+  phase=Failed reason=DeadlineExceeded
+  custom-0 terminated exitCode=137 reason=Error
+warmup status:
+  phase=Failed
+  customizedActionResults[0]: node=cn-hongkong.10.215.180.124 state=Failed reason=Timeout
+    msg="Pod was active on the node longer than the specified deadline"
+  conditions: CustomizedActionFailed=True reason=Timeout; Failed=True reason=MaxFailedNodesExceeded
+events (warmup):
+  WarmupStarted → CreatedPod → DeadlineExceeded → Timeout (Warning, node=…, pod=…: message) → MaxFailedNodesExceeded
+VERDICT: issue #486 acceptance criterion "A timeout results in a failed customized action with
+reason Timeout" CONFIRMED on a real cluster (T0 contract). Note: kubelet enforced the 3s
+deadline ~30s after container start (kubelet sync granularity); the deadline did fire and the
+reported reason/message matched.
+
+Scenario B — imagePreload + customizedAction(timeout=3) on the same node (node .125) — R1
+------------------------------------------------------------------------------------------
+$ kubectl get pods -o jsonpath: verify-b-merged-wfr8c ADS=3 containers=image-preload-0 custom-1
+  phase=Failed reason=DeadlineExceeded
+  container statuses: image-preload-0 Completed; custom-1 Error
+warmup status: phase=Failed, result state=Failed reason=Timeout
+VERDICT: R1 CONFIRMED live — the merged warmup Pod carries BOTH the image-preload container and
+the customized container, and the customized action's 3s timeout becomes the ActiveDeadlineSeconds
+of the whole Pod. The pod-level deadline governs co-located preload work exactly as reviewed:
+a user's action timeout can fail node warmup while a preload container shares the budget.
+
+Scenario C — invalid image + timeoutSeconds=20 (node .88)
+---------------------------------------------------------
+$ kubectl get pods -o jsonpath: verify-c-pull-6nh42 ADS=20 phase=Failed
+warmup events (exact sequence):
+  16:38:08 WarmupStarted
+  16:38:08 CreatedPod
+  16:38:09 ImagePullFailed (Warning) node=…, pod=…: failed to pull and unpack image
+          "registry.invalid/rbg/missing:pr486": … dial tcp: lookup registry.invalid: no such host
+  16:38:29 Timeout (Warning) node=…, pod=…: Pod was active on the node longer than the specified deadline
+  16:38:29 MaxFailedNodesExceeded
+final status: state=Failed reason=Timeout msg="Pod was active…"
+VERDICT: the ImagePullFailed → Timeout sequence reported by the PR's e2e reproduced on a real
+cluster; the pull failure detail lands in the Warning event, the terminal status reason is Timeout
+once the pod deadline fires. Matches the reviewed code paths (aggregateCustomizedActionState checks
+pod.Status.Reason=="DeadlineExceeded" first).
+
+Raw commands (from the round transcript):
+  kubectl apply -f scenario-a-timeout.yaml / scenario-b-merged.yaml / scenario-c-pull.yaml
+  kubectl get pods -n pr488-verify -o jsonpath '{...spec.activeDeadlineSeconds... .status.reason...}'
+  kubectl get rolebasedgroupwarmup <name> -n pr488-verify -o jsonpath '{.status...customizedActionResults...conditions...}'
+  kubectl get events -n pr488-verify --sort-by=.lastTimestamp
