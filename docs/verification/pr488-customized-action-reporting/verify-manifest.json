@@ -23,10 +23,10 @@
       "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyPR488' -count=1 -json"
     }
   },
+  "_r3_note": "R3 (condition-type deviation from issue #486 acceptance criteria) is a static, documentation-level finding — see README and results/static-r2-r3.txt; it has no runtime test to re-verify and is intentionally absent from findings[].",
   "findings": [
     { "id": "R1", "polarity": "canary", "layer": "unit", "match": ["TestVerifyPR488_MergedPodDeadlineGovernsPreloadContainers", "TestVerifyPR488_SmallestTimeoutWinsAcrossActions"] },
     { "id": "R2", "polarity": "canary", "layer": "unit", "match": ["TestVerifyPR488_CompletionPolicyDoesNotAffectEvaluation"] },
-    { "id": "R3", "polarity": "static",  "layer": "unit", "match": ["results/static-r2-r3.txt"] },
     { "id": "R4", "polarity": "canary", "layer": "unit", "match": ["TestVerifyPR488_InvalidSpecWipesExistingCustomizedActionResults"] },
     { "id": "T0", "polarity": "contract", "layer": "unit", "match": ["TestVerifyPR488_DeadlineExceededMapsToTimeout"] }
   ],
