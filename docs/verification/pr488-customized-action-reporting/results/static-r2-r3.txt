@@ -1,0 +1,17 @@
+== R2: all CompletionPolicy usage sites in production code (non-test, non-generated) ==
+b5eadcb7:api/workloads/v1alpha2/rolebasedgroupwarmup_types.go:34:// CustomizedActionCompletionPolicy controls how customized action containers
+b5eadcb7:api/workloads/v1alpha2/rolebasedgroupwarmup_types.go:36:type CustomizedActionCompletionPolicy string
+b5eadcb7:api/workloads/v1alpha2/rolebasedgroupwarmup_types.go:39:	// CustomizedActionCompletionPolicyAllSucceeded requires every customized
+b5eadcb7:api/workloads/v1alpha2/rolebasedgroupwarmup_types.go:41:	CustomizedActionCompletionPolicyAllSucceeded CustomizedActionCompletionPolicy = "AllSucceeded"
+b5eadcb7:api/workloads/v1alpha2/rolebasedgroupwarmup_types.go:99:	// CompletionPolicy controls how customized action containers are evaluated.
+b5eadcb7:api/workloads/v1alpha2/rolebasedgroupwarmup_types.go:104:	CompletionPolicy CustomizedActionCompletionPolicy `json:"completionPolicy,omitempty"`
+b5eadcb7:internal/controller/workloads/rolebasedgroupwarmup_controller.go:264:		if action.CustomizedAction.CompletionPolicy != "" &&
+b5eadcb7:internal/controller/workloads/rolebasedgroupwarmup_controller.go:265:			action.CustomizedAction.CompletionPolicy != workloadsv1alpha2.CustomizedActionCompletionPolicyAllSucceeded {
+b5eadcb7:internal/controller/workloads/rolebasedgroupwarmup_controller.go:266:			return fmt.Errorf("%s.customizedAction has unsupported completionPolicy %q", target, action.CustomizedAction.CompletionPolicy)
+
+== R3: condition types implemented vs issue #486 requested 'CustomizedAction' ==
+b5eadcb7:internal/controller/workloads/rolebasedgroupwarmup_customized_action.go:46:	ConditionCustomizedActionComplete = "CustomizedActionComplete"
+b5eadcb7:internal/controller/workloads/rolebasedgroupwarmup_customized_action.go:47:	ConditionCustomizedActionFailed   = "CustomizedActionFailed"
+b5eadcb7:internal/controller/workloads/rolebasedgroupwarmup_customized_action.go:297:		apimeta.RemoveStatusCondition(conditions, ConditionCustomizedActionComplete)
+b5eadcb7:internal/controller/workloads/rolebasedgroupwarmup_customized_action.go:298:		apimeta.RemoveStatusCondition(conditions, ConditionCustomizedActionFailed)
+issue #486 acceptance: 'The status condition uses type: CustomizedAction'

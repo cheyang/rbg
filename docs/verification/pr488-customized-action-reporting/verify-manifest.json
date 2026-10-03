@@ -1,0 +1,34 @@
+{
+  "topic": "pr488-customized-action-reporting",
+  "pr": "https://github.com/sgl-project/rbg/pull/488",
+  "harnessPaths": [
+    "docs/verification/pr488-customized-action-reporting",
+    "internal/controller/workloads/customized_action_verification_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Base branch lacks per-CustomizedAction timeout, completion policy, and execution-result reporting (issue #486: 'There is no per-CustomizedAction timeout... Container exit codes and termination messages are not clearly exposed in the RoleBasedGroupWarmup status').",
+    "reportedComponent": "RoleBasedGroupWarmup CRD + controller (api/workloads/v1alpha2, internal/controller/workloads)",
+    "patchedComponent": "same files — exact match with the issue's Related resources list",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "static",
+    "verdict": "confirmed",
+    "evidence": "git grep on base 7ed1860c: 0 occurrences of CompletionPolicy/CustomizedActionResult/timeout validation in api/+internal/ — see results/premise-p0-base-vs-head.txt",
+    "match": ["results/premise-p0-base-vs-head.txt"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyPR488' -count=1 -v"
+    }
+  },
+  "findings": [
+    { "id": "R1", "polarity": "canary", "layer": "unit", "match": ["TestVerifyPR488_MergedPodDeadlineGovernsPreloadContainers", "TestVerifyPR488_SmallestTimeoutWinsAcrossActions"] },
+    { "id": "R2", "polarity": "canary", "layer": "unit", "match": ["TestVerifyPR488_CompletionPolicyDoesNotAffectEvaluation"] },
+    { "id": "R3", "polarity": "static",  "layer": "unit", "match": ["results/static-r2-r3.txt"] },
+    { "id": "R4", "polarity": "canary", "layer": "unit", "match": ["TestVerifyPR488_InvalidSpecWipesExistingCustomizedActionResults"] },
+    { "id": "T0", "polarity": "contract", "layer": "unit", "match": ["TestVerifyPR488_DeadlineExceededMapsToTimeout"] }
+  ],
+  "liveNote": "L3 (real cluster) not run — no KUBECONFIG in the reviewer environment. The PR author ran the labeled e2e (--ginkgo.label-filter=customized-action) on Minikube and CI e2e-test is green; if re-checking live, confirm: pod ActiveDeadlineSeconds equals the smallest customized-action timeout, and status reason flips ImagePullFailed -> Timeout once the deadline fires mid-pull."
+}

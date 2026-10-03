@@ -1,0 +1,12 @@
+=== RUN   TestVerifyPR488_MergedPodDeadlineGovernsPreloadContainers
+--- PASS: TestVerifyPR488_MergedPodDeadlineGovernsPreloadContainers (0.04s)
+=== RUN   TestVerifyPR488_SmallestTimeoutWinsAcrossActions
+--- PASS: TestVerifyPR488_SmallestTimeoutWinsAcrossActions (0.00s)
+=== RUN   TestVerifyPR488_DeadlineExceededMapsToTimeout
+--- PASS: TestVerifyPR488_DeadlineExceededMapsToTimeout (0.00s)
+=== RUN   TestVerifyPR488_CompletionPolicyDoesNotAffectEvaluation
+--- PASS: TestVerifyPR488_CompletionPolicyDoesNotAffectEvaluation (0.00s)
+=== RUN   TestVerifyPR488_InvalidSpecWipesExistingCustomizedActionResults
+--- PASS: TestVerifyPR488_InvalidSpecWipesExistingCustomizedActionResults (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.054s

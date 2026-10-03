@@ -1,0 +1,11 @@
+== P0 premise check: base (7ed1860c) vs PR head (b5eadcb7) ==
+-- base: TimeoutSeconds/CompletionPolicy/CustomizedActionResult in api/ + internal/ (expect no hits) --
+0
+-- head: same query (expect hits) --
+b5eadcb7:api/workloads/v1alpha2/rolebasedgroupwarmup_types.go:10
+b5eadcb7:internal/controller/workloads/rolebasedgroupwarmup_customized_action.go:9
+-- base: timeout branch in validateWarmupActions (expect none) --
+0
+-- head: timeout validation present --
+b5eadcb7:internal/controller/workloads/rolebasedgroupwarmup_controller.go:262:			return fmt.Errorf("%s.customizedAction.timeoutSeconds must be greater than 0", target)
+b5eadcb7:internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:932:			wantErr: "timeoutSeconds must be greater than 0",
