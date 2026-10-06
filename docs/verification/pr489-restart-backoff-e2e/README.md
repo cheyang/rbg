@@ -6,7 +6,9 @@ spec (`test/e2e/testcase/v1alpha2/restart_policy_stability.go`,
 "It: RecreateRoleInstanceOnPodRestart with backoff delays second recreation") to stop
 injecting failures via a Pod status patch and instead trigger a real nginx container restart.
 
-Layers run against the code under review (PR head `42f57f72`, merge-base `7ed1860c`):
+Layers run against the code under review (PR heads `42f57f72` and `3ae23fd9` — the second
+commit adds `--kubeconfig` forwarding to `restartNginxContainer` plus a unit test; merge-base
+`7ed1860c`):
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
@@ -36,7 +38,7 @@ Run against the **base** branch without the patch.
 | ID | Claim | Layer | Verdict | Evidence |
 |----|-------|-------|---------|----------|
 | P0 | Patched `Failed` pod phase is not durable; whether it survives the 90s backoff is environment-dependent → old spec is inherently flaky | 3 | **Confirmed** | CI failure dumps (kind-1.31: →Succeeded, stuck forever); `results/p0-demo.log` (aliyun-1.36 bare pod: →Running in ≤9s) |
-| F1 | PR-head spec passes deterministically on a real cluster: recreation happens only after the 90s backoff, UIDs change, instance stable | 3 | **Confirmed** | `results/runA-new-test.log` — 1/1 spec PASS in 118.7s (plus PR #489's own CI e2e-test green, 31m14s) |
+| F1 | PR-head spec passes deterministically on a real cluster: recreation happens only after the 90s backoff, UIDs change, instance stable | 3 | **Confirmed** | `results/runA-new-test.log` (head 42f57f72, PASS 118.7s) and `results/runA2-new-test-head-3ae23fd9.log` (head 3ae23fd9 incl. kubeconfig-forwarding commit, PASS 120.1s); PR #489's own CI e2e-test green, 31m14s |
 | F2 | Base-version spec fails on the CI-like environment (kind-1.31) | 3 | **Not-reproduced on this cluster** (expected: environment-dependent) | `results/runB-old-test.log`, `results/runB2-old-test.log` — old spec PASSED twice here (117s/118s); on this kubelet the `Failed` phase persisted through the backoff window, see `results/manual-replay.md`. The base failure is positively documented by the CI artifacts listed in P0, so the canary is considered red on the CI environment rather than green overall. |
 | — | Controller backoff semantics themselves (sanity, unchanged by the PR) | 3 | Confirmed correct | `results/manual-replay.md`: second recreation held until exactly `lastRestartTime+90s` (07:16:16 → 07:17:46), crashed pod preserved during the window, `restartCount` 1→2, no restart loop afterwards |
 
