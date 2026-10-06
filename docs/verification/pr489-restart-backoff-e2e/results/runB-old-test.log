@@ -1,0 +1,79 @@
+=== RUN   TestE2E
+Running Suite: run rbg e2e test - /tmp/rbg-base/test/e2e
+========================================================
+Random Seed: [1m1791270444[0m
+
+Will run [1m1[0m of [1m122[0m specs
+[38;5;243m------------------------------[0m
+[0m[1m[BeforeSuite] [0m
+[38;5;243m/tmp/rbg-base/test/e2e/e2e_test.go:34[0m
+[38;5;10m[BeforeSuite] PASSED [0.022 seconds][0m
+[38;5;243m------------------------------[0m
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+[38;5;243m------------------------------[0m
+[0m[v1alpha2] Run role based controller e2e tests [38;5;243mrestart policy stability [0m[1mRecreateRoleInstanceOnPodRestart with backoff delays second recreation[0m
+[38;5;243m/tmp/rbg-base/test/e2e/testcase/v1alpha2/restart_policy_stability.go:244[0m
+2026-10-06T15:07:24.553+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 status not found"}
+2026-10-06T15:07:24.809+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:25.063+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:25.318+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:25.573+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:25.828+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:26.083+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:26.338+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:26.593+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:26.848+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:27.103+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:27.358+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:27.911+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:28.166+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:28.420+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:28.675+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:28.930+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:29.184+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:29.440+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:29.694+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:29.949+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:30.204+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:30.458+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:30.713+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:30.969+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:31.223+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:31.478+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:31.734+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:31.988+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:32.243+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:07:32.500+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:08:57.520+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:08:57.775+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:08:58.030+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:08:58.285+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:08:58.539+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:08:58.795+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:08:59.050+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:08:59.304+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:08:59.560+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:08:59.814+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:09:00.069+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:09:00.324+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:09:00.579+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:09:00.833+0800	DEBUG	framework/rbg_v2_expect.go:64	v2 workload not equal, wait next time	{"rbg": "e2e-backoff-test", "reason": "role role-1 not ready: readyReplicas=0, desired=1"}
+2026-10-06T15:09:21.120+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+2026-10-06T15:09:21.124+0800	INFO	log/warning_handler.go:64	workloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet
+2026-10-06T15:09:21.139+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-10-06T15:09:21.394+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+2026-10-06T15:09:21.649+0800	DEBUG	framework/framework.go:225	waiting for all pods to be deleted	{"remainingPods": 2}
+[38;5;10m• [117.377 seconds][0m
+[38;5;243m------------------------------[0m
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+[38;5;243m------------------------------[0m
+[0m[1m[AfterSuite] [0m
+[38;5;243m/tmp/rbg-base/test/e2e/e2e_test.go:40[0m
+[38;5;10m[AfterSuite] PASSED [0.006 seconds][0m
+[38;5;243m------------------------------[0m
+
+[38;5;10m[1mRan 1 of 122 Specs in 117.407 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m1 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m121 Skipped[0m
+--- PASS: TestE2E (117.41s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/e2e	117.424s

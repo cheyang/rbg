@@ -1,0 +1,46 @@
+{
+  "topic": "pr489-restart-backoff-e2e",
+  "pr": "https://github.com/sgl-project/rbg/pull/489",
+  "harnessPaths": [
+    "docs/verification/pr489-restart-backoff-e2e"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "The test injected failure by directly setting a live Pod phase to Failed. During the 90-second backoff, kubelet could overwrite it with Succeeded, so the delayed reconcile no longer saw a restart trigger and the test timed out intermittently. (quoted from the PR body)",
+    "reportedComponent": "test/e2e/testcase/v1alpha2/restart_policy_stability.go (e2e failure injection via test/utils SetPodFailed)",
+    "patchedComponent": "same file — switches injection to a real container restart (kubectl exec nginx -s quit)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "live",
+    "verdict": "confirmed",
+    "evidence": "CI run 37258247385 job 111599840074: kubelet 'Killing pod ...' without deletion, final dump shows Phase=Succeeded/Completed exit=0 restartCount=0 and no second ReCreateInstance event; plus scripts/10-p0-status-patch-evaporation.sh on k8s 1.36 showing the patched Failed phase reverted to Running with restartCount=0.",
+    "match": ["scripts/10-p0-status-patch-evaporation.sh"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/e2e/ -run '^$' -count=1"
+    },
+    "live": {
+      "kind": "ginkgo",
+      "cmd": "go test ./test/e2e/ -run TestE2E -v -ginkgo.v --ginkgo.focus='RecreateRoleInstanceOnPodRestart with backoff delays second recreation' -timeout 15m"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "live",
+      "match": ["RecreateRoleInstanceOnPodRestart with backoff delays second recreation"],
+      "note": "PR-head spec must PASS on a real cluster: recreation happens only after the 90s backoff and the instance is stable afterwards. scripts/20-run-new-test.sh"
+    },
+    {
+      "id": "F2",
+      "polarity": "canary",
+      "layer": "live",
+      "match": ["RecreateRoleInstanceOnPodRestart with backoff delays second recreation"],
+      "note": "Base-version spec must FAIL (150s timeout at 'pods should be recreated with new UIDs') — reproduces the flake mechanism deterministically on this cluster. scripts/30-run-old-test.sh. Once the PR merges, the base version is historical; keep the canary red-on-base and do not invert."
+    }
+  ],
+  "liveNote": "L3 needs a reachable Kubernetes cluster (KUBECONFIG) with rbgs CRDs (leaderWorkerPattern.restartPolicyConfig present) and a running rbgs controller whose restart/backoff code matches the PR merge-base (the PR is test-only). Run scripts/20-run-new-test.sh (expect PASS ~2-5min) and scripts/30-run-old-test.sh (expect FAIL with the 150s timeout ~8-11min)."
+}

@@ -1,0 +1,15 @@
+[P0] pod Ready; patching status.phase=Failed (what SetPodFailed does)
+[P0] t+3s phase=Failed restartCount=0
+[P0] t+6s phase=Failed restartCount=0
+[P0] t+9s phase=Running restartCount=0
+[P0] t+12s phase=Running restartCount=0
+[P0] t+15s phase=Running restartCount=0
+[P0] t+18s phase=Running restartCount=0
+[P0] kubelet events (none should delete the pod; maybe a Killing on older kubelets):
+19s   Normal   AllocIPSucceed   pod/nginx-p0   Alloc IP 10.88.45.100/16 took 21.680395ms
+19s   Normal   Pulling          pod/nginx-p0   Pulling image "registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest"
+19s   Normal   Pulled           pod/nginx-p0   Successfully pulled image "registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest" in 464ms (464ms including waiting). Image size: 44056224 bytes.
+19s   Normal   Created          pod/nginx-p0   Container created
+19s   Normal   Started          pod/nginx-p0   Container started
+[P0] verdict: if phase returned to Running/Succeeded and restartCount=0,
+      the Failed trigger evaporated -> premise CONFIRMED.
