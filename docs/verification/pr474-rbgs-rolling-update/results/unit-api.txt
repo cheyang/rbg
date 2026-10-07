@@ -1,0 +1,53 @@
+=== RUN   TestVerify_F2_RolloutStrategySurvivesV1alpha1RoundTrip
+    verify_rbgs_rollout_codex_conversion_test.go:67: 
+        	Error Trace:	/tmp/rbg-verify-474/api/workloads/v1alpha1/verify_rbgs_rollout_codex_conversion_test.go:67
+        	Error:      	Expected value not to be nil.
+        	Test:       	TestVerify_F2_RolloutStrategySurvivesV1alpha1RoundTrip
+        	Messages:   	spec.rolloutStrategy is silently dropped by a v1alpha1 read-modify-write round trip
+--- FAIL: TestVerify_F2_RolloutStrategySurvivesV1alpha1RoundTrip (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.009s
+=== RUN   TestVerify_F1_NegativeRolloutBudgetsRejected
+=== RUN   TestVerify_F1_NegativeRolloutBudgetsRejected/negative_maxUnavailable_with_surge_budget
+    verify_rbgs_rollout_codex_webhook_test.go:92: 
+        	Error Trace:	/tmp/rbg-verify-474/api/workloads/v1alpha2/verify_rbgs_rollout_codex_webhook_test.go:92
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerify_F1_NegativeRolloutBudgetsRejected/negative_maxUnavailable_with_surge_budget
+        	Messages:   	negative rollout budget must be rejected: &{Type: Partition:<nil> MaxUnavailable:-1 MaxSurge:1 Paused:false}
+=== RUN   TestVerify_F1_NegativeRolloutBudgetsRejected/negative_maxUnavailable_percentage
+    verify_rbgs_rollout_codex_webhook_test.go:92: 
+        	Error Trace:	/tmp/rbg-verify-474/api/workloads/v1alpha2/verify_rbgs_rollout_codex_webhook_test.go:92
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerify_F1_NegativeRolloutBudgetsRejected/negative_maxUnavailable_percentage
+        	Messages:   	negative rollout budget must be rejected: &{Type: Partition:<nil> MaxUnavailable:-10% MaxSurge:1 Paused:false}
+=== RUN   TestVerify_F1_NegativeRolloutBudgetsRejected/negative_maxSurge
+    verify_rbgs_rollout_codex_webhook_test.go:92: 
+        	Error Trace:	/tmp/rbg-verify-474/api/workloads/v1alpha2/verify_rbgs_rollout_codex_webhook_test.go:92
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerify_F1_NegativeRolloutBudgetsRejected/negative_maxSurge
+        	Messages:   	negative rollout budget must be rejected: &{Type: Partition:<nil> MaxUnavailable:<nil> MaxSurge:-2 Paused:false}
+=== RUN   TestVerify_F1_NegativeRolloutBudgetsRejected/negative_partition
+    verify_rbgs_rollout_codex_webhook_test.go:92: 
+        	Error Trace:	/tmp/rbg-verify-474/api/workloads/v1alpha2/verify_rbgs_rollout_codex_webhook_test.go:92
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerify_F1_NegativeRolloutBudgetsRejected/negative_partition
+        	Messages:   	negative rollout budget must be rejected: &{Type: Partition:-1 MaxUnavailable:<nil> MaxSurge:<nil> Paused:false}
+--- FAIL: TestVerify_F1_NegativeRolloutBudgetsRejected (0.00s)
+    --- FAIL: TestVerify_F1_NegativeRolloutBudgetsRejected/negative_maxUnavailable_with_surge_budget (0.00s)
+    --- FAIL: TestVerify_F1_NegativeRolloutBudgetsRejected/negative_maxUnavailable_percentage (0.00s)
+    --- FAIL: TestVerify_F1_NegativeRolloutBudgetsRejected/negative_maxSurge (0.00s)
+    --- FAIL: TestVerify_F1_NegativeRolloutBudgetsRejected/negative_partition (0.00s)
+=== RUN   TestVerify_F1_ValidBudgetsStillAdmitted
+--- PASS: TestVerify_F1_ValidBudgetsStillAdmitted (0.00s)
+=== RUN   TestVerify_F3_ScalingAdapterNewlyEnabledOnUpdateRejected
+    verify_rbgs_rollout_codex_webhook_test.go:124: 
+        	Error Trace:	/tmp/rbg-verify-474/api/workloads/v1alpha2/verify_rbgs_rollout_codex_webhook_test.go:124
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerify_F3_ScalingAdapterNewlyEnabledOnUpdateRejected
+        	Messages:   	an update that newly enables scalingAdapter in the group template must be rejected
+--- FAIL: TestVerify_F3_ScalingAdapterNewlyEnabledOnUpdateRejected (0.00s)
+=== RUN   TestVerify_F3_ScalingAdapterGrandfatheredOnUpdate
+--- PASS: TestVerify_F3_ScalingAdapterGrandfatheredOnUpdate (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.009s
+FAIL

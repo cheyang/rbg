@@ -1,0 +1,11 @@
+=== RUN   TestVerify_P0_BaseUpdatesEveryOutdatedChildInOnePass
+2026-10-07T16:11:09+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-10-07T16:11:09+08:00	INFO	Updating existing RoleBasedGroups	{"rbgset": {"name":"s","namespace":"default"}, "count": 3}
+2026-10-07T16:11:09+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"s","namespace":"default"}, "name": "s-0"}
+2026-10-07T16:11:09+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"s","namespace":"default"}, "name": "s-1"}
+2026-10-07T16:11:09+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"s","namespace":"default"}, "name": "s-2"}
+2026-10-07T16:11:09+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"s","namespace":"default"}, "replicas": 3, "readyReplicas": 3}
+2026-10-07T16:11:09+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+--- PASS: TestVerify_P0_BaseUpdatesEveryOutdatedChildInOnePass (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.048s

@@ -1,0 +1,36 @@
+Harness-bites check (2026-10-07, Reviewer B / Codex)
+=====================================================
+
+Method: temporarily applied the proposed fixes to the production code on the PR head
+(5bfa08b7), re-ran the harness, then reverted. Production diff is empty again.
+
+Fixes applied (temporary, reverted):
+1. F1: validateGroupSetRollout rejects negative resolved maxSurge/maxUnavailable/partition
+   (api/workloads/v1alpha2/rolebasedgroupset_admission.go).
+2. F3: ValidateUpdate rejects NEWLY enabled scalingAdapter (old-vs-new comparison,
+   grandfathering sets that already carry one).
+3. F2: ConvertFrom stashes spec.rolloutStrategy in a conversion annotation,
+   ConvertTo restores it (same pattern as preserveV1alpha1Fields).
+4. F4: Rolling=RolloutComplete additionally requires every base group serving
+   (baseServing < baseTotal keeps Rolling=True).
+5. F5: updateExistingRBGs gained a syncMetadata parameter; the scale-only path in
+   reconcileRolling passes !params.paused.
+
+Result with fixes applied:
+- TestVerify_F1_NegativeRolloutBudgetsRejected            PASS (was FAIL)
+- TestVerify_F1_ValidBudgetsStillAdmitted                 PASS
+- TestVerify_F2_RolloutStrategySurvivesV1alpha1RoundTrip  PASS (was FAIL)
+- TestVerify_F3_ScalingAdapterNewlyEnabledOnUpdateRejected PASS (was FAIL)
+- TestVerify_F3_ScalingAdapterGrandfatheredOnUpdate       PASS
+- TestVerify_F4_BrokenHeldBackGroupLeaksSurgeWhileStatusComplete PASS (was FAIL)
+- TestVerify_F5_PausedScaleOnlyPathPropagatesTemplateMetadata    PASS (was FAIL)
+- All pre-existing tests in internal/controller/workloads PASS
+  (incl. TestRollingUpdate_* and TestStaticUpdate_*).
+
+Known interaction: the PR's own TestRoleBasedGroupSetValidator_ScalingAdapterCreateOnly
+FAILS under the F3 fix — that test pins the disputed behavior ("the update that introduced
+the adapter" is allowed), so the fix necessarily rewrites that expectation. The PR's unit
+test file needed one mechanical update (updateExistingRBGs gained a parameter).
+
+After the check, all production changes were reverted:
+  git diff origin/pr/474 -- ':!docs/verification' ':!*_test.go' ':!test/envtest/testcase/rbgsrolloutreview'  -> empty

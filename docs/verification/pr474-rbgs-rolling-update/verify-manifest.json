@@ -1,0 +1,89 @@
+{
+  "topic": "pr474-rbgs-rolling-update",
+  "pr": "https://github.com/sgl-project/rbg/pull/474",
+  "harnessPaths": [
+    "docs/verification/pr474-rbgs-rolling-update",
+    "internal/controller/workloads/verify_rbgs_rollout_codex_test.go",
+    "api/workloads/v1alpha2/verify_rbgs_rollout_codex_webhook_test.go",
+    "api/workloads/v1alpha1/verify_rbgs_rollout_codex_conversion_test.go",
+    "test/envtest/testcase/rbgsrolloutreview"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Today that propagation is un-paced: when the template changes, every outdated child is updated within a single reconcile, with no ordering and no availability gating. For a set of N groups that means all N groups can restart at once.",
+    "reportedComponent": "RoleBasedGroupSet controller (v1alpha2)",
+    "patchedComponent": "RoleBasedGroupSet controller (v1alpha2) + admission + CRD",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "On merge-base fc201cdf a single Reconcile rewrote all 3 outdated children onto the new template at once (results/premise-base.txt). Run: bash docs/verification/pr474-rbgs-rolling-update/scripts/verify-premise.sh",
+    "match": ["TestVerify_P0_BaseUpdatesEveryOutdatedChildInOnePass"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ ./api/workloads/v1alpha1/ ./api/workloads/v1alpha2/ -run 'TestVerify_' -count=1 -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$(ls -d $HOME/.local/share/kubebuilder-envtest/k8s/* 2>/dev/null | sort -V | tail -1)}\" go test ./test/envtest/testcase/rbgsrolloutreview/ -count=1 -timeout 10m -ginkgo.json-report=\"$GINKGO_REPORT\"",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_F1_NegativeRolloutBudgetsRejected",
+        "TestVerify_F1_ValidBudgetsStillAdmitted",
+        "TestVerify_F1_NegativeMaxUnavailableWedgesRollout"
+      ],
+      "note": "TestVerify_F1_NegativeMaxUnavailableWedgesRollout is a mechanism demo of the controller-side wedge (budget = -1 + readySurge); it passes before and after the admission fix unless the controller also gains clamping."
+    },
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["I1/F1"]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerify_F2_RolloutStrategySurvivesV1alpha1RoundTrip"]
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_F3_ScalingAdapterNewlyEnabledOnUpdateRejected",
+        "TestVerify_F3_ScalingAdapterGrandfatheredOnUpdate"
+      ],
+      "note": "The PR's own TestRoleBasedGroupSetValidator_ScalingAdapterCreateOnly pins the disputed behavior (newly-enabled adapter allowed on update) and must be updated when the fix lands."
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["I2/F3"]
+    },
+    {
+      "id": "F4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerify_F4_BrokenHeldBackGroupLeaksSurgeWhileStatusComplete"],
+      "note": "Consistency contract: Rolling=RolloutComplete must agree with surge release. Satisfied by either scoping completion to serving base groups (status side) or scoping serving to in-scope ordinals (surge side)."
+    },
+    {
+      "id": "F5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerify_F5_PausedScaleOnlyPathPropagatesTemplateMetadata"]
+    }
+  ],
+  "liveNote": "No live layer was run (debate setup runs unit + integration only). If a live pass is wanted: on a real cluster create an RBGS with rolloutStrategy maxUnavailable=1, change groupTemplate, and watch that exactly one child RoleBasedGroup is deleted/recreated at a time (integration spec I3 is the envtest analogue and passes today)."
+}

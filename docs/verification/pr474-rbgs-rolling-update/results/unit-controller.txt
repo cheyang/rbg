@@ -1,0 +1,42 @@
+=== RUN   TestVerify_F1_NegativeMaxUnavailableWedgesRollout
+2026-10-07T16:11:02+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-10-07T16:11:02+08:00	INFO	Unavailability budget exhausted, waiting before recreating more RoleBasedGroups	{"rbgset": {"name":"s","namespace":"default"}, "unavailable": 0, "budget": 0}
+2026-10-07T16:11:02+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"s","namespace":"default"}, "replicas": 3, "readyReplicas": 3, "updatedReplicas": 0}
+2026-10-07T16:11:02+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+--- PASS: TestVerify_F1_NegativeMaxUnavailableWedgesRollout (0.04s)
+=== RUN   TestVerify_F4_BrokenHeldBackGroupLeaksSurgeWhileStatusComplete
+2026-10-07T16:11:02+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-10-07T16:11:02+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"s","namespace":"default"}, "replicas": 4, "readyReplicas": 3, "updatedReplicas": 2}
+2026-10-07T16:11:02+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-10-07T16:11:02+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-10-07T16:11:02+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+    verify_rbgs_rollout_codex_test.go:124: 
+        	Error Trace:	/tmp/rbg-verify-474/internal/controller/workloads/verify_rbgs_rollout_codex_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: true
+        	            	actual  : false
+        	Test:       	TestVerify_F4_BrokenHeldBackGroupLeaksSurgeWhileStatusComplete
+        	Messages:   	status and surge handling disagree: Rolling reason="RolloutComplete" but 1 surge group(s) are still around; a rollout the status calls complete must not hold surge capacity, and a rollout still holding surge must not report complete
+--- FAIL: TestVerify_F4_BrokenHeldBackGroupLeaksSurgeWhileStatusComplete (0.00s)
+=== RUN   TestVerify_F5_PausedScaleOnlyPathPropagatesTemplateMetadata
+2026-10-07T16:11:02+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+2026-10-07T16:11:02+08:00	INFO	Scaling RoleBasedGroups in place, roles differ only in replicas	{"rbgset": {"name":"s","namespace":"default"}, "count": 2}
+2026-10-07T16:11:02+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"s","namespace":"default"}, "name": "s-0"}
+2026-10-07T16:11:02+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"s","namespace":"default"}, "name": "s-1"}
+2026-10-07T16:11:02+08:00	INFO	Rollout is paused, skipping template updates and keeping surge groups	{"rbgset": {"name":"s","namespace":"default"}}
+2026-10-07T16:11:02+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"s","namespace":"default"}, "replicas": 2, "readyReplicas": 2, "updatedReplicas": 2}
+2026-10-07T16:11:02+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"s","namespace":"default"}}
+    verify_rbgs_rollout_codex_test.go:157: 
+        	Error Trace:	/tmp/rbg-verify-474/internal/controller/workloads/verify_rbgs_rollout_codex_test.go:157
+        	Error:      	map[string]string{"app":"v2", "rbg.workloads.x-k8s.io/groupset-index":"0", "rbg.workloads.x-k8s.io/groupset-name":"s"} should not contain "app"
+        	Test:       	TestVerify_F5_PausedScaleOnlyPathPropagatesTemplateMetadata
+        	Messages:   	template metadata must not propagate while the rollout is paused (group s-0)
+    verify_rbgs_rollout_codex_test.go:157: 
+        	Error Trace:	/tmp/rbg-verify-474/internal/controller/workloads/verify_rbgs_rollout_codex_test.go:157
+        	Error:      	map[string]string{"app":"v2", "rbg.workloads.x-k8s.io/groupset-index":"1", "rbg.workloads.x-k8s.io/groupset-name":"s"} should not contain "app"
+        	Test:       	TestVerify_F5_PausedScaleOnlyPathPropagatesTemplateMetadata
+        	Messages:   	template metadata must not propagate while the rollout is paused (group s-1)
+--- FAIL: TestVerify_F5_PausedScaleOnlyPathPropagatesTemplateMetadata (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.052s
+FAIL
