@@ -1,0 +1,37 @@
+L3 live-layer evidence for PR #488 round 2 (head 060ef1b7)
+==========================================================
+Cluster: same dedicated Aliyun ACK test cluster as round 1 (3 nodes, k8s v1.36.2-aliyun.1).
+Setup: in-cluster controller scaled 2->0, PR-head CRD (060ef1b7) applied, PR-head manager built
+from the verify branch (base 060ef1b7) and run out-of-cluster with --enable-webhooks none.
+Cluster state fully restored after (old CRD from backup, controller 2/2, namespace deleted).
+
+Scenario SUCCESS (R5 regression, live reproduction of the CI e2e failure)
+------------------------------------------------------------------------
+Warmup: 2 customized containers (check-a "exit 0", check-b "sleep 1"), completionPolicy
+AllSucceeded, backoffLimitPerNode 0 / maxFailedNodes 0, node .124 (image cached from round 1).
+Pod verify-r2-success-twrhx phase=Succeeded.
+
+status:
+  phase: Completed
+  conditions: CustomizedActionComplete=True/AllActionsSucceeded, Complete=True/WarmupCompleted
+  customizedActionResultsTruncated: True          <- FALSE POSITIVE: single tiny result
+  customizedActionResults[0]:
+    nodeName: cn-hongkong.10.215.180.124
+    podName: verify-r2-success-twrhx
+    state: Succeeded, reason: Completed
+    containers: []                                  <- REGRESSION: 2 successful containers,
+                                                      zero per-container details persisted
+
+VERDICT: R5 CONFIRMED on a real cluster — matches the CI e2e failure
+("should complete customized action with targetRoleBasedGroup mode and merge multi-role
+actions", 71 passed / 1 failed on both e2e jobs, warmup.go:245) and the L2 contract test.
+Matches Copilot's inline comment (customized_action.go:364).
+
+Scenario TIMEOUT (round-1 behavior re-check at the new head)
+-----------------------------------------------------------
+Warmup: timeoutSeconds=3 + "sleep 300" on node .125. Pod verify-r2-timeout-57mcs phase=Failed.
+status: phase=Failed, result state=Failed reason=Timeout, containers: 1 (detail RETAINED).
+
+VERDICT: T0 contract still holds at 060ef1b7. The contrast is the proof of the mechanism:
+failure entries keep per-container detail (the budget-upgrade loop only skips Succeeded),
+success entries lose it unconditionally.
