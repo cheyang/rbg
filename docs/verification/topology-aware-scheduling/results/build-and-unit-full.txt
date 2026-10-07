@@ -1,0 +1,14 @@
+== PR head: beabf09cc0f00ad89f8d39db27db79749a39a475 ==
+== go build ./... ==
+build exit: 0
+
+== repo's own unit tests (reviewer harness excluded via -run filter inversion not possible; run packages without harness file present via git stash-free approach: run volcano tests excluding TestVerify*) ==
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/volcano	0.054s
+
+== all other affected packages ==
+--- FAIL: TestVerifySiblingPlacementGroupsGetDistinctPodGroupNames (0.00s)
+    placement_verify_test.go:79: F-NAME-COLLISION reproduced: sibling placement groups render to the same PodGroup name "llama-serving-p-pd-disaggregation-gr-8b0716fdc827"; pods of scopes [prefill decode] and [router] would share one physical PodGroup and the second apply silently overwrites the first group's spec (source names: "p-pd-disaggregation-group-one" vs "p-pd-disaggregation-group-two")
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/scheduler/volcano	0.055s
+FAIL
+(only harness-test failures expected above; exit status preserved in file)

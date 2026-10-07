@@ -1,0 +1,46 @@
+{
+  "topic": "topology-aware-scheduling",
+  "pr": "https://github.com/sgl-project/rbg/pull/473",
+  "harnessPaths": [
+    "docs/verification/topology-aware-scheduling",
+    "pkg/scheduler/volcano/placement_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "RBG workloads are topology-sensitive (multi-node instance packing, prefill-decode co-location) and users need to declare topology intent once; the base has no topology-aware scheduling capability.",
+    "reportedComponent": "RBG scheduling API + scheduler backends (Volcano/Koordinator/KAI)",
+    "patchedComponent": "api/workloads/v1alpha2 (TopologyConstraint), pkg/scheduler/common (PlacementPlan), pkg/scheduler/volcano (compiler), internal/controller/workloads (gating/conditions)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "git grep on base 7ed1860c finds no TopologyConstraint/networkTopology/HyperNode handling anywhere in api/, pkg/, internal/ — see results/premise-base-check.txt. NOTE: the PR body's claim 'No runtime code is added in this PR' is positively refuted by the diff (4,161 insertions incl. API, controller, scheduler and RBAC changes).",
+    "match": ["premise-base-check.txt"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/scheduler/volcano/ -run 'TestVerify' -v"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=$HOME/.local/share/kubebuilder-envtest/k8s/1.36.2-linux-amd64 go test ./test/envtest/testcase/... -timeout 20m",
+      "report": "results/integration-envtest.txt"
+    }
+  },
+  "findings": [
+    {
+      "id": "B1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifySiblingPlacementGroupsGetDistinctPodGroupNames"]
+    },
+    {
+      "id": "B2",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestVerifyGangWholeGroupPlusSubsetTopologyRuleIsRejected"]
+    }
+  ],
+  "liveNote": "L3 (live) skipped per debate instructions: unit + integration layers only. A live check would need a real Volcano deployment with HyperNodes: create an RBG whose CoordinatedPolicy has two topology rules with >20-char names sharing a 22-char prefix, and observe one PodGroup instead of two."
+}

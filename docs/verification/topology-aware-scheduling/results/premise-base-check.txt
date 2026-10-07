@@ -1,0 +1,6 @@
+== P0 premise check on BASE (7ed1860c) ==
+-- grep for topology scheduling API/handling on base:
+(exit 0 — empty list means no topology-aware scheduling capability on base)
+
+-- volcano scheduler on base: subGroupPolicy/networkTopology capability probes:
+(empty means base has no HyperNode handling)

@@ -1,0 +1,5 @@
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	49.361s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy	201.813s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/webhook	31.462s
+
+[exited with code 0]

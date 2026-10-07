@@ -1,0 +1,9 @@
+== harness-bites check ==
+1) temporary fix (scope hash folded into the UID-hash input in placementPodGroupName) applied:
+   go test -run 'TestVerifySibling|TestVerifyShort' ./pkg/scheduler/volcano/ -> ok (contract test went GREEN)
+2) fix reverted, production diff empty (git status shows only the additive harness test file):
+?? docs/
+?? pkg/scheduler/volcano/placement_verify_test.go
+3) re-run without fix:
+FAIL	sigs.k8s.io/rbgs/pkg/scheduler/volcano	0.009s
+FAIL
