@@ -157,11 +157,12 @@ func TestVerifyPR488_CompletionPolicyDoesNotAffectEvaluation(t *testing.T) {
 	}
 }
 
-// C4 (CANARY, L2, fake client) — finding R4: on the InvalidWarmupSpec failure
-// path failWarmupJob is called with desiredNodes=nil, which wipes previously
-// reported CustomizedActionResults and the CustomizedActionComplete condition
-// from the status.
-func TestVerifyPR488_InvalidSpecWipesExistingCustomizedActionResults(t *testing.T) {
+// C4 (CONTRACT since round 2 — the round-1 canary flipped when the author fixed
+// the wipe; inverted per the polarity rule) — on the InvalidWarmupSpec failure
+// path (desiredNodes=nil) previously reported CustomizedActionResults and the
+// CustomizedActionComplete condition must be PRESERVED in the status.
+// Fixed by commit ed0a2e63 "fix: preserve customized action diagnostics".
+func TestVerifyPR488_InvalidSpecPreservesExistingCustomizedActionResults(t *testing.T) {
 	warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "verify-488-wipe", Namespace: "default", UID: "uid-verify-488", Generation: 2,
@@ -204,12 +205,63 @@ func TestVerifyPR488_InvalidSpecWipesExistingCustomizedActionResults(t *testing.
 	if updated.Status.Phase != workloadsv1alpha2.WarmupJobPhaseFailed {
 		t.Fatalf("expected warmup to fail on invalid spec, got phase %q", updated.Status.Phase)
 	}
-	if len(updated.Status.CustomizedActionResults) != 0 {
-		t.Fatalf("CANARY R4: InvalidWarmupSpec path should currently wipe CustomizedActionResults, got %#v",
+	if len(updated.Status.CustomizedActionResults) != 1 ||
+		updated.Status.CustomizedActionResults[0].NodeName != "node-1" ||
+		updated.Status.CustomizedActionResults[0].State != workloadsv1alpha2.CustomizedActionStateSucceeded {
+		t.Fatalf("CONTRACT R4: InvalidWarmupSpec path must preserve existing CustomizedActionResults, got %#v",
 			updated.Status.CustomizedActionResults)
 	}
 	if condition := apimeta.FindStatusCondition(updated.Status.Conditions,
-		ConditionCustomizedActionComplete); condition != nil {
-		t.Fatalf("CANARY R4: CustomizedActionComplete condition should currently be removed, got %#v", condition)
+		ConditionCustomizedActionComplete); condition == nil || condition.Status != metav1.ConditionTrue {
+		t.Fatalf("CONTRACT R4: CustomizedActionComplete condition must be preserved, got %#v", condition)
+	}
+}
+
+// C5 (CONTRACT, L2, round 2) — regression introduced by 060ef1b7 "fix: bound
+// customized action status size": limitCustomizedActionResults stores every
+// entry as a summary (Containers=nil) and only upgrades NON-succeeded entries
+// back to full detail, so a SUCCEEDED result loses its per-container details
+// even when the status is nowhere near the 512KiB budget. The PR's own e2e
+// ("should complete customized action with targetRoleBasedGroup mode and merge
+// multi-role actions", warmup.go:245) fails on both e2e jobs at head 060ef1b7
+// because of exactly this. Small statuses must keep full detail; compaction
+// may only drop detail when the budget is actually exceeded.
+func TestVerifyPR488_R5_SmallStatusKeepsSucceededContainerDetails(t *testing.T) {
+	warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
+		ObjectMeta: metav1.ObjectMeta{Name: "verify-488-r5", Namespace: "default", UID: "uid-r5", Generation: 2},
+	}
+	pod := mappedWarmupPod("node-1", "attempt-1", corev1.PodSucceeded,
+		terminatedStatus("custom-0", 0, "Completed", ""))
+	pod.Namespace = warmup.Namespace
+	pod.Labels[LabelWarmupName] = warmup.Name
+	pod.Labels[LabelWarmupUID] = string(warmup.UID)
+	desired := map[string][]workloadsv1alpha2.WarmupActions{
+		"node-1": {{CustomizedAction: &workloadsv1alpha2.CustomizedAction{
+			Containers: []corev1.Container{{Name: "decode-task", Image: "busybox"}},
+		}}},
+	}
+	r := newWarmupReconciler(warmup, pod)
+
+	if err := r.updateStatus(context.Background(), warmup, nil, []*corev1.Pod{pod}, nil, desired, map[string]bool{}); err != nil {
+		t.Fatalf("update status: %v", err)
+	}
+	updated := &workloadsv1alpha2.RoleBasedGroupWarmup{}
+	if err := r.Get(context.Background(), client.ObjectKeyFromObject(warmup), updated); err != nil {
+		t.Fatalf("get updated warmup: %v", err)
+	}
+	if len(updated.Status.CustomizedActionResults) != 1 {
+		t.Fatalf("expected one result, got %#v", updated.Status.CustomizedActionResults)
+	}
+	result := updated.Status.CustomizedActionResults[0]
+	if result.State != workloadsv1alpha2.CustomizedActionStateSucceeded {
+		t.Fatalf("expected state Succeeded, got %q", result.State)
+	}
+	if len(result.Containers) != 1 ||
+		result.Containers[0].ContainerName != "node-check" ||
+		result.Containers[0].ExitCode == nil || *result.Containers[0].ExitCode != 0 {
+		t.Fatalf("CONTRACT R5: small status must keep succeeded per-container details, got %#v", result.Containers)
+	}
+	if updated.Status.CustomizedActionResultsTruncated {
+		t.Fatalf("CONTRACT R5: a single tiny result must not be reported as truncated")
 	}
 }

@@ -9,13 +9,15 @@
     "id": "P0",
     "claim": "Base branch lacks per-CustomizedAction timeout, completion policy, and execution-result reporting (issue #486: 'There is no per-CustomizedAction timeout... Container exit codes and termination messages are not clearly exposed in the RoleBasedGroupWarmup status').",
     "reportedComponent": "RoleBasedGroupWarmup CRD + controller (api/workloads/v1alpha2, internal/controller/workloads)",
-    "patchedComponent": "same files — exact match with the issue's Related resources list",
+    "patchedComponent": "same files \u2014 exact match with the issue's Related resources list",
     "componentMatch": true,
     "runsAgainst": "base",
     "layer": "static",
     "verdict": "confirmed",
-    "evidence": "git grep on base 7ed1860c: 0 occurrences of CompletionPolicy/CustomizedActionResult/timeout validation in api/+internal/ — see results/premise-p0-base-vs-head.txt",
-    "match": ["results/premise-p0-base-vs-head.txt"]
+    "evidence": "git grep on base 7ed1860c: 0 occurrences of CompletionPolicy/CustomizedActionResult/timeout validation in api/+internal/ \u2014 see results/premise-p0-base-vs-head.txt",
+    "match": [
+      "results/premise-p0-base-vs-head.txt"
+    ]
   },
   "layers": {
     "unit": {
@@ -23,12 +25,51 @@
       "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyPR488' -count=1 -json"
     }
   },
-  "_r3_note": "R3 (condition-type deviation from issue #486 acceptance criteria) is a static, documentation-level finding — see README and results/static-r2-r3.txt; it has no runtime test to re-verify and is intentionally absent from findings[].",
+  "_r3_note": "R3 (condition-type deviation from issue #486 acceptance criteria) is a static, documentation-level finding \u2014 see README and results/static-r2-r3.txt; it has no runtime test to re-verify and is intentionally absent from findings[].",
   "findings": [
-    { "id": "R1", "polarity": "canary", "layer": "unit", "match": ["TestVerifyPR488_MergedPodDeadlineGovernsPreloadContainers", "TestVerifyPR488_SmallestTimeoutWinsAcrossActions"] },
-    { "id": "R2", "polarity": "canary", "layer": "unit", "match": ["TestVerifyPR488_CompletionPolicyDoesNotAffectEvaluation"] },
-    { "id": "R4", "polarity": "canary", "layer": "unit", "match": ["TestVerifyPR488_InvalidSpecWipesExistingCustomizedActionResults"] },
-    { "id": "T0", "polarity": "contract", "layer": "unit", "match": ["TestVerifyPR488_DeadlineExceededMapsToTimeout"] }
+    {
+      "id": "R1",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR488_MergedPodDeadlineGovernsPreloadContainers",
+        "TestVerifyPR488_SmallestTimeoutWinsAcrossActions"
+      ]
+    },
+    {
+      "id": "R2",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR488_CompletionPolicyDoesNotAffectEvaluation"
+      ]
+    },
+    {
+      "id": "R4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR488_InvalidSpecPreservesExistingCustomizedActionResults"
+      ],
+      "_note": "Round 1 canary flipped when the author fixed the wipe (commit ed0a2e63); inverted to a contract test per the polarity rule."
+    },
+    {
+      "id": "T0",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR488_DeadlineExceededMapsToTimeout"
+      ]
+    },
+    {
+      "id": "R5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR488_R5_SmallStatusKeepsSucceededContainerDetails"
+      ],
+      "_note": "Round-2 regression (060ef1b7): succeeded results unconditionally lose per-container details; PR e2e fails on both e2e jobs."
+    }
   ],
-  "liveNote": "L3 (real cluster) not run — no KUBECONFIG in the reviewer environment. The PR author ran the labeled e2e (--ginkgo.label-filter=customized-action) on Minikube and CI e2e-test is green; if re-checking live, confirm: pod ActiveDeadlineSeconds equals the smallest customized-action timeout, and status reason flips ImagePullFailed -> Timeout once the deadline fires mid-pull."
+  "liveNote": "L3 was run in round 1 (see results/live-layer.txt). Round 2 is proven at L2 + the PR's own CI e2e failure (results/ci-round2-e2e-failure.txt); a live re-run is optional once R5 is fixed \u2014 the PR's labeled e2e covers it."
 }
