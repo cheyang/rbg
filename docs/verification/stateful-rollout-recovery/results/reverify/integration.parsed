@@ -1,0 +1,13 @@
+Should fall back to LeaderOnly and only give the leader component a serviceName	pass
+Should give every component a serviceName and a pod network identity	pass
+Should clear the worker component serviceName and narrow the shared service in place	pass
+Should accept an unset policy and reject an explicit LeaderOnly	pass
+Should create child Deployment for each role	pass
+Should reject v1alpha2 custom components with duplicate names	pass
+Should reject v1alpha1 components with duplicate names	pass
+Should reject RoleInstance components with duplicate names	pass
+Should allow v1alpha2 templateRef without patch	pass
+Should reject v1alpha2 role rolloutStrategy with invalid update type	pass
+Should reject RoleInstanceSet with invalid update strategy type	pass
+Should accept all valid v1alpha2 update strategy types	pass
+Should allow updating a valid v1alpha2 rolloutStrategy	pass
