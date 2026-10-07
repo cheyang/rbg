@@ -1,0 +1,8 @@
+=== RUN   TestKEP465Integration_PRDiffScopeIsDocsOnly
+--- PASS: TestKEP465Integration_PRDiffScopeIsDocsOnly (0.00s)
+=== RUN   TestKEP465Integration_GitDiffCheckClean
+--- PASS: TestKEP465Integration_GitDiffCheckClean (0.00s)
+=== RUN   TestKEP465Integration_YAMLParses
+--- PASS: TestKEP465Integration_YAMLParses (0.02s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/verification/kep465	0.028s

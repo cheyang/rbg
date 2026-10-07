@@ -1,0 +1,45 @@
+=== RUN   TestKEP465_ExistingPhaseEnumMatchesKEP
+--- PASS: TestKEP465_ExistingPhaseEnumMatchesKEP (0.00s)
+=== RUN   TestKEP465_ExistingPodIdentityLabelsMatchKEP
+--- PASS: TestKEP465_ExistingPodIdentityLabelsMatchKEP (0.00s)
+=== RUN   TestKEP465_OnceUsesGenerateName
+--- PASS: TestKEP465_OnceUsesGenerateName (0.00s)
+=== RUN   TestKEP465_NoWarmupValidatingWebhookToday
+--- PASS: TestKEP465_NoWarmupValidatingWebhookToday (0.00s)
+=== RUN   TestKEP465_NoCELImmutabilityOnWarmupSpec
+--- PASS: TestKEP465_NoCELImmutabilityOnWarmupSpec (0.00s)
+=== RUN   TestKEP465_CompletionTrackedByNodeName
+--- PASS: TestKEP465_CompletionTrackedByNodeName (0.00s)
+=== RUN   TestKEP465_TerminalPhasesOnlyDoTTL
+--- PASS: TestKEP465_TerminalPhasesOnlyDoTTL (0.00s)
+=== RUN   TestKEP465_RBACMarkersMatchKEP
+--- PASS: TestKEP465_RBACMarkersMatchKEP (0.00s)
+=== RUN   TestKEP465_KEP129FailedPodsAreRetryCounter
+--- PASS: TestKEP465_KEP129FailedPodsAreRetryCounter (0.00s)
+=== RUN   TestKEP465_VolumeConflictFirstWinsWithEventAndCondition
+--- PASS: TestKEP465_VolumeConflictFirstWinsWithEventAndCondition (0.00s)
+=== RUN   TestKEP465_RoleMergeOrderIsMapIterationToday
+--- PASS: TestKEP465_RoleMergeOrderIsMapIterationToday (0.00s)
+=== RUN   TestKEP465_ControllerAssignedContainerNames
+--- PASS: TestKEP465_ControllerAssignedContainerNames (0.00s)
+=== RUN   TestKEP465_KepYAMLMetadata
+--- PASS: TestKEP465_KepYAMLMetadata (0.00s)
+=== RUN   TestKEP465_TOCAnchorsAndLinksResolve
+--- PASS: TestKEP465_TOCAnchorsAndLinksResolve (0.00s)
+=== RUN   TestKEP465_RequiredSectionsPresent
+--- PASS: TestKEP465_RequiredSectionsPresent (0.00s)
+=== RUN   TestKEP465_F2_RequeueIntervalBoundsContradictory
+    kep465_verification_test.go:305: F2: requeue interval specified as both '<= 5m' (line ~389) and '>= 5m' (line ~621); pick one bound
+--- FAIL: TestKEP465_F2_RequeueIntervalBoundsContradictory (0.00s)
+=== RUN   TestKEP465_F1_ObservabilityOmitsNoNodesMatched
+    kep465_verification_test.go:326: F1: Observability section does not explain Ready/NoNodesMatched (empty target set reports Ready; see line ~281)
+--- FAIL: TestKEP465_F1_ObservabilityOmitsNoNodesMatched (0.00s)
+=== RUN   TestKEP465_F3_DiagramOmitsPausedFromReadyOrDegraded
+    kep465_verification_test.go:348: F3: state machine diagram shows Paused only adjacent to Running; Ready/Degraded -> Paused (rule 1) is not represented
+--- FAIL: TestKEP465_F3_DiagramOmitsPausedFromReadyOrDegraded (0.00s)
+=== RUN   TestKEP465_F5_KepYAMLHasNoApprovers
+    kep465_verification_test.go:359: F5: kep.yaml approvers is empty; who approves the move to implementable?
+--- FAIL: TestKEP465_F5_KepYAMLHasNoApprovers (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/verification/kep465	0.002s
+FAIL
