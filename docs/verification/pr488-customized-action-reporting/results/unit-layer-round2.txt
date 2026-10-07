@@ -7,3 +7,8 @@
 FAIL
 FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.056s
 FAIL
+
+# Runtime probe (round 2): Truncated flag on a single tiny succeeded status
+# go test -run TestVerifyPR488_TruncatedFlagProbe (temporary probe, removed after)
+# PROBE: results=1 truncated=true containers=0  <- false positive confirmed
+# git log -S limitCustomizedActionResults: introduced by 060ef1b7 "fix: bound customized action status size"
