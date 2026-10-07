@@ -1,0 +1,25 @@
+=== RUN   TestVerifyC1SuccessfulResultKeepsContainerDetail
+    verify_pr488_claude_test.go:83: observed: containers=1 truncated=false
+--- PASS: TestVerifyC1SuccessfulResultKeepsContainerDetail (0.00s)
+=== RUN   TestVerifyC2UpdateStatusReportsSuccessfulContainerDetail
+2026-10-07T20:57:58+08:00	INFO	Setting start time	{"time": "2026-10-07 20:57:58.764384285 +0800 CST m=+0.046145850"}
+2026-10-07T20:57:58+08:00	INFO	Warmup job completed	{"succeeded": 1, "failed": 0}
+2026-10-07T20:57:58+08:00	INFO	Updated status	{"phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+--- PASS: TestVerifyC2UpdateStatusReportsSuccessfulContainerDetail (0.04s)
+=== RUN   TestVerifyC3MergedIdentitiesSurviveSuccessfulRun
+2026-10-07T20:57:58+08:00	INFO	Setting start time	{"time": "2026-10-07 20:57:58.767864169 +0800 CST m=+0.049625705"}
+2026-10-07T20:57:58+08:00	INFO	Warmup job completed	{"succeeded": 1, "failed": 0}
+2026-10-07T20:57:58+08:00	INFO	Updated status	{"phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+--- PASS: TestVerifyC3MergedIdentitiesSurviveSuccessfulRun (0.00s)
+=== RUN   TestVerifyC4GlobalTimeoutEmitsPerNodeTransitionEvents
+2026-10-07T20:57:58+08:00	INFO	Start reconciling	{"warmup": {"name":"verify-c4","namespace":"default"}}
+2026-10-07T20:57:58+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"verify-c4","namespace":"default"}, "timeout": "1s", "elapsed": "2m0.770790276s"}
+2026-10-07T20:57:58+08:00	INFO	Warmup job failed	{"warmup": {"name":"verify-c4","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-10-07T20:57:58+08:00	INFO	Finished reconciling	{"warmup": {"name":"verify-c4","namespace":"default"}, "duration": "1.453838ms"}
+--- PASS: TestVerifyC4GlobalTimeoutEmitsPerNodeTransitionEvents (0.00s)
+=== RUN   TestVerifyC5WaitingFailureIdentifiesContainerInStatus
+--- PASS: TestVerifyC5WaitingFailureIdentifiesContainerInStatus (0.00s)
+=== RUN   TestVerifyC6WaitingFailureAggregateNamesFailingContainer
+--- PASS: TestVerifyC6WaitingFailureAggregateNamesFailingContainer (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.057s

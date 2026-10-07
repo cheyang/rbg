@@ -1,0 +1,36 @@
+{
+  "topic": "pr488-customized-action-reporting-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/488",
+  "harnessPaths": [
+    "docs/verification/pr488-customized-action-reporting-claude",
+    "internal/controller/workloads/verify_pr488_claude_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #486: container exit codes and termination messages are not exposed in the RoleBasedGroupWarmup status; users must inspect the generated Pod manually; there is no per-CustomizedAction timeout.",
+    "reportedComponent": "api/workloads/v1alpha2/rolebasedgroupwarmup_types.go + internal/controller/workloads/rolebasedgroupwarmup_controller.go",
+    "patchedComponent": "same files (+ CRD manifests, tests)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "base 0821cb5b CustomizedAction has only Containers/Volumes, no execution reporting in controller; results/premise-base-branch-evidence.txt",
+    "match": ["TestVerifyC2UpdateStatusReportsSuccessfulContainerDetail"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyC[1-6]' -v"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyC[2-4]' -v"
+    }
+  },
+  "findings": [
+    { "id": "P1", "polarity": "contract", "layer": "unit", "match": ["TestVerifyC1SuccessfulResultKeepsContainerDetail", "TestVerifyC2UpdateStatusReportsSuccessfulContainerDetail", "TestVerifyC3MergedIdentitiesSurviveSuccessfulRun"] },
+    { "id": "P2-refine", "polarity": "contract", "layer": "unit", "match": ["TestVerifyC5WaitingFailureIdentifiesContainerInStatus", "TestVerifyC6WaitingFailureAggregateNamesFailingContainer"] },
+    { "id": "guard-global-timeout-events", "polarity": "contract", "layer": "integration", "match": ["TestVerifyC4GlobalTimeoutEmitsPerNodeTransitionEvents"] }
+  ],
+  "liveNote": "L3 skipped this round (debate setup: unit + integration only). Maintainer's live evidence on record in the PR thread; observable signal: successful multi-container action reports zero container details in status.customizedActionResults[].containers."
+}

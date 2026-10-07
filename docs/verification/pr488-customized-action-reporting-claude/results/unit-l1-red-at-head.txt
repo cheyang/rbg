@@ -1,0 +1,30 @@
+=== RUN   TestVerifyC1SuccessfulResultKeepsContainerDetail
+    verify_pr488_claude_test.go:83: observed: containers=0 truncated=true
+    verify_pr488_claude_test.go:88: successful result lost container detail although the status budget was not exhausted: v1alpha2.CustomizedActionResult{NodeName:"node-1", PodName:"attempt-1", State:"Succeeded", Reason:"Completed", Message:"", TimeoutSeconds:(*int64)(nil), Containers:[]v1alpha2.CustomizedActionContainerResult(nil)}
+--- FAIL: TestVerifyC1SuccessfulResultKeepsContainerDetail (0.00s)
+=== RUN   TestVerifyC2UpdateStatusReportsSuccessfulContainerDetail
+2026-10-07T20:57:42+08:00	INFO	Setting start time	{"time": "2026-10-07 20:57:42.479805781 +0800 CST m=+0.045923914"}
+2026-10-07T20:57:42+08:00	INFO	Warmup job completed	{"succeeded": 1, "failed": 0}
+2026-10-07T20:57:42+08:00	INFO	Updated status	{"phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+    verify_pr488_claude_test.go:128: successful result lost container detail through updateStatus: v1alpha2.CustomizedActionResult{NodeName:"node-1", PodName:"attempt-1", State:"Succeeded", Reason:"Completed", Message:"", TimeoutSeconds:(*int64)(nil), Containers:[]v1alpha2.CustomizedActionContainerResult(nil)}
+--- FAIL: TestVerifyC2UpdateStatusReportsSuccessfulContainerDetail (0.04s)
+=== RUN   TestVerifyC3MergedIdentitiesSurviveSuccessfulRun
+2026-10-07T20:57:42+08:00	INFO	Setting start time	{"time": "2026-10-07 20:57:42.483319436 +0800 CST m=+0.049437549"}
+2026-10-07T20:57:42+08:00	INFO	Warmup job completed	{"succeeded": 1, "failed": 0}
+2026-10-07T20:57:42+08:00	INFO	Updated status	{"phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+    verify_pr488_claude_test.go:185: merged identities lost on success: the mapping recorded [decode-check prefill-check] but the result reports []v1alpha2.CustomizedActionContainerResult(nil)
+--- FAIL: TestVerifyC3MergedIdentitiesSurviveSuccessfulRun (0.00s)
+=== RUN   TestVerifyC4GlobalTimeoutEmitsPerNodeTransitionEvents
+2026-10-07T20:57:42+08:00	INFO	Start reconciling	{"warmup": {"name":"verify-c4","namespace":"default"}}
+2026-10-07T20:57:42+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"verify-c4","namespace":"default"}, "timeout": "1s", "elapsed": "2m0.486358767s"}
+2026-10-07T20:57:42+08:00	INFO	Warmup job failed	{"warmup": {"name":"verify-c4","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-10-07T20:57:42+08:00	INFO	Finished reconciling	{"warmup": {"name":"verify-c4","namespace":"default"}, "duration": "1.53509ms"}
+--- PASS: TestVerifyC4GlobalTimeoutEmitsPerNodeTransitionEvents (0.00s)
+=== RUN   TestVerifyC5WaitingFailureIdentifiesContainerInStatus
+--- PASS: TestVerifyC5WaitingFailureIdentifiesContainerInStatus (0.00s)
+=== RUN   TestVerifyC6WaitingFailureAggregateNamesFailingContainer
+    verify_pr488_claude_test.go:316: aggregate message does not identify the failing container: "back-off pulling image"
+--- FAIL: TestVerifyC6WaitingFailureAggregateNamesFailingContainer (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.057s
+FAIL

@@ -1,0 +1,10 @@
+=== RUN   TestVerifyC4GlobalTimeoutEmitsPerNodeTransitionEvents
+2026-10-07T20:57:43+08:00	INFO	Start reconciling	{"warmup": {"name":"verify-c4","namespace":"default"}}
+2026-10-07T20:57:43+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"verify-c4","namespace":"default"}, "timeout": "1s", "elapsed": "2m0.53936576s"}
+2026-10-07T20:57:43+08:00	INFO	Warmup job failed	{"warmup": {"name":"verify-c4","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-10-07T20:57:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"verify-c4","namespace":"default"}, "duration": "1.603963ms"}
+--- PASS: TestVerifyC4GlobalTimeoutEmitsPerNodeTransitionEvents (0.04s)
+=== RUN   TestVerifyC5WaitingFailureIdentifiesContainerInStatus
+--- PASS: TestVerifyC5WaitingFailureIdentifiesContainerInStatus (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	(cached)

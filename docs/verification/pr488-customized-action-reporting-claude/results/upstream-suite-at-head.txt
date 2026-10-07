@@ -1,0 +1,347 @@
+2026-10-07T20:57:44+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "my-rbg", "namespace": "default"}
+2026-10-07T20:57:44+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"my-rbg","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"my-rbg","uid":""}]},"spec":{"policies":[{"roles":["prefill","decode"]}]}}}
+2026-10-07T20:57:44+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-ru", "namespace": "default"}
+2026-10-07T20:57:44+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-ru","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-ru","uid":""}]},"spec":{"policies":[{"roles":["prefill","decode"],"strategy":{"rollingUpdate":{"maxSkew":"10%","maxUnavailable":"5%","partition":"20%"}}}]}}}
+2026-10-07T20:57:44+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-sc", "namespace": "default"}
+2026-10-07T20:57:44+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-sc","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-sc","uid":""}]},"spec":{"policies":[{"roles":["worker"],"strategy":{"scaling":{"maxSkew":"5%","progression":"OrderScheduled"}}}]}}}
+2026-10-07T20:57:44+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-ready", "namespace": "default"}
+2026-10-07T20:57:44+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-ready","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-ready","uid":""}]},"spec":{"policies":[{"roles":["worker"],"strategy":{"scaling":{}}}]}}}
+2026-10-07T20:57:44+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-multi", "namespace": "default"}
+2026-10-07T20:57:44+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-multi","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-multi","uid":""}]},"spec":{"policies":[{"roles":["a","b"],"strategy":{"rollingUpdate":{"maxSkew":"10%"}}},{"roles":["c"],"strategy":{"scaling":{"maxSkew":"5%"}}}]}}}
+2026-10-07T20:57:44+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-upd", "namespace": "default"}
+2026-10-07T20:57:44+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-upd","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-upd","uid":""}]},"spec":{"policies":[{"roles":["new-role"]}]}}}
+2026-10-07T20:57:44+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-nil", "namespace": "default"}
+2026-10-07T20:57:44+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-nil","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-nil","uid":""}]},"spec":{"policies":[{"roles":["role-a"]}]}}}
+2026-10-07T20:57:44+08:00	INFO	Initialized discovery config mode	{"mode": "legacy"}
+2026-10-07T20:57:44+08:00	INFO	Initialized discovery config mode	{"mode": "refine"}
+2026-10-07T20:57:44+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"v1","data":{"config.yaml":"group:\n  name: test-rbg\n  roles:\n  - test-role\n  size: 1\nroles:\n  test-role:\n    instances:\n    - address: test-rbg-test-role-0.s-test-rbg-test-role\n    size: 1\n"},"kind":"ConfigMap","metadata":{"name":"test-rbg","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"controller":true,"kind":"RoleBasedGroup","name":"test-rbg","uid":"rbg-test-uid"}]}}}
+2026-10-07T20:57:44+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"v1","data":{"config.yaml":"group:\n  name: test-rbg\n  roles:\n  - test-role\n  size: 1\nroles:\n  test-role:\n    instances:\n    - address: test-rbg-test-role-0.s-test-rbg-test-role\n    size: 1\n"},"kind":"ConfigMap","metadata":{"name":"test-rbg","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"controller":true,"kind":"RoleBasedGroup","name":"test-rbg","uid":"rbg-test-uid"}]}}}
+2026-10-07T20:57:44+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"v1","data":{"config.yaml":"group:\n  name: test-rbg\n  roles:\n  - test-role\n  size: 1\nroles:\n  test-role:\n    instances:\n    - address: test-rbg-test-role-0.s-test-rbg-test-role\n    size: 1\n"},"kind":"ConfigMap","metadata":{"name":"test-rbg","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"controller":true,"kind":"RoleBasedGroup","name":"test-rbg","uid":"rbg-test-uid"}]}}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"RoleBasedGroup resource not found. Ignoring since object must be deleted","env":"unit-test","name":"non-existent","namespace":"default"}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Current revision need to be updated","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Create revision [test-rbg-6876ff576d-1] successfully","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Initialized discovery config mode","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"mode":"refine"}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"roleInstanceSet hash not equal, old: , new: 7f54c9ffd5","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"role":"test-role"}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.021742426}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Current revision need to be updated","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Create revision [test-rbg-6876ff576d-1] successfully","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Initialized discovery config mode","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"mode":"refine"}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"roleInstanceSet hash not equal, old: , new: 7f54c9ffd5","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"role":"test-role"}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.008636084}
+2026-10-07T20:57:48+08:00	INFO	delete scalingAdapter	{"scalingAdapter": "test-rbg-test-role"}
+2026-10-07T20:57:48+08:00	INFO	updating scalingAdapter labels	{"scalingAdapter": "test-rbg-engine"}
+2026-10-07T20:57:48+08:00	INFO	Overriding role.Replicas from bound RBGSA	{"role": "leader", "observed": 1, "desired": 10, "adapter": "test-rbg-leader"}
+2026-10-07T20:57:48+08:00	INFO	Overriding role.Replicas from bound RBGSA	{"role": "leader", "observed": "<nil>", "desired": 7, "adapter": "test-rbg-leader"}
+2026-10-07T20:57:48+08:00	INFO	delete scalingAdapter	{"scalingAdapter": "test-rbg-scaling-role2-scaling-adapter"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill", "decode"], "maxSkew": "5%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["router", "worker"], "maxSkew": "10%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill", "decode"], "maxSkew": "5%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill", "worker"], "maxSkew": "10%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill", "decode"], "maxSkew": "5%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["decode", "router"], "maxSkew": "8%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["router", "worker"], "maxSkew": "10%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill", "decode"], "maxSkew": "5%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["decode", "router"], "maxSkew": "10%"}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Current revision need to be updated","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Create revision [test-rbg-6876ff576d-1] successfully","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Initialized discovery config mode","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"mode":"refine"}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.00757067}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.001450168}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"roleInstanceSet hash not equal, old: , new: 7f54c9ffd5","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"role":"test-role"}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.006195654}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.004640612}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.001379566}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["removed", "prefill"], "maxSkew": "50%"}
+2026-10-07T20:57:48+08:00	DEBUG	Processing coordination scaling	{"roles": ["removed", "prefill"], "maxSkew": "50%"}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start scaling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"desired replicas":3,"current replicas":1}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Scale successfully","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"old replicas":1,"new replicas":3}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Skip to reconcile the scaling adapter which is not managed by RBG-controller","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"rbgScalingAdapterName":"test-adapter"}
+2026-10-07T20:57:48+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroupScalingAdapter","metadata":{"name":"test-adapter","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"test-rbg","uid":"rbg-test-uid"}]},"spec":{"scaleTargetRef":{"name":"test-rbg","role":"worker"}}}}
+2026-10-07T20:57:48+08:00	INFO	enqueue: rbg scalingAdapter create event	{"rbg": {"name":"test"}}
+2026-10-07T20:57:48+08:00	INFO	enqueue: rbg scalingAdapter update event	{"rbg": {"name":"test"}}
+2026-10-07T20:57:48+08:00	INFO	enqueue: rbg scalingAdapter delete event	{"rbg": {"name":"test"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"error","ts":"2026-10-07T20:57:48+08:00","msg":"Using server side apply to patch object status","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"error":"simulated patch error","stacktrace":"sigs.k8s.io/rbgs/pkg/utils.PatchObjectApplyConfiguration\n\t/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/pkg/utils/utils.go:93\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupScalingAdapterReconciler).patchAdapterStatus\n\t/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupscalingadapter_controller.go:337\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupScalingAdapterReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupscalingadapter_controller.go:204\nsigs.k8s.io/rbgs/internal/controller/workloads.TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync.func1\n\t/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupscalingadapter_controller_test.go:640\ntesting.tRunner\n\t/usr/local/go/src/testing/testing.go:2193"}
+{"level":"error","ts":"2026-10-07T20:57:48+08:00","msg":"Failed to update readyReplicas","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"error":"simulated patch error","stacktrace":"sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupScalingAdapterReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupscalingadapter_controller.go:212\nsigs.k8s.io/rbgs/internal/controller/workloads.TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync.func1\n\t/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupscalingadapter_controller_test.go:640\ntesting.tRunner\n\t/usr/local/go/src/testing/testing.go:2193"}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start scaling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"desired replicas":5,"current replicas":1}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Scale successfully","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"old replicas":1,"new replicas":5}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Start scaling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"desired replicas":5,"current replicas":1}
+{"level":"info","ts":"2026-10-07T20:57:48+08:00","msg":"Scale successfully","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"old replicas":1,"new replicas":5}
+{"level":"error","ts":"2026-10-07T20:57:48+08:00","msg":"failed to list scaling adapters for RBG","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"error":"simulated list error","stacktrace":"sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupScalingAdapterReconciler).mapRBGToScalingAdapters\n\t/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupscalingadapter_controller.go:399\nsigs.k8s.io/rbgs/internal/controller/workloads.TestMapRBGToScalingAdapters.func5\n\t/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupscalingadapter_controller_test.go:1022\ntesting.tRunner\n\t/usr/local/go/src/testing/testing.go:2193"}
+2026-10-07T20:57:48+08:00	INFO	Successfully created RoleBasedGroup	{"name": "test-rbgset-0"}
+2026-10-07T20:57:48+08:00	INFO	Successfully created RoleBasedGroup	{"name": "test-rbgset-1"}
+2026-10-07T20:57:48+08:00	INFO	Successfully created RoleBasedGroup	{"name": "test-rbgset-2"}
+2026-10-07T20:57:48+08:00	INFO	Successfully deleted RoleBasedGroup	{"name": "rbg-0"}
+2026-10-07T20:57:48+08:00	INFO	Successfully deleted RoleBasedGroup	{"name": "rbg-2"}
+2026-10-07T20:57:48+08:00	INFO	Successfully deleted RoleBasedGroup	{"name": "rbg-0"}
+2026-10-07T20:57:48+08:00	INFO	Successfully deleted RoleBasedGroup	{"name": "rbg-1"}
+2026-10-07T20:57:48+08:00	INFO	Successfully deleted RoleBasedGroup	{"name": "rbg-2"}
+2026-10-07T20:57:48+08:00	INFO	Successfully updated RoleBasedGroup	{"name": "test-rbgset-0"}
+2026-10-07T20:57:48+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Scaling down RoleBasedGroups, 4 -> 2	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "count": 2}
+2026-10-07T20:57:48+08:00	INFO	Successfully deleted RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "name": "test-rbgset-2"}
+2026-10-07T20:57:48+08:00	INFO	Successfully deleted RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "name": "test-rbgset-3"}
+2026-10-07T20:57:48+08:00	INFO	Updating existing RoleBasedGroups	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "count": 2}
+2026-10-07T20:57:48+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "name": "test-rbgset-1"}
+2026-10-07T20:57:48+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "name": "test-rbgset-0"}
+2026-10-07T20:57:48+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "replicas": 2, "readyReplicas": 0}
+2026-10-07T20:57:48+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "replicas": 2, "readyReplicas": 2}
+2026-10-07T20:57:48+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "replicas": 2, "readyReplicas": 1}
+2026-10-07T20:57:48+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "replicas": 1, "readyReplicas": 0}
+2026-10-07T20:57:48+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "replicas": 0, "readyReplicas": 0}
+2026-10-07T20:57:48+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Node permanently failed	{"node": "node-1", "failCount": 1, "backoffLimit": 0}
+2026-10-07T20:57:48+08:00	INFO	Node permanently failed	{"node": "node-1", "failCount": 3, "backoffLimit": 2}
+2026-10-07T20:57:48+08:00	INFO	Node permanently failed	{"node": "node-1", "failCount": 2, "backoffLimit": 1}
+2026-10-07T20:57:48+08:00	DEBUG	TTL not yet expired, requeueing	{"remaining": "1m29.998682207s", "requeueAfter": "1m29.998682207s"}
+2026-10-07T20:57:48+08:00	INFO	TTL expired, deleting RoleBasedGroupWarmup
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "549ns"}
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Warmup job paused	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "979.353µs"}
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	No nodes matched, completing immediately	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Updated status	{"warmup": {"name":"test","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 0, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "1.140848ms"}
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"test","namespace":"default"}, "node": "node-1"}
+2026-10-07T20:57:48+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"test","namespace":"default"}, "node": "node-2"}
+2026-10-07T20:57:48+08:00	INFO	Setting start time	{"warmup": {"name":"test","namespace":"default"}, "time": "2026-10-07 20:57:48.292856711 +0800 CST m=+3.606359320"}
+2026-10-07T20:57:48+08:00	INFO	Warmup job running	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Updated status	{"warmup": {"name":"test","namespace":"default"}, "phase": "Running", "desired": 2, "active": 2, "succeeded": 0, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "3.637439ms"}
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"test","namespace":"default"}, "node": "node-1"}
+2026-10-07T20:57:48+08:00	INFO	Setting start time	{"warmup": {"name":"test","namespace":"default"}, "time": "2026-10-07 20:57:48.296240143 +0800 CST m=+3.609742752"}
+2026-10-07T20:57:48+08:00	INFO	Warmup job running	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Updated status	{"warmup": {"name":"test","namespace":"default"}, "phase": "Running", "desired": 3, "active": 1, "succeeded": 0, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "1.947454ms"}
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"invalid-image","namespace":"default"}}
+2026-10-07T20:57:48+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"invalid-image","namespace":"default"}, "error": "spec.targetNodes.imagePreload.images[0] must not be empty"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:182
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:133
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_InvalidImageFailsWarmup
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:842
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-07T20:57:48+08:00	INFO	Warmup job failed	{"warmup": {"name":"invalid-image","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"invalid-image","namespace":"default"}, "duration": "963.842µs"}
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"invalid-custom-image","namespace":"default"}}
+2026-10-07T20:57:48+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"invalid-custom-image","namespace":"default"}, "error": "spec.targetNodes.customizedAction.containers[0].image must not be empty"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:182
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:133
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_InvalidCustomizedContainerImageFailsWarmup.func1
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:894
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-07T20:57:48+08:00	INFO	Warmup job failed	{"warmup": {"name":"invalid-custom-image","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"invalid-custom-image","namespace":"default"}, "duration": "911.79µs"}
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"invalid-custom-image","namespace":"default"}}
+2026-10-07T20:57:48+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"invalid-custom-image","namespace":"default"}, "error": "spec.targetNodes.customizedAction.containers[0].image must not be empty"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:182
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:133
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_InvalidCustomizedContainerImageFailsWarmup.func1
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:894
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-07T20:57:48+08:00	INFO	Warmup job failed	{"warmup": {"name":"invalid-custom-image","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"invalid-custom-image","namespace":"default"}, "duration": "1.774428ms"}
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"create-error","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"create-error","namespace":"default"}, "node": "node-1"}
+2026-10-07T20:57:48+08:00	ERROR	Failed to create warmup Pod	{"warmup": {"name":"create-error","namespace":"default"}, "node": "node-1", "error": "injected pod create failure"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).createPodsForNodes
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:392
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:230
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:133
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_PropagatesPodCreateError
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1045
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"create-error","namespace":"default"}, "duration": "29.611µs"}
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"owner-reference-error","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"owner-reference-error","namespace":"default"}, "node": "node-1"}
+2026-10-07T20:57:48+08:00	ERROR	Failed to set owner reference	{"warmup": {"name":"owner-reference-error","namespace":"default"}, "node": "node-1", "error": "no kind is registered for the type v1alpha2.RoleBasedGroupWarmup in scheme \"/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1063\""}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).createPodsForNodes
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:387
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:230
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:133
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_PropagatesOwnerReferenceError
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1065
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"owner-reference-error","namespace":"default"}, "duration": "23.721µs"}
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"missing-rbg","namespace":"default"}}
+2026-10-07T20:57:48+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"missing-rbg","namespace":"default"}, "name": "does-not-exist", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"does-not-exist\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getDesiredNodesToWarmup
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:564
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:187
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:133
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_MissingTargetRBGFailsWithoutRequeue
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1086
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-07T20:57:48+08:00	INFO	Warmup job failed	{"warmup": {"name":"missing-rbg","namespace":"default"}, "reason": "InvalidTarget", "succeeded": 0, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"missing-rbg","namespace":"default"}, "duration": "931.891µs"}
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"invalid-legacy","namespace":"default"}}
+2026-10-07T20:57:48+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"invalid-legacy","namespace":"default"}, "error": "spec.targetNodes.imagePreload.images must contain at least one image"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:182
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:133
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_InvalidLegacyActionsFailBeforeNodeDiscovery.func1
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1139
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-07T20:57:48+08:00	INFO	Warmup job failed	{"warmup": {"name":"invalid-legacy","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"invalid-legacy","namespace":"default"}, "duration": "1.564132ms"}
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"invalid-legacy","namespace":"default"}}
+2026-10-07T20:57:48+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"invalid-legacy","namespace":"default"}, "error": "spec.targetNodes.customizedAction.containers must contain at least one container"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:182
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:133
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_InvalidLegacyActionsFailBeforeNodeDiscovery.func1
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1139
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-07T20:57:48+08:00	INFO	Warmup job failed	{"warmup": {"name":"invalid-legacy","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"invalid-legacy","namespace":"default"}, "duration": "927.211µs"}
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"invalid-update","namespace":"default"}}
+2026-10-07T20:57:48+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"invalid-update","namespace":"default"}, "error": "spec.targetNodes.imagePreload.images[0] must not be empty"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:182
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller.go:133
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_InvalidSpecCleansUpExistingPods
+	/home/ecs-user/.pr-debate/homes/claude/wt-pr488-claude/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1173
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-07T20:57:48+08:00	INFO	Warmup job failed	{"warmup": {"name":"invalid-update","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"invalid-update","namespace":"default"}, "duration": "942.531µs"}
+2026-10-07T20:57:48+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 1}
+2026-10-07T20:57:48+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "worker"}
+2026-10-07T20:57:48+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "target-rbg", "roles": 1, "nodes": 1}
+2026-10-07T20:57:48+08:00	INFO	Setting start time	{"time": "2026-10-07 20:57:48.32651997 +0800 CST m=+3.640022589"}
+2026-10-07T20:57:48+08:00	INFO	Warmup job completed	{"succeeded": 1, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Updated status	{"phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Updated status	{"phase": "Running", "desired": 1, "active": 0, "succeeded": 0, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Setting start time	{"time": "2026-10-07 20:57:48.340774149 +0800 CST m=+3.654276758"}
+2026-10-07T20:57:48+08:00	INFO	Warmup job failed	{"succeeded": 500, "failed": 500}
+2026-10-07T20:57:48+08:00	INFO	Updated status	{"phase": "Failed", "desired": 1000, "active": 0, "succeeded": 500, "failed": 500}
+2026-10-07T20:57:48+08:00	INFO	Warmup job failed	{"reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"test","namespace":"default"}, "timeout": "1s", "elapsed": "2m0.363654053s"}
+2026-10-07T20:57:48+08:00	INFO	Warmup job failed	{"warmup": {"name":"test","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "1.175349ms"}
+I1007 20:57:48.367279 3150976 roleinstanceset_controller.go:131] "Deleting stale RoleInstance from different pattern" instanceSet="default/test-prefill" instance="default/test-prefill-0" currentPattern="Stateless"
+I1007 20:57:48.367293 3150976 roleinstanceset_controller.go:131] "Deleting stale RoleInstance from different pattern" instanceSet="default/test-prefill" instance="default/test-prefill-1" currentPattern="Stateless"
+I1007 20:57:48.368318 3150976 roleinstanceset_controller.go:131] "Deleting stale RoleInstance from different pattern" instanceSet="default/test-prefill" instance="default/test-prefill-7jj4f" currentPattern="Stateful"
+I1007 20:57:48.368330 3150976 roleinstanceset_controller.go:131] "Deleting stale RoleInstance from different pattern" instanceSet="default/test-prefill" instance="default/test-prefill-jdggk" currentPattern="Stateful"
+I1007 20:57:48.369109 3150976 roleinstanceset_controller.go:131] "Deleting stale RoleInstance from different pattern" instanceSet="default/test-prefill" instance="default/test-prefill-0" currentPattern="Stateless"
+I1007 20:57:48.370528 3150976 roleinstanceset_controller.go:131] "Deleting stale RoleInstance from different pattern" instanceSet="default/test-prefill" instance="default/test-prefill-7jj4f" currentPattern="Stateful"
+--- FAIL: TestVerifyC1SuccessfulResultKeepsContainerDetail (0.00s)
+    verify_pr488_claude_test.go:83: observed: containers=0 truncated=true
+    verify_pr488_claude_test.go:88: successful result lost container detail although the status budget was not exhausted: v1alpha2.CustomizedActionResult{NodeName:"node-1", PodName:"attempt-1", State:"Succeeded", Reason:"Completed", Message:"", TimeoutSeconds:(*int64)(nil), Containers:[]v1alpha2.CustomizedActionContainerResult(nil)}
+2026-10-07T20:57:48+08:00	INFO	Setting start time	{"time": "2026-10-07 20:57:48.373523688 +0800 CST m=+3.687026297"}
+2026-10-07T20:57:48+08:00	INFO	Warmup job completed	{"succeeded": 1, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Updated status	{"phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+--- FAIL: TestVerifyC2UpdateStatusReportsSuccessfulContainerDetail (0.00s)
+    verify_pr488_claude_test.go:128: successful result lost container detail through updateStatus: v1alpha2.CustomizedActionResult{NodeName:"node-1", PodName:"attempt-1", State:"Succeeded", Reason:"Completed", Message:"", TimeoutSeconds:(*int64)(nil), Containers:[]v1alpha2.CustomizedActionContainerResult(nil)}
+2026-10-07T20:57:48+08:00	INFO	Setting start time	{"time": "2026-10-07 20:57:48.375928467 +0800 CST m=+3.689431076"}
+2026-10-07T20:57:48+08:00	INFO	Warmup job completed	{"succeeded": 1, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Updated status	{"phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+--- FAIL: TestVerifyC3MergedIdentitiesSurviveSuccessfulRun (0.00s)
+    verify_pr488_claude_test.go:185: merged identities lost on success: the mapping recorded [decode-check prefill-check] but the result reports []v1alpha2.CustomizedActionContainerResult(nil)
+2026-10-07T20:57:48+08:00	INFO	Start reconciling	{"warmup": {"name":"verify-c4","namespace":"default"}}
+2026-10-07T20:57:48+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"verify-c4","namespace":"default"}, "timeout": "1s", "elapsed": "2m0.378995548s"}
+2026-10-07T20:57:48+08:00	INFO	Warmup job failed	{"warmup": {"name":"verify-c4","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-10-07T20:57:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"verify-c4","namespace":"default"}, "duration": "1.026774ms"}
+--- FAIL: TestVerifyC6WaitingFailureAggregateNamesFailingContainer (0.00s)
+    verify_pr488_claude_test.go:316: aggregate message does not identify the failing container: "back-off pulling image"
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	3.697s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	(cached)
+FAIL
