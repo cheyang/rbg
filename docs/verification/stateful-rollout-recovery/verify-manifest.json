@@ -1,0 +1,40 @@
+{
+  "topic": "stateful-rollout-recovery",
+  "pr": "https://github.com/sgl-project/rbg/pull/484",
+  "harnessPaths": [
+    "docs/verification/stateful-rollout-recovery",
+    "pkg/reconciler/roleinstanceset/statefulmode/verify_stateful_rollout_recovery_claude_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #464: \"A Stateful RoleInstanceSet rollout may stop progressing when its Pod template is updated again while the Pods from the previous update are still NotReady. The rollout does not automatically resume unless another event triggers reconciliation.\" PR #484 narrows the remaining gaps after #470: unhealthy non-targets consume maxUnavailable without a retry; OrderedReady stops at its readiness gate before the rollout retry path; an early A -> B -> A rollback can be skipped when CurrentRevision and UpdateRevision share a revision name; OrderedReady recovery does not cover an in-range stale-revision surge instance.",
+    "reportedComponent": "pkg/reconciler/roleinstanceset/statefulmode (Stateful RoleInstanceSet rollout recovery)",
+    "patchedComponent": "pkg/reconciler/roleinstanceset/statefulmode (stateful_instance_set_control.go, stateful_instance_set_controller.go, stateful_instance_set_utils.go)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "TestClaudeP0UnhealthyNonTargetGetsRequeue is RED on base 9b22f4a (wait=0s, no requeue for a budget-exhausting unhealthy non-target) and GREEN on PR head 90dd9068; results/unit-base.txt vs results/unit-head.txt. Gaps G1-G3 likewise red on base / green on head (G4 = G3's surge case).",
+    "match": ["TestClaudeP0UnhealthyNonTargetGetsRequeue"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "GOCACHE=${GOCACHE:-/tmp/rbg-go-cache} go test -mod=vendor -count=1 -run 'TestClaude' -json ./pkg/reconciler/roleinstanceset/statefulmode/"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.36.2-linux-amd64} GOCACHE=${GOCACHE:-/tmp/rbg-go-cache} go test -mod=vendor -count=1 ./test/envtest/testcase/rbg/... -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestClaudeF1CancelledRollbackBlocksScaleDown"] },
+    { "id": "G1", "polarity": "contract", "layer": "unit", "match": ["TestClaudeG1OrderedReadyResumesStablyUnhealthyTarget"] },
+    { "id": "G2", "polarity": "contract", "layer": "unit", "match": ["TestClaudeG2EarlyRollbackSameNameResumes"] },
+    { "id": "G3", "polarity": "contract", "layer": "unit", "match": ["TestClaudeG3OrderedReadyRecyclesStaleSurge"] },
+    { "id": "F2", "polarity": "contract", "layer": "unit", "match": ["TestClaudeF2UnhealthyNonTargetStillConsumesBudget"] },
+    { "id": "P0", "polarity": "contract", "layer": "unit", "match": ["TestClaudeP0UnhealthyNonTargetGetsRequeue"] }
+  ],
+  "liveNote": "L3 (live cluster) not run in this round per the review setup: only unit + integration layers were requested. A live check would watch RequeueAfter firing on a stalled Stateful RoleInstanceSet (controller logs 'Finished syncing ... result {RequeueAfter: ...}') and, for F1, a stuck scale-down with one extra instance retained."
+}

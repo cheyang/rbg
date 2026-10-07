@@ -1,0 +1,24 @@
+# Harness: unit layer (go test -run TestClaude -v) on BASE 9b22f4a (merge-base, no patch) — 2026-10-07T10:44:21Z
+=== RUN   TestClaudeP0UnhealthyNonTargetGetsRequeue
+    verify_stateful_rollout_recovery_claude_test.go:115: P0: no timed requeue scheduled for the budget-exhausting unhealthy non-target: wait = 0s, want (0, 4s]
+--- FAIL: TestClaudeP0UnhealthyNonTargetGetsRequeue (0.00s)
+=== RUN   TestClaudeG1OrderedReadyResumesStablyUnhealthyTarget
+    verify_stateful_rollout_recovery_claude_test.go:177: G1 phase 1: no retry scheduled for the OrderedReady unhealthy gate: wait = 0s, want (0, 4s]
+--- FAIL: TestClaudeG1OrderedReadyResumesStablyUnhealthyTarget (0.00s)
+=== RUN   TestClaudeG2EarlyRollbackSameNameResumes
+    verify_stateful_rollout_recovery_claude_test.go:251: G2: early rollback did not replace stale instance test-set-0: deleted []
+--- FAIL: TestClaudeG2EarlyRollbackSameNameResumes (0.00s)
+=== RUN   TestClaudeG3OrderedReadyRecyclesStaleSurge
+    verify_stateful_rollout_recovery_claude_test.go:305: G3: OrderedReady did not recycle the stale unhealthy surge: deleted []
+--- FAIL: TestClaudeG3OrderedReadyRecyclesStaleSurge (0.00s)
+=== RUN   TestClaudeF1CancelledRollbackBlocksScaleDown
+=== RUN   TestClaudeF1CancelledRollbackBlocksScaleDown/paused-cancel
+=== RUN   TestClaudeF1CancelledRollbackBlocksScaleDown/immediate-revert
+--- PASS: TestClaudeF1CancelledRollbackBlocksScaleDown (0.00s)
+    --- PASS: TestClaudeF1CancelledRollbackBlocksScaleDown/paused-cancel (0.00s)
+    --- PASS: TestClaudeF1CancelledRollbackBlocksScaleDown/immediate-revert (0.00s)
+=== RUN   TestClaudeF2UnhealthyNonTargetStillConsumesBudget
+--- PASS: TestClaudeF2UnhealthyNonTargetStillConsumesBudget (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.013s
+FAIL

@@ -1,0 +1,14 @@
+# Harness-bites check (Step 4): apply minimal candidate fix (!Paused gate on signal Store) — 2026-10-07T10:44:28Z
+patched: signal Store gated on !Paused
+=== RUN   TestClaudeF1CancelledRollbackBlocksScaleDown
+=== RUN   TestClaudeF1CancelledRollbackBlocksScaleDown/paused-cancel
+=== RUN   TestClaudeF1CancelledRollbackBlocksScaleDown/immediate-revert
+    verify_stateful_rollout_recovery_claude_test.go:398: F1 (immediate-revert): scale-down blocked; instance test-set-1 retained (deleted: []). Desired replicas is 1 and no update work remains, but the set stays 'in rollout' and keeps the extra instance as surge while test-set-0 is unhealthy.
+--- FAIL: TestClaudeF1CancelledRollbackBlocksScaleDown (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.013s
+FAIL
+reverted; production diff vs HEAD:
+?? docs/
+?? pkg/reconciler/roleinstanceset/statefulmode/verify_stateful_rollout_recovery_claude_test.go
+expected: only the untracked harness test file

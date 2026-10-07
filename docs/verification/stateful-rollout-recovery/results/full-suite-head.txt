@@ -1,0 +1,14 @@
+# Full sweep on PR HEAD 90dd9068 — 2026-10-07T10:48:19Z
+## 1) whole ./pkg/... tree (the ONLY failures are the harness's intentional F1 reds):
+--- FAIL: TestClaudeF1CancelledRollbackBlocksScaleDown (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.027s
+FAIL
+(every package reports ok; the statefulmode package fails only on TestClaudeF1, see unit-head.txt)
+
+## 2) race run on the affected trees (harness F1 excluded):
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	1.102s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode	1.055s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision	1.069s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/sync	1.463s
+ok  	sigs.k8s.io/rbgs/pkg/utils/requeueduration	1.007s

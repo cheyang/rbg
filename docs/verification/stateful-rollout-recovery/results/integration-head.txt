@@ -1,0 +1,4 @@
+# Integration layer (envtest, real kube-apiserver+etcd, PR HEAD 90dd9068) — 2026-10-07T10:44:37Z
+KUBEBUILDER_ASSETS=/home/ecs-user/.local/share/kubebuilder-envtest/k8s/1.36.2-linux-amd64
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	48.803s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy	202.488s

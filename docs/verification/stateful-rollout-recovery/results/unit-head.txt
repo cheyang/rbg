@@ -1,0 +1,22 @@
+# Harness: unit layer (go test -run TestClaude -v) on PR HEAD 90dd9068 — 2026-10-07T10:44:15Z
+=== RUN   TestClaudeP0UnhealthyNonTargetGetsRequeue
+--- PASS: TestClaudeP0UnhealthyNonTargetGetsRequeue (0.00s)
+=== RUN   TestClaudeG1OrderedReadyResumesStablyUnhealthyTarget
+--- PASS: TestClaudeG1OrderedReadyResumesStablyUnhealthyTarget (0.00s)
+=== RUN   TestClaudeG2EarlyRollbackSameNameResumes
+--- PASS: TestClaudeG2EarlyRollbackSameNameResumes (0.00s)
+=== RUN   TestClaudeG3OrderedReadyRecyclesStaleSurge
+--- PASS: TestClaudeG3OrderedReadyRecyclesStaleSurge (0.00s)
+=== RUN   TestClaudeF1CancelledRollbackBlocksScaleDown
+=== RUN   TestClaudeF1CancelledRollbackBlocksScaleDown/paused-cancel
+    verify_stateful_rollout_recovery_claude_test.go:398: F1 (paused-cancel): scale-down blocked; instance test-set-1 retained (deleted: []). Desired replicas is 1 and no update work remains, but the set stays 'in rollout' and keeps the extra instance as surge while test-set-0 is unhealthy.
+=== RUN   TestClaudeF1CancelledRollbackBlocksScaleDown/immediate-revert
+    verify_stateful_rollout_recovery_claude_test.go:398: F1 (immediate-revert): scale-down blocked; instance test-set-1 retained (deleted: []). Desired replicas is 1 and no update work remains, but the set stays 'in rollout' and keeps the extra instance as surge while test-set-0 is unhealthy.
+--- FAIL: TestClaudeF1CancelledRollbackBlocksScaleDown (0.00s)
+    --- FAIL: TestClaudeF1CancelledRollbackBlocksScaleDown/paused-cancel (0.00s)
+    --- FAIL: TestClaudeF1CancelledRollbackBlocksScaleDown/immediate-revert (0.00s)
+=== RUN   TestClaudeF2UnhealthyNonTargetStillConsumesBudget
+--- PASS: TestClaudeF2UnhealthyNonTargetStillConsumesBudget (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.013s
+FAIL
