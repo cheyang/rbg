@@ -20,11 +20,11 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyC[1-6]' -v"
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyC[1-6]' -json"
     },
     "integration": {
       "kind": "gotest",
-      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyC[2-4]' -v"
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyC[2-4]' -json"
     }
   },
   "findings": [
