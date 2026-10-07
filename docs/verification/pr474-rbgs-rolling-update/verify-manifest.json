@@ -18,7 +18,9 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "On merge-base fc201cdf a single Reconcile rewrote all 3 outdated children onto the new template at once (results/premise-base.txt). Run: bash docs/verification/pr474-rbgs-rolling-update/scripts/verify-premise.sh",
-    "match": ["TestVerify_P0_BaseUpdatesEveryOutdatedChildInOnePass"]
+    "match": [
+      "TestVerify_P0_BaseUpdatesEveryOutdatedChildInOnePass"
+    ]
   },
   "layers": {
     "unit": {
@@ -47,13 +49,17 @@
       "id": "F1",
       "polarity": "contract",
       "layer": "integration",
-      "match": ["I1/F1"]
+      "match": [
+        "I1/F1"
+      ]
     },
     {
       "id": "F2",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestVerify_F2_RolloutStrategySurvivesV1alpha1RoundTrip"]
+      "match": [
+        "TestVerify_F2_RolloutStrategySurvivesV1alpha1RoundTrip"
+      ]
     },
     {
       "id": "F3",
@@ -69,20 +75,26 @@
       "id": "F3",
       "polarity": "contract",
       "layer": "integration",
-      "match": ["I2/F3"]
+      "match": [
+        "I2/F3: rejects"
+      ]
     },
     {
       "id": "F4",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestVerify_F4_BrokenHeldBackGroupLeaksSurgeWhileStatusComplete"],
+      "match": [
+        "TestVerify_F4_BrokenHeldBackGroupLeaksSurgeWhileStatusComplete"
+      ],
       "note": "Consistency contract: Rolling=RolloutComplete must agree with surge release. Satisfied by either scoping completion to serving base groups (status side) or scoping serving to in-scope ordinals (surge side)."
     },
     {
       "id": "F5",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestVerify_F5_PausedScaleOnlyPathPropagatesTemplateMetadata"]
+      "match": [
+        "TestVerify_F5_PausedScaleOnlyPathPropagatesTemplateMetadata"
+      ]
     }
   ],
   "liveNote": "No live layer was run (debate setup runs unit + integration only). If a live pass is wanted: on a real cluster create an RBGS with rolloutStrategy maxUnavailable=1, change groupTemplate, and watch that exactly one child RoleBasedGroup is deleted/recreated at a time (integration spec I3 is the envtest analogue and passes today)."
