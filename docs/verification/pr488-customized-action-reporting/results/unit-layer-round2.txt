@@ -1,0 +1,9 @@
+--- PASS: TestVerifyPR488_MergedPodDeadlineGovernsPreloadContainers (0.04s)
+--- PASS: TestVerifyPR488_SmallestTimeoutWinsAcrossActions (0.00s)
+--- PASS: TestVerifyPR488_DeadlineExceededMapsToTimeout (0.00s)
+--- PASS: TestVerifyPR488_CompletionPolicyDoesNotAffectEvaluation (0.00s)
+--- PASS: TestVerifyPR488_InvalidSpecPreservesExistingCustomizedActionResults (0.00s)
+--- FAIL: TestVerifyPR488_R5_SmallStatusKeepsSucceededContainerDetails (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.056s
+FAIL

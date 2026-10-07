@@ -36,7 +36,28 @@ Run against the **base** branch (`7ed1860c`), because the question is whether th
 
 ## Summary of results
 
-| ID | Claim | Layer | Polarity | Verdict | Evidence |
+### Round 2 (head `060ef1b7`, delta `b5eadcb7..060ef1b7`)
+
+The PR was rebased onto main (absorbing #489) and the author pushed four commits responding to
+the published round-1 review. Re-verify output:
+
+| ID | Claim | Verdict | Evidence |
+|----|-------|---------|----------|
+| R4 | InvalidWarmupSpec path wipes results | **FIXED** (canary flipped; inverted to contract test, now passing) | commit `ed0a2e63` nil-desiredNodes guard + `preserveCustomizedActionResults`; `TestVerifyPR488_InvalidSpecPreservesExistingCustomizedActionResults` |
+| R1 | merged-pod deadline/pull-time semantics | **Still present, now documented** (the doc-comment sentence I asked for was added: "including image pulls and co-located image preload containers") | `results/unit-layer-round2.txt` |
+| R2 | completionPolicy inert | **Still present, now documented** ("Only AllSucceeded is currently supported") | same |
+| R3 | condition types deviate from #486 acceptance criteria | **Unchanged** — still awaiting maintainer ack before merge | static |
+| N1 | panic on marshal error | **FIXED** — injectable `marshalCustomizedActionMappings` + Warning event + graceful skip | controller.go:760 |
+| N2 | deleting pods transiently drop results | **FIXED** — `preserveCustomizedActionResults` keeps previous results for desired-but-unobserved nodes | `TestUpdateStatusPreservesLastCustomizedActionResultBetweenAttempts` (author's) |
+| **R5 (new)** | **`060ef1b7` regression: succeeded results lose per-container details unconditionally** — `customizedActionResultSummary` strips `Containers` from every entry and the budget-upgrade loop skips Succeeded entries, so even a single tiny status reports no container details (and `truncated=true`). The PR's own e2e fails on both e2e jobs (71 Passed / 1 Failed, deterministic) | **CONFIRMED — blocker (CI red)** | `results/ci-round2-e2e-failure.txt`; red contract test `TestVerifyPR488_R5_SmallStatusKeepsSucceededContainerDetails` (`results/unit-layer-round2.txt`); bites check: patching the upgrade loop to include Succeeded entries restores the detail |
+
+Suggested fix for R5 (author's choice): only compact when the full status would actually exceed
+the budget/max-items — e.g. try full detail first and fall back to summaries per entry, or
+upgrade Succeeded entries too in the second pass. The current always-summary behavior also
+reports `CustomizedActionResultsTruncated=true` for trivially small statuses, which will confuse
+users.
+
+### Round 1 (head `b5eadcb7`)| ID | Claim | Layer | Polarity | Verdict | Evidence |
 |----|-------|-------|----------|---------|----------|
 | P0 | Base lacks timeout / completion policy / execution-result reporting | static | — | **Confirmed** | `results/premise-p0-base-vs-head.txt` |
 | R1 | `timeoutSeconds` becomes a Pod-level `ActiveDeadlineSeconds` on the **merged** warmup Pod — it bounds image-preload containers in the same Pod, the smallest timeout across actions truncates the rest, and (per k8s semantics) the clock includes scheduling + image-pull time | 1+3 | canary | **Confirmed (mechanism, as designed & documented)** | `results/unit-layer.txt`; **live**: `results/live-layer.txt` scenario B — pod `verify-b-merged-wfr8c` carried `image-preload-0` + `custom-1` with `ADS=3`, failed `DeadlineExceeded`, warmup `reason=Timeout`. Field comment in `rolebasedgroupwarmup_types.go` says "limits execution of the merged warmup Pod… smallest configured timeout is used". The PR's own e2e (`reports image pull failure before customized action timeout`) demonstrates the deadline firing during an image pull and being reported as `Timeout`. |
@@ -55,12 +76,16 @@ Run against the **base** branch (`7ed1860c`), because the question is whether th
 
 ## Verdict
 
-No blockers / majors. The implementation is faithful to issue #486's contract, the test coverage
-(unit + reconcile + labeled real-cluster e2e for all five failure modes) satisfies the issue's
-acceptance criteria, and CI is green. The findings above are **minor** design/edge notes (R1, R2,
-R3, R4) plus nits — none blocks merge on evidence.
+**Round 2 (head `060ef1b7`): REQUEST_CHANGES** — a new regression (R5, introduced by the
+status-size-bounding commit) drops per-container details from *successful* results
+unconditionally, which fails the PR's own e2e ("should complete customized action with
+targetRoleBasedGroup mode and merge multi-role actions") on **both** e2e jobs deterministically.
+Reproduced at L2 (`TestVerifyPR488_R5_SmallStatusKeepsSucceededContainerDetails` is red) and the
+bites check confirms the mechanism (upgrading succeeded entries in the budget loop restores the
+detail). Everything from round 1 that the author addressed is now fixed and pinned by inverted
+contract tests.
 
-Review verdict: **COMMENT**. Approving is never automatic — publish only on explicit instruction.
+Round 1 verdict (superseded): COMMENT, no blockers/majors.
 
 Nits not carried into the harness: `panic` on an unreachable `json.Marshal` failure in
 `buildWarmupPod`; `sort.Strings` re-run inside the dedup loop; pods mid-deletion transiently drop
