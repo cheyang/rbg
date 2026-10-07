@@ -1,0 +1,438 @@
+[
+  {
+    "SuitePath": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify",
+    "SuiteDescription": "Warmup Customized Action Verify Suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": false,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 4,
+      "SpecsThatWillRun": 4
+    },
+    "StartTime": "2026-10-07T21:22:27.117462724+08:00",
+    "EndTime": "2026-10-07T21:22:36.866788807+08:00",
+    "RunTime": 9749326083,
+    "SuiteConfig": {
+      "RandomSeed": 1791379347,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": null,
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/suite_test.go",
+          "LineNumber": 60
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-07T21:22:27.117489255+08:00",
+        "EndTime": "2026-10-07T21:22:30.790577262+08:00",
+        "RunTime": 3673087997,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-07T21:22:27+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"../../../../config/crd/bases\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-07T21:22:29+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-07T21:22:30+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n2026-10-07T21:22:30+08:00\tINFO\tStarting EventSource\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"source\": \"kind source: *v1.Pod\"}\n2026-10-07T21:22:30+08:00\tINFO\tStarting EventSource\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupWarmup\"}\n2026-10-07T21:22:30+08:00\tINFO\tStarting Controller\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\"}\n2026-10-07T21:22:30+08:00\tINFO\tStarting workers\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"worker count\": 1}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/suite_test.go",
+              "LineNumber": 60
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-10-07T21:22:27.117498135+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/suite_test.go",
+              "LineNumber": 60
+            },
+            "TimelineLocation": {
+              "Offset": 5448,
+              "Order": 3,
+              "Time": "2026-10-07T21:22:30.790574981+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 3673076846,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR488 customized action status verification"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+            "LineNumber": 98
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+          "LineNumber": 103
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "F1: successful customized action keeps per-container results [contract]",
+        "State": "failed",
+        "StartTime": "2026-10-07T21:22:30.790622353+08:00",
+        "EndTime": "2026-10-07T21:22:33.807199062+08:00",
+        "RunTime": 3016576699,
+        "ParallelProcess": 1,
+        "Failure": {
+          "Message": "F1: successful result must keep per-container detail\nExpected\n    \u003c[]v1alpha2.CustomizedActionContainerResult | len:0, cap:0\u003e: nil\nto have length 1",
+          "Location": {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+            "LineNumber": 121,
+            "FullStackTrace": "sigs.k8s.io/rbgs/test/envtest/testcase/warmupverify.init.func3.1()\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go:121 +0x74a"
+          },
+          "TimelineLocation": {
+            "Offset": 14110,
+            "Order": 5,
+            "Time": "2026-10-07T21:22:33.807187151+08:00"
+          },
+          "FailureNodeContext": "leaf-node",
+          "FailureNodeType": "It",
+          "FailureNodeLocation": {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+            "LineNumber": 103
+          },
+          "ProgressReport": {
+            "LeafNodeLocation": {},
+            "SpecStartTime": "0001-01-01T00:00:00Z",
+            "CurrentNodeLocation": {},
+            "CurrentNodeStartTime": "0001-01-01T00:00:00Z",
+            "CurrentStepLocation": {},
+            "CurrentStepStartTime": "0001-01-01T00:00:00Z",
+            "TimelineLocation": {
+              "Time": "0001-01-01T00:00:00Z"
+            }
+          }
+        },
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-07T21:22:32+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"b8adbc04-5e4f-47d6-b850-294a7915d886\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}}\n2026-10-07T21:22:32+08:00\tINFO\tCreating warmup Pod\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"b8adbc04-5e4f-47d6-b850-294a7915d886\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"node\": \"node-1\"}\n2026-10-07T21:22:32+08:00\tINFO\tSetting start time\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"b8adbc04-5e4f-47d6-b850-294a7915d886\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"time\": \"2026-10-07 21:22:32.799006114 +0800 CST m=+5.690947301\"}\n2026-10-07T21:22:32+08:00\tINFO\tWarmup job running\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"b8adbc04-5e4f-47d6-b850-294a7915d886\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}}\n2026-10-07T21:22:32+08:00\tDEBUG\tevents\tCreated warmup Pod for node node-1\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-f1-contract\",\"name\":\"warmup-f1\",\"uid\":\"dd23a692-3819-427f-80ab-f2f1d4a9bee8\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"238\"}, \"reason\": \"CreatedPod\"}\n2026-10-07T21:22:32+08:00\tDEBUG\tevents\tWarmup job started\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-f1-contract\",\"name\":\"warmup-f1\",\"uid\":\"dd23a692-3819-427f-80ab-f2f1d4a9bee8\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"238\"}, \"reason\": \"WarmupStarted\"}\n2026-10-07T21:22:32+08:00\tINFO\tUpdated status\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"b8adbc04-5e4f-47d6-b850-294a7915d886\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"phase\": \"Running\", \"desired\": 1, \"active\": 1, \"succeeded\": 0, \"failed\": 0}\n2026-10-07T21:22:32+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"b8adbc04-5e4f-47d6-b850-294a7915d886\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"duration\": \"4.23828ms\"}\n2026-10-07T21:22:32+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"3f0c66b8-b03b-45e2-a9ae-9c6b372faa1b\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}}\n2026-10-07T21:22:32+08:00\tINFO\tSetting start time\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"3f0c66b8-b03b-45e2-a9ae-9c6b372faa1b\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"time\": \"2026-10-07 21:22:32.80099238 +0800 CST m=+5.692933567\"}\n2026-10-07T21:22:32+08:00\tINFO\tWarmup job running\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"3f0c66b8-b03b-45e2-a9ae-9c6b372faa1b\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}}\n2026-10-07T21:22:32+08:00\tDEBUG\tevents\tWarmup job started\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-f1-contract\",\"name\":\"warmup-f1\",\"uid\":\"dd23a692-3819-427f-80ab-f2f1d4a9bee8\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"238\"}, \"reason\": \"WarmupStarted\"}\n2026-10-07T21:22:32+08:00\tERROR\tFailed to update status\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"3f0c66b8-b03b-45e2-a9ae-9c6b372faa1b\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"error\": \"Operation cannot be fulfilled on rolebasedgroupwarmups.workloads.x-k8s.io \\\"warmup-f1\\\": the object has been modified; please apply your changes to the latest version and try again\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/internal/controller/workloads/rolebasedgroupwarmup_controller.go:236\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/internal/controller/workloads/rolebasedgroupwarmup_controller.go:133\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-07T21:22:32+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"3f0c66b8-b03b-45e2-a9ae-9c6b372faa1b\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"duration\": \"1.423907ms\"}\n2026-10-07T21:22:32+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"3f0c66b8-b03b-45e2-a9ae-9c6b372faa1b\", \"error\": \"Operation cannot be fulfilled on rolebasedgroupwarmups.workloads.x-k8s.io \\\"warmup-f1\\\": the object has been modified; please apply your changes to the latest version and try again\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-07T21:22:32+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"f7661ed0-c259-42f5-b778-c9e7845483f9\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}}\n2026-10-07T21:22:32+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"f7661ed0-c259-42f5-b778-c9e7845483f9\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"duration\": \"56.822µs\"}\n2026-10-07T21:22:32+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"54b3fa96-1bf9-4c26-a3b5-006bfaa36170\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}}\n2026-10-07T21:22:32+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"54b3fa96-1bf9-4c26-a3b5-006bfaa36170\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"duration\": \"34.001µs\"}\n2026-10-07T21:22:33+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"e86e602d-36b0-413c-be62-c7bea29c39a4\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}}\n2026-10-07T21:22:33+08:00\tINFO\tWarmup job completed\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"e86e602d-36b0-413c-be62-c7bea29c39a4\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"succeeded\": 1, \"failed\": 0}\n2026-10-07T21:22:33+08:00\tDEBUG\tevents\tWarmup job completed: 1 succeeded, 0 failed (within tolerance)\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-f1-contract\",\"name\":\"warmup-f1\",\"uid\":\"dd23a692-3819-427f-80ab-f2f1d4a9bee8\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"241\"}, \"reason\": \"WarmupCompleted\"}\n2026-10-07T21:22:33+08:00\tINFO\tUpdated status\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"e86e602d-36b0-413c-be62-c7bea29c39a4\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"phase\": \"Completed\", \"desired\": 1, \"active\": 0, \"succeeded\": 1, \"failed\": 0}\n2026-10-07T21:22:33+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"e86e602d-36b0-413c-be62-c7bea29c39a4\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"duration\": \"2.406849ms\"}\n2026-10-07T21:22:33+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"7f4bd23e-60a6-4f5d-92ce-588c716546eb\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}}\n2026-10-07T21:22:33+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"namespace\": \"verify-f1-contract\", \"name\": \"warmup-f1\", \"reconcileID\": \"7f4bd23e-60a6-4f5d-92ce-588c716546eb\", \"warmup\": {\"name\":\"warmup-f1\",\"namespace\":\"verify-f1-contract\"}, \"duration\": \"451ns\"}\n2026-10-07T21:22:33+08:00\tDEBUG\tevents\tnode=node-1, pod=warmup-f1-n5ts6: Customized action on node node-1 is Succeeded\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-f1-contract\",\"name\":\"warmup-f1\",\"uid\":\"dd23a692-3819-427f-80ab-f2f1d4a9bee8\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"246\"}, \"reason\": \"CustomizedActionCompleted\"}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+              "LineNumber": 103
+            },
+            "TimelineLocation": {
+              "Order": 4,
+              "Time": "2026-10-07T21:22:30.790624803+08:00"
+            },
+            "Message": "F1: successful customized action keeps per-container results [contract]",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+              "LineNumber": 103
+            },
+            "TimelineLocation": {
+              "Offset": 14110,
+              "Order": 6,
+              "Time": "2026-10-07T21:22:33.807194252+08:00"
+            },
+            "Message": "F1: successful customized action keeps per-container results [contract]",
+            "Duration": 3016569449,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR488 customized action status verification"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+            "LineNumber": 98
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+          "LineNumber": 128
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "F1: tiny successful status is flagged truncated [canary]",
+        "State": "passed",
+        "StartTime": "2026-10-07T21:22:33.807283885+08:00",
+        "EndTime": "2026-10-07T21:22:34.819221255+08:00",
+        "RunTime": 1011937370,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-07T21:22:33+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"dc48cf70-910e-4fb3-9f5e-c89acab3274f\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}}\n2026-10-07T21:22:33+08:00\tINFO\tCreating warmup Pod\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"dc48cf70-910e-4fb3-9f5e-c89acab3274f\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"node\": \"node-1\"}\n2026-10-07T21:22:33+08:00\tINFO\tSetting start time\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"dc48cf70-910e-4fb3-9f5e-c89acab3274f\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"time\": \"2026-10-07 21:22:33.811759882 +0800 CST m=+6.703701069\"}\n2026-10-07T21:22:33+08:00\tINFO\tWarmup job running\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"dc48cf70-910e-4fb3-9f5e-c89acab3274f\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}}\n2026-10-07T21:22:33+08:00\tDEBUG\tevents\tCreated warmup Pod for node node-1\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-f1-canary\",\"name\":\"warmup-f1-canary\",\"uid\":\"d8d69198-11a7-460e-a74d-8ab9a579ba83\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"249\"}, \"reason\": \"CreatedPod\"}\n2026-10-07T21:22:33+08:00\tDEBUG\tevents\tWarmup job started\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-f1-canary\",\"name\":\"warmup-f1-canary\",\"uid\":\"d8d69198-11a7-460e-a74d-8ab9a579ba83\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"249\"}, \"reason\": \"WarmupStarted\"}\n2026-10-07T21:22:33+08:00\tINFO\tUpdated status\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"dc48cf70-910e-4fb3-9f5e-c89acab3274f\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"phase\": \"Running\", \"desired\": 1, \"active\": 1, \"succeeded\": 0, \"failed\": 0}\n2026-10-07T21:22:33+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"dc48cf70-910e-4fb3-9f5e-c89acab3274f\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"duration\": \"3.398982ms\"}\n2026-10-07T21:22:33+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"e6249a58-8155-48ee-8d26-79dc580a3b54\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}}\n2026-10-07T21:22:33+08:00\tINFO\tSetting start time\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"e6249a58-8155-48ee-8d26-79dc580a3b54\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"time\": \"2026-10-07 21:22:33.813504699 +0800 CST m=+6.705445886\"}\n2026-10-07T21:22:33+08:00\tINFO\tWarmup job running\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"e6249a58-8155-48ee-8d26-79dc580a3b54\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}}\n2026-10-07T21:22:33+08:00\tDEBUG\tevents\tWarmup job started\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-f1-canary\",\"name\":\"warmup-f1-canary\",\"uid\":\"d8d69198-11a7-460e-a74d-8ab9a579ba83\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"249\"}, \"reason\": \"WarmupStarted\"}\n2026-10-07T21:22:33+08:00\tERROR\tFailed to update status\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"e6249a58-8155-48ee-8d26-79dc580a3b54\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"error\": \"Operation cannot be fulfilled on rolebasedgroupwarmups.workloads.x-k8s.io \\\"warmup-f1-canary\\\": the object has been modified; please apply your changes to the latest version and try again\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/internal/controller/workloads/rolebasedgroupwarmup_controller.go:236\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/internal/controller/workloads/rolebasedgroupwarmup_controller.go:133\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-07T21:22:33+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"e6249a58-8155-48ee-8d26-79dc580a3b54\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"duration\": \"1.207399ms\"}\n2026-10-07T21:22:33+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"e6249a58-8155-48ee-8d26-79dc580a3b54\", \"error\": \"Operation cannot be fulfilled on rolebasedgroupwarmups.workloads.x-k8s.io \\\"warmup-f1-canary\\\": the object has been modified; please apply your changes to the latest version and try again\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-07T21:22:33+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"16a1e8c1-7753-4292-a48d-12efe8416f03\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}}\n2026-10-07T21:22:33+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"16a1e8c1-7753-4292-a48d-12efe8416f03\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"duration\": \"41.342µs\"}\n2026-10-07T21:22:33+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"652b9e23-9676-4caf-a35e-794b50b9ed82\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}}\n2026-10-07T21:22:33+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"652b9e23-9676-4caf-a35e-794b50b9ed82\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"duration\": \"29.201µs\"}\n2026-10-07T21:22:34+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"5d0bc57a-2bad-4fdb-8954-189ea067c718\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}}\n2026-10-07T21:22:34+08:00\tINFO\tWarmup job completed\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"5d0bc57a-2bad-4fdb-8954-189ea067c718\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"succeeded\": 1, \"failed\": 0}\n2026-10-07T21:22:34+08:00\tDEBUG\tevents\tWarmup job completed: 1 succeeded, 0 failed (within tolerance)\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-f1-canary\",\"name\":\"warmup-f1-canary\",\"uid\":\"d8d69198-11a7-460e-a74d-8ab9a579ba83\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"252\"}, \"reason\": \"WarmupCompleted\"}\n2026-10-07T21:22:34+08:00\tINFO\tUpdated status\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"5d0bc57a-2bad-4fdb-8954-189ea067c718\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"phase\": \"Completed\", \"desired\": 1, \"active\": 0, \"succeeded\": 1, \"failed\": 0}\n2026-10-07T21:22:34+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"5d0bc57a-2bad-4fdb-8954-189ea067c718\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"duration\": \"2.271585ms\"}\n2026-10-07T21:22:34+08:00\tDEBUG\tevents\tnode=node-1, pod=warmup-f1-canary-mzj5f: Customized action on node node-1 is Succeeded\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-f1-canary\",\"name\":\"warmup-f1-canary\",\"uid\":\"d8d69198-11a7-460e-a74d-8ab9a579ba83\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"257\"}, \"reason\": \"CustomizedActionCompleted\"}\n2026-10-07T21:22:34+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"0439861a-454a-4dfe-8312-fe4eed91afdc\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}}\n2026-10-07T21:22:34+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"namespace\": \"verify-f1-canary\", \"name\": \"warmup-f1-canary\", \"reconcileID\": \"0439861a-454a-4dfe-8312-fe4eed91afdc\", \"warmup\": {\"name\":\"warmup-f1-canary\",\"namespace\":\"verify-f1-canary\"}, \"duration\": \"560ns\"}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+              "LineNumber": 128
+            },
+            "TimelineLocation": {
+              "Order": 7,
+              "Time": "2026-10-07T21:22:33.807285935+08:00"
+            },
+            "Message": "F1: tiny successful status is flagged truncated [canary]",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+              "LineNumber": 128
+            },
+            "TimelineLocation": {
+              "Offset": 14483,
+              "Order": 9,
+              "Time": "2026-10-07T21:22:34.819216095+08:00"
+            },
+            "Message": "F1: tiny successful status is flagged truncated [canary]",
+            "Duration": 1011930160,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR488 customized action status verification"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+            "LineNumber": 98
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+          "LineNumber": 150
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "control: failed customized action keeps exit code and sets failure condition [contract]",
+        "State": "passed",
+        "StartTime": "2026-10-07T21:22:34.819251116+08:00",
+        "EndTime": "2026-10-07T21:22:35.830864897+08:00",
+        "RunTime": 1011613781,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-07T21:22:34+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"9153dc2f-991e-4774-b64c-30cf13c74c7d\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}}\n2026-10-07T21:22:34+08:00\tINFO\tCreating warmup Pod\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"9153dc2f-991e-4774-b64c-30cf13c74c7d\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"node\": \"node-1\"}\n2026-10-07T21:22:34+08:00\tINFO\tSetting start time\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"9153dc2f-991e-4774-b64c-30cf13c74c7d\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"time\": \"2026-10-07 21:22:34.823397633 +0800 CST m=+7.715338830\"}\n2026-10-07T21:22:34+08:00\tINFO\tWarmup job running\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"9153dc2f-991e-4774-b64c-30cf13c74c7d\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}}\n2026-10-07T21:22:34+08:00\tDEBUG\tevents\tCreated warmup Pod for node node-1\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-control\",\"name\":\"warmup-control\",\"uid\":\"3f044008-5f37-430e-b472-249f1f707459\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"260\"}, \"reason\": \"CreatedPod\"}\n2026-10-07T21:22:34+08:00\tDEBUG\tevents\tWarmup job started\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-control\",\"name\":\"warmup-control\",\"uid\":\"3f044008-5f37-430e-b472-249f1f707459\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"260\"}, \"reason\": \"WarmupStarted\"}\n2026-10-07T21:22:34+08:00\tINFO\tUpdated status\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"9153dc2f-991e-4774-b64c-30cf13c74c7d\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"phase\": \"Running\", \"desired\": 1, \"active\": 1, \"succeeded\": 0, \"failed\": 0}\n2026-10-07T21:22:34+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"9153dc2f-991e-4774-b64c-30cf13c74c7d\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"duration\": \"3.513596ms\"}\n2026-10-07T21:22:34+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"9eefc7c8-09ea-493f-ae5b-7cae3370166e\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}}\n2026-10-07T21:22:34+08:00\tINFO\tSetting start time\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"9eefc7c8-09ea-493f-ae5b-7cae3370166e\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"time\": \"2026-10-07 21:22:34.82543351 +0800 CST m=+7.717374697\"}\n2026-10-07T21:22:34+08:00\tINFO\tWarmup job running\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"9eefc7c8-09ea-493f-ae5b-7cae3370166e\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}}\n2026-10-07T21:22:34+08:00\tDEBUG\tevents\tWarmup job started\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-control\",\"name\":\"warmup-control\",\"uid\":\"3f044008-5f37-430e-b472-249f1f707459\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"260\"}, \"reason\": \"WarmupStarted\"}\n2026-10-07T21:22:34+08:00\tERROR\tFailed to update status\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"9eefc7c8-09ea-493f-ae5b-7cae3370166e\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"error\": \"Operation cannot be fulfilled on rolebasedgroupwarmups.workloads.x-k8s.io \\\"warmup-control\\\": the object has been modified; please apply your changes to the latest version and try again\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/internal/controller/workloads/rolebasedgroupwarmup_controller.go:236\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/internal/controller/workloads/rolebasedgroupwarmup_controller.go:133\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-07T21:22:34+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"9eefc7c8-09ea-493f-ae5b-7cae3370166e\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"duration\": \"1.239911ms\"}\n2026-10-07T21:22:34+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"9eefc7c8-09ea-493f-ae5b-7cae3370166e\", \"error\": \"Operation cannot be fulfilled on rolebasedgroupwarmups.workloads.x-k8s.io \\\"warmup-control\\\": the object has been modified; please apply your changes to the latest version and try again\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-07T21:22:34+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"e080a466-0ed8-475a-a342-8d25de4edc60\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}}\n2026-10-07T21:22:34+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"e080a466-0ed8-475a-a342-8d25de4edc60\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"duration\": \"36.492µs\"}\n2026-10-07T21:22:34+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"171b23a0-d644-48e9-b13e-0b71f5360690\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}}\n2026-10-07T21:22:34+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"171b23a0-d644-48e9-b13e-0b71f5360690\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"duration\": \"33.531µs\"}\n2026-10-07T21:22:35+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"2a8021d8-b59d-46ee-85a7-e2c6f838648c\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}}\n2026-10-07T21:22:35+08:00\tINFO\tNode permanently failed\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"2a8021d8-b59d-46ee-85a7-e2c6f838648c\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"node\": \"node-1\", \"failCount\": 1, \"backoffLimit\": 0}\n2026-10-07T21:22:35+08:00\tINFO\tMaxFailedNodes exceeded, failing warmup job\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"2a8021d8-b59d-46ee-85a7-e2c6f838648c\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"permanentlyFailed\": 1, \"maxFailedNodes\": 0}\n2026-10-07T21:22:35+08:00\tINFO\tNode permanently failed\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"2a8021d8-b59d-46ee-85a7-e2c6f838648c\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"node\": \"node-1\", \"failCount\": 1, \"backoffLimit\": 0}\n2026-10-07T21:22:35+08:00\tINFO\tWarmup job failed\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"2a8021d8-b59d-46ee-85a7-e2c6f838648c\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"reason\": \"MaxFailedNodesExceeded\", \"succeeded\": 0, \"failed\": 1}\n2026-10-07T21:22:35+08:00\tDEBUG\tevents\tWarmup job failed: 1 nodes permanently failed (max tolerated: 0)\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-control\",\"name\":\"warmup-control\",\"uid\":\"3f044008-5f37-430e-b472-249f1f707459\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"264\"}, \"reason\": \"MaxFailedNodesExceeded\"}\n2026-10-07T21:22:35+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"2a8021d8-b59d-46ee-85a7-e2c6f838648c\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"duration\": \"2.219263ms\"}\n2026-10-07T21:22:35+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"af3028df-db9f-4998-84fa-a960800eb02f\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}}\n2026-10-07T21:22:35+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"namespace\": \"verify-control\", \"name\": \"warmup-control\", \"reconcileID\": \"af3028df-db9f-4998-84fa-a960800eb02f\", \"warmup\": {\"name\":\"warmup-control\",\"namespace\":\"verify-control\"}, \"duration\": \"389ns\"}\n2026-10-07T21:22:35+08:00\tDEBUG\tevents\tnode=node-1, pod=warmup-control-46wkf: check failed\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-control\",\"name\":\"warmup-control\",\"uid\":\"3f044008-5f37-430e-b472-249f1f707459\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"268\"}, \"reason\": \"ContainerExitCode\"}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+              "LineNumber": 150
+            },
+            "TimelineLocation": {
+              "Order": 10,
+              "Time": "2026-10-07T21:22:34.819253547+08:00"
+            },
+            "Message": "control: failed customized action keeps exit code and sets failure condition [contract]",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+              "LineNumber": 150
+            },
+            "TimelineLocation": {
+              "Offset": 15171,
+              "Order": 12,
+              "Time": "2026-10-07T21:22:35.830859337+08:00"
+            },
+            "Message": "control: failed customized action keeps exit code and sets failure condition [contract]",
+            "Duration": 1011605790,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR488 customized action status verification"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+            "LineNumber": 98
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+          "LineNumber": 181
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "F2: image-pull waiting failure keeps container identity and reason [contract]",
+        "State": "passed",
+        "StartTime": "2026-10-07T21:22:35.830916298+08:00",
+        "EndTime": "2026-10-07T21:22:36.842073454+08:00",
+        "RunTime": 1011157155,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-07T21:22:35+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"namespace\": \"verify-f2\", \"name\": \"warmup-f2\", \"reconcileID\": \"795ad58b-5224-42e0-b15f-3a4581438ad8\", \"warmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}}\n2026-10-07T21:22:35+08:00\tINFO\tCreating warmup Pod\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"namespace\": \"verify-f2\", \"name\": \"warmup-f2\", \"reconcileID\": \"795ad58b-5224-42e0-b15f-3a4581438ad8\", \"warmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"node\": \"node-1\"}\n2026-10-07T21:22:35+08:00\tINFO\tSetting start time\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"namespace\": \"verify-f2\", \"name\": \"warmup-f2\", \"reconcileID\": \"795ad58b-5224-42e0-b15f-3a4581438ad8\", \"warmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"time\": \"2026-10-07 21:22:35.83520718 +0800 CST m=+8.727148367\"}\n2026-10-07T21:22:35+08:00\tINFO\tWarmup job running\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"namespace\": \"verify-f2\", \"name\": \"warmup-f2\", \"reconcileID\": \"795ad58b-5224-42e0-b15f-3a4581438ad8\", \"warmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}}\n2026-10-07T21:22:35+08:00\tDEBUG\tevents\tCreated warmup Pod for node node-1\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-f2\",\"name\":\"warmup-f2\",\"uid\":\"eaa70bdc-57fb-405b-bdb1-dde2acd57b91\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"271\"}, \"reason\": \"CreatedPod\"}\n2026-10-07T21:22:35+08:00\tDEBUG\tevents\tWarmup job started\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-f2\",\"name\":\"warmup-f2\",\"uid\":\"eaa70bdc-57fb-405b-bdb1-dde2acd57b91\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"271\"}, \"reason\": \"WarmupStarted\"}\n2026-10-07T21:22:35+08:00\tINFO\tUpdated status\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"namespace\": \"verify-f2\", \"name\": \"warmup-f2\", \"reconcileID\": \"795ad58b-5224-42e0-b15f-3a4581438ad8\", \"warmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"phase\": \"Running\", \"desired\": 1, \"active\": 1, \"succeeded\": 0, \"failed\": 0}\n2026-10-07T21:22:35+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"namespace\": \"verify-f2\", \"name\": \"warmup-f2\", \"reconcileID\": \"795ad58b-5224-42e0-b15f-3a4581438ad8\", \"warmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"duration\": \"3.483144ms\"}\n2026-10-07T21:22:35+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"namespace\": \"verify-f2\", \"name\": \"warmup-f2\", \"reconcileID\": \"af2a9fb3-2f2f-43c6-9e8a-2739e49cab4d\", \"warmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}}\n2026-10-07T21:22:35+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"namespace\": \"verify-f2\", \"name\": \"warmup-f2\", \"reconcileID\": \"af2a9fb3-2f2f-43c6-9e8a-2739e49cab4d\", \"warmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"duration\": \"46.351µs\"}\n2026-10-07T21:22:36+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"namespace\": \"verify-f2\", \"name\": \"warmup-f2\", \"reconcileID\": \"0e9de537-f8d3-447b-a3a1-535c9981bad2\", \"warmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}}\n2026-10-07T21:22:36+08:00\tINFO\tUpdated status\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"namespace\": \"verify-f2\", \"name\": \"warmup-f2\", \"reconcileID\": \"0e9de537-f8d3-447b-a3a1-535c9981bad2\", \"warmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"phase\": \"Running\", \"desired\": 1, \"active\": 1, \"succeeded\": 0, \"failed\": 0}\n2026-10-07T21:22:36+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"namespace\": \"verify-f2\", \"name\": \"warmup-f2\", \"reconcileID\": \"0e9de537-f8d3-447b-a3a1-535c9981bad2\", \"warmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"duration\": \"2.001286ms\"}\n2026-10-07T21:22:36+08:00\tDEBUG\tevents\tnode=node-1, pod=warmup-f2-dvdmw: Back-off pulling image \"busybox\"\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroupWarmup\",\"namespace\":\"verify-f2\",\"name\":\"warmup-f2\",\"uid\":\"eaa70bdc-57fb-405b-bdb1-dde2acd57b91\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"277\"}, \"reason\": \"ImagePullFailed\"}\n2026-10-07T21:22:36+08:00\tINFO\tStart reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"namespace\": \"verify-f2\", \"name\": \"warmup-f2\", \"reconcileID\": \"d1322585-c269-40d9-afd6-8201ad8d41ad\", \"warmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}}\n2026-10-07T21:22:36+08:00\tINFO\tFinished reconciling\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\", \"RoleBasedGroupWarmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"namespace\": \"verify-f2\", \"name\": \"warmup-f2\", \"reconcileID\": \"d1322585-c269-40d9-afd6-8201ad8d41ad\", \"warmup\": {\"name\":\"warmup-f2\",\"namespace\":\"verify-f2\"}, \"duration\": \"32.371µs\"}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+              "LineNumber": 181
+            },
+            "TimelineLocation": {
+              "Order": 13,
+              "Time": "2026-10-07T21:22:35.830918788+08:00"
+            },
+            "Message": "F2: image-pull waiting failure keeps container identity and reason [contract]",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/warmup_verify_test.go",
+              "LineNumber": 181
+            },
+            "TimelineLocation": {
+              "Offset": 6504,
+              "Order": 15,
+              "Time": "2026-10-07T21:22:36.842068373+08:00"
+            },
+            "Message": "F2: image-pull waiting failure keeps container identity and reason [contract]",
+            "Duration": 1011149575,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/suite_test.go",
+          "LineNumber": 90
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-07T21:22:36.842095774+08:00",
+        "EndTime": "2026-10-07T21:22:36.866779957+08:00",
+        "RunTime": 24684183,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-07T21:22:36+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-10-07T21:22:36+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-10-07T21:22:36+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-10-07T21:22:36+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\"}\n2026-10-07T21:22:36+08:00\tINFO\tAll workers finished\t{\"controller\": \"rbgwarmup-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupWarmup\"}\n2026-10-07T21:22:36+08:00\tINFO\tStopping and waiting for caches\n2026-10-07T21:22:36+08:00\tINFO\tStopping and waiting for webhooks\n2026-10-07T21:22:36+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-10-07T21:22:36+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/suite_test.go",
+              "LineNumber": 90
+            },
+            "TimelineLocation": {
+              "Order": 16,
+              "Time": "2026-10-07T21:22:36.842097114+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-07/pr-488/work/verify/test/envtest/testcase/warmupverify/suite_test.go",
+              "LineNumber": 90
+            },
+            "TimelineLocation": {
+              "Offset": 907,
+              "Order": 18,
+              "Time": "2026-10-07T21:22:36.866777647+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 24680543,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,4 @@
+F1: successful customized action keeps per-container results [contract]	fail
+F1: tiny successful status is flagged truncated [canary]	pass
+control: failed customized action keeps exit code and sets failure condition [contract]	pass
+F2: image-pull waiting failure keeps container identity and reason [contract]	pass
