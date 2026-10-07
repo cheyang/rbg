@@ -1,0 +1,25 @@
+=== RUN   TestVerifyPR488F1SucceededResultKeepsContainersWithinBudget
+    zz_verify_pr488_customized_action_test.go:71: F1: successful result lost its per-container detail despite a free budget: v1alpha2.CustomizedActionResult{NodeName:"node-1", PodName:"attempt-1", State:"Succeeded", Reason:"Completed", Message:"", TimeoutSeconds:(*int64)(nil), Containers:[]v1alpha2.CustomizedActionContainerResult(nil)}
+--- FAIL: TestVerifyPR488F1SucceededResultKeepsContainersWithinBudget (0.00s)
+=== RUN   TestVerifyPR488F1CanaryTinySuccessStrippedAndFlaggedTruncated
+--- PASS: TestVerifyPR488F1CanaryTinySuccessStrippedAndFlaggedTruncated (0.00s)
+=== RUN   TestVerifyPR488F2WaitingFailureIdentitySurvivesBounding
+--- PASS: TestVerifyPR488F2WaitingFailureIdentitySurvivesBounding (0.00s)
+=== RUN   TestVerifyPR488F3TerminalFailureLeavesNoStaleRunningResult
+2026-10-07T21:20:25+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-07T21:20:25+08:00	INFO	Node permanently failed	{"warmup": {"name":"test","namespace":"default"}, "node": "node-a", "failCount": 1, "backoffLimit": 0}
+2026-10-07T21:20:25+08:00	INFO	MaxFailedNodes exceeded, failing warmup job	{"warmup": {"name":"test","namespace":"default"}, "permanentlyFailed": 1, "maxFailedNodes": 0}
+2026-10-07T21:20:25+08:00	INFO	Node permanently failed	{"warmup": {"name":"test","namespace":"default"}, "node": "node-a", "failCount": 1, "backoffLimit": 0}
+2026-10-07T21:20:25+08:00	INFO	Warmup job failed	{"warmup": {"name":"test","namespace":"default"}, "reason": "MaxFailedNodesExceeded", "succeeded": 0, "failed": 1}
+2026-10-07T21:20:25+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "1.654144ms"}
+    zz_verify_pr488_customized_action_test.go:206: F3: node node-b keeps stale "Running" result (pod was deleted, job is terminally Failed): v1alpha2.CustomizedActionResult{NodeName:"node-b", PodName:"attempt-b", State:"Running", Reason:"", Message:"", TimeoutSeconds:(*int64)(nil), Containers:[]v1alpha2.CustomizedActionContainerResult{v1alpha2.CustomizedActionContainerResult{ContainerName:"node-check", PodContainerName:"custom-0", State:"Running", ExitCode:(*int32)(nil), TerminationReason:"", TerminationMessage:""}}}
+--- FAIL: TestVerifyPR488F3TerminalFailureLeavesNoStaleRunningResult (0.04s)
+=== RUN   TestVerifyPR488F4CanaryGlobalTimeoutClobbersSpecificReason
+2026-10-07T21:20:25+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-07T21:20:25+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"test","namespace":"default"}, "timeout": "1s", "elapsed": "2m0.505942998s"}
+2026-10-07T21:20:25+08:00	INFO	Warmup job failed	{"warmup": {"name":"test","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-10-07T21:20:25+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "1.064586ms"}
+--- PASS: TestVerifyPR488F4CanaryGlobalTimeoutClobbersSpecificReason (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.053s
+FAIL
