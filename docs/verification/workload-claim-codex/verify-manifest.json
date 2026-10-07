@@ -1,0 +1,55 @@
+{
+  "topic": "workload-claim-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/487",
+  "harnessPaths": [
+    "docs/verification/workload-claim-codex",
+    "pkg/reconciler/zz_verify_workload_claim_test.go",
+    "test/verify/workloadclaim/envtest_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Deleting an RBG with the default background propagation makes the RBG object disappear at once while its workload stays behind, still controlled by the old UID; a same-named RBG created inside that window finds the leftover by name and ConstructRoleStatus reads the leftover's readyReplicas, so the RBG can go Ready=True on a workload left by its predecessor.",
+    "reportedComponent": "pkg/reconciler workload reconcilers (RoleInstanceSet/Deployment/StatefulSet/LeaderWorkerSet) + RBG status construction",
+    "patchedComponent": "pkg/reconciler/common.go + the four workload reconcilers",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "On base (7ed1860c) TestVerifyP0LeftoverReadinessInherited FAILS: ConstructRoleStatus returns ReadyReplicas=1 from a leftover RIS controlled by a previous incarnation's UID, CheckWorkloadReady returns true, and Reconciler writes over it without error. Refined by the integration layer: on a real apiserver the base write path actually fails with 422 'Only one reference can have Controller set to true' (results/integration-base.txt), so the silent damage on base is the status/readiness/dependency reads, exactly the claimed symptom. See results/unit-base.txt.",
+    "match": ["TestVerifyP0LeftoverReadinessInherited"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/ -run 'TestVerifyP0|TestVerifyF1|TestVerifyF2' -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=$(bin/setup-envtest use 1.31.0 --bin-dir bin -p path 2>/dev/null || echo $HOME/.local/share/kubebuilder-envtest/k8s/1.36.2-linux-amd64) go test ./test/verify/workloadclaim/ -run TestVerifyIntegration -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyF1OrphanWorkloadIsAdopted"],
+      "note": "Fails on PR head (orphan adoption removed). Passes only if adoption (or an equivalent recovery path) is restored. Integration counterparts: 'orphan_is_adopted_by_ssa_apply' (base behavior, apiserver-level) and 'head_reconciler_wedges_on_orphan' (head behavior)."
+    },
+    {
+      "id": "F1",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestVerifyF1OrphanWedgesAndSurvivesCleanup"],
+      "note": "Passes on PR head, documenting the permanent wedge; must flip to fail if a recovery path is added."
+    },
+    {
+      "id": "F2",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestVerifyF2TerminatingOwnedWorkloadWaits"],
+      "note": "Passes on PR head, documenting that a terminating workload owned by THIS rbg now reports 0/0 and errors the reconcile; flips if the terminating rule is revisited."
+    }
+  ],
+  "liveNote": "L3 intentionally skipped per debate setup (no KUBECONFIG layer). The GC-window timing itself is not reproducible without a real GC controller; both the unit and envtest layers simulate the leftover/orphan states directly."
+}

@@ -1,0 +1,18 @@
+=== RUN   TestVerifyP0LeftoverReadinessInherited
+--- PASS: TestVerifyP0LeftoverReadinessInherited (0.04s)
+=== RUN   TestVerifyF1OrphanWorkloadIsAdopted
+    zz_verify_workload_claim_test.go:162: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/pkg/reconciler/zz_verify_workload_claim_test.go:162
+        	Error:      	Received unexpected error:
+        	            	workload is not claimable by this RoleBasedGroup: verify-rbg-worker has no controlling RoleBasedGroup
+        	Test:       	TestVerifyF1OrphanWorkloadIsAdopted
+        	Messages:   	F1: an orphaned workload should be adoptable; reconcile must not wedge on it
+--- FAIL: TestVerifyF1OrphanWorkloadIsAdopted (0.00s)
+=== RUN   TestVerifyF1OrphanWedgesAndSurvivesCleanup
+--- PASS: TestVerifyF1OrphanWedgesAndSurvivesCleanup (0.00s)
+=== RUN   TestVerifyF2TerminatingOwnedWorkloadWaits
+--- PASS: TestVerifyF2TerminatingOwnedWorkloadWaits (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.052s
+FAIL
+head unit exit: 1

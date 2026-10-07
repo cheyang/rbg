@@ -1,0 +1,56 @@
+=== RUN   TestVerifyP0LeftoverReadinessInherited
+    zz_verify_workload_claim_test.go:121: 
+        	Error Trace:	/tmp/rbg-base-verify/pkg/reconciler/zz_verify_workload_claim_test.go:121
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestVerifyP0LeftoverReadinessInherited
+        	Messages:   	P0: readiness of a workload controlled by a previous incarnation leaked into the new RBG's status
+    zz_verify_workload_claim_test.go:123: 
+        	Error Trace:	/tmp/rbg-base-verify/pkg/reconciler/zz_verify_workload_claim_test.go:123
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestVerifyP0LeftoverReadinessInherited
+        	Messages:   	P0: replicas of a workload controlled by a previous incarnation leaked into the new RBG's status
+    zz_verify_workload_claim_test.go:128: 
+        	Error Trace:	/tmp/rbg-base-verify/pkg/reconciler/zz_verify_workload_claim_test.go:128
+        	Error:      	Should be false
+        	Test:       	TestVerifyP0LeftoverReadinessInherited
+        	Messages:   	P0: CheckWorkloadReady trusts a workload controlled by a previous incarnation
+    zz_verify_workload_claim_test.go:132: 
+        	Error Trace:	/tmp/rbg-base-verify/pkg/reconciler/zz_verify_workload_claim_test.go:132
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerifyP0LeftoverReadinessInherited
+        	Messages:   	P0: the reconciler must refuse to write over a workload controlled by a previous incarnation
+--- FAIL: TestVerifyP0LeftoverReadinessInherited (0.05s)
+=== RUN   TestVerifyF1OrphanWorkloadIsAdopted
+--- PASS: TestVerifyF1OrphanWorkloadIsAdopted (0.00s)
+=== RUN   TestVerifyF1OrphanWedgesAndSurvivesCleanup
+    zz_verify_workload_claim_test.go:190: 
+        	Error Trace:	/tmp/rbg-base-verify/pkg/reconciler/zz_verify_workload_claim_test.go:190
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestVerifyF1OrphanWedgesAndSurvivesCleanup
+        	Messages:   	orphan contributes no readiness
+    zz_verify_workload_claim_test.go:193: 
+        	Error Trace:	/tmp/rbg-base-verify/pkg/reconciler/zz_verify_workload_claim_test.go:193
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerifyF1OrphanWedgesAndSurvivesCleanup
+        	Messages:   	head refuses to manage an orphan
+--- FAIL: TestVerifyF1OrphanWedgesAndSurvivesCleanup (0.00s)
+=== RUN   TestVerifyF2TerminatingOwnedWorkloadWaits
+    zz_verify_workload_claim_test.go:237: 
+        	Error Trace:	/tmp/rbg-base-verify/pkg/reconciler/zz_verify_workload_claim_test.go:237
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestVerifyF2TerminatingOwnedWorkloadWaits
+        	Messages:   	F2: a still-terminating workload owned by THIS rbg now reports 0 ready (base reported its live replicas)
+    zz_verify_workload_claim_test.go:242: 
+        	Error Trace:	/tmp/rbg-base-verify/pkg/reconciler/zz_verify_workload_claim_test.go:242
+        	Error:      	Should be false
+        	Test:       	TestVerifyF2TerminatingOwnedWorkloadWaits
+    zz_verify_workload_claim_test.go:245: 
+        	Error Trace:	/tmp/rbg-base-verify/pkg/reconciler/zz_verify_workload_claim_test.go:245
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerifyF2TerminatingOwnedWorkloadWaits
+        	Messages:   	F2: reconcile errors while the owned workload is terminating
+--- FAIL: TestVerifyF2TerminatingOwnedWorkloadWaits (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.066s
+FAIL
+base unit exit: 1

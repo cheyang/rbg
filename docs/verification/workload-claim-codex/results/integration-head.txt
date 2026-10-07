@@ -1,0 +1,14 @@
+=== RUN   TestVerifyIntegration
+=== RUN   TestVerifyIntegration/foreign_controlled_leftover_rejects_second_controller_apply
+    envtest_verify_test.go:143: observed apiserver rejection (base write-path behavior): Deployment.apps "verify-rbg-worker" is invalid: metadata.ownerReferences: Invalid value: [{"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","name":"verify-rbg","uid":"uid-of-previous-rbg-incarnation","controller":true,"blockOwnerDeletion":true},{"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","name":"verify-rbg","uid":"uid-of-new-rbg-incarnation","controller":true,"blockOwnerDeletion":true}]: Only one reference can have Controller set to true. Found "true" in references for RoleBasedGroup/verify-rbg and RoleBasedGroup/verify-rbg
+=== RUN   TestVerifyIntegration/orphan_is_adopted_by_ssa_apply
+=== RUN   TestVerifyIntegration/head_reconciler_refuses_leftover_without_touching_it
+=== RUN   TestVerifyIntegration/head_reconciler_wedges_on_orphan
+--- PASS: TestVerifyIntegration (0.02s)
+    --- PASS: TestVerifyIntegration/foreign_controlled_leftover_rejects_second_controller_apply (0.00s)
+    --- PASS: TestVerifyIntegration/orphan_is_adopted_by_ssa_apply (0.00s)
+    --- PASS: TestVerifyIntegration/head_reconciler_refuses_leftover_without_touching_it (0.00s)
+    --- PASS: TestVerifyIntegration/head_reconciler_wedges_on_orphan (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/verify/workloadclaim	(cached)
+head integration exit: 0

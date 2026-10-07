@@ -1,0 +1,30 @@
+=== RUN   TestVerifyIntegration
+=== RUN   TestVerifyIntegration/foreign_controlled_leftover_rejects_second_controller_apply
+    envtest_verify_test.go:143: observed apiserver rejection (base write-path behavior): Deployment.apps "verify-rbg-worker" is invalid: metadata.ownerReferences: Invalid value: [{"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","name":"verify-rbg","uid":"uid-of-previous-rbg-incarnation","controller":true,"blockOwnerDeletion":true},{"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","name":"verify-rbg","uid":"uid-of-new-rbg-incarnation","controller":true,"blockOwnerDeletion":true}]: Only one reference can have Controller set to true. Found "true" in references for RoleBasedGroup/verify-rbg and RoleBasedGroup/verify-rbg
+=== RUN   TestVerifyIntegration/orphan_is_adopted_by_ssa_apply
+=== RUN   TestVerifyIntegration/head_reconciler_refuses_leftover_without_touching_it
+    envtest_verify_test.go:178: 
+        	Error Trace:	/tmp/rbg-base-verify/test/verify/workloadclaim/envtest_verify_test.go:178
+        	Error:      	Should be true
+        	Test:       	TestVerifyIntegration/head_reconciler_refuses_leftover_without_touching_it
+        	Messages:   	got: Deployment.apps "verify-rbg-leftover" is invalid: metadata.ownerReferences: Invalid value: [{"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","name":"verify-rbg","uid":"uid-of-previous-rbg-incarnation","controller":true,"blockOwnerDeletion":true},{"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","name":"verify-rbg","uid":"uid-of-new-rbg-incarnation","controller":true,"blockOwnerDeletion":true}]: Only one reference can have Controller set to true. Found "true" in references for RoleBasedGroup/verify-rbg and RoleBasedGroup/verify-rbg
+    envtest_verify_test.go:179: 
+        	Error Trace:	/tmp/rbg-base-verify/test/verify/workloadclaim/envtest_verify_test.go:179
+        	Error:      	Should be false
+        	Test:       	TestVerifyIntegration/head_reconciler_refuses_leftover_without_touching_it
+        	Messages:   	head must fail with the claimable error, not the apiserver 422 base produced
+=== RUN   TestVerifyIntegration/head_reconciler_wedges_on_orphan
+    envtest_verify_test.go:209: 
+        	Error Trace:	/tmp/rbg-base-verify/test/verify/workloadclaim/envtest_verify_test.go:209
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerifyIntegration/head_reconciler_wedges_on_orphan
+        	Messages:   	F1: head refuses to adopt the orphan
+--- FAIL: TestVerifyIntegration (0.03s)
+    --- PASS: TestVerifyIntegration/foreign_controlled_leftover_rejects_second_controller_apply (0.00s)
+    --- PASS: TestVerifyIntegration/orphan_is_adopted_by_ssa_apply (0.00s)
+    --- FAIL: TestVerifyIntegration/head_reconciler_refuses_leftover_without_touching_it (0.01s)
+    --- FAIL: TestVerifyIntegration/head_reconciler_wedges_on_orphan (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/verify/workloadclaim	4.339s
+FAIL
+base integration exit: 1
