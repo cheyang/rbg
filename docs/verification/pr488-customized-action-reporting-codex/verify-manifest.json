@@ -1,0 +1,43 @@
+{
+  "topic": "pr488-customized-action-reporting-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/488",
+  "harnessPaths": [
+    "docs/verification/pr488-customized-action-reporting-codex",
+    "internal/controller/workloads/zz_verify_pr488_customized_action_test.go",
+    "test/envtest/testcase/warmupverify"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "RoleBasedGroupWarmup CustomizedAction has no per-action timeout, implicit multi-container completion semantics, and no container exit codes / termination messages exposed in status or Events (issue #486).",
+    "reportedComponent": "api/workloads/v1alpha2/rolebasedgroupwarmup_types.go + internal/controller/workloads/rolebasedgroupwarmup_controller.go",
+    "patchedComponent": "same two components (plus CRD manifests, tests)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "base merge-base 0821cb5b has no CustomizedActionResult / timeoutSeconds / completionPolicy anywhere in api/workloads/v1alpha2 or the warmup controller (grep over the base worktree). Feature request, not a regression claim; the gap exists as described.",
+    "match": ["base-grep"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyPR488' -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.36.2-linux-amd64}\" go test ./test/envtest/testcase/warmupverify/ -timeout 10m -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit",        "match": ["TestVerifyPR488F1SucceededResultKeepsContainersWithinBudget"] },
+    { "id": "F1", "polarity": "canary",   "layer": "unit",        "match": ["TestVerifyPR488F1CanaryTinySuccessStrippedAndFlaggedTruncated"] },
+    { "id": "F1", "polarity": "contract", "layer": "integration", "match": ["successful customized action keeps per-container results"] },
+    { "id": "F1", "polarity": "canary",   "layer": "integration", "match": ["tiny successful status is flagged truncated"] },
+    { "id": "F2", "polarity": "contract", "layer": "unit",        "match": ["TestVerifyPR488F2WaitingFailureIdentitySurvivesBounding"] },
+    { "id": "F2", "polarity": "contract", "layer": "integration", "match": ["image-pull waiting failure keeps container identity and reason"] },
+    { "id": "F3", "polarity": "contract", "layer": "unit",        "match": ["TestVerifyPR488F3TerminalFailureLeavesNoStaleRunningResult"] },
+    { "id": "F4", "polarity": "canary",   "layer": "unit",        "match": ["TestVerifyPR488F4CanaryGlobalTimeoutClobbersSpecificReason"] }
+  ],
+  "liveNote": "L3 skipped per debate setup (unit + integration only). The PR's own e2e (test/e2e/testcase/v1alpha2/warmup.go:245) fails on this head for the same mechanism as F1; the maintainer's e2e runs already show that on a live cluster."
+}
