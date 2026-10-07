@@ -1,0 +1,17 @@
+=== Harness-bites check (verifier skill Step 4) ===
+Temporarily applying fix-like patches to production code, re-running canaries,
+expecting polarity flips, then reverting. Wed Oct  7 02:47:50 PM CST 2026
+
+--- Bite 1: route terminal phases to reconcileUnfinished (simulates continuous re-evaluation) ---
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.057s
+FAIL
+patch reverted
+
+--- Bite 1 result: TestClaudeVerifyP0OnceIgnoresLateNodes FAILED under patch (canary bites); reverted ---
+
+--- Bite 2: sorted role iteration in getDesiredNodesToWarmup (KEP determinism fix) ---
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.059s
+FAIL
+--- Bite 2 result: FAILED under patch (canary bites); reverted ---

@@ -1,0 +1,1249 @@
+=== RUN   TestClaudeVerifyP0OnceIgnoresLateNodes
+2026-10-07T14:47:45+08:00	INFO	Start reconciling	{"warmup": {"name":"claude-p0","namespace":"default"}}
+2026-10-07T14:47:45+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"claude-p0","namespace":"default"}, "node": "node-1"}
+2026-10-07T14:47:45+08:00	INFO	Setting start time	{"warmup": {"name":"claude-p0","namespace":"default"}, "time": "2026-10-07 14:47:45.87969603 +0800 CST m=+0.049151820"}
+2026-10-07T14:47:45+08:00	INFO	Warmup job running	{"warmup": {"name":"claude-p0","namespace":"default"}}
+2026-10-07T14:47:45+08:00	INFO	Updated status	{"warmup": {"name":"claude-p0","namespace":"default"}, "phase": "Running", "desired": 1, "active": 1, "succeeded": 0, "failed": 0}
+2026-10-07T14:47:45+08:00	INFO	Finished reconciling	{"warmup": {"name":"claude-p0","namespace":"default"}, "duration": "3.231826ms"}
+2026-10-07T14:47:45+08:00	INFO	Start reconciling	{"warmup": {"name":"claude-p0","namespace":"default"}}
+2026-10-07T14:47:45+08:00	INFO	Warmup job completed	{"warmup": {"name":"claude-p0","namespace":"default"}, "succeeded": 1, "failed": 0}
+2026-10-07T14:47:45+08:00	INFO	Updated status	{"warmup": {"name":"claude-p0","namespace":"default"}, "phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+2026-10-07T14:47:45+08:00	INFO	Finished reconciling	{"warmup": {"name":"claude-p0","namespace":"default"}, "duration": "1.500059ms"}
+2026-10-07T14:47:45+08:00	INFO	Start reconciling	{"warmup": {"name":"claude-p0","namespace":"default"}}
+2026-10-07T14:47:45+08:00	INFO	Finished reconciling	{"warmup": {"name":"claude-p0","namespace":"default"}, "duration": "411ns"}
+--- PASS: TestClaudeVerifyP0OnceIgnoresLateNodes (0.05s)
+=== RUN   TestClaudeVerifyP0SpecUpdateReusesOldSucceededPod
+2026-10-07T14:47:45+08:00	INFO	Start reconciling	{"warmup": {"name":"claude-p0-update","namespace":"default"}}
+2026-10-07T14:47:45+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"claude-p0-update","namespace":"default"}, "node": "node-1"}
+2026-10-07T14:47:45+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"claude-p0-update","namespace":"default"}, "node": "node-2"}
+2026-10-07T14:47:45+08:00	INFO	Setting start time	{"warmup": {"name":"claude-p0-update","namespace":"default"}, "time": "2026-10-07 14:47:45.888868521 +0800 CST m=+0.058324311"}
+2026-10-07T14:47:45+08:00	INFO	Warmup job running	{"warmup": {"name":"claude-p0-update","namespace":"default"}}
+2026-10-07T14:47:45+08:00	INFO	Updated status	{"warmup": {"name":"claude-p0-update","namespace":"default"}, "phase": "Running", "desired": 2, "active": 2, "succeeded": 0, "failed": 0}
+2026-10-07T14:47:45+08:00	INFO	Finished reconciling	{"warmup": {"name":"claude-p0-update","namespace":"default"}, "duration": "3.557277ms"}
+2026-10-07T14:47:45+08:00	INFO	Start reconciling	{"warmup": {"name":"claude-p0-update","namespace":"default"}}
+2026-10-07T14:47:45+08:00	INFO	Updated status	{"warmup": {"name":"claude-p0-update","namespace":"default"}, "phase": "Running", "desired": 2, "active": 1, "succeeded": 1, "failed": 0}
+2026-10-07T14:47:45+08:00	INFO	Finished reconciling	{"warmup": {"name":"claude-p0-update","namespace":"default"}, "duration": "1.495619ms"}
+--- PASS: TestClaudeVerifyP0SpecUpdateReusesOldSucceededPod (0.01s)
+=== RUN   TestClaudeVerifyVolumeFirstWinsIsOrderDependent
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+2026-10-07T14:47:45+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 2}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-a"}
+2026-10-07T14:47:45+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "role-b"}
+2026-10-07T14:47:45+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "rbg-x", "roles": 2, "nodes": 1}
+--- PASS: TestClaudeVerifyVolumeFirstWinsIsOrderDependent (0.01s)
+=== RUN   TestClaudeVerifyF1PausedDoesNotOverrideTerminalPhaseOrTTL
+2026-10-07T14:47:45+08:00	INFO	Start reconciling	{"warmup": {"name":"claude-f1","namespace":"default"}}
+2026-10-07T14:47:45+08:00	DEBUG	TTL not yet expired, requeueing	{"warmup": {"name":"claude-f1","namespace":"default"}, "remaining": "59m58.093062093s", "requeueAfter": "10m0s"}
+2026-10-07T14:47:45+08:00	INFO	Finished reconciling	{"warmup": {"name":"claude-f1","namespace":"default"}, "duration": "3.369µs"}
+2026-10-07T14:47:45+08:00	INFO	Start reconciling	{"warmup": {"name":"claude-f1","namespace":"default"}}
+2026-10-07T14:47:45+08:00	INFO	TTL expired, deleting RoleBasedGroupWarmup	{"warmup": {"name":"claude-f1","namespace":"default"}}
+2026-10-07T14:47:45+08:00	INFO	Finished reconciling	{"warmup": {"name":"claude-f1","namespace":"default"}, "duration": "5.149µs"}
+--- PASS: TestClaudeVerifyF1PausedDoesNotOverrideTerminalPhaseOrTTL (0.00s)
+=== RUN   TestClaudeVerifyF2FailedPodRetriedImmediately
+2026-10-07T14:47:45+08:00	INFO	Start reconciling	{"warmup": {"name":"claude-f2","namespace":"default"}}
+2026-10-07T14:47:45+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"claude-f2","namespace":"default"}, "node": "node-1"}
+2026-10-07T14:47:45+08:00	INFO	Setting start time	{"warmup": {"name":"claude-f2","namespace":"default"}, "time": "2026-10-07 14:47:45.910895897 +0800 CST m=+0.080351687"}
+2026-10-07T14:47:45+08:00	INFO	Warmup job running	{"warmup": {"name":"claude-f2","namespace":"default"}}
+2026-10-07T14:47:45+08:00	INFO	Updated status	{"warmup": {"name":"claude-f2","namespace":"default"}, "phase": "Running", "desired": 1, "active": 1, "succeeded": 0, "failed": 0}
+2026-10-07T14:47:45+08:00	INFO	Finished reconciling	{"warmup": {"name":"claude-f2","namespace":"default"}, "duration": "2.568344ms"}
+2026-10-07T14:47:45+08:00	INFO	Start reconciling	{"warmup": {"name":"claude-f2","namespace":"default"}}
+2026-10-07T14:47:45+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"claude-f2","namespace":"default"}, "node": "node-1"}
+2026-10-07T14:47:45+08:00	INFO	Finished reconciling	{"warmup": {"name":"claude-f2","namespace":"default"}, "duration": "941.651µs"}
+--- PASS: TestClaudeVerifyF2FailedPodRetriedImmediately (0.01s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.086s

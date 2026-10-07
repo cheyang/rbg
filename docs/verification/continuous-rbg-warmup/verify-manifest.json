@@ -1,0 +1,62 @@
+{
+  "topic": "continuous-rbg-warmup",
+  "pr": "https://github.com/sgl-project/rbg/pull/483",
+  "harnessPaths": [
+    "docs/verification/continuous-rbg-warmup",
+    "internal/controller/workloads/verify_kep465_claude_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "RoleBasedGroupWarmup currently behaves as a one-shot job: after it reaches Completed or Failed, nodes that later join an autoscaled inference pool are not warmed; and although the API server currently accepts spec updates, the controller tracks completion only by node name so an update can reuse an old successful Pod and leave a mixture of old/new definitions.",
+    "reportedComponent": "RoleBasedGroupWarmup API (api/workloads/v1alpha2/rolebasedgroupwarmup_types.go) and controller (internal/controller/workloads/rolebasedgroupwarmup_controller.go)",
+    "patchedComponent": "keps/465-continuous-rbg-warmup/ (KEP document only; no production code in this PR)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "TestClaudeVerifyP0OnceIgnoresLateNodes and TestClaudeVerifyP0SpecUpdateReusesOldSucceededPod pass as canaries on the PR head (code identical to base); see results/unit.txt",
+    "match": [
+      "TestClaudeVerifyP0OnceIgnoresLateNodes",
+      "TestClaudeVerifyP0SpecUpdateReusesOldSucceededPod"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestClaudeVerify' -count=1 -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestClaudeVerifyF1PausedDoesNotOverrideTerminalPhaseOrTTL"]
+    },
+    {
+      "id": "P0-once",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestClaudeVerifyP0OnceIgnoresLateNodes"]
+    },
+    {
+      "id": "P0-update",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestClaudeVerifyP0SpecUpdateReusesOldSucceededPod"]
+    },
+    {
+      "id": "F2",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestClaudeVerifyF2FailedPodRetriedImmediately"]
+    },
+    {
+      "id": "KEP-volume-determinism-claim",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestClaudeVerifyVolumeFirstWinsIsOrderDependent"]
+    }
+  ],
+  "liveNote": "L3 skipped per debate instructions (no KUBECONFIG / live layer for this round). The integration layer is not applicable: PR #483 changes no production code, so there is no new behavior to integration-test; all KEP factual claims about current code are settled at the unit layer."
+}
