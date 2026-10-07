@@ -1,0 +1,17 @@
+=== RUN   TestP0CodexOrderedReadyStalledTargetResumesAfterWindow
+    premise_p0_codex_test.go:131: STALL: no requeue scheduled for OrderedReady rollout blocked on unhealthy target; rollout only resumes on an unrelated event (issue #464)
+--- FAIL: TestP0CodexOrderedReadyStalledTargetResumesAfterWindow (0.00s)
+=== RUN   TestP0CodexEarlyRollbackSameNameRevisionResumes
+    premise_p0_codex_test.go:197: STALL: early A->B->A rollback skipped stale instance test-set-0 (rev test-set-c4775b4fd, want test-set-594cc8f647): deleted []
+--- FAIL: TestP0CodexEarlyRollbackSameNameRevisionResumes (0.00s)
+=== RUN   TestP0CodexParallelBlockedTargetSchedulesRetry
+I1007 19:08:43.912442 2996868 stateful_instance_set_control.go:611] "Progress rolling update" instanceSet="default/test-set" targets=[1] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1007 19:08:43.912598 2996868 stateful_instance_set_control.go:644] "Rolling update budget exhausted" instanceSet="default/test-set" instance="default/test-set-1" initialBaseUnavail=1 newlyUnavail=0 effectiveBudget=1
+    premise_p0_codex_test.go:254: STALL: budget blocked by unhealthy non-target but no requeue scheduled; rollout waits for an unrelated event (issue #464)
+--- FAIL: TestP0CodexParallelBlockedTargetSchedulesRetry (0.00s)
+=== RUN   TestP0CodexEarlyRollbackKeepsSurgeAcrossReplacementGap
+    premise_p0_codex_test.go:309: STALL: stale base not replaced despite ready surge: deleted [test-set-1]
+--- FAIL: TestP0CodexEarlyRollbackKeepsSurgeAcrossReplacementGap (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.012s
+FAIL

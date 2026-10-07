@@ -1,0 +1,37 @@
+{
+  "topic": "stateful-rollout-stall-recovery",
+  "pr": "https://github.com/sgl-project/rbg/pull/484",
+  "harnessPaths": [
+    "docs/verification/stateful-rollout-stall-recovery",
+    "pkg/reconciler/roleinstanceset/statefulmode/premise_p0_codex_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "A Stateful RoleInstanceSet rollout may stop progressing when its Pod template is updated again while the Pods from the previous update are still NotReady. The rollout does not automatically resume unless another event triggers reconciliation. (issue #464); remaining gaps after #470 include OrderedReady stopping at its readiness gate and early A->B->A rollback being skipped when CurrentRevision and UpdateRevision share a name.",
+    "reportedComponent": "Stateful RoleInstanceSet controller (pkg/reconciler/roleinstanceset/statefulmode)",
+    "patchedComponent": "pkg/reconciler/roleinstanceset/statefulmode",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "All four contract tests RED on base 9b22f4a8 (no requeue for OrderedReady-blocked rollout; stale A->B->A base never replaced; budget-blocked parallel rollout schedules no retry; protecting surge condemned while stale base kept). GREEN on PR head 90dd9068. See results/unit-p0-base.txt and results/unit-p0-pr-head.txt.",
+    "match": ["TestP0Codex"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -mod=vendor -count=1 ./pkg/reconciler/roleinstanceset/statefulmode/ -run 'TestP0Codex' -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=$(setup-envtest use 1.31.0 --bin-dir /tmp/rbg-envtest -p path) go test -mod=vendor -count=1 ./test/envtest/testcase/... -timeout 20m"
+    }
+  },
+  "findings": [
+    { "id": "P0a", "polarity": "contract", "layer": "unit", "match": ["TestP0CodexOrderedReadyStalledTargetResumesAfterWindow"] },
+    { "id": "P0b", "polarity": "contract", "layer": "unit", "match": ["TestP0CodexEarlyRollbackSameNameRevisionResumes"] },
+    { "id": "P0c", "polarity": "contract", "layer": "unit", "match": ["TestP0CodexParallelBlockedTargetSchedulesRetry"] },
+    { "id": "P0d", "polarity": "contract", "layer": "unit", "match": ["TestP0CodexEarlyRollbackKeepsSurgeAcrossReplacementGap"] }
+  ],
+  "liveNote": "L3 skipped for this review round (debate setup: unit + integration only). A live check would run the stateful RoleInstanceSet controller against a real cluster, recreate issue #464's probe-removal scenario with OrderedReady, and confirm the rollout resumes after stableUnhealthyDuration (10s) with no external events."
+}

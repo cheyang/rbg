@@ -1,0 +1,6 @@
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.018s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode	0.012s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/core	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision	0.014s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/sync	0.048s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/utils	[no test files]
