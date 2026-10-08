@@ -47,15 +47,20 @@ echo "re-verify: last-reviewed = ${LAST_REVIEWED:-<none>}  (delta = ${LAST_REVIE
 ORIG_REF="$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)"
 HARNESS_SRC="$(git rev-parse HEAD)"
 RUNTIME_DIR="$(mktemp -d)"
+# The manifest must survive `git checkout -f` (the fixed ref has no harness),
+# so work from a copy outside the repo.
+cp "$MANIFEST" "$RUNTIME_DIR/manifest.json"
+MANIFEST="$RUNTIME_DIR/manifest.json"
 cleanup() { git checkout -f "$ORIG_REF" >/dev/null 2>&1 || true; rm -rf "$RUNTIME_DIR" 2>/dev/null || true; }
 trap cleanup EXIT
 
 git fetch --quiet origin main 2>/dev/null || true   # F1 compares docs vs merge target
 git checkout -f "$FIXED_REF" >/dev/null 2>&1 || { echo "re-verify: cannot checkout $FIXED_REF" >&2; exit 2; }
-# graft harness onto the fixed code
+# graft harness onto the fixed code (pathspecs only — never a commit switch)
 HPATHS=()
 while IFS= read -r p; do [ -n "$p" ] && HPATHS+=("$p"); done < <(jq -r '.harnessPaths[]' "$MANIFEST")
-git checkout "$HARNESS_SRC" -- "${HPATHS[@]}"
+[ "${#HPATHS[@]}" -gt 0 ] || { echo "re-verify: harnessPaths empty in manifest" >&2; exit 2; }
+git checkout "$HARNESS_SRC" -- "${HPATHS[@]}" || { echo "re-verify: failed to graft harness" >&2; exit 2; }
 
 echo; echo "re-verify: running L1 (static) + L2 (integration)"
 L1LOG="$RUNTIME_DIR/l1.log"; L2LOG="$RUNTIME_DIR/l2.log"

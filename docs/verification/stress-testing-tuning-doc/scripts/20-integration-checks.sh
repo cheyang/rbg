@@ -13,7 +13,7 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 cd "${REPO}"
 
 echo "=== L2a: build documented stress client entrypoint ==="
-go build ./test/stress/
+go build -o "${TMPDIR:-/tmp}/rbg-stress-client-doccheck" ./test/stress/
 echo "go build exit: $?"
 L2A=$?
 
