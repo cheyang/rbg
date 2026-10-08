@@ -1,0 +1,3 @@
+raw jsonpath output: ["--a=1","--b=2","--c=3"]
+lines after tr ',' '\n': 3
+F4 OK

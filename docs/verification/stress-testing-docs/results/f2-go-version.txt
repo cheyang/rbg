@@ -1,0 +1,11 @@
+test/stress has no own go.mod; root go.mod governs 'go run ./test/stress/'
+go.mod go directive: 1.25.0
+doc/best-practice/en/09-stress-testing-and-tuning.md go floor: >= 1.22
+MISMATCH: doc/best-practice/en/09-stress-testing-and-tuning.md says go >= 1.22, but go.mod requires go >= 1.25.0
+doc/best-practice/en/09-stress-testing-and-tuning-guide.md go floor: >= 1.22
+MISMATCH: doc/best-practice/en/09-stress-testing-and-tuning-guide.md says go >= 1.22, but go.mod requires go >= 1.25.0
+doc/best-practice/zh/09-stress-testing-and-tuning.md go floor: >= 1.22
+MISMATCH: doc/best-practice/zh/09-stress-testing-and-tuning.md says go >= 1.22, but go.mod requires go >= 1.25.0
+doc/best-practice/zh/09-stress-testing-and-tuning-guide.md go floor: >= 1.22
+MISMATCH: doc/best-practice/zh/09-stress-testing-and-tuning-guide.md says go >= 1.22, but go.mod requires go >= 1.25.0
+F2 REPRODUCED: docs understate the Go toolchain requirement

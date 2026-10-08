@@ -1,0 +1,3 @@
+F5 REPRODUCED (en): Summary references 'Operation 5 note', but Operation 5 has no
+note about the Update latency regression its own numbers show (P50 393->1871.5ms).
+F5 REPRODUCED (zh): Summary references '见操作五说明', but 操作五 contains no such note.

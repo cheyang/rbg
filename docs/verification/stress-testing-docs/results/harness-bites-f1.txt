@@ -1,0 +1,6 @@
+doc/install.md floor: >= 1.28
+doc/best-practice/en/09-stress-testing-and-tuning.md floor: >= 1.28
+doc/best-practice/en/09-stress-testing-and-tuning-guide.md floor: >= 1.28
+doc/best-practice/zh/09-stress-testing-and-tuning.md floor: >= 1.28
+doc/best-practice/zh/09-stress-testing-and-tuning-guide.md floor: >= 1.28
+F1 OK: version floors consistent

@@ -1,0 +1,7 @@
+test/stress has no own go.mod; root go.mod governs 'go run ./test/stress/'
+go.mod go directive: 1.25.0
+doc/best-practice/en/09-stress-testing-and-tuning.md go floor: >= 1.25
+doc/best-practice/en/09-stress-testing-and-tuning-guide.md go floor: >= 1.25
+doc/best-practice/zh/09-stress-testing-and-tuning.md go floor: >= 1.25
+doc/best-practice/zh/09-stress-testing-and-tuning-guide.md go floor: >= 1.25
+F2 OK: go floors consistent

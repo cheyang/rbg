@@ -1,0 +1,14 @@
+--- rendered controller args ---
+--metrics-bind-address=:8443
+--leader-elect
+--health-probe-bind-address=:8081
+--max-concurrent-reconciles=20
+--kube-api-qps=100
+--kube-api-burst=200
+--scheduler-name=scheduler-plugins
+--enable-deprecated-workload-types=true
+--enable-pprof=true
+--pprof-bind-address=:6060
+MISSING FROM doc/best-practice/en/09-stress-testing-and-tuning-guide.md EXPECTED ARGS: --enable-deprecated-workload-types=true
+MISSING FROM doc/best-practice/zh/09-stress-testing-and-tuning-guide.md EXPECTED ARGS: --enable-deprecated-workload-types=true
+F7 REPRODUCED: the chart renders args the guide's expected-output block omits

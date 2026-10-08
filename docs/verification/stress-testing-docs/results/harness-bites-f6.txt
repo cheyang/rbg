@@ -1,0 +1,2 @@
+skill ships in-repo: .claude/skills/stress-test/SKILL.md
+F6 OK

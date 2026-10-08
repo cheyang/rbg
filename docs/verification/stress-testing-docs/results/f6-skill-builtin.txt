@@ -1,0 +1,3 @@
+skill ships in-repo: .claude/skills/stress-test/SKILL.md
+F6 REPRODUCED: docs describe a repo-shipped skill as Claude Code 'built-in';
+readers without this repo checked out will not find /stress-test in Claude Code.

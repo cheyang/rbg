@@ -1,0 +1,12 @@
+--- pod-running block sets Ready=True? ---
+          lastTransitionTime: {{ $now | Quote }}
+        - type: Ready
+          status: "True"
+running_sets_ready=1
+--- pod-ready selector excludes Ready=True pods? ---
+      - key: '.status.conditions.[] | select( .type == "Ready" ) | .status'
+        operator: 'NotIn'
+        - type: Ready
+        - type: ContainersReady
+MECHANISM CONFIRMED: pod becomes Ready in pod-running (~500ms); pod-ready is unreachable.
+F3 OK

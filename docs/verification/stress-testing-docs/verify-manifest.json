@@ -1,0 +1,41 @@
+{
+  "topic": "stress-testing-docs",
+  "pr": "https://github.com/sgl-project/rbg/pull/390",
+  "harnessPaths": [
+    "docs/verification/stress-testing-docs"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Docs-only PR (doc: add doc best-practice/stress-testing-and-tuning). Premise validation is skipped per the docs-only carve-out; the implicit premise 'the repo lacks operator-facing stress-testing/tuning docs' is trivially true on base.",
+    "reportedComponent": "doc/best-practice",
+    "patchedComponent": "doc/best-practice (en+zh), 4 new markdown files",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "git ls-tree origin/main doc/best-practice/en/ shows no 09-stress-* files; PR adds them. All tooling the docs reference (test/stress, deploy/helm/rbgs, .claude/skills/stress-test) exists at the PR head.",
+    "match": ["premise-note"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "shell",
+      "cmd": "bash docs/verification/stress-testing-docs/checks/f1-k8s-version.sh && bash docs/verification/stress-testing-docs/checks/f2-go-version.sh && bash docs/verification/stress-testing-docs/checks/f3-kwok-ready-timing.sh && bash docs/verification/stress-testing-docs/checks/f5-operation5-note.sh && bash docs/verification/stress-testing-docs/checks/f6-skill-builtin.sh"
+    },
+    "integration": {
+      "kind": "shell",
+      "cmd": "bash docs/verification/stress-testing-docs/checks/f7-helm-args.sh && bash docs/verification/stress-testing-docs/checks/l2-markdownlint.sh"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit",        "match": ["f1-k8s-version"],       "note": "docs claim k8s >= 1.24; doc/install.md requires >= 1.28" },
+    { "id": "F2", "polarity": "contract", "layer": "unit",        "match": ["f2-go-version"],        "note": "docs claim go >= 1.22; root go.mod (which governs test/stress) says go 1.25.0" },
+    { "id": "F3", "polarity": "contract", "layer": "unit",        "match": ["f3-kwok-ready-timing"], "note": "docs claim ~1.5s to Ready; pod-running stage sets Ready=True at ~500ms and pod-ready is unreachable" },
+    { "id": "F5", "polarity": "contract", "layer": "unit",        "match": ["f5-operation5-note"],   "note": "guide summary references an 'Operation 5 note' about update regression that does not exist (en+zh)" },
+    { "id": "F6", "polarity": "contract", "layer": "unit",        "match": ["f6-skill-builtin"],     "note": "docs call /stress-test a 'Claude Code built-in Skill'; it ships in-repo at .claude/skills/stress-test/" },
+    { "id": "F7", "polarity": "contract", "layer": "integration", "match": ["f7-helm-args"],         "note": "rendered args include --enable-deprecated-workload-types=true, missing from guide's expected output" }
+  ],
+  "refuted": [
+    { "id": "F4", "hypothesis": "kubectl jsonpath args output is space-separated so `tr ',' '\\n'` is a no-op", "evidence": "results/f4-args-tr.txt: kubectl v1.37 JSON-marshals single slice results ([\"--a=1\",\"--b=2\"]); tr ',' splits exactly into the doc's shown format. Doc is accurate for modern kubectl." }
+  ],
+  "liveNote": "No live layer: docs-only PR. The full KWOK stress-test workflow itself (test/stress) is out of scope for this PR's verification."
+}
