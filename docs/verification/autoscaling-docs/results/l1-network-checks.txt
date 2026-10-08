@@ -1,0 +1,14 @@
+== B1: rbg-planner repository locations (2026-10-08T17:18:19Z)
+  sgl-project/rbg-planner -> NOT FOUND (HTTP 404 via gh api)
+  rolebasedgroup/rbg-planner -> EXISTS
+  docs reference github.com/sgl-project/rbg-planner in: doc/best-practice/en/08-configuring-autoscaling-guide.md:0 doc/best-practice/en/08-configuring-autoscaling.md:3 doc/best-practice/zh/08-configuring-autoscaling-guide.md:0 doc/best-practice/zh/08-configuring-autoscaling.md:3 
+
+== B2/B3: ghcr.io package existence (anonymous token probe + calibration)
+  ghcr.io/stefanprodan/charts/podinfo -> public (token granted); tags: {"name":"stefanprodan/charts/podinfo","tags":["6.1.0","6.1.1","sha256-2f0cd18e01ccf0b6f1fa78ce4be9efa6eb11b9e9f5336a85e9
+  ghcr.io/sgl-project/charts/rbg-planner -> DENIED (not publicly pullable / does not exist)
+  ghcr.io/sgl-project/rbg-profiler -> DENIED (not publicly pullable / does not exist)
+  ghcr.io/rolebasedgroup/rbg-profiler -> DENIED (not publicly pullable / does not exist)
+
+== upstream planner repo state
+  releases: 0 published releases
+  README quick start: helm install rbg-planner ./charts/rbg-planner -n rbg-system --create-namespace

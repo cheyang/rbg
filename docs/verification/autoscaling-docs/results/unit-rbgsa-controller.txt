@@ -1,0 +1,100 @@
+=== RUN   TestRoleBasedGroupReconciler_ReconcileScalingAdapter
+=== RUN   TestRoleBasedGroupReconciler_ReconcileScalingAdapter/Create_scaling_adapter_when_not_exists
+=== RUN   TestRoleBasedGroupReconciler_ReconcileScalingAdapter/Delete_scaling_adapter_when_disabled
+2026-10-09T01:21:40+08:00	INFO	delete scalingAdapter	{"scalingAdapter": "test-rbg-test-role"}
+--- PASS: TestRoleBasedGroupReconciler_ReconcileScalingAdapter (0.04s)
+    --- PASS: TestRoleBasedGroupReconciler_ReconcileScalingAdapter/Create_scaling_adapter_when_not_exists (0.04s)
+    --- PASS: TestRoleBasedGroupReconciler_ReconcileScalingAdapter/Delete_scaling_adapter_when_disabled (0.00s)
+=== RUN   TestRoleBasedGroupReconciler_ReconcileScalingAdapter_Labels
+=== RUN   TestRoleBasedGroupReconciler_ReconcileScalingAdapter_Labels/user_labels_merged_with_controller_labels
+=== RUN   TestRoleBasedGroupReconciler_ReconcileScalingAdapter_Labels/controller_labels_take_precedence_over_user_labels
+=== RUN   TestRoleBasedGroupReconciler_ReconcileScalingAdapter_Labels/no_user_labels_-_only_controller_labels
+--- PASS: TestRoleBasedGroupReconciler_ReconcileScalingAdapter_Labels (0.01s)
+    --- PASS: TestRoleBasedGroupReconciler_ReconcileScalingAdapter_Labels/user_labels_merged_with_controller_labels (0.00s)
+    --- PASS: TestRoleBasedGroupReconciler_ReconcileScalingAdapter_Labels/controller_labels_take_precedence_over_user_labels (0.00s)
+    --- PASS: TestRoleBasedGroupReconciler_ReconcileScalingAdapter_Labels/no_user_labels_-_only_controller_labels (0.00s)
+=== RUN   TestRoleBasedGroupReconciler_ReconcileScalingAdapter_LabelUpdate
+2026-10-09T01:21:40+08:00	INFO	updating scalingAdapter labels	{"scalingAdapter": "test-rbg-engine"}
+--- PASS: TestRoleBasedGroupReconciler_ReconcileScalingAdapter_LabelUpdate (0.00s)
+=== RUN   TestRoleBasedGroupReconciler_CleanupOrphanedScalingAdapters
+=== RUN   TestRoleBasedGroupReconciler_CleanupOrphanedScalingAdapters/Delete_orphaned_scaling_adapter
+2026-10-09T01:21:40+08:00	INFO	delete scalingAdapter	{"scalingAdapter": "test-rbg-scaling-role2-scaling-adapter"}
+=== RUN   TestRoleBasedGroupReconciler_CleanupOrphanedScalingAdapters/Keep_valid_scaling_adapter
+--- PASS: TestRoleBasedGroupReconciler_CleanupOrphanedScalingAdapters (0.00s)
+    --- PASS: TestRoleBasedGroupReconciler_CleanupOrphanedScalingAdapters/Delete_orphaned_scaling_adapter (0.00s)
+    --- PASS: TestRoleBasedGroupReconciler_CleanupOrphanedScalingAdapters/Keep_valid_scaling_adapter (0.00s)
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_Reconcile
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_Reconcile/adapter_bound_successfully
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_Reconcile/adapter_bound_without_roleStatus_initializes_readyReplicas_to_0
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_Reconcile/unbound_adapter_with_missing_role_requeues_after_10s
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_Reconcile/bounded_adapter_scales_role_replicas
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Start scaling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"desired replicas":3,"current replicas":1}
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Scale successfully","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"old replicas":1,"new replicas":3}
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_Reconcile/adapter_with_non-existent_RBG_should_not_return_error
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Skip to reconcile the scaling adapter which is not managed by RBG-controller","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"rbgScalingAdapterName":"test-adapter"}
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_Reconcile/mock_client_error
+--- PASS: TestRoleBasedGroupScalingAdapterReconciler_Reconcile (0.01s)
+    --- PASS: TestRoleBasedGroupScalingAdapterReconciler_Reconcile/adapter_bound_successfully (0.00s)
+    --- PASS: TestRoleBasedGroupScalingAdapterReconciler_Reconcile/adapter_bound_without_roleStatus_initializes_readyReplicas_to_0 (0.00s)
+    --- PASS: TestRoleBasedGroupScalingAdapterReconciler_Reconcile/unbound_adapter_with_missing_role_requeues_after_10s (0.00s)
+    --- PASS: TestRoleBasedGroupScalingAdapterReconciler_Reconcile/bounded_adapter_scales_role_replicas (0.00s)
+    --- PASS: TestRoleBasedGroupScalingAdapterReconciler_Reconcile/adapter_with_non-existent_RBG_should_not_return_error (0.00s)
+    --- PASS: TestRoleBasedGroupScalingAdapterReconciler_Reconcile/mock_client_error (0.00s)
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_GetTargetRbgFromAdapter
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_GetTargetRbgFromAdapter/adapter_with_valid_target_RBG_should_return_RBG
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_GetTargetRbgFromAdapter/adapter_with_invalid_target_RBG_should_return_error
+--- PASS: TestRoleBasedGroupScalingAdapterReconciler_GetTargetRbgFromAdapter (0.00s)
+    --- PASS: TestRoleBasedGroupScalingAdapterReconciler_GetTargetRbgFromAdapter/adapter_with_valid_target_RBG_should_return_RBG (0.00s)
+    --- PASS: TestRoleBasedGroupScalingAdapterReconciler_GetTargetRbgFromAdapter/adapter_with_invalid_target_RBG_should_return_error (0.00s)
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_UpdateAdapterOwnerReference
+2026-10-09T01:21:41+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroupScalingAdapter","metadata":{"name":"test-adapter","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"test-rbg","uid":"rbg-test-uid"}]},"spec":{"scaleTargetRef":{"name":"test-rbg","role":"worker"}}}}
+--- PASS: TestRoleBasedGroupScalingAdapterReconciler_UpdateAdapterOwnerReference (0.00s)
+=== RUN   TestRBGScalingAdapterPredicate
+2026-10-09T01:21:41+08:00	INFO	enqueue: rbg scalingAdapter create event	{"rbg": {"name":"test"}}
+2026-10-09T01:21:41+08:00	INFO	enqueue: rbg scalingAdapter update event	{"rbg": {"name":"test"}}
+2026-10-09T01:21:41+08:00	INFO	enqueue: rbg scalingAdapter delete event	{"rbg": {"name":"test"}}
+--- PASS: TestRBGScalingAdapterPredicate (0.00s)
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync/sync_readyReplicas_from_nil_to_3
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync/update_readyReplicas_from_1_to_3
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync/no_update_when_readyReplicas_already_3
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync/roleStatus_not_found_skips_readyReplicas_update
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+=== RUN   TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync/patch_error_on_readyReplicas_sync_returns_error
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"error","ts":"2026-10-09T01:21:41+08:00","msg":"Using server side apply to patch object status","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"error":"simulated patch error","stacktrace":"sigs.k8s.io/rbgs/pkg/utils.PatchObjectApplyConfiguration\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/pkg/utils/utils.go:93\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupScalingAdapterReconciler).patchAdapterStatus\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupscalingadapter_controller.go:337\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupScalingAdapterReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupscalingadapter_controller.go:204\nsigs.k8s.io/rbgs/internal/controller/workloads.TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync.func1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupscalingadapter_controller_test.go:640\ntesting.tRunner\n\t/usr/local/go/src/testing/testing.go:2193"}
+{"level":"error","ts":"2026-10-09T01:21:41+08:00","msg":"Failed to update readyReplicas","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"error":"simulated patch error","stacktrace":"sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupScalingAdapterReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupscalingadapter_controller.go:212\nsigs.k8s.io/rbgs/internal/controller/workloads.TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync.func1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupscalingadapter_controller_test.go:640\ntesting.tRunner\n\t/usr/local/go/src/testing/testing.go:2193"}
+--- PASS: TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync (0.01s)
+    --- PASS: TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync/sync_readyReplicas_from_nil_to_3 (0.00s)
+    --- PASS: TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync/update_readyReplicas_from_1_to_3 (0.00s)
+    --- PASS: TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync/no_update_when_readyReplicas_already_3 (0.00s)
+    --- PASS: TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync/roleStatus_not_found_skips_readyReplicas_update (0.00s)
+    --- PASS: TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync/patch_error_on_readyReplicas_sync_returns_error (0.00s)
+=== RUN   TestReadyReplicasSyncWithScale
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Start scaling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"desired replicas":5,"current replicas":1}
+{"level":"info","ts":"2026-10-09T01:21:41+08:00","msg":"Scale successfully","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"old replicas":1,"new replicas":5}
+--- PASS: TestReadyReplicasSyncWithScale (0.00s)
+=== RUN   TestToRoleBasedGroupScalingAdapterStatusPatchApplyConfiguration_ExcludesSpec
+--- PASS: TestToRoleBasedGroupScalingAdapterStatusPatchApplyConfiguration_ExcludesSpec (0.00s)
+=== RUN   TestMapRBGToScalingAdapters
+=== RUN   TestMapRBGToScalingAdapters/maps_RBG_to_matching_adapters
+=== RUN   TestMapRBGToScalingAdapters/returns_nil_for_non-RBG_object
+=== RUN   TestMapRBGToScalingAdapters/returns_nil_on_List_error
+{"level":"error","ts":"2026-10-09T01:21:41+08:00","msg":"failed to list scaling adapters for RBG","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"error":"simulated list error","stacktrace":"sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupScalingAdapterReconciler).mapRBGToScalingAdapters\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupscalingadapter_controller.go:399\nsigs.k8s.io/rbgs/internal/controller/workloads.TestMapRBGToScalingAdapters.func5\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupscalingadapter_controller_test.go:1022\ntesting.tRunner\n\t/usr/local/go/src/testing/testing.go:2193"}
+=== RUN   TestMapRBGToScalingAdapters/returns_nil_when_no_adapters_exist
+--- PASS: TestMapRBGToScalingAdapters (0.00s)
+    --- PASS: TestMapRBGToScalingAdapters/maps_RBG_to_matching_adapters (0.00s)
+    --- PASS: TestMapRBGToScalingAdapters/returns_nil_for_non-RBG_object (0.00s)
+    --- PASS: TestMapRBGToScalingAdapters/returns_nil_on_List_error (0.00s)
+    --- PASS: TestMapRBGToScalingAdapters/returns_nil_when_no_adapters_exist (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.090s

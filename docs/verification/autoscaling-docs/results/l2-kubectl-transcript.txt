@@ -1,0 +1,110 @@
+$ kubectl get ns default
+  rc=<nil>
+  out: NAME      STATUS   AGE
+default   Active   2s
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-1522111538.yaml
+  rc=<nil>
+  out: rolebasedgroup.workloads.x-k8s.io/scaling-demo created
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-2692405982.yaml
+  rc=<nil>
+  out: rolebasedgroup.workloads.x-k8s.io/hpa-demo created
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-3335620325.yaml
+  rc=<nil>
+  out: horizontalpodautoscaler.autoscaling/hpa-demo-backend created
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-3418997070.yaml
+  rc=<nil>
+  out: namespace/monitoring created
+serviceaccount/prometheus created
+clusterrole.rbac.authorization.k8s.io/prometheus created
+clusterrolebinding.rbac.authorization.k8s.io/prometheus created
+configmap/prometheus-config created
+deployment.apps/prometheus created
+service/prometheus created
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-3736942942.yaml
+  rc=<nil>
+  out: rolebasedgroup.workloads.x-k8s.io/keda-demo created
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-888029617.yaml
+  rc=<nil>
+  out: scaledobject.keda.sh/keda-demo-backend created
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-696766687.yaml
+  rc=<nil>
+  out: rolebasedgroup.workloads.x-k8s.io/pd-autoscaler-demo created
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-2647410453.yaml
+  rc=<nil>
+  out: autoscaler.inference-extension.rolebasedgroup.io/pd-autoscaler-demo created
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-3392281145.yaml
+  rc=<nil>
+  out: rolebasedgroup.workloads.x-k8s.io/inference-cluster created
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-3605587546.yaml
+  rc=<nil>
+  out: horizontalpodautoscaler.autoscaling/prefill-hpa created
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-4118514307.yaml
+  rc=<nil>
+  out: horizontalpodautoscaler.autoscaling/hpa-demo-backend configured
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-2902970431.yaml
+  rc=<nil>
+  out: scaledobject.keda.sh/keda-demo-backend configured
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-2956286807.yaml
+  rc=<nil>
+  out: rolebasedgroup.workloads.x-k8s.io/pd-inference created
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-928545582.yaml
+  rc=<nil>
+  out: autoscaler.inference-extension.rolebasedgroup.io/pd-inference created
+  err: 
+$ kubectl get ns default
+  rc=<nil>
+  out: NAME      STATUS   AGE
+default   Active   6s
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-3745240859.yaml
+  rc=<nil>
+  out: rolebasedgroupscalingadapter.workloads.x-k8s.io/scaling-demo-backend created
+  err: 
+$ kubectl scale rbgsa scaling-demo-backend --replicas=4
+  rc=<nil>
+  out: rolebasedgroupscalingadapter.workloads.x-k8s.io/scaling-demo-backend scaled
+  err: 
+$ kubectl get rbgsa scaling-demo-backend -o jsonpath={.spec.replicas}
+  rc=<nil>
+  out: 4
+  err: 
+$ kubectl get --raw /apis/workloads.x-k8s.io/v1alpha2/namespaces/default/rolebasedgroupscalingadapters/scaling-demo-backend/scale
+  rc=<nil>
+  out: {"kind":"Scale","apiVersion":"autoscaling/v1","metadata":{"name":"scaling-demo-backend","namespace":"default","uid":"32cf908f-056c-421e-b33a-927c08a7ee88","resourceVersion":"267","creationTimestamp":"2026-10-08T17:21:30Z"},"spec":{"replicas":4},"status":{"replicas":0}}
+  err: 
+$ kubectl get ns default
+  rc=<nil>
+  out: NAME      STATUS   AGE
+default   Active   6s
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-222132843.yaml
+  rc=exit status 1
+  out: 
+  err: Error from server (BadRequest): error when creating "/tmp/pr389-manifest-222132843.yaml": RoleBasedGroup in version "v1alpha2" cannot be handled as a RoleBasedGroup: strict decoding error: unknown field "spec.bogusTopLevel"
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-3737576547.yaml
+  rc=exit status 1
+  out: 
+  err: Error from server (BadRequest): error when creating "/tmp/pr389-manifest-3737576547.yaml": AutoScaler in version "v1alpha1" cannot be handled as a AutoScaler: strict decoding error: unknown field "spec.implementation.DynamoPlanner.bogusKnob"
+$ kubectl get ns default
+  rc=<nil>
+  out: NAME      STATUS   AGE
+default   Active   6s
+  err: 
+$ kubectl apply --validate=strict -f /tmp/pr389-manifest-263412560.yaml
+  rc=exit status 1
+  out: 
+  err: The AutoScaler "canary-dynamo" is invalid: spec.implementation.DynamoPlanner.metricsEndpoint.metricSource: Unsupported value: "dynamo": supported values: "sglang", "vllm", "patio"

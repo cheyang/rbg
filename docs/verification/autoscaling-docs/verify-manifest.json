@@ -1,0 +1,49 @@
+{
+  "topic": "autoscaling-docs",
+  "pr": "https://github.com/sgl-project/rbg/pull/389",
+  "harnessPaths": [
+    "docs/verification/autoscaling-docs"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "PR title: 'doc: add doc best-practice/configuring-autoscaling' — no PR body, no linked issue (docs-only PR)",
+    "reportedComponent": "documentation (doc/best-practice/{en,zh}/08-configuring-autoscaling*)",
+    "patchedComponent": "documentation only; no production code touched",
+    "componentMatch": true,
+    "runsAgainst": "n/a",
+    "layer": "n/a",
+    "verdict": "skipped-docs-only",
+    "evidence": "docs-only PR: premise validation carved out by the review rubric; recorded in README.md 'Problem premise (P0)'"
+  },
+  "layers": {
+    "unit": {
+      "kind": "python",
+      "cmd": "python3 -I docs/verification/autoscaling-docs/scripts/run_l1_checks.py"
+    },
+    "unit-live": {
+      "kind": "shell",
+      "cmd": "bash docs/verification/autoscaling-docs/scripts/run_l1_network_checks.sh"
+    },
+    "unit-behavior": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'ScalingAdapter|ReadyReplicasSyncWithScale|RBGScalingAdapterPredicate' -count=1 -v"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=$HOME/.local/share/kubebuilder-envtest/k8s/1.36.2-linux-amd64 go test ./docs/verification/autoscaling-docs/harness/ -v -timeout 10m"
+    }
+  },
+  "findings": [
+    { "id": "B1", "polarity": "canary", "layer": "unit",   "match": ["B1"] },
+    { "id": "B2", "polarity": "canary", "layer": "unit",   "match": ["B2"] },
+    { "id": "B3", "polarity": "canary", "layer": "unit",   "match": ["B3"] },
+    { "id": "B4", "polarity": "canary", "layer": "unit",   "match": ["B4"] },
+    { "id": "B5", "polarity": "canary", "layer": "unit",   "match": ["B5"] },
+    { "id": "B6", "polarity": "canary", "layer": "unit",   "match": ["B6"] },
+    { "id": "B7", "polarity": "canary", "layer": "unit",   "match": ["B7"] },
+    { "id": "B8", "polarity": "canary", "layer": "unit",   "match": ["B8", "TestCanaryMetricSourceDynamoRejected"] },
+    { "id": "N1", "polarity": "canary", "layer": "unit",   "match": ["N1"] }
+  ],
+  "contracts": ["C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "C11", "C12"],
+  "liveNote": "L3 (real cluster with controller/KEDA/planner) not run this round: no KUBECONFIG provided and no reachable cluster found by the probe. Cheapest live check if run later: Operation 1 (kubectl scale rbgsa -> pod count + RBG spec.replicas sync)."
+}

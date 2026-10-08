@@ -1,0 +1,29 @@
+=== RUN   TestDocManifestsAdmitted
+    envtest_admit_test.go:219: guide-heredoc-01(RoleBasedGroup): admitted
+    envtest_admit_test.go:219: guide-heredoc-02(RoleBasedGroup): admitted
+    envtest_admit_test.go:219: guide-heredoc-03(HorizontalPodAutoscaler): admitted
+    envtest_admit_test.go:219: guide-heredoc-04(Namespace): admitted
+    envtest_admit_test.go:219: guide-heredoc-05(RoleBasedGroup): admitted
+    envtest_admit_test.go:219: guide-heredoc-06(ScaledObject): admitted
+    envtest_admit_test.go:219: guide-heredoc-07(RoleBasedGroup): admitted
+    envtest_admit_test.go:219: guide-heredoc-08(AutoScaler): admitted
+    envtest_admit_test.go:228: concept-yaml-01(RoleBasedGroup): admitted
+    envtest_admit_test.go:228: concept-yaml-02(HorizontalPodAutoscaler): admitted
+    envtest_admit_test.go:228: concept-yaml-03(HorizontalPodAutoscaler): admitted
+    envtest_admit_test.go:228: concept-yaml-04(ScaledObject): admitted
+    envtest_admit_test.go:228: concept-yaml-05(RoleBasedGroup): admitted
+    envtest_admit_test.go:228: concept-yaml-06(AutoScaler): admitted
+    envtest_admit_test.go:235: applied 14 doc manifests against real CRDs
+--- PASS: TestDocManifestsAdmitted (3.44s)
+=== RUN   TestRBGSAScaleSubresource
+    envtest_admit_test.go:280: kubectl scale rbgsa --replicas=4 -> spec.replicas=4, raw /scale reachable (doc Op1 Step3 mechanics OK)
+--- PASS: TestRBGSAScaleSubresource (0.17s)
+=== RUN   TestHarnessBitesUnknownFields
+    envtest_admit_test.go:314: RBG unknown top-level spec field rejected (expected): exit status 1
+    envtest_admit_test.go:340: AutoScaler unknown field rejected (expected): exit status 1
+--- PASS: TestHarnessBitesUnknownFields (0.12s)
+=== RUN   TestCanaryMetricSourceDynamoRejected
+    envtest_admit_test.go:381: canary B8 confirmed: metricSource=dynamo rejected by real CRD: exit status 1
+--- PASS: TestCanaryMetricSourceDynamoRejected (0.05s)
+PASS
+ok  	sigs.k8s.io/rbgs/docs/verification/autoscaling-docs/harness	7.219s

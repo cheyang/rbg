@@ -1,0 +1,47 @@
+[PASS] C1 (contract) doc: roles[].scalingAdapter.{enable,labels} exist on v1alpha2 RBG CRD
+        evidence: enable: boolean (default False), labels present: True
+[PASS] C2 (contract) doc: roles[].standalonePattern.template exists on v1alpha2 RBG CRD
+        evidence: standalonePattern properties: ['template', 'templateRef']
+[PASS] C3 (contract) doc: RBGSA v1alpha2 is served+storage with /scale subresource and shortname 'rbgsa'
+        evidence: served=True storage=True scale={'labelSelectorPath': '.status.selector', 'specReplicasPath': '.spec.replicas', 'statusReplicasPath': '.status.replicas'}
+[PASS] C4 (contract) doc: RBGSA spec.scaleTargetRef.{name,role} and status.phase exist
+        evidence: scaleTargetRef: ['name', 'role']
+[PASS] C5 (contract) doc: pod labels rbg.workloads.x-k8s.io/{group-name,role-name} exist as constants
+        evidence: RBGPrefix label keys found: True
+[PASS] C6 (contract) doc: RBGSA status.phase 'Bound' is a real phase set by the controller
+        evidence: constants.go defines AdapterPhaseBound='Bound'; controller references it
+[PASS] C7 (contract) doc: kubectl scale rbgsa -> RBG spec.roles[].replicas sync (Operation 1 Step 3)
+        evidence: updateRoleReplicas() writes rbg.Spec.Roles[i].Replicas via r.client.Update
+[PASS] C8 (contract) doc: RBGSA auto-cleaned when role removed / adapter disabled
+        evidence: rolebasedgroup_controller.go deletes adapters in both cases
+[PASS] C9 (contract) doc: every spec path in the concept-doc AutoScaler manifest exists on the real planner CRD
+        evidence: missing paths: none
+[PASS] C10 (contract) doc: sglang v0.5.9 flags --model-path/--tp-size/--enable-metrics/--disaggregation-mode exist
+        evidence: all four args present in v0.5.9 server_args.py
+[PASS] C11 (contract) doc: ScaledObject fields (scaleTargetRef, min/maxReplicaCount, pollingInterval, triggers) on real KEDA CRD
+        evidence: spec properties: ['advanced', 'cooldownPeriod', 'fallback', 'idleReplicaCount', 'initialCooldownPeriod', 'maxReplicaCount', 'minReplicaCount', 'pollingInterval', 'scaleTargetRef', 'triggers']
+[PASS] C12 (contract) doc: scalingInterval default 180; planner scales 'via RBGSA or direct RBG Patch'
+        evidence: CRD default=180; connector has both RBGSA scale + RBG patch fallback
+[PASS] B1 (canary) DEFECT: docs link github.com/sgl-project/rbg-planner (404) instead of rolebasedgroup/rbg-planner
+        evidence: 6 occurrences in PR docs; this repo's own README links rolebasedgroup/rbg-planner
+[PASS] B2 (canary) DEFECT: install cmd uses oci://ghcr.io/sgl-project/charts/rbg-planner; upstream installs from local chart path, no OCI chart documented
+        evidence: 4 occurrences in PR docs; planner README quick start: helm install rbg-planner ./charts/rbg-planner
+[PASS] B3 (canary) DEFECT: profiling.image ghcr.io/sgl-project/rbg-profiler contradicts upstream default ghcr.io/rolebasedgroup/rbg-profiler
+        evidence: 4 occurrences in PR docs; upstream chart values: ['  image: ghcr.io/rolebasedgroup/rbg-profiler:latest']
+[PASS] B4 (canary) DEFECT: doc says metricsEndpoint.port = 'Inference engine metrics port'; CRD says planner's OWN metrics exposition port (default 9091)
+        evidence: CRD description: "Port is the port for planner's own Prometheus metrics exposition."; controller maps it to PLANNER_PROMETHEUS_PORT; planner.py start_http_server(self)=True; doc mislabels=True
+[PASS] B5 (canary) DEFECT: Operation 4 never sets prometheus.endpoint and pods lack prometheus.io/scrape annotations -> planner has no metrics source
+        evidence: helm install line(s) set prometheus.endpoint: False; op4 manifest has scrape annotations: False; chart default endpoint: ['# Prometheus endpoint for planner metrics collection', 'endpoint: http://prometheus-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090']
+[PASS] B6 (canary) DEFECT: 'kubectl get pods -l app=rbg-planner' matches nothing; planner pods only carry app.kubernetes.io/name + app.kubernetes.io/instance
+        evidence: operator deployment labels contain app.kubernetes.io/name=True, plain 'app' label=False; doc uses '-l app=rbg-planner': True
+[PASS] B7 (canary) DEFECT: guide says AutoScaler phase is 'Ready or Profiling'; real phase enum has no Profiling
+        evidence: planner phase enum: ['arima;constant;prophet', 'sglang;vllm;patio', 'Pending;Initializing;Ready;Failed']; doc claims Profiling phase: True
+[PASS] B8 (canary) DEFECT: doc comment says metricSource: 'sglang | vllm | dynamo'; CRD enum is sglang|vllm|patio (dynamo invalid, patio missing)
+        evidence: real enum: ['sglang', 'vllm', 'patio']; doc claims dynamo: True
+[PASS] N1 (nit) NIT: KEDA demo queries sglang_num_queue_requests; real sglang v0.5.9 gauge is sglang:num_queue_reqs (sim-only name, self-consistent within the demo)
+        evidence: real gauge: sglang:num_queue_reqs; doc query uses simulated name: True
+
+==== SUMMARY ====
+contract (doc correct)      : 12/12 PASS
+canary (defect confirmed)   : 8/8 PASS
+nit   (mismatch present)    : 1/1 PASS

@@ -1,0 +1,22 @@
+Harness-bites check (review-finding-verifier Step 4) — 2026-10-09
+
+Temporary fix applied to all four doc files (sed):
+  - links github.com/sgl-project/rbg-planner      -> github.com/rolebasedgroup/rbg-planner
+  - helm oci://ghcr.io/sgl-project/charts/rbg-planner -> ./charts/rbg-planner (+ --set prometheus.endpoint)
+  - profiler image ghcr.io/sgl-project/rbg-profiler -> ghcr.io/rolebasedgroup/rbg-profiler
+  - '-l app=rbg-planner'                          -> '-l app.kubernetes.io/name=rbg-planner'
+  - phase 'Ready or Profiling'                    -> 'Ready or Initializing'
+  - metricSource comment 'sglang | vllm | dynamo' -> 'sglang | vllm | patio'
+  - metricsEndpoint.port 'Inference engine metrics port' -> 'Planner own metrics port'
+  - KEDA query sglang_num_queue_requests          -> sglang:num_queue_reqs
+
+Result: 8/8 canaries + 1 nit FLIPPED to FAIL (defect gone), 12/12 contract
+checks stayed PASS. The harness detects both the presence and the absence of
+every defect it claims.
+
+Fix then reverted: `git checkout -- doc/best-practice/`; production diff vs
+origin/pr/389 is 0 lines. Re-confirmed after revert:
+==== SUMMARY ====
+contract (doc correct)      : 12/12 PASS
+canary (defect confirmed)   : 8/8 PASS
+nit   (mismatch present)    : 1/1 PASS
