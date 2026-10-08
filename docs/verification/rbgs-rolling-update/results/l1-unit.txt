@@ -1,0 +1,11 @@
+--- SKIP: TestVerify_Envtest_RollingAgainstRealAPIServer (0.00s)
+--- PASS: TestVerify_P0_StaticPathUpdatesAllChildrenInOnePass (0.04s)
+--- PASS: TestVerify_RollingRecreatePacedAndConverges (0.02s)
+--- PASS: TestVerify_RollingSurgeBacksZeroMaxUnavailable (0.01s)
+--- PASS: TestVerify_RollingPartitionHoldsBackAndRebuildsAtCurrent (0.01s)
+--- PASS: TestVerify_RollingTemplateFlipFlopConverges (0.01s)
+--- PASS: TestVerify_RollingReplicasOnlyChangeScalesInPlace (0.01s)
+--- PASS: TestVerify_RollingScaleDownDuringRollout (0.01s)
+--- PASS: TestVerify_ControllerClampsPercentZeroZero_Canary (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.123s

@@ -1,0 +1,10 @@
+== Perturbation 1: budget gate removed from deleteGroupSetOutdatedChildren ==
+--- FAIL: TestVerify_RollingRecreatePacedAndConverges (0.05s)
+        	Messages:   	step 3: deleted 3 ready groups with ready=3 replicas=3 maxUnavailable=1
+        	Messages:   	step 3: ready groups dropped below replicas-maxUnavailable
+        	Messages:   	step 4: ready groups dropped below replicas-maxUnavailable
+== Perturbation 2: partition rebuild-at-current removed ==
+--- FAIL: TestVerify_RollingPartitionHoldsBackAndRebuildsAtCurrent (0.05s)
+        	Messages:   	a group rebuilt below the partition must come back on the previous template
+FAIL
+== production diff after revert (must be empty) ==

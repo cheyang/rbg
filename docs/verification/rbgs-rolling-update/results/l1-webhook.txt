@@ -1,0 +1,4 @@
+--- PASS: TestVerify_WebhookRejectsIntegerZeroZero (0.00s)
+--- PASS: TestVerify_WebhookAcceptsPercentZeroZero_Canary (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.008s

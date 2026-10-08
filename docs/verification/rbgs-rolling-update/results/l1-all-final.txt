@@ -1,0 +1,29 @@
+=== RUN   TestVerify_Envtest_RollingAgainstRealAPIServer
+--- SKIP: TestVerify_Envtest_RollingAgainstRealAPIServer (0.00s)
+=== RUN   TestVerify_P0_StaticPathUpdatesAllChildrenInOnePass
+--- PASS: TestVerify_P0_StaticPathUpdatesAllChildrenInOnePass (0.04s)
+=== RUN   TestVerify_RollingRecreatePacedAndConverges
+--- PASS: TestVerify_RollingRecreatePacedAndConverges (0.02s)
+=== RUN   TestVerify_RollingSurgeBacksZeroMaxUnavailable
+--- PASS: TestVerify_RollingSurgeBacksZeroMaxUnavailable (0.01s)
+=== RUN   TestVerify_RollingPartitionHoldsBackAndRebuildsAtCurrent
+--- PASS: TestVerify_RollingPartitionHoldsBackAndRebuildsAtCurrent (0.01s)
+=== RUN   TestVerify_RollingTemplateFlipFlopConverges
+--- PASS: TestVerify_RollingTemplateFlipFlopConverges (0.01s)
+=== RUN   TestVerify_RollingReplicasOnlyChangeScalesInPlace
+--- PASS: TestVerify_RollingReplicasOnlyChangeScalesInPlace (0.01s)
+=== RUN   TestVerify_RollingScaleDownDuringRollout
+--- PASS: TestVerify_RollingScaleDownDuringRollout (0.01s)
+=== RUN   TestVerify_ControllerClampsPercentZeroZero_Canary
+--- PASS: TestVerify_ControllerClampsPercentZeroZero_Canary (0.00s)
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.127s
+=== RUN   TestVerify_ConversionPreservesRolloutStrategy
+--- FAIL: TestVerify_ConversionPreservesRolloutStrategy (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.012s
+=== RUN   TestVerify_WebhookRejectsIntegerZeroZero
+--- PASS: TestVerify_WebhookRejectsIntegerZeroZero (0.00s)
+=== RUN   TestVerify_WebhookAcceptsPercentZeroZero_Canary
+--- PASS: TestVerify_WebhookAcceptsPercentZeroZero_Canary (0.00s)
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.013s
+FAIL
