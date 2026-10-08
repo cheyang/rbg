@@ -1,0 +1,39 @@
+{
+  "topic": "pr474-rbgs-rolling-update",
+  "pr": "https://github.com/sgl-project/rbg/pull/474",
+  "harnessPaths": [
+    "docs/verification/pr474-rbgs-rolling-update",
+    "internal/controller/workloads/rolebasedgroupset_verify_test.go",
+    "api/workloads/v1alpha2/rolebasedgroupset_rollout_verify_test.go",
+    "test/envtest/testcase/rbg/rbgs_rolling_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "\"when the template changes, every outdated child is updated within a single reconcile, with no ordering and no availability gating. For a set of N groups that means all N groups can restart at once\"",
+    "reportedComponent": "RoleBasedGroupSet controller static propagation path (internal/controller/workloads/rolebasedgroupset_controller.go)",
+    "patchedComponent": "same file plus rolebasedgroupset_rolling.go / rolebasedgroupset_revision.go",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "On base 0821cb5b one Reconcile call updated all 3 outdated children in one pass ('Updating existing RoleBasedGroups count: 3'); results/premise-base.log"
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ ./api/workloads/v1alpha2/ -run 'TestVerifyPR474' -count=1 -v"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=$HOME/envtest-assets/k8s/1.37.0-linux-amd64 go test ./test/envtest/testcase/rbg/ -count=1 -ginkgo.focus 'PR #474' -timeout 20m"
+    }
+  },
+  "findings": [
+    { "id": "P0",  "polarity": "canary",   "layer": "unit",        "match": ["TestVerifyPR474_Premise_StaticPathUpdatesAllChildrenAtOnce"], "note": "runs on base too; documents the un-paced static path" },
+    { "id": "F2",  "polarity": "canary",   "layer": "unit",        "match": ["TestVerifyPR474_Webhook_ZeroBudgetIsSpellingSensitive", "TestVerifyPR474_Resolver_PercentZeroBecomesOne"], "note": "author-pinned intended behavior; documents the spelling asymmetry" },
+    { "id": "F3",  "polarity": "canary",   "layer": "unit",        "match": ["TestVerifyPR474_StaticPathWipesChildRoleTemplates"], "note": "documents the static-path full-spec overwrite" },
+    { "id": "POS1", "polarity": "contract", "layer": "unit",       "match": ["TestVerifyPR474_Rollout_PacedRecreate", "TestVerifyPR474_Rollout_ConvergesUnderBudget", "TestVerifyPR474_Rollout_MigrationNoRecreate"] },
+    { "id": "POS2", "polarity": "contract", "layer": "integration", "match": ["I1: recreates one group at a time", "I2: enabling rolloutStrategy over matching legacy", "I3: maxUnavailable=0 with surge"] }
+  ],
+  "liveNote": "L3 (live layer) was NOT run: the debate pipeline for this round mandates unit + integration only. A live cluster IS reachable on this host (2 aliyun nodes, kubectl get no succeeds); if L3 is wanted later, run the PR's own e2e suite (make test-e2e) which covers the same paced-recreate/surge/partition scenarios on kind."
+}

@@ -1,0 +1,12 @@
+# Harness-bites check for the zero-budget spelling gap, 2026-10-08T18:48:33Z
+# The author-pinned behavior is '0%/0% accepted, coerced to maxUnavailable=1 at runtime'.
+# Proposed alternative: reject both spellings symmetrically. Applied temporarily, then reverted.
+
+== step 1: proposed webhook fix applied (both spellings rejected) ==
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.009s
+FAIL
+
+== step 2: fix reverted (stock PR head) — the canary is green again, and the author's own zero-percent case still passes ==
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.071s
+
+(production diff empty)
