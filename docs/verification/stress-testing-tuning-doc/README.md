@@ -110,6 +110,12 @@ flipped to PASS). Reverted with `git checkout -- doc/best-practice/`; `git diff
 origin/pr/390 -- doc/` is empty — the PR's files are untouched on this branch.
 Recorded in `results/harness-bites.log`.
 
+`scripts/re-verify.sh` was also smoke-run end-to-end (auto-resolving the PR head
+from the manifest): F1/F3 report STILL-BROKEN, guard checks report FIXED —
+`results/reverify/smoke-run.log`. In re-verify output the `FX*`/`F3RES` rows are
+**guard checks**: FIXED there means "still consistent", not that a defect was
+repaired.
+
 ## Live run notes
 
 Not run this round (debate setup: unit + integration layers only). Cluster probe

@@ -1,0 +1,19 @@
+re-verify: fixed-ref = b38e9d8236d4f2481c16a7a445d57d72eaac8ee1
+re-verify: last-reviewed = b38e9d82  (delta = b38e9d82..b38e9d8236d4f2481c16a7a445d57d72eaac8ee1)
+
+re-verify: running L1 (static) + L2 (integration)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+F1     contract  unit         STILL-BROKEN   pass=0 fail=1
+F3     contract  unit         STILL-BROKEN   pass=0 fail=1
+FX1    contract  unit         FIXED          pass=1 fail=0
+FX2    contract  unit         FIXED          pass=1 fail=0
+FX3    contract  unit         FIXED          pass=1 fail=0
+F3RES  contract  unit         FIXED          pass=1 fail=0
+
+Raw output: /home/ecs-user/.pr-debate/homes/claude/wt-pr390-claude/docs/verification/stress-testing-tuning-doc/scripts/../results/reverify/
+Review delta this round: b38e9d82..b38e9d8236d4f2481c16a7a445d57d72eaac8ee1
+After reviewing that delta, advance the marker:
+  echo b38e9d8236d4f2481c16a7a445d57d72eaac8ee1 > /home/ecs-user/.pr-debate/homes/claude/wt-pr390-claude/docs/verification/stress-testing-tuning-doc/scripts/../.last-reviewed && git add /home/ecs-user/.pr-debate/homes/claude/wt-pr390-claude/docs/verification/stress-testing-tuning-doc/scripts/../.last-reviewed && git commit -m 'review: advance last-reviewed'
+RESULT: not all findings fixed.
