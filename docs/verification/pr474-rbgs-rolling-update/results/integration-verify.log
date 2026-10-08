@@ -1,0 +1,48 @@
+# Integration layer (envtest, K8s 1.37.0 assets) — PR head 44241903, 2026-10-08T18:47:43Z
+# KUBEBUILDER_ASSETS=... go test ./test/envtest/testcase/rbg/ -count=1 -ginkgo.focus 'PR #474' -timeout 20m -v
+=== RUN   TestRBGController
+Running Suite: RoleBasedGroup Controller Suite - /home/ecs-user/.pr-debate/homes/claude/wt-pr474-claude-review/test/envtest/testcase/rbg
+========================================================================================================================================
+Random Seed: [1m1791485264[0m
+
+Will run [1m3[0m of [1m16[0m specs
+I1009 02:47:50.355152  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485267974873037/paced-0-worker" elapsedTime="5.417908ms"
+I1009 02:47:50.358302  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485267974873037/paced-0-worker" elapsedTime="3.04379ms"
+I1009 02:47:50.366828  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485267974873037/paced-1-worker" elapsedTime="3.308169ms"
+I1009 02:47:50.369556  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485267974873037/paced-1-worker" elapsedTime="2.668518ms"
+I1009 02:47:50.376050  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485267974873037/paced-2-worker" elapsedTime="3.32306ms"
+I1009 02:47:50.378626  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485267974873037/paced-2-worker" elapsedTime="2.42409ms"
+I1009 02:47:50.849744  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485267974873037/paced-2-worker" elapsedTime="3.408542ms"
+I1009 02:47:50.852512  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485267974873037/paced-2-worker" elapsedTime="2.570915ms"
+I1009 02:47:51.173191  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485267974873037/paced-1-worker" elapsedTime="3.788345ms"
+I1009 02:47:51.176451  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485267974873037/paced-1-worker" elapsedTime="2.905545ms"
+I1009 02:47:51.303437  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485267974873037/paced-0-worker" elapsedTime="3.326609ms"
+I1009 02:47:51.306112  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485267974873037/paced-0-worker" elapsedTime="2.468841ms"
+[38;5;10m•[0mI1009 02:47:54.534830  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485274517158510/migrate-0-worker" elapsedTime="3.397692ms"
+I1009 02:47:54.537359  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485274517158510/migrate-0-worker" elapsedTime="2.461451ms"
+I1009 02:47:54.543562  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485274517158510/migrate-1-worker" elapsedTime="3.224876ms"
+I1009 02:47:54.546295  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485274517158510/migrate-1-worker" elapsedTime="2.506953ms"
+I1009 02:47:54.552302  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485274517158510/migrate-2-worker" elapsedTime="3.173665ms"
+I1009 02:47:54.554975  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485274517158510/migrate-2-worker" elapsedTime="2.503263ms"
+[38;5;10m•[0mI1009 02:48:02.785394  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485282757679481/surge-0-worker" elapsedTime="3.522976ms"
+I1009 02:48:02.788176  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485282757679481/surge-0-worker" elapsedTime="2.597676ms"
+I1009 02:48:02.794650  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485282757679481/surge-1-worker" elapsedTime="3.491495ms"
+I1009 02:48:02.797228  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485282757679481/surge-1-worker" elapsedTime="2.42479ms"
+I1009 02:48:02.802787  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485282757679481/surge-2-worker" elapsedTime="3.107562ms"
+I1009 02:48:02.805461  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485282757679481/surge-2-worker" elapsedTime="2.486952ms"
+I1009 02:48:03.116210  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485282757679481/surge-3-worker" elapsedTime="3.519736ms"
+I1009 02:48:03.118572  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485282757679481/surge-3-worker" elapsedTime="2.302906ms"
+I1009 02:48:03.328976  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485282757679481/surge-2-worker" elapsedTime="3.410422ms"
+I1009 02:48:03.331972  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485282757679481/surge-2-worker" elapsedTime="2.815323ms"
+I1009 02:48:03.539090  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485282757679481/surge-1-worker" elapsedTime="3.249477ms"
+I1009 02:48:03.541711  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485282757679481/surge-1-worker" elapsedTime="2.44532ms"
+I1009 02:48:03.747203  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485282757679481/surge-0-worker" elapsedTime="3.219966ms"
+I1009 02:48:03.749761  310900 stateful_instance_set_controller.go:166] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1791485282757679481/surge-0-worker" elapsedTime="2.371238ms"
+[38;5;10m•[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+
+[38;5;10m[1mRan 3 of 16 Specs in 23.537 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m3 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m13 Skipped[0m
+--- PASS: TestRBGController (23.54s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	23.551s
+EXIT:0

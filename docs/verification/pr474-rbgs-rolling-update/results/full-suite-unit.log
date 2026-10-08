@@ -1,0 +1,8 @@
+# Full unit suite (regression) — PR head 44241903, 2026-10-08T18:48:21Z
+# go test ./internal/controller/workloads/... ./api/... -count=1
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	3.772s
+?   	sigs.k8s.io/rbgs/api/workloads/constants	[no test files]
+?   	sigs.k8s.io/rbgs/api/workloads/pub/inplace_update	[no test files]
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.011s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.075s
+EXIT:0

@@ -1,0 +1,30 @@
+# F1 evidence — PR body vs shipped API, 2026-10-08T18:49:54Z
+
+== 'paused' field in the shipped API types? ==
+ABSENT: GroupSetRolloutStrategy has no paused field (PR body documents one)
+
+== claimed unit tests present? ==
+ABSENT: TestRollingUpdate_PacedRecreate
+ABSENT: TestRollingUpdate_TemplateFlipFlopConverges
+ABSENT: TestRollingUpdate_NotServingOutdatedBypassesBudgetOnly
+ABSENT: TestRecreateDeleteCarriesUIDPrecondition
+ABSENT: TestRollingUpdate_ReplicasOnlyChangeIsScaledInPlace
+ABSENT: TestOnlyReplicasChanged
+ABSENT: TestRollingUpdate_PartitionHoldsBackLowerOrdinals
+ABSENT: TestRollingUpdate_PartitionRolloutReportsComplete
+ABSENT: TestRollingUpdate_SurgeGroupsCreated
+ABSENT: TestRollingUpdate_SurgeKeptUntilRecreatedGroupIsReady
+ABSENT: TestRollingUpdate_RolloutCompleteRequiresReady
+ABSENT: TestRoleBasedGroupSetReconciler_TerminatingChildIsNotCountedReady
+ABSENT: TestRollingUpdate_PausedFreezesRollout
+ABSENT: TestStaticUpdate_AllGroupsUpdatedInOnePass
+ABSENT: TestResolveRollingParams
+ABSENT: TestClassifyChildren
+ABSENT: TestSyncRBGMetadataKeepsSystemKeys
+
+== webhook e2e for the new rules? ==
+0
+0: webhook_validation.go untouched by this PR
+
+== revision machinery the body says does not exist ==
+7
