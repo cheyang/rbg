@@ -1,0 +1,115 @@
+{
+  "topic": "rbgs-rolling-update",
+  "pr": "https://github.com/sgl-project/rbg/pull/474",
+  "harnessPaths": [
+    "docs/verification/rbgs-rolling-update",
+    "internal/controller/workloads/rolebasedgroupset_premise_verify_test.go",
+    "internal/controller/workloads/rolebasedgroupset_rolling_verify_test.go",
+    "internal/controller/workloads/rolebasedgroupset_envtest_verify_test.go",
+    "api/workloads/v1alpha2/rolebasedgroupset_admission_verify_test.go",
+    "api/workloads/v1alpha1/rolebasedgroupset_conversion_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "when the template changes, every outdated child is updated within a single reconcile, with no ordering and no availability gating",
+    "reportedComponent": "internal/controller/workloads/rolebasedgroupset_controller.go (static path)",
+    "patchedComponent": "same controller, new rolling path",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "results/p0-base.txt: on base 0821cb5b all 3 children moved to the new template in ONE Reconcile; same test passes on PR head with rolloutStrategy unset (static path preserved).",
+    "match": [
+      "TestVerify_P0_StaticPathUpdatesAllChildrenInOnePass"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ ./api/workloads/v1alpha1/ ./api/workloads/v1alpha2/ -run 'TestVerify_' -count=1 -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=$(ls -d $HOME/.local/share/kubebuilder-envtest/k8s/*-linux-amd64 2>/dev/null | head -1) go test ./internal/controller/workloads/ -run 'TestVerify_Envtest' -count=1 -timeout 8m -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_ConversionPreservesRolloutStrategy"
+      ],
+      "note": "currently RED on the PR head = confirmed bug (v1alpha1 round trip drops spec.rolloutStrategy and rollout status fields)"
+    },
+    {
+      "id": "F3",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerify_WebhookAcceptsPercentZeroZero_Canary",
+        "TestVerify_ControllerClampsPercentZeroZero_Canary"
+      ],
+      "note": "canary pins the current inconsistent behavior; flip when webhook/controller agree on 0%/0%"
+    },
+    {
+      "id": "G1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_RollingRecreatePacedAndConverges"
+      ]
+    },
+    {
+      "id": "G2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_RollingSurgeBacksZeroMaxUnavailable"
+      ]
+    },
+    {
+      "id": "G3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_RollingPartitionHoldsBackAndRebuildsAtCurrent"
+      ]
+    },
+    {
+      "id": "G4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_RollingTemplateFlipFlopConverges"
+      ]
+    },
+    {
+      "id": "G5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_RollingReplicasOnlyChangeScalesInPlace"
+      ]
+    },
+    {
+      "id": "G6",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_RollingScaleDownDuringRollout"
+      ]
+    },
+    {
+      "id": "G7",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestVerify_Envtest_RollingAgainstRealAPIServer"
+      ],
+      "note": "real API server + real CRD defaulting; catches defaulting-induced recreate loops and foreground-delete/UID-precondition issues"
+    }
+  ],
+  "liveNote": "L3 skipped per debate setup (no KUBECONFIG layer). The repo's own kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers the live path and is green in CI run 37802453289."
+}

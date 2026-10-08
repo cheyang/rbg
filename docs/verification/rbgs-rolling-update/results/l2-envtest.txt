@@ -1,0 +1,3 @@
+--- PASS: TestVerify_Envtest_RollingAgainstRealAPIServer (8.97s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	8.982s
