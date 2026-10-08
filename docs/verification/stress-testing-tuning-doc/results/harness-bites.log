@@ -1,0 +1,27 @@
+# Harness-bites check (review-finding-verifier Step 4)
+# Proposed doc fixes applied temporarily; checker re-run; then reverted.
+
+## 1. Baseline (PR head, unfixed docs)
+CHECK F1/PR head: PASS - kwok-stage.yaml at PR head defines ['pod-delete', 'pod-initialize', 'pod-ready', 'pod-running']; docs mention ['pod-delete', 'pod-initialize', 'pod-ready', 'pod-running']; undocumented: none (4 Stage docs in file)
+CHECK F1/merge target origin/main: FAIL - kwok-stage.yaml at merge target origin/main defines ['pod-delete', 'pod-initialize', 'pod-ready', 'pod-ready-blocked', 'pod-running']; docs mention ['pod-delete', 'pod-initialize', 'pod-ready', 'pod-running']; undocumented: ['pod-ready-blocked'] (5 Stage docs in file)
+CHECK F3/args: FAIL - rendered=['--enable-deprecated-workload-types=true', '--enable-pprof=true', '--health-probe-bind-address=:8081', '--kube-api-burst=200', '--kube-api-qps=100', '--leader-elect', '--max-concurrent-reconciles=20', '--metrics-bind-address=:8443', '--pprof-bind-address=:6060', '--scheduler-name=scheduler-plugins']; doc-expected-missing=['--enable-deprecated-workload-types']; doc-expected-extra=none
+CHECK F3/resources: PASS - rendered resources contain 8/16Gi limits and 100m/256Mi requests
+CHECK FX1/paths: PASS - referenced paths missing: none
+CHECK FX2/flags: PASS - flags used in docs but not defined: none
+CHECK FX3/helm-keys: PASS - --set keys not resolving in values.yaml: none (checked 8 keys)
+
+SUMMARY: 2 failure(s)
+
+## 2. With proposed fixes applied (en guide: pod-ready-blocked added to stage list; --enable-deprecated-workload-types=true added to expected args)
+CHECK F1/PR head: PASS - kwok-stage.yaml at PR head defines ['pod-delete', 'pod-initialize', 'pod-ready', 'pod-running']; docs mention ['pod-delete', 'pod-initialize', 'pod-ready', 'pod-running']; undocumented: none (4 Stage docs in file)
+CHECK F1/merge target origin/main: PASS - kwok-stage.yaml at merge target origin/main defines ['pod-delete', 'pod-initialize', 'pod-ready', 'pod-ready-blocked', 'pod-running']; docs mention ['pod-delete', 'pod-initialize', 'pod-ready', 'pod-ready-blocked', 'pod-running']; undocumented: none (5 Stage docs in file)
+CHECK F3/args: PASS - rendered=['--enable-deprecated-workload-types=true', '--enable-pprof=true', '--health-probe-bind-address=:8081', '--kube-api-burst=200', '--kube-api-qps=100', '--leader-elect', '--max-concurrent-reconciles=20', '--metrics-bind-address=:8443', '--pprof-bind-address=:6060', '--scheduler-name=scheduler-plugins']; doc-expected-missing=none; doc-expected-extra=none
+CHECK F3/resources: PASS - rendered resources contain 8/16Gi limits and 100m/256Mi requests
+CHECK FX1/paths: PASS - referenced paths missing: none
+CHECK FX2/flags: PASS - flags used in docs but not defined: none
+CHECK FX3/helm-keys: PASS - --set keys not resolving in values.yaml: none (checked 8 keys)
+
+SUMMARY: 0 failure(s)
+
+## 3. Reverted (git checkout -- doc/best-practice/)
+(empty diff above = PR files pristine)

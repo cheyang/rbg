@@ -1,0 +1,19 @@
+=== L1a: doc-vs-code consistency (F1, F3, FX1-FX3) ===
+CHECK F1/PR head: PASS - kwok-stage.yaml at PR head defines ['pod-delete', 'pod-initialize', 'pod-ready', 'pod-running']; docs mention ['pod-delete', 'pod-initialize', 'pod-ready', 'pod-running']; undocumented: none (4 Stage docs in file)
+CHECK F1/merge target origin/main: FAIL - kwok-stage.yaml at merge target origin/main defines ['pod-delete', 'pod-initialize', 'pod-ready', 'pod-ready-blocked', 'pod-running']; docs mention ['pod-delete', 'pod-initialize', 'pod-ready', 'pod-running']; undocumented: ['pod-ready-blocked'] (5 Stage docs in file)
+CHECK F3/args: FAIL - rendered=['--enable-deprecated-workload-types=true', '--enable-pprof=true', '--health-probe-bind-address=:8081', '--kube-api-burst=200', '--kube-api-qps=100', '--leader-elect', '--max-concurrent-reconciles=20', '--metrics-bind-address=:8443', '--pprof-bind-address=:6060', '--scheduler-name=scheduler-plugins']; doc-expected-missing=['--enable-deprecated-workload-types']; doc-expected-extra=none
+CHECK F3/resources: PASS - rendered resources contain 8/16Gi limits and 100m/256Mi requests
+CHECK FX1/paths: PASS - referenced paths missing: none
+CHECK FX2/flags: PASS - flags used in docs but not defined: none
+CHECK FX3/helm-keys: PASS - --set keys not resolving in values.yaml: none (checked 8 keys)
+
+SUMMARY: 2 failure(s)
+
+=== L1b: markdownlint (CI parity: .github/.markdownlint.json) ===
+markdownlint-cli2 v0.18.1 (markdownlint v0.38.0)
+Finding: doc/best-practice/en/09-stress-testing-and-tuning.md doc/best-practice/en/09-stress-testing-and-tuning-guide.md doc/best-practice/zh/09-stress-testing-and-tuning.md doc/best-practice/zh/09-stress-testing-and-tuning-guide.md
+Linting: 4 file(s)
+Summary: 0 error(s)
+markdownlint exit: 0
+
+=== L1 result: consistency=2 lint=0 ===

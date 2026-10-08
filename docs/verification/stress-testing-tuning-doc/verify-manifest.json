@@ -1,0 +1,42 @@
+{
+  "topic": "stress-testing-tuning-doc",
+  "pr": "https://github.com/sgl-project/rbg/pull/390",
+  "harnessPaths": [
+    "docs/verification/stress-testing-tuning-doc"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "doc: add doc best-practice/stress-testing-and-tuning — document the existing stress-testing toolchain (KWOK setup, controller tuning, stress client) in the best-practice doc series (en+zh, concept + operations-guide pairs).",
+    "reportedComponent": "documentation (doc/best-practice/{en,zh})",
+    "patchedComponent": "documentation only — 4 new markdown files, no code changes",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "doc/best-practice has no 09-* entry at base cb40703a while the toolchain being documented exists (test/stress/, test/stress/scripts/*, .claude/skills/stress-test) — see results/10-static-checks.log FX1/FX2",
+    "match": ["FX1/paths", "FX2/flags"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "shell",
+      "cmd": "bash docs/verification/stress-testing-tuning-doc/scripts/10-static-checks.sh"
+    },
+    "integration": {
+      "kind": "shell",
+      "cmd": "bash docs/verification/stress-testing-tuning-doc/scripts/20-integration-checks.sh"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit",        "match": ["F1/merge target origin/main"] },
+    { "id": "F3", "polarity": "contract", "layer": "unit",        "match": ["F3/args"] },
+    { "id": "FX1", "polarity": "contract", "layer": "unit",       "match": ["FX1/paths"] },
+    { "id": "FX2", "polarity": "contract", "layer": "unit",       "match": ["FX2/flags"] },
+    { "id": "FX3", "polarity": "contract", "layer": "unit",       "match": ["FX3/helm-keys"] },
+    { "id": "F3RES", "polarity": "contract", "layer": "unit",     "match": ["F3/resources"] }
+  ],
+  "liveNote": "L3 (live KWOK cluster) intentionally skipped for this round per the debate setup: unit + integration layers only. A live probe confirmed a reachable cluster (3 nodes) exists, but no live-layer claim was run. To run L3 manually: setup-kwok.sh -> helm upgrade with the doc's flags -> go run ./test/stress/ -> compare kubectl get stages with the doc's expected output.",
+  "uncoveredFindings": [
+    "F2 (dangling 'see Operation 5 note' cross-reference + unexplained update-latency regression) — prose-internal, verified by direct reading of both en and zh guides; not automatable in this harness.",
+    "F4 (inconsistent bold in toolchain bullet), F5 ('Claude Code built-in Skill' mischaracterization), F6 (unlinked Related Documents — series-wide convention), F7 (macOS-only `open`), F8 (background describes Deployment/LWS sub-resources while the flow exercises RoleInstanceSet) — reading-based findings, low severity."
+  ]
+}

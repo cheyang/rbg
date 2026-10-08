@@ -1,0 +1,12 @@
+=== L2a: build documented stress client entrypoint ===
+go build exit: 0
+
+=== L2b: stress package unit tests ===
+ok  	sigs.k8s.io/rbgs/test/stress	0.007s
+
+=== L2c: chart renders with doc's --set flags (pprof port exposed) ===
+WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: /home/ecs-user/.kube/config
+WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: /home/ecs-user/.kube/config
+rendered chart exposes pprof containerPort 6060 and --enable-pprof=true
+
+=== L2 result: build=0 test=0 render=0 ===
