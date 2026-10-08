@@ -1,0 +1,60 @@
+{
+  "topic": "pr389-autoscaling-docs",
+  "pr": "https://github.com/sgl-project/rbg/pull/389",
+  "prHeadReviewed": "3f30e486da26523895a237e2bbb7e110bc76684b",
+  "harnessPaths": [
+    "docs/verification/pr389-autoscaling-docs"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Docs-only PR: adds best-practice concept + operations guide for RBG autoscaling (ScalingAdapter/HPA/KEDA/RBG Planner). No bug claim to reproduce; premise validation carve-out for docs PRs applies.",
+    "reportedComponent": "doc/best-practice",
+    "patchedComponent": "doc/best-practice",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "n/a",
+    "verdict": "confirmed",
+    "evidence": "Gap is real: doc/best-practice on main (01-07,10) has no autoscaling entry; 07-configuring-coordinated-policy.md Related Documents forward-references it. RBG-side API claims verified accurate against api/workloads/v1alpha2 and controllers.",
+    "match": []
+  },
+  "upstreamPinned": {
+    "repo": "rolebasedgroup/rbg-planner",
+    "sha": "0d35ed762e826292f7f420617a62124b358170d4",
+    "note": "The real planner repo. sgl-project/rbg-planner returns 404; rbg's own README.md:282 links the rolebasedgroup org."
+  },
+  "layers": {
+    "unit": {
+      "kind": "script",
+      "cmd": "python3 docs/verification/pr389-autoscaling-docs/scripts/check_docs.py <doc-root> --offline"
+    },
+    "integration": {
+      "kind": "script",
+      "cmd": "python3 docs/verification/pr389-autoscaling-docs/scripts/check_docs.py <doc-root>",
+      "note": "Adds network probes: GitHub API link resolution + upstream rbg-planner CRD/controller fetch at pinned sha (raw.githubusercontent.com). No cluster involved; live layer not applicable to a docs PR."
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit+integration",
+      "match": ["no sgl-project org references", "all github repo links in new docs resolve"],
+      "claim": "Docs link to github.com/sgl-project/rbg-planner (404) and install from oci://ghcr.io/sgl-project/charts/rbg-planner / ghcr.io/sgl-project/rbg-profiler; the project lives at github.com/rolebasedgroup/rbg-planner and publishes no OCI chart (README: local chart path; image CI pushes to Docker Hub)." },
+    { "id": "F2", "polarity": "contract", "layer": "unit+integration",
+      "match": ["metricSource"],
+      "claim": "Docs say metricSource is 'sglang | vllm | dynamo'; shipped CRD enum is sglang|vllm|patio - 'dynamo' is rejected by API validation, 'patio' undocumented." },
+    { "id": "F3", "polarity": "contract", "layer": "unit+integration",
+      "match": ["metricsEndpoint.port", "port to 8000"],
+      "claim": "Docs describe metricsEndpoint.port: 8000 as the inference engine metrics port; upstream wires it to PLANNER_PROMETHEUS_PORT (the planner's own metrics exposition port, default 9091)." },
+    { "id": "F4", "polarity": "contract", "layer": "unit+integration",
+      "match": ["app=rbg-planner"],
+      "claim": "'kubectl get/logs -l app=rbg-planner' selects zero pods; planner engine pods are labeled app.kubernetes.io/name=rbg-planner (+instance)." },
+    { "id": "F5", "polarity": "contract", "layer": "unit",
+      "match": ["Related Documents"],
+      "claim": "Related Documents sections carry a stale 'documents have not been created yet' TODO and plain-text bullets, but docs 01-04 exist on main and sibling docs (05,07) link them." },
+    { "id": "F6", "polarity": "contract", "layer": "unit",
+      "match": ["autocorrect"],
+      "claim": "zh concept doc has 3 AutoCorrect lint errors (halfwidth comma after CJK; missing spaces around hyphens); rest of doc tree is clean. CI runs autocorrect in fix mode so it stays green." },
+    { "id": "F7", "polarity": "contract", "layer": "unit",
+      "match": ["trailing whitespace"],
+      "claim": "Trailing whitespace at en/08-configuring-autoscaling.md:169 ('name: hpa-demo-backend ')." }
+  ],
+  "liveNote": "Docs-only PR: no live layer. The guide's kubectl workflows were verified by code inspection (RBGSA CRD scale subresource, controller sync, planner deployment labels) rather than a cluster."
+}

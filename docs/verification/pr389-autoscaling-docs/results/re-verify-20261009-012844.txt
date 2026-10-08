@@ -1,0 +1,33 @@
+[F0][unit] four new doc files present                              PASS missing=[]
+[F1][unit] no sgl-project org references to rbg-planner/profiler/chart FAIL hits=[('doc/best-practice/en/08-configuring-autoscaling.md', 10), ('doc/best-practice/en/08-configuring-autoscaling.md', 259), ('doc/best-practice/en/08-configuring-autoscaling.md', 305), ('doc/best-practice/en/08-configuring-autoscaling.md', 397), ('doc/best-practice/en/08-configuring-autoscaling.md', 525), ('doc/best-practice/en/08-configuring-autoscaling-guide.md', 21), ('doc/best-practice/en/08-configuring-autoscaling-guide.md', 807), ('doc/best-practice/zh/08-configuring-autoscaling.md', 10)]
+[F1][integration] evidence: sgl-project/rbg-planner does NOT exist today  PASS GET /repos/sgl-project/rbg-planner -> 404
+[F1][integration] real planner repo exists at rolebasedgroup org (evidence) PASS GET /repos/rolebasedgroup/rbg-planner -> 200
+[F1][integration] all github repo links in new docs resolve               FAIL unresolvable=[('sgl-project/rbg-planner', 404)] checked=['ai-dynamo/dynamo', 'kubernetes-sigs/prometheus-adapter', 'sgl-project/rbg', 'sgl-project/rbg-planner']
+[F2][integration] upstream CRD metricSource enum is sglang|vllm|patio (evidence) PASS enum=['patio', 'sglang', 'vllm']
+[F2][unit] docs do not advertise invalid metricSource 'dynamo'     FAIL 'sglang | vllm | dynamo' present=True
+[F2][unit] docs cover the full valid metricSource enum (incl. patio) FAIL 
+[F3][integration] upstream wires metricsEndpoint.port -> PLANNER_PROMETHEUS_PORT (evidence) PASS 
+[F3][unit] docs do not describe metricsEndpoint.port as the engine metrics port FAIL 
+[F3][unit] doc AutoScaler examples do not override planner metrics port to 8000 FAIL 
+[F4][integration] upstream planner pods have no 'app' label key (evidence) PASS labels="app.kubernetes.io/name":     "rbg-planner",
+						"app.kubernetes.io/instance": name,
+[F4][unit] docs do not select planner pods via -l app=rbg-planner  FAIL 
+[F5][unit] doc/best-practice/en/08-configuring-autoscaling.md: Related Documents has no stale TODO / unlinked existing docs FAIL stale_todo=True plain_entries=4
+[F5][unit] doc/best-practice/zh/08-configuring-autoscaling.md: Related Documents has no stale TODO / unlinked existing docs FAIL stale_todo=True plain_entries=4
+[F6][unit] autocorrect --lint clean: doc/best-practice/zh/08-configuring-autoscaling.md FAIL errors=3
+[F6][unit] autocorrect --lint clean: doc/best-practice/zh/08-configuring-autoscaling-guide.md PASS errors=0
+[F7][unit] no trailing whitespace in new docs                      FAIL hits=[('doc/best-practice/en/08-configuring-autoscaling.md', 169)]
+[F0][unit] all yaml code blocks parse                              PASS bad=[]
+
+==== SUMMARY: 19 checks, 11 failed ====
+  FAIL F1 [unit] no sgl-project org references to rbg-planner/profiler/chart
+  FAIL F1 [integration] all github repo links in new docs resolve
+  FAIL F2 [unit] docs do not advertise invalid metricSource 'dynamo'
+  FAIL F2 [unit] docs cover the full valid metricSource enum (incl. patio)
+  FAIL F3 [unit] docs do not describe metricsEndpoint.port as the engine metrics port
+  FAIL F3 [unit] doc AutoScaler examples do not override planner metrics port to 8000
+  FAIL F4 [unit] docs do not select planner pods via -l app=rbg-planner
+  FAIL F5 [unit] doc/best-practice/en/08-configuring-autoscaling.md: Related Documents has no stale TODO / unlinked existing docs
+  FAIL F5 [unit] doc/best-practice/zh/08-configuring-autoscaling.md: Related Documents has no stale TODO / unlinked existing docs
+  FAIL F6 [unit] autocorrect --lint clean: doc/best-practice/zh/08-configuring-autoscaling.md
+  FAIL F7 [unit] no trailing whitespace in new docs

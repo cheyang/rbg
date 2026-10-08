@@ -1,0 +1,17 @@
+.
+doc/best-practice/zh/08-configuring-autoscaling.md:273:1
+-│  │ TTFT, ITL,   │  │ 请求量, ISL,  │  │ 计算所需      │           │
++│  │ TTFT, ITL,   │  │ 请求量，ISL,  │  │ 计算所需      │           │
+
+doc/best-practice/zh/08-configuring-autoscaling.md:274:1
+-│  │ 请求量, ISL  │  │ OSL (ARIMA)  │  │ Prefill/     │           │
++│  │ 请求量，ISL  │  │ OSL (ARIMA)  │  │ Prefill/     │           │
+
+doc/best-practice/zh/08-configuring-autoscaling.md:432:4
+-└── 开始观测-预测-计算-伸缩循环
++└── 开始观测 - 预测 - 计算 - 伸缩循环
+
+
+Error: 3, Warning: 0
+AutoCorrect spend time: 20.235ms
+

@@ -1,0 +1,22 @@
+[F0][unit] four new doc files present                              PASS missing=[]
+[F1][unit] no sgl-project org references to rbg-planner/profiler/chart PASS hits=[]
+[F1][integration] evidence: sgl-project/rbg-planner does NOT exist today  PASS GET /repos/sgl-project/rbg-planner -> 404
+[F1][integration] real planner repo exists at rolebasedgroup org (evidence) PASS GET /repos/rolebasedgroup/rbg-planner -> 200
+[F1][integration] all github repo links in new docs resolve               PASS unresolvable=[] checked=['ai-dynamo/dynamo', 'kubernetes-sigs/prometheus-adapter', 'rolebasedgroup/rbg-planner', 'sgl-project/rbg']
+[F2][integration] upstream CRD metricSource enum is sglang|vllm|patio (evidence) PASS enum=['patio', 'sglang', 'vllm']
+[F2][unit] docs do not advertise invalid metricSource 'dynamo'     PASS 'sglang | vllm | dynamo' present=False
+[F2][unit] docs cover the full valid metricSource enum (incl. patio) PASS 
+[F3][integration] upstream wires metricsEndpoint.port -> PLANNER_PROMETHEUS_PORT (evidence) PASS 
+[F3][unit] docs do not describe metricsEndpoint.port as the engine metrics port PASS 
+[F3][unit] doc AutoScaler examples do not override planner metrics port to 8000 PASS 
+[F4][integration] upstream planner pods have no 'app' label key (evidence) PASS labels="app.kubernetes.io/name":     "rbg-planner",
+						"app.kubernetes.io/instance": name,
+[F4][unit] docs do not select planner pods via -l app=rbg-planner  PASS 
+[F5][unit] doc/best-practice/en/08-configuring-autoscaling.md: Related Documents has no stale TODO / unlinked existing docs PASS stale_todo=False plain_entries=0
+[F5][unit] doc/best-practice/zh/08-configuring-autoscaling.md: Related Documents has no stale TODO / unlinked existing docs PASS stale_todo=False plain_entries=0
+[F6][unit] autocorrect --lint clean: doc/best-practice/zh/08-configuring-autoscaling.md PASS errors=0
+[F6][unit] autocorrect --lint clean: doc/best-practice/zh/08-configuring-autoscaling-guide.md PASS errors=0
+[F7][unit] no trailing whitespace in new docs                      PASS hits=[]
+[F0][unit] all yaml code blocks parse                              PASS bad=[]
+
+==== SUMMARY: 19 checks, 0 failed ====
