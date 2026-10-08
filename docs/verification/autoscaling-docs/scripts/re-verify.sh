@@ -93,6 +93,7 @@ l1_result() { grep -m1 "^\[\(PASS\|FAIL\)\] $1 " "$RESULTS_DIR/l1.txt" | sed 's/
 # contract C* must stay PASS
 c_result() { grep -m1 "^\[\(PASS\|FAIL\)\] $1 " "$RESULTS_DIR/l1.txt" | sed 's/^\[\(PASS\|FAIL\)\].*/\1/'; }
 l1net_has() { grep -q "$1" "$RESULTS_DIR/l1net.txt" && echo yes || echo no; }
+net_probe() { echo "$(l1net_has "$1")"; }
 l2_test() { grep -m1 "^--- \(PASS\|FAIL\): $1 " "$RESULTS_DIR/l2.txt" | sed 's/^--- \(PASS\|FAIL\):.*/\1/'; }
 unit_ok() { grep -q "^ok.*internal/controller/workloads" "$RESULTS_DIR/unit.txt" && echo yes || echo no; }
 
@@ -123,8 +124,10 @@ else
 fi
 
 # live corroboration for B1/B2/B3 (informational; verdict from L1)
+REPO_FIXED="$(net_probe 'sgl-project/rbg-planner -> EXISTS')"
+CHART_PUB="$(net_probe 'ghcr.io/sgl-project/charts/rbg-planner -> public')"
 echo ""
-echo "live probes: planner repo 404 fixed? $(l1net_has 'sgl-project/rbg-planner -> EXISTS' && echo yes || echo 'not yet') | chart published? $(l1net_has 'ghcr.io/sgl-project/charts/rbg-planner -> public' && echo yes || echo 'not yet')"
+echo "live probes: sgl-project/rbg-planner repo now exists: $REPO_FIXED | sgl-project OCI chart now public: $CHART_PUB"
 echo "live results in $RESULTS_DIR/l1net.txt (also copied below)"
 cp "$RESULTS_DIR"/l1*.txt "$RESULTS_DIR"/l2.txt "$RESULTS_DIR"/unit.txt "$VDIR/results/" 2>/dev/null || true
 
