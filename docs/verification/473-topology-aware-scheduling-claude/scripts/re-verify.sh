@@ -95,8 +95,8 @@ if grep -q '"Action":"build-fail"' "$RESULTS_DIR/integration.out" || grep -q 'bu
    ! grep -q '"Action":"\(pass\|fail\)"' "$RESULTS_DIR/integration.out"; then
   : > "$RESULTS_DIR/integration.parsed"; touch "$RESULTS_DIR/integration.buildfail"
 else
-  jq -rs '[.[]|select(.Test!=null and (.Action=="pass" or .Action=="fail"))]
-          | .[] | "\(.Test)\t\(.Action)"] | join("\n")' \
+  jq -r '[.[]|select(.Test!=null and (.Action=="pass" or .Action=="fail"))]
+          | .[] | "\(.Test)\t\(.Action)"' \
     "$RESULTS_DIR/integration.out" > "$RESULTS_DIR/integration.parsed" 2>/dev/null || true
 fi
 

@@ -179,7 +179,11 @@ def p0():
     repo = KEP["repo"]
 
     def non_vendor(lines):
-        return [l for l in lines if not l.split(":", 1)[-1].startswith("vendor/")]
+        # vendor/ = upstream API types (a dependency, not RBG code);
+        # docs/verification/ = this harness' own snapshot files.
+        return [l for l in lines
+                if not l.split(":", 1)[-1].startswith("vendor/")
+                and not l.split(":", 1)[-1].startswith("docs/verification/")]
 
     out = subprocess.run(
         ["git", "grep", "-l", "-E", "topologyConstraint|networkTopology|InstanceTopologyConstraint", "--", "*.go"],
