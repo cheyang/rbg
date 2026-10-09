@@ -1,0 +1,3 @@
+TestExternalDialect_VolcanoHyperNodeTierName	pass
+TestExternalDialect_KoordinatorNetworkTopologySpec	pass
+TestExternalDialect_KAIPodGroupTopologyConstraint	pass
