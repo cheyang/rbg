@@ -1,0 +1,16 @@
+{"Time":"2026-10-10T01:34:51.075481042+08:00","Action":"start","Package":"sigs.k8s.io/rbgs/test/verification"}
+{"Time":"2026-10-10T01:34:51.077128876+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/verification","Test":"TestExternalDialect_VolcanoHyperNodeTierName"}
+{"Time":"2026-10-10T01:34:51.077163447+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verification","Test":"TestExternalDialect_VolcanoHyperNodeTierName","Output":"=== RUN   TestExternalDialect_VolcanoHyperNodeTierName\n","OutputType":"frame"}
+{"Time":"2026-10-10T01:34:51.260230555+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verification","Test":"TestExternalDialect_VolcanoHyperNodeTierName","Output":"--- PASS: TestExternalDialect_VolcanoHyperNodeTierName (0.18s)\n","OutputType":"frame"}
+{"Time":"2026-10-10T01:34:51.260269226+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/verification","Test":"TestExternalDialect_VolcanoHyperNodeTierName","Elapsed":0.18}
+{"Time":"2026-10-10T01:34:51.260283417+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/verification","Test":"TestExternalDialect_KoordinatorNetworkTopologySpec"}
+{"Time":"2026-10-10T01:34:51.260286017+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verification","Test":"TestExternalDialect_KoordinatorNetworkTopologySpec","Output":"=== RUN   TestExternalDialect_KoordinatorNetworkTopologySpec\n","OutputType":"frame"}
+{"Time":"2026-10-10T01:34:51.316044463+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verification","Test":"TestExternalDialect_KoordinatorNetworkTopologySpec","Output":"--- PASS: TestExternalDialect_KoordinatorNetworkTopologySpec (0.06s)\n","OutputType":"frame"}
+{"Time":"2026-10-10T01:34:51.316065904+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/verification","Test":"TestExternalDialect_KoordinatorNetworkTopologySpec","Elapsed":0.06}
+{"Time":"2026-10-10T01:34:51.316071654+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/verification","Test":"TestExternalDialect_KAIPodGroupTopologyConstraint"}
+{"Time":"2026-10-10T01:34:51.316073514+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verification","Test":"TestExternalDialect_KAIPodGroupTopologyConstraint","Output":"=== RUN   TestExternalDialect_KAIPodGroupTopologyConstraint\n","OutputType":"frame"}
+{"Time":"2026-10-10T01:34:51.373005149+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verification","Test":"TestExternalDialect_KAIPodGroupTopologyConstraint","Output":"--- PASS: TestExternalDialect_KAIPodGroupTopologyConstraint (0.06s)\n","OutputType":"frame"}
+{"Time":"2026-10-10T01:34:51.373021319+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/verification","Test":"TestExternalDialect_KAIPodGroupTopologyConstraint","Elapsed":0.06}
+{"Time":"2026-10-10T01:34:51.373026019+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verification","Output":"PASS\n","OutputType":"frame"}
+{"Time":"2026-10-10T01:34:51.37364639+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/verification","Output":"ok  \tsigs.k8s.io/rbgs/test/verification\t0.298s\n"}
+{"Time":"2026-10-10T01:34:51.37366163+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/verification","Elapsed":0.298}
