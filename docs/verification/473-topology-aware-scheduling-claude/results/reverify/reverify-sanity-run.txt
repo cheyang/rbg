@@ -1,0 +1,34 @@
+re-verify: resolving PR head via 'git fetch https://github.com/sgl-project/rbg.git pull/473/head'
+re-verify: fixed-ref = 2b65779bfb554d1793fe6a07b53ec5090daf7c42
+re-verify: last-reviewed = 2b65779bfb554d1793fe6a07b53ec5090daf7c42  (review delta = 2b65779bfb554d1793fe6a07b53ec5090daf7c42..2b65779bfb554d1793fe6a07b53ec5090daf7c42)
+re-verify: running unit layer (check_claims.py)
+re-verify: running integration layer (go test)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT          DETAIL
+F1     canary    unit         STILL-PRESENT    
+F2     canary    unit         STILL-PRESENT    
+F3     canary    unit         STILL-PRESENT    
+F4     canary    unit         STILL-PRESENT    
+F5     canary    unit         STILL-PRESENT    
+F6     canary    unit         STILL-PRESENT    
+F7     canary    unit         STILL-PRESENT    
+F8     canary    unit         STILL-PRESENT    
+F9     canary    unit         STILL-PRESENT    
+F10    canary    unit         STILL-PRESENT    
+P0     contract  unit         OK(contract)     
+C1     contract  unit         OK(contract)     
+C2     contract  unit         OK(contract)     
+C3     contract  unit         OK(contract)     
+G1     contract  integration  OK(contract)     pass=1 fail=0 miss=0
+G2     contract  integration  OK(contract)     pass=1 fail=0 miss=0
+G3     contract  integration  OK(contract)     pass=1 fail=0 miss=0
+G4     canary    integration  STILL-PRESENT    pass=1 fail=0 miss=0
+
+Live layer (L3): skipped by design for this docs-only PR (see README).
+Raw output: /tmp/verify-473-claude/docs/verification/473-topology-aware-scheduling-claude/results/reverify
+
+Review delta this round: 2b65779bfb554d1793fe6a07b53ec5090daf7c42..2b65779bfb554d1793fe6a07b53ec5090daf7c42
+After reviewing that delta, advance the marker:
+  echo 2b65779bfb554d1793fe6a07b53ec5090daf7c42 > /tmp/verify-473-claude/docs/verification/473-topology-aware-scheduling-claude/.last-reviewed && git add /tmp/verify-473-claude/docs/verification/473-topology-aware-scheduling-claude/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.

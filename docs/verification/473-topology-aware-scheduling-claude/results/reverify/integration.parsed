@@ -1,0 +1,4 @@
+TestVolcanoExampleStrictDecodes	pass
+TestSigsPodGroupExampleStrictDecodes	pass
+TestSigsExampleMinMemberZero	pass
+TestKAIExampleStructure	pass
