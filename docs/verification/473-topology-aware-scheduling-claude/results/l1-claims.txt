@@ -1,0 +1,32 @@
+id   polarity  verdict         finding
+---- -------- --------------- -------------------------------------------
+F1   canary   DEFECT-PRESENT  downgrade section does not address the topology finalizer
+     detail: finalizer design present=True, downgrade section mentions finalizer=False
+F2   canary   DEFECT-PRESENT  RBGSet admission guard described two contradictory ways
+     detail: cross-resource listing=True; self-contained/no-lookup=True (both asserted)
+F3   canary   DEFECT-PRESENT  PR body promises preferred<=required validation the KEP declines
+     detail: body promises=True; KEP table row 'Not validated by RBG'=True
+F4   canary   DEFECT-PRESENT  PR body claims an in-tree Chinese translation that is absent
+     detail: body claims translation=True; kep dir contents=['README.md', 'kep.yaml']
+F5   canary   DEFECT-PRESENT  Generated Group Names section defines only the Volcano naming rule
+     detail: section covers Volcano only (Koordinator/KAI naming undefined): True
+F6   canary   DEFECT-PRESENT  KAI/Koordinator examples partition unconstrained roles per instance
+     detail: KAI decode-0/1 subGroups=True, Koordinator per-instance members=True, stated rule present=True
+F7   canary   DEFECT-PRESENT  KEP cites hasSubGroupPolicy; codebase function is supportsSubGroupPolicy
+     detail: KEP cites hasSubGroupPolicy=True; code has it=False; real symbol supportsSubGroupPolicy=True
+F8   canary   DEFECT-PRESENT  reconcile-level validation needs new cluster-scoped reads; RBAC unaddressed
+     detail: topology objects validated at reconcile=True; RBAC mentioned=False
+F9   canary   DEFECT-PRESENT  minMember: 0 on scheduling.sigs.k8s.io PodGroup diverges from upstream CRD
+     detail: KEP renders minMember: 0 on sigs PodGroup=True; upstream scheduler-plugins CRD requires >=1=True; koordinator's deployed CRD has no minimum=True
+F10  canary   DEFECT-PRESENT  typo 'upto' in generated API doc comment
+     detail: doc comment contains 'upto'
+P0   contract PASS            premise: base branch has no topology-aware scheduling
+     detail: base(origin/main) first-party topology code files=[]; PR head first-party topology .go files=[] (docs-only PR; vendor hits are the Volcano API dependency, unrelated)
+C1   contract PASS            codebase symbols the KEP builds on exist (ResolveGangStrategy, labels, conditions)
+     detail: ResolveGangStrategy / labels / IncompatibleGangConfig / GangConfigured / strategy+pattern types all present
+C2   contract PASS            vendored Volcano API matches the KEP dialect claims
+     detail: subGroupPolicy.networkTopology=True; networkTopology{mode,highestTierAllowed,highestTierName}=True; PodGroup minMember Minimum=0=True
+C3   contract PASS            upstream snapshots back the KEP's external API claims
+     detail: volcano HyperNode tier+tierName=True; kai PodGroup topologyConstraint/subGroups=True; kai Topology levels[].nodeLabel=True; koordinator network-topology-spec+gatherStrategy=True; koordinator groups annotation=True
+----
+RESULT: all canaries DEFECT-PRESENT and all contracts PASS

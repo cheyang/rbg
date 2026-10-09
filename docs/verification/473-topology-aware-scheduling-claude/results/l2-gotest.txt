@@ -1,0 +1,13 @@
+=== RUN   TestVolcanoExampleStrictDecodes
+    kep_examples_test.go:143: strict-decoded 1 Volcano PodGroup example(s)
+--- PASS: TestVolcanoExampleStrictDecodes (0.00s)
+=== RUN   TestSigsPodGroupExampleStrictDecodes
+    kep_examples_test.go:160: strict-decoded 1 sigs PodGroup example(s)
+--- PASS: TestSigsPodGroupExampleStrictDecodes (0.00s)
+=== RUN   TestSigsExampleMinMemberZero
+    kep_examples_test.go:176: Koordinator topology-only example renders minMember: 0 (see F9: upstream CRD requires >= 1)
+--- PASS: TestSigsExampleMinMemberZero (0.00s)
+=== RUN   TestKAIExampleStructure
+--- PASS: TestKAIExampleStructure (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/docs/verification/473-topology-aware-scheduling-claude/harness	(cached)

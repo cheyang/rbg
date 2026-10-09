@@ -1,0 +1,53 @@
+{
+  "topic": "473-topology-aware-scheduling-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/473",
+  "harnessPaths": [
+    "docs/verification/473-topology-aware-scheduling-claude"
+  ],
+  "_premise_note": "P0 runs against the BASE branch (origin/main) without the patch: the question is whether the claimed gap (no topology-aware scheduling in RBG today) exists. Docs/KEP PR, so the premise carve-out applies — recorded here anyway because it is cheap and settles 'should this KEP exist'.",
+  "premise": {
+    "id": "P0",
+    "claim": "RBG workloads are topology-sensitive (multi-node instance packing, PD co-location) and RBG currently has no way to declare topology intent; native kube-scheduler cannot express it.",
+    "reportedComponent": "rbg scheduling layer (pkg/scheduler, api/workloads)",
+    "patchedComponent": "keps/473-topology-aware-scheduling (design doc only)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "git grep over origin/main first-party Go code finds no topologyConstraint/networkTopology/InstanceTopologyConstraint anywhere (only the vendored Volcano API types, unrelated); pkg/scheduler has gang-only backends. results/l1-claims.txt check P0.",
+    "match": ["P0"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "python-claims",
+      "cmd": "python3 -I scripts/check_claims.py --repo <repo-root> --evidence results/",
+      "note": "canary verdicts: DEFECT-PRESENT = finding live; DEFECT-ABSENT = fixed (flip)"
+    },
+    "integration": {
+      "kind": "gotest",
+      "pkg": "docs/verification/473-topology-aware-scheduling-claude/harness",
+      "cmd": "go test ./docs/verification/473-topology-aware-scheduling-claude/harness/ -json"
+    }
+  },
+  "findings": [
+    { "id": "F1",  "polarity": "canary",   "layer": "unit",        "match": ["F1"] },
+    { "id": "F2",  "polarity": "canary",   "layer": "unit",        "match": ["F2"] },
+    { "id": "F3",  "polarity": "canary",   "layer": "unit",        "match": ["F3"] },
+    { "id": "F4",  "polarity": "canary",   "layer": "unit",        "match": ["F4"] },
+    { "id": "F5",  "polarity": "canary",   "layer": "unit",        "match": ["F5"] },
+    { "id": "F6",  "polarity": "canary",   "layer": "unit",        "match": ["F6"] },
+    { "id": "F7",  "polarity": "canary",   "layer": "unit",        "match": ["F7"] },
+    { "id": "F8",  "polarity": "canary",   "layer": "unit",        "match": ["F8"] },
+    { "id": "F9",  "polarity": "canary",   "layer": "unit",        "match": ["F9"] },
+    { "id": "F10", "polarity": "canary",   "layer": "unit",        "match": ["F10"] },
+    { "id": "P0",  "polarity": "contract", "layer": "unit",        "match": ["P0"] },
+    { "id": "C1",  "polarity": "contract", "layer": "unit",        "match": ["C1"] },
+    { "id": "C2",  "polarity": "contract", "layer": "unit",        "match": ["C2"] },
+    { "id": "C3",  "polarity": "contract", "layer": "unit",        "match": ["C3"] },
+    { "id": "G1",  "polarity": "contract", "layer": "integration", "match": ["TestVolcanoExampleStrictDecodes"] },
+    { "id": "G2",  "polarity": "contract", "layer": "integration", "match": ["TestSigsPodGroupExampleStrictDecodes"] },
+    { "id": "G3",  "polarity": "contract", "layer": "integration", "match": ["TestKAIExampleStructure"] },
+    { "id": "G4",  "polarity": "canary",   "layer": "integration", "match": ["TestSigsExampleMinMemberZero"] }
+  ],
+  "liveNote": "L3 skipped: PR is docs-only (a KEP) — there is no runtime footprint to exercise. A live cluster probe found a reachable 2-node cluster, but per this review round's scope only unit + integration layers run; live coverage belongs to the implementation PRs that follow the KEP's phase plan."
+}
