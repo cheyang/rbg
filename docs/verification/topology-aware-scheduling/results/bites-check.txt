@@ -1,0 +1,29 @@
+Harness-bites check (step 4), 2026-10-10, against PR head 2b65779b.
+
+Method: temporarily applied candidate "fixes" to the KEP text in the verify
+worktree, re-ran the affected tests, then reverted (git checkout -- keps/).
+Production code was never modified; `git status` afterwards shows only the
+untracked harness files.
+
+Edits applied simultaneously:
+  1. F1  : s/releases it only after the RBG has been deleted/releases it only
+           after the RBG (matched by UID) has been deleted/
+  2. F3  : s/requires no cross-resource child lookup/is fully self-contained/
+  3. F4b : appended "PlacementPlanReady" to the KEP
+  4. F5  : s/- **RBG conditions**/- **Conditions**/
+  5. TOC : s/(#story-2-prefilldecode-co-location)/(#story-2-BROKEN-anchor)/
+
+Observed (go test -run 'TestKEP473_F3|F5|F4b|F1|TOCAnchorsResolve'):
+  --- FAIL: TestKEP473_TOCAnchorsResolve        (contract test bites)
+  --- FAIL: TestKEP473_F1_FinalizerWedgeUnaddressed          (canary flips)
+  --- FAIL: TestKEP473_F3_RBGSetAdmissionContradiction       (canary flips)
+  --- FAIL: TestKEP473_F4b_PRBodyPhantomConditions           (canary flips)
+  --- FAIL: TestKEP473_F5_ConditionSurfaceInconsistent       (canary flips)
+
+Note: the first bites round exposed a bug in the harness itself — the TOC/heading
+regexes lacked the (?m) flag, so extraction matched nothing and the test passed
+vacuously. Fixed by adding (?m) plus minimum-count guards (>=30 TOC links,
+>=30 headings) so the test can no longer pass on empty extraction. After the
+fix, the negative control flips red as shown above.
+
+After `git checkout -- keps/`: all 20 tests PASS again (unit 17, integration 3).

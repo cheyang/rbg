@@ -1,0 +1,39 @@
+{
+  "topic": "topology-aware-scheduling",
+  "pr": "https://github.com/sgl-project/rbg/pull/473",
+  "harnessPaths": [
+    "docs/verification/topology-aware-scheduling",
+    "test/verification"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "RBG workloads are increasingly topology-sensitive (multi-node instance packing; prefill-decode co-location). Volcano, Koordinator, and KAI all model topology, but each uses a different topology dialect.",
+    "reportedComponent": "docs/design only: keps/473-topology-aware-scheduling/ (no runtime code in this PR)",
+    "patchedComponent": "keps/473-topology-aware-scheduling/README.md + kep.yaml",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "integration",
+    "verdict": "confirmed",
+    "evidence": "Docs-only PR, so the code-level premise check is replaced by validating the KEP's factual substrate: all three scheduler dialects exist upstream with exactly the field/annotation names the KEP cites (volcano-sh/apis HyperNode spec.tierName; koordinator gang.scheduling.koordinator.sh/network-topology-spec with MustGather/PreferGather; NVIDIA/KAI-scheduler minSubGroup/subGroups/parent/topologyConstraint.requiredTopologyLevel/preferredTopologyLevel/topology). See results/integration.json.",
+    "match": ["TestExternalDialect"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/verification/ -run 'TestBaseFact|TestKEP473' -json -count=1"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "go test ./test/verification/ -run 'TestExternalDialect' -json -count=1"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "canary", "layer": "unit", "match": ["TestKEP473_F1_FinalizerWedgeUnaddressed"] },
+    { "id": "F2", "polarity": "canary", "layer": "unit", "match": ["TestKEP473_F2_VolcanoGangParentTopologyChildUnspecified"] },
+    { "id": "F3", "polarity": "canary", "layer": "unit", "match": ["TestKEP473_F3_RBGSetAdmissionContradiction"] },
+    { "id": "F4", "polarity": "canary", "layer": "unit", "match": ["TestKEP473_F4a_PRBodyValidationClaimDrift", "TestKEP473_F4b_PRBodyPhantomConditions", "TestKEP473_F4c_PRBodyChineseTranslationClaim"] },
+    { "id": "F5", "polarity": "canary", "layer": "unit", "match": ["TestKEP473_F5_ConditionSurfaceInconsistent"] },
+    { "id": "F6", "polarity": "canary", "layer": "unit", "match": ["TestKEP473_F6_NamingSchemeDialectsUnspecified"] }
+  ],
+  "liveNote": "Not applicable: this PR is a docs-only KEP (no runtime code), so there is no live layer. If implementation PRs arrive, re-run with `bash docs/verification/topology-aware-scheduling/scripts/re-verify.sh` (no args: resolves the current PR head from manifest.pr)."
+}
