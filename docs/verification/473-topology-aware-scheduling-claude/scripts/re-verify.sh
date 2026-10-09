@@ -53,9 +53,16 @@ echo "re-verify: last-reviewed = ${LAST_REVIEWED:-<none>}  (review delta = ${LAS
 
 RESULTS_DIR="$TOPIC_DIR/results/reverify"
 mkdir -p "$RESULTS_DIR"
+# The manifest and results live under the harness dir, which `git checkout -f
+# FIXED_REF` will wipe (the fixed ref carries no harness). Copy the manifest to a
+# temp dir outside the repo so reads survive the checkout; the harnessPaths graft
+# below restores the rest (including results/) inside the repo.
+RUNTIME_DIR="$(mktemp -d)"
+cp "$MANIFEST" "$RUNTIME_DIR/manifest.json"
+MANIFEST="$RUNTIME_DIR/manifest.json"
 ORIG_REF="$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)"
 HARNESS_SRC="$(git rev-parse HEAD)"
-cleanup() { git checkout -f "$ORIG_REF" >/dev/null 2>&1 || true; }
+cleanup() { git checkout -f "$ORIG_REF" >/dev/null 2>&1 || true; rm -rf "$RUNTIME_DIR" 2>/dev/null || true; }
 trap cleanup EXIT
 
 git checkout -f "$FIXED_REF" >/dev/null 2>&1 || { echo "re-verify: cannot checkout $FIXED_REF" >&2; exit 2; }
@@ -82,7 +89,6 @@ awk '/^F[0-9]+ +canary/ {print $1 "\t" ($3=="DEFECT-PRESENT" ? "pass" : "fail")}
 # ---- integration layer: go test strict-decode ------------------------------
 echo "re-verify: running integration layer (go test)" >&2
 HARNESS_PKG="$(jq -r '.layers.integration.pkg // "docs/verification/473-topology-aware-scheduling-claude/harness"' "$MANIFEST")"
-if [ -f "$HARNESS_SRC" ] 2>/dev/null; then :; fi
 ( cd "$(git rev-parse --show-toplevel)" && \
   go test "./$HARNESS_PKG/" -json > "$RESULTS_DIR/integration.out" 2>&1 ) || true
 if grep -q '"Action":"build-fail"' "$RESULTS_DIR/integration.out" || grep -q 'build failed' "$RESULTS_DIR/integration.out" || \
