@@ -1,0 +1,24 @@
+L3 live-layer evidence for PR #488 round 3 (head d260dc6e)
+==========================================================
+Same dedicated Aliyun ACK test cluster; same recipe (controller scaled 2->0, PR-head CRD,
+PR-head manager out-of-cluster, throwaway pr488-verify namespace; all restored after).
+
+Scenario SUCCESS (R5 fix verification, same shape as round 2's failing scenario)
+---------------------------------------------------------------------------------
+Warmup: 2 customized containers (check-a "exit 0", check-b "sleep 1"), node .124.
+
+status (head d260dc6e):
+  phase: Completed
+  customizedActionResultsTruncated: absent (false positive GONE)
+  customizedActionResults[0]:
+    state: Succeeded, reason: Completed
+    containers: 2                                        <- FIXED (was 0 at 060ef1b7)
+      check-a  Succeeded exit: 0
+      check-b  Succeeded exit: 0
+
+VERDICT: R5 FIXED on a real cluster — matches the L2 contract test (now green) and
+round 2's evidence chain. Round-2 -> round-3 delta also changed result selection to
+prefer a warmup-attempt label over creation timestamps (LabelWarmupAttempt), forced
+terminal reasons onto non-succeeded results on job failure, and moved waiting-reason
+(ImagePull/Start) reporting after per-container terminal states with container names
+in the messages — all reviewed in the round-3 delta, no new findings.

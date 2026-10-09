@@ -36,6 +36,20 @@ Run against the **base** branch (`7ed1860c`), because the question is whether th
 
 ## Summary of results
 
+### Round 3 (head `d260dc6e`, delta `060ef1b7..d260dc6e`)
+
+Single commit `d260dc6e` "fix: correct customized action result reporting". Re-verify + delta
+review + live re-run:
+
+| ID | Claim | Verdict | Evidence |
+|----|-------|---------|----------|
+| R5 | succeeded results lose per-container details | **FIXED** — budget-upgrade loop no longer skips Succeeded entries (matches the suggested fix direction); contract test green at L2 and live (`results/live-layer-round3.txt`: containers 2, exit codes, `truncated` absent) | re-verify + live |
+| new | attempt-label pod selection (`LabelWarmupAttempt` + `customizedActionPodIsNewer`), terminal reasons forced onto non-succeeded results in `failWarmupJob` for all failure reasons, waiting-reason checks moved after terminal container states with container names in messages | reviewed in delta; no new findings; author added tests (+116 lines) | delta review |
+| R1/R2 | canaries still present | documented design, unchanged | re-verify |
+| R4/T0 | contracts | pass | re-verify |
+
+Full local test suite at `d260dc6e` green (`internal/controller/workloads`, `api/workloads`).
+
 ### Round 2 (head `060ef1b7`, delta `b5eadcb7..060ef1b7`)
 
 The PR was rebased onto main (absorbing #489) and the author pushed four commits responding to
