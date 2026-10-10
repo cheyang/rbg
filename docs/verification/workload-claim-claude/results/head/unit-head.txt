@@ -1,0 +1,12 @@
+=== RUN   TestVerifyClaim_F2_Unit_OrphanReadinessInheritedBeforeAdoption
+--- PASS: TestVerifyClaim_F2_Unit_OrphanReadinessInheritedBeforeAdoption (0.04s)
+=== RUN   TestVerifyClaim_F3_Unit_WorkloadNameCollision
+--- PASS: TestVerifyClaim_F3_Unit_WorkloadNameCollision (0.00s)
+=== RUN   TestVerifyClaim_P0_Unit_NoReadyReplicasFromForeignWorkload
+--- PASS: TestVerifyClaim_P0_Unit_NoReadyReplicasFromForeignWorkload (0.00s)
+=== RUN   TestVerifyClaim_P0_Unit_NoReadyReplicasFromOrphanWithoutGroupLabel
+--- PASS: TestVerifyClaim_P0_Unit_NoReadyReplicasFromOrphanWithoutGroupLabel (0.00s)
+=== RUN   TestVerifyClaim_P0_Unit_CheckWorkloadReadyNotSatisfiedByForeignWorkload
+--- PASS: TestVerifyClaim_P0_Unit_CheckWorkloadReadyNotSatisfiedByForeignWorkload (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.053s

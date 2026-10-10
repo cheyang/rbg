@@ -1,0 +1,3 @@
+  2026-10-11T00:57:13+08:00	DEBUG	patch content	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "RoleBasedGroup": {"name":"claim-prem","namespace":"test-claim-1791651431256835855"}, "names
+  2026-10-11T00:57:13+08:00	DEBUG	patch content	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "RoleBasedGroup": {"name":"claim-prem","namespace":"test-claim-1791651431256835855"}, "names
+Only one reference can have Controller set to true

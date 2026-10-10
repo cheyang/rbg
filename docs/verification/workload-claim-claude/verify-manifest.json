@@ -1,0 +1,65 @@
+{
+  "topic": "workload-claim-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/487",
+  "harnessPaths": [
+    "docs/verification/workload-claim-claude",
+    "pkg/reconciler/workload_claim_verify_p0_test.go",
+    "pkg/reconciler/workload_claim_verify_head_test.go",
+    "test/envtest/testcase/rbg/workload_claim_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "A same-named RBG created inside the background-deletion window finds the predecessor's leftover workload by name and reports readiness it never earned: ConstructRoleStatus reads the leftover's readyReplicas, so the RBG goes Ready=True on a workload it does not control.",
+    "reportedComponent": "pkg/reconciler workload reconcilers (ConstructRoleStatus / CheckWorkloadReady / Reconciler) + internal/controller/workloads rolebasedgroup_controller",
+    "patchedComponent": "same: pkg/reconciler/common.go checkWorkloadClaimable applied in all four workload reconcilers",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit+integration",
+    "verdict": "confirmed",
+    "evidence": "On base 0821cb5b the three P0 unit tests fail (ConstructRoleStatus reports ready=1 from a foreign-UID workload; CheckWorkloadReady returns true) and the envtest spec observes the persisted RBG Ready=True with readyReplicas=1 (results/base/*, results/envtest-base.txt). The base controller log additionally shows the workload apply failing with 'Only one reference can have Controller set to true' — SSA can never take over the leftover, so the false Ready persisted for the whole GC window (results/envtest-base-controller-evidence.txt).",
+    "match": [
+      "TestVerifyClaim_P0_Unit_NoReadyReplicasFromForeignWorkload",
+      "TestVerifyClaim_P0_Unit_NoReadyReplicasFromOrphanWithoutGroupLabel",
+      "TestVerifyClaim_P0_Unit_CheckWorkloadReadyNotSatisfiedByForeignWorkload",
+      "P0: must not report readiness inherited from a foreign-UID leftover workload"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/ -run 'TestVerifyClaim' -count=1 -v"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=/tmp/rbg-envtest/k8s/1.31.0-linux-amd64 go test ./test/envtest/testcase/rbg/ -count=1 -timeout 15m -args -ginkgo.focus 'Workload claim verification'",
+      "report": "stdout"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "integration",
+      "claim": "While any role's workload is terminating (e.g. stuck behind a finalizer), removing another role from the RBG spec must still clean up the removed role's workload. On the PR head the claimable check returns ErrWorkloadNotClaimable for a terminating workload even when the RBG owns it, aborting Reconcile at Step 8 so the Step 9 cleanup never runs.",
+      "match": [
+        "F1: removing a role still cleans up its workload while another role's workload is stuck terminating",
+        "F1-control: removing a role cleans up its workload when nothing is stuck"
+      ]
+    },
+    {
+      "id": "F2",
+      "polarity": "canary",
+      "layer": "unit",
+      "claim": "An orphan carrying the group-name label is claimable, so ConstructRoleStatus still reads its readyReplicas before adoption has happened. If a later fix gates status on actual control, this test flips to red and must be inverted.",
+      "match": ["TestVerifyClaim_F2_Unit_OrphanReadinessInheritedBeforeAdoption"]
+    },
+    {
+      "id": "F3",
+      "polarity": "canary",
+      "layer": "unit",
+      "claim": "GetWorkloadName truncates to 63 chars, so two roles sharing a 52-char prefix map to one workload name, and the orphan branch of checkWorkloadClaimable inspects only the group-name label — role A's orphan is claimable at role B's slot. If a later fix also checks the role label, the NoError assertion flips to red.",
+      "match": ["TestVerifyClaim_F3_Unit_WorkloadNameCollision"]
+    }
+  ],
+  "liveNote": "L3 (live cluster) was intentionally skipped per the review-round instructions: a reachable cluster was observed (2 aliyun nodes, v1.36.2) but the debate setup restricts stage 2 to unit + integration layers. The e2e orphan-adoption case added by the PR itself passed in the PR's own CI run, covering the real-cluster adoption path."
+}

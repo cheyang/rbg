@@ -1,0 +1,10 @@
+=== RUN   TestVerifyClaim_P0_Unit_NoReadyReplicasFromForeignWorkload
+        	Error:      	Should be zero, but was 1
+        	Error:      	Should be zero, but was 1
+--- FAIL: TestVerifyClaim_P0_Unit_NoReadyReplicasFromForeignWorkload (0.04s)
+=== RUN   TestVerifyClaim_P0_Unit_NoReadyReplicasFromOrphanWithoutGroupLabel
+        	Error:      	Should be zero, but was 1
+--- FAIL: TestVerifyClaim_P0_Unit_NoReadyReplicasFromOrphanWithoutGroupLabel (0.00s)
+=== RUN   TestVerifyClaim_P0_Unit_CheckWorkloadReadyNotSatisfiedByForeignWorkload
+        	Error:      	Should be false
+--- FAIL: TestVerifyClaim_P0_Unit_CheckWorkloadReadyNotSatisfiedByForeignWorkload (0.00s)
