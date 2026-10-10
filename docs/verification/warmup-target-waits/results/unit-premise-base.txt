@@ -1,0 +1,42 @@
+=== RUN   TestReconcile_MissingTargetRBGFailsWithoutRequeue
+2026-10-11T02:26:01+08:00	INFO	Start reconciling	{"warmup": {"name":"missing-rbg","namespace":"default"}}
+2026-10-11T02:26:01+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"missing-rbg","namespace":"default"}, "name": "does-not-exist", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"does-not-exist\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getDesiredNodesToWarmup
+	/tmp/rbg-base-478/internal/controller/workloads/rolebasedgroupwarmup_controller.go:508
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/rbg-base-478/internal/controller/workloads/rolebasedgroupwarmup_controller.go:184
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/rbg-base-478/internal/controller/workloads/rolebasedgroupwarmup_controller.go:130
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_MissingTargetRBGFailsWithoutRequeue
+	/tmp/rbg-base-478/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1032
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-11T02:26:01+08:00	INFO	Warmup job failed	{"warmup": {"name":"missing-rbg","namespace":"default"}, "reason": "InvalidTarget", "succeeded": 0, "failed": 0}
+2026-10-11T02:26:01+08:00	INFO	Finished reconciling	{"warmup": {"name":"missing-rbg","namespace":"default"}, "duration": "1.411397ms"}
+--- PASS: TestReconcile_MissingTargetRBGFailsWithoutRequeue (0.04s)
+=== RUN   TestVerify_Premise_MissingTargetFailsTerminallyOnBase
+2026-10-11T02:26:01+08:00	INFO	Start reconciling	{"warmup": {"name":"p0-missing","namespace":"default"}}
+2026-10-11T02:26:01+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"p0-missing","namespace":"default"}, "name": "p0-missing-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"p0-missing-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getDesiredNodesToWarmup
+	/tmp/rbg-base-478/internal/controller/workloads/rolebasedgroupwarmup_controller.go:508
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/rbg-base-478/internal/controller/workloads/rolebasedgroupwarmup_controller.go:184
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/rbg-base-478/internal/controller/workloads/rolebasedgroupwarmup_controller.go:130
+sigs.k8s.io/rbgs/internal/controller/workloads.TestVerify_Premise_MissingTargetFailsTerminallyOnBase
+	/tmp/rbg-base-478/internal/controller/workloads/warmup_premise_verification_test.go:84
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-11T02:26:01+08:00	INFO	Warmup job failed	{"warmup": {"name":"p0-missing","namespace":"default"}, "reason": "InvalidTarget", "succeeded": 0, "failed": 0}
+2026-10-11T02:26:01+08:00	INFO	Finished reconciling	{"warmup": {"name":"p0-missing","namespace":"default"}, "duration": "1.076485ms"}
+--- PASS: TestVerify_Premise_MissingTargetFailsTerminallyOnBase (0.00s)
+=== RUN   TestVerify_Premise_UnscheduledTargetPodsCompleteOnBase
+2026-10-11T02:26:01+08:00	INFO	Start reconciling	{"warmup": {"name":"p0-unscheduled","namespace":"default"}}
+2026-10-11T02:26:01+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"p0-unscheduled","namespace":"default"}, "count": 1}
+2026-10-11T02:26:01+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"p0-unscheduled","namespace":"default"}, "rbg": "p0-rbg", "roles": 0, "nodes": 0}
+2026-10-11T02:26:01+08:00	INFO	No nodes matched, completing immediately	{"warmup": {"name":"p0-unscheduled","namespace":"default"}}
+2026-10-11T02:26:01+08:00	INFO	Updated status	{"warmup": {"name":"p0-unscheduled","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 0, "failed": 0}
+2026-10-11T02:26:01+08:00	INFO	Finished reconciling	{"warmup": {"name":"p0-unscheduled","namespace":"default"}, "duration": "2.013966ms"}
+--- PASS: TestVerify_Premise_UnscheduledTargetPodsCompleteOnBase (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.060s

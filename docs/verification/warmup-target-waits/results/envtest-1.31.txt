@@ -1,0 +1,9 @@
+=== RUN   TestWarmupCRDItemLevelCELFreezesStoredInvalidObjects
+    warmup_crd_status_verify_test.go:206: envtest apiserver version: 1.31.0
+    warmup_crd_status_verify_test.go:221: fix leg (before): status write under PR-head CRD accepted
+    warmup_crd_status_verify_test.go:237: control: fresh invalid create rejected with the #466 rule message (rule is live)
+    warmup_crd_status_verify_test.go:248: premise CONFIRMED on 1.31.0: status write on the pre-existing invalid object is rejected: RoleBasedGroupWarmup.workloads.x-k8s.io "verify-freeze" is invalid: spec.targetNodes.customizedAction.containers[0]: Invalid value: "object": customized action container image must not be empty
+    warmup_crd_status_verify_test.go:261: fix leg (after): status write accepted again after restoring the PR-head CRD
+--- PASS: TestWarmupCRDItemLevelCELFreezesStoredInvalidObjects (5.47s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/warmupcrdverify	5.478s

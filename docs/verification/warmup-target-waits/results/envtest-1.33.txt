@@ -1,0 +1,9 @@
+=== RUN   TestWarmupCRDItemLevelCELFreezesStoredInvalidObjects
+    warmup_crd_status_verify_test.go:206: envtest apiserver version: 1.33.0
+    warmup_crd_status_verify_test.go:221: fix leg (before): status write under PR-head CRD accepted
+    warmup_crd_status_verify_test.go:237: control: fresh invalid create rejected with the #466 rule message (rule is live)
+    warmup_crd_status_verify_test.go:253: on 1.33.0 the status write is accepted (status ratcheting wired into the status strategy)
+    warmup_crd_status_verify_test.go:261: fix leg (after): status write accepted again after restoring the PR-head CRD
+--- PASS: TestWarmupCRDItemLevelCELFreezesStoredInvalidObjects (6.63s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/warmupcrdverify	6.640s

@@ -1,0 +1,40 @@
+{
+  "topic": "warmup-target-waits",
+  "pr": "https://github.com/sgl-project/rbg/pull/478",
+  "harnessPaths": [
+    "docs/verification/warmup-target-waits",
+    "internal/controller/workloads/warmup_target_waits_verification_test.go",
+    "internal/controller/workloads/warmup_premise_verification_test.go",
+    "test/envtest/warmupcrdverify/warmup_crd_status_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Three claims from the PR body: (1) 'A missing target RoleBasedGroup is an unrecoverable one-shot failure' (Failed/InvalidTarget even if the target is created moments later); (2) 'An existing target RBG whose Pods are not scheduled yet reports Completed/NoNodesMatched' (silent false success); (3) '#466's customized-container-image CEL rule freezes pre-existing objects' on Kubernetes <= 1.32 (status subresource strategy runs CEL without ratcheting).",
+    "reportedComponent": "internal/controller/workloads/rolebasedgroupwarmup_controller.go + generated Warmup CRD",
+    "patchedComponent": "same (controller + CRD + api marker)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit+integration",
+    "verdict": "confirmed",
+    "evidence": "P0-1/P0-2: results/unit-premise-base.txt (base 35e5d029: missing target -> Failed/InvalidTarget no-requeue; unscheduled pods -> Completed/NoNodesMatched). P0-3: results/envtest-1.31.txt (status write on pre-existing invalid object REJECTED with the CEL message under the base CRD) and results/envtest-1.33.txt (same write ACCEPTED on 1.33 -> the ratcheting version boundary is real).",
+    "match": ["TestVerify_Premise_MissingTargetFailsTerminallyOnBase", "TestVerify_Premise_UnscheduledTargetPodsCompleteOnBase", "TestWarmupCRDItemLevelCELFreezesStoredInvalidObjects"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerify_' -count=1 -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=\"$(setup-envtest use 1.31.0 -p path)\" go test ./test/envtest/warmupcrdverify/ -count=1 -timeout 10m -json"
+    }
+  },
+  "findings": [
+    { "id": "F1a", "polarity": "contract", "layer": "unit", "match": ["TestVerify_MidWarmupPendingPodBlocksCompletion"] },
+    { "id": "F1b", "polarity": "canary",   "layer": "unit", "match": ["TestVerify_MidWarmupPendingPodFailsCompletedWorkOnTimeout"] },
+    { "id": "F2",  "polarity": "canary",   "layer": "unit", "match": ["TestVerify_WaitAndRunTimeoutBudgetsAreAdditive"] },
+    { "id": "F3",  "polarity": "contract", "layer": "unit", "match": ["TestVerify_PendingPodsFailAfterGlobalTimeout"] },
+    { "id": "P0-3", "polarity": "contract", "layer": "integration", "match": ["TestWarmupCRDItemLevelCELFreezesStoredInvalidObjects"] }
+  ],
+  "liveNote": "Live layer skipped per review-scope decision (unit + integration only). If run later: on a real <=1.32 cluster, create a Warmup with a customized action container without image under the rule-less CRD, then install the #466 CRD and try PATCH /status -> expect rejection; then install the PR CRD -> expect acceptance. Mid-warmup stall (F1): run a Warmup, let all its Pods succeed, then scale the target RBG so a selected-role Pod stays pending; observe phase stuck Running (no globalTimeoutSeconds) or Failed/GlobalTimeoutExceeded (with it)."
+}
