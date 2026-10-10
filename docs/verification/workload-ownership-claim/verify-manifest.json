@@ -1,0 +1,44 @@
+{
+  "topic": "workload-ownership-claim",
+  "pr": "https://github.com/sgl-project/rbg/pull/487",
+  "harnessPaths": [
+    "docs/verification/workload-ownership-claim",
+    "pkg/reconciler/zz_verify_pr487_ownership_test.go",
+    "test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "A re-created same-named RBG finds the workload left behind by its deleted predecessor and reports readiness it never earned (ConstructRoleStatus reads the leftover's readyReplicas).",
+    "reportedComponent": "pkg/reconciler workload reconcilers + ConstructRoleStatus",
+    "patchedComponent": "pkg/reconciler/common.go + 4 workload reconcilers",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "L1 red on base (status 1/1, ready=true from stale-UID leftover): results/l1-unit-base.txt; L2 red on base (RBG Ready=True from leftover + 422 reconcile loop): results/l2-envtest-base.txt",
+    "match": ["TestZZVerifyP0LeftoverReadinessNotInherited", "must not report Ready from a leftover workload of a previous incarnation"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/ -run 'TestZZVerify' -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=$KUBEBUILDER_ASSETS go test ./test/envtest/testcase/rbg/ -run TestRBGController -ginkgo.focus 'PR487 workload ownership claim' -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    { "id": "P0", "polarity": "contract", "layer": "unit", "match": ["TestZZVerifyP0LeftoverReadinessNotInherited", "TestZZVerifyP0LeftoverReconcileDoesNotWrite"] },
+    { "id": "P0", "polarity": "contract", "layer": "integration", "match": ["must not report Ready from a leftover workload of a previous incarnation"] },
+    { "id": "F-terminating", "polarity": "contract", "layer": "unit", "match": ["TestZZVerifyTerminatingWorkloadNotClaimed"] },
+    { "id": "F-orphan-nolabel", "polarity": "contract", "layer": "unit", "match": ["TestZZVerifyOrphanWithoutGroupLabelRejected"] },
+    { "id": "F-orphan-equal", "polarity": "contract", "layer": "unit", "match": ["TestZZVerifyEqualOrphanAdopted"] },
+    { "id": "F-guard", "polarity": "contract", "layer": "unit", "match": ["TestZZVerifyOwnWorkloadManagedNormally"] },
+    { "id": "F-adopt-e2e", "polarity": "contract", "layer": "integration", "match": ["adopts an orphaned workload carrying the group label"] },
+    { "id": "F-write", "polarity": "contract", "layer": "integration", "match": ["direct reconcile against a leftover fails without mutating it"] },
+    { "id": "F-residual-cm", "polarity": "canary", "layer": "integration", "match": ["discovery ConfigMap apply against a stale-controlled ConfigMap still conflicts"] }
+  ],
+  "liveNote": "L3 skipped this round (no cluster). If run: delete an RBG with background propagation, recreate it immediately, and watch events for FailedReconcileWorkload with ErrWorkloadNotClaimable until the GC removes the leftover; the RBG must not go Ready meanwhile."
+}

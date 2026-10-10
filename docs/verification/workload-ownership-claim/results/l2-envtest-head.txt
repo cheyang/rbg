@@ -1,0 +1,15 @@
+=== RUN   TestRBGController
+Running Suite: RoleBasedGroup Controller Suite - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg
+=======================================================================================================================================================
+Random Seed: [1m1791653779[0m
+
+Will run [1m4[0m of [1m17[0m specs
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;10m•[0m[38;5;10m•[0mZZ-EVIDENCE direct-reconcile error: workload is not claimable by this RoleBasedGroup: zz-direct-rbg-worker is controlled by uid zz-stale-rbg-uid-0000
+[38;5;10m•[0mZZ-EVIDENCE configmap-apply error: ConfigMap "zz-cm-rbg" is invalid: metadata.ownerReferences: Invalid value: [{"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","name":"zz-cm-rbg","uid":"zz-stale-rbg-uid-0000","controller":true},{"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","name":"zz-cm-rbg","uid":"zz-current-rbg-uid-1111","controller":true,"blockOwnerDeletion":true}]: Only one reference can have Controller set to true. Found "true" in references for RoleBasedGroup/zz-cm-rbg and RoleBasedGroup/zz-cm-rbg
+[38;5;10m•[0m
+
+[38;5;10m[1mRan 4 of 17 Specs in 38.922 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m4 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m13 Skipped[0m
+--- PASS: TestRBGController (38.92s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	38.936s

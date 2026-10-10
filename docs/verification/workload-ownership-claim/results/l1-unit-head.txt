@@ -1,0 +1,60 @@
+=== RUN   TestZZVerifyP0LeftoverReadinessNotInherited
+=== RUN   TestZZVerifyP0LeftoverReadinessNotInherited/RoleInstanceSet
+=== RUN   TestZZVerifyP0LeftoverReadinessNotInherited/Deployment
+=== RUN   TestZZVerifyP0LeftoverReadinessNotInherited/StatefulSet
+=== RUN   TestZZVerifyP0LeftoverReadinessNotInherited/LeaderWorkerSet
+--- PASS: TestZZVerifyP0LeftoverReadinessNotInherited (0.04s)
+    --- PASS: TestZZVerifyP0LeftoverReadinessNotInherited/RoleInstanceSet (0.04s)
+    --- PASS: TestZZVerifyP0LeftoverReadinessNotInherited/Deployment (0.00s)
+    --- PASS: TestZZVerifyP0LeftoverReadinessNotInherited/StatefulSet (0.00s)
+    --- PASS: TestZZVerifyP0LeftoverReadinessNotInherited/LeaderWorkerSet (0.00s)
+=== RUN   TestZZVerifyP0LeftoverReconcileDoesNotWrite
+=== RUN   TestZZVerifyP0LeftoverReconcileDoesNotWrite/RoleInstanceSet
+=== RUN   TestZZVerifyP0LeftoverReconcileDoesNotWrite/Deployment
+=== RUN   TestZZVerifyP0LeftoverReconcileDoesNotWrite/StatefulSet
+=== RUN   TestZZVerifyP0LeftoverReconcileDoesNotWrite/LeaderWorkerSet
+--- PASS: TestZZVerifyP0LeftoverReconcileDoesNotWrite (0.01s)
+    --- PASS: TestZZVerifyP0LeftoverReconcileDoesNotWrite/RoleInstanceSet (0.00s)
+    --- PASS: TestZZVerifyP0LeftoverReconcileDoesNotWrite/Deployment (0.00s)
+    --- PASS: TestZZVerifyP0LeftoverReconcileDoesNotWrite/StatefulSet (0.00s)
+    --- PASS: TestZZVerifyP0LeftoverReconcileDoesNotWrite/LeaderWorkerSet (0.01s)
+=== RUN   TestZZVerifyOwnWorkloadManagedNormally
+=== RUN   TestZZVerifyOwnWorkloadManagedNormally/RoleInstanceSet
+=== RUN   TestZZVerifyOwnWorkloadManagedNormally/Deployment
+=== RUN   TestZZVerifyOwnWorkloadManagedNormally/StatefulSet
+=== RUN   TestZZVerifyOwnWorkloadManagedNormally/LeaderWorkerSet
+--- PASS: TestZZVerifyOwnWorkloadManagedNormally (0.00s)
+    --- PASS: TestZZVerifyOwnWorkloadManagedNormally/RoleInstanceSet (0.00s)
+    --- PASS: TestZZVerifyOwnWorkloadManagedNormally/Deployment (0.00s)
+    --- PASS: TestZZVerifyOwnWorkloadManagedNormally/StatefulSet (0.00s)
+    --- PASS: TestZZVerifyOwnWorkloadManagedNormally/LeaderWorkerSet (0.00s)
+=== RUN   TestZZVerifyTerminatingWorkloadNotClaimed
+=== RUN   TestZZVerifyTerminatingWorkloadNotClaimed/RoleInstanceSet
+=== RUN   TestZZVerifyTerminatingWorkloadNotClaimed/Deployment
+=== RUN   TestZZVerifyTerminatingWorkloadNotClaimed/StatefulSet
+=== RUN   TestZZVerifyTerminatingWorkloadNotClaimed/LeaderWorkerSet
+--- PASS: TestZZVerifyTerminatingWorkloadNotClaimed (0.00s)
+    --- PASS: TestZZVerifyTerminatingWorkloadNotClaimed/RoleInstanceSet (0.00s)
+    --- PASS: TestZZVerifyTerminatingWorkloadNotClaimed/Deployment (0.00s)
+    --- PASS: TestZZVerifyTerminatingWorkloadNotClaimed/StatefulSet (0.00s)
+    --- PASS: TestZZVerifyTerminatingWorkloadNotClaimed/LeaderWorkerSet (0.00s)
+=== RUN   TestZZVerifyOrphanWithoutGroupLabelRejected
+=== RUN   TestZZVerifyOrphanWithoutGroupLabelRejected/RoleInstanceSet
+=== RUN   TestZZVerifyOrphanWithoutGroupLabelRejected/Deployment
+=== RUN   TestZZVerifyOrphanWithoutGroupLabelRejected/StatefulSet
+=== RUN   TestZZVerifyOrphanWithoutGroupLabelRejected/LeaderWorkerSet
+--- PASS: TestZZVerifyOrphanWithoutGroupLabelRejected (0.00s)
+    --- PASS: TestZZVerifyOrphanWithoutGroupLabelRejected/RoleInstanceSet (0.00s)
+    --- PASS: TestZZVerifyOrphanWithoutGroupLabelRejected/Deployment (0.00s)
+    --- PASS: TestZZVerifyOrphanWithoutGroupLabelRejected/StatefulSet (0.00s)
+    --- PASS: TestZZVerifyOrphanWithoutGroupLabelRejected/LeaderWorkerSet (0.00s)
+=== RUN   TestZZVerifyEqualOrphanAdopted
+=== RUN   TestZZVerifyEqualOrphanAdopted/Deployment
+=== RUN   TestZZVerifyEqualOrphanAdopted/StatefulSet
+=== RUN   TestZZVerifyEqualOrphanAdopted/LeaderWorkerSet
+--- PASS: TestZZVerifyEqualOrphanAdopted (0.01s)
+    --- PASS: TestZZVerifyEqualOrphanAdopted/Deployment (0.00s)
+    --- PASS: TestZZVerifyEqualOrphanAdopted/StatefulSet (0.01s)
+    --- PASS: TestZZVerifyEqualOrphanAdopted/LeaderWorkerSet (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	(cached)

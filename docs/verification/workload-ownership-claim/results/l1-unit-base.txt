@@ -1,0 +1,340 @@
+=== RUN   TestZZVerifyP0LeftoverReadinessNotInherited
+=== RUN   TestZZVerifyP0LeftoverReadinessNotInherited/RoleInstanceSet
+    zz_verify_pr487_ownership_test.go:188: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:188
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestZZVerifyP0LeftoverReadinessNotInherited/RoleInstanceSet
+        	Messages:   	P0: replicas must not be inherited from a workload controlled by another UID
+    zz_verify_pr487_ownership_test.go:190: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:190
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestZZVerifyP0LeftoverReadinessNotInherited/RoleInstanceSet
+        	Messages:   	P0: readyReplicas must not be inherited from a workload controlled by another UID
+    zz_verify_pr487_ownership_test.go:195: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:195
+        	Error:      	Should be false
+        	Test:       	TestZZVerifyP0LeftoverReadinessNotInherited/RoleInstanceSet
+        	Messages:   	P0: dependents must not trust readiness of a workload controlled by another UID
+=== RUN   TestZZVerifyP0LeftoverReadinessNotInherited/Deployment
+    zz_verify_pr487_ownership_test.go:188: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:188
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestZZVerifyP0LeftoverReadinessNotInherited/Deployment
+        	Messages:   	P0: replicas must not be inherited from a workload controlled by another UID
+    zz_verify_pr487_ownership_test.go:190: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:190
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestZZVerifyP0LeftoverReadinessNotInherited/Deployment
+        	Messages:   	P0: readyReplicas must not be inherited from a workload controlled by another UID
+    zz_verify_pr487_ownership_test.go:195: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:195
+        	Error:      	Should be false
+        	Test:       	TestZZVerifyP0LeftoverReadinessNotInherited/Deployment
+        	Messages:   	P0: dependents must not trust readiness of a workload controlled by another UID
+=== RUN   TestZZVerifyP0LeftoverReadinessNotInherited/StatefulSet
+    zz_verify_pr487_ownership_test.go:188: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:188
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestZZVerifyP0LeftoverReadinessNotInherited/StatefulSet
+        	Messages:   	P0: replicas must not be inherited from a workload controlled by another UID
+    zz_verify_pr487_ownership_test.go:190: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:190
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestZZVerifyP0LeftoverReadinessNotInherited/StatefulSet
+        	Messages:   	P0: readyReplicas must not be inherited from a workload controlled by another UID
+    zz_verify_pr487_ownership_test.go:195: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:195
+        	Error:      	Should be false
+        	Test:       	TestZZVerifyP0LeftoverReadinessNotInherited/StatefulSet
+        	Messages:   	P0: dependents must not trust readiness of a workload controlled by another UID
+=== RUN   TestZZVerifyP0LeftoverReadinessNotInherited/LeaderWorkerSet
+    zz_verify_pr487_ownership_test.go:188: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:188
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestZZVerifyP0LeftoverReadinessNotInherited/LeaderWorkerSet
+        	Messages:   	P0: replicas must not be inherited from a workload controlled by another UID
+    zz_verify_pr487_ownership_test.go:190: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:190
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestZZVerifyP0LeftoverReadinessNotInherited/LeaderWorkerSet
+        	Messages:   	P0: readyReplicas must not be inherited from a workload controlled by another UID
+    zz_verify_pr487_ownership_test.go:195: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:195
+        	Error:      	Should be false
+        	Test:       	TestZZVerifyP0LeftoverReadinessNotInherited/LeaderWorkerSet
+        	Messages:   	P0: dependents must not trust readiness of a workload controlled by another UID
+--- FAIL: TestZZVerifyP0LeftoverReadinessNotInherited (0.04s)
+    --- FAIL: TestZZVerifyP0LeftoverReadinessNotInherited/RoleInstanceSet (0.04s)
+    --- FAIL: TestZZVerifyP0LeftoverReadinessNotInherited/Deployment (0.00s)
+    --- FAIL: TestZZVerifyP0LeftoverReadinessNotInherited/StatefulSet (0.00s)
+    --- FAIL: TestZZVerifyP0LeftoverReadinessNotInherited/LeaderWorkerSet (0.00s)
+=== RUN   TestZZVerifyP0LeftoverReconcileDoesNotWrite
+=== RUN   TestZZVerifyP0LeftoverReconcileDoesNotWrite/RoleInstanceSet
+    zz_verify_pr487_ownership_test.go:227: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:227
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestZZVerifyP0LeftoverReconcileDoesNotWrite/RoleInstanceSet
+        	Messages:   	P0: reconciling over a foreign-controlled workload must fail instead of claiming it
+    zz_verify_pr487_ownership_test.go:232: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:232
+        	Error:      	Not equal: 
+        	            	expected: []v1.OwnerReference{v1.OwnerReference{APIVersion:"workloads.x-k8s.io/v1alpha2", Kind:"RoleBasedGroup", Name:"zz-verify-rbg", UID:"zz-previous-rbg-uid", Controller:(*bool)(0x38c07592f854), BlockOwnerDeletion:(*bool)(0x38c07592f855)}}
+        	            	actual  : []v1.OwnerReference{v1.OwnerReference{APIVersion:"workloads.x-k8s.io/v1alpha2", Kind:"RoleBasedGroup", Name:"zz-verify-rbg", UID:"zz-current-rbg-uid", Controller:(*bool)(0x38c076881bd8), BlockOwnerDeletion:(*bool)(0x38c076881bd9)}}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -5,3 +5,3 @@
+        	            	   Name: (string) (len=13) "zz-verify-rbg",
+        	            	-  UID: (types.UID) (len=19) "zz-previous-rbg-uid",
+        	            	+  UID: (types.UID) (len=18) "zz-current-rbg-uid",
+        	            	   Controller: (*bool)(true),
+        	Test:       	TestZZVerifyP0LeftoverReconcileDoesNotWrite/RoleInstanceSet
+        	Messages:   	P0: the leftover's owner references must not be modified
+=== RUN   TestZZVerifyP0LeftoverReconcileDoesNotWrite/Deployment
+    zz_verify_pr487_ownership_test.go:227: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:227
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestZZVerifyP0LeftoverReconcileDoesNotWrite/Deployment
+        	Messages:   	P0: reconciling over a foreign-controlled workload must fail instead of claiming it
+    zz_verify_pr487_ownership_test.go:232: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:232
+        	Error:      	Not equal: 
+        	            	expected: []v1.OwnerReference{v1.OwnerReference{APIVersion:"workloads.x-k8s.io/v1alpha2", Kind:"RoleBasedGroup", Name:"zz-verify-rbg", UID:"zz-previous-rbg-uid", Controller:(*bool)(0x38c076744b6c), BlockOwnerDeletion:(*bool)(0x38c076744b6d)}}
+        	            	actual  : []v1.OwnerReference{v1.OwnerReference{APIVersion:"workloads.x-k8s.io/v1alpha2", Kind:"RoleBasedGroup", Name:"zz-verify-rbg", UID:"zz-previous-rbg-uid", Controller:(*bool)(0x38c075bc491d), BlockOwnerDeletion:(*bool)(0x38c075bc491e)}, v1.OwnerReference{APIVersion:"workloads.x-k8s.io/v1alpha2", Kind:"RoleBasedGroup", Name:"zz-verify-rbg", UID:"zz-current-rbg-uid", Controller:(*bool)(0x38c075bc495d), BlockOwnerDeletion:(*bool)(0x38c075bc495e)}}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-([]v1.OwnerReference) (len=1) {
+        	            	+([]v1.OwnerReference) (len=2) {
+        	            	  (v1.OwnerReference) {
+        	            	@@ -8,2 +8,10 @@
+        	            	   BlockOwnerDeletion: (*bool)(true)
+        	            	+ },
+        	            	+ (v1.OwnerReference) {
+        	            	+  APIVersion: (string) (len=27) "workloads.x-k8s.io/v1alpha2",
+        	            	+  Kind: (string) (len=14) "RoleBasedGroup",
+        	            	+  Name: (string) (len=13) "zz-verify-rbg",
+        	            	+  UID: (types.UID) (len=18) "zz-current-rbg-uid",
+        	            	+  Controller: (*bool)(true),
+        	            	+  BlockOwnerDeletion: (*bool)(true)
+        	            	  }
+        	Test:       	TestZZVerifyP0LeftoverReconcileDoesNotWrite/Deployment
+        	Messages:   	P0: the leftover's owner references must not be modified
+=== RUN   TestZZVerifyP0LeftoverReconcileDoesNotWrite/StatefulSet
+    zz_verify_pr487_ownership_test.go:227: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:227
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestZZVerifyP0LeftoverReconcileDoesNotWrite/StatefulSet
+        	Messages:   	P0: reconciling over a foreign-controlled workload must fail instead of claiming it
+    zz_verify_pr487_ownership_test.go:232: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:232
+        	Error:      	Not equal: 
+        	            	expected: []v1.OwnerReference{v1.OwnerReference{APIVersion:"workloads.x-k8s.io/v1alpha2", Kind:"RoleBasedGroup", Name:"zz-verify-rbg", UID:"zz-previous-rbg-uid", Controller:(*bool)(0x38c075bc52a4), BlockOwnerDeletion:(*bool)(0x38c075bc52a5)}}
+        	            	actual  : []v1.OwnerReference{v1.OwnerReference{APIVersion:"workloads.x-k8s.io/v1alpha2", Kind:"RoleBasedGroup", Name:"zz-verify-rbg", UID:"zz-previous-rbg-uid", Controller:(*bool)(0x38c0767894bd), BlockOwnerDeletion:(*bool)(0x38c0767894be)}, v1.OwnerReference{APIVersion:"workloads.x-k8s.io/v1alpha2", Kind:"RoleBasedGroup", Name:"zz-verify-rbg", UID:"zz-current-rbg-uid", Controller:(*bool)(0x38c07678959d), BlockOwnerDeletion:(*bool)(0x38c07678959e)}}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-([]v1.OwnerReference) (len=1) {
+        	            	+([]v1.OwnerReference) (len=2) {
+        	            	  (v1.OwnerReference) {
+        	            	@@ -8,2 +8,10 @@
+        	            	   BlockOwnerDeletion: (*bool)(true)
+        	            	+ },
+        	            	+ (v1.OwnerReference) {
+        	            	+  APIVersion: (string) (len=27) "workloads.x-k8s.io/v1alpha2",
+        	            	+  Kind: (string) (len=14) "RoleBasedGroup",
+        	            	+  Name: (string) (len=13) "zz-verify-rbg",
+        	            	+  UID: (types.UID) (len=18) "zz-current-rbg-uid",
+        	            	+  Controller: (*bool)(true),
+        	            	+  BlockOwnerDeletion: (*bool)(true)
+        	            	  }
+        	Test:       	TestZZVerifyP0LeftoverReconcileDoesNotWrite/StatefulSet
+        	Messages:   	P0: the leftover's owner references must not be modified
+=== RUN   TestZZVerifyP0LeftoverReconcileDoesNotWrite/LeaderWorkerSet
+    zz_verify_pr487_ownership_test.go:227: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:227
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestZZVerifyP0LeftoverReconcileDoesNotWrite/LeaderWorkerSet
+        	Messages:   	P0: reconciling over a foreign-controlled workload must fail instead of claiming it
+    zz_verify_pr487_ownership_test.go:232: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:232
+        	Error:      	Not equal: 
+        	            	expected: []v1.OwnerReference{v1.OwnerReference{APIVersion:"workloads.x-k8s.io/v1alpha2", Kind:"RoleBasedGroup", Name:"zz-verify-rbg", UID:"zz-previous-rbg-uid", Controller:(*bool)(0x38c075b57ba4), BlockOwnerDeletion:(*bool)(0x38c075b57ba5)}}
+        	            	actual  : []v1.OwnerReference{v1.OwnerReference{APIVersion:"workloads.x-k8s.io/v1alpha2", Kind:"RoleBasedGroup", Name:"zz-verify-rbg", UID:"zz-current-rbg-uid", Controller:(*bool)(0x38c07592f7e6), BlockOwnerDeletion:(*bool)(0x38c07592f7e7)}}
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -5,3 +5,3 @@
+        	            	   Name: (string) (len=13) "zz-verify-rbg",
+        	            	-  UID: (types.UID) (len=19) "zz-previous-rbg-uid",
+        	            	+  UID: (types.UID) (len=18) "zz-current-rbg-uid",
+        	            	   Controller: (*bool)(true),
+        	Test:       	TestZZVerifyP0LeftoverReconcileDoesNotWrite/LeaderWorkerSet
+        	Messages:   	P0: the leftover's owner references must not be modified
+--- FAIL: TestZZVerifyP0LeftoverReconcileDoesNotWrite (0.02s)
+    --- FAIL: TestZZVerifyP0LeftoverReconcileDoesNotWrite/RoleInstanceSet (0.01s)
+    --- FAIL: TestZZVerifyP0LeftoverReconcileDoesNotWrite/Deployment (0.00s)
+    --- FAIL: TestZZVerifyP0LeftoverReconcileDoesNotWrite/StatefulSet (0.00s)
+    --- FAIL: TestZZVerifyP0LeftoverReconcileDoesNotWrite/LeaderWorkerSet (0.00s)
+=== RUN   TestZZVerifyOwnWorkloadManagedNormally
+=== RUN   TestZZVerifyOwnWorkloadManagedNormally/RoleInstanceSet
+=== RUN   TestZZVerifyOwnWorkloadManagedNormally/Deployment
+=== RUN   TestZZVerifyOwnWorkloadManagedNormally/StatefulSet
+=== RUN   TestZZVerifyOwnWorkloadManagedNormally/LeaderWorkerSet
+--- PASS: TestZZVerifyOwnWorkloadManagedNormally (0.00s)
+    --- PASS: TestZZVerifyOwnWorkloadManagedNormally/RoleInstanceSet (0.00s)
+    --- PASS: TestZZVerifyOwnWorkloadManagedNormally/Deployment (0.00s)
+    --- PASS: TestZZVerifyOwnWorkloadManagedNormally/StatefulSet (0.00s)
+    --- PASS: TestZZVerifyOwnWorkloadManagedNormally/LeaderWorkerSet (0.00s)
+=== RUN   TestZZVerifyTerminatingWorkloadNotClaimed
+=== RUN   TestZZVerifyTerminatingWorkloadNotClaimed/RoleInstanceSet
+    zz_verify_pr487_ownership_test.go:297: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:297
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestZZVerifyTerminatingWorkloadNotClaimed/RoleInstanceSet
+        	Messages:   	a terminating workload must report 0 ready
+    zz_verify_pr487_ownership_test.go:301: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:301
+        	Error:      	Should be false
+        	Test:       	TestZZVerifyTerminatingWorkloadNotClaimed/RoleInstanceSet
+        	Messages:   	a terminating workload must not gate dependents as ready
+    zz_verify_pr487_ownership_test.go:303: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:303
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestZZVerifyTerminatingWorkloadNotClaimed/RoleInstanceSet
+        	Messages:   	reconcile must wait for a terminating workload to disappear
+=== RUN   TestZZVerifyTerminatingWorkloadNotClaimed/Deployment
+    zz_verify_pr487_ownership_test.go:297: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:297
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestZZVerifyTerminatingWorkloadNotClaimed/Deployment
+        	Messages:   	a terminating workload must report 0 ready
+    zz_verify_pr487_ownership_test.go:301: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:301
+        	Error:      	Should be false
+        	Test:       	TestZZVerifyTerminatingWorkloadNotClaimed/Deployment
+        	Messages:   	a terminating workload must not gate dependents as ready
+    zz_verify_pr487_ownership_test.go:303: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:303
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestZZVerifyTerminatingWorkloadNotClaimed/Deployment
+        	Messages:   	reconcile must wait for a terminating workload to disappear
+=== RUN   TestZZVerifyTerminatingWorkloadNotClaimed/StatefulSet
+    zz_verify_pr487_ownership_test.go:297: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:297
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestZZVerifyTerminatingWorkloadNotClaimed/StatefulSet
+        	Messages:   	a terminating workload must report 0 ready
+    zz_verify_pr487_ownership_test.go:301: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:301
+        	Error:      	Should be false
+        	Test:       	TestZZVerifyTerminatingWorkloadNotClaimed/StatefulSet
+        	Messages:   	a terminating workload must not gate dependents as ready
+    zz_verify_pr487_ownership_test.go:303: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:303
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestZZVerifyTerminatingWorkloadNotClaimed/StatefulSet
+        	Messages:   	reconcile must wait for a terminating workload to disappear
+=== RUN   TestZZVerifyTerminatingWorkloadNotClaimed/LeaderWorkerSet
+    zz_verify_pr487_ownership_test.go:297: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:297
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestZZVerifyTerminatingWorkloadNotClaimed/LeaderWorkerSet
+        	Messages:   	a terminating workload must report 0 ready
+    zz_verify_pr487_ownership_test.go:301: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:301
+        	Error:      	Should be false
+        	Test:       	TestZZVerifyTerminatingWorkloadNotClaimed/LeaderWorkerSet
+        	Messages:   	a terminating workload must not gate dependents as ready
+    zz_verify_pr487_ownership_test.go:303: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:303
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestZZVerifyTerminatingWorkloadNotClaimed/LeaderWorkerSet
+        	Messages:   	reconcile must wait for a terminating workload to disappear
+--- FAIL: TestZZVerifyTerminatingWorkloadNotClaimed (0.01s)
+    --- FAIL: TestZZVerifyTerminatingWorkloadNotClaimed/RoleInstanceSet (0.00s)
+    --- FAIL: TestZZVerifyTerminatingWorkloadNotClaimed/Deployment (0.00s)
+    --- FAIL: TestZZVerifyTerminatingWorkloadNotClaimed/StatefulSet (0.00s)
+    --- FAIL: TestZZVerifyTerminatingWorkloadNotClaimed/LeaderWorkerSet (0.00s)
+=== RUN   TestZZVerifyOrphanWithoutGroupLabelRejected
+=== RUN   TestZZVerifyOrphanWithoutGroupLabelRejected/RoleInstanceSet
+    zz_verify_pr487_ownership_test.go:331: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:331
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestZZVerifyOrphanWithoutGroupLabelRejected/RoleInstanceSet
+        	Messages:   	a foreign workload with no controller ref and no group label must not be claimed
+    zz_verify_pr487_ownership_test.go:336: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:336
+        	Error:      	Should be empty, but was [{workloads.x-k8s.io/v1alpha2 RoleBasedGroup zz-verify-rbg zz-current-rbg-uid 0x38c075adc938 0x38c075adc939}]
+        	Test:       	TestZZVerifyOrphanWithoutGroupLabelRejected/RoleInstanceSet
+        	Messages:   	the foreign object must stay untouched
+=== RUN   TestZZVerifyOrphanWithoutGroupLabelRejected/Deployment
+    zz_verify_pr487_ownership_test.go:331: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:331
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestZZVerifyOrphanWithoutGroupLabelRejected/Deployment
+        	Messages:   	a foreign workload with no controller ref and no group label must not be claimed
+    zz_verify_pr487_ownership_test.go:336: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:336
+        	Error:      	Should be empty, but was [{workloads.x-k8s.io/v1alpha2 RoleBasedGroup zz-verify-rbg zz-current-rbg-uid 0x38c075a6a69d 0x38c075a6a69e}]
+        	Test:       	TestZZVerifyOrphanWithoutGroupLabelRejected/Deployment
+        	Messages:   	the foreign object must stay untouched
+=== RUN   TestZZVerifyOrphanWithoutGroupLabelRejected/StatefulSet
+    zz_verify_pr487_ownership_test.go:331: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:331
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestZZVerifyOrphanWithoutGroupLabelRejected/StatefulSet
+        	Messages:   	a foreign workload with no controller ref and no group label must not be claimed
+    zz_verify_pr487_ownership_test.go:336: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:336
+        	Error:      	Should be empty, but was [{workloads.x-k8s.io/v1alpha2 RoleBasedGroup zz-verify-rbg zz-current-rbg-uid 0x38c07592fc4d 0x38c07592fc4e}]
+        	Test:       	TestZZVerifyOrphanWithoutGroupLabelRejected/StatefulSet
+        	Messages:   	the foreign object must stay untouched
+=== RUN   TestZZVerifyOrphanWithoutGroupLabelRejected/LeaderWorkerSet
+    zz_verify_pr487_ownership_test.go:331: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:331
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestZZVerifyOrphanWithoutGroupLabelRejected/LeaderWorkerSet
+        	Messages:   	a foreign workload with no controller ref and no group label must not be claimed
+    zz_verify_pr487_ownership_test.go:336: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:336
+        	Error:      	Should be empty, but was [{workloads.x-k8s.io/v1alpha2 RoleBasedGroup zz-verify-rbg zz-current-rbg-uid 0x38c075bc5406 0x38c075bc5407}]
+        	Test:       	TestZZVerifyOrphanWithoutGroupLabelRejected/LeaderWorkerSet
+        	Messages:   	the foreign object must stay untouched
+--- FAIL: TestZZVerifyOrphanWithoutGroupLabelRejected (0.01s)
+    --- FAIL: TestZZVerifyOrphanWithoutGroupLabelRejected/RoleInstanceSet (0.00s)
+    --- FAIL: TestZZVerifyOrphanWithoutGroupLabelRejected/Deployment (0.00s)
+    --- FAIL: TestZZVerifyOrphanWithoutGroupLabelRejected/StatefulSet (0.00s)
+    --- FAIL: TestZZVerifyOrphanWithoutGroupLabelRejected/LeaderWorkerSet (0.00s)
+=== RUN   TestZZVerifyEqualOrphanAdopted
+=== RUN   TestZZVerifyEqualOrphanAdopted/Deployment
+    zz_verify_pr487_ownership_test.go:425: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:425
+        	Error:      	Expected value not to be nil.
+        	Test:       	TestZZVerifyEqualOrphanAdopted/Deployment
+        	Messages:   	an equal-spec orphan must still be applied so the controller reference returns
+=== RUN   TestZZVerifyEqualOrphanAdopted/StatefulSet
+    zz_verify_pr487_ownership_test.go:425: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:425
+        	Error:      	Expected value not to be nil.
+        	Test:       	TestZZVerifyEqualOrphanAdopted/StatefulSet
+        	Messages:   	an equal-spec orphan must still be applied so the controller reference returns
+=== RUN   TestZZVerifyEqualOrphanAdopted/LeaderWorkerSet
+    zz_verify_pr487_ownership_test.go:425: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/base/pkg/reconciler/zz_verify_pr487_ownership_test.go:425
+        	Error:      	Expected value not to be nil.
+        	Test:       	TestZZVerifyEqualOrphanAdopted/LeaderWorkerSet
+        	Messages:   	an equal-spec orphan must still be applied so the controller reference returns
+--- FAIL: TestZZVerifyEqualOrphanAdopted (0.01s)
+    --- FAIL: TestZZVerifyEqualOrphanAdopted/Deployment (0.00s)
+    --- FAIL: TestZZVerifyEqualOrphanAdopted/StatefulSet (0.00s)
+    --- FAIL: TestZZVerifyEqualOrphanAdopted/LeaderWorkerSet (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.102s
+FAIL
