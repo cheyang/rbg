@@ -1,0 +1,4 @@
+TestVerifyP0cCRDRuleFreezesStatusOn131/1.31.0-linux-amd64	pass
+TestVerifyP0cCRDRuleFreezesStatusOn131	pass
+TestVerifyP0dImagesMinLengthRatchetClaim/1.31.0-linux-amd64	pass
+TestVerifyP0dImagesMinLengthRatchetClaim	pass
