@@ -1,0 +1,56 @@
+{
+  "topic": "warmup-target-wait-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/478",
+  "harnessPaths": [
+    "docs/verification/warmup-target-wait-claude",
+    "internal/controller/workloads/verify_pr478_claude_test.go",
+    "internal/controller/workloads/verify_pr478_envtest_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "PR #478 claims three problems left open by #466: (1) a missing target RoleBasedGroup terminally fails a one-shot Warmup that is often created moments before its target; (2) an existing target whose Pods are unscheduled reports Completed/NoNodesMatched, a silent false success; (3) #466's item-scoped CEL rule on customizedAction.containers[].image re-freezes status writes of already-stored invalid objects on the status subresource path (repo CI targets k8s 1.31).",
+    "reportedComponent": "internal/controller/workloads/rolebasedgroupwarmup_controller.go + config/crd/bases/workloads.x-k8s.io_rolebasedgroupwarmups.yaml",
+    "patchedComponent": "same files (+ api/workloads/v1alpha2 types marker removal, deploy/kubectl/manifests.yaml, KEP, tests)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit+integration",
+    "verdict": "confirmed",
+    "evidence": "results/unit-at-base.txt: TestVerifyC1 red at base (Failed/InvalidTarget immediately), TestVerifyC2 red at base (Completed/NoNodesMatched with desired=0). results/integration-envtest-cel-ab.txt: on envtest k8s 1.31.0 the #466 CEL rule rejects the status subresource write of a pre-existing blank-image object while the PR CRD accepts it; main-resource-path update is accepted (ratcheting). Note: the freeze also reproduces on 1.36.2 (see finding F4).",
+    "match": [
+      "TestVerifyC1MissingTargetWaitsThenRecovers",
+      "TestVerifyC2UnscheduledTargetPodsWaitInsteadOfCompleting",
+      "TestVerifyP0cCRDRuleFreezesStatusOn131"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyC[1-5]|TestVerifyF[12]' -count=1 -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$(setup-envtest use 1.31.0 -p path 2>/dev/null || echo $HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64)}\" go test ./internal/controller/workloads/ -run 'TestVerifyP0c|TestVerifyP0d' -count=1 -timeout 15m -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyF1TargetDeletedAfterPodsSucceededReachesTerminal"]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyF2CountersAndCompletionFrozenDuringWait"]
+    },
+    {
+      "id": "F4-evidence",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["TestVerifyP0cCRDRuleFreezesStatusOn131", "TestVerifyP0dImagesMinLengthRatchetClaim"]
+    }
+  ],
+  "liveNote": "L3 (live cluster) skipped this round per the debate setup: unit + integration layers only. The kubectl-level scenarios in the PR body were not re-run against a live cluster; the envtest layer uses the real kube-apiserver 1.31.0 binary (same version as CI), which is where the CEL/ratcheting behavior lives."
+}
