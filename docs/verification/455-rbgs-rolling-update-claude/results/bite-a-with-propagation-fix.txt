@@ -1,0 +1,10 @@
+2026-10-11T03:07:02+08:00	INFO	Successfully updated RoleBasedGroup	{"name": "v491-0"}
+--- FAIL: TestVerify491P0PropagationGap (0.04s)
+    verify_pr491_claude_test.go:62: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/verify_pr491_claude_test.go:62
+        	Error:      	Should be empty, but was [{tpl {{      0 0001-01-01 00:00:00 +0000 UTC <nil> <nil> map[] map[] [] [] []} {[] [] [] []  <nil> <nil>  map[]   <nil>  false false false <nil> nil []   nil  [] []  <nil> nil [] <nil> <nil> <nil> map[] [] <nil> nil <nil> [] [] nil <nil>}}}]
+        	Test:       	TestVerify491P0PropagationGap
+        	Messages:   	newRBGForSet must drop groupTemplate.spec.roleTemplates for the KEP premise to hold
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.049s
+FAIL

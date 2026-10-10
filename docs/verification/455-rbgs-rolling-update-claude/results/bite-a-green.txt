@@ -1,0 +1,1 @@
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.049s
