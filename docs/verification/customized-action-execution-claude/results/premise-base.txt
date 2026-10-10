@@ -1,0 +1,44 @@
+== P0 premise check on BASE 0821cb5b5a93960efd9a607393def80fdee8347a (2026-10-11) ==
+
+-- 1. CustomizedAction API on base (claimed: no timeoutSeconds / completionPolicy / status results) --
+type CustomizedAction struct {
+	// Containers to run as part of the warmup Pod. Each container runs alongside
+	// image preload containers. The warmup is considered complete when all containers
+	// finish successfully.
+	// +kubebuilder:validation:MinItems=1
+	// +kubebuilder:validation:items:XValidation:rule="has(self.image) && self.image != ''",message="customized action container image must not be empty"
+	// +required
+	Containers []corev1.Container `json:"containers"`
+
+	// Volumes to mount into the customized containers.
+	// +optional
+	Volumes []corev1.Volume `json:"volumes,omitempty"`
+}
+
+-- 2. Status on base (claimed: no customizedActionResults) --
+4:	StartTime *metav1.Time `json:"startTime,omitempty"`
+8:	CompletionTime *metav1.Time `json:"completionTime,omitempty"`
+11:	Phase WarmupJobPhase `json:"phase"`
+14:	Desired int32 `json:"desired"`
+17:	Active int32 `json:"active"`
+20:	Succeeded int32 `json:"succeeded"`
+23:	Failed int32 `json:"failed"`
+25:	// Conditions represent the latest observations of the warmup job's state.
+29:	Conditions []metav1.Condition `json:"conditions,omitempty"`
+
+-- 3. Controller on base: no ActiveDeadlineSeconds, no attempt label, no container-status evaluation --
+0
+0 matches (none of the new execution-reporting mechanisms exist on base)
+
+-- 4. Events on base: only VolumeConflict / FailedCreatePod / CreatedPod / phase events --
+112:			r.Recorder.Event(warmup, corev1.EventTypeNormal, "Paused", "Warmup job paused")
+126:		r.Recorder.Event(warmup, corev1.EventTypeNormal, "Resumed", "Warmup job resumed")
+161:	r.Recorder.Event(warmup, corev1.EventTypeNormal, "TTLExpired",
+383:				r.Recorder.Eventf(warmup, corev1.EventTypeWarning, "FailedCreatePod",
+390:		r.Recorder.Eventf(warmup, corev1.EventTypeNormal, "CreatedPod",
+466:	r.Recorder.Eventf(warmup, corev1.EventTypeWarning, reason, message)
+664:					r.Recorder.Eventf(warmup, corev1.EventTypeWarning, "VolumeConflict",
+754:		r.Recorder.Event(warmup, corev1.EventTypeNormal, "WarmupCompleted",
+771:			r.Recorder.Eventf(warmup, corev1.EventTypeWarning, "WarmupFailed",
+785:			r.Recorder.Eventf(warmup, corev1.EventTypeNormal, "WarmupCompleted",
+805:				r.Recorder.Event(warmup, corev1.EventTypeNormal, "WarmupStarted",

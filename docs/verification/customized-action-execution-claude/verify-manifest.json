@@ -1,0 +1,36 @@
+{
+  "topic": "customized-action-execution-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/488",
+  "prHeadFetch": { "remote": "upstream", "ref": "pull/488/head" },
+  "harnessPaths": [
+    "docs/verification/customized-action-execution-claude",
+    "internal/controller/workloads/verify_customized_action_claude_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "CustomizedAction has no per-action timeout, no explicit completion semantics, no exit-code/termination-message exposure in RoleBasedGroupWarmup status, no Events, and users must inspect the generated Pod manually (issue #486).",
+    "reportedComponent": "api/workloads/v1alpha2/rolebasedgroupwarmup_types.go, internal/controller/workloads/rolebasedgroupwarmup_controller.go",
+    "patchedComponent": "api/workloads/v1alpha2 + internal/controller/workloads (types, CRD, controller, unit+e2e tests)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "Base 0821cb5b: CustomizedAction = Containers+Volumes only; status has no result fields; controller has no ActiveDeadlineSeconds/container-status/event reporting (results/premise-base.txt)",
+    "match": ["git-show-base-inspection"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerify' -v"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestVerifyFailWarmupJobFinalizationEmitsEvents_NilDesiredNodes"], "note": "RED on unfixed PR head (reproduction); GREEN after fix. Control: TestVerifyFailWarmupJobFinalizationEmitsEvents_WithDesiredNodes is GREEN on head." },
+    { "id": "F3", "polarity": "canary", "layer": "unit", "match": ["TestVerifyBuildWarmupPodDuplicateIdentityAcrossRoles"], "note": "GREEN on head documenting duplicates; flips if identities deduped." },
+    { "id": "F4", "polarity": "canary", "layer": "unit", "match": ["TestVerifyAggregateStartFailureMessageNotTruncated"], "note": "GREEN on head documenting untruncated aggregate message; flips if truncated." },
+    { "id": "F5", "polarity": "contract", "layer": "unit", "match": ["TestVerifyImagePullBackOffStaysPending"], "note": "Documents the Waiting->Pending contract; the liveness gap itself is reasoning-level (see findings doc)." },
+    { "id": "F2", "polarity": "none", "layer": "reasoning", "match": [], "note": "API-shape deviation vs issue #486 acceptance criteria; question for the author." },
+    { "id": "F6", "polarity": "none", "layer": "reasoning", "match": [], "note": "Condition computed from pre-limit results; only reachable above 1024 nodes / 512KiB." }
+  ],
+  "liveNote": "Live cluster reachable (3 nodes) but L3 skipped this round by debate-operator instruction (unit+integration only), not by probe failure."
+}

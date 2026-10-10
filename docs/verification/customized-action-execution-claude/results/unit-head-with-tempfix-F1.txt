@@ -1,0 +1,8 @@
+=== RUN   TestVerifyFailWarmupJobFinalizationEmitsEvents_NilDesiredNodes
+2026-10-11T03:20:32+08:00	INFO	Warmup job failed	{"reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+--- PASS: TestVerifyFailWarmupJobFinalizationEmitsEvents_NilDesiredNodes (0.04s)
+=== RUN   TestVerifyFailWarmupJobFinalizationEmitsEvents_WithDesiredNodes
+2026-10-11T03:20:32+08:00	INFO	Warmup job failed	{"reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+--- PASS: TestVerifyFailWarmupJobFinalizationEmitsEvents_WithDesiredNodes (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.052s

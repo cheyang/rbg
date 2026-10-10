@@ -1,0 +1,17 @@
+=== RUN   TestVerifyFailWarmupJobFinalizationEmitsEvents_NilDesiredNodes
+2026-10-11T03:20:13+08:00	INFO	Warmup job failed	{"reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+    verify_customized_action_claude_test.go:103: expected a warning event for node=node-1's Running->Failed finalization, got events:
+        Warning InvalidWarmupSpec spec is invalid
+--- FAIL: TestVerifyFailWarmupJobFinalizationEmitsEvents_NilDesiredNodes (0.04s)
+=== RUN   TestVerifyFailWarmupJobFinalizationEmitsEvents_WithDesiredNodes
+2026-10-11T03:20:13+08:00	INFO	Warmup job failed	{"reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+--- PASS: TestVerifyFailWarmupJobFinalizationEmitsEvents_WithDesiredNodes (0.00s)
+=== RUN   TestVerifyBuildWarmupPodDuplicateIdentityAcrossRoles
+--- PASS: TestVerifyBuildWarmupPodDuplicateIdentityAcrossRoles (0.00s)
+=== RUN   TestVerifyAggregateStartFailureMessageNotTruncated
+--- PASS: TestVerifyAggregateStartFailureMessageNotTruncated (0.00s)
+=== RUN   TestVerifyImagePullBackOffStaysPending
+--- PASS: TestVerifyImagePullBackOffStaysPending (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.055s
+FAIL

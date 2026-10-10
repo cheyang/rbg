@@ -1,0 +1,11 @@
+== PR's own test suite on head d260dc6e ==
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.103s
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	3.733s
+(filtered to exclude TestVerify* reviewer harness; the only other failure-free run is cached above)
+
+== Reviewer harness (TestVerify*) on head ==
+--- FAIL: TestVerifyFailWarmupJobFinalizationEmitsEvents_NilDesiredNodes (0.04s)
+--- PASS: TestVerifyFailWarmupJobFinalizationEmitsEvents_WithDesiredNodes (0.00s)
+--- PASS: TestVerifyBuildWarmupPodDuplicateIdentityAcrossRoles (0.00s)
+--- PASS: TestVerifyAggregateStartFailureMessageNotTruncated (0.00s)
+--- PASS: TestVerifyImagePullBackOffStaysPending (0.00s)
