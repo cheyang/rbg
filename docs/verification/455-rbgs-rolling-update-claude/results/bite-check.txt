@@ -1,0 +1,12 @@
+bite-check (2026-10-10T19:06:53Z)
+
+BITE A (unit, TestVerify491P0PropagationGap): mutated newRBGForSet to copy
+groupTemplate.spec.roleTemplates into children (i.e. implemented the KEP's
+propagation fix) -> harness went red:
+  FAIL TestVerify491P0PropagationGap: Should be empty, but was [{tpl ...}]
+  (raw output: results/bite-a-with-propagation-fix.txt); code reverted after.
+
+BITE B (script, E3c-kep-silent-on-scale): simulated the KEP text mentioning the
+scale subresource -> grep count flips 0 -> 1 -> check would report FAIL:
+  mutated count = 1
+  unmodified count = 0 -> PASS (results/E3c-kep-silent-on-scale.txt)

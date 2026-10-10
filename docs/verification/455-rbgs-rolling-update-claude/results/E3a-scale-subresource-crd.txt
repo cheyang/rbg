@@ -1,0 +1,2 @@
+        statusReplicasPath: .status.replicas
+        statusReplicasPath: .status.replicas
