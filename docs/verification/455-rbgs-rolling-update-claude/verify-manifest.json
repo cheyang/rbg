@@ -1,0 +1,46 @@
+{
+  "topic": "455-rbgs-rolling-update-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/491",
+  "harnessPaths": [
+    "docs/verification/455-rbgs-rolling-update-claude",
+    "internal/controller/workloads/verify_pr491_claude_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #455 (open): RoleBasedGroupSet needs set-level rolling update (update unit = child RBG, with partition/maxUnavailable/maxSurge); KEP also claims children today never receive groupTemplate.spec.roleTemplates.",
+    "reportedComponent": "RBGSet API + controller (api/workloads/v1alpha2/rolebasedgroupset_types.go, internal/controller/workloads/rolebasedgroupset_controller.go)",
+    "patchedComponent": "docs only (keps/455-rbgs-rolling-update/) — design for the reported component",
+    "componentMatch": true,
+    "runsAgainst": "head (code identical to base 0821cb5b: docs-only PR)",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "issue OPEN (results/P0-issue-455.txt); TestVerify491P0PropagationGap proves roleTemplates dropped by newRBGForSet and updateExistingRBGs; results/unit-l1-verify491.out"
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerify491' -count=1"
+    },
+    "integration": {
+      "kind": "gotest-envtest",
+      "cmd": "KUBEBUILDER_ASSETS=$HOME/.local/share/kubebuilder-envtest/k8s/1.36.2-linux-amd64 go test ./test/envtest/testcase/... -count=1 -timeout 25m"
+    },
+    "evidence": {
+      "kind": "script",
+      "cmd": "bash docs/verification/455-rbgs-rolling-update-claude/scripts/re-verify.sh"
+    }
+  },
+  "findings": [
+    { "id": "P0", "polarity": "contract", "layer": "unit", "match": ["TestVerify491P0PropagationGap"] },
+    { "id": "E1-blast-radius", "polarity": "contract", "layer": "unit", "match": ["TestVerify491E1SpecBlastRadiusBounded"] },
+    { "id": "E2-condition-unwritten", "polarity": "contract", "layer": "evidence", "match": ["E2-no-writer"] },
+    { "id": "E3-scale-subresource-unaddressed", "polarity": "contract", "layer": "evidence", "match": ["E3a-scale-subresource-crd", "E3b-scale-subresource-api", "E3c-kep-silent-on-scale"] },
+    { "id": "E4-controller-owned-annotations", "polarity": "contract", "layer": "evidence", "match": ["E4a-discovery-writer", "E4b-annotation-wholesale"] },
+    { "id": "E5-naming-collision", "polarity": "contract", "layer": "evidence", "match": ["E5-role-level-naming"] }
+  ],
+  "bites": {
+    "unit": "mutating newRBGForSet to propagate roleTemplates flips TestVerify491P0 red (results/bite-a-with-propagation-fix.txt); reverted after",
+    "script": "inserting 'scale subresource' into the KEP Status heading flips E3c grep 0->1 (results/bite-check.txt)"
+  },
+  "liveNote": "L3 skipped this round (debate setup: unit + integration only). Probe for the record: a cluster was reachable (kubectl get no: 2 nodes, v1.36.2); it was not used."
+}
