@@ -2,16 +2,24 @@
 
 Reproducible evidence for the findings raised while reviewing
 https://github.com/sgl-project/rbg/pull/474 ("feat: support RoleBasedGroupSet
-rolling update", head `44241903`, base `0821cb5b` = origin/main).
+rolling update").
+
+- **Round 1** (head `44241903`, base `0821cb5b`): P0 premise + POS1/POS2 + F1–F3.
+- **Round 2** (head `9e423e86`, base branch tip `79f7e585`, merge base
+  `0821cb5b` unchanged): delta `44241903..9e423e86` = author commits
+  `f6019ead` (envtest + v1alpha1 round-trip — the round-1 consensus-blocker
+  fix) and `9e423e86` (InPlaceUpdate rollout strategy). The base move
+  `0821cb5b..79f7e585` touches neither the RBGS controller nor the rolling
+  code, so the round-1 premise and contracts stay valid against the new base.
 
 Harness branch: `verify/pr474-rbgs-rolling-update-claude` (reviewer: cheyang's
 fork). Production code is untouched — the diff is tests + docs only.
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
-| 1. Unit (fake client, in-package) | pacing, convergence, migration, resolver, webhook, static-path overwrite | `go test ./internal/controller/workloads/ ./api/workloads/v1alpha2/ -run 'TestVerifyPR474' -count=1 -v` |
-| 2. Integration (envtest, real API server + full controller stack) | paced rollout end-to-end incl. foreground deletion, legacy migration, surge-backed zero unavailability | `KUBEBUILDER_ASSETS=$HOME/envtest-assets/k8s/1.37.0-linux-amd64 go test ./test/envtest/testcase/rbg/ -count=1 -ginkgo.focus 'PR #474' -timeout 20m` |
-| 3. Live | **not run this round** — the debate pipeline mandates unit + integration only. A live cluster is reachable on this host (`kubectl get no` → 2 aliyun v1.36 nodes); the PR's own `make test-e2e` (kind) covers the same scenarios if L3 is ever wanted. | — |
+| 1. Unit (fake client, in-package) | pacing, convergence, migration, resolver, webhook, static-path overwrite, InPlaceUpdate pacing/gating, v1alpha1 conversion round-trip | `go test ./internal/controller/workloads/ ./api/workloads/v1alpha2/ ./api/workloads/v1alpha1/ -run 'TestVerifyPR474' -count=1 -v` |
+| 2. Integration (envtest, real API server + full controller stack) | paced rollout end-to-end incl. foreground deletion, legacy migration, surge-backed zero unavailability, InPlaceUpdate UID preservation | `KUBEBUILDER_ASSETS=$HOME/envtest-assets/k8s/1.37.0-linux-amd64 go test ./test/envtest/testcase/rbg/ -count=1 -ginkgo.focus 'PR #474' -timeout 20m` |
+| 3. Live | **not run this round** — the debate pipeline mandates unit + integration only. A live cluster is reachable on this host (`kubectl get no` → 2 aliyun nodes); the PR's own `make test-e2e` (kind) covers the same scenarios if L3 is ever wanted. | — |
 
 > envtest has no garbage collector. A foreground delete of a child RBG would
 > hang Terminating forever (its RoleInstanceSets carry blockOwnerDeletion owner
@@ -44,6 +52,26 @@ the static path, and the rolling strategy is opt-in. The review question
 becomes whether the new path is correct — covered by POS1/POS2 below.
 
 ## Summary of results
+
+### Round 2 (head `9e423e86`, delta `44241903..9e423e86`)
+
+| ID | Claim | Layer | Verdict | Evidence |
+|----|-------|-------|---------|----------|
+| F8 (round-1 consensus blocker) | A full-object write through the still-served v1alpha1 API silently dropped `spec.rolloutStrategy` + rollout status (mid-rollout revert to the un-paced static path) | 1 | **Fixed at `f6019ead`** — annotation stash round-trips both strategy types and all six status fields; garbage stash fails conversion; stash never leaks into hub storage | results/reverify-selftest-r2.log (TestVerifyPR474_V1alpha1RoundTrip_*) |
+| F2 | Both-zero budget rule was spelling-sensitive | 1 | **Fixed at `9e423e86`** — round-1 canary flipped RED (percent spelling now rejected); promoted to contract | same log (TestVerifyPR474_Webhook_ZeroBudgetRejectedSymmetrically) |
+| F4 (round-1 missingTests) | No envtest integration test drove the rolling loop | 2 | **Fixed** — author added `test/envtest/testcase/rbgs_rolling/` (full-stack, kubelet simulation) + webhook envtest; both suites ran green here | results/author-envtest-r2.log |
+| POS3 | InPlaceUpdate: paced in-place spec updates (≤1 ready child/pass under maxUnavailable=1), never deletes an in-scope child, holds back while the previous child is still rolling, converges, UIDs stable, RolloutComplete | 1 | Confirmed (green) | results/reverify-selftest-r2.log (TestVerifyPR474_InPlaceUpdate_*) |
+| POS4 | InPlaceUpdate on a real API server: template propagates, every child keeps its UID, rollout completes | 2 | Confirmed (green) | I4 in results/integration-verify-r2.log |
+| POS1/POS2 | Recreate-path regression suite (pacing, convergence, migration, surge floor) | 1+2 | Still green — the InPlaceUpdate work did not regress the Recreate path | same logs |
+| F1 | PR body still describes a different API than shipped — and the divergence grew | n/a | Still open (see findings doc) | results/l1-doc-mismatch-r2.log |
+| F3 | Static path still overwrites the child's whole spec | 1 | Still open (canary green) | results/reverify-selftest-r2.log |
+
+Regression sweep on the PR head: full repo unit tests (35 packages ok, 0
+failures), all envtest suites (`rbg`, `rbgs_rolling`, `webhook`,
+`restart_policy`), `go build ./...` clean — results/full-unit-r2.log,
+results/author-envtest-r2.log, results/full-envtest-others-r2.log.
+
+### Round 1 (head `44241903`) — carried forward
 
 | ID | Claim | Layer | Verdict | Evidence |
 |----|-------|-------|---------|----------|
@@ -136,31 +164,132 @@ no revision history". Anyone reviewing from the body, or a user reading its
 field table (`paused: bool`) and setting `paused: true`, is misled — the CRD
 silently prunes the unknown field and the rollout proceeds.
 
+## Round 2 per-finding detail
+
+### F8 — v1alpha1 conversion round-trip (round-1 consensus blocker) — FIXED
+
+The round-1 blocker: `ConvertTo`/`ConvertFrom` never carried `spec.rolloutStrategy`
+or the v1alpha2-only rollout status fields, v1alpha1 remained `served: true`,
+and the controller dispatches on `Spec.RolloutStrategy != nil` — so a
+full-object write through v1alpha1 mid-rollout silently reverted the set to
+the un-paced static path. `f6019ead` fixes it with the annotation-stash
+pattern (`conversion.workloads.x-k8s.io/v1alpha2-rollout-strategy` /
+`-rollout-status`), and the deployed CRD wires the conversion webhook
+(`deploy/kubectl/manifests.yaml`, `config/crd/patches/webhook_in_rolebasedgroupsets.yaml`),
+so the conversion functions actually run on real clusters.
+
+My independent tests (not the author's):
+- `TestVerifyPR474_V1alpha1RoundTrip_PreservesRolloutStrategy` — the exact
+  blocker scenario (hub → v1alpha1 read view → client edit → full-object
+  write-back → hub), for **both** strategy types: strategy + all six status
+  fields survive, the stash never leaks into the stored hub object.
+- `..._ClearsStaleStash` — removing the strategy through v2 does not
+  resurrect it from a stale view; rollout status keeps round-tripping
+  independently (faithful, not staleness).
+- `..._GarbageStashFailsClosed` — a corrupted stash fails conversion loudly.
+- `..._DroppedStashLosesStrategy` (canary) — residual limitation: a v1alpha1
+  client that writes a *fresh* object (no annotation echo) still drops the
+  strategy. kubectl edit/apply echo annotations, so the common paths are
+  safe; programmatic rebuilds are not. Inherent to the stash design.
+
+Bites check: removing the stash write in `ConvertFrom` turns the
+round-trip contract test RED (results/reverify-selftest-r2.log run after
+restore shows green).
+
+### POS3 / POS4 — the new InPlaceUpdate strategy works (contract)
+
+`9e423e86` adds `InPlaceUpdate` (now also the CRD/defaulting default): the
+set rewrites the child RBG spec **in place** instead of deleting it, and
+child readiness is gated by the child's new `RollingUpdateInProgress`
+condition (`rolebasedgroup_rollout_status.go` computes per-role workload
+rollout completion against the revision hash).
+
+- Unit (`TestVerifyPR474_InPlaceUpdate_PacesSpecUpdates`): one ready child
+  updated per pass (highest ordinal first), none deleted; while the updated
+  child is still rolling the availability floor holds (no second child
+  touched); convergence with stable UIDs and `Rolling=False/RolloutComplete`.
+- Unit (`..._ResolverLimits` / `..._RejectsUnknownType`): empty type →
+  in-place path; maxSurge ignored; both-zero fallback; unknown type errors.
+- Envtest (**I4**, real API server + full controller stack): template
+  propagates to all children with every UID preserved and no child ever
+  terminating; ends `Rolling=False/RolloutComplete`,
+  `CurrentRevision==UpdateRevision`.
+- Bites checks: removing the in-place budget guard, or removing the child
+  rolling-condition gate in `groupSetChildReady`, each turn the pacing test
+  RED; restored → green.
+
+### F2 — spelling-sensitive zero rule — FIXED
+
+The round-1 canary
+(`TestVerifyPR474_Webhook_ZeroBudgetIsSpellingSensitive`) **flipped RED** on
+this head — the exact fix signal for a canary. `validateGroupSetRolloutStrategy`
+now rejects `maxUnavailable`/`maxSurge` both-zero in *all* spellings for
+Recreate, and InPlaceUpdate rejects a declared-zero `maxUnavailable` and any
+positive `maxSurge`. Promoted to contract tests
+(`TestVerifyPR474_Webhook_ZeroBudgetRejectedSymmetrically`,
+`TestVerifyPR474_Webhook_InPlaceUpdateRules`); the resolver-level fallback
+remains as defense-in-depth for persisted objects and percentages that round
+down to zero, documented by the `..._PercentZeroBecomesOne` canary.
+
+### F1 — PR body vs shipped API — STILL OPEN, divergence grew
+
+The PR body is byte-identical to round 1 (verified by diff), but the code
+moved: the body says `type` defaults to `Recreate` and `InPlaceUpdate` is
+"reserved and rejected by the CRD enum" — the shipped CRD now accepts
+**both** values and **defaults to `InPlaceUpdate`**. A user who reads the
+body and writes `rolloutStrategy: {maxUnavailable: 1}` (omitting `type`)
+gets in-place per-role pod rollouts where they expected whole-group
+recreation. All round-1 divergences remain: no `paused` field/condition
+(silently pruned by the structural CRD if written), no `TestRollingUpdate_*`
+tests, revision-based design vs the claimed "no revision history",
+`readySurge`/`isServing` budget wording, and no paused e2e. New divergence:
+the body claims a replicas-only diff is "not paced by the budget" — with
+InPlaceUpdate the scale-only shortcut is disabled, so it *is* paced.
+Evidence: results/l1-doc-mismatch-r2.log.
+
+
+
 ## Harness-bites checks performed
+
+Round 2 (each temporary break turned the matching test RED; production diff
+empty after restore — results/reverify-selftest-r2.log shows the final green run):
+
+- **F2 fix**: removing the Recreate both-zero rejection →
+  `TestVerifyPR474_Webhook_ZeroBudgetRejectedSymmetrically` RED.
+- **POS3 pacing**: removing the in-place budget guard in
+  `rolloutGroupSetChildren` → `TestVerifyPR474_InPlaceUpdate_PacesSpecUpdates` RED.
+- **POS3 child gate**: removing the `RollingUpdateInProgress` gate in
+  `groupSetChildReady` → same test RED.
+- **F8 fix**: removing the strategy stash write in `ConvertFrom` →
+  `TestVerifyPR474_V1alpha1RoundTrip_PreservesRolloutStrategy` RED.
+
+Round 1 (results/l1-harness-bites.log):
 
 - **POS1/POS2 contract tests vs base**: the paced-recreate assertion is
   unsatisfiable on base (the base path updates all 3 children in one pass —
   that is exactly the P0 reproduction), and green on the PR head. The fix and
   the test bite each other by construction.
 - **F2**: symmetric-rejection fix applied → red (canary + author's pinned
-  case); reverted → green, `git diff` empty. results/l1-harness-bites.log.
+  case); reverted → green, `git diff` empty.
 - **F3 canary**: fails loudly if `needsUpdate`/`updateExistingRBGs` stop
   overwriting the spec (i.e. if the behavior is "fixed"); polarity documented
   in the test comment.
 
 ## Proposed fixes (NOT applied to production here)
 
-- **F1**: rewrite the PR description against the shipped API (drop `paused`,
-  describe the ControllerRevision-based design, list the real tests), or
-  implement the missing field. The description is the review contract for a
-  feature this size.
-- **F2**: either reject the percent spelling symmetrically (compute the
-  resolved values before the both-zero check) or keep the fallback but surface
-  it — an Event and a note in the MaxUnavailable CRD description saying a
-  resolved 0 with no surge degrades to 1.
+- **F1**: rewrite the PR description against the shipped API — in particular
+  the `type` default (now `InPlaceUpdate`; the body says `Recreate`), the
+  absent `paused` field/condition, the ControllerRevision-based design, the
+  real test list, and the budget-gated replicas-only behavior in InPlaceUpdate
+  mode. The description is the review contract for a feature this size.
 - **F3**: keep the full-spec propagation (it fixes templateRef roles), but
   correct the "legacy path unchanged" claim in the PR body and consider a
   release note for the one-time child rewrite.
+- **F7 (round-2 note)**: consider gating the per-role uncached
+  rollout-completion reads on the child's `RollingUpdateInProgress`
+  condition instead of running them on every RBG reconcile, and watch the
+  apiserver QPS of large sets during rollouts — the repo's own
+  stress-testing guide is the benchmark.
 
 ## Continuing after the fix (possibly on another machine)
 
@@ -174,14 +303,23 @@ git checkout verify/pr474-rbgs-rolling-update-claude
 bash docs/verification/pr474-rbgs-rolling-update/scripts/re-verify.sh   # no arg = current PR head
 ```
 
-`re-verify.sh` fetches the PR head from the manifest's `pr` URL, grafts the
-harness onto it, runs layers 1–2, and prints per-test verdicts. Exit 0 iff the
-runs succeed. Interpretation: **contract** tests (POS1, POS2) are fixed when
-green; **canaries** (F2, F3, and the P0 premise test) are *fixed* only when
-they flip to red — then invert them or promote the new behavior to a contract
-test. `.last-reviewed` holds `44241903` (this round's reviewed head); advance
-it after the next round.
+`re-verify.sh` fetches the PR head from the manifest's `pr` URL, grafts
+**only the manifest's `harnessPaths`** onto it (round-2 fix: the round-1
+script extracted the whole tree, which would have reverted production code
+once the head moved past the branch parent), prints the
+`.last-reviewed..head` delta, runs layers 1–2, and prints per-test verdicts.
+Exit 0 iff the runs succeed. Interpretation: **contract** tests (POS1–POS4,
+F2, F8) are fixed when green; **canaries** (F2b resolver fallback, F3, F8b
+stash-less write, and the P0 premise test) are *fixed* only when they flip
+to red — then invert them or promote the new behavior to a contract test.
+`.last-reviewed` holds `9e423e86` (this round's reviewed head); advance it
+after the next round.
 
 Layer-2 prerequisites: Go 1.27, envtest binaries (etcd + kube-apiserver) at
 `$KUBEBUILDER_ASSETS` (1.37.0 or 1.30.3 assets both work; the repo's Makefile
 pins 1.31.0). No cluster needed; no cluster is touched.
+
+Copy-paste kickoff for a fresh agent: clone this branch, read
+`verify-manifest.json`, run `scripts/re-verify.sh` with no argument, and
+report per-finding Fixed / Still-broken / Partial / Harness-update using the
+polarity table above.
