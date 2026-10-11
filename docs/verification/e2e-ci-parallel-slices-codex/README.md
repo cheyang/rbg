@@ -99,6 +99,42 @@ specs per run). The `workload` filter could exclude `rollout` the way `update`/`
   dropping any of the other 7 CRDs now surfaces only as a later, more confusing spec failure.
 - Fix sketch: restore the `for f in config/crd/bases/*.yaml` loop in the readiness step.
 
+
+## Round 2 (incremental, 2026-10-12)
+
+**Delta reviewed:** `ecd1120a..ecd1120a` — the PR head is unchanged since round 1; there
+were no new commits to review. The base branch moved `798e5d6f..79f7e585` (PR #484,
+stateful-rollout recovery: controller code + envtest only). None of the contract surfaces
+(Makefile, `.github/workflows/*`, `.github/actions/*`, `test/e2e/**`, `deploy/**`,
+`config/crd/**) appear in that delta, so no round-1 base-side measurement is invalidated
+(results/base-change-round2.txt). Post-merge interaction check: #484 adds no e2e specs, so
+the fail-closed routing (S3) is not triggered by it; the rollout slice will simply exercise
+the new recovery logic after merge.
+
+**Manifest finding IDs now use the shared debate ledger IDs** (S1-S11). Mapping from the
+round-1 codex-local IDs: F1->S1, F2->S5, F3->S6, F4->S4, F5->S7.
+
+**Re-verify at head (unchanged):** S1, S4, S5, S6, S7 all STILL-BROKEN (contract tests still
+red); coverage guard still green. CI on the head is the same green Actions run 38031782558
+(no new runs; PR still open, mergeable, no new comments).
+
+**New runnable tests this round** (additive, `test/ciharness/pr494_round2_test.go`) so every
+open blocker/major has a repro on this branch:
+
+| Ledger ID | Test | Polarity | Result at head |
+|-----------|------|----------|----------------|
+| S2 (AC4)  | TestPR494_ManifestJobKeepsBroadCoverageOrDocumentsCut | contract | FAIL — e2e-manifest selects 12/106 legacy specs, cut undocumented, full-coverage claim present |
+| S3 mech.  | TestPR494_UnlabeledSpecGetsZeroCoverageAndStaysGreen | demo (passes by design) | PASS — no-routing-label filter selects 0 specs, `go test` exits 0: silent-zero-coverage mechanism confirmed |
+| S3 (AC5)  | TestPR494_MatrixCoverageGuardWiredInCI | contract | FAIL — no union-coverage guard step in e2e-test.yml |
+
+**Harness-bites (round 2):** S2 flips green via BOTH accepted fix routes — (a) widening the
+e2e-manifest filter to `!volcano && !scheduler-plugins` (parity), and (b) withdrawing the
+full-coverage claim + documenting the manifest subset in ci-optimization-plan.md (docs
+route). S3 flips green when a `test-e2e-coverage-guard` step is added to the workflow. All
+mutations reverted; production diff vs `origin/pr/494` is empty.
+
+Raw results: results/harness-round2.json, results/reverify/ (layer output of re-verify.sh).
+
 ## Harness-bites check (Step 4)
 
 All five fixes above were applied to the working tree simultaneously; the full harness then

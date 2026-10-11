@@ -1,0 +1,17 @@
+# Round-2 base-change analysis (incremental round, 2026-10-12)
+
+PR head: ecd1120a3dbbc2f0d6bc4399e7b1bbe59c07eaee (UNCHANGED since round 1)
+Merge-base: 798e5d6f5eda5f8f67bba35831381921c88d1e3f (unchanged)
+Base branch main advanced: 798e5d6f..79f7e585
+
+## git diff --name-only 798e5d6f..79f7e585
+pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go
+pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control_test.go
+pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_controller.go
+pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_utils.go
+test/envtest/testcase/stateful/rollout_recovery_test.go
+test/envtest/testcase/stateful/suite_test.go
+
+All six files are stateful-rollout controller code or envtest cases.
+None of the contract surfaces (Makefile, .github/workflows/*, .github/actions/*, test/e2e/**, deploy/**, config/crd/**) changed,
+so no round-1 contract measurement against the base is invalidated by the base move.
