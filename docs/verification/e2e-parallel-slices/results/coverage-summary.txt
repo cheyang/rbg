@@ -1,0 +1,31 @@
+# PR 494 label-routing coverage (ginkgo dry-run, PR head ecd1120a)
+Run: go test ./test/e2e/cislices/ -v -timeout 15m  (harness on verify/e2e-parallel-slices-claude)
+
+slices_test.go:212: matrix slice 1: filter="lifecycle && !volcano && !scheduler-plugins && !v1alpha1" -> 12 specs
+slices_test.go:212: matrix slice 2: filter="workload && !volcano && !scheduler-plugins && !v1alpha1" -> 9 specs
+slices_test.go:212: matrix slice 3: filter="(update && !rollout) && !volcano && !scheduler-plugins && !v1alpha1" -> 16 specs
+slices_test.go:212: matrix slice 4: filter="rollout && !volcano && !scheduler-plugins && !v1alpha1" -> 21 specs
+slices_test.go:212: matrix slice 5: filter="(feature && !rollout) && !volcano && !scheduler-plugins && !v1alpha1" -> 17 specs
+slices_test.go:212: matrix slice 6: filter="(webhook || rbac) && !volcano && !scheduler-plugins && !v1alpha1" -> 6 specs
+slices_test.go:212: matrix slice 7: filter="scheduler && !volcano && !scheduler-plugins && !v1alpha1" -> 3 specs
+slices_test.go:212: matrix slice 8: filter="v1alpha1 && !volcano && !scheduler-plugins" -> 28 specs
+slices_test.go:230: legacy default-suite specs: 106; matrix union: 106
+--- PASS: TestMatrixSlicesCoverLegacyDefaultSuite (9.93s)
+slices_test.go:267: F1: manifest job filter "(smoke || install || rbac || webhook) && !volcano && !scheduler-plugins && !v1alpha1" selects 12 of the 106 legacy default-suite specs (base manifest job ran all 106)
+slices_test.go:274: F1 canary: reduction still present (12 < 106)
+--- PASS: TestManifestSliceRunsOnlySmokeSubset (2.23s)
+slices_test.go:296: F3 canary: slice job timeout = E2E_TIMEOUT = 25m, no setup headroom
+slices_test.go:296: F3 canary: slice job timeout = E2E_TIMEOUT = 30m, no setup headroom
+slices_test.go:296: F3 canary: slice job timeout = E2E_TIMEOUT = 35m, no setup headroom
+slices_test.go:296: F3 canary: slice job timeout = E2E_TIMEOUT = 40m, no setup headroom
+slices_test.go:296: F3 canary: slice job timeout = E2E_TIMEOUT = 35m, no setup headroom
+slices_test.go:296: F3 canary: slice job timeout = E2E_TIMEOUT = 25m, no setup headroom
+slices_test.go:296: F3 canary: slice job timeout = E2E_TIMEOUT = 35m, no setup headroom
+slices_test.go:296: F3 canary: slice job timeout = E2E_TIMEOUT = 35m, no setup headroom
+--- PASS: TestMatrixSliceTimeoutEqualsJobTimeout (0.00s)
+slices_test.go:313: F4 canary: volcano job diagnostics still query podgroups.scheduling.x-k8s.io (kube PodGroup CRD, absent on Volcano clusters)
+--- PASS: TestVolcanoDiagnosticsQueryKubePodGroupCRD (0.00s)
+--- PASS: TestSliceFiltersParseSanity (0.00s)
+slices_test.go:341: documentation only — see the comment body for the manual bite check
+--- SKIP: TestWorkflowBiteGuardSelfCheck (0.00s)
+PASS

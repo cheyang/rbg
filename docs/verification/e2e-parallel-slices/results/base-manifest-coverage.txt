@@ -1,0 +1,5 @@
+# BASE (merge-base 798e5d6f) manifest-job coverage — provenance for F1
+The base e2e-test-manifest job ran: make test-e2e  (filter: !volcano && !scheduler-plugins)
+BASE: specs the base manifest job ran (full default suite): 106
+BASE: specs the new manifest filter would select on base labels: 0
+=> coverage on the manifest cluster: 106 -> 12 specs (introduced by PR #494)

@@ -1,0 +1,16 @@
+# static checks on PR head ecd1120a
+
+$ yamllint -s .github/workflows/e2e-test.yml .github/actions/setup-e2e-cluster/action.yaml
+OK (clean)
+
+$ go test ./test/e2e/... -run '^$'   (compile check)
+ok  	sigs.k8s.io/rbgs/test/e2e	(cached) [no tests to run]
+ok  	sigs.k8s.io/rbgs/test/e2e/apicompat	(cached) [no tests to run]
+ok  	sigs.k8s.io/rbgs/test/e2e/cislices	0.001s [no tests to run]
+ok  	sigs.k8s.io/rbgs/test/e2e/upgrade	(cached) [no tests to run]
+
+$ git diff --check 798e5d6..ecd1120a
+OK (no whitespace errors)
+
+$ go vet ./test/e2e/cislices/
+OK

@@ -1,0 +1,33 @@
+{
+  "topic": "e2e-parallel-slices",
+  "pr": "https://github.com/sgl-project/rbg/pull/494",
+  "harnessPaths": [
+    "docs/verification/e2e-parallel-slices",
+    "test/e2e/cislices",
+    "scripts/re-verify.sh"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "\"The current E2E workflow is monolithic and expensive: multiple jobs rebuild the same controller and CRD-upgrader images, repeat the same Kind/LWS/Helm setup, and run long suites sequentially.\"",
+    "reportedComponent": ".github/workflows/e2e-test.yml (CI)",
+    "patchedComponent": ".github/workflows/e2e-test.yml, .github/actions/setup-e2e-cluster, Makefile, test/e2e labels",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "base workflow (798e5d6f) has 5 e2e jobs, each rebuilding/loading controller (+crd-upgrader except manifest) images and repeating Kind/LWS/Helm setup; the default job runs the 106-spec suite in one gulp — results/static-checks.txt, base-manifest-coverage.txt"
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/e2e/cislices/ -v -timeout 15m -json"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "canary", "layer": "unit", "match": ["TestManifestSliceRunsOnlySmokeSubset"] },
+    { "id": "F2", "polarity": "contract", "layer": "unit", "match": ["TestMatrixSlicesCoverLegacyDefaultSuite"] },
+    { "id": "F3", "polarity": "canary", "layer": "unit", "match": ["TestMatrixSliceTimeoutEqualsJobTimeout"] },
+    { "id": "F4", "polarity": "canary", "layer": "unit", "match": ["TestVolcanoDiagnosticsQueryKubePodGroupCRD"] }
+  ],
+  "liveNote": "L3 (real GitHub Actions run) skipped this round per debate round policy (unit+integration only). A cluster is reachable but out of scope. The closest live check is the PR's own Actions run: verify all 8 matrix slices + manifest/deprecated/volcano/sp jobs are scheduled and pass, and that junit artifacts upload."
+}

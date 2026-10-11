@@ -1,0 +1,6 @@
+# LWS pre-pull image tag derivation (composite action, "Install LeaderWorkerSet CRDs")
+# action.yaml computes: lws_image="registry.k8s.io/lws/lws:${{ inputs.lws_version }}" -> "${lws_image/:v/:}"
+# i.e. v0.7.0 -> 0.7.0. Verified against the actual LWS v0.7.0 release manifest:
+#   $ curl -sL https://github.com/kubernetes-sigs/lws/releases/download/v0.7.0/manifests.yaml | grep 'image: registry.k8s.io/lws'
+#   image: registry.k8s.io/lws/lws:0.7.0
+# => the tag transformation is CORRECT (the release image tag has no 'v' prefix). Not a finding.
