@@ -1,0 +1,52 @@
+{
+  "topic": "pr491-rbgs-rolling-update-kep",
+  "pr": "https://github.com/sgl-project/rbg/pull/491",
+  "harnessPaths": [
+    "docs/verification/pr491-rbgs-rolling-update-kep",
+    "test/verification/pr491kep"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Children currently receive only spec.roles; a set template defining roleTemplates produced children that could not resolve a templateRef (KEP 'Child Template Propagation'). Docs-only KEP PR, so P0 is the KEP's factual premise about the codebase, not a runtime symptom.",
+    "reportedComponent": "RoleBasedGroupSet controller (v1alpha2) propagation",
+    "patchedComponent": "keps/455-rbgs-rolling-update/ (docs only)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "C1/C2 pass on the PR head: newRBGForSet and updateExistingRBGs handle only Spec.Roles; RoleBasedGroupSpec holds exactly {roles, roleTemplates}. See results/unit.out.",
+    "match": [
+      "TestVerify_C1_ChildrenReceiveOnlyRolesToday",
+      "TestVerify_C2_RoleBasedGroupSpecHasOnlyTwoFields"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/verification/pr491kep/ -run 'TestVerify_' -count=1 -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_F1_KEPStatesRollingUpdateInProgressIsNewWork",
+        "TestVerify_C3_RollingUpdateInProgressNeverPublished"
+      ],
+      "note": "F1 fails on the PR head (reproduction): the KEP gates InPlaceUpdate availability on the RBG RollingUpdateInProgress condition, which no controller publishes today (C3), and never states that publishing it is new in-scope RBG-controller work. Fixed when the KEP says so explicitly (or the condition gains a producer, flipping C3)."
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_F2_KEPStatesCheckpointPersistence"
+      ],
+      "note": "F2 fails on the PR head (reproduction): the KEP requires a restart-safe groupset-observed-replicas checkpoint but never specifies where it is persisted. Fixed when the KEP names a storage location (status field or annotation)."
+    }
+  ],
+  "integrationNote": "Integration (envtest) layer intentionally omitted: the PR diff is docs-only (keps/455-rbgs-rolling-update/), so there is no controller behavior to exercise. The unit layer asserts the KEP's factual claims against the repository source itself.",
+  "liveNote": "L3 not applicable for a KEP-only PR."
+}
