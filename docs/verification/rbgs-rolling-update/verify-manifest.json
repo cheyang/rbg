@@ -7,7 +7,8 @@
     "internal/controller/workloads/rolebasedgroupset_rolling_verify_test.go",
     "internal/controller/workloads/rolebasedgroupset_envtest_verify_test.go",
     "api/workloads/v1alpha2/rolebasedgroupset_admission_verify_test.go",
-    "api/workloads/v1alpha1/rolebasedgroupset_conversion_verify_test.go"
+    "api/workloads/v1alpha1/rolebasedgroupset_conversion_verify_test.go",
+    "internal/controller/workloads/rolebasedgroupset_inplace_verify_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -39,19 +40,22 @@
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerify_ConversionPreservesRolloutStrategy"
+        "TestVerify_ConversionPreservesRolloutStrategy",
+        "TestVerify_ConversionPreservesInPlaceStrategy"
       ],
-      "note": "currently RED on the PR head = confirmed bug (v1alpha1 round trip drops spec.rolloutStrategy and rollout status fields)"
+      "note": "FIXED on 9e423e86 (f6019ead added the annotation-stash round trip). Contract test now GREEN; extended to InPlaceUpdate strategy + full status block (TestVerify_ConversionPreservesInPlaceStrategy)."
     },
     {
       "id": "F3",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerify_WebhookAcceptsPercentZeroZero_Canary",
-        "TestVerify_ControllerClampsPercentZeroZero_Canary"
+        "TestVerify_WebhookRejectsIntegerZeroZero",
+        "TestVerify_WebhookRejectsPercentZeroZero",
+        "TestVerify_WebhookInPlaceUpdateRules",
+        "TestVerify_ControllerClampsPercentZeroZero_Contract"
       ],
-      "note": "canary pins the current inconsistent behavior; flip when webhook/controller agree on 0%/0%"
+      "note": "FIXED on 9e423e86: admission rejects declared 0/0 in all spellings for Recreate and enforces InPlaceUpdate rules (maxUnavailable>0, maxSurge 0/0%). The flipped canary was promoted to contract tests; the controller clamp now only covers positive percentages resolving to 0 (documented fallback, pinned by TestVerify_ControllerClampsPercentZeroZero_Contract)."
     },
     {
       "id": "G1",
@@ -109,7 +113,46 @@
         "TestVerify_Envtest_RollingAgainstRealAPIServer"
       ],
       "note": "real API server + real CRD defaulting; catches defaulting-induced recreate loops and foreground-delete/UID-precondition issues"
+    },
+    {
+      "id": "F9",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerify_InPlaceScaleOnlyPacing_Canary",
+        "TestVerify_RecreateScaleOnlyIsUnpaced"
+      ],
+      "note": "canary pins observed behavior: replicas-only diffs under InPlaceUpdate are budget-paced one child per readiness window, while Recreate scales all children in one pass; PR body claims scaling is never paced. Flip/promote once intent is clarified."
+    },
+    {
+      "id": "G8",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_InPlaceRolloutPacedNoRecreate",
+        "TestVerify_InPlaceStalledChildBlocksProgress",
+        "TestVerify_GroupSetChildReadyBarrier"
+      ],
+      "note": "InPlace pacing, stall safety (budget held by an in-flight child), and the readiness-barrier semantics"
+    },
+    {
+      "id": "G9",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestVerify_Envtest_InPlaceAgainstRealAPIServer"
+      ],
+      "note": "real API server: UID stability, stalled-child budget hold, convergence under real defaulting, no generation churn after completion"
     }
   ],
-  "liveNote": "L3 skipped per debate setup (no KUBECONFIG layer). The repo's own kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers the live path and is green in CI run 37802453289."
+  "liveNote": "L3 skipped per debate setup (no KUBECONFIG layer). The repo's own kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers the live path and is green in CI run 37802453289.",
+  "round2": {
+    "head": "9e423e860531650e09b32eb6f966c939a931ccbd",
+    "deltaReviewed": "442419032f5f14af3fd3d10585380b6e7d032671..9e423e86",
+    "results": {
+      "unit": "results/l1-unit-round2.txt",
+      "integration": "results/l2-envtest-round2.txt",
+      "harnessBites": "results/harness-bites-round2.txt"
+    }
+  }
 }

@@ -395,11 +395,12 @@ func TestVerify_RollingScaleDownDuringRollout(t *testing.T) {
 	}
 }
 
-func TestVerify_ControllerClampsPercentZeroZero_Canary(t *testing.T) {
-	// CANARY (controller side of the webhook inconsistency): a resolved 0/0 is silently
-	// rewritten to maxUnavailable=1 instead of being rejected.
-	mu := intstr.FromString("0%")
-	ms := intstr.FromString("0%")
+func TestVerify_ControllerClampsPercentZeroZero_Contract(t *testing.T) {
+	// CONTRACT (round 2): admission now rejects DECLARED 0/0 in every spelling, so the
+	// controller clamp is the documented fallback for positive percentages that RESOLVE
+	// to 0 (10% of 3 rounds down to 0 with maxSurge 0 would stall otherwise).
+	mu := intstr.FromString("10%")
+	ms := intstr.FromInt(0)
 	set := &workloadsv1alpha2.RoleBasedGroupSet{
 		Spec: workloadsv1alpha2.RoleBasedGroupSetSpec{
 			Replicas: ptr.To(int32(3)),
@@ -410,6 +411,7 @@ func TestVerify_ControllerClampsPercentZeroZero_Canary(t *testing.T) {
 	}
 	limits, err := resolveGroupSetRollout(set)
 	assert.NoError(t, err)
-	assert.Equal(t, 1, limits.maxUnavailable, "canary: controller silently clamps 0 to 1")
+	assert.Equal(t, 1, limits.maxUnavailable,
+		"10%% of 3 resolves to 0 and must be clamped to 1 when maxSurge is 0 (documented fallback)")
 	assert.Equal(t, 0, limits.maxSurge)
 }

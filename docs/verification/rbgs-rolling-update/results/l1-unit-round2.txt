@@ -1,0 +1,59 @@
+=== RUN   TestVerify_Envtest_RollingAgainstRealAPIServer
+    rolebasedgroupset_envtest_verify_test.go:68: KUBEBUILDER_ASSETS not set; skipping envtest integration layer
+--- SKIP: TestVerify_Envtest_RollingAgainstRealAPIServer (0.00s)
+=== RUN   TestVerify_Envtest_InPlaceAgainstRealAPIServer
+    rolebasedgroupset_envtest_verify_test.go:274: KUBEBUILDER_ASSETS not set; skipping envtest integration layer
+--- SKIP: TestVerify_Envtest_InPlaceAgainstRealAPIServer (0.00s)
+=== RUN   TestVerify_InPlaceRolloutPacedNoRecreate
+--- PASS: TestVerify_InPlaceRolloutPacedNoRecreate (0.06s)
+=== RUN   TestVerify_InPlaceStalledChildBlocksProgress
+--- PASS: TestVerify_InPlaceStalledChildBlocksProgress (0.01s)
+=== RUN   TestVerify_InPlaceScaleOnlyPacing_Canary
+--- PASS: TestVerify_InPlaceScaleOnlyPacing_Canary (0.01s)
+=== RUN   TestVerify_RecreateScaleOnlyIsUnpaced
+--- PASS: TestVerify_RecreateScaleOnlyIsUnpaced (0.01s)
+=== RUN   TestVerify_GroupSetChildReadyBarrier
+--- PASS: TestVerify_GroupSetChildReadyBarrier (0.00s)
+=== RUN   TestVerify_P0_StaticPathUpdatesAllChildrenInOnePass
+2026-10-12T01:54:22+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"premise","namespace":"default"}}
+2026-10-12T01:54:22+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"premise","namespace":"default"}, "replicas": 3, "readyReplicas": 3}
+2026-10-12T01:54:22+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"premise","namespace":"default"}}
+2026-10-12T01:54:22+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"premise","namespace":"default"}}
+2026-10-12T01:54:22+08:00	INFO	Updating existing RoleBasedGroups	{"rbgset": {"name":"premise","namespace":"default"}, "count": 3}
+2026-10-12T01:54:22+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-0"}
+2026-10-12T01:54:22+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-1"}
+2026-10-12T01:54:22+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-2"}
+2026-10-12T01:54:22+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"premise","namespace":"default"}}
+    rolebasedgroupset_premise_verify_test.go:138: P0 confirmed: all 3 children moved to the new template in ONE reconcile
+--- PASS: TestVerify_P0_StaticPathUpdatesAllChildrenInOnePass (0.00s)
+=== RUN   TestVerify_RollingRecreatePacedAndConverges
+    rolebasedgroupset_rolling_verify_test.go:266: converged in 12 reconcile steps
+--- PASS: TestVerify_RollingRecreatePacedAndConverges (0.02s)
+=== RUN   TestVerify_RollingSurgeBacksZeroMaxUnavailable
+--- PASS: TestVerify_RollingSurgeBacksZeroMaxUnavailable (0.01s)
+=== RUN   TestVerify_RollingPartitionHoldsBackAndRebuildsAtCurrent
+--- PASS: TestVerify_RollingPartitionHoldsBackAndRebuildsAtCurrent (0.01s)
+=== RUN   TestVerify_RollingTemplateFlipFlopConverges
+--- PASS: TestVerify_RollingTemplateFlipFlopConverges (0.01s)
+=== RUN   TestVerify_RollingReplicasOnlyChangeScalesInPlace
+--- PASS: TestVerify_RollingReplicasOnlyChangeScalesInPlace (0.01s)
+=== RUN   TestVerify_RollingScaleDownDuringRollout
+--- PASS: TestVerify_RollingScaleDownDuringRollout (0.01s)
+=== RUN   TestVerify_ControllerClampsPercentZeroZero_Contract
+--- PASS: TestVerify_ControllerClampsPercentZeroZero_Contract (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.166s
+=== RUN   TestVerify_ConversionPreservesRolloutStrategy
+--- PASS: TestVerify_ConversionPreservesRolloutStrategy (0.00s)
+=== RUN   TestVerify_ConversionPreservesInPlaceStrategy
+--- PASS: TestVerify_ConversionPreservesInPlaceStrategy (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.010s
+=== RUN   TestVerify_WebhookRejectsIntegerZeroZero
+--- PASS: TestVerify_WebhookRejectsIntegerZeroZero (0.00s)
+=== RUN   TestVerify_WebhookRejectsPercentZeroZero
+--- PASS: TestVerify_WebhookRejectsPercentZeroZero (0.00s)
+=== RUN   TestVerify_WebhookInPlaceUpdateRules
+--- PASS: TestVerify_WebhookInPlaceUpdateRules (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.010s

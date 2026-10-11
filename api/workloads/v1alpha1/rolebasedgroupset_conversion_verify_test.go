@@ -77,3 +77,50 @@ func TestVerify_ConversionPreservesRolloutStrategy(t *testing.T) {
 		"rollout status bookkeeping must survive a v1alpha1 round trip")
 	assert.Equal(t, "rbgs-bbb", restored.Status.UpdateRevision)
 }
+
+// Round 2: the InPlaceUpdate strategy type added in 9e423e86 must round-trip through
+// v1alpha1 too, including percentage spellings and the full rollout status block.
+func TestVerify_ConversionPreservesInPlaceStrategy(t *testing.T) {
+	mu := intstr.FromString("25%")
+	p := intstr.FromInt(1)
+	stored := &v2.RoleBasedGroupSet{
+		Spec: v2.RoleBasedGroupSetSpec{
+			Replicas: ptr.To(int32(4)),
+			GroupTemplate: v2.RoleBasedGroupTemplateSpec{
+				Spec: v2.RoleBasedGroupSpec{
+					Roles: []v2.RoleSpec{{Name: "worker", Replicas: ptr.To(int32(1))}},
+				},
+			},
+			RolloutStrategy: &v2.GroupSetRolloutStrategy{
+				Type:           v2.InPlaceUpdateStrategyType,
+				MaxUnavailable: &mu,
+				Partition:      &p,
+			},
+		},
+		Status: v2.RoleBasedGroupSetStatus{
+			CurrentReplicas: 1, UpdatedReplicas: 3, UpdatedReadyReplicas: 2,
+			ExpectedUpdatedReplicas: 3, CurrentRevision: "rbgs-ccc", UpdateRevision: "rbgs-ddd",
+		},
+	}
+
+	viaV1 := &RoleBasedGroupSet{}
+	require.NoError(t, viaV1.ConvertFrom(stored))
+	restored := &v2.RoleBasedGroupSet{}
+	require.NoError(t, viaV1.ConvertTo(restored))
+
+	require.NotNil(t, restored.Spec.RolloutStrategy)
+	assert.Equal(t, v2.InPlaceUpdateStrategyType, restored.Spec.RolloutStrategy.Type)
+	assert.Equal(t, "25%", restored.Spec.RolloutStrategy.MaxUnavailable.String())
+	assert.Equal(t, 1, restored.Spec.RolloutStrategy.Partition.IntValue())
+	assert.Equal(t, stored.Status.CurrentReplicas, restored.Status.CurrentReplicas)
+	assert.Equal(t, stored.Status.UpdatedReplicas, restored.Status.UpdatedReplicas)
+	assert.Equal(t, stored.Status.UpdatedReadyReplicas, restored.Status.UpdatedReadyReplicas)
+	assert.Equal(t, stored.Status.ExpectedUpdatedReplicas, restored.Status.ExpectedUpdatedReplicas)
+	assert.Equal(t, "rbgs-ccc", restored.Status.CurrentRevision)
+	assert.Equal(t, "rbgs-ddd", restored.Status.UpdateRevision)
+
+	// The stash annotations must not leak into the stored (hub) object.
+	_, hasStrategy := restored.Annotations["conversion.workloads.x-k8s.io/v1alpha2-rollout-strategy"]
+	_, hasStatus := restored.Annotations["conversion.workloads.x-k8s.io/v1alpha2-rollout-status"]
+	assert.False(t, hasStrategy || hasStatus, "conversion stash keys must not leak into the hub object")
+}

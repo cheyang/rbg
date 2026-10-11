@@ -1,0 +1,16 @@
+Harness-bites check, round 2 (head 9e423e86). Production code temporarily perturbed,
+tests re-run, then the perturbation reverted; production diff empty afterwards.
+
+P1: disabled the rollout budget gate in rolloutGroupSetChildren
+    (`ready <= minimumReady` continue removed).
+    -> TestVerify_InPlaceStalledChildBlocksProgress FAILED
+       ("exactly one child was rewritten in the first pass": with no gate, both
+        children were rewritten at once). The stall/pacing tests bite.
+
+P2: dropped the stale-observation guard from groupSetChildReady
+    (rolling.ObservedGeneration >= child.Generation no longer required).
+    -> TestVerify_GroupSetChildReadyBarrier FAILED. The barrier semantics test bites.
+
+Round-1 bites (budget-gate + partition perturbations on the Recreate path) are in
+results/harness-bites.txt and remain valid: those guard rails still pass unmodified
+on 9e423e86 (results/l1-unit-round2.txt).

@@ -77,3 +77,40 @@ repo's own kind-based suite (`make test-e2e`), which is green in CI.
 Kickoff prompt for a fresh agent: "Continue verifying sgl-project/rbg PR #474 from
 branch verify/rbgs-rolling-update-codex on the cheyang fork. Read
 docs/verification/rbgs-rolling-update/README.md and run scripts/re-verify.sh."
+
+## Round 2 — head `9e423e86` (delta `44241903..9e423e86`: v1alpha1 round-trip fix, envtest suite, InPlaceUpdate strategy)
+
+Reviewed head advanced to `9e423e86` (`.last-reviewed`). All round-1 guard rails
+(G1-G7) still pass unmodified on the new head (results/l1-unit-round2.txt,
+results/l2-envtest-round2.txt).
+
+### Round-1 findings re-verified
+
+| id | status on 9e423e86 | evidence |
+|----|--------------------|----------|
+| F1 (blocker: conversion dropped rolloutStrategy) | **FIXED** — annotation stash in `rolebasedgroupset_conversion.go` | contract test now green, extended to InPlaceUpdate + full status block (`TestVerify_ConversionPreservesInPlaceStrategy`) |
+| F3 (minor: "0%"/"0%" admission gap) | **FIXED** — declared 0/0 rejected in every spelling for Recreate; InPlace rules enforced; clamp is now only the documented fallback for positive percents resolving to 0 | flipped canary promoted to contract tests (`TestVerify_WebhookRejectsPercentZeroZero`, `TestVerify_WebhookInPlaceUpdateRules`, `TestVerify_ControllerClampsPercentZeroZero_Contract`) |
+| F8 (minor: no envtest drive) | **FIXED** — author added `test/envtest/testcase/rbgs_rolling` running real controllers | CI envtest job green on 9e423e86 |
+| F4 / F5 / F6 / F7 | unchanged (F6 shrinks: InPlaceUpdate, now the default, syncs metadata-only changes in place; Recreate still recreates) | code inspection |
+
+### Round-2 additions
+
+| id | claim | polarity | layer | status |
+|----|-------|----------|-------|--------|
+| G8 | InPlaceUpdate pacing: never recreates a base child (UID/name stable), at most one child in flight under maxUnavailable=1, a stalled in-flight child holds the whole budget (no further child touched, Rolling stays True), steady state quiet | contract | unit | green |
+| G8b | `groupSetChildReady` barrier semantics: Ready + RollingUpdateInProgress=True at current generation is NOT serving; stale-observation barrier is NOT serving; absent barrier (old RBG controller) is serving | contract | unit | green |
+| G9 | InPlaceUpdate against a real API server: UIDs stable, stalled child holds the budget, converges under real CRD defaulting, exactly one generation bump per child for the template change and no churn afterwards | contract | integration (envtest) | green (results/l2-envtest-round2.txt) |
+| F9 | replicas-only template diff under InPlaceUpdate is budget-paced (one child per readiness window) instead of immediate like in Recreate mode; the PR body claims scaling is never paced | canary | unit | canary passes = behavior pinned; intent questioned |
+
+Harness-bites round 2 (results/harness-bites-round2.txt): disabling the budget gate
+turns G8's stall test red; dropping the stale-observation guard turns G8b red.
+Production diff empty after reverts.
+
+### Note on the fake client
+
+The controller-runtime fake client never manages `metadata.generation`, which would
+hide the generation-lag barrier the InPlace budget relies on. The round-2 unit drive
+(`rolebasedgroupset_inplace_verify_test.go`) emulates the API server: it bumps a
+child's generation itself when the controller rewrites the child spec, and plays the
+child RBG controller by flipping `status.observedGeneration` after a cooldown. The
+envtest layer (G9) needs no emulation and is the authoritative check.
