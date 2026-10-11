@@ -127,7 +127,15 @@ export GINKGO_REPORT="$RESULTS_DIR/ginkgo-report.json"
 # capture current position (must hold the harness) and restore on exit
 ORIG_REF="$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)"
 HARNESS_SRC="$(git rev-parse HEAD)"
-cleanup() { git checkout -f "$ORIG_REF" >/dev/null 2>&1 || true; rm -rf "$RUNTIME_DIR" 2>/dev/null || true; }
+cleanup() {
+  # Preserve persisted results across the checkout: results/reverify/ may be TRACKED in
+  # the harness branch, and `git checkout -f` would silently revert it to HEAD content.
+  local keep; keep="$(mktemp -d)"
+  [ -n "${PERSIST:-}" ] && [ -d "$PERSIST" ] && cp -r "$PERSIST" "$keep/reverify" 2>/dev/null || true
+  git checkout -f "$ORIG_REF" >/dev/null 2>&1 || true
+  [ -n "${PERSIST:-}" ] && [ -d "$keep/reverify" ] && { mkdir -p "$PERSIST"; cp -rf "$keep/reverify/." "$PERSIST"/; } 2>/dev/null || true
+  rm -rf "$keep" "$RUNTIME_DIR" 2>/dev/null || true
+}
 trap cleanup EXIT
 
 echo "re-verify: fixed-ref=$FIXED_REF  harness-from=$ORIG_REF"
