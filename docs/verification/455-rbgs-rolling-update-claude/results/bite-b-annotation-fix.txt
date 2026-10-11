@@ -1,0 +1,9 @@
+bite-b (2026-10-12)
+
+BITE B (unit, TestVerify491E4ControllerOwnedAnnotationWipe): mutated
+needsTemplateAnnotationUpdate in rolebasedgroupset_controller.go to skip the
+controller-owned key rbg.workloads.x-k8s.io/discovery-config-mode (i.e.
+implemented the exclusion the review asks for) -> harness went red:
+  FAIL TestVerify491E4ControllerOwnedAnnotationWipe: "Should be true"
+  (needsUpdate no longer reports drift from the controller-owned annotation —
+  the canary detected the fix); code reverted after, production diff clean.

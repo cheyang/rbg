@@ -24,6 +24,18 @@ mkdir -p "$OUT"
 echo "== re-verify 455-rbgs-rolling-update-claude =="
 echo "base: $BASE_SHA  head: $HEAD_SHA  date: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
+# Guard: the PR head this harness was built for must still be an ancestor of
+# this branch. If the PR advanced, re-run after rebasing/grafting.
+if git rev-parse --verify -q origin/pr/491 >/dev/null 2>&1; then
+  if git merge-base --is-ancestor origin/pr/491 HEAD; then
+    echo "pr-head: $(git rev-parse origin/pr/491) (covered by this branch)"
+  else
+    echo "WARN: PR head $(git rev-parse origin/pr/491) is NOT an ancestor of this branch — graft the harness onto the new head before trusting results"
+  fi
+else
+  echo "WARN: origin/pr/491 not fetched locally; run: git fetch origin pull/491/head:refs/remotes/origin/pr/491"
+fi
+
 cd "$REPO_ROOT"
 
 fail=0
@@ -76,6 +88,13 @@ check E4b-annotation-wholesale "syncRBGMetadata replaces annotations wholesale" 
 EXPECT_GREP="LegacyRecreateUpdateStrategyType"
 check E5-role-level-naming "role-level strategy enum incl. legacy Recreate spelling" \
   grep -n "LegacyRecreateUpdateStrategyType UpdateStrategyType" api/workloads/v1alpha2/rolebasedgroup_types.go
+
+# E6: the v1alpha1->v2 conversion injects a controller-owned key into
+# groupTemplate.annotations — a key the revision-hash exclusion list must cover,
+# or an unchanged template round-tripped through v1alpha1 changes revision identity.
+EXPECT_GREP="annotationV1alpha1Coordination"
+check E6-conversion-injects-template-annotation "conversion injects coordination annotation into groupTemplate.annotations" \
+  grep -nF "dst.Spec.GroupTemplate.Annotations[annotationV1alpha1Coordination]" api/workloads/v1alpha1/rolebasedgroupset_conversion.go
 
 # P0-net: the linked issue is still open (network; recorded, not gating).
 gh issue view 455 --repo sgl-project/rbg --json state,title -t '{{.state}} {{.title}}' \
