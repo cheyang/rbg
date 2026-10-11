@@ -1,0 +1,58 @@
+{
+  "topic": "kep473-topology",
+  "pr": "https://github.com/sgl-project/rbg/pull/492",
+  "harnessPaths": [
+    "docs/verification/kep473-topology",
+    "pkg/scheduler/volcano/verify_kep473_claude_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "RBG workloads increasingly need placement constraints such as multi-node instance packing and prefill/decode co-location; KEP-473 turns those topology intents into a scheduler-independent PlacementPlan compiled for Volcano.",
+    "reportedComponent": "scheduler / placement (none exists today)",
+    "patchedComponent": "pkg/scheduler/common, pkg/scheduler/volcano, api/workloads/v1alpha2, internal/controller/workloads",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "Base branch 0821cb5b has no TopologyConstraint type, no Volcano networkTopology compilation, and no HyperNode reads (grep over pkg/, api/, internal/ returns nothing). Feature premise holds: the capability does not exist on base. See results/premise-base-grep.out.",
+    "match": ["TestVerifyGangTopologyEqualScopeComposesOnePodGroup"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/scheduler/volcano/ -run 'TestVerify' -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=\"$(setup-envtest use -p path 1.34.x || true)\" go test ./test/envtest/testcase/topology/ -v -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyF1GangSubsetPlanKeepsVolcanoSchedulerForUncoveredRole"]
+    },
+    {
+      "id": "F1-diff",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestVerifyF1DifferentialLegacyInjectorStillInjects"]
+    },
+    {
+      "id": "F2",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestVerifyF2GangSupersetWithSubsetTopologyRuleRejected"]
+    },
+    {
+      "id": "C-compose",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyGangTopologyEqualScopeComposesOnePodGroup"]
+    }
+  ],
+  "liveNote": "L3 needs a real Volcano cluster with HyperNodes: deploy the PR controller with --scheduler-name=volcano, create an RBG+CoordinatedPolicy from test/e2e/testcase/v1alpha2/topology_scheduling.go, and check the rendered PodGroup carries networkTopology/subGroupPolicy and covered pods actually land in-domain (e2e spec 'renders a topology constraint and schedules covered pods with Volcano')."
+}
