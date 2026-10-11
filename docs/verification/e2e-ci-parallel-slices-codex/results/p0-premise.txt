@@ -1,0 +1,8 @@
+base ref: 798e5d6f5eda5f8f67bba35831381921c88d1e3f
+lines in base e2e-test.yml: 815
+  occurrences of 'kind create cluster': 5
+  occurrences of 'docker-build-controller': 5
+  occurrences of 'docker-build-crd-upgrader': 4
+  occurrences of 'Install LeaderWorkerSet': 5
+  occurrences of 'get-helm-3': 4
+  occurrences of 'Wait for controller to be ready': 5

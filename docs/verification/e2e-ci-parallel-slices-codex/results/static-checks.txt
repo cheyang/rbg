@@ -1,0 +1,13 @@
+== yamllint -s .github/workflows/e2e-test.yml .github/actions/setup-e2e-cluster/action.yaml ==
+yamllint exit: 0
+== go test ./test/e2e/... -run '^$' (compile only, no specs) ==
+ok  	sigs.k8s.io/rbgs/test/e2e	0.013s [no tests to run]
+ok  	sigs.k8s.io/rbgs/test/e2e/apicompat	0.014s [no tests to run]
+?   	sigs.k8s.io/rbgs/test/e2e/framework	[no test files]
+?   	sigs.k8s.io/rbgs/test/e2e/framework/workloads	[no test files]
+?   	sigs.k8s.io/rbgs/test/e2e/testcase/v1alpha1	[no test files]
+?   	sigs.k8s.io/rbgs/test/e2e/testcase/v1alpha2	[no test files]
+ok  	sigs.k8s.io/rbgs/test/e2e/upgrade	0.011s [no tests to run]
+compile exit: 0
+== go vet ./test/ciharness/ (harness) ==
+vet exit: 0
