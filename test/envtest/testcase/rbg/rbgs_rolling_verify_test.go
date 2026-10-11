@@ -293,4 +293,50 @@ var _ = Describe("RoleBasedGroupSet rolling update (PR #474 verify harness)", fu
 		// itself; the ready floor is the actual zero-unavailability claim.
 		driveRollout(set, "nginx:v2", 1, 3)
 	})
+
+	// I4 (contract, round 2): the InPlaceUpdate strategy never deletes an
+	// in-scope child — every child keeps its UID while the template
+	// propagates, and the rollout still reports complete.
+	It("I4: InPlaceUpdate propagates the template without recreating any child", func() {
+		set := verifyRollingRBGS("inplace", testNs, "nginx:v1", 3, &workloadsv1alpha2.GroupSetRolloutStrategy{
+			Type:           workloadsv1alpha2.InPlaceUpdateStrategyType,
+			MaxUnavailable: ptr.To(intstr.FromInt32(1)),
+		})
+		Expect(testutil.K8sClient.Create(testutil.Ctx, set)).Should(Succeed())
+		uids := waitChildrenReady(set)
+
+		fresh := &workloadsv1alpha2.RoleBasedGroupSet{}
+		Expect(testutil.K8sClient.Get(testutil.Ctx, client.ObjectKeyFromObject(set), fresh)).Should(Succeed())
+		fresh.Spec.GroupTemplate.Spec.Roles[0].Pattern.StandalonePattern.TemplateSource.Template = ptr.To(nginxPodTemplateWithImage("nginx:v2"))
+		Expect(testutil.K8sClient.Update(testutil.Ctx, fresh)).Should(Succeed())
+
+		// Converge with UIDs stable and no child ever terminating.
+		Eventually(func() map[string]string {
+			children := verifyListChildren(set)
+			out := map[string]string{}
+			for i := range children.Items {
+				child := &children.Items[i]
+				Expect(child.DeletionTimestamp.IsZero()).To(BeTrue(),
+					"InPlaceUpdate must never delete an in-scope child (%s)", child.Name)
+				Expect(child.UID).To(Equal(uids[child.Name]),
+					"child %s must keep its UID under InPlaceUpdate", child.Name)
+				out[child.Name] = child.Spec.Roles[0].Pattern.StandalonePattern.TemplateSource.Template.Spec.Containers[0].Image
+			}
+			return out
+		}, timeout, interval).Should(Equal(map[string]string{
+			"inplace-0": "nginx:v2", "inplace-1": "nginx:v2", "inplace-2": "nginx:v2",
+		}))
+
+		completed := &workloadsv1alpha2.RoleBasedGroupSet{}
+		Eventually(func() string {
+			Expect(testutil.K8sClient.Get(testutil.Ctx, client.ObjectKeyFromObject(set), completed)).Should(Succeed())
+			cond := apimeta.FindStatusCondition(completed.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupSetRolling))
+			if cond == nil {
+				return ""
+			}
+			return string(cond.Status) + "/" + cond.Reason
+		}, timeout, interval).Should(Equal("False/RolloutComplete"))
+		Expect(completed.Status.UpdatedReplicas).To(Equal(int32(3)))
+		Expect(completed.Status.CurrentRevision).To(Equal(completed.Status.UpdateRevision))
+	})
 })

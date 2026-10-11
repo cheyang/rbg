@@ -4,10 +4,16 @@
 # Usage: bash scripts/re-verify.sh [<fixed-ref>]
 #   With no ref, fetches the current PR head from the manifest's "pr" URL.
 #
-# Grafts the harness (this branch's docs/ + verify test files) onto the given
-# ref, runs the unit + integration layers, and prints per-claim verdicts.
-# Canaries are fixed only when they FLIP to red; contract tests are fixed when
-# they go green.
+# Grafts ONLY the harness (docs/ + the verify test files listed in the
+# manifest's harnessPaths) onto the given ref, runs the unit + integration
+# layers, and prints per-claim verdicts. Canaries are fixed only when they
+# FLIP to red; contract tests are fixed when they go green.
+#
+# Round 2 note: the round-1 script extracted the whole branch tree, which
+# only worked while the branch parent was the PR head; against a moved head
+# it would have reverted production code to the old head. This version reads
+# harnessPaths from the manifest so the target ref's production code is
+# untouched except for the additive harness files.
 set -euo pipefail
 
 BRANCH_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
@@ -22,15 +28,24 @@ if [ -z "$TARGET_REF" ]; then
     TARGET_REF="FETCH_HEAD"
 fi
 
+# Incremental review delta: last-reviewed marker -> current target.
+LAST_REVIEWED="$(cat "$BRANCH_DIR/docs/verification/pr474-rbgs-rolling-update/.last-reviewed" 2>/dev/null || true)"
 WORK="$(mktemp -d)/rbgs-reverify"
 git worktree add "$WORK" "$TARGET_REF" >/dev/null 2>&1 || { echo "cannot create worktree at $TARGET_REF"; exit 1; }
 trap 'git worktree remove --force "$WORK" >/dev/null 2>&1 || true' EXIT
 
-# Graft the harness onto the target ref.
-git -C "$BRANCH_DIR" archive HEAD | tar -x -C "$WORK"
+# Graft only the harness onto the target ref.
+mapfile -t HARNESS_PATHS < <(python3 -c "import json;[print(p) for p in json.load(open('$MANIFEST'))['harnessPaths']]")
+git -C "$BRANCH_DIR" archive HEAD -- "${HARNESS_PATHS[@]}" | tar -x -C "$WORK"
+
+HEAD_SHA="$(git -C "$WORK" rev-parse HEAD)"
+if [ -n "$LAST_REVIEWED" ]; then
+    echo "== incremental delta: $LAST_REVIEWED..$HEAD_SHA =="
+    git -C "$WORK" log --oneline "$LAST_REVIEWED..$HEAD_SHA" 2>/dev/null | cat || true
+fi
 
 echo "== unit layer =="
-(cd "$WORK" && go test ./internal/controller/workloads/ ./api/workloads/v1alpha2/ \
+(cd "$WORK" && go test ./internal/controller/workloads/ ./api/workloads/v1alpha2/ ./api/workloads/v1alpha1/ \
     -run "TestVerifyPR474" -count=1 -v 2>&1) | tee /tmp/reverify-unit.log
 
 echo "== integration layer (envtest) =="
@@ -47,5 +62,4 @@ echo
 echo "Interpretation: contract tests are FIXED when green; canaries (names"
 echo "containing 'Canary' or flagged 'canary' in the manifest) are FIXED only"
 echo "when they flip to RED."
-LAST="$(git -C "$BRANCH_DIR" rev-parse "$TARGET_REF")"
-echo "Reviewed ref: $LAST  (advance .last-reviewed to this sha if this round is complete)"
+echo "Reviewed ref: $HEAD_SHA  (advance .last-reviewed to this sha if this round is complete)"

@@ -5,23 +5,24 @@
     "docs/verification/pr474-rbgs-rolling-update",
     "internal/controller/workloads/rolebasedgroupset_verify_test.go",
     "api/workloads/v1alpha2/rolebasedgroupset_rollout_verify_test.go",
+    "api/workloads/v1alpha1/rolebasedgroupset_conversion_verify_test.go",
     "test/envtest/testcase/rbg/rbgs_rolling_verify_test.go"
   ],
   "premise": {
     "id": "P0",
     "claim": "\"when the template changes, every outdated child is updated within a single reconcile, with no ordering and no availability gating. For a set of N groups that means all N groups can restart at once\"",
     "reportedComponent": "RoleBasedGroupSet controller static propagation path (internal/controller/workloads/rolebasedgroupset_controller.go)",
-    "patchedComponent": "same file plus rolebasedgroupset_rolling.go / rolebasedgroupset_revision.go",
+    "patchedComponent": "same file plus rolebasedgroupset_rolling.go / rolebasedgroupset_revision.go / rolebasedgroup_rollout_status.go",
     "componentMatch": true,
     "runsAgainst": "base",
     "layer": "unit",
     "verdict": "confirmed",
-    "evidence": "On base 0821cb5b one Reconcile call updated all 3 outdated children in one pass ('Updating existing RoleBasedGroups count: 3'); results/premise-base.log"
+    "evidence": "On base 0821cb5b one Reconcile call updated all 3 outdated children in one pass ('Updating existing RoleBasedGroups count: 3'); results/premise-base.log. The round-2 base move (0821cb5b..79f7e585) does not touch the RBGS controller or rolling code, so the premise is unchanged on the new base."
   },
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./internal/controller/workloads/ ./api/workloads/v1alpha2/ -run 'TestVerifyPR474' -count=1 -v"
+      "cmd": "go test ./internal/controller/workloads/ ./api/workloads/v1alpha2/ ./api/workloads/v1alpha1/ -run 'TestVerifyPR474' -count=1 -v"
     },
     "integration": {
       "kind": "ginkgo",
@@ -30,10 +31,15 @@
   },
   "findings": [
     { "id": "P0",  "polarity": "canary",   "layer": "unit",        "match": ["TestVerifyPR474_Premise_StaticPathUpdatesAllChildrenAtOnce"], "note": "runs on base too; documents the un-paced static path" },
-    { "id": "F2",  "polarity": "canary",   "layer": "unit",        "match": ["TestVerifyPR474_Webhook_ZeroBudgetIsSpellingSensitive", "TestVerifyPR474_Resolver_PercentZeroBecomesOne"], "note": "author-pinned intended behavior; documents the spelling asymmetry" },
+    { "id": "F2",  "polarity": "contract", "layer": "unit",        "match": ["TestVerifyPR474_Webhook_ZeroBudgetRejectedSymmetrically", "TestVerifyPR474_Webhook_InPlaceUpdateRules"], "note": "round 1 canary TestVerifyPR474_Webhook_ZeroBudgetIsSpellingSensitive FLIPPED RED on 9e423e86 (the fix evidence); promoted to contract" },
+    { "id": "F2b", "polarity": "canary",   "layer": "unit",        "match": ["TestVerifyPR474_Resolver_PercentZeroBecomesOne"], "note": "documents the persisted-object both-zero fallback (unreachable via admission for exact zeros since round 2)" },
     { "id": "F3",  "polarity": "canary",   "layer": "unit",        "match": ["TestVerifyPR474_StaticPathWipesChildRoleTemplates"], "note": "documents the static-path full-spec overwrite" },
-    { "id": "POS1", "polarity": "contract", "layer": "unit",       "match": ["TestVerifyPR474_Rollout_PacedRecreate", "TestVerifyPR474_Rollout_ConvergesUnderBudget", "TestVerifyPR474_Rollout_MigrationNoRecreate"] },
-    { "id": "POS2", "polarity": "contract", "layer": "integration", "match": ["I1: recreates one group at a time", "I2: enabling rolloutStrategy over matching legacy", "I3: maxUnavailable=0 with surge"] }
+    { "id": "F8",  "polarity": "contract", "layer": "unit",        "match": ["TestVerifyPR474_V1alpha1RoundTrip_PreservesRolloutStrategy", "TestVerifyPR474_V1alpha1RoundTrip_ClearsStaleStash", "TestVerifyPR474_V1alpha1RoundTrip_GarbageStashFailsClosed"], "note": "round-1 consensus blocker: v1alpha1 conversion dropped spec.rolloutStrategy; fixed via annotation stash at f6019ead" },
+    { "id": "F8b", "polarity": "canary",   "layer": "unit",        "match": ["TestVerifyPR474_V1alpha1RoundTrip_DroppedStashLosesStrategy"], "note": "residual limitation of the stash design: a stash-less v1alpha1 write reverts to the static path" },
+    { "id": "POS1", "polarity": "contract", "layer": "unit",       "match": ["TestVerifyPR474_Rollout_PacedRecreate", "TestVerifyPR474_Rollout_ConvergesUnderBudget", "TestVerifyPR474_Rollout_MigrationNoRecreate"], "note": "Recreate-path regression suite, carried from round 1" },
+    { "id": "POS2", "polarity": "contract", "layer": "integration", "match": ["I1: recreates one group at a time", "I2: enabling rolloutStrategy over matching legacy", "I3: maxUnavailable=0 with surge"] },
+    { "id": "POS3", "polarity": "contract", "layer": "unit",       "match": ["TestVerifyPR474_InPlaceUpdate_PacesSpecUpdates", "TestVerifyPR474_InPlaceUpdate_ResolverLimits", "TestVerifyPR474_Resolver_RejectsUnknownType"], "note": "round 2: InPlaceUpdate pacing, identity, gating, resolver" },
+    { "id": "POS4", "polarity": "contract", "layer": "integration", "match": ["I4: InPlaceUpdate propagates the template without recreating any child"], "note": "round 2: InPlaceUpdate against a real API server, UID preservation, RolloutComplete" }
   ],
-  "liveNote": "L3 (live layer) was NOT run: the debate pipeline for this round mandates unit + integration only. A live cluster IS reachable on this host (2 aliyun nodes, kubectl get no succeeds); if L3 is wanted later, run the PR's own e2e suite (make test-e2e) which covers the same paced-recreate/surge/partition scenarios on kind."
+  "liveNote": "L3 (live layer) was NOT run: the debate pipeline mandates unit + integration only. The author's kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers paced recreate, surge, partition, and InPlaceUpdate UID preservation on a real cluster; make test-e2e is wired to PR CI."
 }

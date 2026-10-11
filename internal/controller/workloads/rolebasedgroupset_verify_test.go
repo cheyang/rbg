@@ -45,6 +45,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -325,11 +326,14 @@ func TestVerifyPR474_StaticPathWipesChildRoleTemplates(t *testing.T) {
 }
 
 // TestVerifyPR474_Resolver_PercentZeroBecomesOne: C6, polarity canary.
-// "0%" unavailable with zero surge slips past the webhook (see the RED
-// contract test in api/workloads/v1alpha2) and the resolver then quietly
-// upgrades maxUnavailable to 1, so the rollout takes a serving group down
-// although the user asked for zero. If the resolver starts rejecting this
-// input instead, this canary flips to RED and must be inverted.
+// Round 2 note: the webhook now rejects the exact-zero spellings (F2 fixed,
+// see the contract test in api/workloads/v1alpha2), so this input is only
+// reachable through persisted objects or via a positive percentage that
+// rounds down to zero; the resolver keeps coercing both-zero to 1 as
+// defense-in-depth, which the author's envtest suite also pins
+// ("legacy explicit zero percentages without admission"). Documents the
+// persisted-object fallback — flips RED if the resolver starts rejecting
+// this input instead, and must then be inverted.
 func TestVerifyPR474_Resolver_PercentZeroBecomesOne(t *testing.T) {
 	set := verifyRollingSet("resolve", "v1", 3, &workloadsv1alpha2.GroupSetRolloutStrategy{
 		Type:           workloadsv1alpha2.RecreateStrategyType,
@@ -341,4 +345,172 @@ func TestVerifyPR474_Resolver_PercentZeroBecomesOne(t *testing.T) {
 	assert.Equal(t, 0, limits.maxSurge)
 	assert.Equal(t, 1, limits.maxUnavailable,
 		"canary: requested 0%% unavailable resolves to 1 - the availability contract is silently violated")
+}
+
+// ── Round 2 (head 9e423e86): InPlaceUpdate rollout strategy ──────────────────
+//
+// C7 (contract): an InPlaceUpdate rollout never deletes an in-scope child; it
+//      rewrites the child spec in place, highest ordinal first, at most
+//      maxUnavailable ready children per pass, and holds back while an
+//      already-updated child is still rolling (the child-level
+//      RollingUpdateInProgress gate in groupSetChildReady).
+// C8 (contract): the resolver routes ""/InPlaceUpdate to the in-place path,
+//      ignores maxSurge, and keeps the both-zero fallback.
+// C9 (contract): an unsupported strategy type is an error, not a silent
+//      fallback to either path.
+
+// verifyMarkChildRolling simulates what the real RBG controller publishes
+// right after the set rewrote a child spec in place: the child's rollout is
+// in progress, so it must stop counting as a ready serving group.
+func verifyMarkChildRolling(t *testing.T, c client.Client, child *workloadsv1alpha2.RoleBasedGroup) {
+	fresh := &workloadsv1alpha2.RoleBasedGroup{}
+	require.NoError(t, c.Get(context.Background(), client.ObjectKeyFromObject(child), fresh))
+	status := fresh.Status.DeepCopy()
+	metaSet := func(conditions []metav1.Condition, cond metav1.Condition) []metav1.Condition {
+		apimeta.SetStatusCondition(&conditions, cond)
+		return conditions
+	}
+	status.Conditions = metaSet(status.Conditions, metav1.Condition{
+		Type: string(workloadsv1alpha2.RoleBasedGroupRollingUpdateInProgress),
+		Status: metav1.ConditionTrue, Reason: "RolesUpdating",
+		LastTransitionTime: metav1.Now(),
+	})
+	fresh.Status = *status
+	require.NoError(t, c.Status().Update(context.Background(), fresh))
+}
+
+// TestVerifyPR474_InPlaceUpdate_PacesSpecUpdates: C7, polarity contract.
+func TestVerifyPR474_InPlaceUpdate_PacesSpecUpdates(t *testing.T) {
+	set := verifyRollingSet("inplace-paced", "v2", 3, &workloadsv1alpha2.GroupSetRolloutStrategy{
+		Type:           workloadsv1alpha2.InPlaceUpdateStrategyType,
+		MaxUnavailable: ptr.To(intstr.FromInt32(1)),
+	})
+	children := verifyChildren(t, set, "v1", 3)
+	uids := map[string]types.UID{}
+	for _, obj := range children {
+		child := obj.(*workloadsv1alpha2.RoleBasedGroup)
+		uids[child.Name] = child.UID
+	}
+	r, c := verifyReconciler(t, append([]client.Object{set}, children...)...)
+
+	updated := func() int {
+		got := verifyChildImages(c, set)
+		n := 0
+		for _, image := range got {
+			if image == "v2" {
+				n++
+			}
+		}
+		return n
+	}
+
+	// Pass 1: exactly one ready child is updated in place (highest ordinal
+	// first); nothing is deleted.
+	_, err := r.Reconcile(context.Background(), ctrl.Request{NamespacedName: client.ObjectKeyFromObject(set)})
+	require.NoError(t, err)
+	got := verifyChildImages(c, set)
+	assert.Len(t, got, 3, "InPlaceUpdate must never delete an in-scope child")
+	assert.Equal(t, "v2", got["inplace-paced-2"], "highest ordinal rolls first")
+	assert.Equal(t, "v1", got["inplace-paced-1"])
+	assert.Equal(t, "v1", got["inplace-paced-0"])
+	assert.Equal(t, 1, updated())
+
+	// While the updated child is still rolling, the availability floor holds:
+	// no further child may be touched.
+	verifyMarkChildRolling(t, c, &workloadsv1alpha2.RoleBasedGroup{
+		ObjectMeta: metav1.ObjectMeta{Name: "inplace-paced-2", Namespace: set.Namespace},
+	})
+	_, err = r.Reconcile(context.Background(), ctrl.Request{NamespacedName: client.ObjectKeyFromObject(set)})
+	require.NoError(t, err)
+	assert.Equal(t, 1, updated(), "no second child may start rolling while the first is in flight")
+
+	// The rolled child finishes (RollingUpdateInProgress=False): the next
+	// child can now be updated.
+	verifyMarkChildDone := func(name string) {
+		fresh := &workloadsv1alpha2.RoleBasedGroup{}
+		require.NoError(t, c.Get(context.Background(), types.NamespacedName{Name: name, Namespace: set.Namespace}, fresh))
+		status := fresh.Status.DeepCopy()
+		conditions := status.Conditions
+		apimeta.SetStatusCondition(&conditions, metav1.Condition{
+			Type: string(workloadsv1alpha2.RoleBasedGroupRollingUpdateInProgress),
+			Status: metav1.ConditionFalse, Reason: "AllRolesUpdated",
+			LastTransitionTime: metav1.Now(),
+		})
+		status.Conditions = conditions
+		fresh.Status = *status
+		require.NoError(t, c.Status().Update(context.Background(), fresh))
+	}
+	verifyMarkChildDone("inplace-paced-2")
+	_, err = r.Reconcile(context.Background(), ctrl.Request{NamespacedName: client.ObjectKeyFromObject(set)})
+	require.NoError(t, err)
+	assert.Equal(t, 2, updated(), "the next child rolls once the previous is done")
+
+	// Converge: all children at v2, every original UID preserved.
+	for _, name := range []string{"inplace-paced-1", "inplace-paced-0"} {
+		verifyMarkChildRolling(t, c, &workloadsv1alpha2.RoleBasedGroup{
+			ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: set.Namespace},
+		})
+		verifyMarkChildDone(name)
+		_, err = r.Reconcile(context.Background(), ctrl.Request{NamespacedName: client.ObjectKeyFromObject(set)})
+		require.NoError(t, err)
+	}
+	assert.Equal(t, map[string]string{
+		"inplace-paced-0": "v2", "inplace-paced-1": "v2", "inplace-paced-2": "v2",
+	}, verifyChildImages(c, set), "InPlaceUpdate rollout must converge")
+
+	list := &workloadsv1alpha2.RoleBasedGroupList{}
+	require.NoError(t, c.List(context.Background(), list, client.InNamespace(set.Namespace)))
+	for i := range list.Items {
+		child := &list.Items[i]
+		assert.Equal(t, uids[child.Name], child.UID, "child %s must keep its UID (no recreate)", child.Name)
+	}
+
+	// The set reports the rollout complete once every child serves the new template.
+	final := &workloadsv1alpha2.RoleBasedGroupSet{}
+	require.NoError(t, c.Get(context.Background(), client.ObjectKeyFromObject(set), final))
+	cond := apimeta.FindStatusCondition(final.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupSetRolling))
+	require.NotNil(t, cond, "the set must publish a Rolling condition")
+	assert.Equal(t, metav1.ConditionFalse, cond.Status)
+	assert.Equal(t, "RolloutComplete", cond.Reason)
+}
+
+// TestVerifyPR474_InPlaceUpdate_ResolverLimits: C8, polarity contract.
+func TestVerifyPR474_InPlaceUpdate_ResolverLimits(t *testing.T) {
+	// Empty type routes to the in-place path and ignores a persisted surge.
+	set := verifyRollingSet("resolver", "v1", 3, &workloadsv1alpha2.GroupSetRolloutStrategy{
+		MaxSurge: ptr.To(intstr.FromInt32(2)),
+	})
+	limits, err := resolveGroupSetRollout(set)
+	require.NoError(t, err)
+	assert.True(t, limits.inPlaceUpdate, "empty type must default to the in-place path")
+	assert.Equal(t, 0, limits.maxSurge, "maxSurge is ignored for InPlaceUpdate")
+
+	// Explicit InPlaceUpdate with a resolved-zero budget falls back to 1.
+	set = verifyRollingSet("resolver2", "v1", 3, &workloadsv1alpha2.GroupSetRolloutStrategy{
+		Type:           workloadsv1alpha2.InPlaceUpdateStrategyType,
+		MaxUnavailable: ptr.To(intstr.FromString("1%")),
+	})
+	limits, err = resolveGroupSetRollout(set)
+	require.NoError(t, err)
+	assert.True(t, limits.inPlaceUpdate)
+	assert.Equal(t, 1, limits.maxUnavailable, "1% of 3 replicas rounds to 0; the resolver enforces the minimum of 1")
+
+	// Recreate keeps resolving surge.
+	set = verifyRollingSet("resolver3", "v1", 3, &workloadsv1alpha2.GroupSetRolloutStrategy{
+		Type:    workloadsv1alpha2.RecreateStrategyType,
+		MaxSurge: ptr.To(intstr.FromInt32(2)),
+	})
+	limits, err = resolveGroupSetRollout(set)
+	require.NoError(t, err)
+	assert.False(t, limits.inPlaceUpdate)
+	assert.Equal(t, 2, limits.maxSurge)
+}
+
+// TestVerifyPR474_Resolver_RejectsUnknownType: C9, polarity contract.
+func TestVerifyPR474_Resolver_RejectsUnknownType(t *testing.T) {
+	set := verifyRollingSet("resolver-bad", "v1", 3, &workloadsv1alpha2.GroupSetRolloutStrategy{
+		Type: workloadsv1alpha2.GroupUpdateStrategyType("Bogus"),
+	})
+	_, err := resolveGroupSetRollout(set)
+	assert.Error(t, err, "an unsupported strategy type must fail loudly, not fall back to either path")
 }
