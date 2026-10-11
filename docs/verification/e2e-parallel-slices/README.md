@@ -108,3 +108,58 @@ polarity table (F2 is a contract test that must stay green; F1/F3/F4 are
 canaries that must flip red when fixed), run the harness-bites check, and
 report an observed-vs-expected table.
 ```
+
+## Round 2 (2026-10-12) — incremental, head unchanged, base advanced
+
+PR head is still `ecd1120a3dbbc2f0d6bc4399e7b1bbe59c07eaee` (no new commits since
+round 1; PR has 0 comments, remains OPEN and mergeable), so every round-1 finding
+carries over unchanged. What did change: `origin/main` advanced
+`798e5d6f → 79f7e585` (single commit `79f7e585 fix: recover stateful rollout stalls
+(#484)`, touching only `internal/…/statefulmode/` and `test/envtest/…` — **no
+overlap with this PR's files**, mergeable per GitHub).
+
+Base-change contract re-checks (all pass):
+- merge conflict: none (gh `mergeable: MERGEABLE`; disjoint file sets);
+- coverage counts (S3 invariant): the base commit adds no `test/e2e` specs — the
+  matrix union re-measured at head still equals the 106-spec legacy default suite;
+- CRD set (S7): `config/crd/bases` still holds 10 CRDs (base commit touches none);
+- release-test.yml (S1): untouched by the base commit — still the bare consumer;
+- Q1 branch protection: re-queried — `main` still unprotected, the active
+  `Default-rule` ruleset (9876266) still has no `required_status_checks` rule.
+- Residual: the green CI run on head (2026-10-10) predates the base advance; the
+  merged-tree interaction (rollout slice × stateful rollout recovery) is untested
+  — recommend an update-branch/rebase re-run before merge (filed as Q2, advisory).
+
+### Harness extensions this round
+
+Added `test/e2e/cislices/consumers_test.go` — contract repros for the findings
+this reviewer carries in the round ledger that previously had tests only on the
+*other* reviewer's branch, so this branch alone now re-runs the full set:
+
+| Test | Ledger ID | Polarity | Round-2 result at head |
+|------|-----------|----------|------------------------|
+| TestReleaseTestBareMakeTestE2eKeepsV1alpha1Suite | S1 | contract | FAIL (defect present: 2 bare call sites, L218/L363) |
+| TestWebhookCABundleGateRequiresEveryWebhook | S5 | contract | FAIL (flattening jsonpath gate; semantic demo: 2-webhook fixture with one unpatched sibling yields non-empty `cHVueGVk`) |
+| TestSetupGateVerifiesAllCommittedCRDs | S7 | contract | FAIL (3 of 10 CRDs verified) |
+
+Harness-bites (all reverted afterwards; `git status` clean except the harness):
+- S1 fix A (E2E_LABEL_FILTER at both release-test.yml call sites) → test green;
+- S1 fix B (Makefile default inclusive again) → test green;
+- S5 fix (jq `all(.webhooks[]; …)` gate) → test green;
+- S7 fix (`for f in config/crd/bases/*.yaml` loop) → test green.
+
+### Round-2 full-suite results
+
+`go test ./test/e2e/cislices/ -v -timeout 15m` (raw: `results/round2/unit.json`):
+
+| Test | ID | Result | Meaning |
+|------|----|--------|---------|
+| TestReleaseTestBareMakeTestE2eKeepsV1alpha1Suite | S1 | FAIL | release-path v1alpha1 loss still present |
+| TestManifestSliceRunsOnlySmokeSubset | S2 | PASS (canary) | manifest 106→12 cut still present |
+| TestMatrixSlicesCoverLegacyDefaultSuite | S3 invariant | PASS | union still == legacy suite; the S3 finding (no guard landed in CI) remains open |
+| TestMatrixSliceTimeoutEqualsJobTimeout | S4 | PASS (canary) | timeout == job deadline still present |
+| TestWebhookCABundleGateRequiresEveryWebhook | S5 | FAIL | any-webhook gate still present |
+| TestVolcanoDiagnosticsQueryKubePodGroupCRD | S6 | PASS (canary) | wrong PodGroup group still present |
+| TestSetupGateVerifiesAllCommittedCRDs | S7 | FAIL | 3/10 CRD gate still present |
+
+`.last-reviewed` stays `ecd1120a…` (head unchanged — nothing to advance).

@@ -15,7 +15,7 @@
     "runsAgainst": "base",
     "layer": "unit",
     "verdict": "confirmed",
-    "evidence": "base workflow (798e5d6f) has 5 e2e jobs, each rebuilding/loading controller (+crd-upgrader except manifest) images and repeating Kind/LWS/Helm setup; the default job runs the 106-spec suite in one gulp — results/static-checks.txt, base-manifest-coverage.txt"
+    "evidence": "base workflow (798e5d6f) has 5 e2e jobs, each rebuilding/loading controller (+crd-upgrader except manifest) images and repeating Kind/LWS/Helm setup; the default job runs the 106-spec suite in one gulp \u2014 results/static-checks.txt, base-manifest-coverage.txt"
   },
   "layers": {
     "unit": {
@@ -24,10 +24,63 @@
     }
   },
   "findings": [
-    { "id": "F1", "polarity": "canary", "layer": "unit", "match": ["TestManifestSliceRunsOnlySmokeSubset"] },
-    { "id": "F2", "polarity": "contract", "layer": "unit", "match": ["TestMatrixSlicesCoverLegacyDefaultSuite"] },
-    { "id": "F3", "polarity": "canary", "layer": "unit", "match": ["TestMatrixSliceTimeoutEqualsJobTimeout"] },
-    { "id": "F4", "polarity": "canary", "layer": "unit", "match": ["TestVolcanoDiagnosticsQueryKubePodGroupCRD"] }
+    {
+      "id": "S1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestReleaseTestBareMakeTestE2eKeepsV1alpha1Suite"
+      ]
+    },
+    {
+      "id": "S2",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestManifestSliceRunsOnlySmokeSubset"
+      ]
+    },
+    {
+      "id": "S3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestMatrixSlicesCoverLegacyDefaultSuite"
+      ]
+    },
+    {
+      "id": "S4",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestMatrixSliceTimeoutEqualsJobTimeout"
+      ]
+    },
+    {
+      "id": "S5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestWebhookCABundleGateRequiresEveryWebhook"
+      ]
+    },
+    {
+      "id": "S6",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVolcanoDiagnosticsQueryKubePodGroupCRD"
+      ]
+    },
+    {
+      "id": "S7",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestSetupGateVerifiesAllCommittedCRDs"
+      ]
+    }
   ],
-  "liveNote": "L3 (real GitHub Actions run) skipped this round per debate round policy (unit+integration only). A cluster is reachable but out of scope. The closest live check is the PR's own Actions run: verify all 8 matrix slices + manifest/deprecated/volcano/sp jobs are scheduled and pass, and that junit artifacts upload."
+  "liveNote": "L3 (real GitHub Actions run) skipped this round per debate round policy (unit+integration only). A cluster is reachable but out of scope. The closest live check is the PR's own Actions run: verify all 8 matrix slices + manifest/deprecated/volcano/sp jobs are scheduled and pass, and that junit artifacts upload.",
+  "idMappingNote": "Round-1 harness IDs F1-F4 map to ledger IDs: F1->S2 (manifest coverage cut, canary), F2->S3 (matrix union guard, contract), F3->S4 (timeout headroom, canary), F4->S6 (volcano PodGroup group, canary). Round 2 added contract repros for S1/S5/S7 (TestReleaseTestBareMakeTestE2eKeepsV1alpha1Suite, TestWebhookCABundleGateRequiresEveryWebhook, TestSetupGateVerifiesAllCommittedCRDs) in test/e2e/cislices/consumers_test.go. S3's manifest entry tracks the union-coverage invariant (green = invariant holds today); the S3 FINDING (no guard landed as a CI step) is tracked in the round ledger, not by this test."
 }

@@ -1,0 +1,5 @@
+TestMatrixSlicesCoverLegacyDefaultSuite	pass
+TestManifestSliceRunsOnlySmokeSubset	pass
+TestMatrixSliceTimeoutEqualsJobTimeout	pass
+TestVolcanoDiagnosticsQueryKubePodGroupCRD	pass
+TestSliceFiltersParseSanity	pass
