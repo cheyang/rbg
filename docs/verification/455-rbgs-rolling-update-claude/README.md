@@ -1,6 +1,6 @@
 # Verification — PR #491 (KEP-455: RBGSet rolling update) — Reviewer A (Claude)
 
-First round, 2026-10-11. Branch `verify/455-rbgs-rolling-update-claude` (fork `cheyang/rbg`).
+First round, 2026-10-11; re-run 2026-10-12 (added E6 check, PR-head guard, E4 unit canary `TestVerify491E4ControllerOwnedAnnotationWipe`, bite C). Branch `verify/455-rbgs-rolling-update-claude` (fork `cheyang/rbg`).
 
 - PR: https://github.com/sgl-project/rbg/pull/491 — **docs-only**: adds `keps/455-rbgs-rolling-update/` (README + kep.yaml), no code changes.
 - Base `0821cb5b` … head `719851a6` (single commit, 396 added lines, 2 files).
@@ -18,8 +18,9 @@ Issue #455 "[Feature] RBGS-level RollingUpdate implementation" — **OPEN**, req
 | E1 | `RoleBasedGroupSpec` has exactly `Roles` + `RoleTemplates` (KEP's "blast radius bounded" claim) | unit (`TestVerify491E1SpecBlastRadiusBounded`, reflection) | exactly those two fields | bound holds today | **confirmed** |
 | E2 | "RBG publishes `RollingUpdateInProgress` …" reads like existing behavior | script (`E2-no-writer`) | 0 non-test writers in `internal/`/`cmd/`/`pkg/`; condition type only *declared* (api v1alpha2 rolebasedgroup_types.go:580); RBG controller sets only `Ready`/`GangConfigured` | if the KEP means a barrier that exists, ≥1 writer | **refuted as existing behavior** → F2 |
 | E3 | Scale subresource interaction with redefined `status.replicas` | script (`E3a/b/c`) | scale subresource served on `.status.replicas` in both API versions + CRD; KEP text mentions scale subresource/HPA **0 times** | design that changes `status.replicas` semantics must cover the surface that reads it | **gap confirmed** → F1 |
-| E4 | Controller-owned annotation exclusion is load-bearing | script (`E4a/b`) | RBG controller writes `discovery-config-mode` onto children; set's `syncRBGMetadata` replaces child annotations wholesale | exclusion list must be explicit and shared by hash / comparison / sync | **confirmed** → F5 |
+| E4 | Controller-owned annotation exclusion is load-bearing | unit + script (`TestVerify491E4ControllerOwnedAnnotationWipe`, `E4a/b`) | RBG controller writes `discovery-config-mode` onto children; `needsUpdate` reports drift from that annotation alone; `updateExistingRBGs`/`syncRBGMetadata` wipes it (annotations → nil); child then looks converged until the RBG controller re-adds it — oscillation | exclusion list must be explicit and shared by hash / comparison / sync | **confirmed (deterministic unit repro)** → F3 |
 | E5 | Naming surface | script (`E5`) | role-level enum has legacy `Recreate` spelling + `InPlaceUpdateStrategy` field | set-level `Recreate`/`InPlaceUpdate` coexists with them | **confirmed** → F4 |
+| E6 | Revision-hash exclusion of controller-injected template keys | script (`E6`) | v1alpha1→v2 conversion injects `conversion.workloads.x-k8s.io/v1alpha1-coordination` into `groupTemplate.annotations` (rolebasedgroupset_conversion.go:61); KEP's exclusion example names only `discovery-config-mode` | conversion-injected keys must be enumerated as excluded, or a v1alpha1 round-trip of an unchanged template changes revision identity | **gap confirmed** → F6 |
 
 ## Test layers
 
@@ -32,6 +33,7 @@ Issue #455 "[Feature] RBGS-level RollingUpdate implementation" — **OPEN**, req
 
 - **Bite A**: implementing the KEP's propagation fix in `newRBGForSet` (copy `RoleTemplates`) flips `TestVerify491P0` red — the harness genuinely detects the fact it pins. Code reverted after (`git diff` clean).
 - **Bite B**: inserting "scale subresource" into the KEP's Status heading flips E3c's grep 0→1 (FAIL) — the silence check genuinely detects KEP text changes.
+- **Bite C** (2026-10-12): mutating `needsTemplateAnnotationUpdate` to skip the controller-owned `discovery-config-mode` key (the exclusion F3 asks for) flips `TestVerify491E4ControllerOwnedAnnotationWipe` red (`results/bite-b-annotation-fix.txt`). Code reverted after; production diff clean.
 
 ## Re-verify
 
@@ -40,3 +42,11 @@ bash docs/verification/455-rbgs-rolling-update-claude/scripts/re-verify.sh
 ```
 
 Resolves head from `origin/pr/491`; prints PASS/FAIL per check; full logs in `results/`.
+
+## Continuing after the fix (polarity)
+
+When the KEP's implementation lands, graft this harness onto the new head (`git checkout <new-head> -- .` is *not* the way: rebase or cherry-pick this branch's harness commit onto the PR head, or fetch `refs/remotes/origin/pr/491` and re-run the script) and read:
+
+- `TestVerify491P0PropagationGap`, `E2`–`E6`, `E1` are **contract checks pinning base facts**: they keep passing while those facts hold. `TestVerify491P0` flips red the moment `roleTemplates` propagation lands — then invert it into the fixed-behavior contract.
+- `TestVerify491E4ControllerOwnedAnnotationWipe` is a **bug-canary**: it passes while the annotation wipe exists. When propagation preserves controller-owned keys, it flips red — invert the three assertions (drift=false, annotation survives, convergence without deletion) and promote it to a contract test.
+- E3c is a **text canary**: it passes (grep=0) while the KEP is silent on the scale subresource; the moment the KEP covers it, grep goes 1 and the check FAILs — that is the fixed state, so retire or invert it then.
