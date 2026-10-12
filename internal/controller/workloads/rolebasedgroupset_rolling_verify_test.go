@@ -415,3 +415,36 @@ func TestVerify_ControllerClampsPercentZeroZero_Contract(t *testing.T) {
 		"10%% of 3 resolves to 0 and must be clamped to 1 when maxSurge is 0 (documented fallback)")
 	assert.Equal(t, 0, limits.maxSurge)
 }
+
+// TestVerify_BodyClaim_CurrentReplicasCountsHeldBack — POLARITY: CANARY (behavior pin).
+// The round-3 PR body claims "Held-back ordinals are excluded from rolloutComplete,
+// expectedUpdatedReplicas, and currentReplicas." The code counts held-back ordinals
+// (index < partition, still on the current/old revision) in status.CurrentReplicas —
+// updateRollingGroupSetStatus has no partition filter on the CurrentReplicas branch,
+// and the author's own TestSyncRollingGroupSet_StrategiesRecoverMissingOrdinals pins
+// CurrentReplicas=2 with partition=3. While this test PASSES, that body clause is
+// inaccurate; if the controller is changed to exclude held-back ordinals from
+// CurrentReplicas, this flips RED and the body clause becomes true.
+func TestVerify_BodyClaim_CurrentReplicasCountsHeldBack(t *testing.T) {
+	current := &groupSetRevision{name: "v1", template: revisionTestTemplate(map[string]string{"version": "v1"})}
+	update := &groupSetRevision{name: "v2", template: revisionTestTemplate(map[string]string{"version": "v2"})}
+	set := revisionTestRollingSet(3, update)
+	set.Spec.RolloutStrategy.Partition = ptr.To(intstr.FromInt(1))
+	// Ordinal 0 is held back on the old revision; ordinals 1,2 are already updated+ready.
+	r, _ := revisionTestRollingReconciler(t, set,
+		revisionTestReadyChild(set, 0, current),
+		revisionTestReadyChild(set, 1, update),
+		revisionTestReadyChild(set, 2, update),
+	)
+	_, children := revisionTestSync(t, r, set, current, update)
+	limits, err := resolveGroupSetRollout(set)
+	require.NoError(t, err)
+	require.NoError(t, r.updateRollingGroupSetStatus(context.Background(), set, children, current, update, limits))
+	// expectedUpdatedReplicas excludes the held-back ordinal: 3-1=2 (body claim holds here).
+	assert.Equal(t, int32(2), set.Status.ExpectedUpdatedReplicas)
+	// currentReplicas INCLUDES the held-back ordinal: one child on the old revision.
+	assert.Equal(t, int32(1), set.Status.CurrentReplicas,
+		"held-back ordinals are counted in status.currentReplicas, contrary to the PR body clause")
+	assert.Equal(t, int32(2), set.Status.UpdatedReplicas)
+	assert.Equal(t, int32(2), set.Status.UpdatedReadyReplicas)
+}

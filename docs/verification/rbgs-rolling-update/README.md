@@ -114,3 +114,25 @@ hide the generation-lag barrier the InPlace budget relies on. The round-2 unit d
 child's generation itself when the controller rewrites the child spec, and plays the
 child RBG controller by flipping `status.observedGeneration` after a cooldown. The
 envtest layer (G9) needs no emulation and is the authoritative check.
+
+## Round 3 — head `98720938` (delta `9e423e86..98720938`: example manifest fix + PR body rewrite)
+
+The code delta is exactly one file: `examples/basic/rbgs/rbgs-rolling-update.yaml`
+— the stale "InPlaceUpdate is reserved; the CRD enum rejects it" comments are
+replaced with accurate descriptions (closes Copilot finding C4242488204). The PR
+body was rewritten and is now accurate on every point checked: strategy field table
+(type default InPlaceUpdate, maxUnavailable/maxSurge semantics), no paused
+field/condition, ControllerRevision-based design, per-strategy scale-only behavior,
+all 22 unit + 10 e2e test names exist in the tree, webhook rules match
+`validateGroupSetRolloutStrategy`, and the controller-behavior narrative matches
+`rolebasedgroupset_rolling.go`.
+
+Re-verify (results/reverify/ round 3): all contract tests green on the new head;
+F9 canary still passes (budget-paced replicas-only under InPlaceUpdate — now
+correctly documented in the body).
+
+### Round-3 addition
+
+| id | claim | polarity | layer | status |
+|----|-------|----------|-------|--------|
+| F10 | body claims held-back ordinals are "excluded from ... currentReplicas"; `updateRollingGroupSetStatus` counts them (no partition filter on the CurrentReplicas branch; author's own `TestSyncRollingGroupSet_StrategiesRecoverMissingOrdinals` expects CurrentReplicas=2 with partition=3) | canary | unit | passes = body clause inaccurate (one-line body fix) |

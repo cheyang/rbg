@@ -143,6 +143,15 @@
         "TestVerify_Envtest_InPlaceAgainstRealAPIServer"
       ],
       "note": "real API server: UID stability, stalled-child budget hold, convergence under real defaulting, no generation churn after completion"
+    },
+    {
+      "id": "F10",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerify_BodyClaim_CurrentReplicasCountsHeldBack"
+      ],
+      "note": "Round 3: pins that held-back ordinals (index < partition, old revision) ARE counted in status.currentReplicas \u2014 the round-3 PR body's 'excluded from ... currentReplicas' clause is inaccurate while this passes. Flips RED if the controller changes to exclude them (body then becomes correct)."
     }
   ],
   "liveNote": "L3 skipped per debate setup (no KUBECONFIG layer). The repo's own kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers the live path and is green in CI run 37802453289.",
@@ -154,5 +163,10 @@
       "integration": "results/l2-envtest-round2.txt",
       "harnessBites": "results/harness-bites-round2.txt"
     }
+  },
+  "round3": {
+    "head": "98720938fff0135a7ffb98a8fefdf6baa7028b88",
+    "delta": "9e423e86..98720938 \u2014 examples/basic/rbgs/rbgs-rolling-update.yaml only (stale 'InPlaceUpdate rejected' comments fixed; C4242488204 closed). PR body rewritten and verified line-by-line against the code; one residual inaccuracy pinned by F10.",
+    "reverify": "results/reverify/ (round 3): all contract findings green, F9 canary still pins budget-paced replicas-only under InPlaceUpdate."
   }
 }
