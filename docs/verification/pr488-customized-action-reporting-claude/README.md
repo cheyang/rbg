@@ -1,7 +1,7 @@
 # pr488-customized-action-reporting (Reviewer A / Claude) — bug verification
 
 Reproducible evidence for the findings raised while reviewing
-https://github.com/sgl-project/rbg/pull/488 (head `060ef1b7`).
+https://github.com/sgl-project/rbg/pull/488 (round 1 head `060ef1b7`; round 2 head `d260dc6e`).
 
 Harness branch: `verify/pr488-customized-action-reporting-claude` on the reviewer's fork
 (cheyang/rbg). **Production code is untouched on this branch** — the only source change is the
@@ -19,6 +19,25 @@ Layers run against the code under review (`origin/pr/488` = `060ef1b7`):
 > the head under review and PASS once the corresponding defect is fixed. C4 and C5 are
 > **contract** guards that are already GREEN on the head (they pin correct behavior the prior
 > reviewers' claims implied was broken — see the P2 row).
+
+
+## Round 2 (2026-10-13) — delta `060ef1b7..d260dc6` ("fix: correct customized action result reporting")
+
+Re-verify of the full harness against head `d260dc6e`, plus review of the delta:
+
+| ID | Claim | Verdict at `d260dc6e` | Evidence |
+|----|-------|----------------------|----------|
+| C1/C2/C3 (P1) | successful results keep per-container detail | **FIXED** (green) | re-verify `results/reverify/` — `limitCustomizedActionResults` now spends the remaining budget in priority order including successes; upstream also added `TestUpdateStatusIncludesCustomizedActionResults` asserting detail + not-truncated |
+| C6 (P2-refine) | waiting-failure aggregate message / Event names the failing container | **FIXED** (green) | message is now `container=<original names>: <waiting message>`; upstream added `TestEvaluateCustomizedPodWaitingMessageIncludesContainer` |
+| truncated flag (F1) | `customizedActionResultsTruncated` false for small successes | **FIXED** (green) | covered by the new upstream assertion in `TestUpdateStatusIncludesCustomizedActionResults` |
+| C4 guard | global timeout emits per-node transition events | **green** (guard) | unchanged path, still evented |
+| **C7 (R2-events-aliasing, NEW)** | on the `desiredNodes == nil` failure path (InvalidWarmupSpec / InvalidTarget), the new unconditional finalization flips non-succeeded results to `Failed` **in status but without any per-node transition Event** | **Still broken (red)** | `TestVerifyC7...` — finalization assertions pass, event assertion fails: only the aggregate job-level `Warning InvalidWarmupSpec` is recorded. Mechanism: `failWarmupJob` captures `oldCustomizedActionResults := warmup.Status.CustomizedActionResults` and, when `desiredNodes == nil`, mutates that same backing array in place (`allCustomizedActionResults` aliases it), so `recordCustomizedActionEvents` compares the baseline to itself and emits nothing. At `060ef1b7` the mutation only ran for global timeout (which always passes `desiredNodes != nil` → fresh slice), so the silence is newly *manifest* at `d260dc6e`. Bite-check: copying the baseline (`oldCustomizedActionResults := append([]workloadsv1alpha2.CustomizedActionResult(nil), warmup.Status.CustomizedActionResults...)`) makes C7 green and the whole upstream suite still passes; reverted afterwards. |
+
+Delta review notes (no further defects found):
+- warmup-attempt label stamping (`nextWarmupAttempts` / `customizedActionPodIsNewer`) — monotonic attempt beats timestamp ties; covered by upstream `TestReconcileStampsMonotonicWarmupAttempt` and `TestEvaluateCustomizedActionResultsPrefersMonotonicAttempt`; `buildWarmupPod` always initializes `Labels`, so the stamp cannot panic.
+- `aggregateCustomizedActionState` now checks terminal failures before waiting errors (documented by upstream `TestEvaluateCustomizedActionPodTerminalFailureBeatsWaitingError`) — reasonable precedence change.
+- CRD `completionPolicy` enum now allows `""` (legacy objects); controller validation already treats `""` as `AllSucceeded` — consistent across manifests + types.
+- Full upstream suite green at head: `go test ./internal/controller/workloads/ ./api/workloads/v1alpha2/` → ok.
 
 ## Problem premise (P0)
 
