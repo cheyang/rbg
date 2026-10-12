@@ -27,7 +27,6 @@ package workloads
 
 import (
 	"context"
-	"strings"
 	"testing"
 	"time"
 
@@ -62,6 +61,18 @@ func verifySpec(rbgName string) workloadsv1alpha2.RoleBasedGroupWarmupSpec {
 
 func verifyRBG(name string) *workloadsv1alpha2.RoleBasedGroup {
 	return &workloadsv1alpha2.RoleBasedGroup{ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: "default"}}
+}
+
+// verifyRBGWithRole declares a role with an explicit replica count so the
+// expected-Pod readiness gate (head 60b1b7cb) engages: expected =
+// ComputeSubGroupSize(role) * replicas.
+func verifyRBGWithRole(name, role string, replicas int32) *workloadsv1alpha2.RoleBasedGroup {
+	return &workloadsv1alpha2.RoleBasedGroup{
+		ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: "default"},
+		Spec: workloadsv1alpha2.RoleBasedGroupSpec{
+			Roles: []workloadsv1alpha2.RoleSpec{{Name: role, Replicas: ptr.To(replicas)}},
+		},
+	}
 }
 
 func verifyTargetPod(name, rbg, role, node string) *corev1.Pod {
@@ -107,7 +118,7 @@ func TestVerify_MidWarmupPendingPodBlocksCompletion(t *testing.T) {
 			ObjectMeta: metav1.ObjectMeta{Name: name, Namespace: "default", UID: types.UID("uid-" + name)},
 			Spec:       verifySpec(name + "-rbg"),
 		}
-		r := newWarmupReconciler(warmup, verifyRBG(name+"-rbg"),
+		r := newWarmupReconciler(warmup, verifyRBGWithRole(name+"-rbg", "worker", 1),
 			verifyTargetPod(name+"-worker-0", name+"-rbg", "worker", "node-1"))
 
 		// Reconcile 1: create the warmup Pod for node-1.
@@ -128,7 +139,15 @@ func TestVerify_MidWarmupPendingPodBlocksCompletion(t *testing.T) {
 		}
 
 		if withPendingPod {
-			// A new selected-role Pod appears unscheduled (scale-up / recreation).
+			// Scale-up: the target now expects 2 Pods; the new one is unscheduled.
+			rbg := &workloadsv1alpha2.RoleBasedGroup{}
+			if err := r.Get(vctx(), client.ObjectKey{Name: name + "-rbg", Namespace: "default"}, rbg); err != nil {
+				t.Fatalf("get target rbg: %v", err)
+			}
+			rbg.Spec.Roles[0].Replicas = ptr.To(int32(2))
+			if err := r.Update(vctx(), rbg); err != nil {
+				t.Fatalf("scale target rbg: %v", err)
+			}
 			if err := r.Create(vctx(), verifyTargetPod(name+"-worker-1", name+"-rbg", "worker", "")); err != nil {
 				t.Fatalf("create pending target pod: %v", err)
 			}
@@ -166,80 +185,55 @@ func TestVerify_MidWarmupPendingPodBlocksCompletion(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// F1b (canary): with globalTimeoutSeconds set, the same mid-warmup pending Pod
-// eventually turns the fully-warmed job into a terminal
-// Failed/GlobalTimeoutExceeded ("timed out waiting for N selected target
-// Pod(s)"), even though 1/1 desired nodes succeeded. Passes on the code under
-// review; must flip once the gate no longer blocks terminal accounting.
+// F1b (contract; INVERTED after head 60b1b7cb fixed the finding): a fully
+// warmed job whose creation-anchored global timeout has already lapsed must
+// COMPLETE, not fail, when a new selected-role target Pod is pending. On the
+// originally reviewed head (9f61d4f7) this scenario ended in
+// Failed/GlobalTimeoutExceeded with status.succeeded=1; the fixed code lets
+// terminal accounting win.
 // ---------------------------------------------------------------------------
-func TestVerify_MidWarmupPendingPodFailsCompletedWorkOnTimeout(t *testing.T) {
+func TestVerify_CompletedWorkSurvivesExpiredGlobalTimeout(t *testing.T) {
 	warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
-		ObjectMeta: metav1.ObjectMeta{Name: "f1-timeout", Namespace: "default", UID: "uid-f1-timeout"},
-		Spec:       verifySpec("f1-timeout-rbg"),
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "f1-timeout", Namespace: "default", UID: "uid-f1-timeout",
+			// Creation-anchored budget (60s) is long past.
+			CreationTimestamp: metav1.NewTime(time.Now().Add(-10 * time.Minute)),
+		},
+		Spec: verifySpec("f1-timeout-rbg"),
 	}
 	warmup.Spec.Policies = &workloadsv1alpha2.WarmupPolicies{GlobalTimeoutSeconds: ptr.To(int64(60))}
-	r := newWarmupReconciler(warmup, verifyRBG("f1-timeout-rbg"),
-		verifyTargetPod("f1-timeout-worker-0", "f1-timeout-rbg", "worker", "node-1"))
-
-	reconcileOnce(t, r, warmup) // creates the warmup Pod, sets startTime
-
-	pods := &corev1.PodList{}
-	if err := r.List(vctx(), pods, client.MatchingLabels{LabelWarmupName: "f1-timeout"}); err != nil {
-		t.Fatalf("list warmup pods: %v", err)
-	}
-	if len(pods.Items) != 1 {
-		t.Fatalf("expected 1 warmup pod, got %d", len(pods.Items))
-	}
-	done := &pods.Items[0]
-	done.Status.Phase = corev1.PodSucceeded
-	if err := r.Status().Update(vctx(), done); err != nil {
-		t.Fatalf("mark warmup pod succeeded: %v", err)
-	}
-	if err := r.Create(vctx(), verifyTargetPod("f1-timeout-worker-1", "f1-timeout-rbg", "worker", "")); err != nil {
-		t.Fatalf("create pending target pod: %v", err)
-	}
-
-	// Let the global timeout lapse while the gate blocks completion.
-	cur := getWarmup(t, r, warmup)
-	if cur.Status.StartTime == nil {
-		t.Fatalf("expected startTime to be set once a Pod exists")
-	}
-	cur.Status.StartTime = &metav1.Time{Time: time.Now().Add(-2 * time.Minute)}
-	if err := r.Status().Update(vctx(), cur); err != nil {
-		t.Fatalf("backdate startTime: %v", err)
-	}
+	r := newWarmupReconciler(warmup,
+		verifyRBGWithRole("f1-timeout-rbg", "worker", 2),
+		// node-1 was warmed and its warmup Pod succeeded; the scale-up Pod is pending.
+		makeWarmupPod("f1-timeout-pod", "default", "f1-timeout", "uid-f1-timeout", "node-1", corev1.PodSucceeded),
+		verifyTargetPod("f1-timeout-worker-0", "f1-timeout-rbg", "worker", "node-1"),
+		verifyTargetPod("f1-timeout-worker-1", "f1-timeout-rbg", "worker", ""),
+	)
 
 	reconcileOnce(t, r, warmup)
 	updated := getWarmup(t, r, warmup)
-	if updated.Status.Phase != workloadsv1alpha2.WarmupJobPhaseFailed {
-		t.Fatalf("canary: expected Failed/GlobalTimeoutExceeded for the blocked job, got %q (%#v)",
+	if updated.Status.Phase == workloadsv1alpha2.WarmupJobPhaseFailed {
+		t.Fatalf("regression: fully warmed job failed despite completed work: %#v", updated.Status.Conditions)
+	}
+	if updated.Status.Phase != workloadsv1alpha2.WarmupJobPhaseCompleted {
+		t.Fatalf("fully warmed job must complete even past the deadline, got %q (%#v)",
 			updated.Status.Phase, updated.Status.Conditions)
 	}
-	cond := apimeta.FindStatusCondition(updated.Status.Conditions, "Failed")
-	if cond == nil || cond.Reason != "GlobalTimeoutExceeded" {
-		t.Fatalf("canary: expected Failed/GlobalTimeoutExceeded, got %#v", updated.Status.Conditions)
-	}
-	// The failure must come from the target-wait gate, not the generic run-phase
-	// timeout: that is what makes this a canary for F1 specifically.
-	if !strings.Contains(cond.Message, "timed out waiting for") {
-		t.Fatalf("canary flipped: failure no longer comes from the target-wait gate: %q", cond.Message)
-	}
 	if updated.Status.Succeeded != 1 {
-		t.Fatalf("canary: expected the succeeded node to be preserved (1), got %d", updated.Status.Succeeded)
+		t.Fatalf("expected the succeeded node to be preserved (1), got %d", updated.Status.Succeeded)
 	}
-	t.Logf("canary observed: 1/1 nodes succeeded yet job is Failed: %q", cond.Message)
 }
 
 // ---------------------------------------------------------------------------
-// F2 (canary): the wait-phase timeout clock and the run-phase timeout clock
-// are different. While no Pod exists the wait is bounded from the Warmup's
-// creation time; once the first Pod exists, status.startTime (set at Pod
-// creation) takes over. Net effect: a Warmup can outlive its
-// globalTimeoutSeconds by up to a factor of two measured from creation.
-// Passes on the code under review; flips if the wait budget becomes
-// creation-anchored for the whole job lifetime.
+// F2 (contract; INVERTED after head 60b1b7cb fixed the finding): the global
+// timeout is a single budget anchored at the Warmup's creation time, covering
+// both the target wait and the Pod run phase. A Warmup created 120s ago with
+// globalTimeoutSeconds=60 must fail during the wait phase even if
+// status.startTime says a Pod was created only 30s ago: the wait clock no
+// longer restarts at first-Pod creation. On the originally reviewed head
+// (9f61d4f7) this job kept waiting (additive budgets).
 // ---------------------------------------------------------------------------
-func TestVerify_WaitAndRunTimeoutBudgetsAreAdditive(t *testing.T) {
+func TestVerify_GlobalTimeoutIsSingleCreationAnchoredBudget(t *testing.T) {
 	warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: "f2-budget", Namespace: "default", UID: "uid-f2-budget",
@@ -251,19 +245,19 @@ func TestVerify_WaitAndRunTimeoutBudgetsAreAdditive(t *testing.T) {
 	warmup.Spec.Policies = &workloadsv1alpha2.WarmupPolicies{GlobalTimeoutSeconds: ptr.To(int64(60))}
 	warmup.Status.StartTime = &metav1.Time{Time: time.Now().Add(-30 * time.Second)}
 
-	r := newWarmupReconciler(warmup, verifyRBG("f2-rbg"), verifyTargetPod("f2-worker-0", "f2-rbg", "worker", ""))
+	r := newWarmupReconciler(warmup, verifyRBGWithRole("f2-rbg", "worker", 1),
+		verifyTargetPod("f2-worker-0", "f2-rbg", "worker", ""))
 
 	reconcileOnce(t, r, warmup)
 	updated := getWarmup(t, r, warmup)
-	if updated.Status.Phase == workloadsv1alpha2.WarmupJobPhaseFailed {
-		t.Fatalf("canary flipped: job failed although startTime-anchored budget (30s of 60s) remains: %#v", updated.Status.Conditions)
+	if updated.Status.Phase != workloadsv1alpha2.WarmupJobPhaseFailed {
+		t.Fatalf("creation-anchored budget (120s of 60s) is exhausted; job must fail instead of waiting on the startTime clock, got %q (%#v)",
+			updated.Status.Phase, updated.Status.Conditions)
 	}
-	cond := apimeta.FindStatusCondition(updated.Status.Conditions, ConditionTargetReady)
-	if cond == nil || cond.Status != metav1.ConditionFalse || cond.Reason != "TargetPodsNotScheduled" {
-		t.Fatalf("canary: expected TargetReady=False/TargetPodsNotScheduled, got %#v", updated.Status.Conditions)
+	cond := apimeta.FindStatusCondition(updated.Status.Conditions, "Failed")
+	if cond == nil || cond.Reason != "GlobalTimeoutExceeded" {
+		t.Fatalf("expected Failed/GlobalTimeoutExceeded, got %#v", updated.Status.Conditions)
 	}
-	t.Logf("canary observed: creation-anchored elapsed=120s already exceeds globalTimeoutSeconds=60, " +
-		"yet the job keeps waiting because the wait clock uses startTime (30s ago) once a Pod existed")
 }
 
 // ---------------------------------------------------------------------------
@@ -281,7 +275,7 @@ func TestVerify_PendingPodsFailAfterGlobalTimeout(t *testing.T) {
 		Spec: verifySpec("f3-rbg"),
 	}
 	warmup.Spec.Policies = &workloadsv1alpha2.WarmupPolicies{GlobalTimeoutSeconds: ptr.To(int64(60))}
-	r := newWarmupReconciler(warmup, verifyRBG("f3-rbg"), verifyTargetPod("f3-worker-0", "f3-rbg", "worker", ""))
+	r := newWarmupReconciler(warmup, verifyRBGWithRole("f3-rbg", "worker", 1), verifyTargetPod("f3-worker-0", "f3-rbg", "worker", ""))
 
 	res := reconcileOnce(t, r, warmup)
 	if res.RequeueAfter != 0 {

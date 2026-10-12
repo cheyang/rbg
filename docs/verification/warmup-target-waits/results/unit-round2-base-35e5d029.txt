@@ -1,0 +1,35 @@
+2026-10-13T02:05:46+08:00	INFO	Start reconciling	{"warmup": {"name":"f4-gone","namespace":"default"}}
+2026-10-13T02:05:46+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"f4-gone","namespace":"default"}, "name": "f4-gone-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"f4-gone-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getDesiredNodesToWarmup
+	/tmp/pr478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:508
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/pr478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:184
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/pr478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:130
+sigs.k8s.io/rbgs/internal/controller/workloads.reconcileOnce
+	/tmp/pr478-base/internal/controller/workloads/warmup_target_waits_verification_test.go:90
+sigs.k8s.io/rbgs/internal/controller/workloads.TestVerify_TargetDeletedMidRunWithActivePodsMustNotComplete
+	/tmp/pr478-base/internal/controller/workloads/warmup_midrun_churn_verification_test.go:62
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-13T02:05:46+08:00	INFO	Warmup job failed	{"warmup": {"name":"f4-gone","namespace":"default"}, "reason": "InvalidTarget", "succeeded": 0, "failed": 0}
+2026-10-13T02:05:46+08:00	INFO	Finished reconciling	{"warmup": {"name":"f4-gone","namespace":"default"}, "duration": "1.913143ms"}
+2026-10-13T02:05:46+08:00	INFO	Start reconciling	{"warmup": {"name":"f4-drain","namespace":"default"}}
+2026-10-13T02:05:46+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"f4-drain","namespace":"default"}, "count": 1}
+2026-10-13T02:05:46+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"f4-drain","namespace":"default"}, "rbg": "f4-drain-rbg", "roles": 0, "nodes": 0}
+2026-10-13T02:05:46+08:00	INFO	Setting start time	{"warmup": {"name":"f4-drain","namespace":"default"}, "time": "2026-10-13 02:05:46.920531462 +0800 CST m=+0.050169842"}
+2026-10-13T02:05:46+08:00	INFO	No nodes matched, completing immediately	{"warmup": {"name":"f4-drain","namespace":"default"}}
+2026-10-13T02:05:46+08:00	INFO	Updated status	{"warmup": {"name":"f4-drain","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 1, "succeeded": 0, "failed": 0}
+2026-10-13T02:05:46+08:00	INFO	Finished reconciling	{"warmup": {"name":"f4-drain","namespace":"default"}, "duration": "1.164238ms"}
+--- FAIL: TestVerify_AllTargetPodsUnscheduledMidRunMustNotComplete (0.00s)
+    warmup_midrun_churn_verification_test.go:98: F4b reproduced: mid-run drain of all selected target Pods reported Completed (reason="NoNodesMatched" message="No nodes matched the target configuration", counters Active=1 Succeeded=0)
+2026-10-13T02:05:46+08:00	INFO	Start reconciling	{"warmup": {"name":"f5-orphan","namespace":"default"}}
+2026-10-13T02:05:46+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"f5-orphan","namespace":"default"}, "count": 1}
+2026-10-13T02:05:46+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"f5-orphan","namespace":"default"}, "node": "node-2", "role": "worker"}
+2026-10-13T02:05:46+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"f5-orphan","namespace":"default"}, "rbg": "f5-orphan-rbg", "roles": 1, "nodes": 1}
+2026-10-13T02:05:46+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"f5-orphan","namespace":"default"}, "timeout": "1m0s", "elapsed": "10m0.922984913s"}
+2026-10-13T02:05:46+08:00	INFO	Warmup job failed	{"warmup": {"name":"f5-orphan","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 1, "failed": 0}
+2026-10-13T02:05:46+08:00	INFO	Finished reconciling	{"warmup": {"name":"f5-orphan","namespace":"default"}, "duration": "995.493µs"}
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.057s
+FAIL

@@ -1,23 +1,32 @@
 # warmup-target-waits — bug verification
 
 Reproducible evidence for the findings raised while reviewing
-https://github.com/sgl-project/rbg/pull/478 (reviewer B / codex; head `9f61d4f7`).
+https://github.com/sgl-project/rbg/pull/478 (reviewer B / codex).
 
-Layers run against the **code under review** (`9f61d4f73d72bb47e181c81f1d6a9a6de12f0d69`):
+- Round 1: head `9f61d4f7` — findings F1a/F1b (gate blocks terminal accounting), F2 (dual
+  timeout clocks), F3 (untested timeout branch); premise P0 confirmed on base `35e5d029`.
+- Round 2 (this round): head `60b1b7cb` — delta `9f61d4f7..60b1b7cb` ("make target readiness
+  terminal-safe and deterministic"). F1/F2/F3 verified **fixed**; two new mid-run-churn
+  regressions found and confirmed: **F4** (false `Completed/NoNodesMatched` with in-flight
+  Pods) and **F5** (global timeout no longer bounds jobs with an active Pod on a non-desired
+  node).
+
+Layers run against the code under review:
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
-| 1. Unit | `reconcileUnfinished` target-wait gate, timeout clocks (fake client) | `go test ./internal/controller/workloads/ -run 'TestVerify_' -count=1 -v` |
+| 1. Unit | `reconcileUnfinished` target-wait gate, timeout clocks, mid-run churn (fake client) | `go test ./internal/controller/workloads/ -run 'TestVerify_' -count=1 -v` |
 | 1b. Premise (unit, **base** branch `35e5d029`) | base semantics the PR claims to fix | `VERIFY_PREMISE_ON_BASE=1 go test ./internal/controller/workloads/ -run 'TestVerify_Premise' -count=1 -v` (on a base worktree; the file is base-compatible) |
 | 2. Integration | real API server (envtest), CRD upgrade A/B of the #466 CEL rule | `KUBEBUILDER_ASSETS="$(setup-envtest use 1.31.0 -p path)" go test ./test/envtest/warmupcrdverify/ -count=1 -v` (also run with `1.33.0` for the positive control) |
 | 3. Live | — | skipped by scope decision; see `liveNote` in verify-manifest.json |
 
 > Test polarity: contract tests (assert intended behavior) FAIL on buggy code / PASS when
-> fixed. Bug-canary tests (assert current behavior) PASS now / FLIP to red when fixed.
+> fixed. Round-1 canaries F1b/F2 flipped on head `60b1b7cb` and were **inverted to contract
+> tests** (`TestVerify_CompletedWorkSurvivesExpiredGlobalTimeout`,
+> `TestVerify_GlobalTimeoutIsSingleCreationAnchoredBudget`); on the old head they fail,
+> documenting the fix.
 
-## Problem premise (P0)
-
-Three claims from the PR body, verified independently:
+## Problem premise (P0) — round 1, unchanged
 
 | | |
 |---|---|
@@ -31,92 +40,99 @@ Three claims from the PR body, verified independently:
 | **Verdict** | **Confirmed** (all three) |
 | Evidence | `results/unit-premise-base.txt`; `results/envtest-1.31.txt`; `results/envtest-1.33.txt` |
 
-- **P0-1 confirmed**: on base, missing target → `Failed/InvalidTarget`, no requeue
-  (base's own `TestReconcile_MissingTargetRBGFailsWithoutRequeue` +
-  `TestVerify_Premise_MissingTargetFailsTerminallyOnBase`).
-- **P0-2 confirmed**: on base, target RBG with only unscheduled Pods →
-  `Completed/NoNodesMatched`, `desired=0` (`TestVerify_Premise_UnscheduledTargetPodsCompleteOnBase`).
-- **P0-3 confirmed, with version boundary**: envtest A/B. With the PR CRD installed, store a
-  Warmup whose customized-action container has no `image`; status writes succeed. Upgrade the
-  CRD to the base (#466) version carrying the item-level CEL rule; fresh invalid creates are
-  rejected (control), and a **status write on the pre-existing invalid object is rejected**
-  on apiserver **1.31.0** (`... is invalid: spec.targetNodes.customizedAction.containers[0]:
-  Invalid value: "object": customized action container image must not be empty`) but
-  **accepted on 1.33.0** (status ratcheting). Restoring the PR CRD makes status writable
-  again. The claimed ≤1.32 freeze and the 1.33 boundary are both real.
+## Round 2 results (head `60b1b7cb`, delta `9f61d4f7..60b1b7cb`)
 
-## Summary of results
+| ID | Claim | Layer | previous `9f61d4f7` | head `60b1b7cb` | base `35e5d029` | Verdict |
+|----|-------|-------|--------------------|-----------------|-----------------|---------|
+| F1a | Pending-Pod gate must not block completion of fully-warmed work | 1 | fail (bug present) | **pass** | — | **Fixed** |
+| F1b | Fully-warmed job past the deadline must complete, not fail | 1 | fail (bug present) | **pass** | — | **Fixed** (canary flipped → inverted) |
+| F2 | `globalTimeoutSeconds` is a single creation-anchored budget | 1 | fail (additive clocks) | **pass** | — | **Fixed** (canary flipped → inverted; API comment + KEP updated) |
+| F3 | Wait-phase `GlobalTimeoutExceeded` branch has coverage | 1 | pass | pass (PR added `TestReconcile_PendingTargetPodsFailAfterGlobalTimeout`) | — | **Fixed** (harness fixture updated for expected-count readiness) |
+| P0-3 | CEL rule freezes stored invalid objects on ≤1.32; PR CRD restores status writes | 2 | pass | pass | — | Still green |
+| **F4a** | Target RBG deleted mid-run with active warmup Pods must not complete as `NoNodesMatched` | 1 | pass | **FAIL** (`Completed/NoNodesMatched`, `Active=1`) | pass | **Confirmed regression (this delta)** |
+| **F4b** | All selected target Pods unscheduled mid-run (drain gap) must not complete as `NoNodesMatched` | 1 | pass (gate held) | **FAIL** (`Completed/NoNodesMatched`, `Active=1`) | fail (no gate existed) | **Confirmed regression vs previous head** (base was broken differently) |
+| **F5** | Expired global timeout must fail the job + delete active Pods even when the only active Pod is on a non-desired node | 1 | pass | **FAIL** (stuck `Running`, no requeue, Pod kept) | pass | **Confirmed regression (this delta)** |
 
-| ID | Claim | Layer | Verdict | Evidence |
-|----|-------|-------|---------|----------|
-| F1a | A Warmup whose desired-node work is fully terminal cannot complete while a selected-role target Pod is pending (gate runs before completion accounting) | 1 | **Confirmed** (contract test red) | `results/unit-pr-head.txt` |
-| F1b | With `globalTimeoutSeconds`, the same stall turns 100%-warmed work into terminal `Failed/GlobalTimeoutExceeded` | 1 | **Confirmed** (canary green on current behavior) | `results/unit-pr-head.txt` |
-| F2 | Wait-phase and run-phase timeout clocks differ (creation vs startTime): total budget can reach ~2× `globalTimeoutSeconds`; field comment contradicts wait-phase clock | 1 | **Confirmed** (canary green) | `results/unit-pr-head.txt` |
-| F3 | The `GlobalTimeoutExceeded`-while-pods-pending branch has no test in the PR | 1 | Confirmed gap; harness adds it (green) | `results/unit-pr-head.txt` |
-| P0-3 | CEL rule freezes stored invalid objects on ≤1.32; PR CRD restores status writes | 2 | **Confirmed** (+1.33 control) | `results/envtest-1.31.txt`, `results/envtest-1.33.txt` |
+Raw output: `results/unit-round2-head-60b1b7cb.txt`, `results/unit-round2-previous-head-9f61d4f7.txt`,
+`results/unit-round2-base-35e5d029.txt`, `results/unit-round2-harness-bites.txt`,
+`results/reverify/` (re-verify.sh run).
 
-## Per-finding detail
+## Per-finding detail (round 2)
 
-### F1 — pending-gate placement blocks terminal accounting (`major`)
+### F4 — mid-run collapse of the desired-node set reports false `Completed/NoNodesMatched` (`blocker`)
 
-`reconcileUnfinished` runs the pending-Pod gate on **every** reconcile, before
-`updateStatus` (the only place `Completed` is computed). Reproduction
-(`TestVerify_MidWarmupPendingPodBlocksCompletion`): Warmup targets role `worker`; target Pod
-on `node-1` → reconcile creates the warmup Pod; mark it `Succeeded`; then a new selected-role
-target Pod appears with `nodeName=""` (scale-up, or recreation after a node failure).
+The delta lets the reconcile continue once any warmup Pod exists (`warmupPodsExist`), so a
+fully-warmed job can complete (that fixed F1a). But when the desired-node set collapses to
+empty mid-run — target RBG deleted (F4a) or every selected-role target Pod momentarily
+unscheduled (F4b: eviction, node drain, Recreate-style rollout gap) — `getDesiredNodesToWarmup`
+returns `{}` and `updateStatus`'s unconditional `desired == 0` branch fires regardless of
+active Pods: phase `Completed`, condition `Complete/NoNodesMatched` ("No nodes matched the
+target configuration"), `CompletionTime` set — while `status.Active=1` and a warmup Pod is
+still running. Because a terminal Warmup is never reconciled again (`Reconcile` routes
+`Completed` to `reconcileFinished`, TTL only):
 
-- Control (no pending Pod): second reconcile → `Completed` (`1/1 nodes warmed up successfully`).
-- With the pending Pod: reconcile → `Running`, `TargetReady=False/TargetPodsNotScheduled`,
-  10s requeue, forever if no `globalTimeoutSeconds` — even though `1/1` desired nodes are done.
+- the in-flight Pod is never accounted (counters freeze with `Active=1`),
+- with `ttlSecondsAfterFinished` the CR — and via owner refs the still-running Pod — is
+  deleted mid-work,
+- (F4b) when the replacement target Pod lands on a new node, that node is **never warmed**:
+  the job already reported success. That is the cold-start the feature exists to prevent.
 
-Timeout leg (`TestVerify_MidWarmupPendingPodFailsCompletedWorkOnTimeout`, canary): with
-`globalTimeoutSeconds=60` and the gate blocking past the deadline, the job ends
-`Failed/GlobalTimeoutExceeded`: *"Warmup job timed out waiting for 1 selected target Pod(s)
-to be scheduled"* — with `status.succeeded=1`. A job that did all its work reports failure.
+The PR's stated intent ("terminal accounting continues so a **fully-warmed** job is not
+stranded") only covers succeeded work; the code also completes partially-warmed jobs, and
+mislabels even the fully-warmed case as `NoNodesMatched`.
 
-Design tension (explicitly called out for the maintainers): the pre-start gating was
-requested in review ("wait for all selected target pods") and is correct; the finding is only
-about the gate also blocking **completion** of work already done. Candidate fixes (not applied):
-evaluate completion before the gate, or apply the gate only while no warmup Pods exist yet.
+Attribution: F4a passes on base and on `9f61d4f7` (missing target → `Running`/wait), fails on
+`60b1b7cb` → introduced by this delta. F4b passes on `9f61d4f7` (the readiness gate held
+regardless of Pods), fails on base (no gate existed) and again on `60b1b7cb` (gate now skipped
+once Pods exist) → regression vs the previous head; the underlying unconditional
+`desired==0` completion is older.
 
-Harness-bites check: a temporary patch gating only when
-`len(activePods)==0 && len(succeededPods)==0 && len(failedPods)==0` turns F1a green and flips
-F1b red (see `results/unit-harness-bites.txt`); patch reverted afterwards; production diff empty.
+Harness-bites: a temporary patch gating the `desired == 0` completion on `active == 0` turns
+F4a/F4b green on the head (`results/unit-round2-harness-bites.txt`); reverted afterwards.
 
-### F2 — two timeout clocks (`minor`)
+### F5 — terminal-state gate lets an orphan active Pod defeat the global timeout (`blocker`)
 
-`targetWaitExpired` bounds the pre-start wait from `creationTimestamp`; once the first Pod
-exists, `status.startTime` (set at Pod creation) anchors both the wait gate and the run-phase
-timeout. Canary `TestVerify_WaitAndRunTimeoutBudgetsAreAdditive`: `creation=now-120s`,
-`startTime=now-30s`, `globalTimeoutSeconds=60`, pending target Pod → the job keeps waiting
-(creation-anchored elapsed 120s > 60s). Total wall time from creation can approach
-2× the configured "global" timeout. Also, the API field comment still says the timeout is
-"measured from the time the first Pod is created (status.startTime)", which no longer
-describes the wait phase.
+`warmupReachedTerminalState` counts active Pods only on **desired** nodes, while
+`updateStatus` counts active Pods on **any** node. With desired nodes all terminal and one
+warmup Pod still active on a node that left the desired set (target Pod migrated during a
+rolling update while its warmup Pod is stuck in `ImagePullBackOff`):
 
-### F3 — untested timeout branch (`minor`)
+- the gate reports "terminal" → the expired `globalTimeoutSeconds` check is skipped;
+- `updateStatus` reports `active=1` → not complete → phase stays `Running`;
+- `requeueForTimeout` returns no requeue once the deadline passed (remaining ≤ 0).
 
-`Failed/GlobalTimeoutExceeded` for still-unscheduled target Pods (the second
-`targetWaitExpired` call site) has no test in the PR. Harness adds
-`TestVerify_PendingPodsFailAfterGlobalTimeout` (contract, green on PR head).
+Net: the job is stuck `Running` forever, the orphan Pod is never deleted, and the documented
+contract ("When the timeout is exceeded, all active Pods are deleted and the job is marked as
+Failed") no longer holds. Base and `9f61d4f7` enforced the timeout unconditionally → both
+pass; `60b1b7cb` fails → introduced by this delta.
 
-### P0-3 — CRD freeze A/B (premise, integration)
+Harness-bites: counting active Pods on all nodes in `warmupReachedTerminalState` turns F5
+green on the head (same patch run as F4); reverted afterwards.
 
-See "Problem premise" above. The test installs the PR CRD from `config/crd/bases/`, stores an
-invalid object, swaps in the base CRD from
-`docs/verification/warmup-target-waits/assets/warmup-crd-base-with-cel-rule.yaml` (extracted
-from merge-base `35e5d029`), probes admission, then writes status. Version-dependent
-assertion: reject on ≤1.32, accept on ≥1.33 (both observed).
+### Fixed this round
+
+- **F1a** — pending-gate placement: gate now applies only while no warmup Pods exist;
+  completion proceeds otherwise. Contract green on head.
+- **F1b** — fully-warmed jobs survive an expired deadline: `warmupReachedTerminalState` skips
+  the timeout for terminal work. Canary flipped; inverted to contract.
+- **F2** — one creation-anchored budget for wait + run phases (`globalTimeoutDeadline`);
+  `globalTimeoutSeconds` API comment, generated CRD description, and KEP all updated to
+  match. Canary flipped; inverted to contract.
+- **F3** — PR added `TestReconcile_PendingTargetPodsFailAfterGlobalTimeout`. The harness test
+  needed a fixture update (the readiness gate now derives the expected Pod count from the RBG
+  spec, so the fixture RBG must declare the role) — a harness update, not a behavior change.
 
 ## Proposed fixes (NOT applied to production here)
 
-- **F1**: let terminal accounting win — either compute completion before the pending gate, or
-  skip the gate once any warmup Pod exists (`if pending > 0 && len(activePods) == 0 &&
-  len(succeededPods) == 0 && len(failedPods) == 0`, the bites-check shape). Keeps the requested
-  pre-start semantics intact.
-- **F2**: document the two clocks (KEP + `GlobalTimeoutSeconds` field comment), or anchor the
-  whole job at creation.
-- **F3**: absorb `TestVerify_PendingPodsFailAfterGlobalTimeout` (or equivalent) into the PR.
+- **F4**: do not let `updateStatus` complete while Pods are in flight — e.g. gate the
+  `desired == 0` branch on `active == 0` (verified green), or derive desired nodes from the
+  Warmup's own Pods when the target snapshot is empty. Also report the fully-warmed
+  target-deleted case as `WarmupCompleted` with real counters instead of `NoNodesMatched`.
+- **F5**: make `warmupReachedTerminalState` consistent with `updateStatus` — count active
+  Pods on all nodes, not only desired ones (verified green).
+
+Both patches together keep the whole `internal/controller/workloads` suite (PR's own tests +
+this harness) green.
 
 ## Continuing after the fix (possibly on another machine)
 
@@ -129,6 +145,7 @@ code untouched, so it grafts onto whatever the fixed code is.
    git checkout <fixed-branch>
    git checkout FETCH_HEAD -- docs/verification/warmup-target-waits \
      internal/controller/workloads/warmup_target_waits_verification_test.go \
+     internal/controller/workloads/warmup_midrun_churn_verification_test.go \
      internal/controller/workloads/warmup_premise_verification_test.go \
      test/envtest/warmupcrdverify/warmup_crd_status_verify_test.go
    ```
@@ -139,9 +156,8 @@ code untouched, so it grafts onto whatever the fixed code is.
    bash docs/verification/warmup-target-waits/scripts/re-verify.sh
    ```
    (auto-resolves the current PR head from the manifest's `pr` URL; unit + integration layers).
-4. Polarity: F1a and F3 are contract tests — green when fixed. F1b and F2 are canaries — they
-   must FLIP to red when fixed; then invert them (or promote the new behavior to contract).
-   P0-3 is version-dependent by design and should stay green.
+4. Polarity: all findings are contract tests now — green when fixed. F1b/F2 were canaries in
+   round 1 and were inverted after head `60b1b7cb` flipped them.
 5. Premise legs (P0-1/P0-2) intentionally skip on PR head; they run only on base with
    `VERIFY_PREMISE_ON_BASE=1`.
 
@@ -149,11 +165,13 @@ code untouched, so it grafts onto whatever the fixed code is.
 ```text
 Continue a verification task on branch verify/warmup-target-waits-codex (fork
 https://github.com/cheyang/rbg.git). Background: a review of
-https://github.com/sgl-project/rbg/pull/478 produced findings F1a/F1b (pending-pod gate
-blocks completion of fully-warmed jobs), F2 (dual timeout clocks), F3 (missing timeout-branch
-test); premise P0 was confirmed on base and via envtest 1.31/1.33 A/B. Read
-docs/verification/warmup-target-waits/README.md ("Continuing after the fix") and follow it:
-graft the harness onto the fixed code (or run scripts/re-verify.sh from the verify branch),
-re-run unit + integration layers, mind the polarity table (F1b/F2 are canaries — invert when
-they flip), and report an observed-vs-expected table. Production code must stay untouched.
+https://github.com/sgl-project/rbg/pull/478 confirmed round-1 findings fixed at head
+60b1b7cb (F1 pending-gate blocking completion, F2 dual timeout clocks, F3 missing timeout
+test) and found two new regressions: F4 (mid-run collapse of the desired-node set reports
+Completed/NoNodesMatched while warmup Pods are still active) and F5 (an active warmup Pod on
+a non-desired node defeats the creation-anchored global timeout; job stuck Running with no
+requeue). Read docs/verification/warmup-target-waits/README.md and follow it: graft the
+harness onto the fixed code (or run scripts/re-verify.sh from the verify branch), re-run unit
++ integration layers, and report an observed-vs-expected table. All findings are contract
+polarity now. Production code must stay untouched.
 ```

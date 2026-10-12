@@ -4,6 +4,7 @@
   "harnessPaths": [
     "docs/verification/warmup-target-waits",
     "internal/controller/workloads/warmup_target_waits_verification_test.go",
+    "internal/controller/workloads/warmup_midrun_churn_verification_test.go",
     "internal/controller/workloads/warmup_premise_verification_test.go",
     "test/envtest/warmupcrdverify/warmup_crd_status_verify_test.go"
   ],
@@ -31,10 +32,19 @@
   },
   "findings": [
     { "id": "F1a", "polarity": "contract", "layer": "unit", "match": ["TestVerify_MidWarmupPendingPodBlocksCompletion"] },
-    { "id": "F1b", "polarity": "canary",   "layer": "unit", "match": ["TestVerify_MidWarmupPendingPodFailsCompletedWorkOnTimeout"] },
-    { "id": "F2",  "polarity": "canary",   "layer": "unit", "match": ["TestVerify_WaitAndRunTimeoutBudgetsAreAdditive"] },
-    { "id": "F3",  "polarity": "contract", "layer": "unit", "match": ["TestVerify_PendingPodsFailAfterGlobalTimeout"] },
+    { "id": "F1b", "polarity": "contract", "layer": "unit", "match": ["TestVerify_CompletedWorkSurvivesExpiredGlobalTimeout"],
+      "note": "canary flipped on head 60b1b7cb (job now completes); inverted to a contract test per polarity rules" },
+    { "id": "F2",  "polarity": "contract", "layer": "unit", "match": ["TestVerify_GlobalTimeoutIsSingleCreationAnchoredBudget"],
+      "note": "canary flipped on head 60b1b7cb (single creation-anchored budget); inverted to a contract test" },
+    { "id": "F3",  "polarity": "contract", "layer": "unit", "match": ["TestVerify_PendingPodsFailAfterGlobalTimeout"],
+      "note": "PR added TestReconcile_PendingTargetPodsFailAfterGlobalTimeout; harness fixture updated for expected-count readiness (roles must exist on the RBG for the gate to engage)" },
+    { "id": "F4a", "polarity": "contract", "layer": "unit", "match": ["TestVerify_TargetDeletedMidRunWithActivePodsMustNotComplete"],
+      "note": "NEW round 2: target RBG deleted mid-run with active warmup Pods -> head reports Completed/NoNodesMatched with Active=1" },
+    { "id": "F4b", "polarity": "contract", "layer": "unit", "match": ["TestVerify_AllTargetPodsUnscheduledMidRunMustNotComplete"],
+      "note": "NEW round 2: all selected target Pods unscheduled mid-run (drain/eviction gap) -> head reports Completed/NoNodesMatched; replacement nodes are never warmed" },
+    { "id": "F5",  "polarity": "contract", "layer": "unit", "match": ["TestVerify_OrphanActivePodStillBoundedByGlobalTimeout"],
+      "note": "NEW round 2: warmupReachedTerminalState ignores active Pods on non-desired nodes while updateStatus counts them -> expired global timeout never fires; job stuck Running with no requeue" },
     { "id": "P0-3", "polarity": "contract", "layer": "integration", "match": ["TestWarmupCRDItemLevelCELFreezesStoredInvalidObjects"] }
   ],
-  "liveNote": "Live layer skipped per review-scope decision (unit + integration only). If run later: on a real <=1.32 cluster, create a Warmup with a customized action container without image under the rule-less CRD, then install the #466 CRD and try PATCH /status -> expect rejection; then install the PR CRD -> expect acceptance. Mid-warmup stall (F1): run a Warmup, let all its Pods succeed, then scale the target RBG so a selected-role Pod stays pending; observe phase stuck Running (no globalTimeoutSeconds) or Failed/GlobalTimeoutExceeded (with it)."
+  "liveNote": "Live layer skipped per review-scope decision (unit + integration only). If run later: on a real <=1.32 cluster, create a Warmup with a customized action container without image under the rule-less CRD, then install the #466 CRD and try PATCH /status -> expect rejection; then install the PR CRD -> expect acceptance. F4 on a live cluster: start a Warmup, then delete the target RBG (or drain the node hosting all selected target Pods) while a warmup Pod is mid-pull -> observe Completed/NoNodesMatched with Active=1. F5: let one node finish warming, then cordon/migrate the target Pod off a second node whose warmup Pod is stuck ImagePullBackOff with globalTimeoutSeconds set -> job stays Running past the deadline."
 }
