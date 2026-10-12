@@ -1,0 +1,7 @@
+Round-3 harness-bites check (F10), on the harness branch (production code == head 98720938 modulo the yaml-only delta):
+
+Perturbation: in updateRollingGroupSetStatus, count CurrentReplicas only for
+index >= limits.partition (i.e. implement the behavior the round-3 PR body claims).
+Result: TestVerify_BodyClaim_CurrentReplicasCountsHeldBack FLIPS RED:
+    Messages: held-back ordinals are counted in status.currentReplicas, contrary to the PR body clause
+Reverted; git diff empty afterwards. The canary exercises the claimed path.

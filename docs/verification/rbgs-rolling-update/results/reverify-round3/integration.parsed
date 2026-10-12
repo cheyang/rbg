@@ -1,0 +1,2 @@
+TestVerify_Envtest_RollingAgainstRealAPIServer	pass
+TestVerify_Envtest_InPlaceAgainstRealAPIServer	pass
