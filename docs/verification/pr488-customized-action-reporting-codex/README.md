@@ -1,7 +1,7 @@
 # Verification — PR #488 "feat: enhance CustomizedAction execution reporting" (Reviewer B / Codex)
 
 - PR: https://github.com/sgl-project/rbg/pull/488
-- Head under review: `060ef1b7310ef9d79b80b7d0a5aaffee34de5c2d`
+- Head under review: `d260dc6ec0c31b869ff0f785e55145d4c9ca2942` (round 2; round 1 reviewed `060ef1b7`)
 - Harness branch: `verify/pr488-customized-action-reporting-codex` (additive test files only; production diff is empty)
 - Layers run: L1 unit (in-package, fake client) + L2 integration (envtest, real API server `1.36.2` assets). L3 live skipped per debate setup.
 
@@ -29,6 +29,51 @@ right place to close it.
 | F4 (new) | unit | `TestVerifyPR488F4CanaryGlobalTimeoutClobbersSpecificReason` | canary | flips when fixed | passes (result reason rewritten `ImagePullFailed` → `GlobalTimeoutExceeded`) | — |
 
 Raw output: `results/unit-head.txt`, `results/integration-head.txt`.
+
+
+## Round 2 — delta `060ef1b7..d260dc6` (commit "fix: correct customized action result reporting")
+
+The delta is a direct response to round 1: the `Succeeded` skip in
+`limitCustomizedActionResults` is removed (F1), `failWarmupJob` now flips every
+non-terminal result to `Failed` for any terminal job failure while preserving a
+specific recorded `Reason`/`Message` (F3+F4). New in the delta: monotonic
+`workloads.x-k8s.io/warmup-attempt` pod labels with attempt-aware latest-pod
+selection, terminal-beats-waiting precedence in `aggregateCustomizedActionState`
+with container identity in waiting messages, and `completionPolicy` CRD enum
+widened to allow an explicit `""`.
+
+| Finding | Layer | Test | Polarity | Observed on d260dc6 | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| F1 | unit | `TestVerifyPR488F1SucceededResultKeepsContainersWithinBudget` | contract | passes | **Fixed** |
+| F1 | unit | `TestVerifyPR488F1TinySuccessNotMarkedTruncated` | contract (inverted canary) | passes | **Fixed** |
+| F1 | integration | `successful customized action keeps per-container results` | contract | passes | **Fixed** |
+| F1 | integration | `tiny successful status is not flagged truncated` | contract (inverted canary) | passes | **Fixed** |
+| F2 | unit | `TestVerifyPR488F2WaitingFailureIdentitySurvivesBounding` | contract | passes | stays refuted |
+| F2 | integration | `image-pull waiting failure keeps container identity and reason` | contract | passes | stays refuted |
+| F3 | unit | `TestVerifyPR488F3TerminalFailureLeavesNoStaleRunningResult` | contract | passes | **Fixed** |
+| F4 | unit | `TestVerifyPR488F4GlobalTimeoutPreservesSpecificReason` | contract (inverted canary) | passes | **Fixed** |
+| F7 (new) | unit | `TestVerifyPR488F7NilDesiredNodesTerminalFlipEmitsTransitionEvent` | contract | **fails** — no per-node event on the nil-desiredNodes flip | **Confirmed (bug, minor)** |
+| F7 control | unit | `TestVerifyPR488F7ControlGlobalTimeoutFlipEmitsTransitionEvent` | contract | passes (global-timeout path emits the event) | pins the asymmetry |
+
+Raw output: `results/unit-head-d260dc6.txt`, `results/integration-head-d260dc6.txt`,
+`results/reverify/` (script run against d260dc6).
+
+### F7 (new this round)
+
+`failWarmupJob` snapshots `oldCustomizedActionResults := warmup.Status.CustomizedActionResults`
+and, when `desiredNodes == nil` (`InvalidWarmupSpec` / `InvalidTarget` — target
+RBG deleted or spec invalidated after results exist), evaluates nothing:
+`allCustomizedActionResults` aliases the same backing array. The new terminal
+flip mutates the results **in place**, so the post-update call
+`recordCustomizedActionEvents(recorder, warmup, old, new)` compares the mutated
+slice against itself and sees no transition: the per-node Warning event for the
+Running/Pending→Failed flip is silently dropped. The global-timeout path takes
+the `desiredNodes != nil` branch (fresh slice from
+`evaluateCustomizedActionResults`) and emits the event for the identical flip —
+the asymmetry is pinned by the control test. Impact is events-only: the status
+flip itself is persisted correctly (verified via the fake client), and the
+job-level Warning event still fires. Harness-bites check: deep-copying the old
+results before the flip turns the F7 contract green (patched, re-run, reverted).
 
 ## Notes on each finding
 
@@ -94,8 +139,9 @@ bash docs/verification/pr488-customized-action-reporting-codex/scripts/re-verify
 ```
 
 (no ref needed — the manifest's `pr` URL resolves the current PR head). Polarity:
-contract tests must go green; the F1/F4 canaries are *fixed only when they flip to
-fail* — then invert them (or drop them and keep the contract tests). The
+all entries are contract tests after round 2 (the F1/F4 canaries flipped on
+d260dc6 and were inverted into regression guards), so a fully fixed head is all
+green. The
 integration layer needs envtest assets (`setup-envtest use 1.31.0` or any local
 KUBEBUILDER_ASSETS). Copy-paste kickoff for a fresh machine:
 
@@ -106,9 +152,13 @@ KUBEBUILDER_ASSETS). Copy-paste kickoff for a fresh machine:
 
 ## Proposed fixes (validated by the harness-bites check, then reverted)
 
-1. F1: remove the `Succeeded` skip in the detail-upgrade pass of
-   `limitCustomizedActionResults` so remaining budget is spent in priority order
-   (failures first, successes last).
-2. F3+F4: in `failWarmupJob`, flip every non-terminal customized-action result to
-   `Failed` on any terminal job failure, keeping any specific `Reason`/`Message`
-   already recorded (only falling back to the job-level reason/message).
+1. F1 (shipped in d260dc6): remove the `Succeeded` skip in the detail-upgrade
+   pass of `limitCustomizedActionResults` so remaining budget is spent in
+   priority order (failures first, successes last).
+2. F3+F4 (shipped in d260dc6): in `failWarmupJob`, flip every non-terminal
+   customized-action result to `Failed` on any terminal job failure, keeping any
+   specific `Reason`/`Message` already recorded.
+3. F7 (open): in `failWarmupJob`, deep-copy `oldCustomizedActionResults` before
+   the flip loop (e.g. via `DeepCopyInto`) so the transition diff on the
+   nil-desiredNodes path compares pre-flip vs post-flip state; verified by the
+   harness-bites check.

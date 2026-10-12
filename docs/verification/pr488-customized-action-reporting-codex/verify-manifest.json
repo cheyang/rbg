@@ -113,7 +113,7 @@
       ]
     }
   ],
-  "liveNote": "L3 skipped per debate setup (unit + integration only). The PR's own e2e (test/e2e/testcase/v1alpha2/warmup.go:245) fails on this head for the same mechanism as F1; the maintainer's e2e runs already show that on a live cluster.",
+  "liveNote": "L3 skipped per debate setup (unit + integration only). On 060ef1b7 the PR's own e2e (test/e2e/testcase/v1alpha2/warmup.go:245) failed for the F1 mechanism; F1 is fixed on d260dc6 and the PR's e2e CI lane is green on d260dc6, so no live signal is outstanding.",
   "rounds": [
     {
       "head": "d260dc6ec0c31b869ff0f785e55145d4c9ca2942",
