@@ -27,17 +27,24 @@ limitations under the License.
 //      Running/Pending customized-action result in a terminally Failed job.
 //   F4 (new): the global-timeout path rewrites a specific per-node failure
 //      reason (ImagePullFailed) to GlobalTimeout at result level.
+//   F7 (new, head d260dc6): on the nil-desiredNodes path of failWarmupJob
+//      (InvalidWarmupSpec / InvalidTarget), the Running/Pending->Failed flip
+//      mutates the stored results slice in place; oldCustomizedActionResults
+//      aliases it, so the transition diff sees old == new and the per-node
+//      Warning event is silently dropped (the global-timeout path emits it).
 
 package workloads
 
 import (
 	"context"
 	"encoding/json"
+	"strings"
 	"testing"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/tools/record"
 	"k8s.io/utils/ptr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -75,9 +82,11 @@ func TestVerifyPR488F1SucceededResultKeepsContainersWithinBudget(t *testing.T) {
 	}
 }
 
-// F1 canary: pins the current (buggy) behavior so the harness flips when the
-// fix lands. PASSES on the head under review.
-func TestVerifyPR488F1CanaryTinySuccessStrippedAndFlaggedTruncated(t *testing.T) {
+// F1 contract (inverted canary, fixed on d260dc6): a tiny successful status
+// keeps its per-container detail and is not flagged truncated. PASSES on the
+// fixed head; a regression that re-skips Succeeded results in the
+// detail-upgrade pass flips this back to red.
+func TestVerifyPR488F1TinySuccessNotMarkedTruncated(t *testing.T) {
 	exit := int32(0)
 	full := []workloadsv1alpha2.CustomizedActionResult{{
 		NodeName: "node-1",
@@ -96,11 +105,11 @@ func TestVerifyPR488F1CanaryTinySuccessStrippedAndFlaggedTruncated(t *testing.T)
 	if len(limited) != 1 {
 		t.Fatalf("expected the single tiny result to be retained, got %d", len(limited))
 	}
-	if len(limited[0].Containers) != 0 {
-		t.Fatalf("canary flipped (containers kept) - invert this test, F1 is fixed")
+	if len(limited[0].Containers) != 1 {
+		t.Fatalf("F1 regression: tiny successful result lost per-container detail: %#v", limited[0])
 	}
-	if !truncated {
-		t.Fatalf("canary flipped (no truncation reported) - invert this test, F1 is fixed")
+	if truncated {
+		t.Fatalf("F1 regression: tiny successful status wrongly flagged truncated")
 	}
 }
 
@@ -209,11 +218,11 @@ func TestVerifyPR488F3TerminalFailureLeavesNoStaleRunningResult(t *testing.T) {
 	}
 }
 
-// F4 canary: the global-timeout path rewrites a specific per-node failure
-// reason (ImagePullFailed) to GlobalTimeout at result level. Pins current
-// behavior; flip when the fix preserves the original reason. PASSES on the
-// head under review.
-func TestVerifyPR488F4CanaryGlobalTimeoutClobbersSpecificReason(t *testing.T) {
+// F4 contract (inverted canary, fixed on d260dc6): the global-timeout flip in
+// failWarmupJob preserves a specific per-node failure reason/message
+// (ImagePullFailed + kubelet text) instead of rewriting it to
+// GlobalTimeoutExceeded. PASSES on the fixed head.
+func TestVerifyPR488F4GlobalTimeoutPreservesSpecificReason(t *testing.T) {
 	startTime := metav1.NewTime(time.Now().Add(-2 * time.Minute))
 	warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
 		ObjectMeta: metav1.ObjectMeta{Name: "test", Namespace: "default", UID: "uid-1", Generation: 1},
@@ -249,7 +258,120 @@ func TestVerifyPR488F4CanaryGlobalTimeoutClobbersSpecificReason(t *testing.T) {
 		t.Fatalf("expected one result, got %#v", updated.Status.CustomizedActionResults)
 	}
 	result := updated.Status.CustomizedActionResults[0]
-	if result.Reason != CustomizedActionReasonGlobalTimeout {
-		t.Fatalf("canary flipped (specific reason %q preserved) - invert this test, F4 is fixed", result.Reason)
+	if result.Reason != CustomizedActionReasonImagePullFailed {
+		t.Fatalf("F4 regression: global timeout clobbered the specific per-node reason, got %q", result.Reason)
 	}
+	if !strings.Contains(strings.ToLower(result.Message), "back-off pulling image") {
+		t.Fatalf("F4 regression: global timeout replaced the kubelet message, got %q", result.Message)
+	}
+}
+
+// drainWarmupEvents collects everything the fake recorder has buffered.
+func drainWarmupEvents(recorder *record.FakeRecorder) []string {
+	var events []string
+	for {
+		select {
+		case e := <-recorder.Events:
+			events = append(events, e)
+		default:
+			return events
+		}
+	}
+}
+
+// F7 (new on head d260dc6): when failWarmupJob runs with nil desiredNodes
+// (InvalidWarmupSpec / InvalidTarget firing after results already exist), the
+// finalize loop flips non-terminal results to Failed in place. Because
+// oldCustomizedActionResults aliases the same backing array on that path, the
+// post-update transition diff sees old == new and the per-node Warning event
+// is silently dropped - the global-timeout path emits it for the same flip.
+// Contract polarity: FAILS on head d260dc6 (event missing), passes once old
+// results are snapshotted before the in-place flip.
+func TestVerifyPR488F7NilDesiredNodesTerminalFlipEmitsTransitionEvent(t *testing.T) {
+	warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
+		ObjectMeta: metav1.ObjectMeta{Name: "test", Namespace: "default", UID: "uid-1", Generation: 1},
+		Status: workloadsv1alpha2.RoleBasedGroupWarmupStatus{
+			Phase: workloadsv1alpha2.WarmupJobPhaseRunning,
+			CustomizedActionResults: []workloadsv1alpha2.CustomizedActionResult{{
+				NodeName: "node-1", PodName: "attempt-1",
+				State: workloadsv1alpha2.CustomizedActionStateRunning,
+			}},
+		},
+	}
+	r := newWarmupReconciler(warmup)
+
+	if err := r.failWarmupJob(context.Background(), warmup, nil, nil, nil, nil,
+		"InvalidTarget", "target RoleBasedGroup disappeared"); err != nil {
+		t.Fatalf("fail warmup job: %v", err)
+	}
+	updated := &workloadsv1alpha2.RoleBasedGroupWarmup{}
+	if err := r.Get(context.Background(), client.ObjectKeyFromObject(warmup), updated); err != nil {
+		t.Fatalf("get updated warmup: %v", err)
+	}
+	if len(updated.Status.CustomizedActionResults) != 1 {
+		t.Fatalf("expected one result, got %#v", updated.Status.CustomizedActionResults)
+	}
+	result := updated.Status.CustomizedActionResults[0]
+	if result.State != workloadsv1alpha2.CustomizedActionStateFailed || result.Reason != "InvalidTarget" {
+		t.Fatalf("expected the in-place flip to Failed/InvalidTarget (the part d260dc6 gets right), got %#v", result)
+	}
+	for _, event := range drainWarmupEvents(r.Recorder.(*record.FakeRecorder)) {
+		if strings.Contains(event, "node=node-1") {
+			return
+		}
+	}
+	t.Fatalf("F7: Running->Failed flip on the nil-desiredNodes path emitted no per-node transition event; " +
+		"oldCustomizedActionResults aliases the mutated slice so the diff sees old == new")
+}
+
+// F7 control: the same Running->Failed flip on the global-timeout path
+// (desiredNodes != nil, freshly evaluated result slice) DOES emit the per-node
+// transition event. PASSES on head d260dc6 - pins the asymmetry.
+func TestVerifyPR488F7ControlGlobalTimeoutFlipEmitsTransitionEvent(t *testing.T) {
+	startTime := metav1.NewTime(time.Now().Add(-2 * time.Minute))
+	warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
+		ObjectMeta: metav1.ObjectMeta{Name: "test", Namespace: "default", UID: "uid-1", Generation: 1},
+		Spec: workloadsv1alpha2.RoleBasedGroupWarmupSpec{
+			Policies: &workloadsv1alpha2.WarmupPolicies{GlobalTimeoutSeconds: ptr.To(int64(1))},
+			TargetNodes: &workloadsv1alpha2.TargetNodes{
+				NodeNames: []string{"node-1"},
+				WarmupActions: workloadsv1alpha2.WarmupActions{CustomizedAction: &workloadsv1alpha2.CustomizedAction{
+					Containers: []corev1.Container{{Name: "node-check", Image: "busybox"}},
+				}},
+			},
+		},
+		Status: workloadsv1alpha2.RoleBasedGroupWarmupStatus{
+			Phase:     workloadsv1alpha2.WarmupJobPhaseRunning,
+			StartTime: &startTime,
+			CustomizedActionResults: []workloadsv1alpha2.CustomizedActionResult{{
+				NodeName: "node-1", PodName: "attempt-1",
+				State: workloadsv1alpha2.CustomizedActionStateRunning,
+			}},
+		},
+	}
+	pod := mappedWarmupPod("node-1", "attempt-1", corev1.PodRunning, corev1.ContainerStatus{
+		Name: "custom-0", State: corev1.ContainerState{Running: &corev1.ContainerStateRunning{}},
+	})
+	pod.Namespace = warmup.Namespace
+	pod.Labels[LabelWarmupName] = warmup.Name
+	pod.Labels[LabelWarmupUID] = string(warmup.UID)
+	r := newWarmupReconciler(warmup, pod)
+
+	if _, err := r.Reconcile(context.Background(), ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)}); err != nil {
+		t.Fatalf("reconcile: %v", err)
+	}
+	updated := &workloadsv1alpha2.RoleBasedGroupWarmup{}
+	if err := r.Get(context.Background(), client.ObjectKeyFromObject(warmup), updated); err != nil {
+		t.Fatalf("get updated warmup: %v", err)
+	}
+	if len(updated.Status.CustomizedActionResults) != 1 ||
+		updated.Status.CustomizedActionResults[0].State != workloadsv1alpha2.CustomizedActionStateFailed {
+		t.Fatalf("expected the timeout flip to Failed, got %#v", updated.Status.CustomizedActionResults)
+	}
+	for _, event := range drainWarmupEvents(r.Recorder.(*record.FakeRecorder)) {
+		if strings.Contains(event, "node=node-1") {
+			return
+		}
+	}
+	t.Fatalf("F7 control: global-timeout flip emitted no per-node transition event (asymmetry claim broken)")
 }

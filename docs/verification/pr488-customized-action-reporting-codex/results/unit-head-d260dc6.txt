@@ -1,0 +1,33 @@
+=== RUN   TestVerifyPR488F1SucceededResultKeepsContainersWithinBudget
+--- PASS: TestVerifyPR488F1SucceededResultKeepsContainersWithinBudget (0.00s)
+=== RUN   TestVerifyPR488F1TinySuccessNotMarkedTruncated
+--- PASS: TestVerifyPR488F1TinySuccessNotMarkedTruncated (0.00s)
+=== RUN   TestVerifyPR488F2WaitingFailureIdentitySurvivesBounding
+--- PASS: TestVerifyPR488F2WaitingFailureIdentitySurvivesBounding (0.00s)
+=== RUN   TestVerifyPR488F3TerminalFailureLeavesNoStaleRunningResult
+2026-10-13T00:49:48+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-13T00:49:48+08:00	INFO	Node permanently failed	{"warmup": {"name":"test","namespace":"default"}, "node": "node-a", "failCount": 1, "backoffLimit": 0}
+2026-10-13T00:49:48+08:00	INFO	MaxFailedNodes exceeded, failing warmup job	{"warmup": {"name":"test","namespace":"default"}, "permanentlyFailed": 1, "maxFailedNodes": 0}
+2026-10-13T00:49:48+08:00	INFO	Node permanently failed	{"warmup": {"name":"test","namespace":"default"}, "node": "node-a", "failCount": 1, "backoffLimit": 0}
+2026-10-13T00:49:48+08:00	INFO	Warmup job failed	{"warmup": {"name":"test","namespace":"default"}, "reason": "MaxFailedNodesExceeded", "succeeded": 0, "failed": 1}
+2026-10-13T00:49:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "1.589492ms"}
+--- PASS: TestVerifyPR488F3TerminalFailureLeavesNoStaleRunningResult (0.04s)
+=== RUN   TestVerifyPR488F4GlobalTimeoutPreservesSpecificReason
+2026-10-13T00:49:48+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-13T00:49:48+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"test","namespace":"default"}, "timeout": "1s", "elapsed": "2m0.693014107s"}
+2026-10-13T00:49:48+08:00	INFO	Warmup job failed	{"warmup": {"name":"test","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-10-13T00:49:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "1.129937ms"}
+--- PASS: TestVerifyPR488F4GlobalTimeoutPreservesSpecificReason (0.00s)
+=== RUN   TestVerifyPR488F7NilDesiredNodesTerminalFlipEmitsTransitionEvent
+2026-10-13T00:49:48+08:00	INFO	Warmup job failed	{"reason": "InvalidTarget", "succeeded": 0, "failed": 0}
+    zz_verify_pr488_customized_action_test.go:323: F7: Running->Failed flip on the nil-desiredNodes path emitted no per-node transition event; oldCustomizedActionResults aliases the mutated slice so the diff sees old == new
+--- FAIL: TestVerifyPR488F7NilDesiredNodesTerminalFlipEmitsTransitionEvent (0.00s)
+=== RUN   TestVerifyPR488F7ControlGlobalTimeoutFlipEmitsTransitionEvent
+2026-10-13T00:49:48+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-10-13T00:49:48+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"test","namespace":"default"}, "timeout": "1s", "elapsed": "2m0.698488518s"}
+2026-10-13T00:49:48+08:00	INFO	Warmup job failed	{"warmup": {"name":"test","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-10-13T00:49:48+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "1.043584ms"}
+--- PASS: TestVerifyPR488F7ControlGlobalTimeoutFlipEmitsTransitionEvent (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.060s
+FAIL

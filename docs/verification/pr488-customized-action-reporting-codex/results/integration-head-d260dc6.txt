@@ -1,0 +1,13 @@
+=== RUN   TestWarmupVerify
+Running Suite: Warmup Customized Action Verify Suite - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-13/pr-488/work/verify/test/envtest/testcase/warmupverify
+======================================================================================================================================================================
+Random Seed: [1m1791823789[0m
+
+Will run [1m4[0m of [1m4[0m specs
+[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m
+
+[38;5;10m[1mRan 4 of 4 Specs in 10.365 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m4 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- PASS: TestWarmupVerify (10.36s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/warmupverify	10.379s

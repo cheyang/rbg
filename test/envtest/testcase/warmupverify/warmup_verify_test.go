@@ -123,9 +123,10 @@ var _ = Describe("PR488 customized action status verification", func() {
 		Expect(result.Containers[0].ExitCode).NotTo(BeNil())
 	})
 
-	// F1 canary: pins the current false-positive truncation signal on a tiny
-	// all-success status. PASSES on the head under review; flips once fixed.
-	It("F1: tiny successful status is flagged truncated [canary]", func() {
+	// F1 contract (inverted canary, fixed on d260dc6): a tiny all-success
+	// status must NOT be flagged truncated. A regression that re-skips
+	// Succeeded results in the detail-upgrade pass flips this back to red.
+	It("F1: tiny successful status is not flagged truncated [contract]", func() {
 		ns := newVerifyNamespace("verify-f1-canary")
 		warmup := newCustomizedWarmup("warmup-f1-canary", ns, "node-check")
 		Expect(k8sClient.Create(ctx, warmup)).To(Succeed())
@@ -140,8 +141,8 @@ var _ = Describe("PR488 customized action status verification", func() {
 		}, verifyTimeout, verifyInterval).Should(Equal(workloadsv1alpha2.WarmupJobPhaseCompleted))
 
 		latest := getWarmup(warmup)
-		Expect(latest.Status.CustomizedActionResultsTruncated).To(BeTrue(),
-			"canary flipped (no false truncation signal) - invert this test, F1 is fixed")
+		Expect(latest.Status.CustomizedActionResultsTruncated).To(BeFalse(),
+			"F1 regression: tiny successful status wrongly flagged truncated")
 	})
 
 	// Control case: failures DO keep per-container detail and drive the
