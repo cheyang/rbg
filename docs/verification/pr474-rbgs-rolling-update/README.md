@@ -11,6 +11,16 @@ rolling update").
   fix) and `9e423e86` (InPlaceUpdate rollout strategy). The base move
   `0821cb5b..79f7e585` touches neither the RBGS controller nor the rolling
   code, so the round-1 premise and contracts stay valid against the new base.
+- **Round 3** (head `98720938`, same base tip `79f7e585`): history was
+  **force-pushed/rewritten** (the three commits were re-authored; `9e423e86`
+  is no longer an ancestor), but the tree delta `9e423e86..98720938` is
+  exactly one file — `examples/basic/rbgs/rbgs-rolling-update.yaml` (the
+  C4242488204 example-comment fix). The PR **body was fully rewritten** this
+  round: it now documents the shipped API (InPlaceUpdate default, no `paused`,
+  ControllerRevision design, real test names, budget-paced scale-only under
+  InPlaceUpdate). F1 (the round-1/2 must-fix) is closed by
+  `scripts/doc-match-r3.sh` (results/l1-doc-match-r3.log, 16/16 PASS) plus
+  the full harness re-run on `98720938`.
 
 Harness branch: `verify/pr474-rbgs-rolling-update-claude` (reviewer: cheyang's
 fork). Production code is untouched — the diff is tests + docs only.
@@ -52,6 +62,26 @@ the static path, and the rolling strategy is opt-in. The review question
 becomes whether the new path is correct — covered by POS1/POS2 below.
 
 ## Summary of results
+
+### Round 3 (head `98720938`, delta `9e423e86..98720938` — body rewrite + example fix)
+
+| ID | Claim | Layer | Verdict | Evidence |
+|----|-------|-------|---------|----------|
+| F1 (round-1/2 must-fix) | PR body documents an API the code does not implement | doc | **Fixed** — body rewritten against the shipped API: `type` enum + `InPlaceUpdate` default, "no `paused` field or condition", ControllerRevision design, budget-paced scale-only under InPlaceUpdate, all 17 unit + 4 admission test names and all 10 e2e It descriptions now exist in the tree | results/l1-doc-match-r3.log (16/16 PASS, incl. the example manifest) |
+| C4242488204 | Example manifest says InPlaceUpdate is "reserved; the CRD enum rejects it for now" | doc | **Fixed** — comments now describe Recreate vs InPlaceUpdate accurately and mark InPlaceUpdate as the default | examples/basic/rbgs/rbgs-rolling-update.yaml (the only file in the tree delta) |
+| POS1/POS2/POS3/POS4 + F2/F8 contracts | Full regression suite on the new head | 1+2 | **Green** — 17/17 unit-layer tests, envtest `PR #474` suite ok (27.7s) | results/reverify-r3.log |
+| F3, F7, F5, F6, Q1, C4242488155, C4242488120, C4242488140, C4242488181 | Open minor/nit findings from rounds 1–2 | 1 | **Still open** — tree is identical to `9e423e86` outside the example, so every code path they cite is unchanged (F3 canary still green) | results/reverify-r3.log; `git diff 9e423e86 98720938` = 1 file |
+
+Residuals noted this round: the body's special note "`isServing` centralizes
+readiness" names a symbol that does not exist (the function is
+`groupSetChildReady` — the sentence names it correctly one clause later;
+cosmetic), and the body still does not mention the v1alpha1
+conversion-stash residual (F8b) — both fold into F1's fix as nits.
+
+The force-pushed history re-authored the three PR commits (same content),
+which is why the round-2 commit ids (`f6019ead`, `9e423e86`) no longer
+resolve as ancestors of the head; the acceptance evidence references the
+*tree*, which is what the contracts run against.
 
 ### Round 2 (head `9e423e86`, delta `44241903..9e423e86`)
 
@@ -159,9 +189,9 @@ there are no `TestRollingUpdate_*` unit tests (the shipped ones are
 `TestSyncRollingGroupSet_*`), no webhook e2e was added
 (`test/e2e/testcase/v1alpha2/webhook_validation.go` is untouched), and the
 revision-based design (`ControllerRevision` history, `currentRevision`/
-`updateRevision` status) contradicts the body's "pure content comparison with
+`updateRevision` status) contradicted the body's "pure content comparison with
 no revision history". Anyone reviewing from the body, or a user reading its
-field table (`paused: bool`) and setting `paused: true`, is misled — the CRD
+field table (`paused: bool`) and setting `paused: true`, was misled — the CRD
 silently prunes the unknown field and the rollout proceeds.
 
 ## Round 2 per-finding detail
@@ -233,19 +263,12 @@ down to zero, documented by the `..._PercentZeroBecomesOne` canary.
 
 ### F1 — PR body vs shipped API — STILL OPEN, divergence grew
 
-The PR body is byte-identical to round 1 (verified by diff), but the code
-moved: the body says `type` defaults to `Recreate` and `InPlaceUpdate` is
-"reserved and rejected by the CRD enum" — the shipped CRD now accepts
-**both** values and **defaults to `InPlaceUpdate`**. A user who reads the
-body and writes `rolloutStrategy: {maxUnavailable: 1}` (omitting `type`)
-gets in-place per-role pod rollouts where they expected whole-group
-recreation. All round-1 divergences remain: no `paused` field/condition
-(silently pruned by the structural CRD if written), no `TestRollingUpdate_*`
-tests, revision-based design vs the claimed "no revision history",
-`readySurge`/`isServing` budget wording, and no paused e2e. New divergence:
-the body claims a replicas-only diff is "not paced by the budget" — with
-InPlaceUpdate the scale-only shortcut is disabled, so it *is* paced.
-Evidence: results/l1-doc-mismatch-r2.log.
+**Round 3: FIXED.** The body was rewritten against the shipped API — every
+round-1/2 divergence is closed (see results/l1-doc-match-r3.log, 16/16
+PASS, re-checked test-by-test against the head tree). The section below is
+the round-2 record of what was wrong before the fix.
+
+The PR body (rounds 1–2) described the pre-rewrite implementation. Verified by inspection:
 
 
 
@@ -312,8 +335,11 @@ Exit 0 iff the runs succeed. Interpretation: **contract** tests (POS1–POS4,
 F2, F8) are fixed when green; **canaries** (F2b resolver fallback, F3, F8b
 stash-less write, and the P0 premise test) are *fixed* only when they flip
 to red — then invert them or promote the new behavior to a contract test.
-`.last-reviewed` holds `9e423e86` (this round's reviewed head); advance it
-after the next round.
+`.last-reviewed` holds `98720938` (this round's reviewed head); advance it
+after the next round. Round 3 also added `scripts/doc-match-r3.sh` (usage:
+`bash scripts/doc-match-r3.sh <pr-body-file> <git-rev>`) — it checks every
+API-surface claim in the current PR body against a given rev and is the
+machine-checkable form of F1.
 
 Layer-2 prerequisites: Go 1.27, envtest binaries (etcd + kube-apiserver) at
 `$KUBEBUILDER_ASSETS` (1.37.0 or 1.30.3 assets both work; the repo's Makefile
