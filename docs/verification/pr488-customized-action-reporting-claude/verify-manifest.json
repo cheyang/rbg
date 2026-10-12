@@ -15,7 +15,9 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "base 0821cb5b CustomizedAction has only Containers/Volumes, no execution reporting in controller; results/premise-base-branch-evidence.txt",
-    "match": ["TestVerifyC2UpdateStatusReportsSuccessfulContainerDetail"]
+    "match": [
+      "TestVerifyC2UpdateStatusReportsSuccessfulContainerDetail"
+    ]
   },
   "layers": {
     "unit": {
@@ -24,13 +26,47 @@
     },
     "integration": {
       "kind": "gotest",
-      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyC[2-4]' -json"
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyC([2-4]|7)' -json"
     }
   },
   "findings": [
-    { "id": "P1", "polarity": "contract", "layer": "unit", "match": ["TestVerifyC1SuccessfulResultKeepsContainerDetail", "TestVerifyC2UpdateStatusReportsSuccessfulContainerDetail", "TestVerifyC3MergedIdentitiesSurviveSuccessfulRun"] },
-    { "id": "P2-refine", "polarity": "contract", "layer": "unit", "match": ["TestVerifyC5WaitingFailureIdentifiesContainerInStatus", "TestVerifyC6WaitingFailureAggregateNamesFailingContainer"] },
-    { "id": "guard-global-timeout-events", "polarity": "contract", "layer": "integration", "match": ["TestVerifyC4GlobalTimeoutEmitsPerNodeTransitionEvents"] }
+    {
+      "id": "P1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyC1SuccessfulResultKeepsContainerDetail",
+        "TestVerifyC2UpdateStatusReportsSuccessfulContainerDetail",
+        "TestVerifyC3MergedIdentitiesSurviveSuccessfulRun"
+      ]
+    },
+    {
+      "id": "P2-refine",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyC5WaitingFailureIdentifiesContainerInStatus",
+        "TestVerifyC6WaitingFailureAggregateNamesFailingContainer"
+      ]
+    },
+    {
+      "id": "guard-global-timeout-events",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestVerifyC4GlobalTimeoutEmitsPerNodeTransitionEvents"
+      ]
+    },
+    {
+      "id": "R2-events-aliasing",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestVerifyC7FinalizationWithoutDesiredNodesEmitsTransitionEvents"
+      ],
+      "firstSeenSha": "d260dc6ec0c31b869ff0f785e55145d4c9ca2942",
+      "note": "Round 2: failWarmupJob finalizes non-terminal results for every failure reason; on desiredNodes==nil the event-dedup baseline aliases the mutated status slice, so Pending->Failed transitions land in status with no per-node Warning event. Fix verified: copy the baseline (one line)."
+    }
   ],
   "liveNote": "L3 skipped this round (debate setup: unit + integration only). Maintainer's live evidence on record in the PR thread; observable signal: successful multi-container action reports zero container details in status.customizedActionResults[].containers."
 }

@@ -209,7 +209,7 @@ func TestVerifyC4GlobalTimeoutEmitsPerNodeTransitionEvents(t *testing.T) {
 			},
 		},
 		Status: workloadsv1alpha2.RoleBasedGroupWarmupStatus{
-			Phase: workloadsv1alpha2.WarmupJobPhaseRunning,
+			Phase:     workloadsv1alpha2.WarmupJobPhaseRunning,
 			StartTime: &startTime,
 			CustomizedActionResults: []workloadsv1alpha2.CustomizedActionResult{{
 				NodeName: "node-1", PodName: "attempt-1",
@@ -342,3 +342,68 @@ func drainClaudeEvents(recorder *record.FakeRecorder) []string {
 	}
 }
 
+// C7 [contract, red while R2-events-aliasing open] Round-2 delta (060ef1b7..d260dc6):
+// failWarmupJob now finalizes non-terminal results to Failed for EVERY failure
+// reason. On the desiredNodes==nil path (InvalidWarmupSpec / InvalidTarget), the
+// finalization loop mutates warmup.Status.CustomizedActionResults in place while
+// the event-dedup baseline (oldCustomizedActionResults) aliases the same backing
+// array, so the Pending->Failed transition lands in status silently. Contract:
+// a transition recorded in status must also be observable in Events (the PR's
+// "transition-based Events" deliverable).
+func TestVerifyC7FinalizationWithoutDesiredNodesEmitsTransitionEvents(t *testing.T) {
+	warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
+		ObjectMeta: metav1.ObjectMeta{Name: "verify-c7", Namespace: "default", UID: "uid-c7", Generation: 2},
+		Spec: workloadsv1alpha2.RoleBasedGroupWarmupSpec{
+			TargetNodes: &workloadsv1alpha2.TargetNodes{
+				NodeNames: []string{"node-1"},
+				WarmupActions: workloadsv1alpha2.WarmupActions{CustomizedAction: &workloadsv1alpha2.CustomizedAction{
+					Containers: []corev1.Container{{Name: "node-check", Image: "busybox"}},
+				}},
+			},
+		},
+		Status: workloadsv1alpha2.RoleBasedGroupWarmupStatus{
+			Phase: workloadsv1alpha2.WarmupJobPhaseRunning,
+			CustomizedActionResults: []workloadsv1alpha2.CustomizedActionResult{{
+				NodeName: "node-1", PodName: "attempt-1",
+				State:   workloadsv1alpha2.CustomizedActionStatePending,
+				Reason:  CustomizedActionReasonImagePullFailed,
+				Message: "container=node-check: back-off pulling image",
+			}},
+		},
+	}
+	r := newWarmupReconciler(warmup)
+	recorder := record.NewFakeRecorder(20)
+	r.Recorder = recorder
+
+	if err := r.failWarmupJob(context.Background(), warmup, nil, nil, nil, nil,
+		"InvalidWarmupSpec", "spec is invalid"); err != nil {
+		t.Fatalf("failWarmupJob: %v", err)
+	}
+
+	updated := &workloadsv1alpha2.RoleBasedGroupWarmup{}
+	if err := r.Get(context.Background(), client.ObjectKeyFromObject(warmup), updated); err != nil {
+		t.Fatalf("get updated warmup: %v", err)
+	}
+	if len(updated.Status.CustomizedActionResults) != 1 {
+		t.Fatalf("expected one result, got %#v", updated.Status.CustomizedActionResults)
+	}
+	got := updated.Status.CustomizedActionResults[0]
+	if got.State != workloadsv1alpha2.CustomizedActionStateFailed {
+		t.Fatalf("finalization must mark the pending result failed, got %#v", got)
+	}
+	if got.Reason != CustomizedActionReasonImagePullFailed || got.Message != "container=node-check: back-off pulling image" {
+		t.Fatalf("finalization must preserve specific diagnostics, got %#v", got)
+	}
+
+	events := drainClaudeEvents(recorder)
+	perNode := ""
+	for _, ev := range events {
+		if strings.Contains(ev, "node=node-1") && strings.Contains(ev, "attempt-1") {
+			perNode = ev
+			break
+		}
+	}
+	if perNode == "" {
+		t.Fatalf("expected a per-node transition event for node-1 after finalization, got %v", events)
+	}
+}
