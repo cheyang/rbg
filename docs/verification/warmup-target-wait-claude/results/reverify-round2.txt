@@ -1,0 +1,25 @@
+# re-verify (unit layer) against PR head 60b1b7cb, round 2
+re-verify: manifest = docs/verification/warmup-target-wait-claude/verify-manifest.json
+re-verify: resolving PR head via 'git fetch https://github.com/sgl-project/rbg.git pull/478/head' (machine-independent)
+re-verify: current head = 60b1b7cb0b42f4f01417c616c5fb54f0108ac555
+re-verify: last-reviewed = 9f61d4f73d72bb47e181c81f1d6a9a6de12f0d69  (review delta = 9f61d4f73d72bb47e181c81f1d6a9a6de12f0d69..60b1b7cb0b42f4f01417c616c5fb54f0108ac555)
+re-verify: fixed-ref=60b1b7cb0b42f4f01417c616c5fb54f0108ac555  harness-from=verify/warmup-target-wait-claude
+re-verify: running layer 'unit' (gotest)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+F1     contract  unit         FIXED          pass=1 fail=0 miss=0
+F2     contract  unit         FIXED          pass=1 fail=0 miss=0
+F4-evidence contract  integration  SKIPPED        layer not in --layers
+
+Live layer (manual): L3 (live cluster) skipped this round per the debate setup: unit + integration layers only. The kubectl-level scenarios in the PR body were not re-run against a live cluster; the envtest layer uses the real kube-apiserver 1.31.0 binary (same version as CI), which is where the CEL/ratcheting behavior lives.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/warmup-target-wait-claude/results/reverify
+
+Review delta this round: 9f61d4f73d72bb47e181c81f1d6a9a6de12f0d69..60b1b7cb0b42f4f01417c616c5fb54f0108ac555
+After reviewing that delta, advance the marker for the next round:
+  echo 60b1b7cb0b42f4f01417c616c5fb54f0108ac555 > docs/verification/warmup-target-wait-claude/.last-reviewed && git add docs/verification/warmup-target-wait-claude/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.
+
+[exited with code 0]

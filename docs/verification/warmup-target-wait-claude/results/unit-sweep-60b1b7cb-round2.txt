@@ -1,0 +1,41 @@
+# Unit sweep at PR head 60b1b7cb (round 2, 2026-10-13)
+# go test ./internal/... ./api/... ./pkg/... ./hack/... -count=1
+--- FAIL: TestVerifyN3ExpiredTimeoutNotBypassedByStaleSucceededNode (0.01s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	4.784s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.042s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.150s
+ok  	sigs.k8s.io/rbgs/pkg/component-discovery	0.044s
+ok  	sigs.k8s.io/rbgs/pkg/coordination/coordinationscaling	0.034s
+ok  	sigs.k8s.io/rbgs/pkg/dependency	0.122s
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.149s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance	0.015s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	0.017s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/readiness	0.089s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod	0.018s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/inplaceupdate	0.107s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/readiness	0.018s
+ok  	sigs.k8s.io/rbgs/pkg/port-allocator	0.025s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.252s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.029s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	0.019s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.016s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	0.025s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.115s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.022s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode	0.039s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision	0.027s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/sync	0.093s
+ok  	sigs.k8s.io/rbgs/pkg/scale	0.015s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler	0.106s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/common	0.079s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/k8s-scheduler-plugin	0.074s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/volcano	0.064s
+ok  	sigs.k8s.io/rbgs/pkg/utils	0.080s
+ok  	sigs.k8s.io/rbgs/pkg/utils/expectations	0.004s
+ok  	sigs.k8s.io/rbgs/pkg/utils/history	0.012s
+ok  	sigs.k8s.io/rbgs/pkg/utils/requeueduration	0.003s
+ok  	sigs.k8s.io/rbgs/pkg/webhook	0.058s
+ok  	sigs.k8s.io/rbgs/pkg/webhook/cert/writer	1.106s
+ok  	sigs.k8s.io/rbgs/hack/gen-helm-rbac	0.004s
+FAIL

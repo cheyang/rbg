@@ -1,0 +1,147 @@
+=== RUN   TestVerifyC1MissingTargetWaitsThenRecovers
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-c1","namespace":"default"}}
+2026-10-11T02:20:43+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"v478-c1","namespace":"default"}, "name": "v478-c1-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"v478-c1-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getDesiredNodesToWarmup
+	/tmp/wt478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:508
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/wt478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:184
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/wt478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:130
+sigs.k8s.io/rbgs/internal/controller/workloads.TestVerifyC1MissingTargetWaitsThenRecovers
+	/tmp/wt478-base/internal/controller/workloads/verify_pr478_claude_test.go:98
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-11T02:20:43+08:00	INFO	Warmup job failed	{"warmup": {"name":"v478-c1","namespace":"default"}, "reason": "InvalidTarget", "succeeded": 0, "failed": 0}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-c1","namespace":"default"}, "duration": "1.356164ms"}
+    verify_pr478_claude_test.go:104: while target is missing, phase should be Running, got "Failed" (conditions=[]v1.Condition{v1.Condition{Type:"Failed", Status:"True", ObservedGeneration:0, LastTransitionTime:time.Date(2026, time.October, 11, 2, 20, 43, 0, time.Local), Reason:"InvalidTarget", Message:"failed to get RoleBasedGroup default/v478-c1-rbg: rolebasedgroups.workloads.x-k8s.io \"v478-c1-rbg\" not found"}})
+--- FAIL: TestVerifyC1MissingTargetWaitsThenRecovers (0.04s)
+=== RUN   TestVerifyC2UnscheduledTargetPodsWaitInsteadOfCompleting
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-c2","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"v478-c2","namespace":"default"}, "count": 1}
+2026-10-11T02:20:43+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"v478-c2","namespace":"default"}, "rbg": "v478-c2-rbg", "roles": 0, "nodes": 0}
+2026-10-11T02:20:43+08:00	INFO	No nodes matched, completing immediately	{"warmup": {"name":"v478-c2","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Updated status	{"warmup": {"name":"v478-c2","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 0, "failed": 0}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-c2","namespace":"default"}, "duration": "1.366515ms"}
+    verify_pr478_claude_test.go:155: unscheduled target Pods must not complete the Warmup (desired=0, conditions=[]v1.Condition{v1.Condition{Type:"Complete", Status:"True", ObservedGeneration:0, LastTransitionTime:time.Date(2026, time.October, 11, 2, 20, 43, 0, time.Local), Reason:"NoNodesMatched", Message:"No nodes matched the target configuration"}})
+--- FAIL: TestVerifyC2UnscheduledTargetPodsWaitInsteadOfCompleting (0.00s)
+=== RUN   TestVerifyC3MissingTargetFailsAfterGlobalTimeoutFromCreation
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-c3","namespace":"default"}}
+2026-10-11T02:20:43+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"v478-c3","namespace":"default"}, "name": "v478-c3-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"v478-c3-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getDesiredNodesToWarmup
+	/tmp/wt478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:508
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/wt478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:184
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/wt478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:130
+sigs.k8s.io/rbgs/internal/controller/workloads.TestVerifyC3MissingTargetFailsAfterGlobalTimeoutFromCreation
+	/tmp/wt478-base/internal/controller/workloads/verify_pr478_claude_test.go:184
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-11T02:20:43+08:00	INFO	Warmup job failed	{"warmup": {"name":"v478-c3","namespace":"default"}, "reason": "InvalidTarget", "succeeded": 0, "failed": 0}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-c3","namespace":"default"}, "duration": "1.031454ms"}
+--- PASS: TestVerifyC3MissingTargetFailsAfterGlobalTimeoutFromCreation (0.00s)
+=== RUN   TestVerifyC4NoPodsAtAllStillCompletesNoNodesMatched
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-c4","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"v478-c4","namespace":"default"}, "count": 1}
+2026-10-11T02:20:43+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"v478-c4","namespace":"default"}, "rbg": "v478-c4-rbg", "roles": 0, "nodes": 0}
+2026-10-11T02:20:43+08:00	INFO	No nodes matched, completing immediately	{"warmup": {"name":"v478-c4","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Updated status	{"warmup": {"name":"v478-c4","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 0, "failed": 0}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-c4","namespace":"default"}, "duration": "957.092µs"}
+--- PASS: TestVerifyC4NoPodsAtAllStillCompletesNoNodesMatched (0.00s)
+=== RUN   TestVerifyC5BlankImageFailsInControllerNoPods
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-c5","namespace":"default"}}
+2026-10-11T02:20:43+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"v478-c5","namespace":"default"}, "error": "spec.targetNodes.customizedAction.containers[0].image must not be empty"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/wt478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:179
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/wt478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:130
+sigs.k8s.io/rbgs/internal/controller/workloads.TestVerifyC5BlankImageFailsInControllerNoPods
+	/tmp/wt478-base/internal/controller/workloads/verify_pr478_claude_test.go:255
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-11T02:20:43+08:00	INFO	Warmup job failed	{"warmup": {"name":"v478-c5","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-c5","namespace":"default"}, "duration": "1.015893ms"}
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-c5","namespace":"default"}}
+2026-10-11T02:20:43+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"v478-c5","namespace":"default"}, "error": "spec.targetNodes.customizedAction.containers[0].image must not be empty"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/wt478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:179
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/wt478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:130
+sigs.k8s.io/rbgs/internal/controller/workloads.TestVerifyC5BlankImageFailsInControllerNoPods
+	/tmp/wt478-base/internal/controller/workloads/verify_pr478_claude_test.go:255
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-11T02:20:43+08:00	INFO	Warmup job failed	{"warmup": {"name":"v478-c5","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-c5","namespace":"default"}, "duration": "931.821µs"}
+--- PASS: TestVerifyC5BlankImageFailsInControllerNoPods (0.01s)
+=== RUN   TestVerifyF1TargetDeletedAfterPodsSucceededReachesTerminal
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-f1","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"v478-f1","namespace":"default"}, "count": 1}
+2026-10-11T02:20:43+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"v478-f1","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-10-11T02:20:43+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"v478-f1","namespace":"default"}, "rbg": "v478-f1-rbg", "roles": 1, "nodes": 1}
+2026-10-11T02:20:43+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"v478-f1","namespace":"default"}, "node": "node-1"}
+2026-10-11T02:20:43+08:00	INFO	Setting start time	{"warmup": {"name":"v478-f1","namespace":"default"}, "time": "2026-10-11 02:20:43.465410962 +0800 CST m=+0.065110585"}
+2026-10-11T02:20:43+08:00	INFO	Warmup job running	{"warmup": {"name":"v478-f1","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Updated status	{"warmup": {"name":"v478-f1","namespace":"default"}, "phase": "Running", "desired": 1, "active": 1, "succeeded": 0, "failed": 0}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-f1","namespace":"default"}, "duration": "2.204012ms"}
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-f1","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"v478-f1","namespace":"default"}, "count": 1}
+2026-10-11T02:20:43+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"v478-f1","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-10-11T02:20:43+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"v478-f1","namespace":"default"}, "rbg": "v478-f1-rbg", "roles": 1, "nodes": 1}
+2026-10-11T02:20:43+08:00	INFO	Warmup job completed	{"warmup": {"name":"v478-f1","namespace":"default"}, "succeeded": 1, "failed": 0}
+2026-10-11T02:20:43+08:00	INFO	Updated status	{"warmup": {"name":"v478-f1","namespace":"default"}, "phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-f1","namespace":"default"}, "duration": "1.144158ms"}
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-f1b","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"v478-f1b","namespace":"default"}, "count": 1}
+2026-10-11T02:20:43+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"v478-f1b","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-10-11T02:20:43+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"v478-f1b","namespace":"default"}, "rbg": "v478-f1b-rbg", "roles": 1, "nodes": 1}
+2026-10-11T02:20:43+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"v478-f1b","namespace":"default"}, "node": "node-1"}
+2026-10-11T02:20:43+08:00	INFO	Setting start time	{"warmup": {"name":"v478-f1b","namespace":"default"}, "time": "2026-10-11 02:20:43.472217156 +0800 CST m=+0.071916779"}
+2026-10-11T02:20:43+08:00	INFO	Warmup job running	{"warmup": {"name":"v478-f1b","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Updated status	{"warmup": {"name":"v478-f1b","namespace":"default"}, "phase": "Running", "desired": 1, "active": 1, "succeeded": 0, "failed": 0}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-f1b","namespace":"default"}, "duration": "2.201443ms"}
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-f1b","namespace":"default"}}
+2026-10-11T02:20:43+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"v478-f1b","namespace":"default"}, "name": "v478-f1b-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"v478-f1b-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getDesiredNodesToWarmup
+	/tmp/wt478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:508
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/wt478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:184
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/wt478-base/internal/controller/workloads/rolebasedgroupwarmup_controller.go:130
+sigs.k8s.io/rbgs/internal/controller/workloads.TestVerifyF1TargetDeletedAfterPodsSucceededReachesTerminal
+	/tmp/wt478-base/internal/controller/workloads/verify_pr478_claude_test.go:338
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-11T02:20:43+08:00	INFO	Warmup job failed	{"warmup": {"name":"v478-f1b","namespace":"default"}, "reason": "InvalidTarget", "succeeded": 1, "failed": 0}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-f1b","namespace":"default"}, "duration": "1.001073ms"}
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-f1b","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-f1b","namespace":"default"}, "duration": "350ns"}
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-f1b","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-f1b","namespace":"default"}, "duration": "260ns"}
+--- PASS: TestVerifyF1TargetDeletedAfterPodsSucceededReachesTerminal (0.01s)
+=== RUN   TestVerifyF2CountersAndCompletionFrozenDuringWait
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-f2","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"v478-f2","namespace":"default"}, "count": 1}
+2026-10-11T02:20:43+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"v478-f2","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-10-11T02:20:43+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"v478-f2","namespace":"default"}, "rbg": "v478-f2-rbg", "roles": 1, "nodes": 1}
+2026-10-11T02:20:43+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"v478-f2","namespace":"default"}, "node": "node-1"}
+2026-10-11T02:20:43+08:00	INFO	Setting start time	{"warmup": {"name":"v478-f2","namespace":"default"}, "time": "2026-10-11 02:20:43.479000579 +0800 CST m=+0.078700232"}
+2026-10-11T02:20:43+08:00	INFO	Warmup job running	{"warmup": {"name":"v478-f2","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Updated status	{"warmup": {"name":"v478-f2","namespace":"default"}, "phase": "Running", "desired": 1, "active": 1, "succeeded": 0, "failed": 0}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-f2","namespace":"default"}, "duration": "2.551564ms"}
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-f2","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"v478-f2","namespace":"default"}, "count": 2}
+2026-10-11T02:20:43+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"v478-f2","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-10-11T02:20:43+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"v478-f2","namespace":"default"}, "rbg": "v478-f2-rbg", "roles": 1, "nodes": 1}
+2026-10-11T02:20:43+08:00	INFO	Warmup job completed	{"warmup": {"name":"v478-f2","namespace":"default"}, "succeeded": 1, "failed": 0}
+2026-10-11T02:20:43+08:00	INFO	Updated status	{"warmup": {"name":"v478-f2","namespace":"default"}, "phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-f2","namespace":"default"}, "duration": "1.108567ms"}
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-f2","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-f2","namespace":"default"}, "duration": "450ns"}
+2026-10-11T02:20:43+08:00	INFO	Start reconciling	{"warmup": {"name":"v478-f2","namespace":"default"}}
+2026-10-11T02:20:43+08:00	INFO	Finished reconciling	{"warmup": {"name":"v478-f2","namespace":"default"}, "duration": "160ns"}
+    verify_pr478_claude_test.go:394: warmup completed despite pending scale-out Pod
+--- PASS: TestVerifyF2CountersAndCompletionFrozenDuringWait (0.01s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.086s
+FAIL

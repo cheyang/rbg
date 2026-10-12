@@ -1,0 +1,36 @@
+=== RUN   TestVerifyP0cCRDRuleFreezesStatusOn131
+=== RUN   TestVerifyP0cCRDRuleFreezesStatusOn131/1.31.0-linux-amd64
+2026-10-11T02:20:48+08:00	DEBUG	controller-runtime.test-env	starting control plane
+2026-10-11T02:20:50+08:00	DEBUG	controller-runtime.test-env	installing CRDs
+2026-10-11T02:20:50+08:00	DEBUG	controller-runtime.test-env	installing webhooks
+2026-10-11T02:20:53+08:00	INFO	spec.targetNodes.customizedAction.containers[0]: Invalid value: "object": customized action container image must not be empty
+    verify_pr478_envtest_test.go:308: A/B result: main-path update with #466 rule (ratchet control): <nil>
+    verify_pr478_envtest_test.go:309: A/B result: status write with #466 rule: RoleBasedGroupWarmup.workloads.x-k8s.io "verify478-frozen" is invalid: spec.targetNodes.customizedAction.containers[0]: Invalid value: "object": customized action container image must not be empty
+    verify_pr478_envtest_test.go:310: A/B result: status write with PR CRD:  <nil>
+=== RUN   TestVerifyP0cCRDRuleFreezesStatusOn131/1.36.2-linux-amd64
+2026-10-11T02:20:53+08:00	DEBUG	controller-runtime.test-env	starting control plane
+2026-10-11T02:20:56+08:00	DEBUG	controller-runtime.test-env	installing CRDs
+2026-10-11T02:20:56+08:00	DEBUG	controller-runtime.test-env	installing webhooks
+2026-10-11T02:20:59+08:00	INFO	spec.targetNodes.customizedAction.containers[0]: Invalid value: "object": customized action container image must not be empty
+    verify_pr478_envtest_test.go:308: A/B result: main-path update with #466 rule (ratchet control): <nil>
+    verify_pr478_envtest_test.go:309: A/B result: status write with #466 rule: RoleBasedGroupWarmup.workloads.x-k8s.io "verify478-frozen" is invalid: spec.targetNodes.customizedAction.containers[0]: Invalid value: "object": customized action container image must not be empty
+    verify_pr478_envtest_test.go:310: A/B result: status write with PR CRD:  <nil>
+--- PASS: TestVerifyP0cCRDRuleFreezesStatusOn131 (10.95s)
+    --- PASS: TestVerifyP0cCRDRuleFreezesStatusOn131/1.31.0-linux-amd64 (5.46s)
+    --- PASS: TestVerifyP0cCRDRuleFreezesStatusOn131/1.36.2-linux-amd64 (5.46s)
+=== RUN   TestVerifyP0dImagesMinLengthRatchetClaim
+=== RUN   TestVerifyP0dImagesMinLengthRatchetClaim/1.31.0-linux-amd64
+2026-10-11T02:20:59+08:00	DEBUG	controller-runtime.test-env	starting control plane
+2026-10-11T02:21:01+08:00	DEBUG	controller-runtime.test-env	installing CRDs
+2026-10-11T02:21:01+08:00	DEBUG	controller-runtime.test-env	installing webhooks
+    verify_pr478_envtest_test.go:403: A/B result: images minLength status write: <nil>
+=== RUN   TestVerifyP0dImagesMinLengthRatchetClaim/1.36.2-linux-amd64
+2026-10-11T02:21:04+08:00	DEBUG	controller-runtime.test-env	starting control plane
+2026-10-11T02:21:06+08:00	DEBUG	controller-runtime.test-env	installing CRDs
+2026-10-11T02:21:06+08:00	DEBUG	controller-runtime.test-env	installing webhooks
+    verify_pr478_envtest_test.go:403: A/B result: images minLength status write: <nil>
+--- PASS: TestVerifyP0dImagesMinLengthRatchetClaim (9.67s)
+    --- PASS: TestVerifyP0dImagesMinLengthRatchetClaim/1.31.0-linux-amd64 (4.73s)
+    --- PASS: TestVerifyP0dImagesMinLengthRatchetClaim/1.36.2-linux-amd64 (4.92s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	20.633s
