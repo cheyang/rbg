@@ -77,6 +77,7 @@ Actions and results:
 | Bites check for the new contract | RED on previous head `feb77ba7` (`results/l1-unit-previous-head-terminating-polarity.txt`), GREEN on `9b6c83eb` |
 | New premise guard | `TestZZVerifyTerminatingForeignWorkloadRefused` — after the blanket terminating check was dropped, the foreign-uid check is the only thing refusing a TERMINATING stale-uid leftover; red on base, green on both PR heads |
 | Polarity of the author's own new tests | `TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn` and `TestRoleBasedGroupReconciler_CleanupRunsWhenOwnedWorkloadTerminating` are RED on `feb77ba7` (head test files grafted; `results/archive/author-tests-on-feb77ba7-polarity.txt`), green on `9b6c83eb` — they genuinely pin the fix |
+| F-cleanup-gate base attribution | canary FLIPS on base `fd84f3b3` (orphan adopted, no wedge, cleanup runs) — the wedge-skips-cleanup trigger is introduced by the PR's intended claim refusals; the step ordering itself pre-exists |
 | New residual-gap canary | `TestZZVerifyCleanupSkippedWhileSiblingRoleWedged` (F-cleanup-gate / review F5): any persistent `reconcileRoles` error (unlabeled orphan, foreign uid until GC, unmet dependency) still skips the step-9 cleanup, so a removed role's leftover leaks for the whole wedge. CANARY, passes on `9b6c83eb` (= behavior present); flip if cleanup starts running on role-reconcile errors |
 
 Round-3 re-verify table on head `9b6c83eb` (`results/reverify/`):
