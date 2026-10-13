@@ -52,8 +52,8 @@ Author's response to the three-source review wave (diw-zw 4 bugs + Copilot mediu
 | diw-zw [API]: status enums / nested bounds not CRD-enforced | `+kubebuilder:validation:Enum` on both states, MaxLength 128/1024, containers MaxItems 1024 | **Fixed** |
 | diw-zw [security]: diagnostic text read surface | documented on both message fields ("same care as Pod logs") | **Addressed by docs** |
 | diw-zw [nit]: sort in dedup loop | sort moved after the merge loop | **Fixed** |
-| diw-zw [perf]: bounds before materializing | not in this delta | **Open (non-blocking)** |
-| diw-zw [test]: 15s transient sampling | not in this delta | **Open (non-blocking)** |
+| diw-zw [perf]: bounds before materializing | not in this delta (author did not claim it either) | **Open (non-blocking, sole leftover)** |
+| diw-zw [test]: 15s transient sampling | removed in dab003ce (e2e now asserts only the terminal Timeout; initially missed in my round-4 delta summary, corrected in PR comment issuecomment-6138100729) | **Fixed** |
 
 My harness at `dab003ce`: all 6 tests green (`results/unit-layer-round4.txt`); full suite
 (`internal/controller/workloads`, `api/workloads`) green. Author added 508 lines of tests.
