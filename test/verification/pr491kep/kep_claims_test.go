@@ -232,24 +232,39 @@ func kepReadme(t *testing.T) string {
 	return readFile(t, "keps/455-rbgs-rolling-update/README.md")
 }
 
-// F1 [finding]: the KEP gates InPlaceUpdate availability on the RBG condition
-// RollingUpdateInProgress (see C3: no controller publishes it today), yet the
-// KEP never states that publishing this condition is NEW RBG-controller work in
-// scope for this KEP, nor specifies when it is set/cleared. Fixed state: the
-// KEP text explicitly says the condition is not currently published and that
-// this KEP adds/specifies that RBG-controller behavior.
-// Polarity: contract. FAILS on the PR head = finding reproduced.
+// F1 [finding, round-1]: the KEP gated InPlaceUpdate availability on the RBG
+// condition RollingUpdateInProgress (C3: no controller publishes it today)
+// without designing it. ROUND-2 CONTRACT UPDATE (harness-update, recorded in
+// README): the round-2 head (b03a7e6) added a "Child Rollout Barrier" design
+// section (producer on the RBG controller, ordering invariant, consumer gate),
+// which satisfies the round-1 ask's first option. The contract is updated
+// accordingly: the KEP must carry the barrier design section. FAILS on the
+// round-1 head (no design), PASSES on the round-2 head. The residual defect in
+// the new consumer rule is tracked separately as R2-N1 in kep_round2_test.go.
+// Polarity: contract.
 func TestVerify_F1_KEPStatesRollingUpdateInProgressIsNewWork(t *testing.T) {
 	readme := kepReadme(t)
 	if !strings.Contains(readme, "RollingUpdateInProgress") {
 		t.Fatalf("KEP no longer references RollingUpdateInProgress at all; harness-update needed")
 	}
-	// Accept any explicit acknowledgment near the condition name that it is
-	// currently absent / must be added (i.e. new RBG-controller scope).
-	re := regexp.MustCompile(`(?i)RollingUpdateInProgress[^\n]{0,400}(not (currently )?(published|implemented|set|emitted)|does not (yet )?(exist|publish)|new (RBG[- ]controller|condition|behavior)|add(ed|s)? (to|by|in) (the )?RBG|must (first )?(be )?(publish|implement))` +
-		`|(?i)(not (currently )?(published|implemented|set|emitted)|does not (yet )?(exist|publish)|new (RBG[- ]controller|condition|behavior)|add(ed|s)? (to|by|in) (the )?RBG|must (first )?(be )?(publish|implement))[^\n]{0,400}RollingUpdateInProgress`)
-	if !re.MatchString(readme) {
-		t.Errorf("F1 reproduced: KEP relies on RBG RollingUpdateInProgress as the InPlaceUpdate availability barrier but never states that no controller publishes it today (verified by C3) nor that adding it is in-scope work")
+	i := strings.Index(readme, "### Child Rollout Barrier")
+	if i < 0 {
+		t.Errorf("F1 reproduced: KEP relies on RBG RollingUpdateInProgress as the InPlaceUpdate " +
+			"availability barrier but carries no design for it (no Child Rollout Barrier section)")
+		return
+	}
+	j := strings.Index(readme[i:], "### Status")
+	if j < 0 {
+		t.Fatalf("KEP structure changed: no Status section after Child Rollout Barrier")
+	}
+	sec := readme[i : i+j]
+	for _, want := range []string{"**Producer.**", "**Consumer.**", "ObservedGeneration", "groupSetChildReady"} {
+		if !strings.Contains(sec, want) {
+			t.Errorf("F1 barrier design incomplete: Child Rollout Barrier section lacks %q", want)
+		}
+	}
+	if !regexp.MustCompile(`(?i)RBG controller checks every role`).MatchString(sec) {
+		t.Errorf("F1 barrier design incomplete: producer (RBG controller status construction) not specified")
 	}
 }
 

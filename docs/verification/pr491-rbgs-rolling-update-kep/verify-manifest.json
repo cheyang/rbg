@@ -14,7 +14,7 @@
     "runsAgainst": "base",
     "layer": "unit",
     "verdict": "confirmed",
-    "evidence": "C1/C2 pass on the PR head: newRBGForSet and updateExistingRBGs handle only Spec.Roles; RoleBasedGroupSpec holds exactly {roles, roleTemplates}. See results/unit.out.",
+    "evidence": "C1/C2 pass on the PR head: newRBGForSet and updateExistingRBGs handle only Spec.Roles; RoleBasedGroupSpec holds exactly {roles, roleTemplates}. Re-verified at b03a7e6 (round 2): code at head byte-identical to merge-base 0821cb5b outside keps/.",
     "match": [
       "TestVerify_C1_ChildrenReceiveOnlyRolesToday",
       "TestVerify_C2_RoleBasedGroupSpecHasOnlyTwoFields"
@@ -35,18 +35,100 @@
         "TestVerify_F1_KEPStatesRollingUpdateInProgressIsNewWork",
         "TestVerify_C3_RollingUpdateInProgressNeverPublished"
       ],
-      "note": "F1 fails on the PR head (reproduction): the KEP gates InPlaceUpdate availability on the RBG RollingUpdateInProgress condition, which no controller publishes today (C3), and never states that publishing it is new in-scope RBG-controller work. Fixed when the KEP says so explicitly (or the condition gains a producer, flipping C3)."
+      "note": "Round-1 (719851a): reproduced — KEP gated on RollingUpdateInProgress with no producer/design. Round-2 (b03a7e6): FIXED — the KEP added the Child Rollout Barrier design section. Contract updated (harness-update): was 'KEP acknowledges the condition is new work', now 'KEP carries the barrier design section (producer/ordering/consumer)'. The residual consumer-rule defect is tracked as N1."
     },
     {
       "id": "F2",
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerify_F2_KEPStatesCheckpointPersistence"
+        "TestVerify_R2F2_ScaleSubresourceInteractionDocumented"
       ],
-      "note": "F2 fails on the PR head (reproduction): the KEP requires a restart-safe groupset-observed-replicas checkpoint but never specifies where it is persisted. Fixed when the KEP names a storage location (status field or annotation)."
+      "note": "Round-1 consensus F2 (Claude's id; codex harness adds coverage this round): status.replicas redefined with surge, feeding the scale subresource undocumented. Round-2: FIXED — Status section documents the interaction and scopes HPA-during-surge out. Guard fails on 719851a, passes on b03a7e6."
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R2F3F4_ControllerOwnedKeysEnumeratedAndSynced"
+      ],
+      "note": "Round-1 consensus F3: controller-owned-key exclusion did not cover the sync/drift path. Round-2: FIXED — one enumerated list covers revision hashing, drift comparison, and metadata sync, and syncRBGMetadata carries the keys over. Guard fails on 719851a, passes on b03a7e6."
+    },
+    {
+      "id": "F4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R2F3F4_ControllerOwnedKeysEnumeratedAndSynced"
+      ],
+      "note": "Round-1 consensus F4: exclusion list under-specified ('such as'); conversion-injected v1alpha1-coordination lands in groupTemplate.annotations. Round-2: FIXED — the list names all four keys including the conversion family. Same guard as F3."
+    },
+    {
+      "id": "F5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_F2_KEPStatesCheckpointPersistence",
+        "TestVerify_R2F5_CheckpointStorageNamed"
+      ],
+      "note": "Round-1 codex F2 (consensus F5): restart-safe groupset-observed-replicas checkpoint had no specified storage. Round-2: FIXED — appendix names annotation rbg.workloads.x-k8s.io/groupset-observed-replicas on the RBGSet object."
+    },
+    {
+      "id": "F6",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R2F6_NumericRevisionInformationalOnly"
+      ],
+      "note": "Round-1 consensus F6: numeric revision staleness on A->B->A template revert vs GetHighestRevision. Round-2: FIXED — appendix declares the numeric field informational-only and name equality canonical."
+    },
+    {
+      "id": "F7",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R2F7_PartitionResolutionTimingPinned"
+      ],
+      "note": "Round-1 consensus F7: percentage-partition resolution timing unpinned. Round-2: FIXED — appendix pins resolution against current spec.replicas at reconcile time, no retroactive re-evaluation of completed batches."
+    },
+    {
+      "id": "Q1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R2Q1_AdmissionVerdictForExplicitZero"
+      ],
+      "note": "Round-1 consensus Q1: explicit maxUnavailable: 0 under InPlaceUpdate — admission-reject or coerce? Round-2: ANSWERED — appendix: the webhook rejects it; resolved-zero (positive percentage rounding to 0) still coerces to 1."
+    },
+    {
+      "id": "Q2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R2Q2_DowngradeStanceStated"
+      ],
+      "note": "Round-1 consensus Q2: operator-downgrade stance for persisted spec.rolloutStrategy. Round-2: ANSWERED — appendix downgrade paragraph (strategy ignored, legacy ungated updates, conversion webhook preserves fields for re-upgrade)."
+    },
+    {
+      "id": "M1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R2M1_V1alpha1RoundTripCoveredByTestPlan"
+      ],
+      "note": "Round-1 consensus M1: test-plan gaps. Round-2: PARTIAL — barrier (unit+reconcile+e2e), bootstrap, controller-owned-key, and scale-subresource entries were added; the v1alpha1 round-trip stash/restore entry is still missing (this test is RED at b03a7e6 = reproduction), and the two Reviewer C wording catches (in-place ordering sentence; 'old template, not the current one') are unchanged."
+    },
+    {
+      "id": "N1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R2N1_AbsentBarrierExceptionIsGenerationGated"
+      ],
+      "note": "NEW round-2 finding (major): the consumer rule's absent-condition exception is not generation-gated, so a just-bumped legacy child reads ready in the window before the child controller stamps RollingUpdateInProgress=True (producer invariant cannot cover that window). RED at b03a7e6 = reproduction. Mechanism exhibits: TestVerify_N1Exhibit_SpecifiedRuleAdmitsConcurrentRolls (>=2 children rolling with maxUnavailable=1) and TestVerify_N1Exhibit_SpecifiedRuleAdmitsSilentStaleCompletion (child controller down -> set declares complete with 0 children rolled); both also assert the generation-gated variant is safe."
     }
   ],
-  "integrationNote": "Integration (envtest) layer intentionally omitted: the PR diff is docs-only (keps/455-rbgs-rolling-update/), so there is no controller behavior to exercise. The unit layer asserts the KEP's factual claims against the repository source itself.",
+  "integrationNote": "Integration (envtest) layer intentionally omitted: the PR diff is docs-only (keps/455-rbgs-rolling-update/), so there is no controller behavior to exercise. The unit layer asserts the KEP's factual claims against the repository source itself; N1's mechanism is demonstrated by a deterministic discrete-event simulation (TestVerify_N1Exhibit_*) since the rollout path does not exist in code yet.",
   "liveNote": "L3 not applicable for a KEP-only PR."
 }
