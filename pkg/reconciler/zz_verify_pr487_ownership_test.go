@@ -267,13 +267,22 @@ func TestZZVerifyOwnWorkloadManagedNormally(t *testing.T) {
 	}
 }
 
-// TestZZVerifyTerminatingWorkloadNotClaimed pins the "terminating" row: a workload that
-// is going away must report 0/0 and refuse reconcile even when this rbg controls it,
-// because the name is about to be free.
+// TestZZVerifyTerminatingOwnedWorkloadClaimable pins the round-3 contract (commit 9b6c83eb,
+// "keep RBG-owned terminating workloads claimable so cleanup runs"): a workload that is
+// terminating but still controlled by THIS rbg must stay claimable. Rejecting it aborted the
+// role reconcile with an error, which propagated out of reconcileRoles and skipped the cleanup
+// step, so a role removed from the spec kept its leftover workload and dependents running for
+// as long as the terminating workload lingered (a finalizer can make that forever).
 //
-//	red on base  (1/1, ready, nil error — base has no terminating check)
-//	green on head (0/0, not ready, error)
-func TestZZVerifyTerminatingWorkloadNotClaimed(t *testing.T) {
+// This replaces the round-2 contract TestZZVerifyTerminatingWorkloadNotClaimed: the "refuse all
+// terminating workloads" behavior was deliberately reverted by the PR author in 9b6c83eb after
+// the cleanup-skip mechanism was identified (review finding F2 / F-terminating: fixed-by-PR,
+// harness updated to the new intended contract).
+//
+//	red on feb77ba7 (ErrWorkloadNotClaimable "is terminating" aborts the reconcile)
+//	green on 9b6c83eb (claimable: reconcile proceeds, status is read from the workload)
+//	red on base fd84f3b3 would be fine either way (base has no claim check at all)
+func TestZZVerifyTerminatingOwnedWorkloadClaimable(t *testing.T) {
 	scheme := zzVerifyScheme(t)
 	for _, k := range zzVerifyKinds() {
 		t.Run(k.kind, func(t *testing.T) {
@@ -292,16 +301,62 @@ func TestZZVerifyTerminatingWorkloadNotClaimed(t *testing.T) {
 			c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(terminating).Build()
 			rec := k.reconciler(scheme, c)
 
+			require.NoError(t, rec.Reconciler(ctx, rbg, &role, nil, zzVerifyRevision),
+				"a terminating workload the RBG owns must not abort the role reconcile before cleanup")
+
 			status, err := rec.ConstructRoleStatus(ctx, rbg, &role)
 			require.NoError(t, err)
-			assert.Zero(t, status.ReadyReplicas, "a terminating workload must report 0 ready")
+			assert.Equal(t, int32(1), status.ReadyReplicas,
+				"an owned terminating workload stays claimable: its status is still read")
+		})
+	}
+}
+
+// TestZZVerifyTerminatingForeignWorkloadRefused guards the premise after the blanket
+// terminating check was removed in 9b6c83eb: a TERMINATING leftover that is still controlled
+// by a stale uid (a same-named predecessor deleted in the background, GC mid-flight) must
+// still be refused. The foreign-uid check is now the ONLY thing between a re-created rbg and
+// readiness inheritance from such a leftover.
+//
+//	red on base fd84f3b3 (no claim check: 1/1 + ready read from the stale leftover)
+//	green on 9b6c83eb (foreign uid refused, terminating or not)
+func TestZZVerifyTerminatingForeignWorkloadRefused(t *testing.T) {
+	scheme := zzVerifyScheme(t)
+	for _, k := range zzVerifyKinds() {
+		t.Run(k.kind, func(t *testing.T) {
+			ctx := context.Background()
+			role := k.role
+			rbg := zzVerifyRBG(role)
+
+			leftover := k.object(metav1.ObjectMeta{
+				Name:              rbg.GetWorkloadName(&role),
+				Namespace:         rbg.Namespace,
+				Generation:        1,
+				OwnerReferences:   []metav1.OwnerReference{zzVerifyControllerRef(rbg, zzVerifyPreviousUID)},
+				DeletionTimestamp: &metav1.Time{Time: time.Now()},
+				Finalizers:        []string{"zz.verify/finalizer"},
+			})
+			c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(leftover).Build()
+			rec := k.reconciler(scheme, c)
+
+			status, err := rec.ConstructRoleStatus(ctx, rbg, &role)
+			require.NoError(t, err)
+			assert.Zero(t, status.ReadyReplicas,
+				"a terminating leftover of a previous incarnation must not report readiness")
 
 			ready, err := rec.CheckWorkloadReady(ctx, rbg, &role)
 			require.NoError(t, err)
-			assert.False(t, ready, "a terminating workload must not gate dependents as ready")
+			assert.False(t, ready,
+				"a terminating leftover of a previous incarnation must not gate dependents as ready")
 
 			assert.Error(t, rec.Reconciler(ctx, rbg, &role, nil, zzVerifyRevision),
-				"reconcile must wait for a terminating workload to disappear")
+				"a terminating leftover controlled by a stale uid must still be refused")
+
+			got := k.empty()
+			require.NoError(t, c.Get(ctx, client.ObjectKeyFromObject(leftover), got))
+			require.Len(t, got.GetOwnerReferences(), 1)
+			assert.Equal(t, zzVerifyPreviousUID, got.GetOwnerReferences()[0].UID,
+				"the foreign leftover must stay untouched")
 		})
 	}
 }

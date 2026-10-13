@@ -1,0 +1,47 @@
+=== RUN   TestZZVerifyTerminatingOwnedWorkloadClaimable
+=== RUN   TestZZVerifyTerminatingOwnedWorkloadClaimable/RoleInstanceSet
+    zz_verify_pr487_ownership_test.go:304: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/pkg/reconciler/zz_verify_pr487_ownership_test.go:304
+        	Error:      	Received unexpected error:
+        	            	workload is not claimable by this RoleBasedGroup: zz-verify-rbg-worker is terminating
+        	Test:       	TestZZVerifyTerminatingOwnedWorkloadClaimable/RoleInstanceSet
+        	Messages:   	a terminating workload the RBG owns must not abort the role reconcile before cleanup
+=== RUN   TestZZVerifyTerminatingOwnedWorkloadClaimable/Deployment
+    zz_verify_pr487_ownership_test.go:304: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/pkg/reconciler/zz_verify_pr487_ownership_test.go:304
+        	Error:      	Received unexpected error:
+        	            	workload is not claimable by this RoleBasedGroup: zz-verify-rbg-worker is terminating
+        	Test:       	TestZZVerifyTerminatingOwnedWorkloadClaimable/Deployment
+        	Messages:   	a terminating workload the RBG owns must not abort the role reconcile before cleanup
+=== RUN   TestZZVerifyTerminatingOwnedWorkloadClaimable/StatefulSet
+    zz_verify_pr487_ownership_test.go:304: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/pkg/reconciler/zz_verify_pr487_ownership_test.go:304
+        	Error:      	Received unexpected error:
+        	            	workload is not claimable by this RoleBasedGroup: zz-verify-rbg-worker is terminating
+        	Test:       	TestZZVerifyTerminatingOwnedWorkloadClaimable/StatefulSet
+        	Messages:   	a terminating workload the RBG owns must not abort the role reconcile before cleanup
+=== RUN   TestZZVerifyTerminatingOwnedWorkloadClaimable/LeaderWorkerSet
+    zz_verify_pr487_ownership_test.go:304: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/pkg/reconciler/zz_verify_pr487_ownership_test.go:304
+        	Error:      	Received unexpected error:
+        	            	workload is not claimable by this RoleBasedGroup: zz-verify-rbg-worker is terminating
+        	Test:       	TestZZVerifyTerminatingOwnedWorkloadClaimable/LeaderWorkerSet
+        	Messages:   	a terminating workload the RBG owns must not abort the role reconcile before cleanup
+--- FAIL: TestZZVerifyTerminatingOwnedWorkloadClaimable (0.04s)
+    --- FAIL: TestZZVerifyTerminatingOwnedWorkloadClaimable/RoleInstanceSet (0.04s)
+    --- FAIL: TestZZVerifyTerminatingOwnedWorkloadClaimable/Deployment (0.00s)
+    --- FAIL: TestZZVerifyTerminatingOwnedWorkloadClaimable/StatefulSet (0.00s)
+    --- FAIL: TestZZVerifyTerminatingOwnedWorkloadClaimable/LeaderWorkerSet (0.01s)
+=== RUN   TestZZVerifyTerminatingForeignWorkloadRefused
+=== RUN   TestZZVerifyTerminatingForeignWorkloadRefused/RoleInstanceSet
+=== RUN   TestZZVerifyTerminatingForeignWorkloadRefused/Deployment
+=== RUN   TestZZVerifyTerminatingForeignWorkloadRefused/StatefulSet
+=== RUN   TestZZVerifyTerminatingForeignWorkloadRefused/LeaderWorkerSet
+--- PASS: TestZZVerifyTerminatingForeignWorkloadRefused (0.00s)
+    --- PASS: TestZZVerifyTerminatingForeignWorkloadRefused/RoleInstanceSet (0.00s)
+    --- PASS: TestZZVerifyTerminatingForeignWorkloadRefused/Deployment (0.00s)
+    --- PASS: TestZZVerifyTerminatingForeignWorkloadRefused/StatefulSet (0.00s)
+    --- PASS: TestZZVerifyTerminatingForeignWorkloadRefused/LeaderWorkerSet (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.060s
+FAIL

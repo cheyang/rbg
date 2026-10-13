@@ -1,0 +1,1193 @@
+[
+  {
+    "SuitePath": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg",
+    "SuiteDescription": "RoleBasedGroup Controller Suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": true,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 17,
+      "SpecsThatWillRun": 4
+    },
+    "StartTime": "2026-10-14T01:41:28.344264237+08:00",
+    "EndTime": "2026-10-14T01:42:08.966570788+08:00",
+    "RunTime": 40622306551,
+    "SuiteConfig": {
+      "RandomSeed": 1791913288,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": [
+        "PR487 workload ownership claim"
+      ],
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/suite_test.go",
+          "LineNumber": 32
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-14T01:41:28.344291078+08:00",
+        "EndTime": "2026-10-14T01:41:32.180887218+08:00",
+        "RunTime": 3836596150,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-14T01:41:28+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-10-14T01:41:30+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-10-14T01:41:30+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/config/crd/bases\"}\n2026-10-14T01:41:30+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-10-14T01:41:30+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-10-14T01:41:30+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-10-14T01:41:30+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-10-14T01:41:30+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-10-14T01:41:30+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-10-14T01:41:30+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-10-14T01:41:30+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-10-14T01:41:30+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-10-14T01:41:30+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-10-14T01:41:30+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-10-14T01:41:30+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-14T01:41:31+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-14T01:41:32+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/suite_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-10-14T01:41:28.344302448+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testutil/setup.go",
+              "LineNumber": 66
+            },
+            "TimelineLocation": {
+              "Order": 2,
+              "Time": "2026-10-14T01:41:28.34435112+08:00"
+            },
+            "Message": "bootstrapping test environment"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testutil/setup.go",
+              "LineNumber": 98
+            },
+            "TimelineLocation": {
+              "Offset": 4712,
+              "Order": 3,
+              "Time": "2026-10-14T01:41:32.076912464+08:00"
+            },
+            "Message": "setting up controller manager"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/suite_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Offset": 4712,
+              "Order": 5,
+              "Time": "2026-10-14T01:41:32.180886028+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 3836583580,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 38
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 57
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 58
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should create child Deployment for each role",
+        "State": "skipped",
+        "StartTime": "2026-10-14T01:41:32.18095153+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 38
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 57
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 107
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should reject v1alpha2 custom components with duplicate names",
+        "State": "skipped",
+        "StartTime": "2026-10-14T01:41:32.180992442+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 38
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 57
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 140
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should reject v1alpha1 components with duplicate names",
+        "State": "skipped",
+        "StartTime": "2026-10-14T01:41:32.180996772+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 38
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 57
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 169
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should reject RoleInstance components with duplicate names",
+        "State": "skipped",
+        "StartTime": "2026-10-14T01:41:32.181000302+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 38
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 57
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 192
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should allow v1alpha2 templateRef without patch",
+        "State": "skipped",
+        "StartTime": "2026-10-14T01:41:32.181004162+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 38
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 57
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 237
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should reject v1alpha2 role rolloutStrategy with invalid update type",
+        "State": "skipped",
+        "StartTime": "2026-10-14T01:41:32.181007352+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 38
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 57
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 269
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should reject RoleInstanceSet with invalid update strategy type",
+        "State": "skipped",
+        "StartTime": "2026-10-14T01:41:32.181010092+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 38
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 57
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 297
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should accept all valid v1alpha2 update strategy types",
+        "State": "skipped",
+        "StartTime": "2026-10-14T01:41:32.181012952+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 38
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 57
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 336
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should allow updating a valid v1alpha2 rolloutStrategy",
+        "State": "skipped",
+        "StartTime": "2026-10-14T01:41:32.181016183+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR487 workload ownership claim (envtest)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+            "LineNumber": 133
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+          "LineNumber": 154
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "must not report Ready from a leftover workload of a previous incarnation",
+        "State": "passed",
+        "StartTime": "2026-10-14T01:41:32.181021123+08:00",
+        "EndTime": "2026-10-14T01:41:57.383064459+08:00",
+        "RunTime": 25202043327,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.CoordinatedPolicy\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleInstanceSet\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupScalingAdapter\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1.Service\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupSet\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstanceSet\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"source\": \"kind source: *v1.Pod\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupScalingAdapter\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting Controller\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting workers\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"worker count\": 1}\n2026-10-14T01:41:32+08:00\tINFO\tStarting Controller\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting workers\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"worker count\": 1}\n2026-10-14T01:41:32+08:00\tINFO\tStarting Controller\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting workers\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"worker count\": 1}\n2026-10-14T01:41:32+08:00\tINFO\tStarting Controller\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting workers\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"worker count\": 1}\n2026-10-14T01:41:32+08:00\tINFO\tStarting Controller\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-10-14T01:41:32+08:00\tINFO\tStarting workers\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"worker count\": 1}\n2026-10-14T01:41:34+08:00\tINFO\tenqueue: rbg create event\t{\"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:34+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"54b0242a-4446-4a92-a952-8d45f62ddd81\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:34+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"54b0242a-4446-4a92-a952-8d45f62ddd81\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:34+08:00\tINFO\tCurrent revision need to be updated\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"54b0242a-4446-4a92-a952-8d45f62ddd81\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:34+08:00\tINFO\tCreate revision [zz-leftover-rbg-58bf9b8594-1] successfully\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"54b0242a-4446-4a92-a952-8d45f62ddd81\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:34+08:00\tDEBUG\tevents\tSuccessful create revision for RoleBasedGroup\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913292181031853\",\"name\":\"zz-leftover-rbg\",\"uid\":\"bc29c070-dba0-4d42-85ad-7113ceeb6486\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"237\"}, \"reason\": \"SucceedCreateRevision\"}\n2026-10-14T01:41:34+08:00\tINFO\tInitialized discovery config mode\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"54b0242a-4446-4a92-a952-8d45f62ddd81\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"mode\": \"refine\"}\n2026-10-14T01:41:34+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"54b0242a-4446-4a92-a952-8d45f62ddd81\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleBasedGroup\",\"metadata\":{\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"},\"status\":{\"conditions\":[{\"lastTransitionTime\":\"2026-10-13T17:41:34Z\",\"message\":\"Not all role ready\",\"observedGeneration\":1,\"reason\":\"RoleNotReady\",\"status\":\"False\",\"type\":\"Ready\"}],\"observedGeneration\":1,\"roleStatuses\":[{\"name\":\"worker\",\"readyReplicas\":0,\"replicas\":0,\"updatedReplicas\":0}]}}}\n2026-10-14T01:41:34+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"54b0242a-4446-4a92-a952-8d45f62ddd81\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"roleOrder\": [[\"worker\"]]}\n2026-10-14T01:41:34+08:00\tDEBUG\tstart to reconciling deployment workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"54b0242a-4446-4a92-a952-8d45f62ddd81\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:34+08:00\tERROR\tFailed to reconcile workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"54b0242a-4446-4a92-a952-8d45f62ddd81\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:34+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"54b0242a-4446-4a92-a952-8d45f62ddd81\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"duration\": \"308.373544ms\"}\n2026-10-14T01:41:34+08:00\tERROR\tReconciler error\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"54b0242a-4446-4a92-a952-8d45f62ddd81\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:34+08:00\tDEBUG\tevents\tFailed to reconcile role worker: workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913292181031853\",\"name\":\"zz-leftover-rbg\",\"uid\":\"bc29c070-dba0-4d42-85ad-7113ceeb6486\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"240\"}, \"reason\": \"FailedReconcileWorkload\"}\n2026-10-14T01:41:34+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"27cd6acf-3e2a-4795-9ab1-e519ba980180\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:34+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"27cd6acf-3e2a-4795-9ab1-e519ba980180\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:34+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"27cd6acf-3e2a-4795-9ab1-e519ba980180\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"roleOrder\": [[\"worker\"]]}\n2026-10-14T01:41:34+08:00\tDEBUG\tstart to reconciling deployment workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"27cd6acf-3e2a-4795-9ab1-e519ba980180\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:34+08:00\tERROR\tFailed to reconcile workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"27cd6acf-3e2a-4795-9ab1-e519ba980180\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:34+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"27cd6acf-3e2a-4795-9ab1-e519ba980180\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"duration\": \"225.048µs\"}\n2026-10-14T01:41:34+08:00\tERROR\tReconciler error\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"27cd6acf-3e2a-4795-9ab1-e519ba980180\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:34+08:00\tDEBUG\tevents\tFailed to reconcile role worker: workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913292181031853\",\"name\":\"zz-leftover-rbg\",\"uid\":\"bc29c070-dba0-4d42-85ad-7113ceeb6486\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"241\"}, \"reason\": \"FailedReconcileWorkload\"}\n2026-10-14T01:41:34+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5932d837-e9ec-4dfb-85df-00f2174ae7ca\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:34+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5932d837-e9ec-4dfb-85df-00f2174ae7ca\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:34+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5932d837-e9ec-4dfb-85df-00f2174ae7ca\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"roleOrder\": [[\"worker\"]]}\n2026-10-14T01:41:34+08:00\tDEBUG\tstart to reconciling deployment workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5932d837-e9ec-4dfb-85df-00f2174ae7ca\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:34+08:00\tERROR\tFailed to reconcile workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5932d837-e9ec-4dfb-85df-00f2174ae7ca\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:34+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5932d837-e9ec-4dfb-85df-00f2174ae7ca\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"duration\": \"189.976µs\"}\n2026-10-14T01:41:34+08:00\tERROR\tReconciler error\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5932d837-e9ec-4dfb-85df-00f2174ae7ca\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:34+08:00\tDEBUG\tevents\tFailed to reconcile role worker: workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913292181031853\",\"name\":\"zz-leftover-rbg\",\"uid\":\"bc29c070-dba0-4d42-85ad-7113ceeb6486\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"241\"}, \"reason\": \"FailedReconcileWorkload\"}\n2026-10-14T01:41:34+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"2b9181a7-5e1b-40c5-a6ec-7fbf130e60d9\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:34+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"2b9181a7-5e1b-40c5-a6ec-7fbf130e60d9\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:34+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"2b9181a7-5e1b-40c5-a6ec-7fbf130e60d9\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"roleOrder\": [[\"worker\"]]}\n2026-10-14T01:41:34+08:00\tDEBUG\tstart to reconciling deployment workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"2b9181a7-5e1b-40c5-a6ec-7fbf130e60d9\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:34+08:00\tERROR\tFailed to reconcile workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"2b9181a7-5e1b-40c5-a6ec-7fbf130e60d9\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:34+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"2b9181a7-5e1b-40c5-a6ec-7fbf130e60d9\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"duration\": \"173.675µs\"}\n2026-10-14T01:41:34+08:00\tERROR\tReconciler error\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"2b9181a7-5e1b-40c5-a6ec-7fbf130e60d9\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:34+08:00\tDEBUG\tevents\tFailed to reconcile role worker: workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913292181031853\",\"name\":\"zz-leftover-rbg\",\"uid\":\"bc29c070-dba0-4d42-85ad-7113ceeb6486\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"241\"}, \"reason\": \"FailedReconcileWorkload\"}\n2026-10-14T01:41:34+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"ab17084d-8fb8-4ec0-855c-8f0705f312cb\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:34+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"ab17084d-8fb8-4ec0-855c-8f0705f312cb\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:34+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"ab17084d-8fb8-4ec0-855c-8f0705f312cb\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"roleOrder\": [[\"worker\"]]}\n2026-10-14T01:41:34+08:00\tDEBUG\tstart to reconciling deployment workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"ab17084d-8fb8-4ec0-855c-8f0705f312cb\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:34+08:00\tERROR\tFailed to reconcile workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"ab17084d-8fb8-4ec0-855c-8f0705f312cb\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:34+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"ab17084d-8fb8-4ec0-855c-8f0705f312cb\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"duration\": \"177.466µs\"}\n2026-10-14T01:41:34+08:00\tERROR\tReconciler error\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"ab17084d-8fb8-4ec0-855c-8f0705f312cb\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:34+08:00\tDEBUG\tevents\tFailed to reconcile role worker: workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913292181031853\",\"name\":\"zz-leftover-rbg\",\"uid\":\"bc29c070-dba0-4d42-85ad-7113ceeb6486\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"241\"}, \"reason\": \"FailedReconcileWorkload\"}\n2026-10-14T01:41:34+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"fea90a46-02d0-428f-89e6-2a78503fffa5\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:34+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"fea90a46-02d0-428f-89e6-2a78503fffa5\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:34+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"fea90a46-02d0-428f-89e6-2a78503fffa5\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"roleOrder\": [[\"worker\"]]}\n2026-10-14T01:41:34+08:00\tDEBUG\tstart to reconciling deployment workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"fea90a46-02d0-428f-89e6-2a78503fffa5\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:34+08:00\tERROR\tFailed to reconcile workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"fea90a46-02d0-428f-89e6-2a78503fffa5\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:34+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"fea90a46-02d0-428f-89e6-2a78503fffa5\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"duration\": \"177.646µs\"}\n2026-10-14T01:41:34+08:00\tERROR\tReconciler error\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"fea90a46-02d0-428f-89e6-2a78503fffa5\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:34+08:00\tDEBUG\tevents\tFailed to reconcile role worker: workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913292181031853\",\"name\":\"zz-leftover-rbg\",\"uid\":\"bc29c070-dba0-4d42-85ad-7113ceeb6486\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"241\"}, \"reason\": \"FailedReconcileWorkload\"}\n2026-10-14T01:41:34+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"24384870-507e-4a9d-8c07-f942cd6d1d0f\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:34+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"24384870-507e-4a9d-8c07-f942cd6d1d0f\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:34+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"24384870-507e-4a9d-8c07-f942cd6d1d0f\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"roleOrder\": [[\"worker\"]]}\n2026-10-14T01:41:34+08:00\tDEBUG\tstart to reconciling deployment workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"24384870-507e-4a9d-8c07-f942cd6d1d0f\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:34+08:00\tERROR\tFailed to reconcile workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"24384870-507e-4a9d-8c07-f942cd6d1d0f\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:34+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"24384870-507e-4a9d-8c07-f942cd6d1d0f\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"duration\": \"211.317µs\"}\n2026-10-14T01:41:34+08:00\tERROR\tReconciler error\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"24384870-507e-4a9d-8c07-f942cd6d1d0f\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:34+08:00\tDEBUG\tevents\tFailed to reconcile role worker: workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913292181031853\",\"name\":\"zz-leftover-rbg\",\"uid\":\"bc29c070-dba0-4d42-85ad-7113ceeb6486\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"241\"}, \"reason\": \"FailedReconcileWorkload\"}\n2026-10-14T01:41:35+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5cd89c57-2681-4003-8c21-225ab3fc0656\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:35+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5cd89c57-2681-4003-8c21-225ab3fc0656\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:35+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5cd89c57-2681-4003-8c21-225ab3fc0656\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"roleOrder\": [[\"worker\"]]}\n2026-10-14T01:41:35+08:00\tDEBUG\tstart to reconciling deployment workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5cd89c57-2681-4003-8c21-225ab3fc0656\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:35+08:00\tERROR\tFailed to reconcile workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5cd89c57-2681-4003-8c21-225ab3fc0656\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:35+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5cd89c57-2681-4003-8c21-225ab3fc0656\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"duration\": \"179.716µs\"}\n2026-10-14T01:41:35+08:00\tERROR\tReconciler error\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5cd89c57-2681-4003-8c21-225ab3fc0656\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:35+08:00\tDEBUG\tevents\tFailed to reconcile role worker: workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913292181031853\",\"name\":\"zz-leftover-rbg\",\"uid\":\"bc29c070-dba0-4d42-85ad-7113ceeb6486\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"241\"}, \"reason\": \"FailedReconcileWorkload\"}\n2026-10-14T01:41:35+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5bc77349-5467-421b-b165-99f650dcbdca\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:35+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5bc77349-5467-421b-b165-99f650dcbdca\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:35+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5bc77349-5467-421b-b165-99f650dcbdca\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"roleOrder\": [[\"worker\"]]}\n2026-10-14T01:41:35+08:00\tDEBUG\tstart to reconciling deployment workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5bc77349-5467-421b-b165-99f650dcbdca\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:35+08:00\tERROR\tFailed to reconcile workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5bc77349-5467-421b-b165-99f650dcbdca\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:35+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5bc77349-5467-421b-b165-99f650dcbdca\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"duration\": \"283.899µs\"}\n2026-10-14T01:41:35+08:00\tERROR\tReconciler error\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"5bc77349-5467-421b-b165-99f650dcbdca\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:35+08:00\tDEBUG\tevents\tFailed to reconcile role worker: workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913292181031853\",\"name\":\"zz-leftover-rbg\",\"uid\":\"bc29c070-dba0-4d42-85ad-7113ceeb6486\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"241\"}, \"reason\": \"FailedReconcileWorkload\"}\n2026-10-14T01:41:37+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"69180128-6000-4b65-bcc0-32ff2d370d28\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:37+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"69180128-6000-4b65-bcc0-32ff2d370d28\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:37+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"69180128-6000-4b65-bcc0-32ff2d370d28\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"roleOrder\": [[\"worker\"]]}\n2026-10-14T01:41:37+08:00\tDEBUG\tstart to reconciling deployment workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"69180128-6000-4b65-bcc0-32ff2d370d28\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:37+08:00\tERROR\tFailed to reconcile workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"69180128-6000-4b65-bcc0-32ff2d370d28\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:37+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"69180128-6000-4b65-bcc0-32ff2d370d28\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"duration\": \"289.83µs\"}\n2026-10-14T01:41:37+08:00\tERROR\tReconciler error\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"69180128-6000-4b65-bcc0-32ff2d370d28\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:37+08:00\tDEBUG\tevents\tFailed to reconcile role worker: workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913292181031853\",\"name\":\"zz-leftover-rbg\",\"uid\":\"bc29c070-dba0-4d42-85ad-7113ceeb6486\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"241\"}, \"reason\": \"FailedReconcileWorkload\"}\n2026-10-14T01:41:39+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"4286053f-2a0f-44ff-8c46-ecd61e4fd860\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:39+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"4286053f-2a0f-44ff-8c46-ecd61e4fd860\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:39+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"4286053f-2a0f-44ff-8c46-ecd61e4fd860\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"roleOrder\": [[\"worker\"]]}\n2026-10-14T01:41:39+08:00\tDEBUG\tstart to reconciling deployment workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"4286053f-2a0f-44ff-8c46-ecd61e4fd860\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:39+08:00\tERROR\tFailed to reconcile workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"4286053f-2a0f-44ff-8c46-ecd61e4fd860\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:39+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"4286053f-2a0f-44ff-8c46-ecd61e4fd860\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"duration\": \"269.198µs\"}\n2026-10-14T01:41:39+08:00\tERROR\tReconciler error\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"4286053f-2a0f-44ff-8c46-ecd61e4fd860\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:39+08:00\tDEBUG\tevents\tFailed to reconcile role worker: workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913292181031853\",\"name\":\"zz-leftover-rbg\",\"uid\":\"bc29c070-dba0-4d42-85ad-7113ceeb6486\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"241\"}, \"reason\": \"FailedReconcileWorkload\"}\n2026-10-14T01:41:44+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"cd6bebc1-17ae-467b-8f29-2b0dd217a2fa\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:44+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"cd6bebc1-17ae-467b-8f29-2b0dd217a2fa\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:44+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"cd6bebc1-17ae-467b-8f29-2b0dd217a2fa\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"roleOrder\": [[\"worker\"]]}\n2026-10-14T01:41:44+08:00\tDEBUG\tstart to reconciling deployment workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"cd6bebc1-17ae-467b-8f29-2b0dd217a2fa\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:44+08:00\tERROR\tFailed to reconcile workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"cd6bebc1-17ae-467b-8f29-2b0dd217a2fa\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:44+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"cd6bebc1-17ae-467b-8f29-2b0dd217a2fa\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"duration\": \"266.919µs\"}\n2026-10-14T01:41:44+08:00\tERROR\tReconciler error\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"cd6bebc1-17ae-467b-8f29-2b0dd217a2fa\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:44+08:00\tDEBUG\tevents\tFailed to reconcile role worker: workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913292181031853\",\"name\":\"zz-leftover-rbg\",\"uid\":\"bc29c070-dba0-4d42-85ad-7113ceeb6486\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"241\"}, \"reason\": \"FailedReconcileWorkload\"}\n2026-10-14T01:41:55+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"6a58b5ed-952e-4d88-ad9d-d798819b25cd\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}}\n2026-10-14T01:41:55+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"6a58b5ed-952e-4d88-ad9d-d798819b25cd\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:55+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"6a58b5ed-952e-4d88-ad9d-d798819b25cd\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"roleOrder\": [[\"worker\"]]}\n2026-10-14T01:41:55+08:00\tDEBUG\tstart to reconciling deployment workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"6a58b5ed-952e-4d88-ad9d-d798819b25cd\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\"}\n2026-10-14T01:41:55+08:00\tERROR\tFailed to reconcile workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"6a58b5ed-952e-4d88-ad9d-d798819b25cd\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"role\": \"worker\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:55+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"6a58b5ed-952e-4d88-ad9d-d798819b25cd\", \"rbg\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"duration\": \"308.3µs\"}\n2026-10-14T01:41:55+08:00\tERROR\tReconciler error\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-leftover-rbg\",\"namespace\":\"zz-pr487-1791913292181031853\"}, \"namespace\": \"zz-pr487-1791913292181031853\", \"name\": \"zz-leftover-rbg\", \"reconcileID\": \"6a58b5ed-952e-4d88-ad9d-d798819b25cd\", \"error\": \"workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-14T01:41:55+08:00\tDEBUG\tevents\tFailed to reconcile role worker: workload is not claimable by this RoleBasedGroup: zz-leftover-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913292181031853\",\"name\":\"zz-leftover-rbg\",\"uid\":\"bc29c070-dba0-4d42-85ad-7113ceeb6486\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"241\"}, \"reason\": \"FailedReconcileWorkload\"}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 141
+            },
+            "TimelineLocation": {
+              "Order": 6,
+              "Time": "2026-10-14T01:41:32.181024293+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 141
+            },
+            "TimelineLocation": {
+              "Offset": 3343,
+              "Order": 8,
+              "Time": "2026-10-14T01:41:32.183755093+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "Duration": 2730800,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 154
+            },
+            "TimelineLocation": {
+              "Offset": 3343,
+              "Order": 9,
+              "Time": "2026-10-14T01:41:32.183758003+08:00"
+            },
+            "Message": "must not report Ready from a leftover workload of a previous incarnation",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 154
+            },
+            "TimelineLocation": {
+              "Offset": 85636,
+              "Order": 11,
+              "Time": "2026-10-14T01:41:54.340263726+08:00"
+            },
+            "Message": "must not report Ready from a leftover workload of a previous incarnation",
+            "Duration": 22156505723,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 146
+            },
+            "TimelineLocation": {
+              "Offset": 85636,
+              "Order": 12,
+              "Time": "2026-10-14T01:41:54.340270046+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 146
+            },
+            "TimelineLocation": {
+              "Offset": 92101,
+              "Order": 14,
+              "Time": "2026-10-14T01:41:57.383056039+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "Duration": 3042785992,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR487 workload ownership claim (envtest)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+            "LineNumber": 133
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+          "LineNumber": 187
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "adopts an orphaned workload carrying the group label",
+        "State": "passed",
+        "StartTime": "2026-10-14T01:41:57.38309729+08:00",
+        "EndTime": "2026-10-14T01:42:00.957004291+08:00",
+        "RunTime": 3573907001,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-14T01:41:57+08:00\tINFO\tenqueue: rbg create event\t{\"rbg\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}}\n2026-10-14T01:41:57+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"namespace\": \"zz-pr487-1791913317383107111\", \"name\": \"zz-orphan-rbg\", \"reconcileID\": \"0c74b901-ad29-4230-b15f-480913208b21\", \"rbg\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}}\n2026-10-14T01:41:57+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"namespace\": \"zz-pr487-1791913317383107111\", \"name\": \"zz-orphan-rbg\", \"reconcileID\": \"0c74b901-ad29-4230-b15f-480913208b21\", \"rbg\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"role\": \"worker\"}\n2026-10-14T01:41:57+08:00\tINFO\tCurrent revision need to be updated\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"namespace\": \"zz-pr487-1791913317383107111\", \"name\": \"zz-orphan-rbg\", \"reconcileID\": \"0c74b901-ad29-4230-b15f-480913208b21\", \"rbg\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}}\n2026-10-14T01:41:57+08:00\tINFO\tCreate revision [zz-orphan-rbg-58bf9b8594-1] successfully\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"namespace\": \"zz-pr487-1791913317383107111\", \"name\": \"zz-orphan-rbg\", \"reconcileID\": \"0c74b901-ad29-4230-b15f-480913208b21\", \"rbg\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}}\n2026-10-14T01:41:57+08:00\tDEBUG\tevents\tSuccessful create revision for RoleBasedGroup\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913317383107111\",\"name\":\"zz-orphan-rbg\",\"uid\":\"5dda0c10-74e8-4c15-9049-8134894ca9a2\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"263\"}, \"reason\": \"SucceedCreateRevision\"}\n2026-10-14T01:41:57+08:00\tINFO\tInitialized discovery config mode\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"namespace\": \"zz-pr487-1791913317383107111\", \"name\": \"zz-orphan-rbg\", \"reconcileID\": \"0c74b901-ad29-4230-b15f-480913208b21\", \"rbg\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"mode\": \"refine\"}\n2026-10-14T01:41:57+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"namespace\": \"zz-pr487-1791913317383107111\", \"name\": \"zz-orphan-rbg\", \"reconcileID\": \"0c74b901-ad29-4230-b15f-480913208b21\", \"rbg\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleBasedGroup\",\"metadata\":{\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"},\"status\":{\"conditions\":[{\"lastTransitionTime\":\"2026-10-13T17:41:57Z\",\"message\":\"All roles are ready\",\"observedGeneration\":1,\"reason\":\"AllRolesReady\",\"status\":\"True\",\"type\":\"Ready\"}],\"observedGeneration\":1,\"roleStatuses\":[{\"name\":\"worker\",\"readyReplicas\":1,\"replicas\":1,\"updatedReplicas\":1}]}}}\n2026-10-14T01:41:57+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"namespace\": \"zz-pr487-1791913317383107111\", \"name\": \"zz-orphan-rbg\", \"reconcileID\": \"0c74b901-ad29-4230-b15f-480913208b21\", \"rbg\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"roleOrder\": [[\"worker\"]]}\n2026-10-14T01:41:57+08:00\tDEBUG\tstart to reconciling deployment workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"namespace\": \"zz-pr487-1791913317383107111\", \"name\": \"zz-orphan-rbg\", \"reconcileID\": \"0c74b901-ad29-4230-b15f-480913208b21\", \"rbg\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"role\": \"worker\"}\n2026-10-14T01:41:57+08:00\tDEBUG\truntime is nil, skip inject sidecar\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"namespace\": \"zz-pr487-1791913317383107111\", \"name\": \"zz-orphan-rbg\", \"reconcileID\": \"0c74b901-ad29-4230-b15f-480913208b21\", \"rbg\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"role\": \"worker\"}\n2026-10-14T01:41:57+08:00\tINFO\tdeployment not equal, diff: objectMeta not equal: label not equal, old [map[rbg.workloads.x-k8s.io/group-name:zz-orphan-rbg rbg.workloads.x-k8s.io/role-name:worker]], new [map[app:zz-leftover rbg.workloads.x-k8s.io/role-revision-worker:68f674d7cf]]\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"namespace\": \"zz-pr487-1791913317383107111\", \"name\": \"zz-orphan-rbg\", \"reconcileID\": \"0c74b901-ad29-4230-b15f-480913208b21\", \"rbg\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"role\": \"worker\"}\n2026-10-14T01:41:57+08:00\tINFO\tdeployment hash not equal, old: , new: 68f674d7cf\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"namespace\": \"zz-pr487-1791913317383107111\", \"name\": \"zz-orphan-rbg\", \"reconcileID\": \"0c74b901-ad29-4230-b15f-480913208b21\", \"rbg\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"role\": \"worker\"}\n2026-10-14T01:41:57+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"namespace\": \"zz-pr487-1791913317383107111\", \"name\": \"zz-orphan-rbg\", \"reconcileID\": \"0c74b901-ad29-4230-b15f-480913208b21\", \"rbg\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"role\": \"worker\", \"patchObject\": {\"apiVersion\":\"apps/v1\",\"kind\":\"Deployment\",\"metadata\":{\"annotations\":{\"rbg.workloads.x-k8s.io/role-size\":\"1\",\"rbg.workloads.x-k8s.io/role-workload-type\":\"apps/v1/Deployment\"},\"labels\":{\"app\":\"zz-leftover\",\"rbg.workloads.x-k8s.io/role-revision-worker\":\"68f674d7cf\"},\"name\":\"zz-orphan-rbg-worker\",\"namespace\":\"zz-pr487-1791913317383107111\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"zz-orphan-rbg\",\"uid\":\"5dda0c10-74e8-4c15-9049-8134894ca9a2\"}]},\"spec\":{\"replicas\":1,\"selector\":{\"matchLabels\":{\"app\":\"zz-leftover\"}},\"template\":{\"metadata\":{\"labels\":{\"app\":\"zz-leftover\"}},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"RBG_GROUP_NAME\",\"value\":\"zz-orphan-rbg\"},{\"name\":\"RBG_ROLE_NAME\",\"value\":\"worker\"}],\"image\":\"registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest\",\"imagePullPolicy\":\"IfNotPresent\",\"name\":\"nginx\",\"resources\":{}}]}}}}}\n2026-10-14T01:41:57+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"namespace\": \"zz-pr487-1791913317383107111\", \"name\": \"zz-orphan-rbg\", \"reconcileID\": \"0c74b901-ad29-4230-b15f-480913208b21\", \"rbg\": {\"name\":\"zz-orphan-rbg\",\"namespace\":\"zz-pr487-1791913317383107111\"}, \"duration\": \"19.520363ms\"}\n2026-10-14T01:41:57+08:00\tDEBUG\tevents\tReconcileSucceed\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"zz-pr487-1791913317383107111\",\"name\":\"zz-orphan-rbg\",\"uid\":\"5dda0c10-74e8-4c15-9049-8134894ca9a2\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"266\"}, \"reason\": \"Succeed\"}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 141
+            },
+            "TimelineLocation": {
+              "Order": 15,
+              "Time": "2026-10-14T01:41:57.38310027+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 141
+            },
+            "TimelineLocation": {
+              "Order": 17,
+              "Time": "2026-10-14T01:41:57.385094956+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "Duration": 1994676,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 187
+            },
+            "TimelineLocation": {
+              "Order": 18,
+              "Time": "2026-10-14T01:41:57.385097626+08:00"
+            },
+            "Message": "adopts an orphaned workload carrying the group label",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 187
+            },
+            "TimelineLocation": {
+              "Offset": 8707,
+              "Order": 20,
+              "Time": "2026-10-14T01:41:57.898752019+08:00"
+            },
+            "Message": "adopts an orphaned workload carrying the group label",
+            "Duration": 513654393,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 146
+            },
+            "TimelineLocation": {
+              "Offset": 8707,
+              "Order": 21,
+              "Time": "2026-10-14T01:41:57.89875831+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 146
+            },
+            "TimelineLocation": {
+              "Offset": 8707,
+              "Order": 23,
+              "Time": "2026-10-14T01:42:00.956991151+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "Duration": 3058232841,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR487 workload ownership claim (envtest)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+            "LineNumber": 133
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+          "LineNumber": 220
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "direct reconcile against a leftover fails without mutating it",
+        "State": "passed",
+        "StartTime": "2026-10-14T01:42:00.957063993+08:00",
+        "EndTime": "2026-10-14T01:42:04.081570706+08:00",
+        "RunTime": 3124506703,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-14T01:42:00+08:00\tDEBUG\tstart to reconciling deployment workload\nZZ-EVIDENCE direct-reconcile error: workload is not claimable by this RoleBasedGroup: zz-direct-rbg-worker is controlled by uid zz-stale-rbg-uid-0000\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 141
+            },
+            "TimelineLocation": {
+              "Order": 24,
+              "Time": "2026-10-14T01:42:00.957068373+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 141
+            },
+            "TimelineLocation": {
+              "Order": 26,
+              "Time": "2026-10-14T01:42:00.962860724+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "Duration": 5792361,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 220
+            },
+            "TimelineLocation": {
+              "Order": 27,
+              "Time": "2026-10-14T01:42:00.962864454+08:00"
+            },
+            "Message": "direct reconcile against a leftover fails without mutating it",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 220
+            },
+            "TimelineLocation": {
+              "Offset": 223,
+              "Order": 29,
+              "Time": "2026-10-14T01:42:00.978065384+08:00"
+            },
+            "Message": "direct reconcile against a leftover fails without mutating it",
+            "Duration": 15200930,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 146
+            },
+            "TimelineLocation": {
+              "Offset": 223,
+              "Order": 30,
+              "Time": "2026-10-14T01:42:00.978072105+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 146
+            },
+            "TimelineLocation": {
+              "Offset": 223,
+              "Order": 32,
+              "Time": "2026-10-14T01:42:04.081560096+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "Duration": 3103487982,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR487 workload ownership claim (envtest)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+            "LineNumber": 133
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+          "LineNumber": 251
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "discovery ConfigMap apply against a stale-controlled ConfigMap still conflicts",
+        "State": "passed",
+        "StartTime": "2026-10-14T01:42:04.081645958+08:00",
+        "EndTime": "2026-10-14T01:42:07.473790964+08:00",
+        "RunTime": 3392144996,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-14T01:42:04+08:00\tDEBUG\tpatch content\t{\"patchObject\": {\"apiVersion\":\"v1\",\"data\":{\"config.yaml\":\"stale: false\"},\"kind\":\"ConfigMap\",\"metadata\":{\"name\":\"zz-cm-rbg\",\"namespace\":\"zz-pr487-1791913324081665339\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"zz-cm-rbg\",\"uid\":\"zz-current-rbg-uid-1111\"}]}}}\n2026-10-14T01:42:04+08:00\tERROR\tUsing server side apply to patch object\t{\"error\": \"ConfigMap \\\"zz-cm-rbg\\\" is invalid: metadata.ownerReferences: Invalid value: [{\\\"apiVersion\\\":\\\"workloads.x-k8s.io/v1alpha2\\\",\\\"kind\\\":\\\"RoleBasedGroup\\\",\\\"name\\\":\\\"zz-cm-rbg\\\",\\\"uid\\\":\\\"zz-stale-rbg-uid-0000\\\",\\\"controller\\\":true},{\\\"apiVersion\\\":\\\"workloads.x-k8s.io/v1alpha2\\\",\\\"kind\\\":\\\"RoleBasedGroup\\\",\\\"name\\\":\\\"zz-cm-rbg\\\",\\\"uid\\\":\\\"zz-current-rbg-uid-1111\\\",\\\"controller\\\":true,\\\"blockOwnerDeletion\\\":true}]: Only one reference can have Controller set to true. Found \\\"true\\\" in references for RoleBasedGroup/zz-cm-rbg and RoleBasedGroup/zz-cm-rbg\"}\nsigs.k8s.io/rbgs/pkg/utils.PatchObjectApplyConfiguration\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/pkg/utils/utils.go:77\nsigs.k8s.io/rbgs/test/envtest/testcase/rbg.init.func5.6\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go:282\ngithub.com/onsi/ginkgo/v2/internal.extractBodyFunction.func3\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/github.com/onsi/ginkgo/v2/internal/node.go:512\ngithub.com/onsi/ginkgo/v2/internal.(*Suite).runNode.func3\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/vendor/github.com/onsi/ginkgo/v2/internal/suite.go:922\nZZ-EVIDENCE configmap-apply error: ConfigMap \"zz-cm-rbg\" is invalid: metadata.ownerReferences: Invalid value: [{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleBasedGroup\",\"name\":\"zz-cm-rbg\",\"uid\":\"zz-stale-rbg-uid-0000\",\"controller\":true},{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleBasedGroup\",\"name\":\"zz-cm-rbg\",\"uid\":\"zz-current-rbg-uid-1111\",\"controller\":true,\"blockOwnerDeletion\":true}]: Only one reference can have Controller set to true. Found \"true\" in references for RoleBasedGroup/zz-cm-rbg and RoleBasedGroup/zz-cm-rbg\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 141
+            },
+            "TimelineLocation": {
+              "Order": 33,
+              "Time": "2026-10-14T01:42:04.081652528+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 141
+            },
+            "TimelineLocation": {
+              "Order": 35,
+              "Time": "2026-10-14T01:42:04.287618441+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "Duration": 205965902,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 251
+            },
+            "TimelineLocation": {
+              "Order": 36,
+              "Time": "2026-10-14T01:42:04.287622601+08:00"
+            },
+            "Message": "discovery ConfigMap apply against a stale-controlled ConfigMap still conflicts",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 251
+            },
+            "TimelineLocation": {
+              "Offset": 2329,
+              "Order": 38,
+              "Time": "2026-10-14T01:42:04.30977821+08:00"
+            },
+            "Message": "discovery ConfigMap apply against a stale-controlled ConfigMap still conflicts",
+            "Duration": 22155609,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 146
+            },
+            "TimelineLocation": {
+              "Offset": 2329,
+              "Order": 39,
+              "Time": "2026-10-14T01:42:04.30978638+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+              "LineNumber": 146
+            },
+            "TimelineLocation": {
+              "Offset": 2329,
+              "Order": 41,
+              "Time": "2026-10-14T01:42:07.473780414+08:00"
+            },
+            "Message": "PR487 workload ownership claim (envtest)",
+            "Duration": 3163994023,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "SharedServiceSelection",
+          "When the policy is not set"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 37
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 143
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+          "LineNumber": 144
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should fall back to LeaderOnly and only give the leader component a serviceName",
+        "State": "skipped",
+        "StartTime": "2026-10-14T01:42:07.473843896+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "SharedServiceSelection",
+          "When the policy is All"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 37
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 173
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+          "LineNumber": 174
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should give every component a serviceName and a pod network identity",
+        "State": "skipped",
+        "StartTime": "2026-10-14T01:42:07.473852056+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "SharedServiceSelection",
+          "When the policy changes from All to LeaderOnly"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 37
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 208
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+          "LineNumber": 209
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should clear the worker component serviceName and narrow the shared service in place",
+        "State": "skipped",
+        "StartTime": "2026-10-14T01:42:07.473857896+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "SharedServiceSelection",
+          "When the role runs on a LeaderWorkerSet workload"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 37
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 261
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+          "LineNumber": 266
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should accept an unset policy and reject an explicit LeaderOnly",
+        "State": "skipped",
+        "StartTime": "2026-10-14T01:42:07.473898188+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/suite_test.go",
+          "LineNumber": 36
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-14T01:42:07.473902198+08:00",
+        "EndTime": "2026-10-14T01:42:08.966544897+08:00",
+        "RunTime": 1492642699,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-14T01:42:07+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-10-14T01:42:07+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-10-14T01:42:07+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-10-14T01:42:07+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-10-14T01:42:07+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-10-14T01:42:07+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-10-14T01:42:07+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-10-14T01:42:07+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-10-14T01:42:07+08:00\tINFO\tAll workers finished\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-10-14T01:42:07+08:00\tINFO\tAll workers finished\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-10-14T01:42:07+08:00\tINFO\tAll workers finished\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-10-14T01:42:07+08:00\tINFO\tAll workers finished\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-10-14T01:42:07+08:00\tINFO\tAll workers finished\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-10-14T01:42:07+08:00\tINFO\tStopping and waiting for caches\n2026-10-14T01:42:07+08:00\tINFO\tStopping and waiting for webhooks\n2026-10-14T01:42:07+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-10-14T01:42:07+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/suite_test.go",
+              "LineNumber": 36
+            },
+            "TimelineLocation": {
+              "Order": 42,
+              "Time": "2026-10-14T01:42:07.473904118+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testutil/setup.go",
+              "LineNumber": 140
+            },
+            "TimelineLocation": {
+              "Order": 43,
+              "Time": "2026-10-14T01:42:07.473941689+08:00"
+            },
+            "Message": "tearing down the test environment"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-11/pr-487/work/verify/test/envtest/testcase/rbg/suite_test.go",
+              "LineNumber": 36
+            },
+            "TimelineLocation": {
+              "Offset": 2441,
+              "Order": 45,
+              "Time": "2026-10-14T01:42:08.966540117+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 1492635999,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]
