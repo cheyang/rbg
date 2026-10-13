@@ -1,0 +1,28 @@
+=== RUN   TestVerifyClaim_P0_Unit_NoReadyReplicasFromForeignWorkload
+    workload_claim_verify_p0_test.go:93: 
+        	Error Trace:	/tmp/wt487-newbase/pkg/reconciler/workload_claim_verify_p0_test.go:93
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestVerifyClaim_P0_Unit_NoReadyReplicasFromForeignWorkload
+        	Messages:   	readiness must not be inherited from a workload controlled by a foreign UID
+    workload_claim_verify_p0_test.go:95: 
+        	Error Trace:	/tmp/wt487-newbase/pkg/reconciler/workload_claim_verify_p0_test.go:95
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestVerifyClaim_P0_Unit_NoReadyReplicasFromForeignWorkload
+--- FAIL: TestVerifyClaim_P0_Unit_NoReadyReplicasFromForeignWorkload (0.04s)
+=== RUN   TestVerifyClaim_P0_Unit_NoReadyReplicasFromOrphanWithoutGroupLabel
+    workload_claim_verify_p0_test.go:121: 
+        	Error Trace:	/tmp/wt487-newbase/pkg/reconciler/workload_claim_verify_p0_test.go:121
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestVerifyClaim_P0_Unit_NoReadyReplicasFromOrphanWithoutGroupLabel
+        	Messages:   	a name-squatter without the group label must not feed the role status
+--- FAIL: TestVerifyClaim_P0_Unit_NoReadyReplicasFromOrphanWithoutGroupLabel (0.00s)
+=== RUN   TestVerifyClaim_P0_Unit_CheckWorkloadReadyNotSatisfiedByForeignWorkload
+    workload_claim_verify_p0_test.go:145: 
+        	Error Trace:	/tmp/wt487-newbase/pkg/reconciler/workload_claim_verify_p0_test.go:145
+        	Error:      	Should be false
+        	Test:       	TestVerifyClaim_P0_Unit_CheckWorkloadReadyNotSatisfiedByForeignWorkload
+        	Messages:   	dependents must not be released on a workload the RBG does not control
+--- FAIL: TestVerifyClaim_P0_Unit_CheckWorkloadReadyNotSatisfiedByForeignWorkload (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.052s
+FAIL

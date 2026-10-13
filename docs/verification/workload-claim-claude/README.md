@@ -119,3 +119,54 @@ Skipped by instruction for this round: a cluster *was* reachable (2 nodes, v1.36
 debate setup restricts stage ② to unit + integration. The PR's own kind-cluster e2e already
 covers the orphan-adoption path (that spec passed in the PR's CI run). What a live layer could
 still add: GC-timing behavior of the leftover window on a real garbage collector.
+
+---
+
+# Round 2 (2026-10-14) — head 9b6c83eb, base moved to fd84f3b3
+
+The PR was force-pushed: the branch now carries the same two commits rebased plus a third,
+`9b6c83eb fix: keep RBG-owned terminating workloads claimable so cleanup runs`, which is a direct
+fix for F1 (terminating-owned workloads are no longer rejected by `checkWorkloadClaimable`; the
+error is scoped to foreign-UID and unlabeled orphans). The merge base also moved
+(0821cb5b → fd84f3b3: #494, #495, #484, #390), so the base-side contracts were re-verified too.
+
+## Round-2 re-verify (re-verify.sh 9b6c83eb)
+
+| ID | Polarity | Layer | Verdict | Evidence |
+|----|----------|-------|---------|----------|
+| F1 | contract | envtest | **FIXED** | `results/reverify/ginkgo-report.json`: both `F1:` (stuck) and `F1-control:` specs passed on 9b6c83eb |
+| F2 | canary | unit | STILL-PRESENT (documented residual, minor) | `results/reverify/unit.parsed`: canary still passes |
+| F3 | canary | unit | STILL-PRESENT (documented residual, minor) | `results/reverify/unit.parsed`: canary still passes |
+
+Normalized `verification` ledger for F1 (contract, higher = worse):
+base 0821cb5b = pass · previous head feb77ba7 = fail · head 9b6c83eb = **pass**.
+
+## Changed-base re-verification
+
+- Premise P0 on the NEW base fd84f3b3 (harness grafted onto a clean checkout):
+  unit — all three `TestVerifyClaim_P0_Unit_*` **FAIL** (`results/newbase/unit-newbase.txt`,
+  "Should be zero, but was 1"); envtest — the `P0:` spec **FAILS**, RBG goes `Ready=True` off the
+  foreign-UID leftover (`results/newbase/envtest-newbase.txt`). The premise still reproduces on
+  the rebased base; nothing upstream fixed it in the meantime.
+- Affected packages on the head: `./pkg/reconciler/...`, `./internal/controller/workloads/...`,
+  `./pkg/dependency/...` all **ok** (`results/head/affected-pkgs-head.txt`).
+- Full envtest rbg suite (no focus) on the head: **ok**, 16/16 specs
+  (`results/head/full-envtest-rbg-head.txt`).
+- Harness plumbing fixed this round: the round-1 manifest ran plain `-v` output, which
+  re-verify.sh's parsers cannot read (every finding came back Harness-update although the layers
+  ran). Layers now emit `go test -json` / `-ginkgo.json-report`; committed as a harness-only
+  change (86c50606).
+
+## Round-2 delta review
+
+`git diff feb77ba7..9b6c83eb` (PR-authored part) touches only `pkg/reconciler/common.go`
+(removes the terminating branch of `checkWorkloadClaimable`, comments), its table test, and adds
+`TestRoleBasedGroupReconciler_CleanupRunsWhenOwnedWorkloadTerminating` + the per-kind
+`TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn`. No new findings on the delta; the
+scoping matches the fix direction requested in round 1. Residual F1-adjacent behavior: while a
+role's workload is genuinely unclaimable (foreign UID / unlabeled orphan), `reconcileRoles` still
+aborts before cleanup until the leftover is GC'd — this mirrors base behavior (the base apply on a
+foreign-UID workload fails with the SSA controller-ref conflict) and is bounded by the GC window,
+so it is not treated as a regression.
+
+`.last-reviewed` advanced to `9b6c83eb54a89ee2e81f2c254c38e9e73c2ab191`.

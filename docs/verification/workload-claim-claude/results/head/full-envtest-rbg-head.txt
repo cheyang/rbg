@@ -1,0 +1,3 @@
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	47.896s
+
+[exited with code 0]
