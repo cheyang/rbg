@@ -275,7 +275,7 @@ func TestVerifyF2CrossRoleTopologyChildRendersFlatSubGroupPolicy(t *testing.T) {
 		require.Len(t, sub.LabelSelector.MatchExpressions, 1)
 		in := sub.LabelSelector.MatchExpressions[0]
 		require.Equal(t, constants.RoleNameLabelKey, in.Key)
-		require.Equal(t, metav1.LabelSelectorOpIn, string(in.Operator))
+		require.Equal(t, metav1.LabelSelectorOpIn, in.Operator)
 		require.ElementsMatch(t, []string{"prefill", "decode"}, in.Values)
 		require.NotNil(t, sub.NetworkTopology, "child networkTopology must be carried")
 		require.Equal(t, "rack", sub.NetworkTopology.HighestTierName)
