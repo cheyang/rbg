@@ -20,7 +20,6 @@ package volcano
 
 import (
 	"context"
-	"strings"
 	"sync"
 	"testing"
 	"time"
