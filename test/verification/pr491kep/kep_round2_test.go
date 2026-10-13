@@ -79,7 +79,7 @@ func TestVerify_R2F3F4_ControllerOwnedKeysEnumeratedAndSynced(t *testing.T) {
 			t.Errorf("R2-F3/F4 regression: enumerated exclusion list lost key %q", key)
 		}
 	}
-	if !regexp.MustCompile(`syncRBGMetadata[^.\n]*carries over the same enumerated controller-owned keys`).MatchString(readme) {
+	if !regexp.MustCompile(`(?s)syncRBGMetadata.{0,220}?carries over the same enumerated controller-owned keys`).MatchString(readme) {
 		t.Errorf("R2-F3 regression: syncRBGMetadata no longer specified to carry over the enumerated keys")
 	}
 }
@@ -96,7 +96,7 @@ func TestVerify_R2F5_CheckpointStorageNamed(t *testing.T) {
 func TestVerify_R2F6_NumericRevisionInformationalOnly(t *testing.T) {
 	readme := kepReadme(t)
 	if !regexp.MustCompile(`(?i)informational only`).MatchString(readme) ||
-		!regexp.MustCompile(`name equality, not by the numeric field`).MatchString(readme) {
+		!regexp.MustCompile(`name\s+equality, not by the numeric field`).MatchString(readme) {
 		t.Errorf("R2-F6 regression: numeric ControllerRevision field no longer declared informational-only")
 	}
 }
