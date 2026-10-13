@@ -97,5 +97,147 @@
     "unit": "mutating newRBGForSet to propagate roleTemplates flips TestVerify491P0 red (results/bite-a-with-propagation-fix.txt); reverted after; mutating needsTemplateAnnotationUpdate to skip the controller-owned key flips TestVerify491E4 red (results/bite-b-annotation-fix.txt) \u2014 reverted after",
     "script": "inserting 'scale subresource' into the KEP Status heading flips E3c grep 0->1 (results/bite-check.txt)"
   },
-  "liveNote": "L3 skipped this round (debate setup: unit + integration only). Probe for the record: a cluster was reachable (kubectl get no: 2 nodes, v1.36.2); it was not used."
+  "liveNote": "L3 skipped this round (debate setup: unit + integration only). Probe for the record: a cluster was reachable (kubectl get no: 2 nodes, v1.36.2); it was not used.",
+  "round2": {
+    "date": "2026-10-14",
+    "head": "b03a7e67cf681599fb1c69537be2a2078ec35cf0",
+    "previousHead": "719851a65959ebc91157ce90651aaa911c26f30c",
+    "delta": "keps/455-rbgs-rolling-update/README.md +114/-5 (force-pushed amendment answering round 1); code still identical to merge-base 0821cb5b outside keps/",
+    "baseMovement": "main 0821cb5b -> 375fdfd5 (PRs #484/#488/#494/#495); none of the finding-referenced files (rolebasedgroup{,set}_controller.go, rolebasedgroupset_conversion.go, pkg/utils/revision_utils.go, RBGSet CRD) changed; round-1 code-path contracts remain valid",
+    "findings": [
+      {
+        "id": "F1",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F1-barrier-section",
+          "R2-F1b-ordering-matches-code",
+          "R2-F1c-api-reader-exists"
+        ],
+        "note": "Child Rollout Barrier section designs producer (RBG controller, apiReader uncached reads), ordering invariant (Step 4 status write before Step 8 role mutation \u2014 verified to map onto the real controller: constructAndUpdateRoleStatuses:689 calls updateRBGStatus; Step 8 at :276), and consumer (groupSetChildReady, absent-or-False with ObservedGeneration>=Generation). E2 (no writer in code) is expected to keep passing until the implementation PR lands."
+      },
+      {
+        "id": "F2",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "E3c-kep-addresses-scale"
+        ],
+        "note": "Scale subresource interaction paragraph added; HPA-during-surge scoped out as unsupported with reason. Round-1 canary inverted to contract check."
+      },
+      {
+        "id": "F3",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F3-key-enumeration"
+        ],
+        "note": "One enumerated 4-key list (discovery-config-mode + conversion.workloads.x-k8s.io/{v1alpha1-coordination,v1alpha2-rollout-strategy,v1alpha2-rollout-status}) governing revision hash, drift comparison, and metadata sync; syncRBGMetadata carries the keys over. Design-level fix; E4 unit canary stays green until implementation."
+      },
+      {
+        "id": "F4",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F3-key-enumeration"
+        ],
+        "note": "v1alpha1-coordination now in the enumerated exclusion list."
+      },
+      {
+        "id": "F5",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F5-checkpoint-storage"
+        ],
+        "note": "Appendix names annotation rbg.workloads.x-k8s.io/groupset-observed-replicas on the RBGSet. Residual note (non-gating): GitOps full-object writes can strip a live-object annotation; a one-line fallback statement would harden it."
+      },
+      {
+        "id": "F6",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F6-numeric-informational"
+        ],
+        "note": "Appendix: numeric revision informational only; name equality decides."
+      },
+      {
+        "id": "F7",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F7-partition-timing"
+        ],
+        "note": "Appendix: partition resolves against current spec.replicas at reconcile time; completed batches not re-evaluated."
+      },
+      {
+        "id": "Q1",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-Q1-zero-verdict"
+        ],
+        "note": "Appendix: webhook rejects explicit maxUnavailable 0 under InPlaceUpdate."
+      },
+      {
+        "id": "Q2",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-Q2-downgrade-stance"
+        ],
+        "note": "Appendix: operator-downgrade stance written down."
+      },
+      {
+        "id": "F9",
+        "status": "open",
+        "polarity": "contract",
+        "evidenceKind": "code-path",
+        "origin": "revision",
+        "introducedByPR": true,
+        "firstSeenSha": "b03a7e67cf681599fb1c69537be2a2078ec35cf0",
+        "checks": [
+          "R2-F9-bootstrap-window"
+        ],
+        "note": "NEW round-2 finding: the barrier design accepts an absent condition as ready for ALL children. For a child the set has just spec-bumped whose RBG controller has not yet reconciled (post-upgrade bootstrap window), no barrier exists yet, so the set can spend the next budget slot on stale capacity \u2014 the producer invariant does not cover that window because the producer has not run since the spec bump. One-sentence fix: accept absence only for children not yet updated in the current rollout (e.g. groupset-revision label still currentRevision). Expected-FAIL reproduction at head; bite D proves the check detects the fix."
+      },
+      {
+        "id": "M1",
+        "status": "partial",
+        "evidenceKind": "code-path",
+        "checks": [
+          "residual-open scan"
+        ],
+        "note": "Test-plan entries added for all four round-1 gaps (barrier set/clear, bootstrap semantics, scale subresource, controller-owned annotation survival). Two Reviewer C wording catches remain: line 434 'old template, not the current one' vs currentRevision=old terminology; the in-place ordering sentence at :401 still gates the higher ordinal on its own completion."
+      },
+      {
+        "id": "F8",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "checks": [
+          "F8-cross-reference"
+        ],
+        "note": "No cross-reference for the set-level vs role-level Recreate vocabulary collision."
+      },
+      {
+        "id": "O1",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "checks": [
+          "O1-template-sections"
+        ],
+        "note": "Graduation Criteria / Release Signoff / PRR sections still absent."
+      },
+      {
+        "id": "C4238820879",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "note": "Lowercase 'rbg' at line 478 still present."
+      }
+    ],
+    "bites": {
+      "D": "results/bite-d-f9-simulated-fix.txt \u2014 simulated one-sentence F9 fix flips R2-F9 0->1",
+      "E": "results/bite-e-barrier-section-removed.txt \u2014 stripping the barrier section makes R2-F1 fail (rc=1)"
+    }
+  }
 }
