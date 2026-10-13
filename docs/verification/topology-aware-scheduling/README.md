@@ -49,6 +49,7 @@ canary means "finding reproduced", not "all clear".
 | F8 | Drift discovery lists "controller resync" as a trigger, but RBGPredicate filters spec-equal updates and the policy watch uses GenerationChangedPredicate — resync never enqueues | 1 | **Still present** (new, round 2) | `TestKEP473_F8_ResyncListedAsDriftTrigger` + `TestBaseFact_RBGPredicateFiltersSpecEqualUpdates` |
 | F9 | Koordinator worked example: 3-member GangGroup (prefill-0/1 + decode) contradicts the KEP's own partition rule for the cross-role-only input (both roles PartitionBy=none -> 2 role-level members) | 1 | **Still present** (new, round 2) | `TestKEP473_F9_KoordinatorExampleMemberPartition` |
 | F10 | Contract-freeze gates any drift from the recorded contract ("Removing all topology ... treated the same way"), but the next paragraph still says webhooks-disabled deployments render "the latest desired topology" — opposite outcomes for the same scenario | 1 | **Still present** (new, round 2) | `TestKEP473_F10_WebhookDisabledContradiction` |
+| F11 | KAI subGroup names (`policy-<rule>`, `instance-<role>-<index>`, `role-<role>`) have no length budget while source names admit 63-char DNS-1123 labels; KAI binds pods via the pod label `kai.scheduler/subgroup-name` whose value is limited to 63 chars | 1 | **Still present** (new, round 2) | `TestKEP473_F11_KAISubGroupNameBudgetMissing` + `TestExternalDialect_KAISubGroupLabelKey` |
 
 Non-finding contract checks (all PASS): all 38 TOC anchors resolve
 (`TestKEP473_TOCAnchorsResolve`); the generated-name budget math is internally
@@ -87,6 +88,14 @@ new location.
   resync delivers old==new/same-generation updates that both filter out. A
   quiescent workload's topology drift is discovered later than claimed (a
   controller *restart* does enqueue via create events; "resync" does not).
+- **F11** — KAI subGroup names combine kind prefixes with source names that
+  are admitted as DNS-1123 labels (≤63 chars each); `instance-` + a 63-char
+  role name + `-<index>` exceeds 63 chars. KAI binds pods to subGroups through
+  the pod label `kai.scheduler/subgroup-name` (kai-scheduler/api
+  `constants.SubGroupLabelKey`, consumed in
+  `pkg/scheduler/api/pod_info/pod_info.go`), and label values are limited to 63
+  chars, so pod creation would be rejected for such names. The Volcano form has
+  an explicit budget (62 chars); the KAI rule has none.
 - **F9** — the Koordinator example first states the full input is not
   renderable (SchedulerUnsupported, nothing created), then shows a 3-member
   GangGroup for "the cross-role-only portion" justified by "prefill is
@@ -117,7 +126,7 @@ new location.
 Harness-bites evidence: `results/bites-check.txt` (round 1: each canary was
 flipped red by a candidate fix, then the KEP was reverted; one harness bug —
 missing `(?m)` regex flag — was found and fixed by this step). Round 2:
-`results/bites-check-round2.txt` — the F7-F10 canaries pass on head `6894a2e`
+`results/bites-check-round2.txt` — the F7-F11 canaries pass on head `6894a2e`
 and all flip red under candidate fixes applied to a scratch copy of the KEP.
 
 ## Proposed fixes (NOT applied anywhere)
@@ -136,6 +145,9 @@ and all flip red under candidate fixes applied to a scratch copy of the KEP.
 - **F10**: state explicitly whether the recorded-contract freeze applies when
   validating webhooks are disabled; align the "renders the latest desired
   topology" sentence with the answer.
+- **F11**: give KAI subGroup names the same treatment as the Volcano placement
+  form (truncate the source portion and/or state a 63-char budget), since pod
+  binding goes through the `kai.scheduler/subgroup-name` label.
 
 ## Continuing after the fix (possibly on another machine)
 

@@ -8,3 +8,4 @@ before: F7-F10 canaries PASS (findings present); after: all four FAIL (flip) —
 --- FAIL: TestKEP473_F9_KoordinatorExampleMemberPartition (0.00s)
 === RUN   TestKEP473_F10_WebhookDisabledContradiction
 --- FAIL: TestKEP473_F10_WebhookDisabledContradiction (0.00s)
+F11: PASS on head 6894a2e (no length budget in KAI naming bullet); flips FAIL after adding a truncation/budget clause to the KAI bullet (scratch copy, then discarded).
