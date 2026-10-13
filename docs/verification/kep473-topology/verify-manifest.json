@@ -23,7 +23,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/scheduler/volcano/ -run 'TestVerify' -json"
+      "cmd": "go test ./pkg/scheduler/volcano/ ./internal/controller/workloads/ -run 'TestVerify' -json"
     },
     "integration": {
       "kind": "ginkgo",
@@ -65,7 +65,7 @@
     {
       "id": "F3",
       "polarity": "contract",
-      "layer": "unit+controller",
+      "layer": "unit",
       "match": [
         "TestVerifyF3TopologyContractStableAcrossNonTopologyRoleChanges",
         "TestVerifyF3AdmissionAllowedRoleRemovalFreezesLiveRBG"
