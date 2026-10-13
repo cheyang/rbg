@@ -1,0 +1,54 @@
+=== RUN   TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn
+=== RUN   TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn/RoleInstanceSet
+    common_test.go:490: 
+        	Error Trace:	/tmp/pr487-prev/pkg/reconciler/common_test.go:490
+        	Error:      	Received unexpected error:
+        	            	workload is not claimable by this RoleBasedGroup: test-rbg-worker is terminating
+        	Test:       	TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn/RoleInstanceSet
+        	Messages:   	a terminating workload the RBG owns must not abort the reconcile before cleanup
+=== RUN   TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn/Deployment
+    common_test.go:490: 
+        	Error Trace:	/tmp/pr487-prev/pkg/reconciler/common_test.go:490
+        	Error:      	Received unexpected error:
+        	            	workload is not claimable by this RoleBasedGroup: test-rbg-worker is terminating
+        	Test:       	TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn/Deployment
+        	Messages:   	a terminating workload the RBG owns must not abort the reconcile before cleanup
+=== RUN   TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn/StatefulSet
+    common_test.go:490: 
+        	Error Trace:	/tmp/pr487-prev/pkg/reconciler/common_test.go:490
+        	Error:      	Received unexpected error:
+        	            	workload is not claimable by this RoleBasedGroup: test-rbg-worker is terminating
+        	Test:       	TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn/StatefulSet
+        	Messages:   	a terminating workload the RBG owns must not abort the reconcile before cleanup
+=== RUN   TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn/LeaderWorkerSet
+    common_test.go:490: 
+        	Error Trace:	/tmp/pr487-prev/pkg/reconciler/common_test.go:490
+        	Error:      	Received unexpected error:
+        	            	workload is not claimable by this RoleBasedGroup: test-rbg-worker is terminating
+        	Test:       	TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn/LeaderWorkerSet
+        	Messages:   	a terminating workload the RBG owns must not abort the reconcile before cleanup
+--- FAIL: TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn (0.04s)
+    --- FAIL: TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn/RoleInstanceSet (0.04s)
+    --- FAIL: TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn/Deployment (0.00s)
+    --- FAIL: TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn/StatefulSet (0.00s)
+    --- FAIL: TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn/LeaderWorkerSet (0.01s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.057s
+FAIL
+=== RUN   TestRoleBasedGroupReconciler_CleanupRunsWhenOwnedWorkloadTerminating
+{"level":"info","ts":"2026-10-14T01:49:52+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-14T01:49:52+08:00","msg":"Current revision need to be updated","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-14T01:49:52+08:00","msg":"Create revision [test-rbg-f7cbb747c-1] successfully","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-10-14T01:49:52+08:00","msg":"Initialized discovery config mode","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"mode":"refine"}
+{"level":"error","ts":"2026-10-14T01:49:52+08:00","msg":"Failed to reconcile workload","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"role":"keep","error":"workload is not claimable by this RoleBasedGroup: test-rbg-keep is terminating","stacktrace":"sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/tmp/pr487-prev/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/tmp/pr487-prev/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/tmp/pr487-prev/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/rbgs/internal/controller/workloads.TestRoleBasedGroupReconciler_CleanupRunsWhenOwnedWorkloadTerminating\n\t/tmp/pr487-prev/internal/controller/workloads/rolebasedgroup_controller_test.go:817\ntesting.tRunner\n\t/usr/local/go/src/testing/testing.go:2193"}
+{"level":"info","ts":"2026-10-14T01:49:52+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.006563216}
+    rolebasedgroup_controller_test.go:818: 
+        	Error Trace:	/tmp/pr487-prev/internal/controller/workloads/rolebasedgroup_controller_test.go:818
+        	Error:      	Received unexpected error:
+        	            	workload is not claimable by this RoleBasedGroup: test-rbg-keep is terminating
+        	Test:       	TestRoleBasedGroupReconciler_CleanupRunsWhenOwnedWorkloadTerminating
+        	Messages:   	reconcile must not abort before cleanup: a terminating workload the RBG owns must stay claimable
+--- FAIL: TestRoleBasedGroupReconciler_CleanupRunsWhenOwnedWorkloadTerminating (0.04s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.057s
+FAIL

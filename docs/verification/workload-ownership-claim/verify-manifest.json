@@ -4,7 +4,8 @@
   "harnessPaths": [
     "docs/verification/workload-ownership-claim",
     "pkg/reconciler/zz_verify_pr487_ownership_test.go",
-    "test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go"
+    "test/envtest/testcase/rbg/zz_verify_pr487_leftover_test.go",
+    "internal/controller/workloads/zz_verify_pr487_cleanup_gate_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -24,7 +25,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/reconciler/ -run 'TestZZVerify' -json"
+      "cmd": "go test ./pkg/reconciler/ ./internal/controller/workloads/ -run 'TestZZVerify' -json"
     },
     "integration": {
       "kind": "ginkgo",
@@ -115,6 +116,15 @@
         "TestZZVerifyTerminatingForeignWorkloadRefused"
       ],
       "note": "Premise guard added in round 3: after 9b6c83eb dropped the blanket terminating check, the foreign-uid check is the only thing refusing a TERMINATING stale-uid leftover. Red on base, green on feb77ba7 and 9b6c83eb."
+    },
+    {
+      "id": "F-cleanup-gate",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestZZVerifyCleanupSkippedWhileSiblingRoleWedged"
+      ],
+      "note": "Residual gap after 9b6c83eb (review finding F5): any persistent reconcileRoles error (unlabeled orphan, foreign uid until GC, unmet dependency) still skips the step-9 cleanup, so a removed role's leftover leaks for the whole wedge. Canary asserts CURRENT behavior; flip it if the controller starts running cleanup on role-reconcile errors."
     }
   ],
   "liveNote": "L3 skipped this round (no cluster). If run: delete an RBG with background propagation, recreate it immediately, and watch events for FailedReconcileWorkload with ErrWorkloadNotClaimable until the GC removes the leftover; the RBG must not go Ready meanwhile."
