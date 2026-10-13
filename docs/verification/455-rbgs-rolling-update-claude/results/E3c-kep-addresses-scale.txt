@@ -1,0 +1,6 @@
+**Scale subresource interaction.** `status.replicas` reports total child
+capacity, including surge groups. The RBGSet scale subresource exposes
+RBGSet scale subresource while surge is in flight is not a supported
+- Scale subresource semantics: `status.replicas` includes surge while a rollout
+- **Scale subresource / HPA**: automated scaling through the scale subresource
+  during surge is not a supported configuration; E2E coverage focuses on manual

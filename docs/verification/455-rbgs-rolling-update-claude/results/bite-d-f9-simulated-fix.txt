@@ -1,0 +1,12 @@
+bite D (round 2, 2026-10-14): simulated F9 fix, KEP text only (no code touched)
+Simulated amendment (appended to the Consumer paragraph of Child Rollout Barrier):
+  "Absence is accepted as ready only for a child the set has not yet updated in
+   the current rollout; a child whose spec the set has just bumped is not
+   considered ready until the condition is present."
+Commit object built via temp-index commit-tree on parent b03a7e67; origin/pr/491
+temporarily pointed at it, then restored to b03a7e67.
+R2-F9 sentence-scope grep with the simulated fix (expect >= 1):
+1
+R2-F9 at real head (expect 0 = finding open):
+0
+Conclusion: the R2-F9 contract check genuinely detects the fix it asks for.
