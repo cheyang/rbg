@@ -127,7 +127,16 @@ export GINKGO_REPORT="$RESULTS_DIR/ginkgo-report.json"
 # capture current position (must hold the harness) and restore on exit
 ORIG_REF="$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)"
 HARNESS_SRC="$(git rev-parse HEAD)"
-cleanup() { git checkout -f "$ORIG_REF" >/dev/null 2>&1 || true; rm -rf "$RUNTIME_DIR" 2>/dev/null || true; }
+cleanup() {
+  git checkout -f "$ORIG_REF" >/dev/null 2>&1 || true
+  # Persist raw output AFTER the tree is restored: the results dir is tracked
+  # in the harness branch, so copying before 'checkout -f' would be wiped and
+  # leave stale (previous-round) results on disk.
+  local persist="$(dirname "$MANIFEST_ORIG")/results/reverify"
+  mkdir -p "$persist" 2>/dev/null && cp -f "$RESULTS_DIR"/*.out "$RESULTS_DIR"/*.parsed "$RESULTS_DIR"/*.json "$persist"/ 2>/dev/null || true
+  echo "re-verify: fresh results persisted to $persist" >&2
+  rm -rf "$RUNTIME_DIR" 2>/dev/null || true
+}
 trap cleanup EXIT
 
 echo "re-verify: fixed-ref=$FIXED_REF  harness-from=$ORIG_REF"
@@ -220,12 +229,8 @@ done
 
 LIVE="$(jq -r '.liveNote // empty' "$MANIFEST")"
 [ -n "$LIVE" ] && printf '\nLive layer (manual): %s\n' "$LIVE"
-# persist raw output into the (restored-after-cleanup) in-repo results dir for inspection
-PERSIST="$(dirname "$MANIFEST_ORIG")/results/reverify"
-mkdir -p "$PERSIST" 2>/dev/null && cp -f "$RESULTS_DIR"/*.out "$RESULTS_DIR"/*.parsed "$RESULTS_DIR"/*.json "$PERSIST"/ 2>/dev/null || true
-
 printf '\nReminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its\n'
-printf 'assertion (or promote the new behavior to a contract test). Raw output: %s\n' "$PERSIST"
+printf 'assertion (or promote the new behavior to a contract test).\n' 
 printf '\nReview delta this round: %s..%s\n' "${LAST_REVIEWED:-base}" "$FIXED_REF"
 printf 'After reviewing that delta, advance the marker for the next round:\n'
 printf '  echo %s > %s && git add %s && git commit -m "review: advance last-reviewed"\n' \

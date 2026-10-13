@@ -14,8 +14,10 @@
     "runsAgainst": "base",
     "layer": "integration",
     "verdict": "confirmed",
-    "evidence": "Docs-only PR, so the code-level premise check is replaced by validating the KEP's factual substrate: all three scheduler dialects exist upstream with exactly the field/annotation names the KEP cites (volcano-sh/apis HyperNode spec.tierName; koordinator gang.scheduling.koordinator.sh/network-topology-spec with MustGather/PreferGather; NVIDIA/KAI-scheduler minSubGroup/subGroups/parent/topologyConstraint.requiredTopologyLevel/preferredTopologyLevel/topology). See results/integration.json.",
-    "match": ["TestExternalDialect"]
+    "evidence": "Docs-only PR, so the code-level premise check is replaced by validating the KEP's factual substrate: all three scheduler dialects exist upstream with the field/annotation names the KEP cites (volcano-sh/apis HyperNode spec.tierName; koordinator gang.scheduling.koordinator.sh/network-topology-spec with MustGather/PreferGather; KAI minSubGroup/subGroups/parent/topologyConstraint.{requiredTopologyLevel,preferredTopologyLevel,topology} \u2014 now in the kai-scheduler/api repo after the round-2 upstream move \u2014 plus the round-2 claims: KAI TopologyLevel.alias incl. v0.18.3, Koordinator scheduling.sigs.k8s.io PodGroup minMember without a minimum, scheduler-plugins scheduling.x-k8s.io PodGroup minMember minimum=1). See results/integration.json.",
+    "match": [
+      "TestExternalDialect"
+    ]
   },
   "layers": {
     "unit": {
@@ -28,12 +30,88 @@
     }
   },
   "findings": [
-    { "id": "F1", "polarity": "canary", "layer": "unit", "match": ["TestKEP473_F1_FinalizerWedgeUnaddressed"] },
-    { "id": "F2", "polarity": "canary", "layer": "unit", "match": ["TestKEP473_F2_VolcanoGangParentTopologyChildUnspecified"] },
-    { "id": "F3", "polarity": "canary", "layer": "unit", "match": ["TestKEP473_F3_RBGSetAdmissionContradiction"] },
-    { "id": "F4", "polarity": "canary", "layer": "unit", "match": ["TestKEP473_F4a_PRBodyValidationClaimDrift", "TestKEP473_F4b_PRBodyPhantomConditions", "TestKEP473_F4c_PRBodyChineseTranslationClaim"] },
-    { "id": "F5", "polarity": "canary", "layer": "unit", "match": ["TestKEP473_F5_ConditionSurfaceInconsistent"] },
-    { "id": "F6", "polarity": "canary", "layer": "unit", "match": ["TestKEP473_F6_NamingSchemeDialectsUnspecified"] }
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F1_ContractFinalizerReleaseKeyedByUID"
+      ]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F2_ContractVolcanoGangParentTopologyChildSpecified"
+      ]
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F3_ContractRBGSetAdmissionSelfContained"
+      ]
+    },
+    {
+      "id": "F4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F4a_ContractValidationClaimAligned",
+        "TestKEP473_F4b_ContractNoPhantomConditions",
+        "TestKEP473_F4c_ContractChineseTranslationClaimGone"
+      ]
+    },
+    {
+      "id": "F5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F5_ContractConditionSurfaceIsRBG"
+      ]
+    },
+    {
+      "id": "F6",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F6_ContractNamingSchemeCoversAllDialects"
+      ]
+    },
+    {
+      "id": "F7",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F7_ContractFreezeCacheRaceUnaddressed"
+      ]
+    },
+    {
+      "id": "F8",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F8_ResyncListedAsDriftTrigger"
+      ]
+    },
+    {
+      "id": "F9",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F9_KoordinatorExampleMemberPartition"
+      ]
+    },
+    {
+      "id": "F10",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F10_WebhookDisabledContradiction"
+      ]
+    }
   ],
   "liveNote": "Not applicable: this PR is a docs-only KEP (no runtime code), so there is no live layer. If implementation PRs arrive, re-run with `bash docs/verification/topology-aware-scheduling/scripts/re-verify.sh` (no args: resolves the current PR head from manifest.pr)."
 }
