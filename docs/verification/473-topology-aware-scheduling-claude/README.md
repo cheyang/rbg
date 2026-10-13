@@ -1,7 +1,14 @@
 # Verification — PR #473 (KEP-473: Topology-Aware Scheduling) — Reviewer A (Claude)
 
 PR: https://github.com/sgl-project/rbg/pull/473 — adds
-`keps/473-topology-aware-scheduling/{README.md,kep.yaml}` only (656 insertions, no runtime code).
+`keps/473-topology-aware-scheduling/{README.md,kep.yaml}` only (676 insertions, no runtime code).
+
+**Round 2** (head `6894a2e`, delta `2b65779b..6894a2e`, 3 commits clarifying review
+feedback): F1–F6 and F9 are fixed (canaries flipped; F4 via a PR-body edit —
+`results/pr-body.md` re-archived from the current body). New findings F11–F13 from the
+delta review. F7/F8/F10 unchanged. `re-verify.sh` gained a repo-root `cd` (round-1
+invocation from inside this directory broke git's relative pathspec after the
+head checkout deleted the cwd).
 
 ## Premise (P0): CONFIRMED
 
@@ -20,7 +27,7 @@ strategy, the scheduler backends).
 
 | layer | what | how to run |
 | --- | --- | --- |
-| unit (python claim-check) | 10 canaries (F1–F10) + 4 contracts (P0, C1–C3) over the KEP text, the PR body, the repo, and upstream API snapshots | `python3 -I scripts/check_claims.py --repo <repo-root> --evidence results/` |
+| unit (python claim-check) | 13 canaries (F1–F13) + 4 contracts (P0, C1–C3) over the KEP text, the PR body, the repo, and upstream API snapshots | `python3 -I scripts/check_claims.py --repo <repo-root> --evidence results/` |
 | integration (go test) | strict-decodes the KEP's embedded example YAML into the real vendored upstream API types (Volcano `scheduling.volcano.sh/v1beta1`; scheduler-plugins `scheduling.x-k8s.io/v1alpha1`), structural check of the KAI example | `go test ./docs/verification/473-topology-aware-scheduling-claude/harness/ -v` |
 | live (L3) | **skipped** — the PR is documentation-only; nothing runs. (A cluster probe did find a reachable 2-node cluster; live coverage belongs to the implementation PRs of the KEP's phase plan.) | — |
 
@@ -31,28 +38,37 @@ Re-run everything against the current PR head (machine-independent, resolves the
 bash scripts/re-verify.sh            # or: bash scripts/re-verify.sh <fixed-ref>
 ```
 
-## Observed vs expected
+## Observed vs expected (round 2, head 6894a2e)
 
-| check | polarity | observed | expected | verdict |
-| --- | --- | --- | --- | --- |
-| F1 downgrade section ignores the topology finalizer | canary | DEFECT-PRESENT | present while unfixed | **finding live** |
-| F2 RBGSet guard described two contradictory ways | canary | DEFECT-PRESENT | idem | **finding live** |
-| F3 PR body promises preferred≤required validation, KEP declines it | canary | DEFECT-PRESENT | idem | **finding live** |
-| F4 promised in-tree Chinese translation absent | canary | DEFECT-PRESENT | idem | **finding live** |
-| F5 Generated Group Names covers Volcano only | canary | DEFECT-PRESENT | idem | **finding live** |
-| F6 examples partition unconstrained roles per instance | canary | DEFECT-PRESENT | idem | **finding live** |
-| F7 KEP cites `hasSubGroupPolicy`; code says `supportsSubGroupPolicy` | canary | DEFECT-PRESENT | idem | **finding live** |
-| F8 new cluster-scoped reads needed, RBAC unaddressed | canary | DEFECT-PRESENT | idem | **finding live** |
-| F9 `minMember: 0` on sigs PodGroup vs upstream CRD `Minimum=1` | canary | DEFECT-PRESENT | idem | **finding live** |
-| F10 typo "upto" | canary | DEFECT-PRESENT | idem | **finding live** |
-| P0 base has no topology scheduling | contract | PASS | PASS | fact holds |
-| C1 KEP's codebase symbols exist | contract | PASS | PASS | facts hold |
-| C2 vendored Volcano API matches dialect claims | contract | PASS | PASS | facts hold |
-| C3 upstream snapshots back external API claims | contract | PASS | PASS | facts hold |
-| G1 Volcano example strict-decodes | contract | PASS | PASS | example fields are real |
-| G2 sigs PodGroup example strict-decodes | contract | PASS | PASS | idem |
-| G3 KAI example structure | contract | PASS | PASS | idem |
-| G4 Koordinator example renders `minMember: 0` | canary | PASS (renders 0) | present while unfixed | backs F9 |
+| check | polarity | observed | verdict |
+| --- | --- | --- | --- |
+| F1 downgrade section ignores the topology finalizer | canary | DEFECT-ABSENT | **FIXED** — downgrade section now documents the finalizer escape hatch |
+| F2 RBGSet guard described two contradictory ways | canary | DEFECT-ABSENT | **FIXED** — guard is now described once, self-contained |
+| F3 PR body promises preferred≤required validation, KEP declines it | canary | DEFECT-ABSENT | **FIXED** — KEP now validates ordering (`InvalidLevelOrder`) |
+| F4 promised in-tree Chinese translation absent | canary | DEFECT-ABSENT | **FIXED** — claim removed from the PR body |
+| F5 Generated Group Names covers Volcano only | canary | DEFECT-ABSENT | **FIXED** — per-dialect naming rules + collision-safe PlacementGroup-ID hash |
+| F6 examples partition unconstrained roles per instance | canary | DEFECT-ABSENT | **FIXED** — KAI renders `role-decode`; Koordinator renders one role-level decode member |
+| F7 KEP cites `hasSubGroupPolicy`; code says `supportsSubGroupPolicy` | canary | DEFECT-PRESENT | **finding live** |
+| F8 new cluster-scoped reads needed, RBAC unaddressed | canary | DEFECT-PRESENT | **finding live** |
+| F9 `minMember: 0` on sigs PodGroup vs upstream CRD `Minimum=1` | canary | DEFECT-ABSENT | **FIXED** — dialect detection + `SchedulerUnsupported` documented; canary refined to guard the mitigation, G4 promoted to contract |
+| F10 typo "upto" | canary | DEFECT-PRESENT | **finding live** |
+| F11 Koordinator "cross-role-only" rendering shows per-instance prefill members the unrenderability claim excludes | canary | DEFECT-PRESENT | **finding live** (new in round 2) |
+| F12 "Role declaration immutable from create onward" contradicts codebase and test item 7 | canary | DEFECT-PRESENT | **finding live** (new in round 2) |
+| F13 DNS-1123 admission rule for "Role names" unscoped; RoleSpec.Name has no pattern today | canary | DEFECT-PRESENT | **finding live** (new in round 2) |
+| P0 base has no topology scheduling | contract | PASS | fact holds |
+| C1 KEP's codebase symbols exist | contract | PASS | facts hold |
+| C2 vendored Volcano API matches dialect claims | contract | PASS | facts hold |
+| C3 upstream snapshots back external API claims | contract | PASS | facts hold |
+| G1 Volcano example strict-decodes | contract | PASS | example fields are real |
+| G2 sigs PodGroup example strict-decodes | contract | PASS | idem |
+| G3 KAI example structure (kind-prefixed tree-unique names, no unconstrained-role split) | contract | PASS | updated for the round-2 example |
+| G4 Koordinator dialect rendering + documented detection | contract | PASS | promoted from canary after F9 fix |
+
+F14 (does a never-accepted late policy receive the topology finalizer?) is an open
+**question** to the author, not a canary — see the debate document.
+
+Raw output: round 1 — `results/l1-claims.txt`, `results/l2-gotest.txt`;
+round 2 — `results/reverify/{unit.out,integration.out,unit.parsed,integration.parsed}`.
 
 Raw output: `results/l1-claims.txt`, `results/l2-gotest.txt`.
 
@@ -85,10 +101,17 @@ The KEP's load-bearing factual claims about the world all check out:
 
 ## Harness bites (Step 4 check)
 
-Applying the proposed fixes for F1/F2/F10 to a **temporary copy** of the KEP
-(`/tmp/kep473-fixed.md`, never committed) flips exactly those three canaries to
-DEFECT-ABSENT while the other seven stay present — see `results/l1-bites-check.txt`.
-The repo's KEP file was never modified (`git status` clean of tracked changes).
+Round 1: applying the proposed fixes for F1/F2/F10 to a **temporary copy** of the KEP
+flips exactly those three canaries to DEFECT-ABSENT while the others stay present —
+see `results/l1-bites-check.txt`.
+
+Round 2: applying the proposed fixes for F11 (render two role-level members instead of
+per-instance prefill in the Koordinator partial example), F12 (justify "cannot arrive
+late" via topology-declaration immutability instead of whole-Role immutability), and
+F13 (scope the DNS-1123 rule to roles bearing `instanceTopologyConstraint`) to a
+temporary checkout of the PR head flips exactly F11/F12/F13 to DEFECT-ABSENT — see
+`results/l1-bites-check-round2.txt` (run against the head tree; the branch's KEP was
+never modified, production diff empty).
 
 ## Continuing after the fix
 
