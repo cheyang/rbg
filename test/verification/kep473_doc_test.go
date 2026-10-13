@@ -20,14 +20,18 @@ limitations under the License.
 // It contains two kinds of tests:
 //
 //   - Contract tests (TestBaseFact_*, TestKEP473_TOCAnchorsResolve,
-//     TestKEP473_GroupNameBudget): assert facts the KEP relies on about the
-//     base tree and invariants of the KEP text itself. They PASS on the PR
-//     under review; a failure means the ground truth moved (e.g. a rename)
-//     or the KEP regressed.
-//   - Bug-canaries (TestKEP473_F*): assert the CURRENT, suspected-defective
-//     text is present. They PASS while the finding is unfixed and must FLIP
-//     to red once the author fixes the KEP/PR-body text. A green canary is
-//     NOT a clean bill of health; see docs/verification/topology-aware-scheduling.
+//     TestKEP473_GroupNameBudget, TestKEP473_F1..F6_Contract*): assert facts
+//     the KEP relies on about the base tree and invariants of the KEP text
+//     itself. They PASS on the PR under review; a failure means the ground
+//     truth moved (e.g. a rename) or the KEP regressed. The F1..F6 contract
+//     tests are round-1 canaries that flipped when head 6894a2e fixed the
+//     findings; they were inverted per polarity rules so a future regression
+//     of the fix turns them red again.
+//   - Bug-canaries (TestKEP473_F7..F10_*): assert the CURRENT,
+//     suspected-defective text is present. They PASS while the finding is
+//     unfixed and must FLIP to red once the author fixes the KEP text. A
+//     green canary is NOT a clean bill of health; see
+//     docs/verification/topology-aware-scheduling.
 //
 // The TestExternalDialect_* tests are the integration layer: they fetch the
 // upstream scheduler APIs the KEP cites (Volcano, Koordinator, KAI) and check
@@ -196,6 +200,41 @@ func TestBaseFact_RBGSetAdmissionDoesNoChildLookup(t *testing.T) {
 	assertNotContains(t, body, ".List(", "RoleBasedGroupSetValidator")
 }
 
+// TestBaseFact_VolcanoSubGroupLabelSelector pins the vendored Volcano field
+// the round-2 F2 fix relies on: a subGroupPolicy entry can select the child
+// roles with a labelSelector (and optionally refine per instance with
+// matchLabelKeys) while carrying its own networkTopology.
+func TestBaseFact_VolcanoSubGroupLabelSelector(t *testing.T) {
+	body := readRel(t, "vendor/volcano.sh/apis/pkg/apis/scheduling/types.go")
+	assertContains(t, body, "LabelSelector *metav1.LabelSelector `json:\"labelSelector,omitempty\"`",
+		"vendored volcano SubGroupPolicySpec")
+}
+
+// TestBaseFact_PolicyFetchAndWatch pins the mechanism behind finding F7:
+// the RBG controller resolves the CoordinatedPolicy through the
+// cache-backed client (r.client.Get) and the policy watch uses
+// GenerationChangedPredicate (create events DO enqueue; resync does not).
+func TestBaseFact_PolicyFetchAndWatch(t *testing.T) {
+	body := readRel(t, "internal/controller/workloads/rolebasedgroup_controller.go")
+	assertContains(t, body,
+		"err := r.client.Get(ctx, types.NamespacedName{Name: rbg.Name, Namespace: rbg.Namespace}, coordinatedPolicy)",
+		"RBG controller CoordinatedPolicy fetch (cache-backed client)")
+	assertContains(t, body,
+		"Watches(&workloadsv1alpha2.CoordinatedPolicy{}",
+		"RBG controller CoordinatedPolicy watch")
+	assertContains(t, body, "builder.WithPredicates(predicate.GenerationChangedPredicate{}))",
+		"RBG controller CoordinatedPolicy watch predicate")
+}
+
+// TestBaseFact_RBGPredicateFiltersSpecEqualUpdates pins the mechanism behind
+// finding F8: the RBG update predicate enqueues only when the spec changes,
+// so an informer resync (old == new) never enqueues an RBG reconcile.
+func TestBaseFact_RBGPredicateFiltersSpecEqualUpdates(t *testing.T) {
+	body := readRel(t, "internal/controller/workloads/rolebasedgroup_controller.go")
+	assertContains(t, body, "if !reflect.DeepEqual(oldRbg.Spec, newRbg.Spec) {",
+		"RBGPredicate.UpdateFunc (spec-equality filter)")
+}
+
 // ---------------------------------------------------------------------------
 // Contract tests on the KEP document itself.
 // ---------------------------------------------------------------------------
@@ -268,88 +307,93 @@ func TestKEP473_GroupNameBudget(t *testing.T) {
 // when the author fixes the document (or the PR body fixture is refreshed).
 // ---------------------------------------------------------------------------
 
-// F1: the immutability-enforcing finalizer releases "only after the RBG has
-// been deleted", but the policy binds to the RBG by name only. A delete +
-// immediate same-name recreate (standard GitOps flow) leaves the old policy
-// terminating forever, blocking any new policy of that name and leaving the
-// stale topology constraints attached to the new RBG. The Mutability section
-// as written does not key the release on the RBG identity (UID) nor define
-// how terminating policies are treated by the planner.
-func TestKEP473_F1_FinalizerWedgeUnaddressed(t *testing.T) {
+// F1 FIXED at 6894a2e (was a round-1 canary; inverted to a contract test).
+// The finalizer release is now keyed to the matching RBG's UID, a terminating
+// policy matching that UID stays authoritative, a stale terminating policy is
+// ignored and released once its recorded UID is gone, and a manual escape
+// hatch is documented.
+func TestKEP473_F1_ContractFinalizerReleaseKeyedByUID(t *testing.T) {
 	sec := section(kepText(t), "Mutability and Update Semantics")
 	if sec == "" {
 		t.Fatal("Mutability and Update Semantics section not found")
 	}
-	assertContains(t, sec,
+	assertNotContains(t, sec,
 		"releases it only after the RBG has been deleted",
-		"mutability section (name-scoped release condition)")
-	assertNotContains(t, sec, "UID",
-		"mutability section (release condition is still not keyed on RBG identity)")
-	assertNotContains(t, sec, "terminating",
-		"mutability section (treatment of terminating policies still unspecified)")
+		"mutability section (name-scoped release condition must be gone)")
+	assertContains(t, sec, "Release is keyed to the matching RBG's **UID**",
+		"mutability section (UID-keyed release)")
+	assertContains(t, sec, "remains authoritative",
+		"mutability section (terminating policy handling)")
+	assertContains(t, sec, "releases the finalizer once that recorded UID is deleted",
+		"mutability section (stale-owner release)")
+	assertContains(t, sec, "Escape hatch and rollback",
+		"mutability section (documented escape hatch)")
 }
 
-// F2: the KEP's motivating scenario (PD co-location) composes with gang
-// scheduling as gang-parent {all roles} containing a cross-role topology
-// child {prefill,decode}. The KEP only commits Volcano to "parent topology +
-// per-instance child topology" and punts everything else to
-// SchedulerUnsupported, leaving unspecified whether the Phase-1 backend can
-// render the KEP's own Story 2 next to gang.
-func TestKEP473_F2_VolcanoGangParentTopologyChildUnspecified(t *testing.T) {
+// F2 FIXED at 6894a2e (inverted to a contract test). The Volcano containment
+// bullet now specifies the gang-parent + cross-role topology-child rendering
+// (a subGroupPolicy entry whose labelSelector selects the child roles and
+// carries the child networkTopology); the vendored Volcano
+// SubGroupPolicySpec.LabelSelector field this relies on is pinned by
+// TestBaseFact_VolcanoSubGroupLabelSelector.
+func TestKEP473_F2_ContractVolcanoGangParentTopologyChildSpecified(t *testing.T) {
 	sec := section(kepText(t), "Translation Channels")
 	if sec == "" {
 		t.Fatal("Translation Channels section not found")
 	}
-	assertContains(t, sec, "not arbitrary cross-role containment",
-		"Volcano containment limitation sentence")
-	lower := strings.ToLower(sec)
-	for _, clarification := range []string{"gang parent", "gang-parent", "parent gang"} {
-		if strings.Contains(lower, clarification) {
-			t.Errorf("KEP now addresses gang-parent/topology-child (%q); invert this canary", clarification)
-		}
-	}
+	assertContains(t, sec, "a gang parent with a cross-role topology child",
+		"Volcano containment bullet (gang-parent case specified)")
+	assertContains(t, sec, "entry whose `labelSelector` selects the child roles",
+		"Volcano containment bullet (rendering mechanism)")
+	assertContains(t, sec, "does not support arbitrary multi-level cross-role containment",
+		"Volcano containment bullet (remaining limitation stated)")
 }
 
-// F3: the Level Identifiers section says the RBGSet immutability guard "lists
-// children from the informer cache" (cross-resource admission read), while the
-// Mutability section says RBGSet template validation "requires no
-// cross-resource child lookup". Both cannot be true, and the base tree's
-// RBGSet validator does no cross-resource reads at all.
-func TestKEP473_F3_RBGSetAdmissionContradiction(t *testing.T) {
+// F3 FIXED at 6894a2e (inverted to a contract test): the informer-cache
+// admission sentence is gone and the validation preamble now states all
+// immutability validation is self-contained (no child lookup, no cache
+// dependency), matching the base tree's RBGSet validator
+// (TestBaseFact_RBGSetAdmissionDoesNoChildLookup).
+func TestKEP473_F3_ContractRBGSetAdmissionSelfContained(t *testing.T) {
 	doc := kepText(t)
-	assertContains(t, doc, "it lists children from the informer cache",
-		"Level Identifiers validation preamble")
+	assertNotContains(t, doc, "it lists children from the informer cache",
+		"Level Identifiers validation preamble (stale sentence must be gone)")
+	assertContains(t, doc, "performs no child lookup and no informer-cache dependency",
+		"Level Identifiers validation preamble (self-contained statement)")
 	assertContains(t, doc, "requires no cross-resource child lookup",
 		"Mutability and Update Semantics section")
 }
 
-// F4a: the PR body claims reconcile validates "preferred level not broader
-// than required"; the KEP's validation table says the required/preferred
-// relative order is "Not validated by RBG".
-func TestKEP473_F4a_PRBodyValidationClaimDrift(t *testing.T) {
+// F4a FIXED at 6894a2e + PR-body edit (inverted to a contract test): the PR
+// body claims "preferred level not broader than required" and the KEP
+// validation table now specifies that ordering check (InvalidLevelOrder)
+// instead of "Not validated by RBG".
+func TestKEP473_F4a_ContractValidationClaimAligned(t *testing.T) {
 	assertContains(t, prBodyFixture(t), "preferred level not broader than required",
 		"PR body fixture")
-	assertContains(t, kepText(t), "Required/preferred relative order | Not validated by RBG",
-		"KEP validation table")
+	assertNotContains(t, kepText(t), "| Not validated by RBG |",
+		"KEP validation table (relative-order punt must be gone)")
+	assertContains(t, kepText(t), "rejected as `InvalidLevelOrder`",
+		"KEP validation table (ordering check specified)")
 }
 
-// F4b: the PR body lists conditions PlacementPlanReady and
-// TopologyConstraintActive that appear nowhere in the KEP (which defines only
-// GangConfigured and TopologyTranslated).
-func TestKEP473_F4b_PRBodyPhantomConditions(t *testing.T) {
+// F4b FIXED by PR-body edit (inverted to a contract test): the phantom
+// conditions PlacementPlanReady / TopologyConstraintActive are gone from the
+// PR body; the KEP defines only GangConfigured and TopologyTranslated.
+func TestKEP473_F4b_ContractNoPhantomConditions(t *testing.T) {
 	body := prBodyFixture(t)
-	assertContains(t, body, "PlacementPlanReady", "PR body fixture")
-	assertContains(t, body, "TopologyConstraintActive", "PR body fixture")
+	assertNotContains(t, body, "PlacementPlanReady", "PR body fixture")
+	assertNotContains(t, body, "TopologyConstraintActive", "PR body fixture")
 	doc := kepText(t)
 	assertNotContains(t, doc, "PlacementPlanReady", "KEP text")
 	assertNotContains(t, doc, "TopologyConstraintActive", "KEP text")
 }
 
-// F4c: the PR body states "The Chinese translation is kept in-tree with the
-// English KEP", but the PR adds only an English README.md and no Chinese KEP
-// file exists anywhere under keps/.
-func TestKEP473_F4c_PRBodyChineseTranslationClaim(t *testing.T) {
-	assertContains(t, prBodyFixture(t), "Chinese translation is kept in-tree", "PR body fixture")
+// F4c FIXED by PR-body edit (inverted to a contract test): the claim "The
+// Chinese translation is kept in-tree with the English KEP" was removed (no
+// Chinese KEP file exists under keps/).
+func TestKEP473_F4c_ContractChineseTranslationClaimGone(t *testing.T) {
+	assertNotContains(t, prBodyFixture(t), "Chinese translation is kept in-tree", "PR body fixture")
 	kepsDir := filepath.Join(repoRoot(t), "keps")
 	found := []string{}
 	_ = filepath.Walk(kepsDir, func(path string, info os.FileInfo, err error) error {
@@ -363,14 +407,15 @@ func TestKEP473_F4c_PRBodyChineseTranslationClaim(t *testing.T) {
 	}
 }
 
-// F5: the Risks and Mitigations table says TopologyTranslated=False surfaces
-// "on the declaring object (CoordinatedPolicy for rules...)", while the
-// Observability section and Graduation Criteria put the condition on the RBG
-// (which is also the KEP-430 precedent for gang failures).
-func TestKEP473_F5_ConditionSurfaceInconsistent(t *testing.T) {
+// F5 FIXED at 6894a2e (inverted to a contract test): the condition surface
+// is now consistently the RBG, with the event/message naming the declaring
+// CoordinatedPolicy rule or RoleSpec.
+func TestKEP473_F5_ContractConditionSurfaceIsRBG(t *testing.T) {
 	doc := kepText(t)
-	assertContains(t, doc,
+	assertNotContains(t, doc,
 		"on the declaring object (CoordinatedPolicy for rules",
+		"Risks and Mitigations table (old surface must be gone)")
+	assertContains(t, doc, "on the RBG, with the event/message naming the declaring",
 		"Risks and Mitigations table")
 	assertContains(t, section(doc, "Observability"), "**RBG conditions**",
 		"Observability section")
@@ -378,18 +423,96 @@ func TestKEP473_F5_ConditionSurfaceInconsistent(t *testing.T) {
 		"Graduation Criteria")
 }
 
-// F6: the Generated Group Names section defines a naming scheme only for
-// Volcano; the KAI example reuses the legacy rbg.Name and the Koordinator
-// example introduces per-instance member PodGroup names, neither of which is
-// covered by the stated scheme.
-func TestKEP473_F6_NamingSchemeDialectsUnspecified(t *testing.T) {
+// F6 FIXED at 6894a2e (inverted to a contract test): the Generated Group
+// Names section now has per-dialect naming rules for Volcano, Koordinator and
+// KAI (kind-prefixed, tree-unique KAI subGroup names).
+func TestKEP473_F6_ContractNamingSchemeCoversAllDialects(t *testing.T) {
 	sec := section(kepText(t), "Generated Group Names")
 	if sec == "" {
 		t.Fatal("Generated Group Names section not found")
 	}
 	assertContains(t, sec, "Volcano", "naming section")
-	assertNotContains(t, sec, "KAI", "naming section (KAI still unspecified)")
-	assertNotContains(t, sec, "Koordinator", "naming section (Koordinator still unspecified)")
+	assertContains(t, sec, "KAI", "naming section")
+	assertContains(t, sec, "Koordinator", "naming section")
+	assertContains(t, sec, "unique across the entire subGroup tree",
+		"naming section (KAI tree-uniqueness rule)")
+}
+
+// ---------------------------------------------------------------------------
+// Bug canaries (round 2, head 6894a2e). PASS = finding still present in the
+// text; must FLIP to red when the author fixes the document.
+// ---------------------------------------------------------------------------
+
+// F7: the new contract-freeze mechanism records the accepted topology
+// contract (including "none") at the RBG's first placement acceptance, and
+// states "A CoordinatedPolicy may be created before the RBG; that is a normal
+// launch ordering and the recorded contract is its topology." The controller
+// resolves the policy through the cache-backed client
+// (TestBaseFact_PolicyFetchAndWatch), so a policy that exists in etcd but is
+// not yet visible in the informer cache at freeze time freezes the contract
+// as "none"; when the policy event later arrives the RBG reports
+// TopologyPolicyLate and gates role updates, and recovery requires deleting
+// and recreating the RBG. The KEP specifies no uncached read, settling
+// window, or other guard at freeze time, so the blessed "normal launch
+// ordering" is only probabilistically safe.
+func TestKEP473_F7_ContractFreezeCacheRaceUnaddressed(t *testing.T) {
+	sec := section(kepText(t), "Mutability and Update Semantics")
+	if sec == "" {
+		t.Fatal("Mutability and Update Semantics section not found")
+	}
+	assertContains(t, sec,
+		"A CoordinatedPolicy may be created before the RBG; that is a normal launch ordering",
+		"mutability section (blessed create ordering)")
+	for _, guard := range []string{"uncached", "APIReader", "direct read", "settling", "cache"} {
+		if strings.Contains(sec, guard) {
+			t.Errorf("mutability section now mentions %q at freeze time; re-check F7 and invert this canary", guard)
+		}
+	}
+}
+
+// F8: the drift-discovery text lists "controller resync" as a trigger, but
+// the RBG update predicate enqueues only on spec changes
+// (TestBaseFact_RBGPredicateFiltersSpecEqualUpdates) and the CoordinatedPolicy
+// watch uses GenerationChangedPredicate, so informer resync events (old ==
+// new, same generation) never enqueue a reconcile. On a quiescent workload,
+// topology-object drift is discovered later than the KEP claims.
+func TestKEP473_F8_ResyncListedAsDriftTrigger(t *testing.T) {
+	doc := kepText(t)
+	assertContains(t, doc, "controller resync",
+		"drift-discovery trigger list (resync cannot pass the stated predicates)")
+}
+
+// F9: the Koordinator worked example says "the full example input is not
+// renderable on Koordinator ... no PodGroup is created or updated" and then
+// shows a 3-member GangGroup (prefill-0/1 + decode) for "the cross-role-only
+// portion", justifying it with "prefill is partitioned per instance, but
+// decode has PartitionBy=none". In a cross-role-only input prefill has no
+// instance constraint, so by the KEP's own naming rule (per-role members when
+// PartitionBy=none) prefill should also contribute one role-level member —
+// the example contradicts the stated partition rule under either reading.
+func TestKEP473_F9_KoordinatorExampleMemberPartition(t *testing.T) {
+	doc := kepText(t)
+	assertContains(t, doc, "prefill is partitioned per instance, but decode has `PartitionBy=none`",
+		"Koordinator example justification")
+	assertContains(t, doc, "3 total: prefill-0/1 + decode",
+		"Koordinator example member count")
+}
+
+// F10: the contract-freeze paragraph gates any drift between the recorded
+// contract and the currently resolved declarations with TopologyPolicyLate
+// ("Removing all topology after a non-empty contract is treated the same
+// way"), while the next paragraph still says that with validating webhooks
+// disabled "the controller then renders the latest desired topology". For an
+// in-place topology change with webhooks disabled the two sentences give
+// opposite outcomes.
+func TestKEP473_F10_WebhookDisabledContradiction(t *testing.T) {
+	doc := kepText(t)
+	assertContains(t, doc,
+		"Removing all topology after a non-empty contract is treated the same way",
+		"contract-freeze paragraph")
+	assertContains(t, doc,
+		"the controller then renders the latest desired topology",
+		"webhooks-disabled sentence")
 }
 
 // ---------------------------------------------------------------------------
@@ -450,14 +573,86 @@ func TestExternalDialect_KoordinatorNetworkTopologySpec(t *testing.T) {
 }
 
 func TestExternalDialect_KAIPodGroupTopologyConstraint(t *testing.T) {
-	body := fetch(t, "https://raw.githubusercontent.com/NVIDIA/KAI-scheduler/main/pkg/apis/scheduling/v2alpha2/podgroup_types.go")
+	// The KAI Go API types moved from NVIDIA/KAI-scheduler/pkg/apis/... to the
+	// dedicated kai-scheduler/api repo between rounds (round-1 URL 404s since).
+	body := fetch(t, "https://raw.githubusercontent.com/kai-scheduler/api/main/scheduling/v2alpha2/podgroup_types.go")
 	// Singular minSubGroup, exactly as the KEP renders it.
-	assertContains(t, body, "MinSubGroup *int32 `json:\"minSubGroup,omitempty\"", "KAI PodGroup/SubGroup")
-	assertContains(t, body, "RequiredTopologyLevel string `json:\"requiredTopologyLevel,omitempty\"",
+	assertContains(t, body, "MinSubGroup *int32 `json:\"minSubGroup,omitempty\"`", "KAI PodGroup/SubGroup")
+	assertContains(t, body, "RequiredTopologyLevel string `json:\"requiredTopologyLevel,omitempty\"`",
 		"KAI TopologyConstraint")
-	assertContains(t, body, "PreferredTopologyLevel string `json:\"preferredTopologyLevel,omitempty\"",
+	assertContains(t, body, "PreferredTopologyLevel string `json:\"preferredTopologyLevel,omitempty\"`",
 		"KAI TopologyConstraint")
-	assertContains(t, body, "Topology string `json:\"topology,omitempty\"", "KAI TopologyConstraint")
-	assertContains(t, body, "SubGroups []SubGroup `json:\"subGroups,omitempty\"", "KAI PodGroup")
-	assertContains(t, body, "Parent *string `json:\"parent,omitempty\"", "KAI SubGroup")
+	assertContains(t, body, "Topology string `json:\"topology,omitempty\"`", "KAI TopologyConstraint")
+	assertContains(t, body, "SubGroups []SubGroup `json:\"subGroups,omitempty\"`", "KAI PodGroup")
+	assertContains(t, body, "Parent *string `json:\"parent,omitempty\"`", "KAI SubGroup")
+}
+
+// The round-2 KEP text claims a KAI level is identified by its nodeLabel OR
+// its TopologyLevel.alias. Verify the alias field exists upstream.
+func TestExternalDialect_KAITopologyLevelAlias(t *testing.T) {
+	body := fetch(t, "https://raw.githubusercontent.com/kai-scheduler/api/main/kai/v1alpha1/topology_types.go")
+	assertContains(t, body, "NodeLabel string `json:\"nodeLabel\"`", "KAI TopologyLevel")
+	assertContains(t, body, "Alias string `json:\"alias,omitempty\"`", "KAI TopologyLevel")
+}
+
+// The KEP pins the alias claim to "Current KAI (including v0.18.3)": the
+// v0.18.3 Topology CRD must document alias as usable in place of nodeLabel in
+// requiredTopologyLevel/preferredTopologyLevel.
+func TestExternalDialect_KAIAliasInV0183CRD(t *testing.T) {
+	body := fetch(t, "https://raw.githubusercontent.com/NVIDIA/KAI-scheduler/v0.18.3/deployments/kai-scheduler/crds/kai.scheduler_topologies.yaml")
+	assertContains(t, body, "alias:", "KAI v0.18.3 Topology CRD levels")
+	assertContains(t, body, "usable in place of nodeLabel when",
+		"KAI v0.18.3 Topology CRD alias description")
+	assertContains(t, body, "requiredTopologyLevel", "KAI v0.18.3 Topology CRD alias description")
+	assertContains(t, body, "nodeLabel:", "KAI v0.18.3 Topology CRD levels")
+}
+
+// The round-2 KEP text claims Koordinator's deployed PodGroup CRD
+// (scheduling.sigs.k8s.io) permits minMember: 0 (no minimum in the schema)...
+func TestExternalDialect_KoordinatorPodGroupMinMember(t *testing.T) {
+	body := fetch(t, "https://raw.githubusercontent.com/koordinator-sh/koordinator/master/config/crd/bases/scheduling.sigs.k8s.io_podgroups.yaml")
+	assertContains(t, body, "group: scheduling.sigs.k8s.io", "Koordinator PodGroup CRD group")
+	block := propertyBlock(t, body, "minMember")
+	assertContains(t, block, "format: int32", "Koordinator PodGroup minMember")
+	assertNotContains(t, block, "minimum:", "Koordinator PodGroup minMember (0 must be allowed)")
+}
+
+// ...while the upstream scheduler-plugins PodGroup CRD (scheduling.x-k8s.io,
+// the dialect the repo's k8s-scheduler-plugin backend renders) requires
+// minMember >= 1, which is why topology-only rendering cannot assume it.
+func TestExternalDialect_SchedulerPluginsPodGroupMinMemberOne(t *testing.T) {
+	body := fetch(t, "https://raw.githubusercontent.com/kubernetes-sigs/scheduler-plugins/master/manifests/coscheduling/crd.yaml")
+	assertContains(t, body, "group: scheduling.x-k8s.io", "scheduler-plugins PodGroup CRD group")
+	block := propertyBlock(t, body, "minMember")
+	assertContains(t, block, "minimum: 1", "scheduler-plugins PodGroup minMember")
+}
+
+// propertyBlock extracts the CRD schema block for one property name: from
+// "<indent><name>:" to the next line with the same or smaller indent.
+func propertyBlock(t *testing.T, yaml, name string) string {
+	t.Helper()
+	lines := strings.Split(yaml, "\n")
+	start := -1
+	indent := 0
+	for i, l := range lines {
+		trimmed := strings.TrimLeft(l, " ")
+		if trimmed == name+":" {
+			start = i
+			indent = len(l) - len(trimmed)
+			break
+		}
+	}
+	if start < 0 {
+		t.Fatalf("property %q not found in CRD yaml", name)
+	}
+	var b strings.Builder
+	b.WriteString(lines[start] + "\n")
+	for _, l := range lines[start+1:] {
+		trimmed := strings.TrimLeft(l, " ")
+		if trimmed != "" && len(l)-len(trimmed) <= indent {
+			break
+		}
+		b.WriteString(l + "\n")
+	}
+	return b.String()
 }
