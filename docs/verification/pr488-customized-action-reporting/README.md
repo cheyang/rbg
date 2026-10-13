@@ -36,6 +36,28 @@ Run against the **base** branch (`7ed1860c`), because the question is whether th
 
 ## Summary of results
 
+### Round 4 (head `dab003ce`, delta `d260dc6e..dab003ce`)
+
+Author's response to the three-source review wave (diw-zw 4 bugs + Copilot medium + second-session
+2 P2s), single commit `dab003ce` "fix: harden customized action result reporting" (+801/−77):
+
+| Finding | Fix in delta | Verdict |
+|---------|--------------|---------|
+| diw-zw #1 / Copilot: old/new result slice aliasing swallows failure events | `oldCustomizedActionResults` now deep-copied before mutation | **Fixed** (code-verified) |
+| P2: immediately retried failure disappears without an event | new `recordDisplacedCustomizedActionFailures` compares pre/post-create results and records the displaced failure | **Fixed** (code-verified) |
+| diw-zw #2: `failWarmupJob` discards preserved diagnostics | now routes through `preserveCustomizedActionResults` (with `allPods` param) | **Fixed** (code-verified) |
+| diw-zw #3: preserved summaries reset `truncated` to false | `preservedPrevious && oldTruncated → truncated stays true` in both paths | **Fixed** (code-verified) |
+| diw-zw #4: aggregate messages bypass 1024B limit | reason→128 / message→1024 truncation applied on all aggregate paths + CRD MaxLength bounds | **Fixed** (code-verified) |
+| diw-zw [semantics]: global timeout marks succeeded actions failed | `allSucceeded` now returns before the deadline-exceeded check; failed-with-waiting now `Failed` when pod phase is Failed (fixes P2 #2 too) | **Fixed** (code-verified) |
+| diw-zw [API]: status enums / nested bounds not CRD-enforced | `+kubebuilder:validation:Enum` on both states, MaxLength 128/1024, containers MaxItems 1024 | **Fixed** |
+| diw-zw [security]: diagnostic text read surface | documented on both message fields ("same care as Pod logs") | **Addressed by docs** |
+| diw-zw [nit]: sort in dedup loop | sort moved after the merge loop | **Fixed** |
+| diw-zw [perf]: bounds before materializing | not in this delta | **Open (non-blocking)** |
+| diw-zw [test]: 15s transient sampling | not in this delta | **Open (non-blocking)** |
+
+My harness at `dab003ce`: all 6 tests green (`results/unit-layer-round4.txt`); full suite
+(`internal/controller/workloads`, `api/workloads`) green. Author added 508 lines of tests.
+
 ### Round 3 (head `d260dc6e`, delta `060ef1b7..d260dc6e`)
 
 Single commit `d260dc6e` "fix: correct customized action result reporting". Re-verify + delta
