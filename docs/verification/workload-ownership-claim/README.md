@@ -60,6 +60,42 @@ Layers run against the code under review:
   test stays green on both, so the harness exercises the changed paths. No production file was modified;
   the harness is additive (`zz_verify_*` files).
 
+## Round 3 (2026-10-14) — incremental: rebase + new commit 9b6c83eb
+
+Delta since last round (`feb77ba7`): the PR was rebased `0821cb5b` -> `fd84f3b3` (no overlap with the
+touched component — the base move brings in #484/#495/#494, which touch roleinstance/stateful mode and
+e2e CI plumbing only) and gained one new commit, `9b6c83eb` "keep RBG-owned terminating workloads
+claimable so cleanup runs", which addresses the round-2 finding F-terminating (review F2).
+
+Actions and results:
+
+| Action | Result |
+|--------|--------|
+| `re-verify.sh` on head `9b6c83eb` (harness from round 2) | all FIXED except `F-terminating` STILL-BROKEN — the author deliberately changed that contract (Harness-update, below) |
+| Premise re-check on the NEW base `fd84f3b3` (base had moved) | P0 contracts RED at both layers (`results/archive/l1-unit-base-fd84f3b3.txt`, `l2-envtest-base-fd84f3b3.txt`) — premise still valid on the new base |
+| Harness update for F-terminating | `TestZZVerifyTerminatingWorkloadNotClaimed` replaced by `TestZZVerifyTerminatingOwnedWorkloadClaimable` (new intended contract) |
+| Bites check for the new contract | RED on previous head `feb77ba7` (`results/l1-unit-previous-head-terminating-polarity.txt`), GREEN on `9b6c83eb` |
+| New premise guard | `TestZZVerifyTerminatingForeignWorkloadRefused` — after the blanket terminating check was dropped, the foreign-uid check is the only thing refusing a TERMINATING stale-uid leftover; red on base, green on both PR heads |
+| Polarity of the author's own new tests | `TestWorkloadReconcilers_ClaimTerminatingWorkloadTheyOwn` and `TestRoleBasedGroupReconciler_CleanupRunsWhenOwnedWorkloadTerminating` are RED on `feb77ba7` (head test files grafted; `results/archive/author-tests-on-feb77ba7-polarity.txt`), green on `9b6c83eb` — they genuinely pin the fix |
+| New residual-gap canary | `TestZZVerifyCleanupSkippedWhileSiblingRoleWedged` (F-cleanup-gate / review F5): any persistent `reconcileRoles` error (unlabeled orphan, foreign uid until GC, unmet dependency) still skips the step-9 cleanup, so a removed role's leftover leaks for the whole wedge. CANARY, passes on `9b6c83eb` (= behavior present); flip if cleanup starts running on role-reconcile errors |
+
+Round-3 re-verify table on head `9b6c83eb` (`results/reverify/`):
+
+```
+P0                     contract  unit+integration  FIXED
+F-terminating          contract  unit              FIXED (new contract; harness updated)
+F-terminating-foreign  contract  unit              FIXED
+F-orphan-nolabel       contract  unit              FIXED
+F-orphan-equal         contract  unit              FIXED
+F-guard                contract  unit              FIXED
+F-adopt-e2e            contract  integration       FIXED
+F-write                contract  integration       FIXED
+F-residual-cm          canary    integration       STILL-PRESENT (open minor finding F1)
+F-cleanup-gate         canary    unit              STILL-PRESENT (open minor finding F5)
+```
+
+The two STILL-PRESENT rows are canaries asserting currently-present minor behavior, not failed fixes.
+
 ## Continuing after the fix (possibly on another machine)
 
 The harness lives on branch `verify/workload-ownership-claim-codex` (production code untouched).
