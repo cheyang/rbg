@@ -34,6 +34,15 @@ Run against the **base** branch (`7ed1860c`), because the question is whether th
 | **Verdict** | **Confirmed** |
 | Evidence | `results/premise-p0-base-vs-head.txt` — base has 0 occurrences of `CompletionPolicy`/`CustomizedActionResult`/timeout validation in `api/`+`internal/`; head defines and validates them. For a feature request, absence of the capability on base is the symptom. |
 
+## Final state
+
+**MERGED 2026-10-13 11:03:39Z** — squash commit `375fdfd5` on sgl-project/rbg main.
+Timeline: author pinged the maintainer at 10:58 ("@diw-zw Pls take a look"), diw-zw
+approved at 11:03:24 after resolving the remaining perf threads, and the PR merged
+15 seconds later. All review threads resolved (0 open at merge); reviewDecision APPROVED.
+Four review rounds + a maintainer pass over 12 days; every blocking finding was fixed
+and independently verified (harness + live cluster + CI) before merge.
+
 ## Summary of results
 
 ### Round 4 (head `dab003ce`, delta `d260dc6e..dab003ce`)
