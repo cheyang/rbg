@@ -49,7 +49,7 @@ Main design points:
      - KAI: `minSubGroup: 0` / `minMember: 0`
 
 4. **KAI topology identity**
-   - KAI levels are `nodeLabel` keys, not aliases.
+   - KAI levels are `nodeLabel` keys or `TopologyLevel.alias` identifiers, resolved against the selected `Topology` CR.
    - `TopologyConstraint.topologyName` selects the KAI `Topology` CR.
    - The controller default can be overridden by the API field.
    - Missing or inconsistent topology names are reported as `TopologyResourceUnresolved` / `IncompatibleTopologyNames`.
@@ -58,21 +58,21 @@ Main design points:
    - Topology declarations are immutable for the RBG and CoordinatedPolicy lifecycle.
    - Admission rejects in-place additions, removals, and changes.
    - To change topology, delete and recreate the affected workload and, when needed, its topology-bearing CoordinatedPolicy.
-   - An active topology-bearing CoordinatedPolicy is protected by a controller-managed finalizer until its matching RBG is deleted, preventing delete/recreate from bypassing immutability.
+   - The combined RBG/CoordinatedPolicy contract freezes when the controller first accepts a placement plan; a topology-bearing policy arriving after the RBG accepted `none`, or a changed contract, reports `TopologyPolicyLate` and gates role updates instead of applying to running pods.
+   - An active topology-bearing CoordinatedPolicy is protected by a controller-managed finalizer; release is keyed to the matching RBG's UID, a terminating policy matching that UID stays authoritative, a stale terminating policy is ignored and released, and manual finalizer removal is the documented rollback escape hatch.
    - Rolling updates that change topology constraints are out of scope.
 
-6. **Explicit failure semantics**
+6. **Naming safety and explicit failure semantics**
    - Reconcile validates:
      - level existence
      - parent/child level ordering
      - preferred level not broader than required
      - topology resource existence
      - scheduler capability
-   - Failures surface as conditions and events:
-     - `PlacementPlanReady=False`
-     - `TopologyTranslated=False`
-     - `PreferredAbsorbed=True`
-     - `TopologyConstraintActive=True`
+   - Failures surface as RBG conditions and events naming the declaring rule or role:
+     - `TopologyTranslated=False`, including `TopologyPolicyLate`
+     - `GangConfigured=False` (retained for gang-only failures)
+     - `TopologyTranslated=True` with reason `PreferredAbsorbed` when Volcano cannot anchor a preferred level
    - Role create/update is gated when the plan or translation is invalid.
 
 7. **KEP-430 compatibility**
@@ -120,18 +120,20 @@ Key design decisions worth reviewing:
 6. KAI topology identity is explicit via `topologyName`.
 7. Topology constraints are immutable for the workload lifecycle.
 8. Unsupported scheduler capabilities are reported, not approximated.
+9. Generated source names are admitted as DNS-1123 labels; KAI subGroups use kind-prefixed, tree-unique names with consistent parent references and bindings.
 
 ### Ⅵ. Special notes for reviews
 
 - This KEP intentionally narrows alpha topology rules to whole-role-scope co-location.
 - Segment-level grouping and spread are not part of this KEP.
 - Native kube-scheduler translation is explicitly unsupported.
-- The Chinese translation is kept in-tree with the English KEP.
 
 ## Checklist
 
 - [ ] Format your code `make fmt`.
 - [ ] Add unit tests or integration tests.
 - [ ] Update the documentation related to the change.
+
+
 
 
