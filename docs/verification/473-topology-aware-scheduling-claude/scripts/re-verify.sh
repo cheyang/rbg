@@ -24,6 +24,11 @@ MANIFEST="$TOPIC_DIR/verify-manifest.json"
 command -v jq >/dev/null || { echo "re-verify: jq required" >&2; exit 2; }
 command -v python3 >/dev/null || { echo "re-verify: python3 required" >&2; exit 2; }
 git rev-parse --git-dir >/dev/null 2>&1 || { echo "re-verify: not a git repo" >&2; exit 2; }
+# round-2 robustness fix: run from the repo root, not the invocation cwd. If
+# invoked from inside docs/verification/<topic>/, `git checkout -f <head>`
+# deletes that directory and git can no longer resolve the relative harness
+# pathspec for the graft ("pathspec did not match any file(s)").
+cd "$(git rev-parse --show-toplevel)"
 if ! git diff --quiet || ! git diff --cached --quiet; then
   echo "re-verify: working tree has uncommitted tracked changes; commit or stash first" >&2
   exit 2

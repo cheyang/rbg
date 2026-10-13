@@ -147,6 +147,11 @@ def f8():
 
 @check("F9", "canary", "minMember: 0 on scheduling.sigs.k8s.io PodGroup diverges from upstream CRD")
 def f9():
+    # round-2 refinement: the finding was "the dialect divergence is unaddressed".
+    # The PR head now documents runtime dialect detection + SchedulerUnsupported,
+    # which is the mitigation the finding asked for, so the canary must flip to
+    # DEFECT-ABSENT once that mitigation language is present (and re-trigger if
+    # the rendering again ships without it).
     kep = KEP["text"]
     repo = KEP["repo"]
     koord_example = section(kep, "```yaml\napiVersion: scheduling.sigs.k8s.io", "```")
@@ -162,14 +167,79 @@ def f9():
     if os.path.exists(koord_crd):
         crd = read(koord_crd)
         koord_no_min = "minimum:" not in crd
-    present = renders_zero and upstream_min1 and koord_no_min
-    return present, "KEP renders minMember: 0 on sigs PodGroup=%s; upstream scheduler-plugins CRD requires >=1=%s; koordinator's deployed CRD has no minimum=%s" % (
-        renders_zero, upstream_min1, koord_no_min)
+    mitigated = ("detects the installed PodGroup CRD dialect" in kep
+                 and "SchedulerUnsupported" in kep)
+    present = renders_zero and upstream_min1 and koord_no_min and not mitigated
+    return present, "KEP renders minMember: 0 on sigs PodGroup=%s; upstream scheduler-plugins CRD requires >=1=%s; koordinator's deployed CRD has no minimum=%s; dialect-detection mitigation documented=%s" % (
+        renders_zero, upstream_min1, koord_no_min, mitigated)
 
 
 @check("F10", "canary", "typo 'upto' in generated API doc comment")
 def f10():
     return "upto" in KEP["text"], "doc comment contains 'upto'"
+
+
+# --------------------------------------------- round-2 canaries (new head) ---
+
+@check("F11", "canary", "Koordinator 'cross-role-only' rendering shows per-instance prefill members the unrenderability claim excludes")
+def f11():
+    # The round-2 KEP states the full example is NOT renderable on Koordinator
+    # (prefill's instance-level constraint -> SchedulerUnsupported, no PodGroup),
+    # then illustrates "the cross-role-only portion" with per-instance members
+    # (infer-0-prefill-0/1) that only exist BECAUSE of that instance constraint.
+    # A genuinely cross-role-only input has PartitionBy=none on both roles and
+    # renders two role-level members (infer-0-prefill, infer-0-decode). The
+    # shown 3-member rendering matches neither world.
+    kep = KEP["text"]
+    not_renderable = "is **not renderable** on Koordinator" in kep
+    cross_only = "For the cross-role-only portion of the input" in kep
+    per_instance = ("infer-0-prefill-0" in kep and "infer-0-prefill-1" in kep
+                    and "role-level member" in kep)
+    present = not_renderable and cross_only and per_instance
+    return present, "full input declared not renderable=%s; partial rendering shown=%s; per-instance prefill members present=%s" % (
+        not_renderable, cross_only, per_instance)
+
+
+@check("F12", "canary", "'Role declaration immutable from create onward' contradicts codebase and the KEP's own test plan")
+def f12():
+    # The contract-freeze paragraph justifies "role-level constraints cannot
+    # arrive late" with "RBG admission makes the Role declaration immutable
+    # from create onward". Nothing in the codebase enforces that (ValidateUpdate
+    # checks rolling-update/dependencies/scaling-adapter only), and the KEP's
+    # own test item 7 says ordinary topology-free role changes remain allowed
+    # (replicas live on RoleSpec, so whole-Role immutability would break
+    # scaling). The correct justification is topology-declaration immutability.
+    kep = KEP["text"]
+    claim = "RBG admission makes the Role declaration immutable from create onward" in kep
+    item7 = "ordinary topology-free role changes remain allowed" in kep
+    adm_path = os.path.join(KEP["repo"], "api", "workloads", "v1alpha2", "rolebasedgroup_admission.go")
+    no_code_guard = True
+    if os.path.exists(adm_path):
+        adm = read(adm_path)
+        no_code_guard = ("reflect.DeepEqual(oldRBG.Spec.Roles" not in adm
+                         and "immutable" not in adm.lower())
+    present = claim and item7 and no_code_guard
+    return present, "KEP claims whole-Role immutability=%s; KEP test item 7 allows ordinary role changes=%s; RBG admission has no roles-immutability guard=%s" % (
+        claim, item7, no_code_guard)
+
+
+@check("F13", "canary", "DNS-1123 admission rule for 'Role names' is unscoped; RoleSpec.Name has no pattern today")
+def f13():
+    # The new naming-safety rule reads "Role names and topology-bearing
+    # policy-rule names are validated at admission as DNS-1123 labels". The
+    # policy-rule half is scoped to topology-bearing rules; the role half is
+    # not. RoleSpec.Name today carries only Required+MinLength=1, so a literal
+    # all-roles reading tightens the schema for existing objects. The KEP
+    # should scope it to roles bearing instanceTopologyConstraint.
+    kep = KEP["text"]
+    unqualified = ("Role names and topology-bearing policy-rule names" in kep
+                   or "Role names and topology-bearing policy-rule names must be DNS-1123" in kep)
+    types_src = read(os.path.join(KEP["repo"], "api", "workloads", "v1alpha2", "rolebasedgroup_types.go"))
+    role_block = re.search(r"type RoleSpec struct.*?Name string `json:\"name\"`", types_src, re.S)
+    no_pattern = bool(role_block) and "Pattern" not in role_block.group(0)
+    present = unqualified and no_pattern
+    return present, "KEP states unqualified 'Role names ... DNS-1123'=%s; RoleSpec.Name lacks a pattern marker=%s" % (
+        unqualified, no_pattern)
 
 
 # --------------------------------------------------------------- contracts ---

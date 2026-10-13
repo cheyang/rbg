@@ -160,25 +160,42 @@ func TestSigsPodGroupExampleStrictDecodes(t *testing.T) {
 	t.Logf("strict-decoded %d sigs PodGroup example(s)", found)
 }
 
-// TestSigsExampleMinMemberZero documents the CRD-level divergence behind
-// review finding F9: the upstream scheduler-plugins CRD enforces
-// spec.minMember >= 1, while Koordinator's deployed CRD does not. The Go type
-// accepts 0, so only the CRD schema can reject it — recorded here as text,
-// proven in scripts/check_claims.py (F9).
+// TestSigsExampleMinMemberZero was the F9 bug-canary in round 1 (upstream
+// scheduler-plugins CRD enforces spec.minMember >= 1, Koordinator's deployed
+// CRD does not). Round 2 fixed F9 at the document level: the KEP now targets
+// Koordinator's deployed CRD dialect and documents runtime dialect detection.
+// The canary is therefore promoted to a contract: the example must keep
+// rendering minMember: 0 (valid on the Koordinator dialect) AND the KEP must
+// keep the dialect-detection mitigation next to it.
 func TestSigsExampleMinMemberZero(t *testing.T) {
+	kep := kepText(t)
+	var found int
 	for _, block := range yamlBlocks(t) {
 		if !strings.Contains(block, "apiVersion: scheduling.sigs.k8s.io/v1alpha1") {
 			continue
 		}
+		found++
 		if !strings.Contains(block, "minMember: 0") {
 			t.Fatalf("expected the topology-only Koordinator example to render minMember: 0, block:\n%s", block)
 		}
-		t.Log("Koordinator topology-only example renders minMember: 0 (see F9: upstream CRD requires >= 1)")
+		t.Log("Koordinator topology-only example renders minMember: 0 (Koordinator CRD dialect)")
+	}
+	if found == 0 {
+		t.Fatal("KEP has no scheduling.sigs.k8s.io/v1alpha1 example to verify")
+	}
+	if !strings.Contains(kep, "detects the installed PodGroup CRD dialect") {
+		t.Errorf("KEP no longer documents runtime PodGroup CRD dialect detection (the F9 mitigation)")
+	}
+	if !strings.Contains(kep, "scheduling.x-k8s.io") {
+		t.Errorf("KEP no longer names the upstream scheduler-plugins dialect (scheduling.x-k8s.io) in the dialect discussion")
 	}
 }
 
-// TestKAIExampleStructure checks the KAI example carries the fields the KEP's
-// design depends on, as a textual stand-in for the missing vendored types.
+// TestKAIExampleStructure checks the KAI example against the KEP's round-2
+// rendering rules: kind-prefixed, tree-unique subGroup names (policy-/,
+// instance-/, role-), parent references using the generated names, and no
+// per-instance split of a role without an instance constraint. Textual
+// stand-in for the missing vendored KAI types.
 func TestKAIExampleStructure(t *testing.T) {
 	var kai []string
 	for _, block := range yamlBlocks(t) {
@@ -195,10 +212,38 @@ func TestKAIExampleStructure(t *testing.T) {
 		"preferredTopologyLevel: topology.rack",
 		"topology: cluster-topology",
 		"minSubGroup: 0",
-		"parent: pd-colocation",
+		"name: policy-pd-colocation",
+		"parent: policy-pd-colocation",
+		"name: instance-prefill-0",
+		"name: instance-prefill-1",
+		"name: role-decode",
 	} {
 		if !strings.Contains(block, want) {
 			t.Errorf("KAI example missing %q", want)
 		}
+	}
+	for _, banned := range []string{
+		"name: decode-0", // unconstrained role must not be split per instance
+		"name: decode-1",
+		"parent: pd-colocation\n", // raw source name as a parent reference
+	} {
+		if strings.Contains(block, banned) {
+			t.Errorf("KAI example contains banned %q (naming/partition rule violation)", banned)
+		}
+	}
+	// tree-unique subGroup names
+	names := map[string]bool{}
+	for _, line := range strings.Split(block, "\n") {
+		trimmed := strings.TrimSpace(line)
+		if strings.HasPrefix(trimmed, "- name: ") {
+			n := strings.TrimPrefix(trimmed, "- name: ")
+			if names[n] {
+				t.Errorf("duplicate subGroup name %q — names must be unique across the tree", n)
+			}
+			names[n] = true
+		}
+	}
+	if len(names) == 0 {
+		t.Fatal("no subGroup names parsed from KAI example")
 	}
 }
