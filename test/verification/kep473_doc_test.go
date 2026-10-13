@@ -206,7 +206,7 @@ func TestBaseFact_RBGSetAdmissionDoesNoChildLookup(t *testing.T) {
 // matchLabelKeys) while carrying its own networkTopology.
 func TestBaseFact_VolcanoSubGroupLabelSelector(t *testing.T) {
 	body := readRel(t, "vendor/volcano.sh/apis/pkg/apis/scheduling/types.go")
-	assertContains(t, body, "LabelSelector *metav1.LabelSelector `json:\"labelSelector,omitempty\"`",
+	assertContains(t, body, "LabelSelector *metav1.LabelSelector `json:\"labelSelector,omitempty\"",
 		"vendored volcano SubGroupPolicySpec")
 }
 
@@ -577,22 +577,22 @@ func TestExternalDialect_KAIPodGroupTopologyConstraint(t *testing.T) {
 	// dedicated kai-scheduler/api repo between rounds (round-1 URL 404s since).
 	body := fetch(t, "https://raw.githubusercontent.com/kai-scheduler/api/main/scheduling/v2alpha2/podgroup_types.go")
 	// Singular minSubGroup, exactly as the KEP renders it.
-	assertContains(t, body, "MinSubGroup *int32 `json:\"minSubGroup,omitempty\"`", "KAI PodGroup/SubGroup")
-	assertContains(t, body, "RequiredTopologyLevel string `json:\"requiredTopologyLevel,omitempty\"`",
+	assertContains(t, body, "MinSubGroup *int32 `json:\"minSubGroup,omitempty\"", "KAI PodGroup/SubGroup")
+	assertContains(t, body, "RequiredTopologyLevel string `json:\"requiredTopologyLevel,omitempty\"",
 		"KAI TopologyConstraint")
-	assertContains(t, body, "PreferredTopologyLevel string `json:\"preferredTopologyLevel,omitempty\"`",
+	assertContains(t, body, "PreferredTopologyLevel string `json:\"preferredTopologyLevel,omitempty\"",
 		"KAI TopologyConstraint")
-	assertContains(t, body, "Topology string `json:\"topology,omitempty\"`", "KAI TopologyConstraint")
-	assertContains(t, body, "SubGroups []SubGroup `json:\"subGroups,omitempty\"`", "KAI PodGroup")
-	assertContains(t, body, "Parent *string `json:\"parent,omitempty\"`", "KAI SubGroup")
+	assertContains(t, body, "Topology string `json:\"topology,omitempty\"", "KAI TopologyConstraint")
+	assertContains(t, body, "SubGroups []SubGroup `json:\"subGroups,omitempty\"", "KAI PodGroup")
+	assertContains(t, body, "Parent *string `json:\"parent,omitempty\"", "KAI SubGroup")
 }
 
 // The round-2 KEP text claims a KAI level is identified by its nodeLabel OR
 // its TopologyLevel.alias. Verify the alias field exists upstream.
 func TestExternalDialect_KAITopologyLevelAlias(t *testing.T) {
 	body := fetch(t, "https://raw.githubusercontent.com/kai-scheduler/api/main/kai/v1alpha1/topology_types.go")
-	assertContains(t, body, "NodeLabel string `json:\"nodeLabel\"`", "KAI TopologyLevel")
-	assertContains(t, body, "Alias string `json:\"alias,omitempty\"`", "KAI TopologyLevel")
+	assertContains(t, body, "NodeLabel string `json:\"nodeLabel\"", "KAI TopologyLevel")
+	assertContains(t, body, "Alias string `json:\"alias,omitempty\"", "KAI TopologyLevel")
 }
 
 // The KEP pins the alias claim to "Current KAI (including v0.18.3)": the
