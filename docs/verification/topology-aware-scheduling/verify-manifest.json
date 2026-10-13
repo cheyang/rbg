@@ -111,6 +111,14 @@
       "match": [
         "TestKEP473_F10_WebhookDisabledContradiction"
       ]
+    },
+    {
+      "id": "F11",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F11_KAISubGroupNameBudgetMissing"
+      ]
     }
   ],
   "liveNote": "Not applicable: this PR is a docs-only KEP (no runtime code), so there is no live layer. If implementation PRs arrive, re-run with `bash docs/verification/topology-aware-scheduling/scripts/re-verify.sh` (no args: resolves the current PR head from manifest.pr)."

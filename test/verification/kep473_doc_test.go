@@ -515,6 +515,35 @@ func TestKEP473_F10_WebhookDisabledContradiction(t *testing.T) {
 		"webhooks-disabled sentence")
 }
 
+// F11: the KAI naming rule generates `policy-<rule-name>` /
+// `instance-<role.Name>-<instance-index>` / `role-<role.Name>` with source
+// names admitted as DNS-1123 labels (up to 63 chars each) and, unlike the
+// Volcano placement-name form, no truncation or length budget. KAI binds pods
+// to subGroups through the pod label `kai.scheduler/subgroup-name`
+// (TestExternalDialect_KAISubGroupLabelKey), and Kubernetes label values are
+// limited to 63 characters — e.g. "instance-" + a 63-char role name + index
+// exceeds the limit and pod creation would be rejected.
+func TestKEP473_F11_KAISubGroupNameBudgetMissing(t *testing.T) {
+	sec := section(kepText(t), "Generated Group Names")
+	if sec == "" {
+		t.Fatal("Generated Group Names section not found")
+	}
+	kai := ""
+	for _, line := range strings.Split(sec, "\n") {
+		if strings.Contains(line, "instance-<role.Name>-<instance-index>") {
+			kai = line
+		}
+	}
+	if kai == "" {
+		t.Fatal("KAI naming bullet not found")
+	}
+	for _, budget := range []string{"truncat", "63", "at most"} {
+		if strings.Contains(kai, budget) {
+			t.Errorf("KAI naming bullet now carries a length budget (%q); re-check F11 and invert this canary", budget)
+		}
+	}
+}
+
 // ---------------------------------------------------------------------------
 // Integration layer: the upstream scheduler dialects the KEP cites.
 // These anchor the premise (three incompatible dialects, quoted correctly).
@@ -625,6 +654,15 @@ func TestExternalDialect_SchedulerPluginsPodGroupMinMemberOne(t *testing.T) {
 	assertContains(t, body, "group: scheduling.x-k8s.io", "scheduler-plugins PodGroup CRD group")
 	block := propertyBlock(t, body, "minMember")
 	assertContains(t, block, "minimum: 1", "scheduler-plugins PodGroup minMember")
+}
+
+// KAI binds pods to subGroups through the pod label
+// `kai.scheduler/subgroup-name`; label values are limited to 63 chars, which
+// is why F11 asks for a length budget on generated KAI subGroup names.
+func TestExternalDialect_KAISubGroupLabelKey(t *testing.T) {
+	body := fetch(t, "https://raw.githubusercontent.com/kai-scheduler/api/main/constants/constants.go")
+	assertContains(t, body, "SubGroupLabelKey", "KAI constants")
+	assertContains(t, body, "kai.scheduler/subgroup-name", "KAI constants")
 }
 
 // propertyBlock extracts the CRD schema block for one property name: from
