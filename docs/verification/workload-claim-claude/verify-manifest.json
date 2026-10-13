@@ -27,12 +27,12 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/reconciler/ -run 'TestVerifyClaim' -count=1 -v"
+      "cmd": "go test ./pkg/reconciler/ -run 'TestVerifyClaim' -count=1 -v -json"
     },
     "integration": {
       "kind": "ginkgo",
-      "cmd": "KUBEBUILDER_ASSETS=/tmp/rbg-envtest/k8s/1.31.0-linux-amd64 go test ./test/envtest/testcase/rbg/ -count=1 -timeout 15m -args -ginkgo.focus 'Workload claim verification'",
-      "report": "stdout"
+      "cmd": "KUBEBUILDER_ASSETS=/tmp/rbg-envtest/k8s/1.31.0-linux-amd64 go test ./test/envtest/testcase/rbg/ -count=1 -timeout 15m -args -ginkgo.focus 'Workload claim verification' -ginkgo.json-report $GINKGO_REPORT -ginkgo.v",
+      "report": "$GINKGO_REPORT"
     }
   },
   "findings": [
