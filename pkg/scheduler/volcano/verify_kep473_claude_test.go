@@ -166,6 +166,12 @@ func TestVerifyF1GangOnlyPlanInjectionMatchesLegacy(t *testing.T) {
 	require.False(t, plan.HasTopology())
 
 	m := New(nil)
+	readAnnotation := func(pts *coreapplyv1.PodTemplateSpecApplyConfiguration) string {
+		if pts.ObjectMetaApplyConfiguration == nil {
+			return ""
+		}
+		return pts.Annotations[AnnotationKey]
+	}
 	for i := range rbg.Spec.Roles {
 		placement := &coreapplyv1.PodTemplateSpecApplyConfiguration{}
 		m.InjectPlacementSchedulingFields(rbg, &rbg.Spec.Roles[i], plan, placement)
@@ -182,7 +188,7 @@ func TestVerifyF1GangOnlyPlanInjectionMatchesLegacy(t *testing.T) {
 			"role %s: legacy injector set nothing", rbg.Spec.Roles[i].Name)
 		require.Equal(t, *legacy.Spec.SchedulerName, *placement.Spec.SchedulerName,
 			"role %s: placement and legacy injectors disagree on schedulerName", rbg.Spec.Roles[i].Name)
-		require.Equal(t, legacy.Annotations[AnnotationKey], placement.Annotations[AnnotationKey],
+		require.Equal(t, readAnnotation(legacy), readAnnotation(placement),
 			"role %s: placement and legacy injectors disagree on the PodGroup annotation",
 			rbg.Spec.Roles[i].Name)
 	}
