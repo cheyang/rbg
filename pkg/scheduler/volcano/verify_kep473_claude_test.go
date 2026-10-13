@@ -205,6 +205,7 @@ func TestVerifyF2CrossRoleTopologyChildRendersFlatSubGroupPolicy(t *testing.T) {
 	rbg := rbgWithRoles(
 		standaloneRole("prefill", 2, constants.RoleInstanceSetWorkloadType),
 		standaloneRole("decode", 2, constants.RoleInstanceSetWorkloadType),
+		standaloneRole("router", 1, constants.RoleInstanceSetWorkloadType),
 	)
 	rbg.UID = "rbg-uid"
 	policy := verifyPolicy(workloadsv1alpha2.CoordinatedPolicyRule{
@@ -233,11 +234,14 @@ func TestVerifyF2CrossRoleTopologyChildRendersFlatSubGroupPolicy(t *testing.T) {
 		Build()
 	ctx := context.Background()
 
-	gangStrategy := &common.GangStrategy{Roles: sets.New("prefill", "decode")}
+	gangStrategy := &common.GangStrategy{Roles: sets.New("prefill", "decode", "router")}
 	plan, err := common.ResolvePlacementPlan(ctx, c, rbg, gangStrategy)
 	require.NoError(t, err)
 	require.True(t, plan.HasTopology())
 	require.Len(t, plan.TopLevelGroups(), 1, "gang superset should contain the topology child")
+	require.NotNil(t, plan.TopLevelGroups()[0].Children,
+		"the topology rule must nest beneath the gang parent")
+	require.Len(t, plan.TopLevelGroups()[0].Children, 1)
 
 	m := New(c)
 	m.networkTopologySupported = true
