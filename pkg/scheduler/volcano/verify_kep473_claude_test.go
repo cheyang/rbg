@@ -418,13 +418,14 @@ func TestVerifyF3TopologyContractStableAcrossNonTopologyRoleChanges(t *testing.T
 	}
 }
 
-// TestVerifyF5TopologyContractEncodingIsAmbiguous is a CONTRACT test for finding F5
-// (round 2, minor). TopologyContractID builds its preimage by concatenating fields
-// with unescaped separators (';', ':' and empty delimiters), and topologyName is a
-// free-form identifier (validateTopologyIdentifier only checks non-empty and length).
-// A topologyName containing the literal separators can therefore alias a different
-// plan structure, so two semantically different declarations can share one contract
-// ID and a change between them escapes the freeze. On the head this FAILS (red).
+// TestVerifyF5TopologyContractEncodingIsAmbiguous is a GUARD test for the F5
+// hypothesis (round 2, refuted as a practical bug). TopologyContractID builds its
+// preimage by concatenating fields with unescaped ';' separators, and topologyName is
+// a free-form identifier, so an aliasing collision seemed constructible. It is not in
+// practice: the NUL-delimited role list and the invariant ";required:...;preferred:"
+// suffix order mean every realistic alias needs a NUL byte inside topologyName. This
+// test locks in that the boundary shapes stay distinct; if the encoding is ever
+// simplified (e.g. plain strings.Join), this guard goes red.
 func TestVerifyF5TopologyContractEncodingIsAmbiguous(t *testing.T) {
 	weird := &common.PlacementPlan{Root: &common.PlacementGroup{
 		Scope: common.PlacementScope{Roles: []string{"a"}},
