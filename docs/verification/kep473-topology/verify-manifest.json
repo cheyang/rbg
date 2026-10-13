@@ -3,7 +3,8 @@
   "pr": "https://github.com/sgl-project/rbg/pull/492",
   "harnessPaths": [
     "docs/verification/kep473-topology",
-    "pkg/scheduler/volcano/verify_kep473_claude_test.go"
+    "pkg/scheduler/volcano/verify_kep473_claude_test.go",
+    "internal/controller/workloads/verify_kep473_claude_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -64,9 +65,10 @@
     {
       "id": "F3",
       "polarity": "contract",
-      "layer": "unit",
+      "layer": "unit+controller",
       "match": [
-        "TestVerifyF3TopologyContractStableAcrossNonTopologyRoleChanges"
+        "TestVerifyF3TopologyContractStableAcrossNonTopologyRoleChanges",
+        "TestVerifyF3AdmissionAllowedRoleRemovalFreezesLiveRBG"
       ],
       "status": "open",
       "firstSeenSha": "dab8726249aa6193d2db15b701df84f12a3787a0"
