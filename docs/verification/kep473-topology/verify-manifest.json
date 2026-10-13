@@ -78,7 +78,7 @@
       "match": [
         "TestVerifyF5TopologyContractEncodingIsAmbiguous"
       ],
-      "status": "open",
+      "status": "refuted (hypothesis); test kept as encoding-distinctness guard",
       "firstSeenSha": "dab8726249aa6193d2db15b701df84f12a3787a0"
     },
     {

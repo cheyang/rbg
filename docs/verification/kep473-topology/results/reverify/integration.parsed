@@ -1,0 +1,2 @@
+rejects a topology policy that arrives after the RBG accepted no topology	pass
+protects an active topology policy and supports delete-and-recreate	pass

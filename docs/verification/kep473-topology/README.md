@@ -101,3 +101,37 @@ Copy-paste kickoff prompt: "You are resuming a PR-492 verification. Checkout bra
 verify/kep473-topology-claude, run docs/verification/kep473-topology/scripts/re-verify.sh,
 apply polarity from the README table, report Fixed/Still-broken per finding, then
 advance .last-reviewed to the new head."
+
+## Round 2 (head `dab8726249aa6193d2db15b701df84f12a3787a0`, base `79f7e5858fdc30ffaeadef4aea12c3809dcb348d`)
+
+The PR was rebased and extended with review-fix commits (contract freeze, UID-keyed
+policy release, flat cross-role subGroup rendering). Re-verify results on the new head:
+
+| ID | Claim | Polarity | Verdict on `dab87262` | Evidence |
+|----|-------|----------|------------------------|----------|
+| P0 | Topology support absent on base | contract | Confirmed (unchanged) | `results/premise-base-grep.out` |
+| F1 | Uncovered gang roles lost `schedulerName: volcano` | contract | **FIXED** — gang-only plans route through the legacy KEP-430 injector (`placement.go` InjectPlacementSchedulingFields) | `TestVerifyF1GangSubsetPlanKeepsVolcanoSchedulerForUncoveredRole` green |
+| F1-diff | Placement vs legacy injector divergence | contract (converted from canary) | **FIXED** — both paths now agree for every role | `TestVerifyF1GangOnlyPlanInjectionMatchesLegacy` green |
+| F2 | Cross-role containment rejected as SchedulerUnsupported | contract (promoted from canary) | **FIXED** — whole-scope topology child renders as a flat `subGroupPolicy` entry (`role In [...]` + child networkTopology); gang parent keeps the KEP-430 `rbg.Name` | `TestVerifyF2CrossRoleTopologyChildRendersFlatSubGroupPolicy` green |
+| F3 (NEW) | Topology-contract freeze hashes the whole-group gang scope's role set, so an admission-allowed role add/remove changes the contract ID → `TopologyPolicyLate` gates role reconciliation of a live RBG | contract | **STILL-BROKEN (red)** — reproduced: removing `router` (no topology constraint, `ValidateRoleTopologyImmutability` allows it) changes the ID `e15ade6e…` → `36ee84b0…` | `TestVerifyF3TopologyContractStableAcrossNonTopologyRoleChanges` red on head |
+| F5 (NEW) | Contract-ID preimage concatenation is ambiguous | contract | **Refuted as a practical bug** — every alias needs a NUL byte in `topologyName`; kept as encoding-distinctness guard | `TestVerifyF5TopologyContractEncodingIsAmbiguous` green |
+| C-compose | Equal-scope gang+topology composes one PodGroup | contract | Guard, green | `TestVerifyGangTopologyEqualScopeComposesOnePodGroup` |
+
+Envtest layer (2 specs: late-policy rejection, policy protection + delete/recreate):
+`results/reverify/integration.out` — SUCCESS, 2/2 on the new head.
+
+### F3 harness-bites check
+
+Applied the proposed fix (gang-only nodes contribute no roles to the contract preimage)
+to `topology_plan.go`, re-ran: F3 went green; `./pkg/scheduler/...` and
+`./internal/controller/workloads/...` (incl. the author's `TestTopologyContractID`) all
+stayed green. Fix reverted; production diff empty again.
+
+### F4 (open, minor — code-path evidence, no unit repro)
+
+`resolvePlacement` records the contract (`ensureTopologyContract`) BEFORE
+`reconcilePlacement` renders it. A plan that resolves but fails to render
+(SchedulerUnsupported) is nevertheless frozen, so removing/fixing the offending
+topology then reports `TopologyPolicyLate` — backing out of a launch-time
+misconfiguration requires deleting the whole RBG. Arguably intended fail-closed
+behavior; raised as a question for the author.
