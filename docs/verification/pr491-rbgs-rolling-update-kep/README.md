@@ -137,6 +137,20 @@ child controllers within a tick (its reconcile is the cheap side of the race);
 child controller latency 1 tick, roll duration 3 ticks, 4 children,
 maxUnavailable=1.
 
+## Round-2 harness-bites check (still-open contracts)
+
+Grafted onto head b03a7e6, then simulated the proposed fixes in the KEP README:
+(1) consumer rule amended to "...condition is absent only when the child's status
+observedGeneration has caught up to its current generation, or when..." and
+(2) a "Conversion round-trip" v1alpha1 stash/restore entry added to the unit
+test plan. Result: `TestVerify_R2N1_AbsentBarrierExceptionIsGenerationGated` and
+`TestVerify_R2M1_V1alpha1RoundTripCoveredByTestPlan` both flipped FAIL -> PASS;
+the KEP was then reverted (`git checkout -- keps/`, diff empty). Both contracts
+bite. Note: the N1 regex rejects a period between "absent" and the
+observedGeneration mention, so a fix sentence containing the literal Go path
+`status.observedGeneration` may read as Harness-update — reword the regex, not
+the finding.
+
 ## How to run
 
 ```bash
