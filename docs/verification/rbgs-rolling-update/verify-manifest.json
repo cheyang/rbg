@@ -190,5 +190,10 @@
     "head": "98720938fff0135a7ffb98a8fefdf6baa7028b88",
     "delta": "9e423e86..98720938 \u2014 examples/basic/rbgs/rbgs-rolling-update.yaml only (stale 'InPlaceUpdate rejected' comments fixed; C4242488204 closed). PR body rewritten and verified line-by-line against the code; one residual inaccuracy pinned by F10.",
     "reverify": "results/reverify/ (round 3): all contract findings green, F9 canary still pins budget-paced replicas-only under InPlaceUpdate."
+  },
+  "round4": {
+    "head": "8c024b28ebd81234cebd706dfb2351bde757385c",
+    "delta": "98720938..8c024b28 \u2014 conversion annotation keys moved into systemManagedAnnotationKeys (revision/sync exclusion).",
+    "reverify": "results/reverify/ (round 4): carried contracts all green; R4FIX green (fix claims proven); R4M1 PARTIAL=regression \u2014 rolling-path create drops the coordination annotation and value changes never reach settled children (both contracts pass on 98720938, fail on 8c024b28; bites check in results/harness-bites-round4.txt)."
   }
 }

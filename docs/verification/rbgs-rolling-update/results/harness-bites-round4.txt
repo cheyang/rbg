@@ -1,0 +1,8 @@
+--- FAIL: TestVerify_ConversionAnnotation_RevisionIgnoresCoordination (0.04s)
+--- FAIL: TestVerify_ConversionAnnotation_SyncPreservesChildCoordination (0.00s)
+--- PASS: TestVerify_ConversionAnnotation_RollingCreatePropagatesToChildren (0.01s)
+    --- PASS: TestVerify_ConversionAnnotation_RollingCreatePropagatesToChildren/InPlaceUpdate (0.01s)
+    --- PASS: TestVerify_ConversionAnnotation_RollingCreatePropagatesToChildren/Recreate (0.00s)
+--- PASS: TestVerify_ConversionAnnotation_CoordinationValueChangeReachesChildren (0.01s)
+--- PASS: TestVerify_ConversionAnnotation_StaticPathStillPropagates (0.00s)
+=== bites (key removed on 8c024b28) ===

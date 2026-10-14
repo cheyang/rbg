@@ -136,3 +136,40 @@ correctly documented in the body).
 | id | claim | polarity | layer | status |
 |----|-------|----------|-------|--------|
 | F10 | body claims held-back ordinals are "excluded from ... currentReplicas"; `updateRollingGroupSetStatus` counts them (no partition filter on the CurrentReplicas branch; author's own `TestSyncRollingGroupSet_StrategiesRecoverMissingOrdinals` expects CurrentReplicas=2 with partition=3) | canary | unit | passes = body clause inaccurate (one-line body fix) |
+
+## Round 4 — head 8c024b28 (delta 98720938..8c024b28)
+
+The round-4 delta is one commit, `8c024b28 fix(rbgs): exclude conversion
+annotations from RBGSet revision and sync`: it moves the v1alpha1 conversion
+annotation keys into `systemManagedAnnotationKeys` (rolebasedgroupset_revision.go).
+That map feeds three consumers: (a) revision hashing/drift via
+`normalizedGroupSetTemplate`, (b) metadata sync via `syncRBGMetadata` /
+`needsTemplateAnnotationUpdate`, and (c) child creation, because
+`newRBGForSetRevision` builds children from the normalized `revision.template`.
+
+New contracts (`internal/controller/workloads/rolebasedgroupset_conversion_annotation_verify_test.go`,
+all contract polarity, differential across both heads):
+
+| id | test | claim | 98720938 | 8c024b28 |
+|----|------|-------|----------|----------|
+| R4FIX | TestVerify_ConversionAnnotation_RevisionIgnoresCoordination | revision hash ignores the coordination annotation (no churn) | RED (churn real) | **GREEN** |
+| R4FIX | TestVerify_ConversionAnnotation_SyncPreservesChildCoordination | syncRBGMetadata preserves the child-side coordination annotation (no wipe) | RED (wipe real) | **GREEN** |
+| R4M1 | TestVerify_ConversionAnnotation_RollingCreatePropagatesToChildren | rolling-path create propagates the coordination annotation to children (both strategies) | GREEN | **RED = regression** |
+| R4M1 | TestVerify_ConversionAnnotation_CoordinationValueChangeReachesChildren | a coordination-only value change reaches settled children | GREEN | **RED = regression** |
+| R4M1 | TestVerify_ConversionAnnotation_StaticPathStillPropagates | static path unaffected | GREEN | GREEN |
+
+R4M1 mechanism: with the annotation stripped from `revision.template`,
+`newRBGForSetRevision` creates children WITHOUT it, and since it is also stripped
+from drift comparison the children classify as up-to-date forever — no sync ever
+repairs them. The RBG reconciler's `EnsureV1alpha1CoordinatedPolicy`
+(rolebasedgroup_controller.go:229) reads that annotation to migrate v1alpha1
+CoordinationRequirements into a CoordinatedPolicy, so rolling-path children of a
+v1alpha1-originated set silently lose their coordination policy.
+
+Harness-bites (results/harness-bites-round4.txt): on 8c024b28, deleting the
+coordination key from `systemManagedAnnotationKeys` flips R4FIX RED and R4M1 GREEN —
+the tests key on exactly the delta's mechanism. Production diff empty afterwards.
+
+Re-verify this round (results/reverify/): all carried contracts FIXED on 8c024b28;
+canaries F9 (budget-paced replicas-only under InPlaceUpdate) and F10 (body
+currentReplicas clause) STILL-PRESENT, i.e. the pinned behaviors are unchanged.
