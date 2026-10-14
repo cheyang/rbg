@@ -1,0 +1,50 @@
+=== RUN   TestVerify_ConversionAnnotation_RevisionIgnoresCoordination
+    rolebasedgroupset_conversion_annotation_verify_test.go:90: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-12/pr-474/verify/internal/controller/workloads/rolebasedgroupset_conversion_annotation_verify_test.go:90
+        	Error:      	Not equal: 
+        	            	expected: "rbgs-552f7bd68a044a5635d90bec6c8341c8f175883dc613fa74"
+        	            	actual  : "rbgs-d3e9806a48fa964b804391da04f72baaaecefbe74ea6b6a9"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-rbgs-552f7bd68a044a5635d90bec6c8341c8f175883dc613fa74
+        	            	+rbgs-d3e9806a48fa964b804391da04f72baaaecefbe74ea6b6a9
+        	Test:       	TestVerify_ConversionAnnotation_RevisionIgnoresCoordination
+        	Messages:   	revision name must be stable w.r.t. the conversion coordination annotation (got rbgs-552f7bd68a044a5635d90bec6c8341c8f175883dc613fa74 vs rbgs-d3e9806a48fa964b804391da04f72baaaecefbe74ea6b6a9)
+    rolebasedgroupset_conversion_annotation_verify_test.go:93: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-12/pr-474/verify/internal/controller/workloads/rolebasedgroupset_conversion_annotation_verify_test.go:93
+        	Error:      	Should be true
+        	Test:       	TestVerify_ConversionAnnotation_RevisionIgnoresCoordination
+        	Messages:   	normalized templates differing only in the coordination annotation must be equal
+--- FAIL: TestVerify_ConversionAnnotation_RevisionIgnoresCoordination (0.04s)
+=== RUN   TestVerify_ConversionAnnotation_SyncPreservesChildCoordination
+    rolebasedgroupset_conversion_annotation_verify_test.go:112: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-12/pr-474/verify/internal/controller/workloads/rolebasedgroupset_conversion_annotation_verify_test.go:112
+        	Error:      	Not equal: 
+        	            	expected: "[{\"roles\":[\"worker\"],\"strategy\":{\"type\":\"RollingUpdate\"}}]"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-[{"roles":["worker"],"strategy":{"type":"RollingUpdate"}}]
+        	            	+
+        	Test:       	TestVerify_ConversionAnnotation_SyncPreservesChildCoordination
+        	Messages:   	syncRBGMetadata must not wipe the conversion coordination annotation from the child
+--- FAIL: TestVerify_ConversionAnnotation_SyncPreservesChildCoordination (0.00s)
+=== RUN   TestVerify_ConversionAnnotation_RollingCreatePropagatesToChildren
+=== RUN   TestVerify_ConversionAnnotation_RollingCreatePropagatesToChildren/InPlaceUpdate
+=== RUN   TestVerify_ConversionAnnotation_RollingCreatePropagatesToChildren/Recreate
+--- PASS: TestVerify_ConversionAnnotation_RollingCreatePropagatesToChildren (0.01s)
+    --- PASS: TestVerify_ConversionAnnotation_RollingCreatePropagatesToChildren/InPlaceUpdate (0.01s)
+    --- PASS: TestVerify_ConversionAnnotation_RollingCreatePropagatesToChildren/Recreate (0.00s)
+=== RUN   TestVerify_ConversionAnnotation_CoordinationValueChangeReachesChildren
+--- PASS: TestVerify_ConversionAnnotation_CoordinationValueChangeReachesChildren (0.01s)
+=== RUN   TestVerify_ConversionAnnotation_StaticPathStillPropagates
+--- PASS: TestVerify_ConversionAnnotation_StaticPathStillPropagates (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.069s
+FAIL
