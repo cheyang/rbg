@@ -21,6 +21,17 @@ rolling update").
   InPlaceUpdate). F1 (the round-1/2 must-fix) is closed by
   `scripts/doc-match-r3.sh` (results/l1-doc-match-r3.log, 16/16 PASS) plus
   the full harness re-run on `98720938`.
+- **Round 4** (head `8c024b28`, same base tip `79f7e585`, delta
+  `98720938..8c024b28` = one commit, "fix(rbgs): exclude conversion
+  annotations from RBGSet revision and sync"): the delta adds the three
+  conversion annotation constants and expands `systemManagedAnnotationKeys`.
+  New this round: a proven **revision regression** (F11 — v1alpha1
+  coordination no longer propagates to children on the rolling path; same
+  contract test PASSES on `98720938` and FAILS on `8c024b28`), a one-time
+  migration re-roll for stored sets (F12, canary), and an incomplete
+  exclusion list (F13 — `v1alpha1-pod-group-policy` still wiped). The
+  delta's own hash-exclusion claim is now covered (POS5). All round-1–3
+  contracts re-ran green on the new head.
 
 Harness branch: `verify/pr474-rbgs-rolling-update-claude` (reviewer: cheyang's
 fork). Production code is untouched — the diff is tests + docs only.
@@ -62,6 +73,43 @@ the static path, and the rolling strategy is opt-in. The review question
 becomes whether the new path is correct — covered by POS1/POS2 below.
 
 ## Summary of results
+
+### Round 4 (head `8c024b28`, delta `98720938..8c024b28` — conversion-annotation exclusion)
+
+| ID | Claim | Layer | Verdict | Evidence |
+|----|-------|-------|---------|----------|
+| F11 (new, blocker) | A v1alpha1 write injects the coordination conversion annotation into `groupTemplate.annotations` so children carry it (the conversion code's own stated purpose, for `EnsureV1alpha1CoordinatedPolicy`). On the rolling path this is now broken both at creation (`newRBGForSetRevision` builds children from the *normalized* template, which deletes the annotation) and on change (the annotation no longer participates in the revision hash, so up-to-date children are never re-synced) | 1 | **Regression confirmed** — `TestVerifyPR474_Rolling_CoordinationChangePropagatesToChildren` PASSES on `98720938`, FAILS on `8c024b28` (both assertions: creation propagation and change propagation) | results/convann-differential-r4.log; bites check: proposed two-part fix turns it green (results/convann-bites-r4.log) |
+| POS5 (new) | The delta's own claim: the revision hash ignores the conversion annotations | 1 | **Confirmed** — FAIL on `98720938`, PASS on `8c024b28`. This is the coverage the delta itself did not add | results/convann-differential-r4.log |
+| F12 (new, minor) | Children labeled with the pre-delta revision hash are re-rolled once on the first reconcile after the controller upgrade (one-time migration churn: in-place relabel under InPlaceUpdate, delete+recreate under Recreate) for sets whose stored template carries conversion annotations | 1 | **Canary PASSes on `8c024b28`** (churn happens), FAILs on `98720938` (no churn there) | results/convann-differential-r4.log (`TestVerifyPR474_Canary_LegacyRevisionLabelRerolledOnce`) |
+| F13 (new, minor) | `v1alpha1-pod-group-policy` is the same conversion-machinery class as the keys the delta excluded, but is missing from `systemManagedAnnotationKeys`, so `syncRBGMetadata` still wipes it from children (out-of-band v1alpha1 child write) | 1 | **Gap confirmed** — FAIL on both heads; on `8c024b28` only the coordination key survives. Bites check: adding the key turns it green | results/convann-differential-r4.log; results/convann-bites-r4.log (`TestVerifyPR474_Rolling_PreservesChildConversionStash`) |
+| Round-1–3 contracts (POS1–POS4, F2, F8, F3 canary, etc.) | Full regression sweep on the new head | 1+2 | **Green** — all prior tests pass; envtest `PR #474` ok (28.1s), author's `rbgs_rolling` ok (141.9s), `webhook` ok (62.0s) | results/reverify-r4.log; results/integration-verify-r4.log; results/author-envtest-r4.log |
+| F10 / F1 / AC8 doc contracts | PR body still matches the shipped API (16/16), all five round-3 fine-print residuals still present; the body does not mention the new conversion-annotation exclusion | doc | **F10 still open**; doc-match 16/16 PASS on the current body + `8c024b28` | results/l1-doc-match-r4.log |
+
+F11 detail — the two broken halves:
+
+1. **Creation**: `rolebasedgroupset_conversion.go` ConvertTo (lines 89–97)
+   copies the coordination annotation into `GroupTemplate.Annotations`
+   "so that newRBGForSet ... propagates it to each child RoleBasedGroup,
+   making them visible to EnsureV1alpha1CoordinatedPolicy". But the rolling
+   path creates children through `newRBGForSetRevision`
+   (rolebasedgroupset_revision.go:181), which passes the **normalized**
+   template to `newRBGForSet` — and the delta makes normalization delete the
+   annotation. Children on the rolling path never carry it; the static path
+   (raw template) still does, so the two paths now disagree for the same
+   v1alpha1 object.
+2. **Change**: `updateRollingGroupSetChild` (rolling.go:399) applies metadata
+   only via `syncRBGMetadata`, which is only reached for **outdated**
+   children. Since the annotation no longer changes the revision hash, a
+   `CoordinationRequirements` change leaves every child up-to-date, so
+   nothing propagates — existing children keep the old value forever, and
+   children created after the change (see 1.) carry nothing, producing
+   mixed coordination semantics across ordinals of one set.
+
+Proposed fix (NOT applied; bites-checked): pass the raw template's
+annotations in `newRBGForSetRevision`, and converge system-managed template
+annotation drift on up-to-date children (e.g. a `needsTemplateAnnotationUpdate`
+check in `classifyGroupSetChildrenForRollout` that applies `syncRBGMetadata`
+without a rollout) — see results/convann-bites-r4.log Step 1.
 
 ### Round 3 (head `98720938`, delta `9e423e86..98720938` — body rewrite + example fix)
 
@@ -331,11 +379,12 @@ bash docs/verification/pr474-rbgs-rolling-update/scripts/re-verify.sh   # no arg
 script extracted the whole tree, which would have reverted production code
 once the head moved past the branch parent), prints the
 `.last-reviewed..head` delta, runs layers 1–2, and prints per-test verdicts.
-Exit 0 iff the runs succeed. Interpretation: **contract** tests (POS1–POS4,
-F2, F8) are fixed when green; **canaries** (F2b resolver fallback, F3, F8b
-stash-less write, and the P0 premise test) are *fixed* only when they flip
+Exit 0 iff the runs succeed. Interpretation: **contract** tests (POS1–POS5,
+F2, F8, F11, F13) are fixed when green; **canaries** (F2b resolver fallback,
+F3, F8b stash-less write, F12 legacy-label migration churn, and the P0
+premise test) are *fixed* only when they flip
 to red — then invert them or promote the new behavior to a contract test.
-`.last-reviewed` holds `98720938` (this round's reviewed head); advance it
+`.last-reviewed` holds `8c024b28` (this round's reviewed head); advance it
 after the next round. Round 3 also added `scripts/doc-match-r3.sh` (usage:
 `bash scripts/doc-match-r3.sh <pr-body-file> <git-rev>`) — it checks every
 API-surface claim in the current PR body against a given rev and is the

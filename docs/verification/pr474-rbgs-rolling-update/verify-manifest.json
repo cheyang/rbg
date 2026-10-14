@@ -6,7 +6,8 @@
     "internal/controller/workloads/rolebasedgroupset_verify_test.go",
     "api/workloads/v1alpha2/rolebasedgroupset_rollout_verify_test.go",
     "api/workloads/v1alpha1/rolebasedgroupset_conversion_verify_test.go",
-    "test/envtest/testcase/rbg/rbgs_rolling_verify_test.go"
+    "test/envtest/testcase/rbg/rbgs_rolling_verify_test.go",
+    "internal/controller/workloads/rolebasedgroupset_convann_verify_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -136,6 +137,42 @@
         "I4: InPlaceUpdate propagates the template without recreating any child"
       ],
       "note": "round 2: InPlaceUpdate against a real API server, UID preservation, RolloutComplete"
+    },
+    {
+      "id": "F11",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Rolling_CoordinationChangePropagatesToChildren"
+      ],
+      "note": "round 4, revision-regression at 8c024b28: v1alpha1 coordination propagation to children is broken on the rolling path (creation via newRBGForSetRevision uses the normalized template, which now drops the annotation; changes no longer change the revision hash so up-to-date children are never synced). PASS on 98720938, FAIL on 8c024b28. Bites check: proposed two-part fix turns it green (results/convann-bites-r4.log)."
+    },
+    {
+      "id": "F12",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Canary_LegacyRevisionLabelRerolledOnce"
+      ],
+      "note": "round 4, canary: children labeled with the pre-delta revision hash are re-rolled once on the first reconcile after upgrade (one-time migration churn for sets whose stored template carries conversion annotations). FAIL on 98720938 (no churn), PASS on 8c024b28. If the author adds seamless migration, this flips and must be inverted."
+    },
+    {
+      "id": "F13",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Rolling_PreservesChildConversionStash"
+      ],
+      "note": "round 4: v1alpha1-pod-group-policy is the same conversion-machinery class as the keys the delta excluded, but it is missing from systemManagedAnnotationKeys, so syncRBGMetadata still wipes it from children (FAIL on both 98720938 and 8c024b28; on 8c024b28 only the coordination key survives). Bites check: adding the key turns it green."
+    },
+    {
+      "id": "POS5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_RevisionHash_IgnoresConversionAnnotations"
+      ],
+      "note": "round 4, the delta's own claim (coverage the delta did not add): the revision hash ignores the conversion annotations. FAIL on 98720938, PASS on 8c024b28."
     }
   ],
   "liveNote": "L3 (live layer) was NOT run: the debate pipeline mandates unit + integration only. The author's kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers paced recreate, surge, partition, and InPlaceUpdate UID preservation on a real cluster; make test-e2e is wired to PR CI.",
@@ -149,6 +186,20 @@
         "results/reverify-r3.log",
         "results/l1-doc-match-r3.log",
         "results/author-envtest-r3.log"
+      ]
+    },
+    {
+      "round": 4,
+      "head": "8c024b28ebd81234cebd706dfb2351bde757385c",
+      "base": "79f7e5858fdc30ffaeadef4aea12c3809dcb348d",
+      "treeDeltaFromPreviousHead": "single commit 8c024b28 'fix(rbgs): exclude conversion annotations from RBGSet revision and sync' \u2014 annotation.go constants, v1alpha1 conversion consts, systemManagedAnnotationKeys expansion",
+      "results": [
+        "results/convann-differential-r4.log",
+        "results/convann-bites-r4.log",
+        "results/reverify-r4.log",
+        "results/integration-verify-r4.log",
+        "results/author-envtest-r4.log",
+        "results/l1-doc-match-r4.log"
       ]
     }
   ]

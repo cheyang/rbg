@@ -1,0 +1,17 @@
+PASS  enum {Recreate, InPlaceUpdate} — types.go
+PASS  kubebuilder default InPlaceUpdate — types.go
+PASS  no Paused field/condition in types — types.go
+PASS  body states: no paused field/condition — body
+PASS  body states: default is InPlaceUpdate — body
+PASS  ControllerRevision machinery exists (ensureGroupSetRevision) — rolling/revision code
+PASS  body documents revision label — body
+PASS  InPlaceUpdate branch present in rolling.go — rolling.go
+PASS  scale-only shortcut gated off under InPlaceUpdate (budget-paced) — rolling.go:307
+PASS  body notes scale-only is budget-paced under InPlaceUpdate — body
+PASS  all body-listed test names exist — grep at rev
+PASS  all body-listed e2e It descriptions exist — rbgs.go
+PASS  example: no 'rejected' claim for InPlaceUpdate — examples/basic/rbgs/rbgs-rolling-update.yaml
+PASS  example: documents InPlaceUpdate as default — examples/basic/rbgs/rbgs-rolling-update.yaml
+PASS  conditions are Ready and Rolling — types.go
+PASS  note: body says 'isServing centralizes readiness' but symbol absent (cosmetic) — residual nit
+DOC-MATCH: body matches shipped API
