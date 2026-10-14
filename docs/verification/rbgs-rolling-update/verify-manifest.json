@@ -8,7 +8,8 @@
     "internal/controller/workloads/rolebasedgroupset_envtest_verify_test.go",
     "api/workloads/v1alpha2/rolebasedgroupset_admission_verify_test.go",
     "api/workloads/v1alpha1/rolebasedgroupset_conversion_verify_test.go",
-    "internal/controller/workloads/rolebasedgroupset_inplace_verify_test.go"
+    "internal/controller/workloads/rolebasedgroupset_inplace_verify_test.go",
+    "internal/controller/workloads/rolebasedgroupset_conversion_annotation_verify_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -152,6 +153,27 @@
         "TestVerify_BodyClaim_CurrentReplicasCountsHeldBack"
       ],
       "note": "Round 3: pins that held-back ordinals (index < partition, old revision) ARE counted in status.currentReplicas \u2014 the round-3 PR body's 'excluded from ... currentReplicas' clause is inaccurate while this passes. Flips RED if the controller changes to exclude them (body then becomes correct)."
+    },
+    {
+      "id": "R4FIX",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_ConversionAnnotation_RevisionIgnoresCoordination",
+        "TestVerify_ConversionAnnotation_SyncPreservesChildCoordination"
+      ],
+      "note": "Round 4 delta (8c024b28) fix claims: the conversion coordination annotation is excluded from the revision hash (no churn across v1alpha1 round trips) and preserved by syncRBGMetadata (no wipe of child-side values). Both RED on 98720938 (control: the problems were real), expected GREEN on 8c024b28."
+    },
+    {
+      "id": "R4M1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_ConversionAnnotation_RollingCreatePropagatesToChildren",
+        "TestVerify_ConversionAnnotation_CoordinationValueChangeReachesChildren",
+        "TestVerify_ConversionAnnotation_StaticPathStillPropagates"
+      ],
+      "note": "Propagation contract: rolling-path children must carry the template's coordination annotation (EnsureV1alpha1CoordinatedPolicy reads it), and coordination value changes must reach settled children. GREEN on 98720938; on 8c024b28 the systemManagedAnnotationKeys exclusion also strips the annotation from revision.template, which newRBGForSetRevision builds children from - REGRESSION candidate (revision-regression: contract passes on previous head, fails on this head)."
     }
   ],
   "liveNote": "L3 skipped per debate setup (no KUBECONFIG layer). The repo's own kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers the live path and is green in CI run 37802453289.",
