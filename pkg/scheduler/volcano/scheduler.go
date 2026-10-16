@@ -186,23 +186,7 @@ func (m *GangScheduler) createOrUpdate(
 		}
 	}
 
-	podGroup := &volcanoschedulingv1beta1.PodGroup{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      rbg.Name,
-			Namespace: rbg.Namespace,
-			OwnerReferences: []metav1.OwnerReference{
-				*metav1.NewControllerRef(rbg, utils.GetRbgGVK()),
-			},
-			Annotations: desiredAnnotations,
-		},
-		Spec: volcanoschedulingv1beta1.PodGroupSpec{
-			MinMember:         minMember,
-			Queue:             queue,
-			PriorityClassName: priorityClassName,
-			SubGroupPolicy:    subGroupPolicy,
-		},
-	}
-
+	podGroup := &volcanoschedulingv1beta1.PodGroup{}
 	err = m.client.Get(ctx, types.NamespacedName{Name: rbg.Name, Namespace: rbg.Namespace}, podGroup)
 	if err != nil && !apierrors.IsNotFound(err) {
 		logger.Error(err, "get pod group error")
@@ -210,11 +194,31 @@ func (m *GangScheduler) createOrUpdate(
 	}
 
 	if apierrors.IsNotFound(err) {
+		podGroup = &volcanoschedulingv1beta1.PodGroup{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      rbg.Name,
+				Namespace: rbg.Namespace,
+				OwnerReferences: []metav1.OwnerReference{
+					*metav1.NewControllerRef(rbg, utils.GetRbgGVK()),
+				},
+				Annotations: desiredAnnotations,
+			},
+			Spec: volcanoschedulingv1beta1.PodGroupSpec{
+				MinMember:         minMember,
+				Queue:             queue,
+				PriorityClassName: priorityClassName,
+				SubGroupPolicy:    subGroupPolicy,
+			},
+		}
 		if createErr := m.client.Create(ctx, podGroup); createErr != nil {
 			logger.Error(createErr, "create pod group error")
 			return createErr
 		}
 		return nil
+	}
+
+	if ref := metav1.GetControllerOfNoCopy(podGroup); ref != nil && ref.UID != rbg.UID {
+		return fmt.Errorf("PodGroup %s/%s is controlled by uid %s", rbg.Namespace, rbg.Name, ref.UID)
 	}
 
 	// Update if needed
@@ -228,6 +232,13 @@ func (m *GangScheduler) createOrUpdate(
 				ctx, types.NamespacedName{Name: rbg.Name, Namespace: rbg.Namespace}, podGroup,
 			); fetchErr != nil {
 				return fetchErr
+			}
+			if ref := metav1.GetControllerOfNoCopy(podGroup); ref != nil && ref.UID != rbg.UID {
+				return fmt.Errorf("PodGroup %s/%s is controlled by uid %s", rbg.Namespace, rbg.Name, ref.UID)
+			}
+			// An orphaned PodGroup should be adopted
+			if !metav1.IsControlledBy(podGroup, rbg) {
+				podGroup.OwnerReferences = append(podGroup.OwnerReferences, *metav1.NewControllerRef(rbg, utils.GetRbgGVK()))
 			}
 			podGroup.Spec.MinMember = desiredMinMember
 			podGroup.Spec.Queue = queue
