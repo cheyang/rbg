@@ -1,0 +1,16 @@
+P0/P1: a leftover child RBG of a same-named predecessor is not deleted on scale-down and not counted in status	pass
+P2: an orphaned child RBG carrying the set label is adopted by the recreated set	pass
+P0/P3: a leftover scaling adapter of a same-named predecessor is replaced, not honored	pass
+Should fall back to LeaderOnly and only give the leader component a serviceName	skipped
+Should give every component a serviceName and a pod network identity	skipped
+Should clear the worker component serviceName and narrow the shared service in place	skipped
+Should accept an unset policy and reject an explicit LeaderOnly	skipped
+Should create child Deployment for each role	skipped
+Should reject v1alpha2 custom components with duplicate names	skipped
+Should reject v1alpha1 components with duplicate names	skipped
+Should reject RoleInstance components with duplicate names	skipped
+Should allow v1alpha2 templateRef without patch	skipped
+Should reject v1alpha2 role rolloutStrategy with invalid update type	skipped
+Should reject RoleInstanceSet with invalid update strategy type	skipped
+Should accept all valid v1alpha2 update strategy types	skipped
+Should allow updating a valid v1alpha2 rolloutStrategy	skipped
