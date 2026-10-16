@@ -1,0 +1,43 @@
+=== RUN   TestVerifyPremiseRBGSetForeignChildSurvivesScaleDown
+2026-10-16T18:19:33+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"demo","namespace":"default"}}
+2026-10-16T18:19:33+08:00	INFO	Scaling down RoleBasedGroups, 1 -> 0	{"rbgset": {"name":"demo","namespace":"default"}, "count": 1}
+2026-10-16T18:19:33+08:00	INFO	Successfully deleted RoleBasedGroup	{"rbgset": {"name":"demo","namespace":"default"}, "name": "demo-0"}
+2026-10-16T18:19:33+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"demo","namespace":"default"}, "replicas": 0, "readyReplicas": 0}
+2026-10-16T18:19:33+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"demo","namespace":"default"}}
+    zz_verify_stale_uid_test.go:64: 
+        	Error Trace:	/tmp/rbg-base-p500/internal/controller/workloads/zz_verify_stale_uid_test.go:64
+        	Error:      	Received unexpected error:
+        	            	rolebasedgroups.workloads.x-k8s.io "demo-0" not found
+        	Test:       	TestVerifyPremiseRBGSetForeignChildSurvivesScaleDown
+        	Messages:   	contract: a child RBG controlled by a different set UID must survive this set's scale-down
+--- FAIL: TestVerifyPremiseRBGSetForeignChildSurvivesScaleDown (0.04s)
+=== RUN   TestVerifyPremiseForeignBoundAdapterDoesNotOverrideReplicas
+2026-10-16T18:19:33+08:00	INFO	Overriding role.Replicas from bound RBGSA	{"role": "worker", "observed": 1, "desired": 5, "adapter": "demo-worker"}
+    zz_verify_stale_uid_test.go:105: 
+        	Error Trace:	/tmp/rbg-base-p500/internal/controller/workloads/zz_verify_stale_uid_test.go:105
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 5
+        	Test:       	TestVerifyPremiseForeignBoundAdapterDoesNotOverrideReplicas
+        	Messages:   	contract: a bound adapter owned by a different RBG UID must not override role replicas
+--- FAIL: TestVerifyPremiseForeignBoundAdapterDoesNotOverrideReplicas (0.00s)
+=== RUN   TestVerifyPremiseForeignAdapterRecreatedWithFreshOwner
+    zz_verify_stale_uid_test.go:157: 
+        	Error Trace:	/tmp/rbg-base-p500/internal/controller/workloads/zz_verify_stale_uid_test.go:157
+        	Error:      	Should be true
+        	Test:       	TestVerifyPremiseForeignAdapterRecreatedWithFreshOwner
+        	Messages:   	contract: adapter must carry the current RBG UID as owner after reconcile
+    zz_verify_stale_uid_test.go:159: 
+        	Error Trace:	/tmp/rbg-base-p500/internal/controller/workloads/zz_verify_stale_uid_test.go:159
+        	Error:      	Should not be: "old-rbg-uid"
+        	Test:       	TestVerifyPremiseForeignAdapterRecreatedWithFreshOwner
+        	Messages:   	contract: predecessor owner reference must be gone
+    zz_verify_stale_uid_test.go:161: 
+        	Error Trace:	/tmp/rbg-base-p500/internal/controller/workloads/zz_verify_stale_uid_test.go:161
+        	Error:      	Expected nil, but got: (*int32)(0x3b6e9bca558c)
+        	Test:       	TestVerifyPremiseForeignAdapterRecreatedWithFreshOwner
+        	Messages:   	contract: recreated adapter must not inherit the predecessor's spec.replicas
+--- FAIL: TestVerifyPremiseForeignAdapterRecreatedWithFreshOwner (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.056s
+FAIL

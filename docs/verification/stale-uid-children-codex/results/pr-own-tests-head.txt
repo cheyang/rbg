@@ -1,0 +1,5 @@
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.061s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler	0.014s [no tests to run]
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/common	0.011s [no tests to run]
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/k8s-scheduler-plugin	0.053s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/volcano	0.055s

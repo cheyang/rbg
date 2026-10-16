@@ -1,0 +1,31 @@
+=== RUN   TestVerifyPremiseForeignPodGroupRejected
+    zz_verify_stale_uid_test.go:55: 
+        	Error Trace:	/tmp/rbg-base-p500/pkg/scheduler/k8s-scheduler-plugin/zz_verify_stale_uid_test.go:55
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerifyPremiseForeignPodGroupRejected
+        	Messages:   	contract: a PodGroup controlled by a different UID must be rejected
+    zz_verify_stale_uid_test.go:59: 
+        	Error Trace:	/tmp/rbg-base-p500/pkg/scheduler/k8s-scheduler-plugin/zz_verify_stale_uid_test.go:59
+        	Error:      	Not equal: 
+        	            	expected: 7
+        	            	actual  : 2
+        	Test:       	TestVerifyPremiseForeignPodGroupRejected
+        	Messages:   	contract: foreign PodGroup spec must not be rewritten
+--- FAIL: TestVerifyPremiseForeignPodGroupRejected (0.04s)
+=== RUN   TestVerifyF1SameSpecOrphanPodGroupAdopted
+    zz_verify_stale_uid_test.go:85: 
+        	Error Trace:	/tmp/rbg-base-p500/pkg/scheduler/k8s-scheduler-plugin/zz_verify_stale_uid_test.go:85
+        	Error:      	Should be true
+        	Test:       	TestVerifyF1SameSpecOrphanPodGroupAdopted
+        	Messages:   	contract: a same-spec orphan PodGroup must be adopted, not left ownerless
+--- FAIL: TestVerifyF1SameSpecOrphanPodGroupAdopted (0.00s)
+=== RUN   TestVerifyF1SameSpecOrphanLeaksPastDeletePodGroup
+    zz_verify_stale_uid_test.go:114: 
+        	Error Trace:	/tmp/rbg-base-p500/pkg/scheduler/k8s-scheduler-plugin/zz_verify_stale_uid_test.go:114
+        	Error:      	Should be true
+        	Test:       	TestVerifyF1SameSpecOrphanLeaksPastDeletePodGroup
+        	Messages:   	contract: the PodGroup managed for this RBG must be deleted when gang scheduling is disabled; got err=<nil>
+--- FAIL: TestVerifyF1SameSpecOrphanLeaksPastDeletePodGroup (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/scheduler/k8s-scheduler-plugin	0.047s
+FAIL

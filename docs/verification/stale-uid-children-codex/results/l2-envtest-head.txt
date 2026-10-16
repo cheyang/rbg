@@ -1,0 +1,26 @@
+=== RUN   TestRBGController
+Running Suite: RoleBasedGroup Controller Suite - /home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/rbg
+======================================================================================================================================
+Random Seed: [1m1792146600[0m
+
+Will run [1m3[0m of [1m16[0m specs
+I1016 18:30:06.919761 1431630 stateful_instance_set_controller.go:177] "Finished syncing InstanceSet" instanceSet="verify-p500-1792146604537849533/verify-set-0-worker" elapsedTime="6.469404ms"
+I1016 18:30:06.934924 1431630 stateful_instance_set_controller.go:177] "Finished syncing InstanceSet" instanceSet="verify-p500-1792146604537849533/verify-set-0-worker" elapsedTime="15.071056ms"
+I1016 18:30:06.937613 1431630 stateful_instance_set_controller.go:177] "Finished syncing InstanceSet" instanceSet="verify-p500-1792146604537849533/verify-set-0-worker" elapsedTime="2.612606ms"
+[38;5;10m•[0mI1016 18:30:26.262818 1431630 stateful_instance_set_controller.go:177] "Finished syncing InstanceSet" instanceSet="verify-p500-1792146626241588178/verify-set-orphan-0-worker" elapsedTime="4.789538ms"
+I1016 18:30:26.265605 1431630 stateful_instance_set_controller.go:177] "Finished syncing InstanceSet" instanceSet="verify-p500-1792146626241588178/verify-set-orphan-0-worker" elapsedTime="2.710979ms"
+I1016 18:30:26.269075 1431630 stateful_instance_set_controller.go:177] "Finished syncing InstanceSet" instanceSet="verify-p500-1792146626241588178/verify-set-orphan-0-worker" elapsedTime="2.800523ms"
+I1016 18:30:26.272008 1431630 stateful_instance_set_controller.go:177] "Finished syncing InstanceSet" instanceSet="verify-p500-1792146626241588178/verify-set-orphan-0-worker" elapsedTime="2.870684ms"
+I1016 18:30:26.274563 1431630 stateful_instance_set_controller.go:177] "Finished syncing InstanceSet" instanceSet="verify-p500-1792146626241588178/verify-set-orphan-0-worker" elapsedTime="2.486102ms"
+[38;5;10m•[0mI1016 18:30:29.553118 1431630 stateful_instance_set_controller.go:177] "Finished syncing InstanceSet" instanceSet="verify-p500-1792146629534878329/verify-rbg-worker" elapsedTime="5.292485ms"
+I1016 18:30:29.568505 1431630 stateful_instance_set_controller.go:177] "Finished syncing InstanceSet" instanceSet="verify-p500-1792146629534878329/verify-rbg-worker" elapsedTime="15.297554ms"
+I1016 18:30:29.570897 1431630 stateful_instance_set_controller.go:177] "Finished syncing InstanceSet" instanceSet="verify-p500-1792146629534878329/verify-rbg-worker" elapsedTime="2.326526ms"
+I1016 18:30:29.890663 1431630 stateful_instance_set_controller.go:177] "Finished syncing InstanceSet" instanceSet="verify-p500-1792146629534878329/verify-rbg-worker" elapsedTime="4.760417ms"
+I1016 18:30:29.896029 1431630 stateful_instance_set_controller.go:177] "Finished syncing InstanceSet" instanceSet="verify-p500-1792146629534878329/verify-rbg-worker" elapsedTime="5.268483ms"
+[38;5;10m•[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+
+[38;5;10m[1mRan 3 of 16 Specs in 32.432 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m3 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m13 Skipped[0m
+--- PASS: TestRBGController (32.43s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	32.448s
