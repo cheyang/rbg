@@ -33,11 +33,13 @@ import (
 	"github.com/stretchr/testify/require"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/record"
 	"k8s.io/utils/ptr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
+	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
 
 	"sigs.k8s.io/rbgs/api/workloads/constants"
 	workloadsv1alpha2 "sigs.k8s.io/rbgs/api/workloads/v1alpha2"
@@ -157,4 +159,61 @@ func TestP0Adapter_ForeignBoundAdapterDoesNotOverrideReplicas(t *testing.T) {
 	require.NotNil(t, rbg.Spec.Roles[0].Replicas)
 	assert.Equal(t, int32(3), *rbg.Spec.Roles[0].Replicas,
 		"a foreign adapter's stale spec.replicas must not pin the recreated RBG")
+}
+
+// TestF8Adapter_RecreateDeleteCarriesUIDPrecondition — finding F8 contract test
+// (round 2). Claim: when ReconcileScalingAdapter replaces a foreign/orphan
+// ScalingAdapter, the delete must carry the observed adapter UID as a
+// precondition, so a stale-cache reconcile cannot wipe out a newer live adapter
+// created under the same name. Contract polarity: FAILed on round-1 head
+// d2915172 (the delete had no preconditions); head 4f32bb9f added the
+// precondition, so it must PASS and keep passing.
+func TestF8Adapter_RecreateDeleteCarriesUIDPrecondition(t *testing.T) {
+	scheme := runtime.NewScheme()
+	require.NoError(t, workloadsv1alpha2.AddToScheme(scheme))
+
+	rbg := &workloadsv1alpha2.RoleBasedGroup{
+		TypeMeta:   metav1.TypeMeta{APIVersion: "workloads.x-k8s.io/v1alpha2", Kind: "RoleBasedGroup"},
+		ObjectMeta: metav1.ObjectMeta{Name: "demo", Namespace: "default", UID: "new-rbg-uid"},
+	}
+	role := &workloadsv1alpha2.RoleSpec{
+		Name:           "worker",
+		ScalingAdapter: &workloadsv1alpha2.ScalingAdapter{Enable: true},
+	}
+	adapterName := workloadsv1alpha2.GenerateScalingAdapterName(rbg.Name, role.Name)
+
+	existing := &workloadsv1alpha2.RoleBasedGroupScalingAdapter{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      adapterName,
+			Namespace: rbg.Namespace,
+			UID:       types.UID("old-rbg-uid"),
+		},
+		Spec: workloadsv1alpha2.RoleBasedGroupScalingAdapterSpec{
+			Replicas:       ptr.To(int32(9)),
+			ScaleTargetRef: &workloadsv1alpha2.AdapterScaleTargetRef{Name: rbg.Name, Role: role.Name},
+		},
+	}
+
+	var capturedUID *types.UID
+	c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(existing).WithInterceptorFuncs(interceptor.Funcs{
+		Delete: func(ctx context.Context, c client.WithWatch, obj client.Object, opts ...client.DeleteOption) error {
+			var delOpts client.DeleteOptions
+			delOpts.ApplyOptions(opts)
+			if delOpts.Raw != nil && delOpts.Raw.Preconditions != nil {
+				capturedUID = delOpts.Raw.Preconditions.UID
+			}
+			return c.Delete(ctx, obj, opts...)
+		},
+	}).Build()
+	r := &RoleBasedGroupReconciler{client: c, recorder: record.NewFakeRecorder(16)}
+
+	require.NoError(t, r.ReconcileScalingAdapter(context.Background(), rbg, role))
+
+	require.NotNil(t, capturedUID, "replace-delete must carry a UID precondition")
+	assert.Equal(t, existing.UID, *capturedUID,
+		"the precondition UID must match the observed (possibly stale) adapter UID")
+	after := &workloadsv1alpha2.RoleBasedGroupScalingAdapter{}
+	require.NoError(t, c.Get(context.Background(), client.ObjectKey{Name: adapterName, Namespace: rbg.Namespace}, after))
+	assert.True(t, after.ContainsRBGOwner(rbg),
+		"the adapter must be recreated owned by the current RBG")
 }

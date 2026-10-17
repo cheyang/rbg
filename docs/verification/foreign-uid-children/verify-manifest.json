@@ -28,7 +28,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test -mod=vendor -count=1 -json ./internal/controller/workloads/ ./pkg/scheduler/k8s-scheduler-plugin/ ./pkg/scheduler/volcano/ -run 'TestP0|TestF1'"
+      "cmd": "go test -mod=vendor -count=1 -json ./internal/controller/workloads/ ./pkg/scheduler/k8s-scheduler-plugin/ ./pkg/scheduler/volcano/ -run 'TestP0|TestF1|TestF8'"
     },
     "integration": {
       "kind": "gotest",
@@ -58,7 +58,16 @@
         "TestF1Plugin_OrphanMatchingSpec_AdoptionContract",
         "TestF1Volcano_OrphanMatchingSpec_AdoptionContract"
       ],
-      "_note": "Open finding: orphaned PodGroup whose spec already matches is never adopted, so deletePodGroup's IsControlledBy gate leaks it. Proposed fix validated in the harness-bites check: add '|| !metav1.IsControlledBy(podGroup, rbg)' to the spec-drift condition in both schedulers; with that patch both tests pass and the full pkg/scheduler/... suite stays green."
+      "_note": "FIXED on head 4f32bb9f (round 2): the author added '!metav1.IsControlledBy(podGroup, rbg) ||' to the update condition in both schedulers (the exact one-line fix validated in round 1's harness-bites check), plus same-spec orphan test rows in both scheduler suites (TestCreateOrUpdateSameSpecOrphanPodGroupAdopted). Both F1 contract tests now pass on 4f32bb9f; kept as the regression suite against re-breakage."
+    },
+    {
+      "id": "F8",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestF8Adapter_RecreateDeleteCarriesUIDPrecondition"
+      ],
+      "_note": "FIXED on head 4f32bb9f (round 2): ReconcileScalingAdapter's replace-delete now carries the observed adapter UID as a DeleteOptions precondition (internal/controller/workloads/rolebasedgroup_controller.go), with the PR's own TestReconcileScalingAdapter_RecreateUsesUIDPrecondition. This harness test (added round 2) was red on d2915172 and green on 4f32bb9f; kept as the regression suite. Note: the sibling delete in the same function (scaling disabled path, r.client.Delete without preconditions) is still unconditional — tracked as an advisory note in the round-2 findings, not a blocker."
     }
   ],
   "liveNote": "L3 (live) not run per this review round's policy (unit + integration only). If run later: in a real cluster with Volcano, delete an RBG with --cascade=orphan and recreate it with identical spec; verify the PodGroup gets a controller ownerRef (oc get podgroup -o yaml) and is removed when the recreated RBG is deleted with default propagation."
