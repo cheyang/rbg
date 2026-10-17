@@ -105,3 +105,42 @@ the reviewer's fork, read docs/verification/stale-uid-children-codex/README.md a
 verify-manifest.json, then run scripts/re-verify.sh with no args. Contract polarity
 throughout: F1 fixed iff TestVerifyF1* go green; P0-L1/P0-L2 must stay green.
 ```
+
+---
+
+## Round 2 — head `4f32bb9f` (delta `d2915172..4f32bb9f`)
+
+The new head is a single commit addressing round-1 findings:
+
+- **F1 fix taken exactly as proposed**: `!metav1.IsControlledBy(podGroup, rbg) ||` added to the
+  update trigger in both `pkg/scheduler/volcano/scheduler.go` and
+  `pkg/scheduler/k8s-scheduler-plugin/scheduler.go`, with new same-spec orphan rows
+  (`TestCreateOrUpdateSameSpecOrphanPodGroupAdopted` /
+  `TestCreateOrUpdate_SameSpecOrphanPodGroupAdopted`) in both scheduler suites — also closing
+  the F5 test-row gap.
+- **F8 fix taken**: the scaling-adapter replace path now deletes with the observed UID as a
+  precondition (`Preconditions.UID`), covered by
+  `TestReconcileScalingAdapter_RecreateUsesUIDPrecondition`.
+
+Re-verify results (`scripts/re-verify.sh 4f32bb9f`, grafts this harness onto the head):
+
+| ID | Round-1 state | Round-2 verdict | Evidence |
+|----|---------------|-----------------|----------|
+| P0-L1 | fixed | **still fixed** (regression suite green) | results/reverify/unit.parsed |
+| P0-L2 | fixed | **still fixed** (3/3 envtest specs green) | results/reverify/integration.parsed |
+| F1 | open | **FIXED** — `TestVerifyF1SameSpecOrphanPodGroupAdopted` + `TestVerifyF1SameSpecOrphanLeaksPastDeletePodGroup` now GREEN in both schedulers | results/reverify/unit.parsed |
+
+Fix attribution (red-on-previous): the PR's own three new tests were grafted onto the previous
+head `d2915172` and all FAIL there (`delete must include a UID precondition`; `same-spec
+orphan PodGroup should still be adopted` x2), and PASS on `4f32bb9f` —
+results/r2-new-tests-on-prev-d2915172.txt vs results/r2-new-tests-on-head-4f32bb9f.txt.
+
+Regression sweep on head `4f32bb9f`: `go test -mod=vendor -count=1
+./internal/controller/workloads/... ./pkg/scheduler/...` all green —
+results/r2-full-suites-head-4f32bb9f.txt.
+
+Delta review: no new findings. Still open from round 1 (untouched by this delta): F2 (silent
+foreign-name stall in the Set), F3 (delete+create AlreadyExists transient — the UID
+precondition does not change the same-reconcile create-after-delete), F4 (adopt-then-delete
+churn nit), F6 (leftover ControllerRevision collision, pre-existing), F7 (adapter name
+ambiguity, unconfirmed Copilot advisory).

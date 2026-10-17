@@ -1,0 +1,28 @@
+2026-10-18T00:15:14+08:00	INFO	recreating scalingAdapter not owned by this RBG	{"scalingAdapter": "demo-worker"}
+--- FAIL: TestReconcileScalingAdapter_RecreateUsesUIDPrecondition (0.04s)
+    scalingadapter_uid_test.go:273: 
+        	Error Trace:	/tmp/rbg-prev-d2915172/internal/controller/workloads/scalingadapter_uid_test.go:273
+        	Error:      	Expected value not to be nil.
+        	Test:       	TestReconcileScalingAdapter_RecreateUsesUIDPrecondition
+        	Messages:   	delete must include a UID precondition
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.055s
+FAIL
+--- FAIL: TestCreateOrUpdate_SameSpecOrphanPodGroupAdopted (0.04s)
+    scheduler_test.go:238: 
+        	Error Trace:	/tmp/rbg-prev-d2915172/pkg/scheduler/k8s-scheduler-plugin/scheduler_test.go:238
+        	Error:      	Should be true
+        	Test:       	TestCreateOrUpdate_SameSpecOrphanPodGroupAdopted
+        	Messages:   	same-spec orphan PodGroup should still be adopted
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/scheduler/k8s-scheduler-plugin	0.051s
+FAIL
+--- FAIL: TestCreateOrUpdateSameSpecOrphanPodGroupAdopted (0.04s)
+    scheduler_test.go:503: 
+        	Error Trace:	/tmp/rbg-prev-d2915172/pkg/scheduler/volcano/scheduler_test.go:503
+        	Error:      	Should be true
+        	Test:       	TestCreateOrUpdateSameSpecOrphanPodGroupAdopted
+        	Messages:   	same-spec orphan PodGroup should still be adopted
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/scheduler/volcano	0.049s
+FAIL
