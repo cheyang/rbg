@@ -14,3 +14,11 @@ BenchmarkV501PremiseBasePrunePerReconcile/entries=100-16         	   25334	     
 BenchmarkV501PremiseBasePrunePerReconcile/entries=10000-16       	     201	   1197299 ns/op	  960000 B/op	   30000 allocs/op
 PASS
 ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.737s
+cpu: AMD EPYC                                       
+BenchmarkV501ObserveGlobalScanBase/otherEntries=0-16         	 2083140	       117.9 ns/op	       0 B/op	       0 allocs/op
+BenchmarkV501ObserveGlobalScanBase/otherEntries=100-16       	  303728	       797.7 ns/op	       0 B/op	       0 allocs/op
+BenchmarkV501ObserveGlobalScanBase/otherEntries=10000-16     	    1078	    205118 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.913s
+
+# observeInstanceHealth global-scan cost on BASE (identical to head: 116/856/214us at 0/100/10k) — pre-existing, untouched by PR #501
