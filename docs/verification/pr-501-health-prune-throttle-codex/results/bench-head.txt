@@ -1,0 +1,11 @@
+$ go test -mod=vendor ./pkg/reconciler/roleinstanceset/statefulmode -run "^$" -bench "^BenchmarkPruneInstanceHealth$" -benchmem -benchtime=200ms -count=1
+goos: linux
+goarch: amd64
+pkg: sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode
+cpu: AMD EPYC                                       
+BenchmarkPruneInstanceHealth/instances=100/sweep=false-16         	15664033	        15.26 ns/op	       0 B/op	       0 allocs/op
+BenchmarkPruneInstanceHealth/instances=100/sweep=true-16          	   25161	      9499 ns/op	    9600 B/op	     300 allocs/op
+BenchmarkPruneInstanceHealth/instances=10000/sweep=false-16       	15697177	        15.29 ns/op	       0 B/op	       0 allocs/op
+BenchmarkPruneInstanceHealth/instances=10000/sweep=true-16        	     200	   1190626 ns/op	  960000 B/op	   30000 allocs/op
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	1.252s

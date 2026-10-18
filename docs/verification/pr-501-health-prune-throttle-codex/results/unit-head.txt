@@ -1,0 +1,32 @@
+$ go test -mod=vendor -race -count=1 ./pkg/reconciler/roleinstanceset/statefulmode/...
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	1.091s
+
+$ go test -mod=vendor -race -count=1 -v -run "TestPruneInstanceHealth|TestPruneEarlyRollbackReplacementSignals|TestVerifyPr501" ./pkg/reconciler/roleinstanceset/statefulmode/
+=== RUN   TestPruneInstanceHealth
+=== RUN   TestPruneInstanceHealth/live
+=== RUN   TestPruneInstanceHealth/deleted
+=== RUN   TestPruneInstanceHealth/recreated
+=== RUN   TestPruneInstanceHealth/lookup_error
+--- PASS: TestPruneInstanceHealth (0.00s)
+=== RUN   TestPruneEarlyRollbackReplacementSignals
+=== RUN   TestPruneEarlyRollbackReplacementSignals/live
+=== RUN   TestPruneEarlyRollbackReplacementSignals/deleted
+=== RUN   TestPruneEarlyRollbackReplacementSignals/recreated
+=== RUN   TestPruneEarlyRollbackReplacementSignals/lookup_error
+--- PASS: TestPruneEarlyRollbackReplacementSignals (0.00s)
+=== RUN   TestPruneInstanceHealthInterval
+=== RUN   TestPruneInstanceHealthInterval/deleted
+=== RUN   TestPruneInstanceHealthInterval/recreated
+--- PASS: TestPruneInstanceHealthInterval (0.00s)
+=== RUN   TestPruneInstanceHealthConcurrent
+--- PASS: TestPruneInstanceHealthConcurrent (0.00s)
+=== RUN   TestVerifyPr501PruneThrottledWithinInterval
+--- PASS: TestVerifyPr501PruneThrottledWithinInterval (0.00s)
+=== RUN   TestVerifyPr501ConcurrentCallsSweepOnce
+--- PASS: TestVerifyPr501ConcurrentCallsSweepOnce (0.00s)
+=== RUN   TestVerifyPr501StaleRecordsReclaimedAfterInterval
+=== RUN   TestVerifyPr501StaleRecordsReclaimedAfterInterval/deleted
+=== RUN   TestVerifyPr501StaleRecordsReclaimedAfterInterval/recreated
+--- PASS: TestVerifyPr501StaleRecordsReclaimedAfterInterval (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	1.057s

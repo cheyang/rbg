@@ -1,0 +1,10 @@
+P0 premise benchmark, run against BASE 56c49531084191ad982c7b1512d64bb83acd2098 (no throttle).
+$ cp scripts/premise_p0_base_bench_test.go pkg/reconciler/roleinstanceset/statefulmode/ && go test -mod=vendor ./pkg/reconciler/roleinstanceset/statefulmode -run "^$" -bench "^BenchmarkPremiseP0BasePruneEveryReconcile$" -benchmem -benchtime=200ms -count=1
+goos: linux
+goarch: amd64
+pkg: sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode
+cpu: AMD EPYC                                       
+BenchmarkPremiseP0BasePruneEveryReconcile/instances=100-16         	   25197	      9471 ns/op	    9600 B/op	     300 allocs/op
+BenchmarkPremiseP0BasePruneEveryReconcile/instances=10000-16       	     199	   1201397 ns/op	  960000 B/op	   30000 allocs/op
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.739s

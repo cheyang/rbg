@@ -1,0 +1,5 @@
+$ KUBEBUILDER_ASSETS=/home/ecs-user/envtest-assets/k8s/1.31.0-linux-amd64 go test -mod=vendor -count=1 ./test/envtest/testcase/stateful/ -timeout 15m
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/stateful	19.625s
+
+$ KUBEBUILDER_ASSETS=/home/ecs-user/envtest-assets/k8s/1.31.0-linux-amd64 go test -mod=vendor -count=1 ./test/envtest/testcase/rbg/ -timeout 15m
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	47.279s

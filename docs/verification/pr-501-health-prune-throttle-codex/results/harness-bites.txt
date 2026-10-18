@@ -1,0 +1,25 @@
+HARNESS-BITES CHECK on PR head 8e5c51f1: throttle block temporarily removed from pruneInstanceHealth.
+All contract tests must FAIL on un-throttled code. Production diff is reverted after the run.
+
+$ go test -mod=vendor -count=1 -run "TestPruneInstanceHealthInterval|TestPruneInstanceHealthConcurrent|TestVerifyPr501" ./pkg/reconciler/roleinstanceset/statefulmode/
+--- FAIL: TestPruneInstanceHealthInterval (0.00s)
+    --- FAIL: TestPruneInstanceHealthInterval/deleted (0.00s)
+        stateful_instance_set_control_test.go:2113: cleanup before interval elapsed made extra lookups: got 8, want 4
+    --- FAIL: TestPruneInstanceHealthInterval/recreated (0.00s)
+        stateful_instance_set_control_test.go:2113: cleanup before interval elapsed made extra lookups: got 8, want 4
+--- FAIL: TestPruneInstanceHealthConcurrent (0.00s)
+    stateful_instance_set_control_test.go:2162: concurrent cleanup made 64 lookups, want one sweep with 2 lookups
+--- FAIL: TestVerifyPr501PruneThrottledWithinInterval (0.00s)
+    verify_pr501_prune_throttle_test.go:73: call within interval must not sweep: got 4 lookups, want 2
+--- FAIL: TestVerifyPr501ConcurrentCallsSweepOnce (0.00s)
+    verify_pr501_prune_throttle_test.go:101: 32 concurrent calls must produce exactly one sweep: got 64 lookups, want 2
+--- FAIL: TestVerifyPr501StaleRecordsReclaimedAfterInterval (0.00s)
+    --- FAIL: TestVerifyPr501StaleRecordsReclaimedAfterInterval/deleted (0.00s)
+        verify_pr501_prune_throttle_test.go:134: unhealthy timer vanished before any due sweep
+    --- FAIL: TestVerifyPr501StaleRecordsReclaimedAfterInterval/recreated (0.00s)
+        verify_pr501_prune_throttle_test.go:134: unhealthy timer vanished before any due sweep
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.012s
+FAIL
+
+exit code: non-zero (FAIL) as expected on un-throttled code

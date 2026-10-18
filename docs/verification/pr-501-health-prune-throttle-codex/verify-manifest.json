@@ -1,0 +1,37 @@
+{
+  "topic": "pr-501-health-prune-throttle-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/501",
+  "harnessPaths": [
+    "docs/verification/pr-501-health-prune-throttle-codex",
+    "pkg/reconciler/roleinstanceset/statefulmode/verify_pr501_prune_throttle_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "pruneInstanceHealth() is called at the top of every Reconcile and performs a full Range over the global instanceUnhealthySince map, with one informer lister Get per entry — O(number of tracked unhealthy instances) on every reconcile (issue #481)",
+    "reportedComponent": "pkg/reconciler/roleinstanceset/statefulmode (ReconcileStatefulInstanceSet.Reconcile -> pruneInstanceHealth)",
+    "patchedComponent": "pkg/reconciler/roleinstanceset/statefulmode",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "base @10k entries: 1,201,397 ns/op, 960 kB, 30,000 allocs per call (results/premise-p0-base-bench.txt); head throttled call: 15.3 ns/op, 0 allocs (results/bench-head.txt)",
+    "match": ["BenchmarkPremiseP0BasePruneEveryReconcile"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -mod=vendor -race -count=1 -json -run 'TestVerifyPr501|TestPruneInstanceHealthInterval|TestPruneInstanceHealthConcurrent' ./pkg/reconciler/roleinstanceset/statefulmode/"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$(setup-envtest use 1.31.0 -p path)}\" go test -mod=vendor -count=1 -json ./test/envtest/testcase/stateful/ ./test/envtest/testcase/rbg/ -timeout 15m"
+    }
+  },
+  "findings": [
+    { "id": "C1", "polarity": "contract", "layer": "unit", "match": ["TestVerifyPr501PruneThrottledWithinInterval", "TestPruneInstanceHealthInterval"] },
+    { "id": "C2", "polarity": "contract", "layer": "unit", "match": ["TestVerifyPr501ConcurrentCallsSweepOnce", "TestPruneInstanceHealthConcurrent"] },
+    { "id": "C3", "polarity": "contract", "layer": "unit", "match": ["TestVerifyPr501StaleRecordsReclaimedAfterInterval"] },
+    { "id": "C4", "polarity": "contract", "layer": "integration", "match": ["TestStatefulRoleInstanceSetController", "TestRBGController"] }
+  ],
+  "liveNote": "L3 skipped per review scope (no KUBECONFIG layer). If run live, the observable signal is reconcile latency staying flat as tracked unhealthy instances grow; check controller logs for 'Finished syncing InstanceSet' elapsedTime."
+}
