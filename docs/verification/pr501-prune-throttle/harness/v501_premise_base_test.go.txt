@@ -1,0 +1,115 @@
+/*
+Copyright 2026 The RBG Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package statefulmode
+
+// P0 premise check for PR #501, run against the BASE branch
+// (56c49531084191ad982c7b1512d64bb83acd2098) where pruneInstanceHealth()
+// takes no argument and is invoked unconditionally at the top of every
+// Reconcile. Issue #481 claims: "pruneInstanceHealth() ... performs a full
+// Range over the global instanceUnhealthySince map, with one informer
+// lister Get per entry. This is O(number of tracked unhealthy instances)
+// on every reconcile."
+//
+// This file is BASE-ONLY: it does not compile against the PR head (the
+// function signature gained a `now time.Time` parameter there), so it is
+// recorded under docs/verification/pr501-prune-throttle/ rather than
+// committed as a live test. See results/base-premise.txt for the captured
+// run output.
+
+import (
+	"fmt"
+	"sync/atomic"
+	"testing"
+	"time"
+
+	workloadsv1alpha2 "sigs.k8s.io/rbgs/api/workloads/v1alpha2"
+	instancelisters "sigs.k8s.io/rbgs/client-go/listers/workloads/v1alpha2"
+	"k8s.io/client-go/tools/cache"
+)
+
+type v501BaseCountingIndexer struct {
+	cache.Indexer
+	lookups atomic.Int32
+}
+
+func (i *v501BaseCountingIndexer) GetByKey(key string) (interface{}, bool, error) {
+	i.lookups.Add(1)
+	return i.Indexer.GetByKey(key)
+}
+
+// TestV501PremiseBaseScansOnEveryReconcile proves the premise: with two
+// live sets each holding one unhealthy entry and one rollback signal (4
+// lister reads per sweep), three consecutive reconcile-time prune calls
+// perform 12 reads — one full sweep per call, with no time-based skip.
+func TestV501PremiseBaseScansOnEveryReconcile(t *testing.T) {
+	resetInstanceUnhealthySince()
+	resetEarlyRollbackReplacementSignals()
+	t.Cleanup(resetInstanceUnhealthySince)
+	t.Cleanup(resetEarlyRollbackReplacementSignals)
+
+	set := buildSet("premise", 1, nil, nil)
+	set.UID = "premise-set"
+	otherSet := set.DeepCopy()
+	otherSet.Namespace = "other"
+	otherSet.UID = "other-set"
+	instance := buildInst(set.Name, 0, testOldRev, false, true)
+
+	indexer := &v501BaseCountingIndexer{Indexer: cache.NewIndexer(cache.MetaNamespaceKeyFunc, nil)}
+	for _, liveSet := range []*workloadsv1alpha2.RoleInstanceSet{set, otherSet} {
+		if err := indexer.Add(liveSet); err != nil {
+			t.Fatal(err)
+		}
+		instanceUnhealthySince.Store(getInstanceHealthKey(liveSet, instance), time.Now())
+		recordEarlyRollbackReplacementSignal(liveSet, 0, testUpdateRev)
+	}
+	controller := &ReconcileStatefulInstanceSet{roleInstanceSetLister: instancelisters.NewRoleInstanceSetLister(indexer)}
+
+	controller.pruneInstanceHealth()
+	controller.pruneInstanceHealth()
+	controller.pruneInstanceHealth()
+	if got := indexer.lookups.Load(); got != 12 {
+		t.Fatalf("base pruneInstanceHealth made %d lookups over 3 calls, want 12 (a full sweep on every reconcile)", got)
+	}
+}
+
+// BenchmarkV501PremiseBasePrunePerReconcile measures the per-reconcile cost
+// of the unconditional sweep on base, for differential comparison against
+// the throttled head (~15ns/op at any map size).
+func BenchmarkV501PremiseBasePrunePerReconcile(b *testing.B) {
+	for _, count := range []int{100, 10000} {
+		b.Run(fmt.Sprint("entries=", count), func(b *testing.B) {
+			resetInstanceUnhealthySince()
+			resetEarlyRollbackReplacementSignals()
+			b.Cleanup(resetInstanceUnhealthySince)
+			b.Cleanup(resetEarlyRollbackReplacementSignals)
+			set := buildSet("bench", int32(count), nil, nil)
+			indexer := cache.NewIndexer(cache.MetaNamespaceKeyFunc, nil)
+			if err := indexer.Add(set); err != nil {
+				b.Fatal(err)
+			}
+			for i := range count {
+				instanceUnhealthySince.Store(getInstanceHealthKey(set, buildInst(set.Name, i, testOldRev, false, true)), time.Now())
+			}
+			controller := &ReconcileStatefulInstanceSet{roleInstanceSetLister: instancelisters.NewRoleInstanceSetLister(indexer)}
+			b.ReportAllocs()
+			b.ResetTimer()
+			for range b.N {
+				controller.pruneInstanceHealth()
+			}
+		})
+	}
+}

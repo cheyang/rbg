@@ -1,0 +1,63 @@
+{
+  "topic": "pr501-prune-throttle",
+  "pr": "https://github.com/sgl-project/rbg/pull/501",
+  "reviewer": "claude",
+  "branch": "verify/pr501-prune-throttle-claude",
+  "baseCommit": "56c49531084191ad982c7b1512d64bb83acd2098",
+  "headCommit": "8e5c51f109f6f97f91e739b96d4efb346691c911",
+  "harnessPaths": [
+    "docs/verification/pr501-prune-throttle",
+    "pkg/reconciler/roleinstanceset/statefulmode/verify_pr501_prune_throttle_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #481 / PR body: stateful RoleInstanceSet reconciles sweep the global health observations and early-rollback signals on every request — pruneInstanceHealth performs a full Range over the global maps with one informer lister Get per entry, O(number of tracked unhealthy instances) on every reconcile.",
+    "reportedComponent": "pkg/reconciler/roleinstanceset/statefulmode pruneInstanceHealth (called at the top of Reconcile)",
+    "patchedComponent": "same function/file; throttle added around the existing sweep",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "On base 56c4953 the counting-indexer canary TestV501PremiseBaseScansOnEveryReconcile PASSES: 3 consecutive prune calls over 2 sets x (1 unhealthy timer + 1 rollback signal) perform 12 lister reads — one full sweep per reconcile with no time-based skip (results/base-premise.txt). Per-reconcile cost on base: 9.4us @ 100 entries, 1.19ms / 960KB / 30,000 allocs @ 10,000 entries (every reconcile). On head the same map sizes cost 15ns / 0 allocs on the throttled path.",
+    "match": ["TestV501PremiseBaseScansOnEveryReconcile"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -mod=vendor ./pkg/reconciler/roleinstanceset/statefulmode/ -run 'TestV501' -count=1 -v -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "C1-throttle-cadence",
+      "polarity": "contract",
+      "layer": "unit",
+      "claim": "First prune call sweeps; calls within instanceHealthPruneInterval perform zero informer lookups; the first call at/after the interval sweeps again and reclaims records for deleted and UID-replaced sets while preserving other sets' (and other namespaces' same-named sets') records.",
+      "match": ["TestV501PruneSweepCadence"]
+    },
+    {
+      "id": "C2-nonblocking-skip",
+      "polarity": "contract",
+      "layer": "unit",
+      "claim": "While a sweep is in progress (mutex held), another worker's prune call returns promptly without blocking and without advancing the sweep clock. This is the property that distinguishes TryLock from a plain Lock; the PR's own TestPruneInstanceHealthConcurrent cannot tell them apart.",
+      "match": ["TestV501PruneNonBlockingWhileSweepInProgress"]
+    },
+    {
+      "id": "C3-deferred-sweep-safety",
+      "polarity": "contract",
+      "layer": "unit",
+      "claim": "Deferring the sweep is correctness-safe: within the throttle window (no sweep at all), a same-name recreated set inherits neither the old set's unhealthy window (observeInstanceHealth reclaims old-UID entries and starts a fresh one) nor the old rollback signal (readers self-invalidate on setUID mismatch).",
+      "match": ["TestV501DeferredSweepSafetyForRecreatedSet"]
+    }
+  ],
+  "benchmarks": {
+    "note": "Evidence, not red/green gates. Run: go test -mod=vendor ./pkg/reconciler/roleinstanceset/statefulmode/ -run '^$' -bench 'BenchmarkV501|BenchmarkPruneInstanceHealth' -benchmem -benchtime=200ms -count=1",
+    "results": "results/head-benchmarks.txt",
+    "covers": [
+      "hot-path prune cost is O(1) at any map size (15ns, 0 allocs) — PR's claimed win, reproduced",
+      "due-sweep cost ~O(N) (9.6us/1.19ms at 100/10k entries) — now at most once per minute",
+      "F2 evidence: observeInstanceHealth still Ranges the global map per reconcile (116ns/856ns/214us at 0/100/10k other-set entries) — pre-existing, untouched by this PR"
+    ]
+  },
+  "liveNote": "L3 (live cluster) intentionally skipped per the debate-round instructions (unit + integration only). No integration (envtest) layer either: the change is pure in-memory control flow around two package-level sync.Maps plus lister reads that a cache.Indexer fake exercises fully; a real API server adds no signal for this contract. The PR's own e2e/CI coverage is unaffected by an in-memory cadence change."
+}

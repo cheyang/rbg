@@ -1,0 +1,23 @@
+# Harness-bites check — HEAD 8e5c51f109f6f97f91e739b96d4efb346691c911
+# Step 4 of review-finding-verifier: temporarily apply a regression to the
+# production code, confirm the harness goes red, then revert and confirm the
+# production diff is empty again.
+
+Bite A — neuter the throttle in pruneInstanceHealth (replace the interval
+check with `if false`), expect TestV501PruneSweepCadence to FAIL:
+    --- FAIL: TestV501PruneSweepCadence/deleted (0.00s)
+        verify_pr501_prune_throttle_test.go:101: throttled calls made extra lookups: got 16, want 4
+    --- FAIL: TestV501PruneSweepCadence/replaced (0.00s)
+        verify_pr501_prune_throttle_test.go:101: throttled calls made extra lookups: got 16, want 4
+    FAIL
+
+Bite B — replace TryLock with a blocking Lock, expect
+TestV501PruneNonBlockingWhileSweepInProgress to FAIL:
+    --- FAIL: TestV501PruneNonBlockingWhileSweepInProgress (2.00s)
+        verify_pr501_prune_throttle_test.go:179: pruneInstanceHealth blocked while another
+        sweep held the mutex; workers must skip, not wait
+    FAIL
+
+After both bites the production file was restored from the pristine copy;
+`git diff --stat -- pkg/` reports no tracked production changes (only the
+additive harness test file is new).

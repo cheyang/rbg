@@ -1,0 +1,16 @@
+# P0 premise check — BASE 56c49531084191ad982c7b1512d64bb83acd2098
+# Harness: docs/verification/pr501-prune-throttle/harness/v501_premise_base_test.go.txt (base-only; the PR head changed pruneInstanceHealth's signature)
+# Run: cd <base worktree> && go test -mod=vendor -count=1 -run TestV501PremiseBaseScansOnEveryReconcile -v ./pkg/reconciler/roleinstanceset/statefulmode/
+
+=== RUN   TestV501PremiseBaseScansOnEveryReconcile
+--- PASS: TestV501PremiseBaseScansOnEveryReconcile (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.010s
+goos: linux
+goarch: amd64
+pkg: sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode
+cpu: AMD EPYC                                       
+BenchmarkV501PremiseBasePrunePerReconcile/entries=100-16         	   25334	      9400 ns/op	    9600 B/op	     300 allocs/op
+BenchmarkV501PremiseBasePrunePerReconcile/entries=10000-16       	     201	   1197299 ns/op	  960000 B/op	   30000 allocs/op
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.737s

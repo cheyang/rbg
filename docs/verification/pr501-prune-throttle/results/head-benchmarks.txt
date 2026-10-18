@@ -1,0 +1,17 @@
+# HEAD benchmarks — reviewer harness + the PR's own benchmark
+
+goos: linux
+goarch: amd64
+pkg: sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode
+cpu: AMD EPYC                                       
+BenchmarkPruneInstanceHealth/instances=100/sweep=false-16         	15706041	        15.27 ns/op	       0 B/op	       0 allocs/op
+BenchmarkPruneInstanceHealth/instances=100/sweep=true-16          	   25081	      9614 ns/op	    9600 B/op	     300 allocs/op
+BenchmarkPruneInstanceHealth/instances=10000/sweep=false-16       	15532945	        15.27 ns/op	       0 B/op	       0 allocs/op
+BenchmarkPruneInstanceHealth/instances=10000/sweep=true-16        	     199	   1194053 ns/op	  960028 B/op	   30000 allocs/op
+BenchmarkV501PruneHotPath/entries=100-16                          	15243187	        14.86 ns/op	       0 B/op	       0 allocs/op
+BenchmarkV501PruneHotPath/entries=10000-16                        	16301905	        15.03 ns/op	       0 B/op	       0 allocs/op
+BenchmarkV501ObserveInstanceHealthGlobalScan/otherEntries=0-16    	 2061810	       116.4 ns/op	       0 B/op	       0 allocs/op
+BenchmarkV501ObserveInstanceHealthGlobalScan/otherEntries=100-16  	  281287	       855.6 ns/op	       0 B/op	       0 allocs/op
+BenchmarkV501ObserveInstanceHealthGlobalScan/otherEntries=10000-16         	    1014	    214137 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	2.695s
