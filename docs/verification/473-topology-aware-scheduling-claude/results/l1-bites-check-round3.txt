@@ -1,0 +1,18 @@
+Round-3 harness bites check (Step 4 of review-finding-verifier), head 99b991c.
+
+Method: check_claims.py run with --kep pointing at a temporary modified copy of
+the KEP (the branch's KEP was never modified; production diff empty; the copies
+live in /tmp only).
+
+bite 1 — remove the LF1 freeze-time guard sentence ("Before first acceptance,
+  read the policy through the uncached `apiReader`; any read error other than
+  `NotFound` blocks acceptance." -> informer-cache wording):
+  exit=1, failing contracts: LF1 (+C9, an artifact of running outside the
+  graft: HEAD is the verify branch, not the PR head; C9 passes in re-verify).
+bite 2 — rename the PRR heading to "## Rollout Notes":
+  exit=1, failing contracts: LF11.
+bite 3 — reintroduce "Controller resync" as a drift-discovery trigger:
+  exit=1, failing contracts: LF2.
+
+Each targeted fixed-guard contract fails exactly when its fix is reverted; the
+other contracts stay green. The harness bites.

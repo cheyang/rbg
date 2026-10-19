@@ -1,7 +1,26 @@
 # Verification — PR #473 (KEP-473: Topology-Aware Scheduling) — Reviewer A (Claude)
 
 PR: https://github.com/sgl-project/rbg/pull/473 — adds
-`keps/473-topology-aware-scheduling/{README.md,kep.yaml}` only (676 insertions, no runtime code).
+`keps/473-topology-aware-scheduling/{README.md,kep.yaml}` only (the Go files in the
+GitHub diff are a cherry-pick of main's already-merged #495, byte-identical — check C9).
+
+**Round 3** (head `99b991c`, delta `6894a2e..99b991c`, force-push rebase onto `79f7e585`
+plus 3 new KEP commits `d5d89dc9/877db572/99b991c5`): the KEP nearly doubled and answers
+the round-3 request-changes. Ledger F1 (contract freeze vs cache-backed policy read) is
+**fixed** and pinned by contract LF1 (uncached `apiReader` read before first acceptance,
+explicit `topologyPolicyRequired` dependency, downgraded ordering claim; base controller
+fact `mgr.GetAPIReader()` verified). Ledger F2/F4/F6/F10/F11/F12/F13 likewise fixed and
+guarded by LF2/LF4/LF6/LF10/LF11/LF12/LF13. All round-1/2 fixed findings stay fixed —
+their flipped canaries were inverted into fixed-guard contracts (F1–F12 now `contract`).
+New evidence contracts C4–C8 verify the KEP's new upstream scheduler-internal citations
+(Volcano v1.14.4 subjob selection / restart-domain recovery / BestEffort+backfill, KAI
+v0.18.6 non-injective `calcDomainId` + level validation, Koordinator pinned-commit
+no-Bound-members limitation) against `results/upstream/round3/` snapshots fetched this
+round. G3/G4 needles updated for the rewritten KAI/Koordinator examples (harness update,
+not a defect). **Still live**: F8 = ledger F9 (RBAC never enumerated) and F13 = ledger
+F7 (DNS-1123 rule for "Role names" unscoped). Bite checks: reverting the LF1 guard, the
+PRR heading, or reintroducing "controller resync" flips exactly the matching contract —
+see `results/l1-bites-check-round3.txt`.
 
 **Round 2** (head `6894a2e`, delta `2b65779b..6894a2e`, 3 commits clarifying review
 feedback): F1–F6 and F9 are fixed (canaries flipped; F4 via a PR-body edit —
@@ -37,6 +56,32 @@ Re-run everything against the current PR head (machine-independent, resolves the
 ```bash
 bash scripts/re-verify.sh            # or: bash scripts/re-verify.sh <fixed-ref>
 ```
+
+## Observed vs expected (round 3, head 99b991c)
+
+| check | polarity | observed | verdict |
+| --- | --- | --- | --- |
+| LF1 ledger F1: contract freeze lacks a freeze-time guard / blessed ordering | contract (fixed guard) | PASS | **FIXED** — uncached `apiReader` read before first acceptance, `topologyPolicyRequired`, ordering claim downgraded with documented recovery; base controller exposes `mgr.GetAPIReader()` |
+| LF2 ledger F2: 'controller resync' listed as drift trigger | contract | PASS | **FIXED** — event-driven requeue + five-second retries only; no resync claim |
+| LF4 ledger F4: webhooks-disabled sentence contradicts the freeze | contract | PASS | **FIXED** — webhooks required, but controller still rejects mismatch and retains previous bindings |
+| LF6 ledger F6: KAI subGroup names carry no length budget | contract | PASS | **FIXED** — kind-prefixed bounded forms + hash12, 63-char tests promised |
+| LF10 ledger F10: minMember/minSubGroup zero-value wording contradiction | contract | PASS | **FIXED** — "Nonzero thresholds come only from gang configuration" |
+| LF11 ledger F11: alpha KEP omits the PRR questionnaire | contract | PASS | **FIXED** — full PRR section + kep.yaml feature-gates/metrics |
+| LF12 ledger F12: binding injection ordering after reconcileRoles | contract | PASS | **FIXED** — flow step 11 (inject bindings) precedes step 12 (create/update Roles); per-Pod handshake specified |
+| LF13 ledger F13: Volcano example omits subGroupSize | contract | PASS | **FIXED** — `subGroupSize: 4` + `ComputeSubGroupSize` + threshold semantics |
+| F8 ledger F9: new cluster-scoped reads, RBAC unaddressed | canary | DEFECT-PRESENT | **finding live** (permission surface grew: topology CR CRUD, Node watch, HyperNode/Topology CRUD, cross-namespace checks) |
+| F13 ledger F7: DNS-1123 admission rule for 'Role names' unscoped | canary | DEFECT-PRESENT | **finding live** (RoleSpec.Name still has no pattern; scope the rule to instanceTopologyConstraint-bearing roles) |
+| C4 Volcano v1.14.4 subjob mechanics (first-non-empty-match, default-subjob topology inheritance, subGroupSize→MinAvailable) | contract | PASS | facts hold (results/upstream/round3/volcano_*.go) |
+| C5 Volcano restart domain recovery skips topology-less subjobs | contract | PASS | fact holds |
+| C6 Volcano allocate skips BestEffort; backfill direct-allocates | contract | PASS | fact holds |
+| C7 KAI v0.18.6 calcDomainId unescaped join; MaxItems=16; nodeLabel immutable | contract | PASS | fact holds |
+| C8 Koordinator pinned commit: no-Bound-members-only + OnceSatisfied early return | contract | PASS | fact holds |
+| C9 PR's Go delta byte-identical to main's #495 | contract | PASS | fact holds — net docs-only PR |
+| F1–F12 (round-1/2 findings, inverted fixed guards) | contract | PASS | all remain fixed at 99b991c |
+| P0, C1–C3, G1–G4 | contract | PASS | facts/examples hold; G3/G4 needles updated for the rewritten examples |
+
+Raw output round 3: `results/reverify/{unit.out,integration.out,unit.parsed,integration.parsed}`;
+bites: `results/l1-bites-check-round3.txt`.
 
 ## Observed vs expected (round 2, head 6894a2e)
 
