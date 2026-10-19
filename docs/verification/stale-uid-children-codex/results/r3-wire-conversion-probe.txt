@@ -1,0 +1,8 @@
+=== RUN   TestRound3Form_PreconditionReachesWireBody
+    main_test.go:23: wire body precondition UID = observed-uid-1234
+--- PASS: TestRound3Form_PreconditionReachesWireBody (0.00s)
+=== RUN   TestRound2Form_Control_StillDropped
+    main_test.go:36: control holds: Raw-only form drops the precondition (round-2 defect was real)
+--- PASS: TestRound2Form_Control_StillDropped (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/zzprobe	0.007s

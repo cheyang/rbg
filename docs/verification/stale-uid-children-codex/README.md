@@ -144,3 +144,41 @@ foreign-name stall in the Set), F3 (delete+create AlreadyExists transient — th
 precondition does not change the same-reconcile create-after-delete), F4 (adopt-then-delete
 churn nit), F6 (leftover ControllerRevision collision, pre-existing), F7 (adapter name
 ambiguity, unconfirmed Copilot advisory).
+
+---
+
+## Round 3 — head `b1d47c14` (delta `4f32bb9f..b1d47c14`)
+
+One commit, +4/−6 in two files — exactly the F8/AC6 fix round 2 asked for:
+
+- `rolebasedgroup_controller.go`: the adapter replace-delete now sets the **top-level**
+  `client.DeleteOptions.Preconditions` (was: `DeleteOptions.Raw.Preconditions`, which
+  controller-runtime's `AsDeleteOptions()` overwrites with the nil top-level field —
+  vendored `options.go:354` — so the round-2 guard never reached the wire).
+- `scalingadapter_uid_test.go`: the test now asserts the **post-conversion** shape
+  (`delOpts.AsDeleteOptions().Preconditions`) instead of the pre-conversion `Raw` struct.
+
+Verification this round:
+
+| Evidence | Result |
+|----------|--------|
+| `scripts/re-verify.sh b1d47c14` (grafts this harness onto the head) | P0-L1, P0-L2, F1, F8-L1, F8-L2 all **FIXED/green** — results/reverify/ |
+| New harness unit test `TestVerifyF8AdapterReplaceDeletePreconditionReachesWire` (asserts the wire body via the same `ApplyOptions`+`AsDeleteOptions()` conversion `typedClient.Delete` performs) | **RED on 4f32bb9f, GREEN on b1d47c14** — harness bites with correct polarity |
+| Control `TestVerifyF8WireConversionControlRawOnlyFormDropped` (pins the vendored conversion semantics) | green on both |
+| Runtime probe against vendored controller-runtime v0.22.1: round-3 form puts the UID in the wire body; round-2 Raw-only form still drops it | results/r3-wire-conversion-probe.txt |
+| PR's updated `TestReconcileScalingAdapter_RecreateUsesUIDPrecondition` grafted onto `4f32bb9f` | **FAILS** ("delete must include a UID precondition") — red-on-previous, the updated test genuinely bites: results/r3-updated-pr-test-on-prev-4f32bb9f.txt vs r3-updated-pr-test-on-head-b1d47c14.txt |
+| New envtest spec `F8: the API server enforces the UID delete precondition...` (real API server: wrong-UID delete → 409 Conflict + object survives; stale-UID delete after same-name replacement → 409 + replacement survives; correct-UID delete → succeeds) | **PASS** (1/1) — the enforcement link the fake client cannot provide |
+| `go test -mod=vendor ./internal/controller/workloads/... ./pkg/scheduler/...` + `go vet` on b1d47c14 | all green — results/r3-full-suites-head-b1d47c14.txt |
+| GitHub CI on b1d47c14 | 22/22 SUCCESS |
+
+Consequence chain now closed end to end: controller sends the observed UID →
+`AsDeleteOptions()` propagates it into the DELETE body → the API server rejects a
+UID-mismatched delete with 409, the reconcile returns the error (Conflict is not
+IsNotFound) and retries. A stale-cache reconcile can no longer wipe a live adapter.
+F8/AC6: **fixed**.
+
+Still open (unchanged by this delta): F2 (log-only foreign-name stall), F3 (transient
+AlreadyExists on delete+recreate in one reconcile), F4 (adopt-then-delete churn nit),
+F6 (pre-existing ControllerRevision collision), F7 (unconfirmed adapter-name ambiguity),
+F9 (the sibling disabled-scaling delete at rolebasedgroup_controller.go:1031 is still
+unconditional — the one-line symmetry follow-up).

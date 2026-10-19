@@ -1,0 +1,10 @@
+2026-10-19T23:41:51+08:00	INFO	recreating scalingAdapter not owned by this RBG	{"scalingAdapter": "demo-worker"}
+--- FAIL: TestReconcileScalingAdapter_RecreateUsesUIDPrecondition (0.04s)
+    scalingadapter_uid_test.go:273: 
+        	Error Trace:	/tmp/pr500-r3-prev/internal/controller/workloads/scalingadapter_uid_test.go:273
+        	Error:      	Expected value not to be nil.
+        	Test:       	TestReconcileScalingAdapter_RecreateUsesUIDPrecondition
+        	Messages:   	delete must include a UID precondition
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.049s
+FAIL
