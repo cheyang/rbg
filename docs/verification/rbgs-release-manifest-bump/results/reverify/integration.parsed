@@ -1,0 +1,6 @@
+TestManagerFlagReflectsToggle	pass
+TestClusterRoleGrantsReflectToggle	pass
+TestToggleDeltaIsScopedToDeprecatedRBACAndFlag	pass
+TestReleaseImageTagsConsistentAcrossManifests	pass
+TestRenderedImagesMatchValuesTag	pass
+TestKustomizeBuildMatchesShippedManifests	pass

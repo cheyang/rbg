@@ -1,0 +1,3 @@
+TestReleaseImageTagsConsistentAcrossManifests	pass
+TestRenderedImagesMatchValuesTag	pass
+TestKustomizeBuildMatchesShippedManifests	pass
