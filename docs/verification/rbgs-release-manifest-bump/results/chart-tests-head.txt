@@ -1,0 +1,15 @@
+# go test ./test/chart/ (full package, PR head 7499b7c0, KUBECONFIG=clean 600-mode fixture)
+=== RUN   TestManagerFlagReflectsToggle
+--- PASS: TestManagerFlagReflectsToggle (0.08s)
+=== RUN   TestClusterRoleGrantsReflectToggle
+--- PASS: TestClusterRoleGrantsReflectToggle (0.08s)
+=== RUN   TestToggleDeltaIsScopedToDeprecatedRBACAndFlag
+--- PASS: TestToggleDeltaIsScopedToDeprecatedRBACAndFlag (0.05s)
+=== RUN   TestReleaseImageTagsConsistentAcrossManifests
+--- PASS: TestReleaseImageTagsConsistentAcrossManifests (0.14s)
+=== RUN   TestRenderedImagesMatchValuesTag
+--- PASS: TestRenderedImagesMatchValuesTag (0.02s)
+=== RUN   TestKustomizeBuildMatchesShippedManifests
+--- PASS: TestKustomizeBuildMatchesShippedManifests (0.91s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/chart	1.277s

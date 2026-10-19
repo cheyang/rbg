@@ -1,0 +1,14 @@
+# helm lint deploy/helm/rbgs
+==> Linting deploy/helm/rbgs
+[INFO] Chart.yaml: icon is recommended
+
+1 chart(s) linted, 0 chart(s) failed
+
+# helm template rbgs deploy/helm/rbgs | grep image:
+          image: "rolebasedgroup/rbgs-controller:v0.9.0-d88b3186"
+          image: "rolebasedgroup/rbgs-upgrade-crd:v0.9.0-d88b3186"
+
+# version ConfigMap rendered appVersion:
+  chartVersion: "0.9.0-alpha.2"
+  appVersion: "0.9.0-d88b3186"
+---

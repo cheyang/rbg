@@ -1,0 +1,2 @@
+# kubectl kustomize config/default vs deploy/kubectl/manifests.yaml (head 7499b7c0)
+IDENTICAL (byte-for-byte, 99143 lines)

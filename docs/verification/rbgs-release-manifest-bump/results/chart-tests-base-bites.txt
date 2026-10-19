@@ -1,0 +1,18 @@
+# go test -run harness tests on merge base d88b3186 (bites proof: expect FAIL on the two release-pinning tests)
+=== RUN   TestReleaseImageTagsConsistentAcrossManifests
+    release_manifest_consistency_test.go:109: values.yaml controller.image.tag = "v0.9.0-eadb6c20", want "v0.9.0-d88b3186"
+    release_manifest_consistency_test.go:109: values.yaml crdUpgrade.image.tag = "v0.9.0-eadb6c20", want "v0.9.0-d88b3186"
+    release_manifest_consistency_test.go:133: kustomization.yaml controller newTag = "v0.9.0-eadb6c20", want "v0.9.0-d88b3186"
+    release_manifest_consistency_test.go:155: deploy/kubectl/manifests.yaml controller image tag = "v0.9.0-eadb6c20", want "v0.9.0-d88b3186"
+    release_manifest_consistency_test.go:172: Chart.yaml appVersion = "0.9.0-eadb6c20", want "0.9.0-d88b3186" (tag "v0.9.0-d88b3186" without leading v)
+    release_manifest_consistency_test.go:175: Chart.yaml version = "0.9.0-alpha.1", want "0.9.0-alpha.2"
+--- FAIL: TestReleaseImageTagsConsistentAcrossManifests (0.14s)
+=== RUN   TestRenderedImagesMatchValuesTag
+    release_manifest_consistency_test.go:203: rendered chart does not schedule "rolebasedgroup/rbgs-controller:v0.9.0-d88b3186" (tag "v0.9.0-d88b3186" not rendered)
+    release_manifest_consistency_test.go:203: rendered chart does not schedule "rolebasedgroup/rbgs-upgrade-crd:v0.9.0-d88b3186" (tag "v0.9.0-d88b3186" not rendered)
+--- FAIL: TestRenderedImagesMatchValuesTag (0.03s)
+=== RUN   TestKustomizeBuildMatchesShippedManifests
+--- PASS: TestKustomizeBuildMatchesShippedManifests (0.98s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/chart	1.162s
+FAIL

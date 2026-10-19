@@ -1,0 +1,49 @@
+{
+  "topic": "rbgs-release-manifest-bump",
+  "pr": "https://github.com/sgl-project/rbg/pull/505",
+  "reviewer": "claude",
+  "harnessPaths": [
+    "docs/verification/rbgs-release-manifest-bump",
+    "test/chart/release_manifest_consistency_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Release-manifest bump for the 0.9.0-alpha.2 cut, based on main @ d88b3186. Only version strings change; no functional/template edits.",
+    "reportedComponent": "shipped release defaults: helm chart version/appVersion, values.yaml image tags, kustomize manager image, generated kubectl manifests",
+    "patchedComponent": "exactly those four files",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "integration",
+    "verdict": "confirmed",
+    "evidence": "cut is real: images rolebasedgroup/rbgs-controller:v0.9.0-d88b3186 and rbgs-upgrade-crd:v0.9.0-d88b3186 are published multi-arch on Docker Hub (pushed 2026-10-19), and the previous cut used the identical 4-file bump pattern (fc201cdf, 0.9.0-alpha.1). results/dockerhub-*.json"
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "K=$(mktemp) && printf 'apiVersion: v1\\nkind: Config\\n' >\"$K\" && KUBECONFIG=\"$K\" go test ./test/chart/ -run 'TestReleaseImageTagsConsistentAcrossManifests|TestRenderedImagesMatchValuesTag|TestKustomizeBuildMatchesShippedManifests' -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "K=$(mktemp) && printf 'apiVersion: v1\\nkind: Config\\n' >\"$K\" && KUBECONFIG=\"$K\" go test ./test/chart/ -json"
+    }
+  },
+  "findings": [
+    { "id": "A1-chart-renders-release-images", "polarity": "contract", "layer": "unit", "match": ["TestRenderedImagesMatchValuesTag"] },
+    { "id": "A2-release-tags-consistent", "polarity": "contract", "layer": "unit", "match": ["TestReleaseImageTagsConsistentAcrossManifests"] },
+    { "id": "A3-kustomize-sync", "polarity": "contract", "layer": "unit", "match": ["TestKustomizeBuildMatchesShippedManifests"] },
+    { "id": "A4-chart-testplan-passes", "polarity": "contract", "layer": "integration", "match": ["TestManagerFlagReflectsToggle", "TestClusterRoleGrantsReflectToggle", "TestToggleDeltaIsScopedToDeprecatedRBACAndFlag"] }
+  ],
+  "manualChecks": [
+    {
+      "id": "A5-images-published",
+      "cmd": "bash docs/verification/rbgs-release-manifest-bump/scripts/check-images-published.sh v0.9.0-d88b3186",
+      "note": "network check against Docker Hub; not a property of the repo code, so not a re-verify layer"
+    },
+    {
+      "id": "A6-no-stale-refs",
+      "cmd": "git grep -n 'eadb6c20' -- ':!docs/verification' ':!test/chart/release_manifest_consistency_test.go'",
+      "note": "no reference to the previous cut's tag may remain; empty output = pass"
+    }
+  ],
+  "liveNote": "No live/KUBECONFIG layer needed for this PR (version strings only). Two environment caveats recorded instead: (1) the repo's own chart tests fail on any machine whose kubeconfig is group/world-readable because renderChart() uses CombinedOutput() - run layers with a 0600-mode KUBECONFIG as baked into the layer cmds; (2) re-pin expectations to a later cut with RBG_EXPECTED_RELEASE_TAG / RBG_EXPECTED_CHART_VERSION."
+}
