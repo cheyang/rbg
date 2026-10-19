@@ -35,6 +35,48 @@ canary means "finding reproduced", not "all clear".
 
 ## Summary of results
 
+### Round 3 (head 99b991c5, `.last-reviewed` advanced)
+
+The round-3 delta (`6894a2e..99b991c5`) rewrites the KEP around a new
+`ClusterNetworkTopology` vocabulary CR (Managed/Imported), adds the alpha PRR
+questionnaire, the instance-binding handshake, and the RBG/topology drain
+protocols, and re-bases onto `79f7e585` — picking up a duplicate of the
+already-merged #495 `GetSelector` fix (`19acd93d`, content-identical to main's
+`7b384f4d`; zero net diff against the round-3 frozen base `d88b3186`).
+
+| ID | Claim (ledger ID) | Layer | Round-3 verdict | Evidence |
+|----|-------------------|-------|-----------------|----------|
+| F7 | (ledger F1, round-2 major) Contract freeze read the policy through the cache-backed client; blessed "policy before RBG" ordering could freeze `none` and wedge the RBG | 1 | **Fixed** (canary flipped -> contract): freeze now reads the policy through the uncached `apiReader`, non-NotFound read errors block acceptance, and immutable `spec.topologyPolicyRequired` provides a deterministic wait | `TestKEP473_F7_ContractFreezeReadsUncached` (fails on 6894a2e, passes on 99b991c5) |
+| F8 | (ledger F2) "controller resync" listed as a drift trigger the predicates filter out | 1 | **Fixed** — trigger removed everywhere; drift now discovered via topology/native-resource watches + workload events | `TestKEP473_F8_ContractNoResyncTrigger` (bites on 6894a2e) |
+| F9 | (ledger F3) Koordinator cross-role-only example contradicted the partition rule | 1 | **Fixed** — example rewritten as an explicitly gated Phase-2 illustration with the correct 2 role-level members; inspected baseline reports `SchedulerUnsupported` | `TestKEP473_F9_ContractKoordinatorExampleGatedAndConsistent` (bites on 6894a2e) |
+| F10 | (ledger F4) webhooks-disabled sentence contradicted the contract freeze | 1 | **Fixed** — admission bypass no longer authorizes overwriting an accepted record | `TestKEP473_F10_ContractWebhookBypassStillGated` (bites on 6894a2e) |
+| F11 | (ledger F6) KAI subGroup names had no length budget vs the 63-char binding label | 1 | **Fixed** — kind-prefixed, 20-char-truncated, hash-suffixed names; worst case 42 < 63 | `TestKEP473_F11_ContractKAISubGroupNamesBounded` (bites on 6894a2e) |
+| F12 | (ledger F7, open) Naming-safety rule "Role names ... validated at admission as DNS-1123 labels" is still unscoped (RoleSpec.Name carries no pattern validation today) | 1 | **Still present** (canary green on both heads) | `TestKEP473_F12_RoleNameRuleUnscoped` |
+| F13 | (ledger F9, open) The new topology controller needs Node list/watch, HyperNode/Topology CRUD and topology-CR status/finalizer writes; still no RBAC/ClusterRole section | 1 | **Still present** (canary green on both heads) | `TestKEP473_F13_RBACSectionMissing` |
+
+Harness-updates this round: the round-1 contract assertions that pinned
+round-2 wording (F1/F2/F3/F4a/F5) were updated to the round-3 text with
+contract semantics preserved (e.g. the gang-parent + cross-role topology
+child case is now specified as explicitly `SchedulerUnsupported` in Phase 1 —
+the round-2 labelSelector rendering was found unworkable upstream, see below);
+`headingRE` now accepts the H1 self-link the regenerated TOC uses. The F4b/F4c
+failures on the previous-head differential are fixture artifacts (the
+refreshed round-2 PR-body fixture shares assertions with the fix), unchanged
+from round 2. `TestBaseFact_GetSelectorUsesSelectorFromSet` pins that the
+tree under review carries the #495 selector fix (fails on 6894a2e, passes on
+99b991c5).
+
+Round-3 integration layer (all PASS, live-fetched 2026-10-19): the new
+Backend Capability Gate claims verified against the cited upstream sources —
+KAI v0.18.6 `calcDomainId` joins label values with `.` without escaping;
+Volcano v1.14.4 `allocate` skips empty-request (BestEffort) tasks;
+`getOrCreateSubJob` honors only the first policy with non-empty match values
+(selector-only policies never form a subgroup); the default subjob inherits
+the parent `networkTopology`; `recoverAllocatedHyperNode` skips topology-free
+subjobs; Koordinator@81e01347's topology workflow is documented upstream as
+supporting only jobs with no Bound members and total membership equal to the
+minimum.
+
 ### Round 2 (head 6894a2e, `.last-reviewed` advanced)
 
 | ID | Claim | Layer | Round-2 verdict | Evidence |
