@@ -1,0 +1,5 @@
+== head 7499b7c0: kustomize build config/default vs deploy/kubectl/manifests.yaml ==
+IN SYNC at head
+
+== base d88b3186 (worktree /tmp/rbg-base-505a): same check ==
+IN SYNC at base

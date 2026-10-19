@@ -1,0 +1,9 @@
+== Docker Hub tag existence check (2026-10-20, Asia/Shanghai) ==
+--- rolebasedgroup/rbgs-controller:v0.9.0-d88b3186 ---
+name: v0.9.0-d88b3186
+last_updated: 2026-10-19T13:00:44.043197Z
+archs: ['amd64', 'arm64']
+--- rolebasedgroup/rbgs-upgrade-crd:v0.9.0-d88b3186 ---
+name: v0.9.0-d88b3186
+last_updated: 2026-10-19T13:04:21.270758Z
+archs: ['amd64', 'arm64']

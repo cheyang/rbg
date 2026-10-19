@@ -1,0 +1,37 @@
+{
+  "topic": "release-bump-0.9.0-alpha.2",
+  "pr": "https://github.com/sgl-project/rbg/pull/505",
+  "harnessPaths": [
+    "docs/verification/release-bump-0.9.0-alpha.2",
+    "test/verify"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Release-manifest bump for the 0.9.0-alpha.2 cut, based on main @ d88b3186. Only version strings change; no functional/template edits. Defaults point at published images v0.9.0-d88b3186.",
+    "reportedComponent": "release manifests (deploy/helm/rbgs chart, config/manager kustomization, deploy/kubectl/manifests.yaml)",
+    "patchedComponent": "same",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "integration",
+    "verdict": "confirmed",
+    "evidence": "Diff is 4 files / version strings only; d88b3186 is main HEAD and the PR merge-base; Docker Hub has multi-arch rolebasedgroup/rbgs-controller:v0.9.0-d88b3186 (pushed 2026-10-19T13:00:44Z) and rolebasedgroup/rbgs-upgrade-crd:v0.9.0-d88b3186 (2026-10-19T13:04:21Z). See results/p0-dockerhub-tags.txt.",
+    "match": ["TestReferencedImagesPublished"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/verify/ -run 'TestVersionStringsConsistent|TestGeneratedManifestsInSync' -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "go test ./test/verify/ -run 'TestChartRenderMatchesValues|TestReferencedImagesPublished' -json"
+    }
+  },
+  "findings": [
+    { "id": "C1", "polarity": "contract", "layer": "unit",        "match": ["TestVersionStringsConsistent"] },
+    { "id": "C2", "polarity": "contract", "layer": "unit",        "match": ["TestGeneratedManifestsInSync"] },
+    { "id": "C3", "polarity": "contract", "layer": "integration", "match": ["TestChartRenderMatchesValues"] },
+    { "id": "C4", "polarity": "contract", "layer": "integration", "match": ["TestReferencedImagesPublished"] }
+  ],
+  "liveNote": "No live layer: version-string bump only. Optionally `helm install`/`kubectl apply` the rendered defaults on a scratch cluster and confirm pods start (image pull exercised implicitly by e2e CI)."
+}

@@ -1,0 +1,4 @@
+== harness-bites check: config/manager newTag corrupted to v0.9.0-deadbeef ==
+TestVersionStringsConsistent: FAIL (newTag = v0.9.0-deadbeef, want v0.9.0-d88b3186)
+TestGeneratedManifestsInSync: FAIL (manifests out of sync)
+reverted: git diff --stat | wc -l == 0 (production diff empty)

@@ -1,0 +1,14 @@
+== HOME=/tmp/fakehome-505 (no world-readable kubeconfig) go test ./test/chart/ -v ==
+=== RUN   TestManagerFlagReflectsToggle
+--- PASS: TestManagerFlagReflectsToggle (0.15s)
+=== RUN   TestClusterRoleGrantsReflectToggle
+--- PASS: TestClusterRoleGrantsReflectToggle (0.07s)
+=== RUN   TestToggleDeltaIsScopedToDeprecatedRBACAndFlag
+--- PASS: TestToggleDeltaIsScopedToDeprecatedRBACAndFlag (0.05s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/chart	(cached)
+
+== same test with default HOME (world-readable ~/.kube/config present) ==
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/chart	0.146s
+FAIL

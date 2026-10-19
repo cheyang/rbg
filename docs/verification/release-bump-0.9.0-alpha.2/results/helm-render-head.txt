@@ -1,0 +1,9 @@
+== helm template rbgs deploy/helm/rbgs (head 7499b7c0), version-bearing lines ==
+18:  chartVersion: "0.9.0-alpha.2"
+19:  appVersion: "0.9.0-d88b3186"
+342:          image: "rolebasedgroup/rbgs-controller:v0.9.0-d88b3186"
+587:          image: "rolebasedgroup/rbgs-upgrade-crd:v0.9.0-d88b3186"
+
+stale references to previous tag v0.9.0-eadb6c20: 0
+stale references to previous chart 0.9.0-alpha.1: 0
+new tag v0.9.0-d88b3186 occurrences: 2

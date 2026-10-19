@@ -1,0 +1,12 @@
+=== RUN   TestVersionStringsConsistent
+--- PASS: TestVersionStringsConsistent (0.00s)
+=== RUN   TestGeneratedManifestsInSync
+--- PASS: TestGeneratedManifestsInSync (0.96s)
+=== RUN   TestChartRenderMatchesValues
+--- PASS: TestChartRenderMatchesValues (0.03s)
+=== RUN   TestReferencedImagesPublished
+    release_contract_test.go:242: rolebasedgroup/rbgs-controller:v0.9.0-d88b3186 exists (architectures: 2)
+    release_contract_test.go:242: rolebasedgroup/rbgs-upgrade-crd:v0.9.0-d88b3186 exists (architectures: 2)
+--- PASS: TestReferencedImagesPublished (0.65s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/verify	1.646s
