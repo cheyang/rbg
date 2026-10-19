@@ -252,4 +252,95 @@ var _ = Describe("Verify PR500: stale-UID children of a recreated parent", func(
 		}, verifyTimeout, verifyInterval).Should(BeTrue(),
 			"contract: the recreated RBG must replace the predecessor's adapter with one carrying its own UID")
 	})
+
+	It("F8: the API server enforces the UID delete precondition used by the adapter replace path", func() {
+		// The fake client cannot enforce UID preconditions; this spec proves the
+		// real API server does, using the exact client.DeleteOptions shape the
+		// controller uses at rolebasedgroup_controller.go (replace path).
+		// Combined with the unit layer
+		// (TestVerifyF8AdapterReplaceDeletePreconditionReachesWire, which proves the
+		// controller puts the observed UID into the wire body), this closes the
+		// loop: controller sends precondition -> it reaches the wire -> the API
+		// server rejects a stale-UID delete instead of wiping the live object.
+		rbgName := "verify-f8-rbg"
+		role := wrappersv2.BuildStandaloneRole("worker").Obj()
+		role.ScalingAdapter = &workloadsv1alpha2.ScalingAdapter{Enable: true}
+		rbg := &workloadsv1alpha2.RoleBasedGroup{
+			ObjectMeta: metav1.ObjectMeta{Name: rbgName, Namespace: testNs},
+			Spec:       workloadsv1alpha2.RoleBasedGroupSpec{Roles: []workloadsv1alpha2.RoleSpec{role}},
+		}
+		adapterKey := types.NamespacedName{Name: scale.GenerateScalingAdapterName(rbgName, "worker"), Namespace: testNs}
+
+		By("creating the RBG and waiting for its adapter")
+		Expect(testutil.K8sClient.Create(testutil.Ctx, rbg)).To(Succeed())
+		adapter := &workloadsv1alpha2.RoleBasedGroupScalingAdapter{}
+		Eventually(func() error {
+			return testutil.K8sClient.Get(testutil.Ctx, adapterKey, adapter)
+		}, verifyTimeout, verifyInterval).Should(Succeed())
+		observedUID := adapter.UID
+
+		By("deleting with a WRONG UID precondition: the API server must reject and the adapter must survive")
+		wrongUID := types.UID("00000000-0000-0000-0000-000000000000")
+		err := testutil.K8sClient.Delete(testutil.Ctx, adapter, &client.DeleteOptions{
+			Preconditions: &metav1.Preconditions{UID: &wrongUID},
+		})
+		Expect(err).To(HaveOccurred(), "a UID-mismatched preconditioned delete must be rejected")
+		Expect(apierrors.IsConflict(err)).To(BeTrue(), "expected a 409 Conflict, got: %v", err)
+		survived := &workloadsv1alpha2.RoleBasedGroupScalingAdapter{}
+		Expect(testutil.K8sClient.Get(testutil.Ctx, adapterKey, survived)).To(Succeed())
+
+		By("stale-cache simulation: the observed object is replaced under the same name (fresh UID)")
+		Expect(testutil.K8sClient.Delete(testutil.Ctx, survived)).To(Succeed())
+		liveRBG := &workloadsv1alpha2.RoleBasedGroup{}
+		Expect(testutil.K8sClient.Get(testutil.Ctx, types.NamespacedName{Name: rbgName, Namespace: testNs}, liveRBG)).To(Succeed())
+		var liveUID types.UID
+		Eventually(func() bool {
+			cur := &workloadsv1alpha2.RoleBasedGroupScalingAdapter{}
+			err := testutil.K8sClient.Get(testutil.Ctx, adapterKey, cur)
+			if apierrors.IsNotFound(err) {
+				// Recreate it ourselves (owned by the live RBG, so the controller
+				// treats it as managed and leaves it alone) if the controller has
+				// not recreated it yet; either way a fresh UID appears.
+				repl := &workloadsv1alpha2.RoleBasedGroupScalingAdapter{
+					ObjectMeta: metav1.ObjectMeta{
+						Name:      adapterKey.Name,
+						Namespace: testNs,
+						OwnerReferences: []metav1.OwnerReference{
+							*metav1.NewControllerRef(liveRBG, workloadsv1alpha2.GroupVersion.WithKind("RoleBasedGroup")),
+						},
+					},
+					Spec: workloadsv1alpha2.RoleBasedGroupScalingAdapterSpec{
+						ScaleTargetRef: &workloadsv1alpha2.AdapterScaleTargetRef{Name: rbgName, Role: "worker"},
+					},
+				}
+				_ = testutil.K8sClient.Create(testutil.Ctx, repl)
+				return false
+			}
+			if err != nil || cur.UID == observedUID {
+				return false
+			}
+			liveUID = cur.UID
+			return true
+		}, verifyTimeout, verifyInterval).Should(BeTrue(), "a replacement adapter with a fresh UID must exist")
+
+		By("deleting with the STALE observed UID: must be rejected, and the live replacement must survive")
+		stale := observedUID
+		replacement := &workloadsv1alpha2.RoleBasedGroupScalingAdapter{}
+		Expect(testutil.K8sClient.Get(testutil.Ctx, adapterKey, replacement)).To(Succeed())
+		err = testutil.K8sClient.Delete(testutil.Ctx, replacement, &client.DeleteOptions{
+			Preconditions: &metav1.Preconditions{UID: &stale},
+		})
+		Expect(err).To(HaveOccurred(), "a stale-UID preconditioned delete must be rejected")
+		Expect(apierrors.IsConflict(err)).To(BeTrue(), "expected a 409 Conflict, got: %v", err)
+		check := &workloadsv1alpha2.RoleBasedGroupScalingAdapter{}
+		Expect(testutil.K8sClient.Get(testutil.Ctx, adapterKey, check)).To(Succeed(),
+			"the live replacement adapter must survive the rejected stale delete")
+		Expect(check.UID).To(Equal(liveUID))
+
+		By("deleting with the CURRENT UID precondition: must succeed")
+		Expect(testutil.K8sClient.Delete(testutil.Ctx, check, &client.DeleteOptions{
+			Preconditions: &metav1.Preconditions{UID: &check.UID},
+		})).To(Succeed())
+	})
+
 })

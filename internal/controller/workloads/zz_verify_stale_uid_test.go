@@ -24,6 +24,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
+	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
 
 	"sigs.k8s.io/rbgs/api/workloads/constants"
 	workloadsv1alpha2 "sigs.k8s.io/rbgs/api/workloads/v1alpha2"
@@ -159,4 +160,92 @@ func TestVerifyPremiseForeignAdapterRecreatedWithFreshOwner(t *testing.T) {
 		assert.NotEqual(t, "old-rbg-uid", string(ref.UID), "contract: predecessor owner reference must be gone")
 	}
 	assert.Nil(t, after.Spec.Replicas, "contract: recreated adapter must not inherit the predecessor's spec.replicas")
+}
+
+// F8 (round 3): the scaling-adapter replace-delete must carry the observed
+// adapter UID as a delete precondition *in the wire body*, so a stale-cache
+// reconcile cannot delete a newer live adapter created under the same name.
+//
+// History: round 2 (4f32bb9f) set the precondition only on DeleteOptions.Raw;
+// controller-runtime's AsDeleteOptions() overwrites Raw.Preconditions with the
+// nil top-level field, so the DELETE body carried no precondition. Round 3
+// (b1d47c14) sets the top-level client.DeleteOptions.Preconditions.
+//
+// This harness test asserts the POST-CONVERSION shape: it runs the exact
+// ApplyOptions + AsDeleteOptions() conversion typedClient.Delete performs
+// (vendor/sigs.k8s.io/controller-runtime/pkg/client/typed_client.go:81-88) and
+// reads Preconditions from the resulting wire body. Asserting
+// delOpts.Raw.Preconditions pre-conversion is vacuous — that was the round-2
+// mistake (the PR's own test and both reviewers' probes initially made it).
+//
+// Polarity: CONTRACT. RED on 4f32bb9f (precondition dropped), GREEN on b1d47c14.
+// The fake client cannot enforce UID preconditions (it only honors
+// ResourceVersion), so API-server enforcement is proven at the envtest layer
+// (test/envtest/testcase/rbg/zz_verify_stale_uid_envtest_test.go, spec F8).
+func TestVerifyF8AdapterReplaceDeletePreconditionReachesWire(t *testing.T) {
+	scheme := runtime.NewScheme()
+	require.NoError(t, workloadsv1alpha2.AddToScheme(scheme))
+
+	role := wrappersv2.BuildStandaloneRole("worker").Obj()
+	role.ScalingAdapter = &workloadsv1alpha2.ScalingAdapter{Enable: true}
+	rbg := &workloadsv1alpha2.RoleBasedGroup{
+		ObjectMeta: metav1.ObjectMeta{Name: "demo", Namespace: "default", UID: "new-rbg-uid"},
+		Spec:       workloadsv1alpha2.RoleBasedGroupSpec{Roles: []workloadsv1alpha2.RoleSpec{role}},
+	}
+	rbg.APIVersion = "workloads.x-k8s.io/v1alpha2"
+	rbg.Kind = "RoleBasedGroup"
+	adapter := &workloadsv1alpha2.RoleBasedGroupScalingAdapter{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      scale.GenerateScalingAdapterName(rbg.Name, "worker"),
+			Namespace: rbg.Namespace,
+			UID:       "old-rbg-uid",
+			OwnerReferences: []metav1.OwnerReference{{
+				APIVersion: "workloads.x-k8s.io/v1alpha2",
+				Kind:       "RoleBasedGroup",
+				Name:       rbg.Name,
+				UID:        "old-rbg-uid",
+			}},
+		},
+		Spec: workloadsv1alpha2.RoleBasedGroupScalingAdapterSpec{
+			ScaleTargetRef: &workloadsv1alpha2.AdapterScaleTargetRef{Name: rbg.Name, Role: "worker"},
+			Replicas:       ptr.To[int32](5),
+		},
+	}
+
+	var wireUID *types.UID
+	c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(adapter).WithInterceptorFuncs(interceptor.Funcs{
+		Delete: func(ctx context.Context, c client.WithWatch, obj client.Object, opts ...client.DeleteOption) error {
+			var delOpts client.DeleteOptions
+			delOpts.ApplyOptions(opts)
+			// Post-conversion assertion: what typedClient.Delete puts in .Body().
+			if body := delOpts.AsDeleteOptions(); body.Preconditions != nil {
+				wireUID = body.Preconditions.UID
+			}
+			return c.Delete(ctx, obj, opts...)
+		},
+	}).Build()
+	r := &RoleBasedGroupReconciler{client: c, scheme: scheme, recorder: record.NewFakeRecorder(10)}
+
+	require.NoError(t, r.ReconcileScalingAdapter(context.Background(), rbg, &rbg.Spec.Roles[0]))
+
+	require.NotNil(t, wireUID, "contract: the replace-delete wire body must carry a UID precondition (AsDeleteOptions post-conversion)")
+	assert.Equal(t, adapter.UID, *wireUID, "contract: wire precondition must equal the observed adapter UID")
+}
+
+// F8 control: documents the round-2 defect direction so the polarity of the
+// test above is unambiguous — with the Raw-only option form, AsDeleteOptions()
+// overwrites Raw.Preconditions with the nil top-level field. If a future
+// controller-runtime upgrade changes that conversion, this control flips and
+// both tests must be re-derived.
+func TestVerifyF8WireConversionControlRawOnlyFormDropped(t *testing.T) {
+	uid := types.UID("observed-uid")
+	rawOnly := &client.DeleteOptions{Raw: &metav1.DeleteOptions{Preconditions: &metav1.Preconditions{UID: &uid}}}
+	if body := rawOnly.AsDeleteOptions(); body.Preconditions != nil {
+		t.Fatalf("control broken: vendored controller-runtime no longer drops Raw-only preconditions; re-derive F8 polarity")
+	}
+	topLevel := &client.DeleteOptions{Preconditions: &metav1.Preconditions{UID: &uid}}
+	body := topLevel.AsDeleteOptions()
+	if body.Preconditions == nil || body.Preconditions.UID == nil || *body.Preconditions.UID != uid {
+		t.Fatalf("control broken: top-level Preconditions no longer propagated by AsDeleteOptions: %+v", body.Preconditions)
+	}
 }

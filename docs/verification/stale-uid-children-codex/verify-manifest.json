@@ -18,7 +18,12 @@
     "layer": "unit+integration",
     "verdict": "confirmed",
     "evidence": "On base 56c49531: foreign-UID child RBG deleted on scale-down; foreign bound adapter overrode replicas 1->5; foreign PodGroup MinMember rewritten 7->2 (volcano + k8s-scheduler-plugin); envtest: 3/3 recreate-scenario specs fail on base. results/l1-*-base.txt, results/l2-envtest-base.txt",
-    "match": ["TestVerifyPremise", "leftover child RBG", "orphaned child RBG", "leftover scaling adapter"]
+    "match": [
+      "TestVerifyPremise",
+      "leftover child RBG",
+      "orphaned child RBG",
+      "leftover scaling adapter"
+    ]
   },
   "layers": {
     "unit": {
@@ -32,9 +37,52 @@
     }
   },
   "findings": [
-    { "id": "P0-L1", "polarity": "contract", "layer": "unit", "match": ["TestVerifyPremise"] },
-    { "id": "P0-L2", "polarity": "contract", "layer": "integration", "match": ["leftover child RBG", "orphaned child RBG", "leftover scaling adapter"] },
-    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestVerifyF1SameSpecOrphanPodGroupAdopted", "TestVerifyF1SameSpecOrphanLeaksPastDeletePodGroup"] }
+    {
+      "id": "P0-L1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPremise"
+      ]
+    },
+    {
+      "id": "P0-L2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "leftover child RBG",
+        "orphaned child RBG",
+        "leftover scaling adapter"
+      ]
+    },
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyF1SameSpecOrphanPodGroupAdopted",
+        "TestVerifyF1SameSpecOrphanLeaksPastDeletePodGroup"
+      ]
+    },
+    {
+      "id": "F8-L1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyF8AdapterReplaceDeletePreconditionReachesWire",
+        "TestVerifyF8WireConversionControl"
+      ],
+      "note": "red on 4f32bb9f (precondition dropped by AsDeleteOptions), green on b1d47c14; control pins the conversion semantics"
+    },
+    {
+      "id": "F8-L2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "F8: the API server enforces"
+      ],
+      "note": "mechanism contract: the real API server rejects UID-mismatched preconditioned deletes (409 Conflict) and accepts matched ones; green on every ref, proves the enforcement the fake client cannot"
+    }
   ],
   "liveNote": "L3 (skipped per round policy): on a real cluster, delete+recreate a gang-scheduled RBG with --cascade=orphan and an unchanged spec, then disable gang scheduling; the orphan PodGroup must be deleted (F1 currently leaks it)."
 }
