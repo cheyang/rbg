@@ -82,44 +82,61 @@
     },
     {
       "id": "F7",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestKEP473_F7_ContractFreezeCacheRaceUnaddressed"
+        "TestKEP473_F7_ContractFreezeReadsUncached"
       ]
     },
     {
       "id": "F8",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestKEP473_F8_ResyncListedAsDriftTrigger"
+        "TestKEP473_F8_ContractNoResyncTrigger"
       ]
     },
     {
       "id": "F9",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestKEP473_F9_KoordinatorExampleMemberPartition"
+        "TestKEP473_F9_ContractKoordinatorExampleGatedAndConsistent"
       ]
     },
     {
       "id": "F10",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestKEP473_F10_WebhookDisabledContradiction"
+        "TestKEP473_F10_ContractWebhookBypassStillGated"
       ]
     },
     {
       "id": "F11",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F11_ContractKAISubGroupNamesBounded"
+      ]
+    },
+    {
+      "id": "F12",
       "polarity": "canary",
       "layer": "unit",
       "match": [
-        "TestKEP473_F11_KAISubGroupNameBudgetMissing"
+        "TestKEP473_F12_RoleNameRuleUnscoped"
+      ]
+    },
+    {
+      "id": "F13",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F13_RBACSectionMissing"
       ]
     }
   ],
-  "liveNote": "Not applicable: this PR is a docs-only KEP (no runtime code), so there is no live layer. If implementation PRs arrive, re-run with `bash docs/verification/topology-aware-scheduling/scripts/re-verify.sh` (no args: resolves the current PR head from manifest.pr)."
+  "liveNote": "Not applicable: this PR is a docs-only KEP (no runtime code), so there is no live layer. If implementation PRs arrive, re-run with `bash docs/verification/topology-aware-scheduling/scripts/re-verify.sh` (no args: resolves the current PR head from manifest.pr).",
+  "notes": "Round 3 (head 99b991c5): canaries F7-F11 flipped (round-2 findings fixed) and were inverted to contract tests; stale round-1 contract assertions updated to the rewritten text (Harness-update); F12/F13 are the remaining open text findings (unscoped DNS-1123 role rule, missing RBAC section)."
 }

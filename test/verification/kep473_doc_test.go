@@ -235,12 +235,22 @@ func TestBaseFact_RBGPredicateFiltersSpecEqualUpdates(t *testing.T) {
 		"RBGPredicate.UpdateFunc (spec-equality filter)")
 }
 
+// TestBaseFact_GetSelectorUsesSelectorFromSet pins that the tree under
+// review carries the RoleInstance revision-selector fix: the pre-fix code
+// discarded labels.Selector.Add's return value, so GetSelector returned an
+// empty selector that matched every ControllerRevision in the namespace.
+func TestBaseFact_GetSelectorUsesSelectorFromSet(t *testing.T) {
+	body := readRel(t, "pkg/reconciler/roleinstance/utils/instance_utils.go")
+	assertContains(t, body, "return labels.SelectorFromSet(GetSelectorMatchLabels(instance.Name))",
+		"pkg/reconciler/roleinstance/utils/instance_utils.go GetSelector")
+}
+
 // ---------------------------------------------------------------------------
 // Contract tests on the KEP document itself.
 // ---------------------------------------------------------------------------
 
 var tocLinkRE = regexp.MustCompile(`(?m)^\s*- \[([^\]]+)\]\((#[^)]+)\)`)
-var headingRE = regexp.MustCompile(`(?m)^(#{2,4}) (.+)$`)
+var headingRE = regexp.MustCompile(`(?m)^(#{1,4}) (.+)$`)
 
 // githubSlug approximates GitHub's heading slugger: lowercase, drop anything
 // that is not a letter/digit/space/hyphen/underscore (en-dashes included),
@@ -320,12 +330,15 @@ func TestKEP473_F1_ContractFinalizerReleaseKeyedByUID(t *testing.T) {
 	assertNotContains(t, sec,
 		"releases it only after the RBG has been deleted",
 		"mutability section (name-scoped release condition must be gone)")
-	assertContains(t, sec, "Release is keyed to the matching RBG's **UID**",
+	// Round-3 wording (head 99b991c5):
+	assertContains(t, sec, "keyed to the RBG **UID**, not merely its name",
 		"mutability section (UID-keyed release)")
-	assertContains(t, sec, "remains authoritative",
+	assertContains(t, sec, "remains the authoritative contract",
 		"mutability section (terminating policy handling)")
-	assertContains(t, sec, "releases the finalizer once that recorded UID is deleted",
+	assertContains(t, sec, "may be released when the recorded RBG UID no longer exists",
 		"mutability section (stale-owner release)")
+	assertContains(t, sec, "PlacementDrained=True",
+		"mutability section (drain-marker release path)")
 	assertContains(t, sec, "Escape hatch and rollback",
 		"mutability section (documented escape hatch)")
 }
@@ -341,12 +354,13 @@ func TestKEP473_F2_ContractVolcanoGangParentTopologyChildSpecified(t *testing.T)
 	if sec == "" {
 		t.Fatal("Translation Channels section not found")
 	}
-	assertContains(t, sec, "a gang parent with a cross-role topology child",
-		"Volcano containment bullet (gang-parent case specified)")
-	assertContains(t, sec, "entry whose `labelSelector` selects the child roles",
-		"Volcano containment bullet (rendering mechanism)")
-	assertContains(t, sec, "does not support arbitrary multi-level cross-role containment",
-		"Volcano containment bullet (remaining limitation stated)")
+	// Round-3 resolution: explicitly rejected with safeguards, not silently
+	// dropped and not approximated (the round-2 labelSelector rendering was
+	// found unworkable against Volcano v1.14.4 — see the integration layer).
+	assertContains(t, sec, "with a cross-role topology child over `{prefill, decode}` is **unsupported in Phase 1**",
+		"Volcano containment bullet (gang-parent case explicitly rejected)")
+	assertContains(t, sec, "must not flatten away per-role minima, widen the topology scope to router, or emit overlapping subgroup policies",
+		"Volcano containment bullet (no-silent-degradation safeguards)")
 }
 
 // F3 FIXED at 6894a2e (inverted to a contract test): the informer-cache
@@ -357,9 +371,10 @@ func TestKEP473_F2_ContractVolcanoGangParentTopologyChildSpecified(t *testing.T)
 func TestKEP473_F3_ContractRBGSetAdmissionSelfContained(t *testing.T) {
 	doc := kepText(t)
 	assertNotContains(t, doc, "it lists children from the informer cache",
-		"Level Identifiers validation preamble (stale sentence must be gone)")
-	assertContains(t, doc, "performs no child lookup and no informer-cache dependency",
-		"Level Identifiers validation preamble (self-contained statement)")
+		"validation preamble (stale sentence must be gone)")
+	// Round-3 locus (Mutability and Update Semantics):
+	assertContains(t, doc, "Admission compares the old and new topology declarations directly",
+		"Mutability and Update Semantics section (self-contained admission)")
 	assertContains(t, doc, "requires no cross-resource child lookup",
 		"Mutability and Update Semantics section")
 }
@@ -372,9 +387,12 @@ func TestKEP473_F4a_ContractValidationClaimAligned(t *testing.T) {
 	assertContains(t, prBodyFixture(t), "preferred level not broader than required",
 		"PR body fixture")
 	assertNotContains(t, kepText(t), "| Not validated by RBG |",
-		"KEP validation table (relative-order punt must be gone)")
-	assertContains(t, kepText(t), "rejected as `InvalidLevelOrder`",
-		"KEP validation table (ordering check specified)")
+		"KEP validation text (relative-order punt must be gone)")
+	// Round-3 locus: reconcile-flow step 6 + the TopologyTranslated reason list.
+	assertContains(t, kepText(t), "preferred/required ordering",
+		"KEP reconcile flow (ordering check specified)")
+	assertContains(t, kepText(t), "InvalidLevelOrder",
+		"KEP condition reasons (ordering rejection surfaced)")
 }
 
 // F4b FIXED by PR-body edit (inverted to a contract test): the phantom
@@ -415,10 +433,14 @@ func TestKEP473_F5_ContractConditionSurfaceIsRBG(t *testing.T) {
 	assertNotContains(t, doc,
 		"on the declaring object (CoordinatedPolicy for rules",
 		"Risks and Mitigations table (old surface must be gone)")
-	assertContains(t, doc, "on the RBG, with the event/message naming the declaring",
+	// Round-3 wording: the Risks row surfaces the condition and names the
+	// declaring object in the message; Observability keeps it under RBG
+	// conditions.
+	assertContains(t, doc, "failures surface `TopologyTranslated=False` and name the declaring CoordinatedPolicy rule or RoleSpec",
 		"Risks and Mitigations table")
-	assertContains(t, section(doc, "Observability"), "**RBG conditions**",
-		"Observability section")
+	obs := section(doc, "Observability")
+	assertContains(t, obs, "**RBG conditions**", "Observability section")
+	assertContains(t, obs, "`TopologyTranslated`", "Observability section (RBG conditions)")
 	assertContains(t, doc, "status and edge-triggered events on RBG",
 		"Graduation Criteria")
 }
@@ -439,111 +461,127 @@ func TestKEP473_F6_ContractNamingSchemeCoversAllDialects(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// Bug canaries (round 2, head 6894a2e). PASS = finding still present in the
-// text; must FLIP to red when the author fixes the document.
+// Round-2 canaries that FLIPPED at head 99b991c5 (round 3): inverted to
+// contract tests per polarity rules. A future regression of the fixed text
+// turns these red again.
 // ---------------------------------------------------------------------------
 
-// F7: the new contract-freeze mechanism records the accepted topology
-// contract (including "none") at the RBG's first placement acceptance, and
-// states "A CoordinatedPolicy may be created before the RBG; that is a normal
-// launch ordering and the recorded contract is its topology." The controller
-// resolves the policy through the cache-backed client
-// (TestBaseFact_PolicyFetchAndWatch), so a policy that exists in etcd but is
-// not yet visible in the informer cache at freeze time freezes the contract
-// as "none"; when the policy event later arrives the RBG reports
-// TopologyPolicyLate and gates role updates, and recovery requires deleting
-// and recreating the RBG. The KEP specifies no uncached read, settling
-// window, or other guard at freeze time, so the blessed "normal launch
-// ordering" is only probabilistically safe.
-func TestKEP473_F7_ContractFreezeCacheRaceUnaddressed(t *testing.T) {
+// Ledger F1 (round-2 blocker): the contract freeze now reads the policy
+// through the uncached apiReader before first acceptance, non-NotFound read
+// errors block acceptance, and spec.topologyPolicyRequired provides a
+// deterministic wait for GitOps ordering. The probabilistically-unsafe
+// "policy before RBG is a normal launch ordering" sentence is gone.
+func TestKEP473_F7_ContractFreezeReadsUncached(t *testing.T) {
 	sec := section(kepText(t), "Mutability and Update Semantics")
 	if sec == "" {
 		t.Fatal("Mutability and Update Semantics section not found")
 	}
-	assertContains(t, sec,
+	assertContains(t, sec, "uncached `apiReader`",
+		"contract freeze (uncached policy read at acceptance)")
+	assertContains(t, sec, "any read error other than `NotFound` blocks acceptance",
+		"contract freeze (read-error gating)")
+	assertContains(t, sec, "topologyPolicyRequired",
+		"contract freeze (explicit policy dependency)")
+	assertNotContains(t, sec,
 		"A CoordinatedPolicy may be created before the RBG; that is a normal launch ordering",
-		"mutability section (blessed create ordering)")
-	for _, guard := range []string{"uncached", "APIReader", "direct read", "settling", "cache"} {
-		if strings.Contains(sec, guard) {
-			t.Errorf("mutability section now mentions %q at freeze time; re-check F7 and invert this canary", guard)
-		}
-	}
+		"contract freeze (unguarded blessed-ordering sentence must be gone)")
 }
 
-// F8: the drift-discovery text lists "controller resync" as a trigger, but
-// the RBG update predicate enqueues only on spec changes
-// (TestBaseFact_RBGPredicateFiltersSpecEqualUpdates) and the CoordinatedPolicy
-// watch uses GenerationChangedPredicate, so informer resync events (old ==
-// new, same generation) never enqueue a reconcile. On a quiescent workload,
-// topology-object drift is discovered later than the KEP claims.
-func TestKEP473_F8_ResyncListedAsDriftTrigger(t *testing.T) {
+// Ledger F2: "controller resync" is no longer listed as a drift-discovery
+// trigger anywhere (it could not pass the stated predicates, see
+// TestBaseFact_RBGPredicateFiltersSpecEqualUpdates); drift is now discovered
+// through topology/native-resource watches plus workload events.
+func TestKEP473_F8_ContractNoResyncTrigger(t *testing.T) {
 	doc := kepText(t)
-	assertContains(t, doc, "controller resync",
-		"drift-discovery trigger list (resync cannot pass the stated predicates)")
+	assertNotContains(t, doc, "controller resync",
+		"drift-discovery triggers (resync cannot pass the stated predicates)")
+	assertContains(t, doc, "Topology and native-resource changes enqueue referencing RBGs",
+		"drift discovery (watch-based triggers)")
 }
 
-// F9: the Koordinator worked example says "the full example input is not
-// renderable on Koordinator ... no PodGroup is created or updated" and then
-// shows a 3-member GangGroup (prefill-0/1 + decode) for "the cross-role-only
-// portion", justifying it with "prefill is partitioned per instance, but
-// decode has PartitionBy=none". In a cross-role-only input prefill has no
-// instance constraint, so by the KEP's own naming rule (per-role members when
-// PartitionBy=none) prefill should also contribute one role-level member —
-// the example contradicts the stated partition rule under either reading.
-func TestKEP473_F9_KoordinatorExampleMemberPartition(t *testing.T) {
+// Ledger F3: the Koordinator worked example is now explicitly a gated
+// Phase-2 illustration (unsupported on the inspected baseline) and renders
+// the genuinely cross-role-only member set (2 role-level members), not the
+// contradictory 3-member per-instance partition.
+func TestKEP473_F9_ContractKoordinatorExampleGatedAndConsistent(t *testing.T) {
 	doc := kepText(t)
-	assertContains(t, doc, "prefill is partitioned per instance, but decode has `PartitionBy=none`",
-		"Koordinator example justification")
-	assertContains(t, doc, "3 total: prefill-0/1 + decode",
-		"Koordinator example member count")
+	assertContains(t, doc, "future Phase 2 dialect illustration, not runnable supported output",
+		"Koordinator example (gated-illustration disclaimer)")
+	assertContains(t, doc, "2 total: prefill + decode",
+		"Koordinator example (role-level member set)")
+	assertNotContains(t, doc, "3 total: prefill-0/1 + decode",
+		"Koordinator example (contradictory per-instance member set must be gone)")
+	assertNotContains(t, doc, "prefill is partitioned per instance, but decode has `PartitionBy=none`",
+		"Koordinator example (self-contradictory justification must be gone)")
 }
 
-// F10: the contract-freeze paragraph gates any drift between the recorded
-// contract and the currently resolved declarations with TopologyPolicyLate
-// ("Removing all topology after a non-empty contract is treated the same
-// way"), while the next paragraph still says that with validating webhooks
-// disabled "the controller then renders the latest desired topology". For an
-// in-place topology change with webhooks disabled the two sentences give
-// opposite outcomes.
-func TestKEP473_F10_WebhookDisabledContradiction(t *testing.T) {
+// Ledger F4: the webhooks-disabled sentence no longer prescribes rendering
+// the latest desired topology over an accepted record; the controller
+// rejects mismatches and retains previous bindings even when admission is
+// bypassed.
+func TestKEP473_F10_ContractWebhookBypassStillGated(t *testing.T) {
 	doc := kepText(t)
-	assertContains(t, doc,
-		"Removing all topology after a non-empty contract is treated the same way",
-		"contract-freeze paragraph")
-	assertContains(t, doc,
-		"the controller then renders the latest desired topology",
-		"webhooks-disabled sentence")
+	assertNotContains(t, doc, "the controller then renders the latest desired topology",
+		"webhooks-disabled sentence (contradictory render-latest outcome must be gone)")
+	assertContains(t, doc, "neither authorizes overwriting an existing accepted record",
+		"webhooks-disabled sentence (accepted record still enforced)")
 }
 
-// F11: the KAI naming rule generates `policy-<rule-name>` /
-// `instance-<role.Name>-<instance-index>` / `role-<role.Name>` with source
-// names admitted as DNS-1123 labels (up to 63 chars each) and, unlike the
-// Volcano placement-name form, no truncation or length budget. KAI binds pods
-// to subGroups through the pod label `kai.scheduler/subgroup-name`
-// (TestExternalDialect_KAISubGroupLabelKey), and Kubernetes label values are
-// limited to 63 characters — e.g. "instance-" + a 63-char role name + index
-// exceeds the limit and pod creation would be rejected.
-func TestKEP473_F11_KAISubGroupNameBudgetMissing(t *testing.T) {
+// Ledger F6: KAI subGroup names are now kind-prefixed, length-bounded and
+// hash-suffixed, compatible with the 63-character label-value limit of the
+// kai.scheduler/subgroup-name binding label
+// (TestExternalDialect_KAISubGroupLabelKey).
+func TestKEP473_F11_ContractKAISubGroupNamesBounded(t *testing.T) {
 	sec := section(kepText(t), "Generated Group Names")
 	if sec == "" {
 		t.Fatal("Generated Group Names section not found")
 	}
-	kai := ""
-	for _, line := range strings.Split(sec, "\n") {
-		if strings.Contains(line, "instance-<role.Name>-<instance-index>") {
-			kai = line
-		}
+	assertContains(t, sec, "policy-<source[0:20]>-<hash12>", "KAI naming rule (policy form)")
+	assertContains(t, sec, "instance-<role[0:20]>-<instance-hash12>", "KAI naming rule (instance form)")
+	assertContains(t, sec, "role-<source[0:20]>-<hash12>", "KAI naming rule (role form)")
+	assertContains(t, sec, "names stay below 63 characters", "KAI naming rule (budget stated)")
+	// Arithmetic: worst case is the instance form, 9+20+1+12 = 42 < 63.
+	if worst := len("instance-") + 20 + 1 + 12; worst >= 63 {
+		t.Errorf("instance form budget inconsistent: %d >= 63", worst)
 	}
-	if kai == "" {
-		t.Fatal("KAI naming bullet not found")
-	}
-	for _, budget := range []string{"truncat", "63", "at most"} {
-		if strings.Contains(kai, budget) {
-			t.Errorf("KAI naming bullet now carries a length budget (%q); re-check F11 and invert this canary", budget)
-		}
+	if worst := len("policy-") + 20 + 1 + 12; worst >= 63 {
+		t.Errorf("policy form budget inconsistent: %d >= 63", worst)
 	}
 }
 
+// ---------------------------------------------------------------------------
+// Bug canaries (round 3, head 99b991c5). PASS = finding still present in the
+// text; must FLIP to red when the author fixes the document.
+// ---------------------------------------------------------------------------
+
+// Ledger F7 (open): the naming-safety rule still reads "Role names and
+// topology-bearing policy-rule names are validated at admission as DNS-1123
+// labels" — the role half is unscoped, while RoleSpec.Name today carries no
+// pattern validation (unlike TemplateRef.Name). Read literally this is a
+// schema tightening for pre-existing objects; the intent is almost certainly
+// roles bearing topology declarations.
+func TestKEP473_F12_RoleNameRuleUnscoped(t *testing.T) {
+	doc := kepText(t)
+	assertContains(t, doc,
+		"Role names and topology-bearing policy-rule names are validated at admission as DNS-1123 labels",
+		"naming-safety rule (role half unscoped)")
+}
+
+// Ledger F9 (open, carried): the design now requires cluster-scoped reads and
+// writes the controller does not have today (Node list/watch for Volcano
+// materialization, HyperNode CRUD, KAI Topology CRUD, topology CR
+// status/finalizer writes), but the KEP still contains no RBAC/ClusterRole
+// section.
+func TestKEP473_F13_RBACSectionMissing(t *testing.T) {
+	doc := kepText(t)
+	assertNotContains(t, doc, "RBAC", "KEP text (no RBAC discussion)")
+	assertNotContains(t, doc, "ClusterRole", "KEP text (no ClusterRole discussion)")
+}
+
+// ---------------------------------------------------------------------------
+// Integration layer: the upstream scheduler dialects the KEP cites.
+// These anchor the premise (three incompatible dialects, quoted correctly).
+// ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 // Integration layer: the upstream scheduler dialects the KEP cites.
 // These anchor the premise (three incompatible dialects, quoted correctly).
@@ -663,6 +701,76 @@ func TestExternalDialect_KAISubGroupLabelKey(t *testing.T) {
 	body := fetch(t, "https://raw.githubusercontent.com/kai-scheduler/api/main/constants/constants.go")
 	assertContains(t, body, "SubGroupLabelKey", "KAI constants")
 	assertContains(t, body, "kai.scheduler/subgroup-name", "KAI constants")
+}
+
+// ---------------------------------------------------------------------------
+// Round-3 integration checks: the new Backend Capability Gates section makes
+// load-bearing claims about upstream scheduler sources. Pin each one.
+// ---------------------------------------------------------------------------
+
+// KAI v0.18.6 calcDomainId joins label values with "." without escaping, so
+// paths ["a.b","c"] and ["a","b.c"] collide — the basis for the KAI
+// domain-encoding gate.
+func TestExternalDialect_KAIDomainIDJoinUnescaped(t *testing.T) {
+	body := fetch(t, "https://raw.githubusercontent.com/kai-scheduler/KAI-scheduler/v0.18.6/pkg/scheduler/plugins/topology/topology_structs.go")
+	assertContains(t, body, "func calcDomainId(", "KAI v0.18.6 topology_structs.go")
+	assertContains(t, body, `strings.Join(domainsNames, ".")`,
+		"KAI v0.18.6 calcDomainId (unescaped dot join)")
+}
+
+// Volcano v1.14.4 allocate skips tasks with empty resource requests, so a
+// topology-covered BestEffort pod would bypass the hard topology path — the
+// basis for the effective-request gate.
+func TestExternalDialect_VolcanoAllocateSkipsBestEffort(t *testing.T) {
+	body := fetch(t, "https://raw.githubusercontent.com/volcano-sh/volcano/v1.14.4/pkg/scheduler/actions/allocate/allocate.go")
+	assertContains(t, body, "task.Resreq.IsEmpty()", "Volcano v1.14.4 allocate (BestEffort skip)")
+	assertContains(t, body, "Skip BestEffort task in 'allocate' action",
+		"Volcano v1.14.4 allocate (BestEffort skip log)")
+}
+
+// Volcano v1.14.4 getOrCreateSubJob only honors the first policy with
+// non-empty match values; a labelSelector-only policy produces empty
+// matchValues and never forms its subgroup — the basis for rejecting
+// cross-role topology children under a wider gang parent in Phase 1.
+func TestExternalDialect_VolcanoSelectorOnlyPolicyCreatesNoSubGroup(t *testing.T) {
+	body := fetch(t, "https://raw.githubusercontent.com/volcano-sh/volcano/v1.14.4/pkg/scheduler/api/job_info.go")
+	assertContains(t, body, "if matchValues := getSubJobMatchValues(policy, ti.Pod); len(matchValues) > 0 {",
+		"Volcano v1.14.4 getOrCreateSubJob (first non-empty match wins)")
+	sub := fetch(t, "https://raw.githubusercontent.com/volcano-sh/volcano/v1.14.4/pkg/scheduler/api/sub_job_info.go")
+	assertContains(t, sub, "matchValues := make([]string, 0, len(policy.MatchLabelKeys))",
+		"Volcano v1.14.4 getSubJobMatchValues (empty without matchLabelKeys)")
+}
+
+// Volcano v1.14.4 default subjob inherits the parent PodGroup's
+// networkTopology — the basis for the "pods in the default subjob keep the
+// backend's verified parent inheritance" claim.
+func TestExternalDialect_VolcanoDefaultSubJobInheritsParentTopology(t *testing.T) {
+	body := fetch(t, "https://raw.githubusercontent.com/volcano-sh/volcano/v1.14.4/pkg/scheduler/api/job_info.go")
+	assertContains(t, body, "policy.NetworkTopology = cloneNetworkTopology(ji.NetworkTopology)",
+		"Volcano v1.14.4 getOrCreateDefaultSubJob (parent topology inheritance)")
+}
+
+// Volcano v1.14.4 recoverAllocatedHyperNode skips subjobs without their own
+// networkTopology — the basis for propagating effective parent topology into
+// every explicit subgroup policy.
+func TestExternalDialect_VolcanoRecoverySkipsTopologyFreeSubJobs(t *testing.T) {
+	body := fetch(t, "https://raw.githubusercontent.com/volcano-sh/volcano/v1.14.4/pkg/scheduler/framework/session.go")
+	assertContains(t, body, "func (ssn *Session) recoverAllocatedHyperNode(",
+		"Volcano v1.14.4 session (recovery entrypoint)")
+	assertContains(t, body, `if !subJob.WithNetworkTopology() || subJob.AllocatedHyperNode != "" {`,
+		"Volcano v1.14.4 session (topology-free subjobs skipped in recovery)")
+}
+
+// Koordinator at the inspected baseline 81e01347 explicitly limits the
+// network-topology workflow to jobs with no Bound members and total
+// membership equal to the minimum — the basis for the continuous-placement
+// gate (vocabulary binding != workload placement support).
+func TestExternalDialect_KoordinatorBoundMembersUnsupported(t *testing.T) {
+	body := fetch(t, "https://raw.githubusercontent.com/koordinator-sh/koordinator/81e013476f441ae7f331789de8d2aa4890b2c641/pkg/scheduler/plugins/coscheduling/core/network_topology_workflow.go")
+	assertContains(t, body, "there are no Bound member Pods",
+		"Koordinator baseline network_topology_workflow.go (FIXME limitation)")
+	assertContains(t, body, "the total number of Job member Pods is equal to the minimum number",
+		"Koordinator baseline network_topology_workflow.go (FIXME limitation)")
 }
 
 // propertyBlock extracts the CRD schema block for one property name: from
