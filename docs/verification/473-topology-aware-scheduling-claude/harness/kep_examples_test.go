@@ -183,7 +183,7 @@ func TestSigsExampleMinMemberZero(t *testing.T) {
 	if found == 0 {
 		t.Fatal("KEP has no scheduling.sigs.k8s.io/v1alpha1 example to verify")
 	}
-	if !strings.Contains(kep, "detects the installed PodGroup CRD dialect") {
+	if !strings.Contains(kep, "detects the installed dialect at runtime") {
 		t.Errorf("KEP no longer documents runtime PodGroup CRD dialect detection (the F9 mitigation)")
 	}
 	if !strings.Contains(kep, "scheduling.x-k8s.io") {
@@ -207,16 +207,23 @@ func TestKAIExampleStructure(t *testing.T) {
 		t.Fatalf("expected exactly one KAI PodGroup example, got %d", len(kai))
 	}
 	block := kai[0]
+	// round-3 harness update: the KAI example was rewritten for the KAI mapping
+	// freeze — topologyConstraint levels now render nodeLabels from the accepted
+	// snapshot (topology.example.com/block, .../rack), the native Topology name
+	// comes from ClusterNetworkTopology.status.resources (gpu-fabric), and
+	// per-instance leaves carry UID-hashed names. The structural invariants are
+	// unchanged: kind prefixes, parent references via generated names, no
+	// per-instance split of a role without an instance constraint.
 	for _, want := range []string{
-		"requiredTopologyLevel: topology.block",
-		"preferredTopologyLevel: topology.rack",
-		"topology: cluster-topology",
+		"requiredTopologyLevel: topology.example.com/block",
+		"preferredTopologyLevel: topology.example.com/rack",
+		"topology: gpu-fabric",
 		"minSubGroup: 0",
-		"name: policy-pd-colocation",
-		"parent: policy-pd-colocation",
-		"name: instance-prefill-0",
-		"name: instance-prefill-1",
-		"name: role-decode",
+		"name: policy-pd-colocation-",
+		"parent: policy-pd-colocation-",
+		"name: instance-prefill-<instance0-hash12>",
+		"name: instance-prefill-<instance1-hash12>",
+		"name: role-decode-",
 	} {
 		if !strings.Contains(block, want) {
 			t.Errorf("KAI example missing %q", want)

@@ -33,60 +33,84 @@
   },
   "findings": [
     {
+      "id": "P0",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "P0"
+      ],
+      "status": "passing-fact"
+    },
+    {
       "id": "F1",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
         "F1"
-      ]
+      ],
+      "status": "fixed",
+      "fixedGuard": true
     },
     {
       "id": "F2",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
         "F2"
-      ]
+      ],
+      "status": "fixed",
+      "fixedGuard": true
     },
     {
       "id": "F3",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
         "F3"
-      ]
+      ],
+      "status": "fixed",
+      "fixedGuard": true
     },
     {
       "id": "F4",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
         "F4"
-      ]
+      ],
+      "status": "fixed",
+      "fixedGuard": true
     },
     {
       "id": "F5",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
         "F5"
-      ]
+      ],
+      "status": "fixed",
+      "fixedGuard": true
     },
     {
       "id": "F6",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
         "F6"
-      ]
+      ],
+      "status": "fixed",
+      "fixedGuard": true
     },
     {
       "id": "F7",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
         "F7"
-      ]
+      ],
+      "status": "fixed",
+      "fixedGuard": true,
+      "ledgerId": "ledger-F14"
     },
     {
       "id": "F8",
@@ -94,39 +118,53 @@
       "layer": "unit",
       "match": [
         "F8"
-      ]
+      ],
+      "status": "open",
+      "ledgerId": "ledger-F9"
     },
     {
       "id": "F9",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
         "F9"
-      ]
+      ],
+      "status": "fixed",
+      "fixedGuard": true,
+      "ledgerId": "ledger-F25-mitigation"
     },
     {
       "id": "F10",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
         "F10"
-      ]
+      ],
+      "status": "fixed",
+      "fixedGuard": true,
+      "ledgerId": "ledger-F15"
     },
     {
       "id": "F11",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
         "F11"
-      ]
+      ],
+      "status": "fixed",
+      "fixedGuard": true,
+      "ledgerId": "ledger-F3"
     },
     {
       "id": "F12",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
         "F12"
-      ]
+      ],
+      "status": "fixed",
+      "fixedGuard": true,
+      "ledgerId": "ledger-F5"
     },
     {
       "id": "F13",
@@ -134,15 +172,9 @@
       "layer": "unit",
       "match": [
         "F13"
-      ]
-    },
-    {
-      "id": "P0",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "P0"
-      ]
+      ],
+      "status": "open",
+      "ledgerId": "ledger-F7"
     },
     {
       "id": "C1",
@@ -150,7 +182,8 @@
       "layer": "unit",
       "match": [
         "C1"
-      ]
+      ],
+      "status": "passing-fact"
     },
     {
       "id": "C2",
@@ -158,7 +191,8 @@
       "layer": "unit",
       "match": [
         "C2"
-      ]
+      ],
+      "status": "passing-fact"
     },
     {
       "id": "C3",
@@ -166,7 +200,8 @@
       "layer": "unit",
       "match": [
         "C3"
-      ]
+      ],
+      "status": "passing-fact"
     },
     {
       "id": "G1",
@@ -174,7 +209,8 @@
       "layer": "integration",
       "match": [
         "TestVolcanoExampleStrictDecodes"
-      ]
+      ],
+      "status": "passing-fact"
     },
     {
       "id": "G2",
@@ -182,7 +218,8 @@
       "layer": "integration",
       "match": [
         "TestSigsPodGroupExampleStrictDecodes"
-      ]
+      ],
+      "status": "passing-fact"
     },
     {
       "id": "G3",
@@ -190,7 +227,8 @@
       "layer": "integration",
       "match": [
         "TestKAIExampleStructure"
-      ]
+      ],
+      "status": "passing-fact"
     },
     {
       "id": "G4",
@@ -198,7 +236,156 @@
       "layer": "integration",
       "match": [
         "TestSigsExampleMinMemberZero"
-      ]
+      ],
+      "status": "passing-fact"
+    },
+    {
+      "id": "LF1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF1"
+      ],
+      "status": "fixed",
+      "ledgerId": "ledger-F1",
+      "note": "round-3 fixed guard: ledger finding fixed at head 99b991c"
+    },
+    {
+      "id": "LF2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF2"
+      ],
+      "status": "fixed",
+      "ledgerId": "ledger-F2",
+      "note": "round-3 fixed guard: ledger finding fixed at head 99b991c"
+    },
+    {
+      "id": "LF4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF4"
+      ],
+      "status": "fixed",
+      "ledgerId": "ledger-F4",
+      "note": "round-3 fixed guard: ledger finding fixed at head 99b991c"
+    },
+    {
+      "id": "LF6",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF6"
+      ],
+      "status": "fixed",
+      "ledgerId": "ledger-F6",
+      "note": "round-3 fixed guard: ledger finding fixed at head 99b991c"
+    },
+    {
+      "id": "LF10",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF10"
+      ],
+      "status": "fixed",
+      "ledgerId": "ledger-F10",
+      "note": "round-3 fixed guard: ledger finding fixed at head 99b991c"
+    },
+    {
+      "id": "LF11",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF11"
+      ],
+      "status": "fixed",
+      "ledgerId": "ledger-F11",
+      "note": "round-3 fixed guard: ledger finding fixed at head 99b991c"
+    },
+    {
+      "id": "LF12",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF12"
+      ],
+      "status": "fixed",
+      "ledgerId": "ledger-F12",
+      "note": "round-3 fixed guard: ledger finding fixed at head 99b991c"
+    },
+    {
+      "id": "LF13",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF13"
+      ],
+      "status": "fixed",
+      "ledgerId": "ledger-F13",
+      "note": "round-3 fixed guard: ledger finding fixed at head 99b991c"
+    },
+    {
+      "id": "C4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "C4"
+      ],
+      "status": "passing-fact",
+      "note": "round-3 evidence contract over results/upstream/round3/ snapshots"
+    },
+    {
+      "id": "C5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "C5"
+      ],
+      "status": "passing-fact",
+      "note": "round-3 evidence contract over results/upstream/round3/ snapshots"
+    },
+    {
+      "id": "C6",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "C6"
+      ],
+      "status": "passing-fact",
+      "note": "round-3 evidence contract over results/upstream/round3/ snapshots"
+    },
+    {
+      "id": "C7",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "C7"
+      ],
+      "status": "passing-fact",
+      "note": "round-3 evidence contract over results/upstream/round3/ snapshots"
+    },
+    {
+      "id": "C8",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "C8"
+      ],
+      "status": "passing-fact",
+      "note": "round-3 evidence contract over results/upstream/round3/ snapshots"
+    },
+    {
+      "id": "C9",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "C9"
+      ],
+      "status": "passing-fact",
+      "note": "round-3 evidence contract over results/upstream/round3/ snapshots"
     }
   ],
   "liveNote": "L3 skipped: PR is docs-only (a KEP) \u2014 no runtime footprint. Live coverage belongs to the implementation PRs that follow the KEP's phase plan.",
@@ -226,5 +413,6 @@
     "openQuestions": [
       "F14 (finalizer on a never-accepted late policy) is a question, not a canary \u2014 see README"
     ]
-  }
+  },
+  "round3Notes": "Round 3 (head 99b991c, delta 6894a2e..99b991c, force-push rebase onto 79f7e585): the only Go files in the GitHub diff are a cherry-pick of main #495 (byte-identical, see C9), so the PR is still net docs-only. Round-3 ledger findings F1/F2/F4/F6/F10/F11 fixed and guarded by LF* contracts; round-1/2 findings F1-F12 (harness numbering) remain fixed and were inverted from canaries to fixed-guard contracts per the verifier skill. Live canaries: F8 (ledger F9 RBAC), F13 (ledger F7 DNS-1123 scoping). New evidence contracts C4-C8 verify the KEP's new upstream scheduler-internal citations (Volcano v1.14.4 subjob/restart/BestEffort/backfill, KAI v0.18.6 domain encoding + level validation, Koordinator pinned-commit no-Bound-members limitation) against results/upstream/round3/ snapshots. G3/G4 needles updated for the rewritten KAI/Koordinator examples (harness update, not a defect)."
 }

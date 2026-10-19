@@ -1,0 +1,755 @@
+/*
+Copyright 2022 The Koordinator Authors.
+Copyright 2020 The Kubernetes Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package core
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"strings"
+	"time"
+
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/util/sets"
+	k8sfeature "k8s.io/apiserver/pkg/util/feature"
+	"k8s.io/client-go/informers"
+	listerv1 "k8s.io/client-go/listers/core/v1"
+	"k8s.io/client-go/tools/cache"
+	"k8s.io/klog/v2"
+	fwktype "k8s.io/kube-scheduler/framework"
+	podutil "k8s.io/kubernetes/pkg/api/v1/pod"
+	"k8s.io/kubernetes/pkg/scheduler/framework"
+	schedulerutil "k8s.io/kubernetes/pkg/scheduler/util"
+
+	"github.com/koordinator-sh/koordinator/apis/extension"
+	pgclientset "github.com/koordinator-sh/koordinator/apis/thirdparty/scheduler-plugins/pkg/generated/clientset/versioned"
+	pgformers "github.com/koordinator-sh/koordinator/apis/thirdparty/scheduler-plugins/pkg/generated/informers/externalversions"
+	pglister "github.com/koordinator-sh/koordinator/apis/thirdparty/scheduler-plugins/pkg/generated/listers/scheduling/v1alpha1"
+	koordinatorinformers "github.com/koordinator-sh/koordinator/pkg/client/informers/externalversions"
+	"github.com/koordinator-sh/koordinator/pkg/features"
+	"github.com/koordinator-sh/koordinator/pkg/scheduler/apis/config"
+	"github.com/koordinator-sh/koordinator/pkg/scheduler/frameworkext"
+	frameworkexthelper "github.com/koordinator-sh/koordinator/pkg/scheduler/frameworkext/helper"
+	"github.com/koordinator-sh/koordinator/pkg/scheduler/frameworkext/workloadauditor"
+	"github.com/koordinator-sh/koordinator/pkg/scheduler/plugins/coscheduling/util"
+	reservationutil "github.com/koordinator-sh/koordinator/pkg/util/reservation"
+)
+
+type Status string
+
+const (
+	Name     = "Coscheduling"
+	stateKey = Name
+
+	// PodGroupNotSpecified denotes no PodGroup is specified in the Pod spec.
+	PodGroupNotSpecified Status = "PodGroup not specified"
+	// PodGroupNotFound denotes the specified PodGroup in the Pod spec is
+	// not found in API server.
+	PodGroupNotFound Status = "PodGroup not found"
+	Success          Status = "Success"
+	Wait             Status = "Wait"
+)
+
+// Manager defines the interfaces for PodGroup management.
+type Manager interface {
+	NextPod() *corev1.Pod
+	FindOneNode(ctx context.Context, cycleState fwktype.CycleState, pod *corev1.Pod, result *fwktype.PreFilterResult) (*frameworkext.BatchScheduleResult, *fwktype.Status)
+	SucceedGangScheduling()
+	PreEnqueue(context.Context, *corev1.Pod) (err error)
+	BeforePreFilter(context.Context, fwktype.CycleState, *corev1.Pod) (err error)
+	PreFilter(ctx context.Context, state fwktype.CycleState, pod *corev1.Pod, nodes []fwktype.NodeInfo) (*fwktype.PreFilterResult, *fwktype.Status)
+	PreScore(ctx context.Context, cycleState fwktype.CycleState, pod *corev1.Pod, nodes []fwktype.NodeInfo) *fwktype.Status
+	Score(ctx context.Context, state fwktype.CycleState, p *corev1.Pod, nodeInfo fwktype.NodeInfo) (int64, *fwktype.Status)
+	Permit(context.Context, *corev1.Pod) (time.Duration, Status)
+	PostBind(context.Context, *corev1.Pod, string)
+	PostFilter(ctx context.Context, state fwktype.CycleState, pod *corev1.Pod, m fwktype.NodeToStatusReader) (*fwktype.PostFilterResult, *fwktype.Status)
+	AfterPostFilter(context.Context, fwktype.CycleState, *corev1.Pod, fwktype.Handle, string, fwktype.NodeToStatusReader, *fwktype.Status) (*fwktype.PostFilterResult, *fwktype.Status)
+	GetAllPodsFromGang(string) []*corev1.Pod
+	AllowGangGroup(*corev1.Pod, fwktype.Handle, string)
+	Unreserve(context.Context, fwktype.CycleState, *corev1.Pod, string, fwktype.Handle, string)
+
+	GetGangSummary(gangId string) (*GangSummary, bool)
+	GetGangSummaries() map[string]*GangSummary
+
+	GetBoundPodNumber(gangId string) int32
+
+	GetGangBindingInfo(pod *corev1.Pod) *GangBindingInfo
+}
+
+// PodGroupManager defines the scheduling operation called
+type PodGroupManager struct {
+	handle fwktype.Handle
+	args   *config.CoschedulingArgs
+	// pgClient is a podGroup client
+	pgClient pgclientset.Interface
+	// pgLister is podgroup lister
+	pgLister pglister.PodGroupLister
+	// podLister is pod lister
+	podLister listerv1.PodLister
+	// cache stores gang info
+	cache                 *GangCache
+	holder                GangSchedulingContextHolder
+	preemptionEvaluator   PreemptionEvaluator
+	networkTopologySolver NetworkTopologySolver
+
+	workloadAuditor workloadauditor.WorkloadAuditor
+}
+
+// NewPodGroupManager creates a new operation object.
+func NewPodGroupManager(
+	handle fwktype.Handle,
+	args *config.CoschedulingArgs,
+	pgClient pgclientset.Interface,
+	pgSharedInformerFactory pgformers.SharedInformerFactory,
+	sharedInformerFactory informers.SharedInformerFactory,
+	koordSharedInformerFactory koordinatorinformers.SharedInformerFactory,
+) *PodGroupManager {
+	pgInformer := pgSharedInformerFactory.Scheduling().V1alpha1().PodGroups()
+	podInformer := sharedInformerFactory.Core().V1().Pods()
+	gangCache := NewGangCache(args, podInformer.Lister(), pgInformer.Lister(), pgClient, handle)
+	pgMgr := &PodGroupManager{
+		handle:    handle,
+		args:      args,
+		pgClient:  pgClient,
+		pgLister:  pgInformer.Lister(),
+		podLister: podInformer.Lister(),
+		cache:     gangCache,
+	}
+	if extHandle, ok := handle.(frameworkext.ExtendedHandle); ok {
+		pgMgr.workloadAuditor = extHandle.GetWorkloadAuditor()
+		gangCache.workloadAuditor = pgMgr.workloadAuditor
+	}
+	if handle != nil {
+		pgMgr.networkTopologySolver = NewNetworkTopologySolver(handle)
+	}
+	pgMgr.preemptionEvaluator = NewPreemptionEvaluator(handle, gangCache, &pgMgr.holder, pgMgr.networkTopologySolver)
+
+	podGroupEventHandler := cache.ResourceEventHandlerFuncs{
+		AddFunc:    gangCache.onPodGroupAdd,
+		UpdateFunc: gangCache.onPodGroupUpdate,
+		DeleteFunc: gangCache.onPodGroupDelete,
+	}
+	frameworkexthelper.ForceSyncFromInformer(context.TODO().Done(), pgSharedInformerFactory, pgInformer.Informer(), podGroupEventHandler)
+
+	podEventHandler := cache.ResourceEventHandlerFuncs{
+		AddFunc:    gangCache.onPodAdd,
+		UpdateFunc: gangCache.onPodUpdate,
+		DeleteFunc: gangCache.onPodDelete,
+	}
+	frameworkexthelper.ForceSyncFromInformer(context.TODO().Done(), sharedInformerFactory, podInformer.Informer(), podEventHandler)
+	reservationInformer := koordSharedInformerFactory.Scheduling().V1alpha1().Reservations()
+	reservationEventHandler := reservationutil.NewReservationToPodEventHandler(podEventHandler)
+	frameworkexthelper.ForceSyncFromInformer(context.TODO().Done(), koordSharedInformerFactory, reservationInformer.Informer(), reservationEventHandler)
+	return pgMgr
+}
+
+func (pgMgr *PodGroupManager) NextPod() *corev1.Pod {
+	gangSchedulingContext := pgMgr.holder.getCurrentGangSchedulingContext()
+	if gangSchedulingContext == nil {
+		klog.V(4).Infof("NextPod: return nil, gangSchedulingContext is nil")
+		return nil
+	}
+	firstPod := gangSchedulingContext.firstPod
+	gang := pgMgr.GetGangByPod(firstPod)
+	if gang == nil {
+		// the podGroup is deleted
+		pgMgr.rejectGangGroup(pgMgr.handle, gangSchedulingContext.gangGroup, ReasonGangIsNil)
+		pgMgr.holder.clearGangSchedulingContext(ReasonGangIsNil)
+		return nil
+	}
+
+	// iterate over each gangGroup, get all the pods
+	gangGroup := gang.getGangGroup()
+	for _, groupGangId := range gangGroup {
+		groupGang := pgMgr.cache.getGangFromCacheByGangId(groupGangId, false)
+		if groupGang == nil {
+			continue
+		}
+		pods := groupGang.getPendingChildrenFromGang()
+		for _, pod := range pods {
+			podKey := util.GetId(pod.Namespace, pod.Name)
+
+			if !gangSchedulingContext.alreadyAttemptedPods.Has(podKey) {
+				gangSchedulingContext.Lock()
+				gangSchedulingContext.alreadyAttemptedPods.Insert(podKey)
+				gangSchedulingContext.Unlock()
+				klog.Infof("NextPod: return pod %s/%s/%s, gangGroup: %+v, gangGroupStartTime: %+v", pod.Namespace, pod.Name, pod.UID, gangGroup, gangSchedulingContext.startTime)
+				// correct podInfo.Time and podInfo.Attempts
+				return frameworkext.CopyQueueInfoToPod(firstPod, pod)
+			}
+		}
+	}
+	pgMgr.rejectGangGroup(pgMgr.handle, gangSchedulingContext.gangGroup, ReasonAllPendingPodsIsAlreadyAttempted)
+	pgMgr.holder.clearGangSchedulingContext(ReasonAllPendingPodsIsAlreadyAttempted)
+	if gangSchedulingContext.failedMessage == "" && pgMgr.workloadAuditor != nil {
+		pgMgr.workloadAuditor.RecordGangScheduleResult(gangSchedulingContext.gangGroupID, workloadauditor.RecordTypeGangAllPodsAlreadyAttempted, "")
+	}
+
+	return nil
+}
+
+func (pgMgr *PodGroupManager) SucceedGangScheduling() {
+	pgMgr.holder.clearGangSchedulingContext(ReasonGangIsSucceed)
+}
+
+// PreEnqueue
+// TODO Turning it on may result in no Pod scheduling events, and an external check should be done through the controller later.
+func (pgMgr *PodGroupManager) PreEnqueue(ctx context.Context, pod *corev1.Pod) (err error) {
+	if !util.IsPodNeedGang(pod) {
+		return nil
+	}
+	gang := pgMgr.GetGangByPod(pod)
+	if gang == nil {
+		return fmt.Errorf("can't find gang, gangName: %v, podName: %v", util.GetId(pod.Namespace, util.GetGangNameByPod(pod)),
+			util.GetId(pod.Namespace, pod.Name))
+	}
+
+	// check if gang is initialized
+	if !gang.HasGangInit {
+		return fmt.Errorf("gang has not init, gangName: %v, podName: %v", gang.Name,
+			util.GetId(pod.Namespace, pod.Name))
+	}
+	// resourceSatisfied means pod will directly pass the PreFilter
+	if gang.getGangMatchPolicy() == extension.GangMatchPolicyOnceSatisfied && gang.isGangOnceResourceSatisfied() {
+		return nil
+	}
+	err = pgMgr.basicGangRequirementsCheck(gang, pod)
+	if err != nil {
+		// use IsPodRepresentative to avoid write lock collisions.
+		if gang.IsPodRepresentative(pod) {
+			// It's possible that another Pod arrives and satisfies the Gang Basic Check.
+			// Here, we determine this by checking whether RepresentativePod is itself within a write lock.
+			gang.DeleteIfRepresentative(pod, ReasonGangBasicCheckUnsatisfied)
+		}
+		return err
+	}
+
+	gangSchedulingContext := pgMgr.holder.getCurrentGangSchedulingContext()
+	if gangSchedulingContext != nil && gangSchedulingContext.gangGroup.Has(gang.Name) {
+		podKey := util.GetId(pod.Namespace, pod.Name)
+		gangSchedulingContext.RLock()
+		// Subsequent Pods should be prevented from entering ActiveQ or BackoffQ to avoid the time-consuming deletion of them
+		if !gangSchedulingContext.alreadyAttemptedPods.Has(podKey) {
+			gangSchedulingContext.RUnlock()
+			return fmt.Errorf(ErrPodHasNotBeenAttempted, gang.GangGroupId)
+		}
+		gangSchedulingContext.RUnlock()
+	}
+
+	return gang.RecordIfNoRepresentatives(pod)
+}
+
+// PreEnqueue
+// i.Check whether children in Gang has met the requirements of minimum number under each Gang, and reject the pod if negative.
+// ii.Check whether the Gang is inited, and reject the pod if positive.
+// iii.Check whether the Gang is OnceResourceSatisfied
+func (pgMgr *PodGroupManager) basicGangRequirementsCheck(gang *Gang, pod *corev1.Pod) error {
+	gangGroup := gang.getGangGroup()
+	var gangsOfMinNumUnSatisfied, gangsOfGangIsNil, gangsOfGangNotInit []string
+	for _, gangID := range gangGroup {
+		memberGang := pgMgr.cache.getGangFromCacheByGangId(gangID, false)
+		if memberGang == nil {
+			gangsOfGangIsNil = append(gangsOfGangIsNil, gangID)
+			continue
+		}
+		if !memberGang.HasGangInit {
+			gangsOfGangNotInit = append(gangsOfGangNotInit, gangID)
+			continue
+		}
+		if memberGang.getChildrenNum() < memberGang.getGangMinNum() {
+			gangsOfMinNumUnSatisfied = append(gangsOfMinNumUnSatisfied,
+				fmt.Sprintf("%s(collected %d/%d children)", gangID, memberGang.getChildrenNum(), memberGang.getGangMinNum()))
+			continue
+		}
+	}
+	var failedMsg []string
+	if len(gangsOfGangIsNil) > 0 {
+		failedMsg = append(failedMsg, fmt.Sprintf("memberGangs %+v doesn't exists", gangsOfGangIsNil))
+	}
+	if len(gangsOfGangNotInit) > 0 {
+		failedMsg = append(failedMsg, fmt.Sprintf("memberGangs %+v has not init", gangsOfGangNotInit))
+	}
+	if len(gangsOfMinNumUnSatisfied) > 0 {
+		failedMsg = append(failedMsg, fmt.Sprintf("memberGangs %+v child pod not collect enough", gangsOfMinNumUnSatisfied))
+	}
+	if len(failedMsg) > 0 {
+		return fmt.Errorf("gangGroup %v basic check: %s, current gang: %s, podName: %v",
+			gangGroup,
+			strings.Join(failedMsg, ", "),
+			gang.Name,
+			util.GetId(pod.Namespace, pod.Name))
+	}
+
+	return nil
+}
+
+func (pgMgr *PodGroupManager) BeforePreFilter(ctx context.Context, cycleState fwktype.CycleState, pod *corev1.Pod) (err error) {
+	if !util.IsPodNeedGang(pod) {
+		return nil
+	}
+	gang := pgMgr.GetGangByPod(pod)
+	if gang == nil {
+		return fmt.Errorf("can't find gang, gangName: %v, podName: %v", util.GetId(pod.Namespace, util.GetGangNameByPod(pod)),
+			util.GetId(pod.Namespace, pod.Name))
+	}
+
+	// check if gang is initialized
+	if !gang.HasGangInit {
+		return fmt.Errorf("gang has not init, gangName: %v, podName: %v", gang.Name,
+			util.GetId(pod.Namespace, pod.Name))
+	}
+	// resourceSatisfied means pod will directly pass the PreFilter
+	if gang.getGangMatchPolicy() == extension.GangMatchPolicyOnceSatisfied && gang.isGangOnceResourceSatisfied() {
+		return nil
+	}
+	err = pgMgr.basicGangRequirementsCheck(gang, pod)
+	if err != nil {
+		// use IsPodRepresentative to avoid write lock collisions.
+		if gang.IsPodRepresentative(pod) {
+			// It's possible that another Pod arrives and satisfies the Gang Basic Check.
+			// Here, we determine this by checking whether RepresentativePod is itself within a write lock.
+			gang.DeleteIfRepresentative(pod, ReasonGangBasicCheckUnsatisfied)
+		}
+		return err
+	}
+	diagnosis := frameworkext.GetDiagnosis(cycleState)
+	diagnosis.QuestionedKey = gang.GangGroupId
+	gangSchedulingContext := pgMgr.holder.getCurrentGangSchedulingContext()
+	if gangSchedulingContext == nil {
+		gangSchedulingContext = &GangSchedulingContext{
+			firstPod:            pod,
+			gangGroup:           sets.New[string](gang.GangGroup...),
+			gangGroupID:         gang.GangGroupId,
+			networkTopologySpec: gang.NetworkTopologySpec,
+		}
+		if gangSchedulingContext.networkTopologySpec != nil {
+			gangSchedulingContext.networkTopologySnapshot = pgMgr.handle.(frameworkext.ExtendedHandle).GetNetworkTopologyTreeManager().GetSnapshot()
+			if gangSchedulingContext.networkTopologySnapshot == nil {
+				return errors.New(ErrNoClusterNetworkTopology)
+			}
+		}
+		pgMgr.holder.setGangSchedulingContext(gangSchedulingContext, ReasonFirstPodPassPreFilter)
+		// clear the current representative because representative is already enter into scheduling
+		gang.ClearCurrentRepresentative(ReasonGangGroupEnterIntoScheduling)
+		return nil
+	}
+	if gangSchedulingContext.failedMessage != "" {
+		diagnosis.IsRootCausePod = false
+		if gangSchedulingContext.suggestion != nil {
+			diagnosis.SetSuggestion(gangSchedulingContext.suggestion)
+		}
+		return fmt.Errorf("%s", gangSchedulingContext.failedMessage)
+	}
+	return nil
+}
+
+// PostFilter invoked at the postFilter extension point.
+func (pgMgr *PodGroupManager) PostFilter(ctx context.Context, state fwktype.CycleState, pod *corev1.Pod, m fwktype.NodeToStatusReader) (*fwktype.PostFilterResult, *fwktype.Status) {
+	if !*pgMgr.args.EnablePreemption {
+		diagnosis := frameworkext.GetDiagnosis(state)
+		if diagnosis != nil && !diagnosis.IsRootCausePod {
+			gangSchedulingContext := pgMgr.holder.getCurrentGangSchedulingContext()
+			if gangSchedulingContext != nil && gangSchedulingContext.preemptionMessage != "" {
+				return &fwktype.PostFilterResult{}, fwktype.NewStatus(fwktype.Unschedulable, gangSchedulingContext.preemptionMessage)
+			}
+		}
+		return &fwktype.PostFilterResult{}, fwktype.NewStatus(fwktype.Unschedulable)
+	}
+
+	pgMgr.summaryAndRecordFailedMessage(state, pod, m)
+
+	result, status := pgMgr.preemptionEvaluator.Preempt(ctx, state, pod, m)
+	msg := status.Message()
+	if len(msg) > 0 {
+		return result, fwktype.NewStatus(status.Code(), "preemption: "+msg)
+	}
+	return result, status
+}
+
+// AfterPostFilter
+// i. If strict-mode, we will set scheduleCycleValid to false and release all assumed pods.
+// ii. If non-strict mode, we will do nothing.
+func (pgMgr *PodGroupManager) AfterPostFilter(ctx context.Context, state fwktype.CycleState, pod *corev1.Pod, handle fwktype.Handle, pluginName string, filteredNodeStatusMap fwktype.NodeToStatusReader, postFilterStatus *fwktype.Status) (*fwktype.PostFilterResult, *fwktype.Status) {
+	if !util.IsPodNeedGang(pod) {
+		return &fwktype.PostFilterResult{}, fwktype.NewStatus(fwktype.Unschedulable)
+	}
+	gang := pgMgr.GetGangByPod(pod)
+	if gang == nil {
+		message := fmt.Sprintf("Pod %q cannot find Gang %q", klog.KObj(pod), util.GetGangNameByPod(pod))
+		klog.Warningf("%s", message)
+		return &fwktype.PostFilterResult{}, fwktype.NewStatus(fwktype.Unschedulable, message)
+	}
+	if gang.getGangMatchPolicy() == extension.GangMatchPolicyOnceSatisfied && gang.isGangOnceResourceSatisfied() {
+		return &fwktype.PostFilterResult{}, fwktype.NewStatus(fwktype.Unschedulable)
+	}
+
+	message := pgMgr.summaryAndRecordFailedMessage(state, pod, filteredNodeStatusMap)
+	diagnosis := frameworkext.GetDiagnosis(state)
+	if diagnosis != nil {
+		if suggestion := diagnosis.GetSuggestion(); suggestion != nil {
+			gangSchedulingContext := pgMgr.holder.getCurrentGangSchedulingContext()
+			if gangSchedulingContext != nil {
+				gangSchedulingContext.suggestion = suggestion
+			}
+		}
+		if diagnosis.IsRootCausePod {
+			gangSchedulingContext := pgMgr.holder.getCurrentGangSchedulingContext()
+			if gangSchedulingContext != nil && gangSchedulingContext.preemptionMessage == "" {
+				if diagnosis.PreemptionDiagnosis != nil && diagnosis.PreemptionDiagnosis.FailedMessage != "" {
+					gangSchedulingContext.preemptionMessage = diagnosis.PreemptionDiagnosis.FailedMessage
+				}
+			}
+		}
+	}
+
+	// Patch scheduling failure condition for unattempted pending pods in the gang group.
+	// Only execute for non-root-cause pods and only once per GangSchedulingContext.
+	if k8sfeature.DefaultFeatureGate.Enabled(features.GangPendingPodsConditionPatch) && diagnosis != nil && !diagnosis.IsRootCausePod {
+		gangSchedulingContext := pgMgr.holder.getCurrentGangSchedulingContext()
+		if gangSchedulingContext != nil && !gangSchedulingContext.pendingPodsConditionPatched {
+			gangSchedulingContext.pendingPodsConditionPatched = true
+			pgMgr.patchGangPendingPodsCondition(ctx, handle, pod, gang, gangSchedulingContext, filteredNodeStatusMap, postFilterStatus)
+		}
+	}
+
+	if gang.getGangMode() == extension.GangModeStrict {
+		gang.clearWaitingGang()
+		pgMgr.rejectGangGroupById(handle, pluginName, gang.Name, message)
+		return &fwktype.PostFilterResult{}, fwktype.NewStatus(fwktype.Unschedulable,
+			fmt.Sprintf("Gang %q gets rejected due to pod is unschedulable", gang.Name))
+	}
+
+	return &fwktype.PostFilterResult{}, fwktype.NewStatus(fwktype.Unschedulable)
+}
+
+// patchGangPendingPodsCondition patches a PodScheduled=False condition on unattempted pending pods
+// (excluding the current pod, which is patched by the scheduler) in the gang group in parallel,
+// without modifying NominatedNodeName.
+func (pgMgr *PodGroupManager) patchGangPendingPodsCondition(ctx context.Context, handle fwktype.Handle, currentPod *corev1.Pod, gang *Gang, gangSchedulingContext *GangSchedulingContext, filteredNodeStatusMap fwktype.NodeToStatusReader, postFilterStatus *fwktype.Status) {
+	if postFilterStatus == nil {
+		return
+	}
+	startTime := time.Now()
+
+	// Get the set of already attempted pods to exclude
+	attemptedPods := gangSchedulingContext.alreadyAttemptedPods
+
+	// Collect all pending pods from the gang group, excluding already attempted ones
+	// and the current pod (which already gets its condition patched by the scheduler).
+	currentPodKey := util.GetId(currentPod.Namespace, currentPod.Name)
+	var pendingPods []*corev1.Pod
+	gangGroup := gang.getGangGroup()
+	for _, groupGangId := range gangGroup {
+		groupGang := pgMgr.cache.getGangFromCacheByGangId(groupGangId, false)
+		if groupGang == nil {
+			continue
+		}
+		pods := groupGang.getPendingChildrenFromGang()
+		for _, pod := range pods {
+			podKey := util.GetId(pod.Namespace, pod.Name)
+			if podKey != currentPodKey && !attemptedPods.Has(podKey) {
+				pendingPods = append(pendingPods, pod)
+			}
+		}
+	}
+
+	if len(pendingPods) == 0 {
+		klog.Infof("patchGangPendingPodsCondition skipped (no pending pods): currentPod=%s/%s, gangGroupID=%s, gangMinMember=%d, alreadyAttempted=%d, duration=%v",
+			currentPod.Namespace, currentPod.Name, gangSchedulingContext.gangGroupID, gang.MinRequiredNumber, attemptedPods.Len(), time.Since(startTime))
+		return
+	}
+
+	nodeInfos, _ := handle.SnapshotSharedLister().NodeInfos().List()
+	fitErr := &framework.FitError{
+		Pod:         currentPod,
+		NumAllNodes: len(nodeInfos),
+		Diagnosis: framework.Diagnosis{
+			PreFilterMsg:  gangSchedulingContext.failedMessage,
+			PostFilterMsg: postFilterStatus.Message(),
+		},
+	}
+	errMsg := fitErr.Error()
+
+	cs := handle.ClientSet()
+	handle.Parallelizer().Until(ctx, len(pendingPods), func(i int) {
+		pod := pendingPods[i]
+		condition := &corev1.PodCondition{
+			Type:    corev1.PodScheduled,
+			Status:  corev1.ConditionFalse,
+			Reason:  corev1.PodReasonUnschedulable,
+			Message: errMsg,
+		}
+		podStatusCopy := pod.Status.DeepCopy()
+		if !podutil.UpdatePodCondition(podStatusCopy, condition) {
+			return
+		}
+		if err := schedulerutil.PatchPodStatus(ctx, cs, pod.Name, pod.Namespace, &pod.Status, podStatusCopy); err != nil {
+			klog.Warningf("Failed to patch scheduling failure condition for pod %s/%s: %v", pod.Namespace, pod.Name, err)
+		}
+	}, "PatchGangPendingPodsCondition")
+	klog.Infof("patchGangPendingPodsCondition completed: currentPod=%s/%s, gangGroupID=%s, gangMinMember=%d, alreadyAttempted=%d, pendingPodsPatched=%d, duration=%v",
+		currentPod.Namespace, currentPod.Name, gangSchedulingContext.gangGroupID, gang.MinRequiredNumber, attemptedPods.Len(), len(pendingPods), time.Since(startTime))
+}
+
+func (pgMgr *PodGroupManager) summaryAndRecordFailedMessage(state fwktype.CycleState, triggerPod *corev1.Pod, filteredNodeStatusMap fwktype.NodeToStatusReader) string {
+	gangSchedulingContext := pgMgr.holder.getCurrentGangSchedulingContext()
+	if gangSchedulingContext == nil {
+		return fmt.Sprintf("gets rejected due to member pod %q is unschedulable", framework.GetNamespacedName(triggerPod.Namespace, triggerPod.Name))
+	}
+	if gangSchedulingContext.failedMessage != "" {
+		return gangSchedulingContext.failedMessage
+	}
+	nodeInfos, _ := pgMgr.handle.SnapshotSharedLister().NodeInfos().List()
+	fitErr := &framework.FitError{
+		Pod:         triggerPod,
+		NumAllNodes: len(nodeInfos),
+		Diagnosis: framework.Diagnosis{
+			NodeToStatus: func() *framework.NodeToStatus {
+				if nts, ok := filteredNodeStatusMap.(*framework.NodeToStatus); ok {
+					return nts
+				}
+				return framework.NewDefaultNodeToStatus()
+			}(),
+		},
+	}
+	waitingPodsNum := pgMgr.cache.getWaitingPodsNum(gangSchedulingContext.gangGroup.UnsortedList())
+	diagnosis := frameworkext.GetDiagnosis(state)
+	if diagnosis != nil && diagnosis.ScheduleDiagnosis != nil && diagnosis.ScheduleDiagnosis.SchedulingMode == frameworkext.PodSchedulingMode {
+		diagnosis.ScheduleDiagnosis.AlreadyWaitForBound = waitingPodsNum
+		diagnosis.ScheduleDiagnosis.AlreadyWaitForBoundPods = pgMgr.cache.getWaitingPods(gangSchedulingContext.gangGroup.UnsortedList())
+	}
+	message := fmt.Sprintf("GangGroup %q gets rejected due to member Pod %q is unschedulable with reason %q, alreadyWaitForBound: %d", gangSchedulingContext.gangGroupID, framework.GetNamespacedName(triggerPod.Namespace, triggerPod.Name), fitErr, waitingPodsNum)
+	gangSchedulingContext.failedMessage = message
+	gangSchedulingContext.triggerPod = triggerPod
+	return message
+}
+
+// Permit
+// we will calculate all Gangs in GangGroup whether the current number of assumed-pods in each Gang meets the Gang's minimum requirement.
+// and decide whether we should let the pod wait in Permit stage or let the whole gangGroup go binding
+func (pgMgr *PodGroupManager) Permit(ctx context.Context, pod *corev1.Pod) (time.Duration, Status) {
+	if !util.IsPodNeedGang(pod) {
+		return 0, PodGroupNotSpecified
+	}
+	gang := pgMgr.GetGangByPod(pod)
+
+	if gang == nil {
+		klog.Warningf("Pod %q missing Gang", klog.KObj(pod))
+		return 0, PodGroupNotFound
+	}
+	// first add pod to the gang's WaitingPodsMap
+	gang.addAssumedPod(pod)
+
+	allGangGroupAssumed := true
+	gangGroup := gang.getGangGroup()
+	// check each gang group
+	for _, groupName := range gangGroup {
+		gangTmp := pgMgr.cache.getGangFromCacheByGangId(groupName, false)
+		if gangTmp == nil || !gangTmp.isGangValidForPermit() {
+			allGangGroupAssumed = false
+			break
+		}
+	}
+	if !allGangGroupAssumed {
+		gang.addWaitingGang()
+		return gang.WaitTime, Wait
+	}
+	return 0, Success
+}
+
+// Unreserve
+// if gang is resourceSatisfied, we only delAssumedPod
+// if gang is not resourceSatisfied and is in StrictMode, we release all the assumed pods
+func (pgMgr *PodGroupManager) Unreserve(ctx context.Context, state fwktype.CycleState, pod *corev1.Pod, nodeName string, handle fwktype.Handle, pluginName string) {
+	if !util.IsPodNeedGang(pod) {
+		return
+	}
+	gang := pgMgr.GetGangByPod(pod)
+	if gang == nil {
+		klog.Warningf("Pod %q missing Gang", klog.KObj(pod))
+		return
+	}
+	// first delete the pod from gang's waitingFroBindChildren map
+	gang.delAssumedPod(pod)
+
+	// TODO we should record failed message when current pod is the first failed pod of gang, now we just let it go, so quick fail is not supported
+
+	if !(gang.getGangMatchPolicy() == extension.GangMatchPolicyOnceSatisfied && gang.isGangOnceResourceSatisfied()) &&
+		gang.getGangMode() == extension.GangModeStrict {
+		message := fmt.Sprintf("Gang %q gets rejected due to Pod %q in Unreserve", gang.Name, pod.Name)
+		pgMgr.rejectGangGroupById(handle, pluginName, gang.Name, message)
+	}
+}
+
+func (pgMgr *PodGroupManager) rejectGangGroupById(handle fwktype.Handle, pluginName, gangId, message string) {
+	gang := pgMgr.cache.getGangFromCacheByGangId(gangId, false)
+	if gang == nil {
+		return
+	}
+
+	// iterate over each gangGroup, get all the pods
+	gangGroup := gang.getGangGroup()
+	gangSet := sets.New[string](gangGroup...)
+	pgMgr.rejectGangGroup(handle, gangSet, message)
+}
+
+func (pgMgr *PodGroupManager) rejectGangGroup(handle fwktype.Handle, gangSet sets.Set[string], message string) {
+	if handle != nil {
+		handle.IterateOverWaitingPods(func(waitingPod fwktype.WaitingPod) {
+			waitingGangId := util.GetId(waitingPod.GetPod().Namespace, util.GetGangNameByPod(waitingPod.GetPod()))
+			if gangSet.Has(waitingGangId) {
+				klog.V(1).InfoS("GangGroup gets rejected due to",
+					"waitingGang", waitingGangId,
+					"waitingPod", klog.KObj(waitingPod.GetPod()),
+					"message", message,
+				)
+				waitingPod.Reject(frameworkext.JobRejectPlugin, message)
+			}
+		})
+	}
+}
+
+// PostBind updates a PodGroup's status.
+func (pgMgr *PodGroupManager) PostBind(ctx context.Context, pod *corev1.Pod, nodeName string) {
+	if !util.IsPodNeedGang(pod) {
+		return
+	}
+	gang := pgMgr.GetGangByPod(pod)
+	if gang == nil {
+		klog.Warningf("Pod %q missing Gang", klog.KObj(pod))
+		return
+	}
+	// update gang in cache
+	gang.addBoundPod(pod)
+}
+
+func (pgMgr *PodGroupManager) AllowGangGroup(pod *corev1.Pod, handle fwktype.Handle, pluginName string) {
+	gang := pgMgr.GetGangByPod(pod)
+	if gang == nil {
+		klog.Warningf("Pod %q missing Gang", klog.KObj(pod))
+		return
+	}
+
+	if pgMgr.workloadAuditor != nil {
+		pgMgr.workloadAuditor.RecordGangScheduleResult(gang.GangGroupId, workloadauditor.RecordTypeScheduled, "")
+	}
+
+	gangSlices := gang.getGangGroup()
+
+	if currentBindingMembers := gang.getBindingMembers(); len(currentBindingMembers) <= 0 { // record binding members if it is unset
+		waitingPods := pgMgr.cache.getWaitingPods(gangSlices)
+		memberPods := sets.New[string]()
+		for _, pod := range waitingPods {
+			memberPods.Insert(string(pod.UID))
+		}
+		gang.setBindingMembers(memberPods)
+		klog.V(4).InfoS("AllowGangGroup: record binding members for gang",
+			"pod", klog.KObj(pod), "gang", gang.Name, "gangGroup", gang.GangGroupId, "memberPods", memberPods.Len())
+	} else {
+		klog.V(4).InfoS("AllowGangGroup: binding members already set, skip recording",
+			"pod", klog.KObj(pod), "gang", gang.Name, "gangGroup", gang.GangGroupId, "memberPods", currentBindingMembers.Len())
+	}
+
+	handle.IterateOverWaitingPods(func(waitingPod fwktype.WaitingPod) {
+		podGangId := util.GetId(waitingPod.GetPod().Namespace, util.GetGangNameByPod(waitingPod.GetPod()))
+		for _, gangIdTmp := range gangSlices {
+			if podGangId == gangIdTmp {
+				klog.V(4).InfoS("Permit allows pod from gang", "gang", podGangId, "pod", klog.KObj(waitingPod.GetPod()))
+				waitingPod.Allow(pluginName)
+				break
+			}
+		}
+	})
+}
+
+func (pgMgr *PodGroupManager) GetGangByPod(pod *corev1.Pod) *Gang {
+	gangName := util.GetGangNameByPod(pod)
+	if gangName == "" {
+		return nil
+	}
+	gangId := util.GetId(pod.Namespace, gangName)
+	gang := pgMgr.cache.getGangFromCacheByGangId(gangId, false)
+	return gang
+}
+
+func (pgMgr *PodGroupManager) GetAllPodsFromGang(gangId string) []*corev1.Pod {
+	pods := make([]*corev1.Pod, 0)
+	gang := pgMgr.cache.getGangFromCacheByGangId(gangId, false)
+	if gang == nil {
+		return pods
+	}
+	pods = gang.getChildrenFromGang()
+	return pods
+}
+
+func (pgMgr *PodGroupManager) GetGangSummary(gangId string) (*GangSummary, bool) {
+	gang := pgMgr.cache.getGangFromCacheByGangId(gangId, false)
+	if gang == nil {
+		return nil, false
+	}
+	return gang.GetGangSummary(), true
+}
+
+func (pgMgr *PodGroupManager) GetGangSummaries() map[string]*GangSummary {
+	result := make(map[string]*GangSummary)
+	allGangs := pgMgr.cache.getAllGangsFromCache()
+	for gangName, gang := range allGangs {
+		result[gangName] = gang.GetGangSummary()
+	}
+
+	return result
+}
+
+func (pgMgr *PodGroupManager) GetBoundPodNumber(gangId string) int32 {
+	gang := pgMgr.cache.getGangFromCacheByGangId(gangId, false)
+	if gang == nil {
+		return 0
+	}
+	return gang.getBoundPodNum()
+}
+
+type GangBindingInfo struct {
+	GangGroupId string
+	MemberCount int
+}
+
+func (pgMgr *PodGroupManager) GetGangBindingInfo(pod *corev1.Pod) *GangBindingInfo {
+	gang := pgMgr.GetGangByPod(pod)
+	if gang == nil {
+		return nil
+	}
+
+	// Get the snapshot members from GangGroupInfo.
+	// This value was set in AllowGangGroup and persists through binding cycle.
+	memberPods := gang.getBindingMembers()
+	if memberPods.Len() <= 1 { // skip gang binding info when no member pods or single pod
+		klog.V(4).InfoS("Skip gang binding info due to the size of memberPods no larger than 1 (OnceSatisfied or failover)",
+			"pod", klog.KObj(pod), "gangGroup", gang.GangGroupId, "memberPods", memberPods.Len())
+		return nil
+	}
+	if !memberPods.Has(string(pod.UID)) { // only record binding info for member pods
+		klog.V(4).InfoS("Skip gang binding info due to pod not in memberPods",
+			"pod", klog.KObj(pod), "gangGroup", gang.GangGroupId, "memberPods", memberPods.Len())
+		return nil
+	}
+
+	return &GangBindingInfo{
+		GangGroupId: gang.GangGroupId,
+		MemberCount: memberPods.Len(),
+	}
+}

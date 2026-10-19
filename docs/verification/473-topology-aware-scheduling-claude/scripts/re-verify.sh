@@ -84,11 +84,10 @@ python3 -I "$HERE/check_claims.py" --repo "$(git rev-parse --show-toplevel)" \
   --evidence "$TOPIC_DIR/results" > "$RESULTS_DIR/unit.out" 2>&1 || true
 
 # unit-layer parse: "<id> <polarity> <verdict>" -> id<TAB>state
-#   canary: DEFECT-PRESENT -> pass (still present), DEFECT-ABSENT -> fail (flipped)
+#   canary:   DEFECT-PRESENT -> pass (still present), DEFECT-ABSENT -> fail (flipped)
 #   contract: PASS -> pass, FAIL -> fail
-awk '/^F[0-9]+ +canary/ {print $1 "\t" ($3=="DEFECT-PRESENT" ? "pass" : "fail")}
-     /^P[0-9]+ +contract/ {print $1 "\t" ($3=="PASS" ? "pass" : "fail")}
-     /^C[0-9]+ +contract/ {print $1 "\t" ($3=="PASS" ? "pass" : "fail")}' \
+# round-3: ids are F*, LF* (ledger fixed-guards), P0, C* — any letters+digits.
+awk '/^[A-Z]+[0-9]+ +(canary|contract)/ {print $1 "\t" (($2=="canary" && $3=="DEFECT-PRESENT") || ($2=="contract" && $3=="PASS") ? "pass" : "fail")}' \
   "$RESULTS_DIR/unit.out" > "$RESULTS_DIR/unit.parsed" || true
 
 # ---- integration layer: go test strict-decode ------------------------------
