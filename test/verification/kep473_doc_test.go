@@ -549,6 +549,31 @@ func TestKEP473_F11_ContractKAISubGroupNamesBounded(t *testing.T) {
 	}
 }
 
+// Ledger F5 (fixed at 99b991c5): the false justification "RBG admission makes
+// the Role declaration immutable from create onward" is gone; ordinary role
+// changes are now correctly scoped to layout-preserving updates.
+func TestKEP473_F14_ContractNoFalseRoleImmutabilityJustification(t *testing.T) {
+	doc := kepText(t)
+	assertNotContains(t, doc, "Role declaration immutable from create onward",
+		"contract freeze (false whole-Role immutability justification must be gone)")
+	assertContains(t, doc, "Ordinary changes remain allowed only when they preserve the accepted physical membership layout",
+		"mutability section (ordinary changes scoped to layout-preserving updates)")
+}
+
+// Ledger F10 (fixed at 99b991c5): the "minMember/minSubGroup render only
+// where gang is configured" sentence that contradicted the mandated
+// zero-value rendering is replaced by an explicit rule (zero values always
+// rendered; nonzero thresholds only from gang).
+func TestKEP473_F15_ContractZeroValueRenderingClarified(t *testing.T) {
+	doc := kepText(t)
+	assertNotContains(t, doc, "render only where gang is configured",
+		"KAI rendering rule (contradictory gang-only sentence must be gone)")
+	assertContains(t, doc, "KAI explicitly renders `minMember: 0` on topology-only leaf subgroups",
+		"KAI rendering rule (zero values mandated)")
+	assertContains(t, doc, "Nonzero thresholds come only from gang configuration",
+		"KAI rendering rule (nonzero thresholds scoped to gang)")
+}
+
 // ---------------------------------------------------------------------------
 // Bug canaries (round 3, head 99b991c5). PASS = finding still present in the
 // text; must FLIP to red when the author fixes the document.

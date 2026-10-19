@@ -129,6 +129,22 @@
       ]
     },
     {
+      "id": "F14",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F14_ContractNoFalseRoleImmutabilityJustification"
+      ]
+    },
+    {
+      "id": "F15",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F15_ContractZeroValueRenderingClarified"
+      ]
+    },
+    {
       "id": "F13",
       "polarity": "canary",
       "layer": "unit",
