@@ -1,0 +1,5 @@
+=== RUN   TestPremiseP0RestartLosesSurgeProtection
+    premise_p0_base_repro_test.go:172: created=[p0-restart-0] deleted=[p0-restart-1]
+--- PASS: TestPremiseP0RestartLosesSurgeProtection (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.051s

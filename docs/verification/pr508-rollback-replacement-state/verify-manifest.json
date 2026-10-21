@@ -1,0 +1,57 @@
+{
+  "topic": "pr508-rollback-replacement-state",
+  "pr": "https://github.com/sgl-project/rbg/pull/508",
+  "baseBranch": "main@ecdfd6e6",
+  "headAtRound1": "a1d164a9",
+  "harnessPaths": [
+    "docs/verification/pr508-rollback-replacement-state",
+    "pkg/reconciler/roleinstanceset/statefulmode/rollback_replacement_verification_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #482: a Stateful RoleInstanceSet early rollback (A -> B -> A) tracks the replacement-in-progress signal in controller process memory (earlyRollbackReplacementSignals). After the stale base instance is deleted, a controller restart loses the signal; topology then treats the rollout as complete and condemns the existing surge while the replacement base is still unavailable, violating maxUnavailable=0.",
+    "reportedComponent": "pkg/reconciler/roleinstanceset/statefulmode (stateful rollout surge protection)",
+    "patchedComponent": "same package + status.rolloutReplacementState API — exact match",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "Reconcile-level fake-client repro on base main@ecdfd6e6 (results/premise-p0_base_repro_test.go, run from a detached worktree): post-restart state (in-memory signals empty, both revisions resolve to A, stale base deleted, healthy A surge at ordinal 1, replicas=1/maxSurge=1/maxUnavailable=0) — main deletes the surge (deleted=[p0-restart-1]) while the replacement base at ordinal 0 has only just been created and is unavailable. See results/premise-p0-base.txt. The same scenario on the PR head retains the surge (V1 canary).",
+    "match": [
+      "results/premise-p0-base.txt",
+      "results/premise_p0_base_repro_test.go"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -mod=vendor -count=1 -run 'TestVerifyPR508' -v ./pkg/reconciler/roleinstanceset/statefulmode/"
+    },
+    "integration": {
+      "kind": "gotest-envtest",
+      "cmd": "KUBEBUILDER_ASSETS=<envtest-assets> go test -mod=vendor -count=1 -timeout 10m ./test/envtest/testcase/stateful/"
+    }
+  },
+  "findings": [
+    {
+      "id": "V1",
+      "polarity": "canary",
+      "layer": "unit",
+      "claim": "After a restart, persisted rolloutReplacementState retains the surge while the replacement base is unavailable, recreates the base, and releases the surge + clears the state once the base is Ready (issue #482's expected behavior).",
+      "match": [
+        "TestVerifyPR508_V1_RestartRetainsSurgeUntilReplacementReady"
+      ]
+    },
+    {
+      "id": "V2",
+      "polarity": "contract",
+      "layer": "unit",
+      "claim": "A changed target revision ends the recorded scope's surge protection (no stuck protection).",
+      "match": [
+        "TestVerifyPR508_V2_RevisionChangeEndsProtection"
+      ]
+    }
+  ],
+  "liveNote": "No live cluster run for round 1: the defect is a controller-restart + informer-ordering race that the unit layer reproduces deterministically (in-memory signals empty == fresh process) and the envtest suite covers against a real API server (rollout_recovery_test.go seeds API-only state). The author additionally reports a delayed-watch A/B against a real API server (PR body, section V) — not re-run by the reviewer. The ACK live cluster is not needed for this premise.",
+  "round1Sweep": "results/full-sweep-round1.txt"
+}

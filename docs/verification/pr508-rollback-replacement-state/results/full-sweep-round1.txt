@@ -1,0 +1,12 @@
+# Round 1 full sweep on PR head a1d164a9 (verify branch, harness included)
+date: 2026-10-22T03:15:21Z
+
+$ go test -mod=vendor -count=1 ./pkg/reconciler/roleinstanceset/statefulmode/... ./pkg/utils/expectations/... ./api/workloads/... ./internal/controller/workloads/...
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.113s
+ok  	sigs.k8s.io/rbgs/pkg/utils/expectations	0.003s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.011s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.126s
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	3.788s
+
+$ KUBEBUILDER_ASSETS=~/envtest-assets/k8s/1.31.0-linux-amd64 go test -mod=vendor -count=1 -timeout 10m ./test/envtest/testcase/stateful/...
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/stateful	35.964s
