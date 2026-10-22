@@ -132,3 +132,37 @@ round's outputs):
   → all green (`results/race-sweep-audit.out`).
 
 `.last-reviewed` stays at `a1d164a` (nothing to advance — delta empty).
+
+## Audit round 3 (2026-10-22, third re-attestation)
+
+Round mode `audit` again, same reason: the Codex cross-review timed out a
+second consecutive time (phase1-codex rc=124 at the extended 120m budget), so
+this round re-runs Reviewer A's evidence fresh on the still-unchanged head.
+Head `a1d164a` re-resolved via `git fetch sgl-project/rbg pull/508/head`;
+review delta remains empty (`a1d164a..a1d164a`).
+
+All evidence re-executed this round and captured under
+`results/reverify-audit3/` (the `re-verify.sh` exit trap restores the branch
+over `results/reverify/`, so round-3 raw outputs are persisted side-by-side
+instead of overwriting round-2's):
+
+- Premise P0 re-CONFIRMED on base `ecdfd6e6` via
+  `scripts/run-premise-base.sh` (PASS = #482 symptom reproduced: after the
+  simulated restart the surge is condemned while the replacement base is
+  unready). Output is time-invariant and byte-identical to
+  `results/premise-base.out`.
+- Unit layer re-run directly on the branch tree (= head + additive harness):
+  `go test -mod=vendor -count=1 -json -run 'TestClaude'` → C1–C5 all pass
+  (`results/reverify-audit3/unit.out`, 2026-10-22).
+- Integration layer re-run: stateful envtest against the real API server
+  (k8s 1.37.0), 36s, all specs pass; I1 and I2 confirmed in
+  `results/reverify-audit3/ginkgo-report.json` (StartTime 2026-10-22T18:30+08).
+- Race sweep on the head re-run:
+  `go test -mod=vendor -race -count=1 ./api/workloads/v1alpha2/...
+  ./pkg/reconciler/roleinstanceset/... ./internal/controller/workloads/...`
+  → all green (`results/race-sweep-audit3.out`).
+- `scripts/re-verify.sh` also re-run end-to-end (C1–C5, I1, I2 all FIXED,
+  exit 0).
+
+Findings F1–F4 unchanged and open; no new findings (head bit-identical to the
+initial-round review). `.last-reviewed` stays at `a1d164a`.
