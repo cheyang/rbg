@@ -1,0 +1,6 @@
+premise check against base ecdfd6e601de64adc0d0892c7ad05f75e85873a8
+=== RUN   TestClaudePremiseRestartLosesSurgeProtection
+--- PASS: TestClaudePremiseRestartLosesSurgeProtection (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.010s
+exit=0

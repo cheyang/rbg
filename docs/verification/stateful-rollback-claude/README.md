@@ -108,3 +108,27 @@ last-reviewed..head delta and advance .last-reviewed."
 - With an outdated CRD and `maxSurge > 0`, early-rollback replacement stalls
   with a Warning event until the CRD is upgraded (detected via a post-patch
   deep-equal check; see `PersistRolloutReplacementState`).
+
+## Audit round (2026-10-22) — re-attestation
+
+Round mode `audit`: the PR head is unchanged (`a1d164a`), base unchanged, empty
+review delta `a1d164a..a1d164a`; the round exists because the previous round's
+Codex cross-review timed out (phase1 rc=124), not because the code moved. No
+author commits, comments, or CI changes since the initial round (PR discussion
+re-checked via `gh` this round).
+
+All evidence below was **re-executed** this round (not copied from the initial
+round's outputs):
+
+- `scripts/run-premise-base.sh` → premise re-CONFIRMED on base `ecdfd6e6`
+  (`results/premise-base.out`, 2026-10-22).
+- `scripts/re-verify.sh` (no ref; auto-resolved PR head via
+  `git fetch ... pull/508/head`) → C1–C5, I1, I2 all FIXED/pass, exit 0
+  (`results/reverify/`, 2026-10-22; integration layer ran the real controller
+  against a real API server, 35s).
+- Full race sweep on the head:
+  `go test -mod=vendor -race -count=1 ./api/workloads/...
+  ./pkg/reconciler/roleinstanceset/... ./internal/controller/workloads/...`
+  → all green (`results/race-sweep-audit.out`).
+
+`.last-reviewed` stays at `a1d164a` (nothing to advance — delta empty).
