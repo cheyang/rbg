@@ -1,0 +1,3 @@
+ASSETS=/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/bin/k8s/1.31.0-linux-amd64
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/stateful	35.557s
+ENVTEST_EXIT=0

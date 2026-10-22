@@ -1,0 +1,5 @@
+--- FAIL: TestCodexP0RestartLosesReplacementSignal (0.00s)
+    zz_codex_premise_base_test.go:75: issue #482 reproduced: after a restart the replacement signal is lost; topology collapses to endOrdinal=1 activeSurge=0 inRollout=false, so the Ready surge at ordinal 1 falls out of range and is condemned while the replacement base is unready
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.011s
+FAIL

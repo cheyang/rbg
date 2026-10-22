@@ -1,0 +1,20 @@
+=== RUN   TestCodexRestartKeepsSurgeFromPersistedState
+--- PASS: TestCodexRestartKeepsSurgeFromPersistedState (0.00s)
+=== RUN   TestCodexSurgeReleasedAfterReplacementConverges
+--- PASS: TestCodexSurgeReleasedAfterReplacementConverges (0.00s)
+=== RUN   TestCodexTerminatingReplacementKeepsProtection
+--- PASS: TestCodexTerminatingReplacementKeepsProtection (0.00s)
+=== RUN   TestCodexPersistIntentPrecedesDelete
+I1022 18:52:31.015101  730749 stateful_instance_set_control.go:909] "Updating instance" instanceSet="default/codex-rollback" instance="default/codex-rollback-0" from="codex-rev-b" to="codex-rev-a" isSurge=false free=false
+I1022 18:52:31.015239  730749 stateful_instance_set_control.go:909] "Updating instance" instanceSet="default/codex-rollback" instance="default/codex-rollback-0" from="codex-rev-b" to="codex-rev-a" isSurge=false free=false
+--- PASS: TestCodexPersistIntentPrecedesDelete (0.00s)
+=== RUN   TestCodexRevisionChangeInvalidatesState
+--- PASS: TestCodexRevisionChangeInvalidatesState (0.00s)
+=== RUN   TestCodexScopeOverlapSemantics
+--- PASS: TestCodexScopeOverlapSemantics (0.00s)
+=== RUN   TestCodexTerminatingStaleBaseIsRecorded
+--- PASS: TestCodexTerminatingStaleBaseIsRecorded (0.00s)
+=== RUN   TestCodexExpectationGateSemantics
+--- PASS: TestCodexExpectationGateSemantics (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	1.053s
