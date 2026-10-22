@@ -1,0 +1,3 @@
+replaces a stably unhealthy rollout target through the controller requeue path	pass
+recovers early-rollback surge protection from persisted status	pass
+retains surge through a complete A to B to A rollback when partition decreases	pass
