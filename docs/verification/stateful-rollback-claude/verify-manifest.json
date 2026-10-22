@@ -1,0 +1,42 @@
+{
+  "topic": "stateful-rollback-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/508",
+  "baseSha": "ecdfd6e601de64adc0d0892c7ad05f75e85873a8",
+  "harnessPaths": [
+    "docs/verification/stateful-rollback-claude",
+    "pkg/reconciler/roleinstanceset/statefulmode/rollback_restart_claude_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #482: \"The current proposed recovery approach tracks that replacement-in-progress state in controller process memory (earlyRollbackReplacementUIDs). If the controller restarts after the stale base instance has disappeared but before the replacement is Ready, that state is lost. Topology then treats the rollout as complete, collapses endOrdinal to replicas, and the existing surge can be condemned and deleted while the replacement is still unavailable.\"",
+    "reportedComponent": "Stateful RoleInstanceSet controller (pkg/reconciler/roleinstanceset/statefulmode)",
+    "patchedComponent": "Same package + RoleInstanceSet status API (api/workloads/v1alpha2)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "results/premise-base.out: on base ecdfd6e6, with the in-memory signal present the surge stays in range (endOrdinal>=2); after simulating a controller restart (process-local signal map cleared, nothing persisted in status), computeTopologyForReconcile returns inRollout=false, endOrdinal=1, activeSurge=0 — the only ready instance is condemned while the replacement base is unready, violating maxUnavailable=0. Run via scripts/run-premise-base.sh (build tag rbg_premise_base, throwaway worktree of the base ref).",
+    "match": ["TestClaudePremiseRestartLosesSurgeProtection"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -mod=vendor -count=1 -json -run 'TestClaude' ./pkg/reconciler/roleinstanceset/statefulmode/"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=${KUBEBUILDER_ASSETS:-/home/ecs-user/envtest-assets/k8s/1.37.0-linux-amd64} go test -mod=vendor ./test/envtest/testcase/stateful/... -count=1 -timeout 15m -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    { "id": "C1", "polarity": "contract", "layer": "unit", "match": ["TestClaudeRestartSurgeProtectedByPersistedState"], "claim": "Post-restart, persisted status.rolloutReplacementState keeps the existing surge in the managed range while the replacement base is absent/unready." },
+    { "id": "C2", "polarity": "contract", "layer": "unit", "match": ["TestClaudeReadyReplacementReleasesSurge"], "claim": "Protection ends (and surplus surge is condemned) once every base in the recorded scope is Ready at the target revision with observed generation — no unbounded surge retention." },
+    { "id": "C3", "polarity": "contract", "layer": "unit", "match": ["TestClaudeRevisionChangeInvalidatesState"], "claim": "A persisted scope whose UpdateRevision no longer matches is invalidated, so stale state cannot wedge a later rollout." },
+    { "id": "C4", "polarity": "contract", "layer": "unit", "match": ["TestClaudeScaleDownOverlapRetainsFormerBaseAsSurge"], "claim": "Replica/partition changes restrict completion to the overlap between recorded scope and current update range; a healthy former base acts as retained surge until the remaining replacement converges." },
+    { "id": "C5", "polarity": "contract", "layer": "unit", "match": ["TestClaudePersistIntentPrecedesBaseDeletion"], "claim": "The control persists replacement intent BEFORE deleting the stale base instance (restart-safe ordering)." },
+    { "id": "I1", "polarity": "contract", "layer": "integration", "match": ["recovers early-rollback surge protection from persisted status"], "claim": "Envtest: recovery from persisted API state only (no process-local signal), including pause/resume and surge cleanup after the base becomes Ready." },
+    { "id": "I2", "polarity": "contract", "layer": "integration", "match": ["retains surge through a complete A to B to A rollback when partition decreases"], "claim": "Envtest: full A -> B -> A rollback with partition lowered mid-replacement retains the Ready surge until the replacement base is Ready." }
+  ],
+  "liveNote": "L3 (process-restart against a real cluster) was not run in this round; restart is simulated at L1 by reconstructing controller state and at L2 by seeding persisted API state only. If a live check is desired: restart the controller process (kill -TERM) after the stale base disappears and before the replacement is Ready, and verify the surge RoleInstance is not deleted until the replacement reports Ready."
+}
