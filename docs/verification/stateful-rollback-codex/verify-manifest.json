@@ -1,0 +1,44 @@
+{
+  "topic": "stateful-rollback-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/508",
+  "reviewer": "codex",
+  "baseSha": "ecdfd6e601de64adc0d0892c7ad05f75e85873a8",
+  "headSha": "a1d164a95d146bc209d73627f3a14cdb877b83d4",
+  "harnessPaths": [
+    "docs/verification/stateful-rollback-codex",
+    "pkg/reconciler/roleinstanceset/statefulmode/zz_codex_contracts_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "A controller restart after the stale base is deleted but before the replacement is Ready loses the process-local replacement signal; the rollout is treated as complete and the only Ready surge instance is condemned, violating maxUnavailable=0 (issue #482).",
+    "reportedComponent": "pkg/reconciler/roleinstanceset/statefulmode (stateful RoleInstanceSet controller)",
+    "patchedComponent": "pkg/reconciler/roleinstanceset/statefulmode + v1alpha2 CRD status schema",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "results/premise-base.out: TestCodexP0RestartLosesReplacementSignal FAILs on ecdfd6e6 with endOrdinal=1 activeSurge=0 after simulated restart (surge condemned while replacement unready).",
+    "match": ["TestCodexP0RestartLosesReplacementSignal"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -mod=vendor -race -count=1 -run 'TestCodex' -v ./pkg/reconciler/roleinstanceset/statefulmode/"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=$KUBEBUILDER_ASSETS go test -mod=vendor ./test/envtest/testcase/stateful -count=1 -timeout 10m"
+    }
+  },
+  "findings": [
+    { "id": "C1", "polarity": "contract", "layer": "unit", "match": ["TestCodexRestartKeepsSurgeFromPersistedState"] },
+    { "id": "C2", "polarity": "contract", "layer": "unit", "match": ["TestCodexSurgeReleasedAfterReplacementConverges", "TestCodexTerminatingReplacementKeepsProtection"] },
+    { "id": "C3", "polarity": "contract", "layer": "unit", "match": ["TestCodexPersistIntentPrecedesDelete"] },
+    { "id": "C4", "polarity": "contract", "layer": "unit", "match": ["TestCodexRevisionChangeInvalidatesState"] },
+    { "id": "C5", "polarity": "contract", "layer": "unit", "match": ["TestCodexScopeOverlapSemantics"] },
+    { "id": "C6", "polarity": "contract", "layer": "unit", "match": ["TestCodexTerminatingStaleBaseIsRecorded"] },
+    { "id": "C7", "polarity": "contract", "layer": "unit", "match": ["TestCodexExpectationGateSemantics"] },
+    { "id": "I1", "polarity": "contract", "layer": "integration", "match": ["TestStatefulRoleInstanceSetController"] }
+  ],
+  "liveNote": "L3 skipped per round instructions. For a live check: kill the controller mid-replacement (stale base gone, replacement unready) and confirm the Ready surge UID is unchanged until the replacement is Ready."
+}
