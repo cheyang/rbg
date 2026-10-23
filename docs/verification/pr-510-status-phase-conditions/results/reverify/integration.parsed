@@ -1,0 +1,2 @@
+contract: RBG reports Ready once the LWS controller reports the role available	fail
+control: an LWS that stamps condition observedGeneration reports Ready	skipped

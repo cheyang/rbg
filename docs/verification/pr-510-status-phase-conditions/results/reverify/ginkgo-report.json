@@ -1,0 +1,337 @@
+[
+  {
+    "SuitePath": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510",
+    "SuiteDescription": "PR510 LWS status verification suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": false,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 2,
+      "SpecsThatWillRun": 1
+    },
+    "StartTime": "2026-10-24T01:46:47.620332633+08:00",
+    "EndTime": "2026-10-24T01:47:37.805249811+08:00",
+    "RunTime": 50184917178,
+    "SuiteConfig": {
+      "RandomSeed": 1792777607,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": [
+        "contract: RBG reports Ready once the LWS controller reports the role available"
+      ],
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/suite_test.go",
+          "LineNumber": 83
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-24T01:46:47.620352974+08:00",
+        "EndTime": "2026-10-24T01:46:52.26810626+08:00",
+        "RunTime": 4647753276,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-24T01:46:47+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/config/crd/bases\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/home/ecs-user/go/pkg/mod/sigs.k8s.io/lws@v0.7.0/config/crd/bases\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"leaderworkerset.x-k8s.io_leaderworkersets.yaml\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-10-24T01:46:50+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"leaderworkersets.leaderworkerset.x-k8s.io\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"leaderworkerset.x-k8s.io/v1\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-24T01:46:51+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n2026-10-24T01:46:51+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-24T01:46:51+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleInstanceSet\"}\n2026-10-24T01:46:51+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1.StatefulSet\"}\n2026-10-24T01:46:51+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupScalingAdapter\"}\n2026-10-24T01:46:51+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1.LeaderWorkerSet\"}\n2026-10-24T01:46:51+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.CoordinatedPolicy\"}\n2026-10-24T01:46:51+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1.Service\"}\n2026-10-24T01:46:51+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1.Deployment\"}\n2026-10-24T01:46:51+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-24T01:46:52+08:00\tINFO\tStarting Controller\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-10-24T01:46:52+08:00\tINFO\tStarting workers\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"worker count\": 1}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/suite_test.go",
+              "LineNumber": 83
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-10-24T01:46:47.620361564+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/suite_test.go",
+              "LineNumber": 83
+            },
+            "TimelineLocation": {
+              "Offset": 7590,
+              "Order": 3,
+              "Time": "2026-10-24T01:46:52.26809335+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 4647731776,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR510 F1: RBG Ready with a LeaderWorkerSet role"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/lws_status_test.go",
+            "LineNumber": 64
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/lws_status_test.go",
+          "LineNumber": 76
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "contract: RBG reports Ready once the LWS controller reports the role available",
+        "State": "failed",
+        "StartTime": "2026-10-24T01:46:52.268158622+08:00",
+        "EndTime": "2026-10-24T01:47:37.782516552+08:00",
+        "RunTime": 45514357930,
+        "ParallelProcess": 1,
+        "Failure": {
+          "Message": "Timed out after 45.000s.\nThe function passed to Eventually failed at /home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/lws_status_test.go:98 with:\nRBG Ready must become True once LWS reports the role converged; phase=Running\nExpected\n    \u003cv1.ConditionStatus\u003e: False\nto equal\n    \u003cv1.ConditionStatus\u003e: True",
+          "Location": {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/lws_status_test.go",
+            "LineNumber": 100,
+            "FullStackTrace": "sigs.k8s.io/rbgs/test/envtest/testcase/verifylws510.init.func1.3()\n\t/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/lws_status_test.go:100 +0x494"
+          },
+          "TimelineLocation": {
+            "Offset": 20835,
+            "Order": 8,
+            "Time": "2026-10-24T01:47:37.781179104+08:00"
+          },
+          "FailureNodeContext": "leaf-node",
+          "FailureNodeType": "It",
+          "FailureNodeLocation": {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/lws_status_test.go",
+            "LineNumber": 76
+          },
+          "ProgressReport": {
+            "LeafNodeLocation": {},
+            "SpecStartTime": "0001-01-01T00:00:00Z",
+            "CurrentNodeLocation": {},
+            "CurrentNodeStartTime": "0001-01-01T00:00:00Z",
+            "CurrentStepLocation": {},
+            "CurrentStepStartTime": "0001-01-01T00:00:00Z",
+            "TimelineLocation": {
+              "Time": "0001-01-01T00:00:00Z"
+            }
+          }
+        },
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-24T01:46:52+08:00\tINFO\tenqueue: rbg create event\t{\"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}}\n2026-10-24T01:46:52+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"133275d7-f07d-4886-b512-9cb96b6a1750\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}}\n2026-10-24T01:46:52+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"133275d7-f07d-4886-b512-9cb96b6a1750\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"role\": \"role-1\"}\n2026-10-24T01:46:52+08:00\tINFO\tCurrent revision need to be updated\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"133275d7-f07d-4886-b512-9cb96b6a1750\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}}\n2026-10-24T01:46:52+08:00\tINFO\tCreate revision [lws-ready-74f4d987d9-1] successfully\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"133275d7-f07d-4886-b512-9cb96b6a1750\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}}\n2026-10-24T01:46:52+08:00\tDEBUG\tevents\tSuccessful create revision for RoleBasedGroup\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"verify-lws-hcdjz\",\"name\":\"lws-ready\",\"uid\":\"c6c3e8ea-04ee-404c-a25a-f181901f21d8\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"234\"}, \"reason\": \"SucceedCreateRevision\"}\n2026-10-24T01:46:52+08:00\tINFO\tInitialized discovery config mode\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"133275d7-f07d-4886-b512-9cb96b6a1750\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"mode\": \"refine\"}\n2026-10-24T01:46:52+08:00\tINFO\tenqueue: rbg update event\t{\"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}}\n2026-10-24T01:46:52+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"133275d7-f07d-4886-b512-9cb96b6a1750\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"patchObject\": {\"apiVersion\":\"v1\",\"data\":{\"config.yaml\":\"group:\\n  name: lws-ready\\n  roles:\\n  - role-1\\n  size: 1\\nroles:\\n  role-1:\\n    instances:\\n    - address: lws-ready-role-1-0.s-lws-ready-role-1\\n    - address: lws-ready-role-1-1.s-lws-ready-role-1\\n    size: 2\\n\"},\"kind\":\"ConfigMap\",\"metadata\":{\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"lws-ready\",\"uid\":\"c6c3e8ea-04ee-404c-a25a-f181901f21d8\"}]}}}\n2026-10-24T01:46:52+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"133275d7-f07d-4886-b512-9cb96b6a1750\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleBasedGroup\",\"metadata\":{\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"},\"status\":{\"conditions\":[{\"lastTransitionTime\":\"2026-10-23T17:46:52Z\",\"message\":\"Configuration accepted\",\"observedGeneration\":1,\"reason\":\"ValidSpec\",\"status\":\"True\",\"type\":\"Accepted\"},{\"lastTransitionTime\":\"2026-10-23T17:46:52Z\",\"message\":\"Creating\",\"observedGeneration\":1,\"reason\":\"Creating\",\"status\":\"False\",\"type\":\"Ready\"},{\"lastTransitionTime\":\"2026-10-23T17:46:52Z\",\"message\":\"Creating\",\"observedGeneration\":1,\"reason\":\"Creating\",\"status\":\"True\",\"type\":\"Progressing\"}],\"observedGeneration\":1,\"phase\":\"Creating\",\"roleStatuses\":[{\"name\":\"role-1\",\"readyReplicas\":0,\"replicas\":0,\"updatedReplicas\":0}]}}}\n2026-10-24T01:46:52+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"133275d7-f07d-4886-b512-9cb96b6a1750\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"roleOrder\": [[\"role-1\"]]}\n2026-10-24T01:46:52+08:00\tDEBUG\tstart to reconciling lws workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"133275d7-f07d-4886-b512-9cb96b6a1750\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"role\": \"role-1\"}\n2026-10-24T01:46:52+08:00\tDEBUG\truntime is nil, skip inject sidecar\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"133275d7-f07d-4886-b512-9cb96b6a1750\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"role\": \"role-1\"}\n2026-10-24T01:46:52+08:00\tINFO\tlws not equal, diff: old lws not exist\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"133275d7-f07d-4886-b512-9cb96b6a1750\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"role\": \"role-1\"}\n2026-10-24T01:46:52+08:00\tINFO\tlws hash not equal, old: , new: 589db4ff7d\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"133275d7-f07d-4886-b512-9cb96b6a1750\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"role\": \"role-1\"}\n2026-10-24T01:46:52+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"133275d7-f07d-4886-b512-9cb96b6a1750\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"role\": \"role-1\", \"patchObject\": {\"apiVersion\":\"leaderworkerset.x-k8s.io/v1\",\"kind\":\"LeaderWorkerSet\",\"metadata\":{\"annotations\":{\"rbg.workloads.x-k8s.io/role-size\":\"1\",\"rbg.workloads.x-k8s.io/role-workload-type\":\"leaderworkerset.x-k8s.io/v1/LeaderWorkerSet\"},\"labels\":{\"rbg.workloads.x-k8s.io/group-name\":\"lws-ready\",\"rbg.workloads.x-k8s.io/group-uid\":\"4659b5798a32d5e678c163c5fda72c08d470a6c9\",\"rbg.workloads.x-k8s.io/role-name\":\"role-1\",\"rbg.workloads.x-k8s.io/role-revision-role-1\":\"589db4ff7d\"},\"name\":\"lws-ready-role-1\",\"namespace\":\"verify-lws-hcdjz\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"lws-ready\",\"uid\":\"c6c3e8ea-04ee-404c-a25a-f181901f21d8\"}]},\"spec\":{\"leaderWorkerTemplate\":{\"leaderTemplate\":{\"metadata\":{\"labels\":{\"rbg.workloads.x-k8s.io/group-name\":\"lws-ready\",\"rbg.workloads.x-k8s.io/group-uid\":\"4659b5798a32d5e678c163c5fda72c08d470a6c9\",\"rbg.workloads.x-k8s.io/role-name\":\"role-1\",\"role\":\"leader\"}},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"RBG_GROUP_NAME\",\"value\":\"lws-ready\"},{\"name\":\"RBG_ROLE_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['apps.kubernetes.io/pod-index']\"}}},{\"name\":\"RBG_ROLE_NAME\",\"value\":\"role-1\"}],\"image\":\"registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest\",\"imagePullPolicy\":\"IfNotPresent\",\"name\":\"nginx\",\"resources\":{},\"volumeMounts\":[{\"mountPath\":\"/etc/rbg\",\"name\":\"rbg-cluster-config\",\"readOnly\":true}]}],\"volumes\":[{\"configMap\":{\"items\":[{\"key\":\"config.yaml\",\"path\":\"config.yaml\"}],\"name\":\"lws-ready\"},\"name\":\"rbg-cluster-config\"}]}},\"restartPolicy\":\"RecreateGroupOnPodRestart\",\"size\":2,\"workerTemplate\":{\"metadata\":{\"labels\":{\"rbg.workloads.x-k8s.io/group-name\":\"lws-ready\",\"rbg.workloads.x-k8s.io/group-uid\":\"4659b5798a32d5e678c163c5fda72c08d470a6c9\",\"rbg.workloads.x-k8s.io/role-name\":\"role-1\",\"role\":\"worker\"}},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"RBG_GROUP_NAME\",\"value\":\"lws-ready\"},{\"name\":\"RBG_ROLE_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['apps.kubernetes.io/pod-index']\"}}},{\"name\":\"RBG_ROLE_NAME\",\"value\":\"role-1\"}],\"image\":\"registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest\",\"imagePullPolicy\":\"IfNotPresent\",\"name\":\"nginx\",\"resources\":{},\"volumeMounts\":[{\"mountPath\":\"/etc/rbg\",\"name\":\"rbg-cluster-config\",\"readOnly\":true}]}],\"volumes\":[{\"configMap\":{\"items\":[{\"key\":\"config.yaml\",\"path\":\"config.yaml\"}],\"name\":\"lws-ready\"},\"name\":\"rbg-cluster-config\"}]}}},\"replicas\":1}}}\n2026-10-24T01:46:52+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"133275d7-f07d-4886-b512-9cb96b6a1750\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"duration\": \"425.563064ms\"}\n2026-10-24T01:46:52+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"5c59db6c-6713-4b1b-8731-02f8a2b98835\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}}\n2026-10-24T01:46:52+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"5c59db6c-6713-4b1b-8731-02f8a2b98835\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"role\": \"role-1\"}\n2026-10-24T01:46:52+08:00\tDEBUG\tevents\tReconcileSucceed\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"verify-lws-hcdjz\",\"name\":\"lws-ready\",\"uid\":\"c6c3e8ea-04ee-404c-a25a-f181901f21d8\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"237\"}, \"reason\": \"Succeed\"}\n2026-10-24T01:46:52+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"5c59db6c-6713-4b1b-8731-02f8a2b98835\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"patchObject\": {\"apiVersion\":\"v1\",\"data\":{\"config.yaml\":\"group:\\n  name: lws-ready\\n  roles:\\n  - role-1\\n  size: 1\\nroles:\\n  role-1:\\n    instances:\\n    - address: lws-ready-role-1-0.s-lws-ready-role-1\\n    - address: lws-ready-role-1-1.s-lws-ready-role-1\\n    size: 2\\n\"},\"kind\":\"ConfigMap\",\"metadata\":{\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"lws-ready\",\"uid\":\"c6c3e8ea-04ee-404c-a25a-f181901f21d8\"}]}}}\n2026-10-24T01:46:52+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"5c59db6c-6713-4b1b-8731-02f8a2b98835\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"roleOrder\": [[\"role-1\"]]}\n2026-10-24T01:46:52+08:00\tDEBUG\tstart to reconciling lws workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"5c59db6c-6713-4b1b-8731-02f8a2b98835\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"role\": \"role-1\"}\n2026-10-24T01:46:52+08:00\tDEBUG\truntime is nil, skip inject sidecar\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"5c59db6c-6713-4b1b-8731-02f8a2b98835\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"role\": \"role-1\"}\n2026-10-24T01:46:52+08:00\tINFO\tlws equal, skip reconcile\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"5c59db6c-6713-4b1b-8731-02f8a2b98835\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"role\": \"role-1\"}\n2026-10-24T01:46:52+08:00\tDEBUG\tenter workload.onUpdateFunc, verify-lws-hcdjz/lws-ready-role-1, type: *v1.LeaderWorkerSet\n2026-10-24T01:46:52+08:00\tINFO\tenqueue: workload update event\t{\"rbg\": {\"name\":\"lws-ready-role-1\",\"namespace\":\"verify-lws-hcdjz\"}, \"diff\": \"lws not equal, error: lws status not equal: status not equal\"}\n2026-10-24T01:46:52+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"5c59db6c-6713-4b1b-8731-02f8a2b98835\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"duration\": \"100.327092ms\"}\n2026-10-24T01:46:52+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"a8702e53-48ad-4c6d-ab18-55d95567deed\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}}\n2026-10-24T01:46:52+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"a8702e53-48ad-4c6d-ab18-55d95567deed\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"role\": \"role-1\"}\n2026-10-24T01:46:52+08:00\tDEBUG\tevents\tReconcileSucceed\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"verify-lws-hcdjz\",\"name\":\"lws-ready\",\"uid\":\"c6c3e8ea-04ee-404c-a25a-f181901f21d8\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"239\"}, \"reason\": \"Succeed\"}\n2026-10-24T01:46:52+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"a8702e53-48ad-4c6d-ab18-55d95567deed\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"patchObject\": {\"apiVersion\":\"v1\",\"data\":{\"config.yaml\":\"group:\\n  name: lws-ready\\n  roles:\\n  - role-1\\n  size: 1\\nroles:\\n  role-1:\\n    instances:\\n    - address: lws-ready-role-1-0.s-lws-ready-role-1\\n    - address: lws-ready-role-1-1.s-lws-ready-role-1\\n    size: 2\\n\"},\"kind\":\"ConfigMap\",\"metadata\":{\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"lws-ready\",\"uid\":\"c6c3e8ea-04ee-404c-a25a-f181901f21d8\"}]}}}\n2026-10-24T01:46:52+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"a8702e53-48ad-4c6d-ab18-55d95567deed\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleBasedGroup\",\"metadata\":{\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"},\"status\":{\"conditions\":[{\"lastTransitionTime\":\"2026-10-23T17:46:52Z\",\"message\":\"Configuration accepted\",\"observedGeneration\":1,\"reason\":\"ValidSpec\",\"status\":\"True\",\"type\":\"Accepted\"},{\"lastTransitionTime\":\"2026-10-23T17:46:52Z\",\"message\":\"WaitingForInstances\",\"observedGeneration\":1,\"reason\":\"WaitingForInstances\",\"status\":\"False\",\"type\":\"Ready\"},{\"lastTransitionTime\":\"2026-10-23T17:46:52Z\",\"message\":\"WaitingForInstances\",\"observedGeneration\":1,\"reason\":\"WaitingForInstances\",\"status\":\"True\",\"type\":\"Progressing\"}],\"observedGeneration\":1,\"phase\":\"Running\",\"roleStatuses\":[{\"name\":\"role-1\",\"readyReplicas\":1,\"replicas\":1,\"updatedReplicas\":1}]}}}\n2026-10-24T01:46:52+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"a8702e53-48ad-4c6d-ab18-55d95567deed\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"roleOrder\": [[\"role-1\"]]}\n2026-10-24T01:46:52+08:00\tDEBUG\tstart to reconciling lws workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"a8702e53-48ad-4c6d-ab18-55d95567deed\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"role\": \"role-1\"}\n2026-10-24T01:46:52+08:00\tDEBUG\truntime is nil, skip inject sidecar\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"a8702e53-48ad-4c6d-ab18-55d95567deed\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"role\": \"role-1\"}\n2026-10-24T01:46:52+08:00\tINFO\tlws equal, skip reconcile\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"a8702e53-48ad-4c6d-ab18-55d95567deed\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"role\": \"role-1\"}\n2026-10-24T01:46:52+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"namespace\": \"verify-lws-hcdjz\", \"name\": \"lws-ready\", \"reconcileID\": \"a8702e53-48ad-4c6d-ab18-55d95567deed\", \"rbg\": {\"name\":\"lws-ready\",\"namespace\":\"verify-lws-hcdjz\"}, \"duration\": \"100.693355ms\"}\n2026-10-24T01:46:52+08:00\tDEBUG\tevents\tReconcileSucceed\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"verify-lws-hcdjz\",\"name\":\"lws-ready\",\"uid\":\"c6c3e8ea-04ee-404c-a25a-f181901f21d8\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"239\"}, \"reason\": \"Succeed\"}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/lws_status_test.go",
+              "LineNumber": 67
+            },
+            "TimelineLocation": {
+              "Order": 4,
+              "Time": "2026-10-24T01:46:52.268161462+08:00"
+            },
+            "Message": "PR510 F1: RBG Ready with a LeaderWorkerSet role",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/lws_status_test.go",
+              "LineNumber": 67
+            },
+            "TimelineLocation": {
+              "Order": 6,
+              "Time": "2026-10-24T01:46:52.271111067+08:00"
+            },
+            "Message": "PR510 F1: RBG Ready with a LeaderWorkerSet role",
+            "Duration": 2949595,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/lws_status_test.go",
+              "LineNumber": 76
+            },
+            "TimelineLocation": {
+              "Order": 7,
+              "Time": "2026-10-24T01:46:52.271113097+08:00"
+            },
+            "Message": "contract: RBG reports Ready once the LWS controller reports the role available",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/lws_status_test.go",
+              "LineNumber": 76
+            },
+            "TimelineLocation": {
+              "Offset": 20835,
+              "Order": 9,
+              "Time": "2026-10-24T01:47:37.781186774+08:00"
+            },
+            "Message": "contract: RBG reports Ready once the LWS controller reports the role available",
+            "Duration": 45510073687,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/lws_status_test.go",
+              "LineNumber": 72
+            },
+            "TimelineLocation": {
+              "Offset": 20835,
+              "Order": 10,
+              "Time": "2026-10-24T01:47:37.781194724+08:00"
+            },
+            "Message": "PR510 F1: RBG Ready with a LeaderWorkerSet role",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/lws_status_test.go",
+              "LineNumber": 72
+            },
+            "TimelineLocation": {
+              "Offset": 20835,
+              "Order": 12,
+              "Time": "2026-10-24T01:47:37.782513031+08:00"
+            },
+            "Message": "PR510 F1: RBG Ready with a LeaderWorkerSet role",
+            "Duration": 1318307,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR510 F1: RBG Ready with a LeaderWorkerSet role"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/lws_status_test.go",
+            "LineNumber": 64
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/lws_status_test.go",
+          "LineNumber": 103
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "control: an LWS that stamps condition observedGeneration reports Ready",
+        "State": "skipped",
+        "StartTime": "2026-10-24T01:47:37.782614115+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/suite_test.go",
+          "LineNumber": 129
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-24T01:47:37.782618655+08:00",
+        "EndTime": "2026-10-24T01:47:37.805242231+08:00",
+        "RunTime": 22623586,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-24T01:47:37+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-10-24T01:47:37+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-10-24T01:47:37+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-10-24T01:47:37+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-10-24T01:47:37+08:00\tINFO\tAll workers finished\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-10-24T01:47:37+08:00\tINFO\tStopping and waiting for caches\n2026-10-24T01:47:37+08:00\tINFO\tStopping and waiting for webhooks\n2026-10-24T01:47:37+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-10-24T01:47:37+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/suite_test.go",
+              "LineNumber": 129
+            },
+            "TimelineLocation": {
+              "Order": 13,
+              "Time": "2026-10-24T01:47:37.782619615+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifylws510/suite_test.go",
+              "LineNumber": 129
+            },
+            "TimelineLocation": {
+              "Offset": 903,
+              "Order": 15,
+              "Time": "2026-10-24T01:47:37.805239201+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 22619586,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]
