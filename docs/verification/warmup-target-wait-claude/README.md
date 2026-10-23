@@ -122,3 +122,53 @@ non-zero until the timeout-bypass fix lands.
   `status.startTime` in that path.
 - Polarity table: all tests here are **contract** tests except N3, which asserts
   the *correct* behavior (fail on expired timeout) and is red while F6 is present.
+
+## Round 3 — head `b0915b21` ("settle mid-run empty targets correctly")
+
+The PR was rebased onto a new base `ecdfd6e6` and gained three commits
+(`e313d507` keep in-flight jobs non-terminal and arm the timeout safety net,
+`82ce44bc` extract phase transition from updateStatus, `b0915b21` settle mid-run
+empty targets correctly). The rebased round-2 content is `99d49326`.
+
+### Findings verdicts (differential: previous `99d49326` → head `b0915b21`)
+
+| ID | Test | 99d49326 (prev) | b0915b21 (head) | Verdict |
+|---|---|---|---|---|
+| F4a | `TestVerifyN1TargetDeletedMidRunWithActivePodStaysRunning` | **FAIL** (false `Completed/NoNodesMatched`, Active=1) | **PASS** | **FIXED** |
+| F4b | `TestVerifyN4AllTargetPodsUnscheduledMidRunWaitsAndWarmsReplacement` | **FAIL** (false completion; replacement node never warmed) | **PASS** | **FIXED** |
+| F5 | `TestVerifyN5OrphanActivePodOnDepartedNodeFailsOnGlobalTimeout` | **FAIL** (wedged `Running`, orphan kept, no requeue) | **PASS** (Failed/GlobalTimeoutExceeded, pod deleted) | **FIXED** |
+| F6 | `TestVerifyN3ExpiredTimeoutNotBypassedByStaleSucceededNode` | **FAIL** | **PASS** | **FIXED** |
+| F7 | N1 terminal stage (reason `WarmupCompleted`, preserved `startTime`) | wart observed | **PASS** | **FIXED** |
+| F8 | `TestGeneratedWarmupCRDDoesNotValidateContainerImages` (new item-schema assertion) | guard incomplete | **PASS** | **FIXED** |
+| F1/F2/F4-evidence | unchanged | PASS | PASS | still FIXED / refuted |
+
+- **Polarity note (harness update):** N1's round-2 assertion demanded a *terminal*
+  phase with an active Pod; the round-2 debate settled on the opposite contract
+  (stay `Running`, timeout armed — completing was the bug). N1 was rewritten to the
+  agreed contract, which is why it now *fails* on the round-2 head and passes on
+  `b0915b21`. N4/N5 are new repros for the round-2 F4b/F5 blockers/major.
+- **Base control (`ecdfd6e6`):** C1/C2 still red (premise problems 1/2 reproduce on
+  the new base). N1 red at base with `Failed/InvalidTarget` immediately (the
+  premise-1 one-shot failure), N4 red (premise-2 false completion), N5 red (the
+  base's startTime-anchored dual clock never expires with an unset startTime).
+- **Harness-bites check for F8:** re-adding the exact #466
+  `items.x-kubernetes-validations` rule to the generated CRD makes the guard fail
+  at both WarmupActions embedding paths (`rolebasedgroupwarmup_crd_test.go:135`);
+  clean head is green.
+- **Upstream sweep at head:** `go test ./internal/controller/workloads/
+  ./api/workloads/v1alpha2/ ./pkg/...` — 0 failures. `go build ./...` and
+  `go vet` clean. CRD `config/crd/bases` and `deploy/kubectl/manifests.yaml`
+  are structurally identical, and the #466 CEL message is absent from both.
+- **Integration layer:** P0c/P0d green on envtest k8s 1.31.0.
+- **CI on `b0915b21`:** all checks SUCCESS (queried via the GitHub API at round
+  start), including e2e suites; attribution unknown.
+- **Q2 residual (open, empirical):** a terminal `Completed` job after mid-run
+  target deletion carries `TargetReady=False/RoleBasedGroupNotFound` alongside
+  `Complete=True/WarmupCompleted` (probe run at head). Carried as an open
+  question, not a blocker.
+- **Q3 (round-2 open question) is now resolved by the PR:** the expected target
+  Pod count honors a bound ScalingAdapter's effective replicas
+  (`applyTargetScalingAdapterReplicas`, mirroring the RBG controller's in-memory
+  override, on a DeepCopy), with the author's
+  `TestReconcile_ScalingAdapterReplicasGateExpectedTargetPods` and RBAC verified
+  (`controller-role` grants `get` on `rolebasedgroupscalingadapters`).
