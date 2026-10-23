@@ -80,35 +80,52 @@ def section(text, start, end):
 KEP = {"text": "", "repo": "", "evidence": "", "body": ""}
 
 
-@check("F8", "canary", "reconcile-level validation needs new cluster-scoped reads; RBAC unaddressed (ledger F9)")
-def f8():
-    # STILL LIVE at head 99b991c: the KEP now needs even more permissions
-    # (ClusterNetworkTopology cluster-scoped CRUD, Node list/watch, HyperNode /
-    # KAI Topology create+delete, cross-namespace consumer checks, finalizers)
-    # and still has no RBAC section or ClusterRole listing.
-    kep = KEP["text"]
-    needs_objects = ("HyperNode" in kep and "ClusterNetworkTopology" in kep and "reconcile" in kep.lower())
-    mentions_rbac = ("RBAC" in kep or "ClusterRole" in kep or "role-based access" in kep.lower())
-    present = needs_objects and not mentions_rbac
-    return present, "topology objects validated at reconcile=%s; RBAC mentioned=%s" % (needs_objects, mentions_rbac)
+# ------------------------------------- round-4 fixed guards (flipped r4) ----
+# The round-3 canaries F8 (RBAC unaddressed, ledger F9) and F13 (unscoped
+# DNS-1123 role rule, ledger F7) flipped to DEFECT-ABSENT at head 9f682b0.
+# Per the verifier skill they are inverted into contracts asserting the fix.
 
 
-@check("F13", "canary", "DNS-1123 admission rule for 'Role names' is unscoped; RoleSpec.Name has no pattern today (ledger F7)")
-def f13():
-    # STILL LIVE at head 99b991c: the naming-safety rule reads "Role names and
-    # topology-bearing policy-rule names are validated at admission as DNS-1123
-    # labels". The policy-rule half is scoped to topology-bearing rules; the
-    # role half is not. RoleSpec.Name today carries only Required+MinLength=1,
-    # so a literal all-roles reading tightens the schema for existing objects.
-    # The KEP should scope it to roles bearing instanceTopologyConstraint.
+@check("LF9", "contract", "[fixed r4] the KEP enumerates the required RBAC matrix (ledger F9)")
+def lf9():
     kep = KEP["text"]
-    unqualified = ("Role names and topology-bearing policy-rule names" in kep)
+    intro = "The required RBAC surface is listed below" in kep
+    rows = {
+        "clusternetworktopologies verbs+status+finalizers":
+            "`topology.x-k8s.io/clusternetworktopologies` (cluster) | `get`, `list`, `watch`, `patch`, `update`" in kep
+            and "`/status`: `get`, `patch`, `update`" in kep,
+        "workload resources in managed namespaces":
+            "`workloads.x-k8s.io/rolebasedgroups`, `roleinstances`, `coordinatedpolicies`" in kep,
+        "scheduler PodGroups incl. finalizers":
+            "Scheduler PodGroups: `scheduling.volcano.sh`" in kep and "`/finalizers`: `update`" in kep,
+        "Managed native create/delete (hypernodes/topologies)":
+            "Managed `kai.scheduler/topologies` or `topology.volcano.sh/hypernodes` (cluster) | `get`, `list`, `watch`, `create`, `patch`, `update`, `delete`" in kep,
+        "Imported native read-only":
+            "Imported `kai.scheduler/topologies` or `scheduling.koordinator.sh/clusternetworktopologies` (cluster) | `get`, `list`, `watch` only" in kep,
+        "nodes + CRD read-only":
+            "Core `nodes`; `apiextensions.k8s.io/customresourcedefinitions` (cluster) | `get`, `list`, `watch`" in kep,
+        "cross-namespace retention visibility":
+            "Cross-namespace topology retention requires visibility into every namespace" in kep,
+    }
+    ok = intro and all(rows.values())
+    return ok, "intro=%s; " % intro + "; ".join("%s=%s" % (k, v) for k, v in rows.items())
+
+
+@check("LF7", "contract", "[fixed r4] the DNS-1123 rule is scoped to topology-bearing compiler sources (ledger F7)")
+def lf7():
+    kep = KEP["text"]
+    scoped = ("Topology-bearing policy-rule names and Role names used as sources by a topology-bearing compiled plan"
+              " must be DNS-1123 labels" in kep)
+    no_tightening = "adds no stricter naming admission to topology-free RBGs or gang-only policies" in kep
+    unqualified_gone = "Role names and topology-bearing policy-rule names are validated at admission" not in kep
+    # the codebase half of the round-3 finding: RoleSpec.Name still has no
+    # API-wide pattern, so only the scoped reading is compatible with it.
     types_src = read(os.path.join(KEP["repo"], "api", "workloads", "v1alpha2", "rolebasedgroup_types.go"))
     role_block = re.search(r"type RoleSpec struct.*?Name string `json:\"name\"`", types_src, re.S)
     no_pattern = bool(role_block) and "Pattern" not in role_block.group(0)
-    present = unqualified and no_pattern
-    return present, "KEP states unqualified 'Role names ... DNS-1123'=%s; RoleSpec.Name lacks a pattern marker=%s" % (
-        unqualified, no_pattern)
+    ok = scoped and no_tightening and unqualified_gone and no_pattern
+    return ok, "scoped sentence=%s; no-tightening sentence=%s; unqualified sentence gone=%s; RoleSpec.Name pattern-free=%s" % (
+        scoped, no_tightening, unqualified_gone, no_pattern)
 
 
 # --------------------------------------- fixed guards (inverted canaries) ---
@@ -305,6 +322,117 @@ def lf13():
         size, compute, threshold)
 
 
+# ------------------------------------- round-4 fixed guards (new fixes) -----
+# Head 9f682b0 closed the remaining round-3 open findings. Each guard below
+# pins the sentence(s) that constitute the fix so a later rewrite cannot
+# silently regress them.
+
+
+@check("LF8", "contract", "[fixed r4] rejected unselected late policies acquire no finalizer; deleting them resumes (ledger F8)")
+def lf8():
+    kep = KEP["text"]
+    no_finalizer = ("A rejected late policy that was never selected for acceptance acquires no "
+                    "`topology.x-k8s.io/policy` finalizer or topology consumer reservation" in kep)
+    resume = ("Removing that policy restores the previously accepted role-only or `none` declarations" in kep
+              and "does not require recreating the existing RBG" in kep)
+    new_lifecycle = "Applying the rejected topology does require a new RBG lifecycle" in kep
+    test = "Late-policy recovery: an unselected rejected policy acquires no topology finalizer" in kep
+    return no_finalizer and resume and new_lifecycle and test, \
+        "no finalizer/reservation=%s; delete-resumes=%s; new lifecycle for applying=%s; test item 34=%s" % (
+            no_finalizer, resume, new_lifecycle, test)
+
+
+@check("LF16", "contract", "[fixed r4] TopologyPolicyLate's message identifies which mismatch occurred (ledger F16)")
+def lf16():
+    kep = KEP["text"]
+    documented = ("`TopologyPolicyLate` also covers changed or removed accepted declarations, "
+                  "and its message must identify which mismatch occurred" in kep)
+    return documented, "reason semantics + message identification documented=%s" % documented
+
+
+@check("LF26", "contract", "[fixed r4] PR body describes the ClusterNetworkTopology design; stale legs gone (ledger F26)")
+def lf26():
+    body = KEP["body"]
+    kep = KEP["text"]
+    mentions = body.count("ClusterNetworkTopology") >= 1
+    stale = {
+        "TopologyResourceUnresolved": "TopologyResourceUnresolved" in body,
+        "selects the KAI Topology CR": "selects the KAI Topology CR" in body,
+        "controller default can be overridden": "default can be overridden" in body,
+    }
+    # the body's replacement bullets agree with the KEP's head statements
+    agrees = ("topologyName` references this RBG CR" in body
+              and "It is not a KAI/Volcano/Koordinator resource name" in kep
+              and "No default topology CR is created" in kep)
+    ok = mentions and not any(stale.values()) and agrees
+    return ok, "body mentions ClusterNetworkTopology=%s; stale legs present=%s; replacement bullets agree with KEP=%s" % (
+        mentions, [k for k, v in stale.items() if v], agrees)
+
+
+@check("LF27", "contract", "[fixed r4] the published branch's net diff is the two KEP files only (ledger F27)")
+def lf27():
+    repo = KEP["repo"]
+    mb = subprocess.run(["git", "merge-base", "origin/main", "HEAD"],
+                        cwd=repo, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    if mb.returncode != 0:
+        return False, "merge-base unavailable"
+    mb_sha = mb.stdout.decode().strip()
+    ls = subprocess.run(["git", "diff", "--name-only", mb_sha, "HEAD"],
+                        cwd=repo, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
+    if ls.returncode != 0:
+        return False, "git diff failed"
+    # the grafted reviewer harness (docs/verification/**) is not part of the
+    # published PR tree; everything else must be the two KEP files
+    changed = [f for f in ls.stdout.decode().split()
+               if not f.startswith("docs/verification/")]
+    allowed = {"keps/473-topology-aware-scheduling/README.md",
+               "keps/473-topology-aware-scheduling/kep.yaml"}
+    ok = set(changed) <= allowed
+    return ok, "net changed files outside the harness: %s" % (changed or "(none)")
+
+
+@check("LF28", "contract", "[fixed r4] topology create rejects known-but-unsupported schedulers incl. native kube-scheduler (ledger F28)")
+def lf28():
+    kep = KEP["text"]
+    rule = ("reject creation if the active scheduler is unknown or is not one of `KAI`, `Koordinator`, and `Volcano`, "
+            "including a recognized native kube-scheduler configuration" in kep)
+    no_enum = "do not add an enum value merely to persist a failed topology CR" in kep
+    test = ("unknown and known-but-unsupported schedulers (including native kube-scheduler) reject create "
+            "without expanding the enum" in kep)
+    return rule and no_enum and test, \
+        "create-rejection rule=%s; no-enum-persistence=%s; admission test item 1=%s" % (rule, no_enum, test)
+
+
+@check("LF29", "contract", "[fixed r4] HyperNode readable prefixes sanitize dots before truncation (ledger F29)")
+def lf29():
+    kep = KEP["text"]
+    sanitize = ("Compute `topology-prefix` by replacing every `.` in the DNS-subdomain topology name with `-`, "
+                "then taking the first 16 characters" in kep)
+    order = "do not truncate before sanitizing" in kep
+    hash_inputs = "sanitization/truncation never changes those hash inputs" in kep
+    boundary = "must not leave a dot at the truncation boundary" in kep
+    test = "dotted names (including `abcdefghijklmno.example.com` with a dot at the 16-character boundary)" in kep
+    return sanitize and order and hash_inputs and boundary and test, \
+        "sanitize-then-truncate=%s; order stated=%s; hash inputs stable=%s; boundary example=%s; test item 12 dotted=%s" % (
+            sanitize, order, hash_inputs, boundary, test)
+
+
+@check("LF30", "contract", "[fixed r4] legacy recordless RBGs bootstrap to none; pre-arrival policy is late (ledger F30)")
+def lf30():
+    kep = KEP["text"]
+    marker = "topology.x-k8s.io/contract-version: v1:<handover-uuid>" in kep
+    legacy_none = "persist a legacy `none` record for that UID" in kep
+    late = ("A topology-bearing policy already present before the new controller's first reconcile is late "
+            "relative to this legacy contract and reports `TopologyPolicyLate`" in kep)
+    blocked = "TopologyBootstrapBlocked" in kep
+    tests = ("Upgrade bootstrap: CREATE stamps the configured `v1:<handover-uuid>` marker" in kep
+             and "Legacy upgrade: seed old-controller workloads without an accepted record" in kep
+             and "Upgrade handover: run an old controller with existing RBGs" in kep)
+    return marker and legacy_none and late and blocked and tests, \
+        "CREATE marker=%s; legacy none bootstrap=%s; pre-arrival policy late=%s; TopologyBootstrapBlocked=%s; test items 33/24/19=%s" % (
+            marker, legacy_none, late, blocked, tests)
+
+
 # --------------------------------------------------------------- contracts ---
 
 @check("P0", "contract", "premise: base branch has no topology-aware scheduling")
@@ -480,12 +608,14 @@ def main():
     ap.add_argument("--repo", required=True)
     ap.add_argument("--evidence", default=os.path.join(here, "..", "results"))
     ap.add_argument("--kep", default=os.path.join("keps", "473-topology-aware-scheduling", "README.md"))
+    ap.add_argument("--body", default=None,
+                    help="override the PR-body fixture path (bites-check against an archived body)")
     args = ap.parse_args()
 
     KEP["repo"] = os.path.abspath(args.repo)
     KEP["evidence"] = os.path.abspath(args.evidence)
     KEP["text"] = read(os.path.join(KEP["repo"], args.kep))
-    body_path = os.path.join(KEP["evidence"], "pr-body.md")
+    body_path = args.body or os.path.join(KEP["evidence"], "pr-body.md")
     KEP["body"] = read(body_path) if os.path.exists(body_path) else ""
 
     failures = []

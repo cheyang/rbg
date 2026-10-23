@@ -113,14 +113,14 @@
       "ledgerId": "ledger-F14"
     },
     {
-      "id": "F8",
-      "polarity": "canary",
+      "id": "LF9",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
-        "F8"
+        "LF9"
       ],
-      "status": "open",
-      "ledgerId": "ledger-F9"
+      "status": "fixed",
+      "fixedGuard": true
     },
     {
       "id": "F9",
@@ -167,14 +167,14 @@
       "ledgerId": "ledger-F5"
     },
     {
-      "id": "F13",
-      "polarity": "canary",
+      "id": "LF7",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
-        "F13"
+        "LF7"
       ],
-      "status": "open",
-      "ledgerId": "ledger-F7"
+      "status": "fixed",
+      "fixedGuard": true
     },
     {
       "id": "C1",
@@ -386,6 +386,76 @@
       ],
       "status": "passing-fact",
       "note": "round-3 evidence contract over results/upstream/round3/ snapshots"
+    },
+    {
+      "id": "LF8",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF8"
+      ],
+      "status": "fixed",
+      "fixedGuard": true
+    },
+    {
+      "id": "LF16",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF16"
+      ],
+      "status": "fixed",
+      "fixedGuard": true
+    },
+    {
+      "id": "LF26",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF26"
+      ],
+      "status": "fixed",
+      "fixedGuard": true
+    },
+    {
+      "id": "LF27",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF27"
+      ],
+      "status": "fixed",
+      "fixedGuard": true
+    },
+    {
+      "id": "LF28",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF28"
+      ],
+      "status": "fixed",
+      "fixedGuard": true
+    },
+    {
+      "id": "LF29",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF29"
+      ],
+      "status": "fixed",
+      "fixedGuard": true
+    },
+    {
+      "id": "LF30",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "LF30"
+      ],
+      "status": "fixed",
+      "fixedGuard": true
     }
   ],
   "liveNote": "L3 skipped: PR is docs-only (a KEP) \u2014 no runtime footprint. Live coverage belongs to the implementation PRs that follow the KEP's phase plan.",
