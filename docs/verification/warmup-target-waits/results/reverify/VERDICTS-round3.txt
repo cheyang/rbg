@@ -1,0 +1,4 @@
+re-verify against PR head b0915b21 (round 3, base moved 35e5d029 -> ecdfd6e6):
+F1a FIXED / F1b FIXED / F2 FIXED / F3 FIXED / F4a FIXED / F4b FIXED / F5 FIXED / P0-3 FIXED (envtest 1.31.0)
+F9 (new, canary) STILL-PRESENT: collapsed-set settle bypasses maxFailedNodes tolerance (minor)
+Premise re-confirmed on new base ecdfd6e6: VERIFY_PREMISE_ON_BASE=1 both premise tests pass (bugs reproduce on base).
