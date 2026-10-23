@@ -1,0 +1,67 @@
+{
+  "topic": "pr509-v1alpha1-deprecation",
+  "pr": "https://github.com/sgl-project/rbg/pull/509",
+  "reviewer": "claude",
+  "harnessPaths": [
+    "docs/verification/pr509-v1alpha1-deprecation-claude",
+    "api/workloads/v1alpha1/deprecation_webhook_pr509_test.go",
+    "test/envtest/testcase/deprecation"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "PR body: v1alpha1 writes on 0.9.0 must return an Admission Warning, new deprecated workload uses must be rejected while --enable-deprecated-workload-types=true keeps existing deprecated roles reconcilable, and guidance for both migration tracks must exist.",
+    "reportedComponent": "admission path (v1alpha1 + v1alpha2 webhooks) + docs + chart",
+    "patchedComponent": "api/workloads/v1alpha1 deprecation webhook (new), api/workloads/v1alpha2 validators, cmd/rbgs wiring, config/webhook + chart manifests, doc/",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "code-path",
+    "verdict": "confirmed",
+    "evidence": "Base ecdfd6e has no warning code anywhere in api/workloads/v1alpha1 (the file is new in this PR) and its only deprecated-workload gate is the flag-off cutoff in rolebasedgroup_admission.go (if !EnableDeprecatedWorkloadTypes). v1alpha1 writes on base succeed with no warning and no compat gate; the migration guides do not exist on base. See results/unit-head.out for the on-head warning emission (log lines 'workloads.x-k8s.io/v1alpha1 is deprecated')."
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./api/workloads/v1alpha1/ -run 'TestPR509' -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$(ls -d $HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-* 2>/dev/null | head -1)}\" go test ./test/envtest/testcase/deprecation/ -timeout 10m -v -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "canary",
+      "layer": "integration",
+      "match": ["F1 canary: a legacy RoleBasedGroupSet cannot scale up in compat mode"]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestPR509F2ReadFailureRejectsGrandfatheredUpdate",
+        "TestPR509F2StaleCacheOverridesRequestOldObj"
+      ]
+    },
+    {
+      "id": "G1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestPR509GateCreateNewDeprecatedUseRejected"]
+    },
+    {
+      "id": "G2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "contract: admits an update of a grandfathered legacy child and set",
+        "contract: rejects a direct create of a legacy-workload role (the gate itself)",
+        "contract: v1alpha1 writes hit the deprecation webhook",
+        "control: scales a non-legacy RoleBasedGroupSet under live admission"
+      ]
+    }
+  ],
+  "liveNote": "L3 (skipped for this debate round per pipeline deviation #2): against a real cluster installed from deploy/helm with controller.deprecatedWorkloadTypes.enabled=true, scale a pre-existing RBGSet whose template role carries role-workload-type=apps/v1/StatefulSet from 1 to 2 replicas and watch for 'Failed to scale up ... new uses are not accepted' reconcile errors — the same signal captured in results/integration-head.out (24 occurrences)."
+}

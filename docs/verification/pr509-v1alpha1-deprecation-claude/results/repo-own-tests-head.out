@@ -1,0 +1,5 @@
+== PR's own tests (harness tests skipped) ==
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.010s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.102s
+== controller tests ==
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	(cached)

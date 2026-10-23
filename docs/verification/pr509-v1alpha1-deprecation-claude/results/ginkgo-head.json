@@ -1,0 +1,875 @@
+[
+  {
+    "SuitePath": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation",
+    "SuiteDescription": "v1alpha1 Deprecation Compat Gate Suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": true,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 5,
+      "SpecsThatWillRun": 5
+    },
+    "StartTime": "2026-10-23T22:36:05.812126418+08:00",
+    "EndTime": "2026-10-23T22:38:58.916628625+08:00",
+    "RunTime": 173104502207,
+    "SuiteConfig": {
+      "RandomSeed": 1792766165,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": null,
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/suite_test.go",
+          "LineNumber": 96
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-23T22:36:05.812153189+08:00",
+        "EndTime": "2026-10-23T22:36:09.351640369+08:00",
+        "RunTime": 3539487180,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-23T22:36:05+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\treading Webhooks from path\t{\"path\": \"/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/webhooks\"}\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\tread webhooks from file\t{\"file\": \"mutating.yaml\"}\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\tread webhooks from file\t{\"file\": \"validating.yaml\"}\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/config/crd/bases\"}\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-10-23T22:36:07+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-23T22:36:08+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-23T22:36:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n2026-10-23T22:36:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling mutating webhook\t{\"webhook\": \"mutating-webhook-configuration\"}\n2026-10-23T22:36:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling validating webhook\t{\"webhook\": \"validating-webhook-configuration\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/convert\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleInstanceSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroup\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroup\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupSet\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=InstanceSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instanceset\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instanceset\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=Instance\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instance\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instance\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupScalingAdapter\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupscalingadapter\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupscalingadapter\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=ClusterEngineRuntimeProfile\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-clusterengineruntimeprofile\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-clusterengineruntimeprofile\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.webhook\tStarting webhook server\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.certwatcher\tUpdated current TLS certificate\t{\"cert\": \"/tmp/envtest-serving-certs-1277927810/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-1277927810/tls.key\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.webhook\tServing webhook server\t{\"host\": \"127.0.0.1\", \"port\": 40473}\n2026-10-23T22:36:09+08:00\tINFO\tStarting EventSource\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-23T22:36:09+08:00\tINFO\tcontroller-runtime.certwatcher\tStarting certificate poll+watcher\t{\"cert\": \"/tmp/envtest-serving-certs-1277927810/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-1277927810/tls.key\", \"interval\": \"10s\"}\n2026-10-23T22:36:09+08:00\tINFO\tStarting EventSource\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupSet\"}\n2026-10-23T22:36:09+08:00\tINFO\tStarting Controller\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-10-23T22:36:09+08:00\tINFO\tStarting workers\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"worker count\": 1}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/suite_test.go",
+              "LineNumber": 96
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-10-23T22:36:05.812161279+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/suite_test.go",
+              "LineNumber": 103
+            },
+            "TimelineLocation": {
+              "Order": 2,
+              "Time": "2026-10-23T22:36:05.81219753+08:00"
+            },
+            "Message": "bootstrapping the webhook-enabled envtest environment"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/suite_test.go",
+              "LineNumber": 125
+            },
+            "TimelineLocation": {
+              "Offset": 5393,
+              "Order": 3,
+              "Time": "2026-10-23T22:36:09.1469444+08:00"
+            },
+            "Message": "setting up the manager with the production webhook set and the RBGSet controller"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/suite_test.go",
+              "LineNumber": 153
+            },
+            "TimelineLocation": {
+              "Offset": 10082,
+              "Order": 4,
+              "Time": "2026-10-23T22:36:09.147570702+08:00"
+            },
+            "Message": "waiting for the webhook server to serve and the cache to sync"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/suite_test.go",
+              "LineNumber": 96
+            },
+            "TimelineLocation": {
+              "Offset": 11510,
+              "Order": 6,
+              "Time": "2026-10-23T22:36:09.351638469+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 3539477190,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "0.9.0 deprecated workload compatibility gate"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+            "LineNumber": 52
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+          "LineNumber": 105
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "control: scales a non-legacy RoleBasedGroupSet under live admission",
+        "State": "passed",
+        "StartTime": "2026-10-23T22:36:09.351691711+08:00",
+        "EndTime": "2026-10-23T22:36:42.46860801+08:00",
+        "RunTime": 33116916289,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-23T22:36:11+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"9a864ad5-5dda-4212-9ab7-e8077f7ae2c0\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}}\n2026-10-23T22:36:11+08:00\tINFO\tScaling up RoleBasedGroups, 0 -\u003e 1\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"9a864ad5-5dda-4212-9ab7-e8077f7ae2c0\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"count\": 1}\n2026-10-23T22:36:11+08:00\tINFO\tSuccessfully created RoleBasedGroup\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"9a864ad5-5dda-4212-9ab7-e8077f7ae2c0\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"name\": \"ctl-set-0\"}\n2026-10-23T22:36:11+08:00\tINFO\tSuccessfully updated RoleBasedGroupSet status\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"9a864ad5-5dda-4212-9ab7-e8077f7ae2c0\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"replicas\": 0, \"readyReplicas\": 0}\n2026-10-23T22:36:11+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"9a864ad5-5dda-4212-9ab7-e8077f7ae2c0\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}}\n2026-10-23T22:36:11+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"3ced75c2-97e8-454a-acd4-532745f1603f\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}}\n2026-10-23T22:36:11+08:00\tINFO\tSuccessfully updated RoleBasedGroupSet status\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"3ced75c2-97e8-454a-acd4-532745f1603f\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"replicas\": 1, \"readyReplicas\": 0}\n2026-10-23T22:36:11+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"3ced75c2-97e8-454a-acd4-532745f1603f\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}}\n2026-10-23T22:36:11+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"6687f486-614a-4403-9c66-caa9c0256151\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}}\n2026-10-23T22:36:11+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"6687f486-614a-4403-9c66-caa9c0256151\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}}\n2026-10-23T22:36:11+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"77ff0bee-0cf5-4625-b9b1-6ca4e6732926\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}}\n2026-10-23T22:36:11+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"77ff0bee-0cf5-4625-b9b1-6ca4e6732926\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}}\n2026-10-23T22:36:11+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"51886444-afd0-416b-a18d-5ab87d90d032\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}}\n2026-10-23T22:36:11+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"51886444-afd0-416b-a18d-5ab87d90d032\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"count\": 1}\n2026-10-23T22:36:11+08:00\tINFO\tSuccessfully created RoleBasedGroup\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"51886444-afd0-416b-a18d-5ab87d90d032\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"name\": \"ctl-set-1\"}\n2026-10-23T22:36:11+08:00\tINFO\tSuccessfully updated RoleBasedGroupSet status\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"51886444-afd0-416b-a18d-5ab87d90d032\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"replicas\": 2, \"readyReplicas\": 0}\n2026-10-23T22:36:11+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"51886444-afd0-416b-a18d-5ab87d90d032\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}}\n2026-10-23T22:36:11+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"c4022433-cca8-444e-9e80-133b99e97343\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}}\n2026-10-23T22:36:11+08:00\tINFO\tSuccessfully updated RoleBasedGroupSet status\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"c4022433-cca8-444e-9e80-133b99e97343\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"replicas\": 2, \"readyReplicas\": 0}\n2026-10-23T22:36:11+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"c4022433-cca8-444e-9e80-133b99e97343\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}}\n2026-10-23T22:36:11+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"a72e779c-5302-4058-9f89-49287d2c7c78\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}}\n2026-10-23T22:36:11+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}, \"namespace\": \"pr509-1792766169351702611\", \"name\": \"ctl-set\", \"reconcileID\": \"a72e779c-5302-4058-9f89-49287d2c7c78\", \"rbgset\": {\"name\":\"ctl-set\",\"namespace\":\"pr509-1792766169351702611\"}}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 55
+            },
+            "TimelineLocation": {
+              "Order": 7,
+              "Time": "2026-10-23T22:36:09.351694961+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 55
+            },
+            "TimelineLocation": {
+              "Order": 9,
+              "Time": "2026-10-23T22:36:09.354809412+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "Duration": 3114451,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 105
+            },
+            "TimelineLocation": {
+              "Order": 10,
+              "Time": "2026-10-23T22:36:09.354811552+08:00"
+            },
+            "Message": "control: scales a non-legacy RoleBasedGroupSet under live admission",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 105
+            },
+            "TimelineLocation": {
+              "Offset": 10039,
+              "Order": 12,
+              "Time": "2026-10-23T22:36:12.371569249+08:00"
+            },
+            "Message": "control: scales a non-legacy RoleBasedGroupSet under live admission",
+            "Duration": 3016757697,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 60
+            },
+            "TimelineLocation": {
+              "Offset": 10039,
+              "Order": 13,
+              "Time": "2026-10-23T22:36:12.371576649+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 60
+            },
+            "TimelineLocation": {
+              "Offset": 10039,
+              "Order": 15,
+              "Time": "2026-10-23T22:36:42.46860072+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "Duration": 30097024071,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "0.9.0 deprecated workload compatibility gate"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+            "LineNumber": 52
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+          "LineNumber": 129
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "contract: admits an update of a grandfathered legacy child and set",
+        "State": "passed",
+        "StartTime": "2026-10-23T22:36:42.468649971+08:00",
+        "EndTime": "2026-10-23T22:37:13.082178525+08:00",
+        "RunTime": 30613528564,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-23T22:36:42+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"5d29c501-1d19-4621-b5bf-675155883c8c\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}}\n2026-10-23T22:36:42+08:00\tINFO\tScaling up RoleBasedGroups, 0 -\u003e 1\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"5d29c501-1d19-4621-b5bf-675155883c8c\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"count\": 1}\n2026-10-23T22:36:42+08:00\tINFO\tSuccessfully created RoleBasedGroup\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"5d29c501-1d19-4621-b5bf-675155883c8c\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"name\": \"gf-set-0\"}\n2026-10-23T22:36:42+08:00\tINFO\tSuccessfully updated RoleBasedGroupSet status\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"5d29c501-1d19-4621-b5bf-675155883c8c\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"replicas\": 1, \"readyReplicas\": 0}\n2026-10-23T22:36:42+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"5d29c501-1d19-4621-b5bf-675155883c8c\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}}\n2026-10-23T22:36:42+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"bbb748b2-2a41-445a-8d0f-a5429bee6684\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}}\n2026-10-23T22:36:42+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"bbb748b2-2a41-445a-8d0f-a5429bee6684\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}}\n2026-10-23T22:36:42+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"b2202bbe-c57d-4781-8c62-5806fe022278\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}}\n2026-10-23T22:36:42+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"b2202bbe-c57d-4781-8c62-5806fe022278\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}}\n2026-10-23T22:36:42+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"9535cce1-2c96-431c-b01d-15a099ad910f\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}}\n2026-10-23T22:36:42+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"9535cce1-2c96-431c-b01d-15a099ad910f\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}}\n2026-10-23T22:36:42+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"9919ec36-3e7d-4077-9c15-c2cbc61ed88a\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}}\n2026-10-23T22:36:42+08:00\tINFO\tUpdating existing RoleBasedGroups\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"9919ec36-3e7d-4077-9c15-c2cbc61ed88a\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"count\": 1}\n2026-10-23T22:36:42+08:00\tINFO\tSuccessfully updated RoleBasedGroup\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"9919ec36-3e7d-4077-9c15-c2cbc61ed88a\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"name\": \"gf-set-0\"}\n2026-10-23T22:36:42+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"9919ec36-3e7d-4077-9c15-c2cbc61ed88a\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}}\n2026-10-23T22:36:42+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"df197cf8-d87b-4975-a831-3cd25d47b9c2\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}}\n2026-10-23T22:36:42+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}, \"namespace\": \"pr509-1792766202468671112\", \"name\": \"gf-set\", \"reconcileID\": \"df197cf8-d87b-4975-a831-3cd25d47b9c2\", \"rbgset\": {\"name\":\"gf-set\",\"namespace\":\"pr509-1792766202468671112\"}}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 55
+            },
+            "TimelineLocation": {
+              "Order": 16,
+              "Time": "2026-10-23T22:36:42.468662152+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 55
+            },
+            "TimelineLocation": {
+              "Order": 18,
+              "Time": "2026-10-23T22:36:42.470973484+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "Duration": 2311342,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 129
+            },
+            "TimelineLocation": {
+              "Order": 19,
+              "Time": "2026-10-23T22:36:42.470975934+08:00"
+            },
+            "Message": "contract: admits an update of a grandfathered legacy child and set",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 139
+            },
+            "TimelineLocation": {
+              "Offset": 4054,
+              "Order": 20,
+              "Time": "2026-10-23T22:36:42.979521553+08:00"
+            },
+            "Message": "updating the legacy template in place — grandfathered, must be admitted"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 148
+            },
+            "TimelineLocation": {
+              "Offset": 4054,
+              "Order": 21,
+              "Time": "2026-10-23T22:36:42.984227951+08:00"
+            },
+            "Message": "updating the legacy child in place — grandfathered, must be admitted"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 129
+            },
+            "TimelineLocation": {
+              "Offset": 4933,
+              "Order": 23,
+              "Time": "2026-10-23T22:36:42.988535164+08:00"
+            },
+            "Message": "contract: admits an update of a grandfathered legacy child and set",
+            "Duration": 517559220,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 60
+            },
+            "TimelineLocation": {
+              "Offset": 4933,
+              "Order": 24,
+              "Time": "2026-10-23T22:36:42.988540535+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 60
+            },
+            "TimelineLocation": {
+              "Offset": 7615,
+              "Order": 26,
+              "Time": "2026-10-23T22:37:13.082171135+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "Duration": 30093630601,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "0.9.0 deprecated workload compatibility gate"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+            "LineNumber": 52
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+          "LineNumber": 161
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "contract: rejects a direct create of a legacy-workload role (the gate itself)",
+        "State": "passed",
+        "StartTime": "2026-10-23T22:37:13.082225957+08:00",
+        "EndTime": "2026-10-23T22:37:43.181748786+08:00",
+        "RunTime": 30099522839,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 55
+            },
+            "TimelineLocation": {
+              "Order": 27,
+              "Time": "2026-10-23T22:37:13.082228907+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 55
+            },
+            "TimelineLocation": {
+              "Order": 29,
+              "Time": "2026-10-23T22:37:13.084423495+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "Duration": 2194588,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 161
+            },
+            "TimelineLocation": {
+              "Order": 30,
+              "Time": "2026-10-23T22:37:13.084425075+08:00"
+            },
+            "Message": "contract: rejects a direct create of a legacy-workload role (the gate itself)",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 161
+            },
+            "TimelineLocation": {
+              "Order": 32,
+              "Time": "2026-10-23T22:37:13.087221825+08:00"
+            },
+            "Message": "contract: rejects a direct create of a legacy-workload role (the gate itself)",
+            "Duration": 2796750,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 60
+            },
+            "TimelineLocation": {
+              "Order": 33,
+              "Time": "2026-10-23T22:37:13.087224715+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 60
+            },
+            "TimelineLocation": {
+              "Order": 35,
+              "Time": "2026-10-23T22:37:43.181741295+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "Duration": 30094516580,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "0.9.0 deprecated workload compatibility gate"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+            "LineNumber": 52
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+          "LineNumber": 171
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "F1 canary: a legacy RoleBasedGroupSet cannot scale up in compat mode",
+        "State": "passed",
+        "StartTime": "2026-10-23T22:37:43.181775397+08:00",
+        "EndTime": "2026-10-23T22:38:28.791346798+08:00",
+        "RunTime": 45609571401,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-23T22:37:43+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"95d250c3-7d6e-4c10-b861-0afc2718571f\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:43+08:00\tINFO\tScaling up RoleBasedGroups, 0 -\u003e 1\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"95d250c3-7d6e-4c10-b861-0afc2718571f\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:37:43+08:00\tINFO\tSuccessfully created RoleBasedGroup\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"95d250c3-7d6e-4c10-b861-0afc2718571f\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"name\": \"legacy-set-0\"}\n2026-10-23T22:37:43+08:00\tINFO\tSuccessfully updated RoleBasedGroupSet status\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"95d250c3-7d6e-4c10-b861-0afc2718571f\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"replicas\": 1, \"readyReplicas\": 0}\n2026-10-23T22:37:43+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"95d250c3-7d6e-4c10-b861-0afc2718571f\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:43+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"3297fab7-449d-4beb-9f71-32ce27587767\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:43+08:00\tINFO\tSuccessfully reconciled rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"3297fab7-449d-4beb-9f71-32ce27587767\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:43+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"9ccb7c2a-69e1-4afb-9791-9e89096b9d5d\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:43+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"9ccb7c2a-69e1-4afb-9791-9e89096b9d5d\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:37:43+08:00\tERROR\tFailed to scale up\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"9ccb7c2a-69e1-4afb-9791-9e89096b9d5d\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:202\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:43+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"9ccb7c2a-69e1-4afb-9791-9e89096b9d5d\", \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:43+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"71abe777-1df6-4b47-aac5-25acf4edfa34\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:43+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"71abe777-1df6-4b47-aac5-25acf4edfa34\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:37:43+08:00\tERROR\tFailed to scale up\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"71abe777-1df6-4b47-aac5-25acf4edfa34\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:202\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:43+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"71abe777-1df6-4b47-aac5-25acf4edfa34\", \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:43+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"763bcdab-2261-4c97-8bda-e36811d0f55f\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:43+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"763bcdab-2261-4c97-8bda-e36811d0f55f\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:37:43+08:00\tERROR\tFailed to scale up\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"763bcdab-2261-4c97-8bda-e36811d0f55f\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:202\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:43+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"763bcdab-2261-4c97-8bda-e36811d0f55f\", \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:43+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"c4c2d1d9-4ab0-49bf-aa99-78107a612df8\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:43+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"c4c2d1d9-4ab0-49bf-aa99-78107a612df8\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:37:43+08:00\tERROR\tFailed to scale up\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"c4c2d1d9-4ab0-49bf-aa99-78107a612df8\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:202\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:43+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"c4c2d1d9-4ab0-49bf-aa99-78107a612df8\", \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:43+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"88a3b89c-ff2c-49f3-ae74-5b4851bf8491\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:43+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"88a3b89c-ff2c-49f3-ae74-5b4851bf8491\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:37:43+08:00\tERROR\tFailed to scale up\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"88a3b89c-ff2c-49f3-ae74-5b4851bf8491\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:202\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:43+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"88a3b89c-ff2c-49f3-ae74-5b4851bf8491\", \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:43+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"bd327369-123b-46b5-9c73-d748296a8790\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:43+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"bd327369-123b-46b5-9c73-d748296a8790\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:37:43+08:00\tERROR\tFailed to scale up\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"bd327369-123b-46b5-9c73-d748296a8790\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:202\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:43+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"bd327369-123b-46b5-9c73-d748296a8790\", \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:44+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"a5e2074a-2830-49b5-934c-43fc87717c5a\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:44+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"a5e2074a-2830-49b5-934c-43fc87717c5a\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:37:44+08:00\tERROR\tFailed to scale up\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"a5e2074a-2830-49b5-934c-43fc87717c5a\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:202\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:44+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"a5e2074a-2830-49b5-934c-43fc87717c5a\", \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:44+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"cf42b114-8cb7-4423-8fc1-75641974b818\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:44+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"cf42b114-8cb7-4423-8fc1-75641974b818\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:37:44+08:00\tERROR\tFailed to scale up\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"cf42b114-8cb7-4423-8fc1-75641974b818\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:202\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:44+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"cf42b114-8cb7-4423-8fc1-75641974b818\", \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:44+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"f83d5308-c403-4590-901f-ffd55e620adb\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:44+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"f83d5308-c403-4590-901f-ffd55e620adb\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:37:44+08:00\tERROR\tFailed to scale up\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"f83d5308-c403-4590-901f-ffd55e620adb\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:202\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:44+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"f83d5308-c403-4590-901f-ffd55e620adb\", \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:46+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"c584eade-0f87-4140-b9c1-f51076f0a41b\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:46+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"c584eade-0f87-4140-b9c1-f51076f0a41b\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:37:46+08:00\tERROR\tFailed to scale up\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"c584eade-0f87-4140-b9c1-f51076f0a41b\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:202\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:46+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"c584eade-0f87-4140-b9c1-f51076f0a41b\", \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:48+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"c61f7f1e-ba4d-4188-ae0d-638e4ca37607\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:48+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"c61f7f1e-ba4d-4188-ae0d-638e4ca37607\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:37:48+08:00\tERROR\tFailed to scale up\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"c61f7f1e-ba4d-4188-ae0d-638e4ca37607\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:202\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:48+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"c61f7f1e-ba4d-4188-ae0d-638e4ca37607\", \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:53+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"65d40307-b7ca-47b5-adda-382643e7f168\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:37:53+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"65d40307-b7ca-47b5-adda-382643e7f168\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:37:53+08:00\tERROR\tFailed to scale up\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"65d40307-b7ca-47b5-adda-382643e7f168\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:202\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:37:53+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"65d40307-b7ca-47b5-adda-382643e7f168\", \"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:38:04+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"b5b0df2d-a2eb-4611-bebf-f4a61d7519a5\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:38:04+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"b5b0df2d-a2eb-4611-bebf-f4a61d7519a5\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:38:04+08:00\tERROR\tFailed to scale up\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"b5b0df2d-a2eb-4611-bebf-f4a61d7519a5\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"error\": \"failed to create RoleBasedGroup legacy-set-1: rolebasedgroups.workloads.x-k8s.io \\\"legacy-set-1\\\" is forbidden: unable to create new content in namespace pr509-1792766263181787027 because it is being terminated\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: rolebasedgroups.workloads.x-k8s.io \\\"legacy-set-1\\\" is forbidden: unable to create new content in namespace pr509-1792766263181787027 because it is being terminated\"}]}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:202\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:38:04+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"b5b0df2d-a2eb-4611-bebf-f4a61d7519a5\", \"error\": \"failed to create RoleBasedGroup legacy-set-1: rolebasedgroups.workloads.x-k8s.io \\\"legacy-set-1\\\" is forbidden: unable to create new content in namespace pr509-1792766263181787027 because it is being terminated\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: rolebasedgroups.workloads.x-k8s.io \\\"legacy-set-1\\\" is forbidden: unable to create new content in namespace pr509-1792766263181787027 because it is being terminated\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:38:24+08:00\tINFO\tStart to reconcile rbgset\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"620a48d4-8b59-45c4-9b88-6797fdb676c5\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}}\n2026-10-23T22:38:24+08:00\tINFO\tScaling up RoleBasedGroups, 1 -\u003e 2\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"620a48d4-8b59-45c4-9b88-6797fdb676c5\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"count\": 1}\n2026-10-23T22:38:24+08:00\tERROR\tFailed to scale up\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"620a48d4-8b59-45c4-9b88-6797fdb676c5\", \"rbgset\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"error\": \"failed to create RoleBasedGroup legacy-set-1: rolebasedgroups.workloads.x-k8s.io \\\"legacy-set-1\\\" is forbidden: unable to create new content in namespace pr509-1792766263181787027 because it is being terminated\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: rolebasedgroups.workloads.x-k8s.io \\\"legacy-set-1\\\" is forbidden: unable to create new content in namespace pr509-1792766263181787027 because it is being terminated\"}]}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupSetReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/internal/controller/workloads/rolebasedgroupset_controller.go:202\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-23T22:38:24+08:00\tERROR\tReconciler error\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"RoleBasedGroupSet\": {\"name\":\"legacy-set\",\"namespace\":\"pr509-1792766263181787027\"}, \"namespace\": \"pr509-1792766263181787027\", \"name\": \"legacy-set\", \"reconcileID\": \"620a48d4-8b59-45c4-9b88-6797fdb676c5\", \"error\": \"failed to create RoleBasedGroup legacy-set-1: rolebasedgroups.workloads.x-k8s.io \\\"legacy-set-1\\\" is forbidden: unable to create new content in namespace pr509-1792766263181787027 because it is being terminated\", \"errorCauses\": [{\"error\": \"failed to create RoleBasedGroup legacy-set-1: rolebasedgroups.workloads.x-k8s.io \\\"legacy-set-1\\\" is forbidden: unable to create new content in namespace pr509-1792766263181787027 because it is being terminated\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 55
+            },
+            "TimelineLocation": {
+              "Order": 36,
+              "Time": "2026-10-23T22:37:43.181778297+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 55
+            },
+            "TimelineLocation": {
+              "Order": 38,
+              "Time": "2026-10-23T22:37:43.18383971+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "Duration": 2061403,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 171
+            },
+            "TimelineLocation": {
+              "Order": 39,
+              "Time": "2026-10-23T22:37:43.18384134+08:00"
+            },
+            "Message": "F1 canary: a legacy RoleBasedGroupSet cannot scale up in compat mode",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 181
+            },
+            "TimelineLocation": {
+              "Offset": 3263,
+              "Order": 40,
+              "Time": "2026-10-23T22:37:43.693608413+08:00"
+            },
+            "Message": "scaling the legacy set 1 -\u003e 2 (the set update itself is grandfathered)"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 186
+            },
+            "TimelineLocation": {
+              "Offset": 3263,
+              "Order": 41,
+              "Time": "2026-10-23T22:37:43.698483636+08:00"
+            },
+            "Message": "watching whether the controller manages to create child-1"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 171
+            },
+            "TimelineLocation": {
+              "Offset": 82463,
+              "Order": 43,
+              "Time": "2026-10-23T22:37:58.698648071+08:00"
+            },
+            "Message": "F1 canary: a legacy RoleBasedGroupSet cannot scale up in compat mode",
+            "Duration": 15514806741,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 60
+            },
+            "TimelineLocation": {
+              "Offset": 82463,
+              "Order": 44,
+              "Time": "2026-10-23T22:37:58.698657392+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 60
+            },
+            "TimelineLocation": {
+              "Offset": 91463,
+              "Order": 46,
+              "Time": "2026-10-23T22:38:28.791339247+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "Duration": 30092681845,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "0.9.0 deprecated workload compatibility gate"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+            "LineNumber": 52
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+          "LineNumber": 201
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "contract: v1alpha1 writes hit the deprecation webhook",
+        "State": "passed",
+        "StartTime": "2026-10-23T22:38:28.79142705+08:00",
+        "EndTime": "2026-10-23T22:38:58.895205962+08:00",
+        "RunTime": 30103778912,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-23T22:38:28+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n2026-10-23T22:38:28+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide\n2026-10-23T22:38:28+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n2026-10-23T22:38:28+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 55
+            },
+            "TimelineLocation": {
+              "Order": 47,
+              "Time": "2026-10-23T22:38:28.791430801+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 55
+            },
+            "TimelineLocation": {
+              "Order": 49,
+              "Time": "2026-10-23T22:38:28.793241715+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "Duration": 1810924,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 201
+            },
+            "TimelineLocation": {
+              "Order": 50,
+              "Time": "2026-10-23T22:38:28.793243455+08:00"
+            },
+            "Message": "contract: v1alpha1 writes hit the deprecation webhook",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 202
+            },
+            "TimelineLocation": {
+              "Order": 51,
+              "Time": "2026-10-23T22:38:28.793259516+08:00"
+            },
+            "Message": "admitting a v1alpha1 create that names RoleInstanceSet explicitly"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 209
+            },
+            "TimelineLocation": {
+              "Offset": 286,
+              "Order": 52,
+              "Time": "2026-10-23T22:38:28.796927866+08:00"
+            },
+            "Message": "rejecting a v1alpha1 create that names a deprecated workload type"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 201
+            },
+            "TimelineLocation": {
+              "Offset": 572,
+              "Order": 54,
+              "Time": "2026-10-23T22:38:28.799146296+08:00"
+            },
+            "Message": "contract: v1alpha1 writes hit the deprecation webhook",
+            "Duration": 5902831,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 60
+            },
+            "TimelineLocation": {
+              "Offset": 572,
+              "Order": 55,
+              "Time": "2026-10-23T22:38:28.799149876+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/compat_gate_test.go",
+              "LineNumber": 60
+            },
+            "TimelineLocation": {
+              "Offset": 572,
+              "Order": 57,
+              "Time": "2026-10-23T22:38:58.895198002+08:00"
+            },
+            "Message": "0.9.0 deprecated workload compatibility gate",
+            "Duration": 30096048126,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/suite_test.go",
+          "LineNumber": 171
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-23T22:38:58.895228933+08:00",
+        "EndTime": "2026-10-23T22:38:58.916620095+08:00",
+        "RunTime": 21391152,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-23T22:38:58+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-10-23T22:38:58+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-10-23T22:38:58+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-10-23T22:38:58+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-10-23T22:38:58+08:00\tINFO\tAll workers finished\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-10-23T22:38:58+08:00\tINFO\tStopping and waiting for caches\n2026-10-23T22:38:58+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-watching file\t{\"cert\": \"/tmp/envtest-serving-certs-1277927810/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-1277927810/tls.key\", \"error\": \"no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:235\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-23T22:38:58+08:00\tDEBUG\tcontroller-runtime.certwatcher\tcertificate event\t{\"cert\": \"/tmp/envtest-serving-certs-1277927810/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-1277927810/tls.key\", \"event\": \"CHMOD         \\\"/tmp/envtest-serving-certs-1277927810/tls.key\\\"\"}\n2026-10-23T22:38:58+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-reading certificate\t{\"cert\": \"/tmp/envtest-serving-certs-1277927810/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-1277927810/tls.key\", \"error\": \"open /tmp/envtest-serving-certs-1277927810/tls.crt: no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:243\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-23T22:38:58+08:00\tINFO\tStopping and waiting for webhooks\n2026-10-23T22:38:58+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-watching file\t{\"cert\": \"/tmp/envtest-serving-certs-1277927810/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-1277927810/tls.key\", \"error\": \"no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:235\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-23T22:38:58+08:00\tDEBUG\tcontroller-runtime.certwatcher\tcertificate event\t{\"cert\": \"/tmp/envtest-serving-certs-1277927810/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-1277927810/tls.key\", \"event\": \"REMOVE        \\\"/tmp/envtest-serving-certs-1277927810/tls.key\\\"\"}\n2026-10-23T22:38:58+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-reading certificate\t{\"cert\": \"/tmp/envtest-serving-certs-1277927810/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-1277927810/tls.key\", \"error\": \"open /tmp/envtest-serving-certs-1277927810/tls.crt: no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:243\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-23T22:38:58+08:00\tINFO\tcontroller-runtime.webhook\tShutting down webhook server with timeout of 1 minute\n2026-10-23T22:38:58+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-10-23T22:38:58+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/suite_test.go",
+              "LineNumber": 171
+            },
+            "TimelineLocation": {
+              "Order": 58,
+              "Time": "2026-10-23T22:38:58.895230513+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/suite_test.go",
+              "LineNumber": 173
+            },
+            "TimelineLocation": {
+              "Order": 59,
+              "Time": "2026-10-23T22:38:58.895255114+08:00"
+            },
+            "Message": "tearing down the envtest environment"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/deprecation/suite_test.go",
+              "LineNumber": 171
+            },
+            "TimelineLocation": {
+              "Offset": 4265,
+              "Order": 61,
+              "Time": "2026-10-23T22:38:58.916617975+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 21387461,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]
