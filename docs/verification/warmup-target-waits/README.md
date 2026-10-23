@@ -5,11 +5,13 @@ https://github.com/sgl-project/rbg/pull/478 (reviewer B / codex).
 
 - Round 1: head `9f61d4f7` — findings F1a/F1b (gate blocks terminal accounting), F2 (dual
   timeout clocks), F3 (untested timeout branch); premise P0 confirmed on base `35e5d029`.
-- Round 2 (this round): head `60b1b7cb` — delta `9f61d4f7..60b1b7cb` ("make target readiness
-  terminal-safe and deterministic"). F1/F2/F3 verified **fixed**; two new mid-run-churn
-  regressions found and confirmed: **F4** (false `Completed/NoNodesMatched` with in-flight
-  Pods) and **F5** (global timeout no longer bounds jobs with an active Pod on a non-desired
-  node).
+- Round 2: head `60b1b7cb` — delta `9f61d4f7..60b1b7cb`. F1/F2/F3 verified **fixed**; two new
+  mid-run-churn regressions found and confirmed: **F4** (false `Completed/NoNodesMatched`
+  with in-flight Pods) and **F5** (global timeout no longer bounds jobs with an active Pod on
+  a non-desired node).
+- Round 3 (this round): head `b0915b21` — delta `60b1b7cb..b0915b21` after a rebase onto
+  `ecdfd6e6`. F4a/F4b/F5/F6/F7/F8 verified **fixed**; one new minor semantics finding **F9**
+  (collapsed-set settle bypasses `maxFailedNodes` tolerance), pinned as a canary.
 
 Layers run against the code under review:
 
@@ -56,6 +58,29 @@ Layers run against the code under review:
 Raw output: `results/unit-round2-head-60b1b7cb.txt`, `results/unit-round2-previous-head-9f61d4f7.txt`,
 `results/unit-round2-base-35e5d029.txt`, `results/unit-round2-harness-bites.txt`,
 `results/reverify/` (re-verify.sh run).
+
+
+## Round 3 results (head `b0915b21`, delta `60b1b7cb..b0915b21`, base moved `35e5d029` -> `ecdfd6e6`)
+
+The PR was rebased onto `ecdfd6e6` (main gained #488 customized-action reporting;
+orthogonal to the wait/completion logic) and added three commits: `e313d507`
+(active-gating + terminal-gate accounting + scaling-adapter replicas + CRD guard),
+`82ce44bc` (extract `updateWarmupPhase`), `b0915b21` (collapsed-set settle semantics).
+
+| ID | Claim | Layer | previous head `60b1b7cb` | head `b0915b21` | Verdict |
+|----|-------|-------|--------------------------|------------------|---------|
+| F1a/F1b/F2/F3 | round-1 contracts (regression suite) | 1 | pass | **pass** | Still fixed |
+| F4a | Target deleted mid-run with active Pods must not complete | 1 | FAIL | **pass** | **Fixed** (`updateEmptyDesiredPhase` keeps `Running` while active; settles `Completed/WarmupCompleted` with a truthful reason once Pods are terminal) |
+| F4b | All target Pods unscheduled mid-run must not complete; replacement node must be warmed | 1 | FAIL | **pass** | **Fixed** (stays `Running` + 10 s poll while `pending>0 && desired==0`; PR test `TestReconcile_MidRunTargetGapWaitsAndWarmsReplacementNode` proves the replacement node is warmed) |
+| F5 | Expired global timeout must fire with an active Pod on a non-desired node | 1 | FAIL | **pass** | **Fixed** (`warmupReachedTerminalState` blocks on any active Pod; PR test `TestReconcile_ActivePodOutsideDesiredSetFailsOnGlobalTimeout` asserts the orphan Pod is deleted) |
+| F6 (Claude) | Stale terminal node on a dropped node must not bypass the expired timeout | 1 | FAIL | pass (code-verified: terminal accounting intersected with desired; PR test `TestReconcile_StaleTerminalNodeDoesNotBypassGlobalTimeout`) | **Fixed** |
+| F7 | `desired==0` completions must report a truthful reason and preserve `startTime` | 1 | FAIL | pass (code + PR test `TestReconcile_TargetDeletedAfterSuccessKeepsStartTimeAndReason`) | **Fixed** |
+| F8 | CRD guard must pin the container *item* schema | 1 | — | pass (`crd_test.go` now asserts `containers.Items.Schema.XValidations` is empty) | **Fixed** |
+| P0 premise | re-confirmed on the NEW base `ecdfd6e6` (base moved) | 1 | — | base: both premise bugs still reproduce (`VERIFY_PREMISE_ON_BASE=1`) | Confirmed |
+| P0-3 | CEL/status A/B on envtest 1.31.0 | 2 | pass | **pass** | Still green |
+| **F9** | Collapsed-set settle should honor `maxFailedNodes` tolerance | 1 | n/a (path did not exist) | **CANARY pinned**: within-tolerance job settles `Failed/InvalidTarget` when the target is deleted pre-settle | Open (minor — see findings) |
+
+Raw output: `results/reverify/` (round-3 run against `b0915b21`).
 
 ## Per-finding detail (round 2)
 
