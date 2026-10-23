@@ -1034,6 +1034,32 @@ func TestExternalDialect_KoordinatorBoundMembersUnsupported(t *testing.T) {
 		"Koordinator baseline network_topology_workflow.go (FIXME limitation)")
 }
 
+// Round-4: the new RBAC matrix and the Koordinator semantic-identity
+// paragraph name concrete upstream groups/resources/fields. Pin each.
+func TestExternalDialect_VolcanoHyperNodeGroup(t *testing.T) {
+	body := fetch(t, "https://raw.githubusercontent.com/volcano-sh/apis/master/pkg/apis/topology/v1alpha1/register.go")
+	assertContains(t, body, `GroupName = "topology.volcano.sh"`,
+		"Volcano HyperNode API group (RBAC matrix row)")
+}
+
+func TestExternalDialect_KAIPodGroupGroup(t *testing.T) {
+	body := fetch(t, "https://raw.githubusercontent.com/kai-scheduler/api/main/scheduling/v2alpha2/groupversion_info.go")
+	assertContains(t, body, `Group: "scheduling.run.ai"`,
+		"KAI PodGroup API group (RBAC matrix row)")
+}
+
+func TestExternalDialect_KoordinatorClusterNetworkTopologyGroup(t *testing.T) {
+	gv := fetch(t, "https://raw.githubusercontent.com/koordinator-sh/koordinator/master/apis/scheduling/v1alpha1/groupversion_info.go")
+	assertContains(t, gv, `Group: "scheduling.koordinator.sh"`,
+		"Koordinator ClusterNetworkTopology API group (RBAC matrix row)")
+	types := fetch(t, "https://raw.githubusercontent.com/koordinator-sh/koordinator/master/apis/scheduling/v1alpha1/cluster_network_topology_types.go")
+	// The semantic-identity fields the round-4 mapping freeze enumerates.
+	assertContains(t, types, `json:"networkTopologySpec"`, "Koordinator spec field")
+	assertContains(t, types, `json:"topologyLayer"`, "Koordinator layer field")
+	assertContains(t, types, `json:"parentTopologyLayer,omitempty"`, "Koordinator parent field")
+	assertContains(t, types, `json:"labelKey,omitempty"`, "Koordinator labelKey field")
+}
+
 // propertyBlock extracts the CRD schema block for one property name: from
 // "<indent><name>:" to the next line with the same or smaller indent.
 func propertyBlock(t *testing.T, yaml, name string) string {

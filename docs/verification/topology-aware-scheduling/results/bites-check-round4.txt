@@ -1,0 +1,3 @@
+old (truncate-before-sanitize): "r-abcdefghijklmno.-rack-65bc78b6aa30" validDNS1123Label=false
+new (sanitize-before-truncate): "r-abcdefghijklmno--rack-e366e05e327c" validDNS1123Label=true len=36
+new maximal inputs:           "r-aaaaaaaaaaaaaaaa-llllllllllllllll-fa332fddbd4f" validDNS1123Label=true len=48 (<=48 claimed)
