@@ -173,3 +173,49 @@ the tests key on exactly the delta's mechanism. Production diff empty afterwards
 Re-verify this round (results/reverify/): all carried contracts FIXED on 8c024b28;
 canaries F9 (budget-paced replicas-only under InPlaceUpdate) and F10 (body
 currentReplicas clause) STILL-PRESENT, i.e. the pinned behaviors are unchanged.
+
+## Round 5 — head 4a9043c3 (delta 8c024b28..4a9043c3)
+
+Three fix commits, all verified on this harness:
+
+- `6dd7de5f` carry v1alpha1 conversion intent through the rolling path —
+  **closes R4M1/F11 and F13**: `newRBGForSetRevision` materializes live
+  system-managed keys onto created children, an unbudgeted convergence loop in
+  `syncRollingGroupSet` repairs them on settled/partition-held children, and the
+  PodGroupPolicy stash is snapshotted onto its owning ControllerRevision
+  (removal gated on the previously owned snapshot). Also closes F15 (shared
+  constants everywhere) and the RBGSet half of C4242488155 (`copyAnnotations`
+  before any mutation in ConvertTo/ConvertFrom).
+- `51bf17bb` request/ack handshake — **answers C4273377135**: budgeted child
+  writes carry `rbg.workloads.x-k8s.io/rollout-request`; the child controller
+  acks via `status.observedRolloutRequest` only after every role workload has
+  rolled out (`AddGroupAnnotationsToRoleHashes` folds the pod-shaping group
+  annotations into role hashes so metadata-only changes still roll workloads).
+- `4a9043c3` Recreate replicas-only updates are now budget-paced (in place) —
+  the F9 Recreate canary **flipped as intended**; both scale-only tests are now
+  contracts. NOTE: the PR body's "scaling stays immediate" / "Recreate …
+  applied in place immediately, bypassing the budget" clauses are now stale
+  (tracked under F10), and the new annotation/status field are undocumented
+  there.
+
+Harness updates (additive): the simulated child controllers now echo the
+rollout-request acknowledgement (unit + envtest sims); without that the new
+budget gate wedges every paced rollout — a harness-model gap, not a product
+defect: the author's own envtest runs the real RBG reconciler and acks
+naturally (rbgs_rolling suite green, 212s).
+
+New contracts (rolebasedgroupset_round5_verify_test.go, all green on 4a9043c3):
+
+| id | test | claim |
+|----|------|-------|
+| R5ACK | TestVerify_RolloutAck_MetadataOnlyTemplateChangePaced | metadata-only template change is paced one child per ack window; with the ack frozen the budget holds forever (no further writes); unfreeze converges with UIDs preserved |
+| R5PGP | TestVerify_ConversionAnnotation_PodGroupPolicyRollingLifecycle | policy stash: create propagation, in-place value convergence (unversioned), gated removal, no resurrection, steady-state quiet |
+| R5PGP | TestVerify_ConversionAnnotation_PodGroupPolicyHeldOrdinalKeepsSnapshot | a partition-held ordinal keeps the policy its pinned revision owns while the in-scope ordinal rolls to the new revision+policy |
+
+Bites (results/harness-bites-round5.txt): neutering `requestGroupSetChildRollout`
+turns R5ACK RED; neutering the revision snapshot/template re-attach turns the
+R5PGP lifecycle RED; production tree restored byte-identical after both.
+
+Re-verify (results/reverify/): every carried contract FIXED on 4a9043c3 —
+F1, F3, G1-G9 (unit+integration), F9 (promoted), R4FIX, R4M1, R5ACK, R5PGP.
+F10 canary STILL-PRESENT (doc drift unchanged).
