@@ -1,0 +1,54 @@
+=== Round 4 differential: new conversion-annotation tests ===
+--- HEAD 8c024b28 (current PR head) ---
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+--- FAIL: TestVerifyPR474_Rolling_CoordinationChangePropagatesToChildren (0.04s)
+--- PASS: TestVerifyPR474_RevisionHash_IgnoresConversionAnnotations (0.00s)
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+--- PASS: TestVerifyPR474_Canary_LegacyRevisionLabelRerolledOnce (0.00s)
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:12:10+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+--- FAIL: TestVerifyPR474_Rolling_PreservesChildConversionStash (0.01s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.068s
+FAIL
+
+--- PREVIOUS HEAD 98720938 (round-3 reviewed head) ---
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+--- PASS: TestVerifyPR474_Rolling_CoordinationChangePropagatesToChildren (0.05s)
+--- FAIL: TestVerifyPR474_RevisionHash_IgnoresConversionAnnotations (0.00s)
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+--- FAIL: TestVerifyPR474_Canary_LegacyRevisionLabelRerolledOnce (0.00s)
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:12:12+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+--- FAIL: TestVerifyPR474_Rolling_PreservesChildConversionStash (0.01s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.070s
+FAIL

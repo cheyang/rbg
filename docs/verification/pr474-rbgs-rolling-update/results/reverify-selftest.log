@@ -1,0 +1,59 @@
+== unit layer ==
+=== RUN   TestVerifyPR474_Premise_StaticPathUpdatesAllChildrenAtOnce
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"premise","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Updating existing RoleBasedGroups	{"rbgset": {"name":"premise","namespace":"default"}, "count": 3}
+2026-10-09T02:51:50+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-0"}
+2026-10-09T02:51:50+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-1"}
+2026-10-09T02:51:50+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-2"}
+2026-10-09T02:51:50+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"premise","namespace":"default"}, "replicas": 3, "readyReplicas": 3}
+2026-10-09T02:51:50+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"premise","namespace":"default"}}
+--- PASS: TestVerifyPR474_Premise_StaticPathUpdatesAllChildrenAtOnce (0.04s)
+=== RUN   TestVerifyPR474_Rollout_PacedRecreate
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"paced","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"paced","namespace":"default"}}
+--- PASS: TestVerifyPR474_Rollout_PacedRecreate (0.00s)
+=== RUN   TestVerifyPR474_Rollout_ConvergesUnderBudget
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+--- PASS: TestVerifyPR474_Rollout_ConvergesUnderBudget (0.02s)
+=== RUN   TestVerifyPR474_Rollout_MigrationNoRecreate
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+--- PASS: TestVerifyPR474_Rollout_MigrationNoRecreate (0.00s)
+=== RUN   TestVerifyPR474_StaticPathWipesChildRoleTemplates
+2026-10-09T02:51:50+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"wipe","namespace":"default"}}
+2026-10-09T02:51:50+08:00	INFO	Updating existing RoleBasedGroups	{"rbgset": {"name":"wipe","namespace":"default"}, "count": 1}
+2026-10-09T02:51:50+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"wipe","namespace":"default"}, "name": "wipe-0"}
+2026-10-09T02:51:50+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"wipe","namespace":"default"}, "replicas": 1, "readyReplicas": 1}
+2026-10-09T02:51:50+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"wipe","namespace":"default"}}
+--- PASS: TestVerifyPR474_StaticPathWipesChildRoleTemplates (0.00s)
+=== RUN   TestVerifyPR474_Resolver_PercentZeroBecomesOne
+--- PASS: TestVerifyPR474_Resolver_PercentZeroBecomesOne (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.074s
+=== RUN   TestVerifyPR474_Webhook_ZeroBudgetIsSpellingSensitive
+--- PASS: TestVerifyPR474_Webhook_ZeroBudgetIsSpellingSensitive (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.009s
+== integration layer (envtest) ==
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	23.116s
+
+== verdicts ==
+--- PASS: TestVerifyPR474_Premise_StaticPathUpdatesAllChildrenAtOnce (0.04s)
+--- PASS: TestVerifyPR474_Rollout_PacedRecreate (0.00s)
+--- PASS: TestVerifyPR474_Rollout_ConvergesUnderBudget (0.02s)
+--- PASS: TestVerifyPR474_Rollout_MigrationNoRecreate (0.00s)
+--- PASS: TestVerifyPR474_StaticPathWipesChildRoleTemplates (0.00s)
+--- PASS: TestVerifyPR474_Resolver_PercentZeroBecomesOne (0.00s)
+--- PASS: TestVerifyPR474_Webhook_ZeroBudgetIsSpellingSensitive (0.00s)

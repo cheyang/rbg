@@ -1,0 +1,19 @@
+=== Round 4 harness-bites check (8c024b28) ===
+Proposed fixes are applied to the production code, the affected tests
+must go GREEN, then the fixes are reverted and the tests must be RED
+again, and 'git status' must show no production diff.
+
+--- Step 1: apply fix for F11 (creation propagation + metadata drift sync) ---
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.055s
+
+--- Step 2: additionally add v1alpha1-pod-group-policy to systemManagedAnnotationKeys (fix for F13) ---
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.060s
+
+--- Step 3: revert everything; tests must be RED again, production diff empty ---
+?? api/workloads/v1alpha1/rolebasedgroupset_conversion_verify_test.go
+?? api/workloads/v1alpha2/rolebasedgroupset_rollout_verify_test.go
+?? internal/controller/workloads/rolebasedgroupset_convann_verify_test.go
+?? internal/controller/workloads/rolebasedgroupset_verify_test.go
+?? test/envtest/testcase/rbg/rbgs_rolling_verify_test.go
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.062s
+FAIL

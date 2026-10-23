@@ -1,0 +1,14 @@
+# Premise (P0) — BASE branch 0821cb5b, 2026-10-08T18:48:13Z
+# go test ./internal/controller/workloads/ -run TestVerifyPR474_Premise -count=1 -v
+=== RUN   TestVerifyPR474_Premise_StaticPathUpdatesAllChildrenAtOnce
+2026-10-09T02:48:14+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"premise","namespace":"default"}}
+2026-10-09T02:48:14+08:00	INFO	Updating existing RoleBasedGroups	{"rbgset": {"name":"premise","namespace":"default"}, "count": 3}
+2026-10-09T02:48:14+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-1"}
+2026-10-09T02:48:14+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-2"}
+2026-10-09T02:48:14+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-0"}
+2026-10-09T02:48:14+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"premise","namespace":"default"}, "replicas": 3, "readyReplicas": 0}
+2026-10-09T02:48:14+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"premise","namespace":"default"}}
+--- PASS: TestVerifyPR474_Premise_StaticPathUpdatesAllChildrenAtOnce (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.049s
+EXIT:0

@@ -1,0 +1,101 @@
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+--- FAIL: TestVerifyPR474_Rolling_CoordinationChangePropagatesToChildren (0.04s)
+    rolebasedgroupset_convann_verify_test.go:173: 
+        	Error Trace:	/tmp/r474-head-test/internal/controller/workloads/rolebasedgroupset_convann_verify_test.go:173
+        	Error:      	Not equal: 
+        	            	expected: "[{\"name\":\"coord-a\",\"roles\":[\"worker\"]}]"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-[{"name":"coord-a","roles":["worker"]}]
+        	            	+
+        	Test:       	TestVerifyPR474_Rolling_CoordinationChangePropagatesToChildren
+        	Messages:   	children must carry the v1alpha1 coordination stash from creation
+    rolebasedgroupset_convann_verify_test.go:194: 
+        	Error Trace:	/tmp/r474-head-test/internal/controller/workloads/rolebasedgroupset_convann_verify_test.go:194
+        	Error:      	Not equal: 
+        	            	expected: "[{\"name\":\"coord-b\",\"roles\":[\"worker\"]}]"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-[{"name":"coord-b","roles":["worker"]}]
+        	            	+
+        	Test:       	TestVerifyPR474_Rolling_CoordinationChangePropagatesToChildren
+        	Messages:   	a CoordinationRequirements change through v1alpha1 must reach existing children
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+--- FAIL: TestVerifyPR474_Rolling_PreservesChildConversionStash (0.01s)
+    rolebasedgroupset_convann_verify_test.go:306: 
+        	Error Trace:	/tmp/r474-head-test/internal/controller/workloads/rolebasedgroupset_convann_verify_test.go:306
+        	Error:      	Not equal: 
+        	            	expected: "{\"kubeScheduling\":{\"scheduleTimeoutSeconds\":60}}"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-{"kubeScheduling":{"scheduleTimeoutSeconds":60}}
+        	            	+
+        	Test:       	TestVerifyPR474_Rolling_PreservesChildConversionStash
+        	Messages:   	the pod-group-policy stash is the same conversion-machinery class and must survive too
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"premise","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Updating existing RoleBasedGroups	{"rbgset": {"name":"premise","namespace":"default"}, "count": 3}
+2026-10-15T02:06:58+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-1"}
+2026-10-15T02:06:58+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-2"}
+2026-10-15T02:06:58+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-0"}
+2026-10-15T02:06:58+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"premise","namespace":"default"}, "replicas": 3, "readyReplicas": 3}
+2026-10-15T02:06:58+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"premise","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"paced","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"paced","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"wipe","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Updating existing RoleBasedGroups	{"rbgset": {"name":"wipe","namespace":"default"}, "count": 1}
+2026-10-15T02:06:58+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"wipe","namespace":"default"}, "name": "wipe-0"}
+2026-10-15T02:06:58+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"wipe","namespace":"default"}, "replicas": 1, "readyReplicas": 1}
+2026-10-15T02:06:58+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"wipe","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-10-15T02:06:58+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.100s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.013s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.011s
+FAIL
