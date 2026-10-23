@@ -1,1 +1,1 @@
-453:  annotation (`rbg.workloads.x-k8s.io/groupset-observed-replicas`) on the RBGSet
+565:  annotation (`rbg.workloads.x-k8s.io/groupset-observed-replicas`) on the RBGSet

@@ -1,0 +1,6 @@
+== Bite F: request-gate sentences removed ==
+  [If a rollout request exists, its value must match] hits=0 (0 => check FAILS = bites)
+  [never bypasses a pending request|cannot bypass an issued request] hits=0 (0 => check FAILS = bites)
+  [exclude the child from .readyReplicas] hits=0 (0 => check FAILS = bites)
+  [receives a new request rather than reusing] hits=1 (0 => check FAILS = bites)
+  R2-F9 disjunction: remedyA=0 remedyB=0 (sum 0 < 1 => EXPECTED-FAIL returns)

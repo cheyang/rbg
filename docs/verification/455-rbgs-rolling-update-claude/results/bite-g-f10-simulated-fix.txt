@@ -1,0 +1,3 @@
+== Bite G: simulated F10 hardening line (re-issue on stripped request) ==
+  F10 pattern hits=1 (>=1 => check flips green)
+  head text hits=0 (0 => F10 open at head)

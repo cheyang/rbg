@@ -155,32 +155,130 @@ EXPECT_GREP="Downgrading"
 check R2-Q2-downgrade-stance "KEP states the operator-downgrade stance (Q2 fix)" \
   bash -c 'git show origin/pr/491:keps/455-rbgs-rolling-update/README.md | grep -n "Downgrading"'
 
-# R2-F9 (NEW finding, contract, EXPECTED-FAIL reproduction at head): the
-# barrier design treats an absent condition as ready for ALL children,
-# including children the set has already spec-bumped in the current rollout
-# whose RBG controller has not yet reconciled (post-upgrade bootstrap window).
-# The fix is one sentence restricting absence-acceptance to children not yet
-# touched by the current rollout. FAIL here is the reproduction, not a harness
-# error — it does not gate the overall result.
-r2f9=$(git show origin/pr/491:keps/455-rbgs-rolling-update/README.md \
+# R2-F9 / N1 (round-2 major: the barrier's absent-condition exception was not
+# generation-gated, so a spec-bumped child could count as ready on stale
+# conditions). Round 3 fixed it with a different — stronger — remedy than the
+# round-2 exemplar clause: a persistent rollout-request/acknowledgement
+# protocol. The round-2 grep was remedy-shaped and missed it (disclosed
+# harness note in the round-2 manifest), so the check is updated to a
+# disjunction: EITHER remedy closes the window. Harness-update, not a fix
+# claim by itself — the R3-N1* checks below pin the actual mechanism.
+r2f9_remedy_a=$(git show origin/pr/491:keps/455-rbgs-rolling-update/README.md \
   | tr '\n' ' ' | grep -oiE "absen(t|ce)[^.]{0,300}\." \
   | grep -icE "current rollout|already updated|not yet updated|until the condition|must present" || true)
-echo "$r2f9" > "$OUT/R2-F9-bootstrap-window.txt"
-if [ "${r2f9:-0}" -ge 1 ]; then
-  echo "PASS R2-F9-bootstrap-window — KEP restricts absent-as-ready (F9 fixed)"
+r2f9_remedy_b=$(git show origin/pr/491:keps/455-rbgs-rolling-update/README.md \
+  | grep -icE "never bypasses a pending request|cannot bypass an issued request" || true)
+echo "remedyA=$r2f9_remedy_a remedyB=$r2f9_remedy_b" > "$OUT/R2-F9-bootstrap-window.txt"
+if [ "$(( ${r2f9_remedy_a:-0} + ${r2f9_remedy_b:-0} ))" -ge 1 ]; then
+  echo "PASS R2-F9-bootstrap-window — the absent-as-ready window is closed by a stated remedy (N1 fixed)"
 else
-  echo "EXPECTED-FAIL R2-F9-bootstrap-window — absent-as-ready is unrestricted in the KEP text (F9 open; reproduction at results/R2-F9-bootstrap-window.txt)"
+  echo "EXPECTED-FAIL R2-F9-bootstrap-window — absent-as-ready is unrestricted in the KEP text (N1 open)"
 fi
 
-# Residual open nits (round 1, not addressed by the amendment) — recorded,
-# non-gating: F8 vocabulary collision cross-ref, O1 KEP-template sections,
-# M1 wording catches, C4238820879 lowercase rbg.
+# ---- Round 3 (2026-10-23, head f711893c) -------------------------------
+# The amendment rewrote the Child Rollout Barrier around a persistent
+# request/acknowledgement protocol. These checks pin the N1 fix mechanism
+# (R3-N1*) and the new design surface's code-fact claims (R3-*).
+
+# R3-N1a: the consumer demands request/acknowledgement equality.
+EXPECT_GREP="must match"
+check R3-N1a-consumer-request-gate "groupSetChildReady requires request==acknowledgement (N1 fix)" \
+  bash -c 'git show origin/pr/491:keps/455-rbgs-rolling-update/README.md | grep -n "If a rollout request exists, its value must match"'
+
+# R3-N1b: the request is written atomically with the spec/metadata/label —
+# this is what closes the post-bump observation window.
+EXPECT_GREP="same resource-version"
+check R3-N1b-request-atomic-write "request advances in the same Update as spec+metadata+revision label" \
+  bash -c 'git show origin/pr/491:keps/455-rbgs-rolling-update/README.md | grep -n "same resource-version"'
+
+# R3-N1c: a missing condition cannot release an issued request (the old
+# absent-condition exception is subordinated to the request gate).
+EXPECT_GREP="issued request"
+check R3-N1c-absent-cannot-bypass "missing condition never bypasses a pending request" \
+  bash -c 'git show origin/pr/491:keps/455-rbgs-rolling-update/README.md | grep -nE "never bypasses a pending request|cannot bypass an issued request"'
+
+# R3-N1d: the risk row justifies the barrier via the request protocol.
+EXPECT_GREP="Persist a new request"
+check R3-N1d-risk-row-request "risk row: persist request, hold budget until acknowledgement" \
+  bash -c 'git show origin/pr/491:keps/455-rbgs-rolling-update/README.md | grep -n "Persist a new request with the child update"'
+
+# R3-N1e: restart/leader-handover safety — both values live on the object.
+EXPECT_GREP="persist on the child object"
+check R3-N1e-restart-persistence "request+ack persist across controller restart" \
+  bash -c 'git show origin/pr/491:keps/455-rbgs-rolling-update/README.md | grep -n "persist on the child object"'
+
+# R3-N1f: the fail-open exhibit (silent completion) is precluded: pending
+# requests exclude the child from readyReplicas/updatedReadyReplicas.
+EXPECT_GREP="exclude the child"
+check R3-N1f-pending-excludes-ready "pending request excludes child from readyReplicas" \
+  bash -c 'git show origin/pr/491:keps/455-rbgs-rolling-update/README.md | grep -n "exclude the child from .readyReplicas"'
+
+# R3-N1g: A->B->A gets a fresh counter (no stale-ack reuse).
+EXPECT_GREP="new request rather than reusing"
+check R3-N1g-aba-fresh-request "A->B->A receives a new request, not an old acknowledgement" \
+  bash -c 'git show origin/pr/491:keps/455-rbgs-rolling-update/README.md | grep -n "receives a new request rather than reusing an old acknowledgement"'
+
+# R3-N1h: the bootstrap test-plan entry asserts the corrected behavior.
+EXPECT_GREP="never-requested legacy child"
+check R3-N1h-bootstrap-test-entry "bootstrap test entry: fallback only for never-requested children" \
+  bash -c 'git show origin/pr/491:keps/455-rbgs-rolling-update/README.md | grep -n "never-requested legacy child retains"'
+
+# R3-F3b: the exclusion list grew to 6 system keys (adds rollout-request and
+# v1alpha1-pod-group-policy) and still governs hash + drift + sync-preserve.
+EXPECT_GREP="ok"
+check R3-F3b-key-enumeration-6 "KEP enumerates 6 system keys for hash+drift+sync (round-3 refinement)" \
+  bash -c 'KEP_SHOW() { git show origin/pr/491:keps/455-rbgs-rolling-update/README.md; }; K=$(KEP_SHOW); for k in "rbg.workloads.x-k8s.io/discovery-config-mode" "rbg.workloads.x-k8s.io/rollout-request" "conversion.workloads.x-k8s.io/v1alpha1-coordination" "conversion.workloads.x-k8s.io/v1alpha1-pod-group-policy" "conversion.workloads.x-k8s.io/v1alpha2-rollout-strategy" "conversion.workloads.x-k8s.io/v1alpha2-rollout-status"; do echo "$K" | grep -qF "$k" || { echo "missing: $k"; exit 1; }; done; echo ok'
+
+# R3-C1: the KEP's "shared SSA serializer" maps to real code (the status
+# acknowledgement rides the existing apply-configuration patch machinery).
+EXPECT_GREP="func PatchObjectApplyConfiguration"
+check R3-C1-ssa-serializer-exists "shared SSA serializer exists (pkg/utils PatchObjectApplyConfiguration)" \
+  bash -c 'grep -n "func PatchObjectApplyConfiguration" pkg/utils/utils.go; grep -n "client.Apply" pkg/utils/utils.go | head -2'
+
+# R3-C2: the two Pod-shaping group annotations the role-hash design folds in
+# exist as constants.
+EXPECT_GREP="GroupExclusiveTopologyKey"
+check R3-C2-podshaping-keys-exist "group-exclusive-topology / group-gang-scheduling keys exist in code" \
+  bash -c 'grep -n "GroupExclusiveTopologyKey = \|GangSchedulingAnnotationKey = " api/workloads/constants/annotation.go'
+
+# R3-C3: per-role FNV-32a hashing exists (the design composes with it).
+EXPECT_GREP="fnv.New32a()"
+check R3-C3-rolehash-fnv "role revision hashing uses FNV-32a today" \
+  grep -n "fnv.New32a()" pkg/utils/revision_utils.go
+
+# R3-F10 (NEW round-3 finding, minor, doc-gap contract, expected-FAIL while
+# open): a replace-style full-object write on a child RBG can strip the live
+# rollout-request annotation, and the set keeps no independent record of the
+# requests it issued (the key is excluded from drift comparison, so a stripped
+# request is never re-issued). A stripped pending request reopens exactly the
+# N1 window: stale Ready + no request -> legacy fallback -> budget released
+# while the child's workloads are still rolling. Same hazard class as the
+# round-2 F5 checkpoint nit (replace-writes stripping live annotations).
+# One hardening sentence in the KEP (e.g. how the implementation detects or
+# re-issues a lost request) flips this check green.
+r3f10=$(git show origin/pr/491:keps/455-rbgs-rolling-update/README.md \
+  | grep -icE "strip[sed]?[^.]{0,200}rollout-request|rollout-request[^.]{0,200}strip[sed]?|re-?issue[sd]?[^.]{0,120}request|lost[^.]{0,120}request" || true)
+echo "$r3f10" > "$OUT/R3-F10-request-strip-fallback.txt"
+if [ "${r3f10:-0}" -ge 1 ]; then
+  echo "PASS R3-F10-request-strip-fallback — KEP states a fallback/re-issue for a stripped request (F10 fixed)"
+else
+  echo "EXPECTED-FAIL R3-F10-request-strip-fallback — no stated fallback for a replace-write stripping the rollout-request annotation (F10 open, minor)"
+fi
+
+# Residual open nits (rounds 1-3, not addressed or partially addressed) —
+# recorded, non-gating: F8 vocabulary collision cross-ref, O1 KEP-template
+# sections, M1 wording catches, C4238820879 lowercase rbg, F10 strip hazard.
 echo "-- residual-open (informational, non-gating) --"
 git show origin/pr/491:keps/455-rbgs-rolling-update/README.md > "$OUT/kep-head-snapshot.txt"
 grep -c "Graduation Criteria\|Release Signoff" "$OUT/kep-head-snapshot.txt" | sed 's/^/O1-template-sections: /'
 grep -n "old template, not the current one" "$OUT/kep-head-snapshot.txt" | sed 's/^/M1-terminology: /'
-grep -nE "\brbg\b" "$OUT/kep-head-snapshot.txt" | sed 's/^/C4238820879-lowercase-rbg: /' | head -3
+grep -n "a higher ordinal is not released" "$OUT/kep-head-snapshot.txt" | sed 's/^/M1-in-place-ordering-wording: /'
+grep -nE "no old-version rbg can be reconstructed" "$OUT/kep-head-snapshot.txt" | sed 's/^/C4238820879-lowercase-rbg: /'
 grep -icE "role-level (Recreate|update strategy|vocabulary)" "$OUT/kep-head-snapshot.txt" | sed 's/^/F8-cross-reference: /'
+# Q3 (round-3 question): compatibility-annotation convergence is ungated while
+# coordination data can drive role-replica application (code fact below).
+grep -n "independently of revision changes and rollout budgets" "$OUT/kep-head-snapshot.txt" | sed 's/^/Q3-ungated-convergence: /'
+grep -n "coordination scaling target replicas" internal/controller/workloads/rolebasedgroup_controller.go | sed 's/^/Q3-code-fact-coordination-drives-replicas: /'
 
 # P0-net: the linked issue is still open (network; recorded, not gating).
 gh issue view 455 --repo sgl-project/rbg --json state,title -t '{{.state}} {{.title}}' \

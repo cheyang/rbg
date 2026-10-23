@@ -1,0 +1,2 @@
+357:		hf := fnv.New32a()
+445:	hf := fnv.New32a()

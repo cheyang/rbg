@@ -1,1 +1,1 @@
-0
+remedyA=0 remedyB=2

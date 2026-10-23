@@ -1,4 +1,1 @@
-288:### Child Rollout Barrier
-297:**Producer.** During status construction the RBG controller checks every role's
-307:**Ordering invariant.** The status — and therefore the barrier — is written during
-314:**Consumer.** `groupSetChildReady` treats a child as ready only when the
+323:### Child Rollout Barrier

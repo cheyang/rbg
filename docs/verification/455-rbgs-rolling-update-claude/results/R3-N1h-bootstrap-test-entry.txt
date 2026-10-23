@@ -1,0 +1,1 @@
+503:- Bootstrap barrier semantics: a never-requested legacy child retains the

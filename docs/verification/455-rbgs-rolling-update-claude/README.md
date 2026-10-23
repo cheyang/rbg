@@ -75,3 +75,35 @@ When the KEP's implementation lands, graft this harness onto the new head (`git 
 - `TestVerify491P0PropagationGap`, `E2`–`E6`, `E1` are **contract checks pinning base facts**: they keep passing while those facts hold. `TestVerify491P0` flips red the moment `roleTemplates` propagation lands — then invert it into the fixed-behavior contract.
 - `TestVerify491E4ControllerOwnedAnnotationWipe` is a **bug-canary**: it passes while the annotation wipe exists. When propagation preserves controller-owned keys, it flips red — invert the three assertions (drift=false, annotation survives, convergence without deletion) and promote it to a contract test.
 - E3c was a **text canary** in round 1 (passed while the KEP was silent on the scale subresource). The round-2 amendment covered it, the canary flipped (as predicted), and it has been **inverted into a contract check** (`E3c-kep-addresses-scale`) pinning the F2 fix.
+
+## Round 3 (2026-10-23, head `f711893c`) — observed vs expected
+
+Single KEP-only commit (`kep: clarify child rollout acknowledgement and replica-change budgets`, +193/−81 in README.md; kep.yaml untouched; headings/TOC unchanged; code at head still byte-identical to merge-base `0821cb5b` outside `keps/`). Base movement since round 2 (`fd84f3b3` → `a0b11e6a`, PRs #497/#487/#501/#504/#506/#505/#500/#508) touches set-controller orphan adoption/UID filtering (#500) and RBG scaling-adapter ownership (#487/#497) — **no KEP-referenced code fact changed**; all E-checks and R2-* guards re-run green at head. Issue #455 still **OPEN**.
+
+The amendment rewrites the Child Rollout Barrier around a persistent **request/acknowledgement protocol** and answers the round-2 major (N1, filed by Claude as F9):
+
+| ID | Round-3 check | Observed | Verdict |
+|----|---------------|----------|---------|
+| N1 / F9 (absent-condition exception not generation-gated — round-2 major) | `R3-N1a`…`R3-N1h` + updated `R2-F9` (disjunction) | The set now writes `rbg.workloads.x-k8s.io/rollout-request` (per-child decimal counter) **in the same resource-version-protected Update** as the spec/metadata/revision label; the RBG controller acknowledges via `status.observedRolloutRequest` only after applying workloads and re-verifying every role; `groupSetChildReady` demands request==ack; pending requests exclude the child from `readyReplicas`/`updatedReadyReplicas`; a missing condition can never bypass an issued request; both values persist on the object (restart-safe); A→B→A gets a fresh counter. This is **stronger than the round-2 exemplar clause**: it also closes the metadata-only window (a child write that does not bump `metadata.generation`), which a generation gate alone would *not* have covered — the amendment's own opening paragraph identifies that case | **fixed** (design-level; mechanism pinned by 8 contract checks, all PASS; bite F proves they bite) |
+| New design surface: role hashes fold Pod-shaping annotations | `R3-C2`, `R3-C3` | `group-exclusive-topology` / `group-gang-scheduling` constants exist (`api/workloads/constants/annotation.go:25,43`); per-role FNV-32a hashing exists (`pkg/utils/revision_utils.go`) — the "fold in two Pod-shaping annotations" design composes with real machinery | **consistent** with code |
+| New design surface: "shared SSA serializer" | `R3-C1` | `utils.PatchObjectApplyConfiguration` (pkg/utils/utils.go:48, field manager `rbg`, force) really is a shared SSA status/spec patch path used by the RBG controller today | **consistent** with code |
+| F3/F4 (exclusion list) | `R2-F3` + new `R3-F3b` | List grew to 6 keys (adds `rollout-request`, `v1alpha1-pod-group-policy`); sync semantics refined: child-side values preserved, template annotations applied over them, rollout-request never copied from template | **still fixed** (refinement, not regression: keys stay excluded from hash+drift, so no spec-level churn; value-level convergence is template-authoritative) |
+| **F10 (NEW, minor)** | `R3-F10-request-strip-fallback` (doc-gap contract, EXPECTED-FAIL at head) | A replace-style full-object write (kubectl replace, Argo `Replace=true`) on a child RBG can strip the live `rollout-request` annotation; the set keeps no independent record of issued requests (the key is drift-excluded, so no re-issue), and a stripped pending request reopens exactly the N1 window (stale `Ready` + no request → legacy fallback → budget released). Same hazard class as the round-2 F5 checkpoint nit; children are controller-owned objects an operator rarely replace-writes, so **minor, non-gating** | **open** (hardening: one KEP sentence — detection or re-issue of a lost request) |
+| **Q3 (NEW, question)** | residual scan + code fact | Compatibility-annotation convergence is explicitly ungated ("independently of revision changes and rollout budgets", :206) while coordination data drives the RBG controller's role-replica application (:590 "Apply coordination scaling target replicas if available") — an ungated write that can change serving capacity | **question** (confirm intended; state the rationale) |
+| M1 (test-plan residual) | residual scan | Child-level "Conversion: request annotations and acknowledgements round-trip" entry added + manual-validation paragraph; **set-level** v1alpha1 strategy/status round-trip entry still missing; wording catches unchanged at :494 (in-place ordering) and :530 ("old template, not the current one") | **partially addressed** (advisory) |
+| F8 / O1 / C4238820879 (nits) | residual scan | Unchanged: no vocabulary cross-reference, no Graduation/Release Signoff sections, lowercase "rbg" now at :590 | **open** (nits, non-gating) |
+
+### Round-3 harness update
+
+`R2-F9` was remedy-shaped (grep for the round-2 exemplar clause) and missed the actual fix shape — the disclosed round-2 harness note. It is now a **disjunction** (either remedy closes the window) and the mechanism is pinned by `R3-N1a`–`R3-N1h`. `R3-F10` is the reproduction for the new minor finding (flips green when the KEP states a strip fallback/re-issue).
+
+### Round-3 harness bites
+
+- **Bite F** (`results/bite-f-n1-fix-removed.txt`): removing the request-gate sentences from a temp copy of the KEP makes `R3-N1a`, `R3-N1c`, `R3-N1f` fail and returns the `R2-F9` disjunction to EXPECTED-FAIL — the fix-pinning checks bite.
+- **Bite G** (`results/bite-g-f10-simulated-fix.txt`): adding one hardening sentence (re-issue on stripped request) to a temp copy flips `R3-F10` 0→1.
+
+### Round-3 layers
+
+- **L1 unit**: `go test ./internal/controller/workloads/` — green (3.6 s full suite).
+- **L2 envtest**: `rbg` 49 s, `restart_policy` 201 s, `webhook` 32 s — green at the grafted head.
+- **P0-net**: issue #455 OPEN (`results/P0-issue-455.txt`).

@@ -1,3 +1,3 @@
-ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	49.491s
-ok  	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy	202.316s
-ok  	sigs.k8s.io/rbgs/test/envtest/testcase/webhook	31.464s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	48.809s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy	201.002s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/webhook	30.048s
