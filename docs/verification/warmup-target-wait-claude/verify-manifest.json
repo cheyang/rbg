@@ -25,7 +25,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyC[1-5]|TestVerifyF[12]|TestVerifyN[123]' -count=1 -json"
+      "cmd": "go test ./internal/controller/workloads/ ./api/workloads/v1alpha2/ -run 'TestVerifyC[1-5]|TestVerifyF[12]|TestVerifyN[1-5]|TestGeneratedWarmupCRDDoesNotValidateContainerImages' -count=1 -json"
     },
     "integration": {
       "kind": "gotest",
