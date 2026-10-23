@@ -1,0 +1,30 @@
+=== RUN   TestDeprecationWarningValidatorReturnsAdmissionWarning
+W1023 23:22:26.048717 1237440 deprecation_webhook.go:67]  rbg: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+--- PASS: TestDeprecationWarningValidatorReturnsAdmissionWarning (0.00s)
+=== RUN   TestDeprecationWarningValidatorReturnsAdmissionWarningOnDelete
+W1023 23:22:26.048813 1237440 deprecation_webhook.go:67]  rbg: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+W1023 23:22:26.048817 1237440 deprecation_webhook.go:67]  rbg: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+--- PASS: TestDeprecationWarningValidatorReturnsAdmissionWarningOnDelete (0.00s)
+=== RUN   TestDeprecatedWorkloadValidatorTransitionalAndFinalModes
+W1023 23:22:26.048977 1237440 deprecation_webhook.go:67]  rbg: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+W1023 23:22:26.048987 1237440 deprecation_webhook.go:67]  rbg: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+W1023 23:22:26.048993 1237440 deprecation_webhook.go:67]  rbg: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+--- PASS: TestDeprecatedWorkloadValidatorTransitionalAndFinalModes (0.00s)
+=== RUN   TestDeprecatedWorkloadValidatorFinalModeRejectsExistingUse
+W1023 23:22:26.049012 1237440 deprecation_webhook.go:67]  rbg: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+W1023 23:22:26.049017 1237440 deprecation_webhook.go:67]  rbg: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+--- PASS: TestDeprecatedWorkloadValidatorFinalModeRejectsExistingUse (0.00s)
+=== RUN   TestPR509Contract_StalePersistedReadDoesNotGrantExemption
+W1023 23:22:26.085206 1237440 deprecation_webhook.go:67]  rbg: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+    zz_verify_pr509_deprecation_test.go:85: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/api/workloads/v1alpha1/zz_verify_pr509_deprecation_test.go:85
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestPR509Contract_StalePersistedReadDoesNotGrantExemption
+        	Messages:   	reintroducing a deprecated workload type into a migrated role must be rejected; a stale cache read must not grant the existing-role exemption (PR #509 F3)
+--- FAIL: TestPR509Contract_StalePersistedReadDoesNotGrantExemption (0.04s)
+=== RUN   TestPR509Control_FreshPersistedReadRejectsReintroduction
+W1023 23:22:26.086865 1237440 deprecation_webhook.go:67]  rbg: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+--- PASS: TestPR509Control_FreshPersistedReadRejectsReintroduction (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.046s
+FAIL

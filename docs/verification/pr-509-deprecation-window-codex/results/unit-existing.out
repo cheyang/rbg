@@ -1,0 +1,10 @@
+        	Messages:   	in compat mode the flag is already true; advising the user to re-enable it is misleading (PR #509 F4)
+    zz_verify_pr509_test.go:110: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/api/workloads/v1alpha2/zz_verify_pr509_test.go:110
+        	Error:      	Should be false
+        	Test:       	TestPR509Contract_CompatModeRejectionDoesNotAdviseReenablingTheFlag
+        	Messages:   	compat-mode rejection must not recommend the flag value that is already in effect
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.110s
+ok  	sigs.k8s.io/rbgs/cmd/rbgs	0.053s
+FAIL

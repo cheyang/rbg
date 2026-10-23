@@ -1,0 +1,23 @@
+=== RUN   TestPR509Contract_StalePersistedReadDoesNotGrantExemption
+W1023 23:39:20.321549 1256156 deprecation_webhook.go:67]  rbg: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+--- PASS: TestPR509Contract_StalePersistedReadDoesNotGrantExemption (0.05s)
+=== RUN   TestPR509Control_FreshPersistedReadRejectsReintroduction
+W1023 23:39:20.322482 1256156 deprecation_webhook.go:67]  rbg: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+--- PASS: TestPR509Control_FreshPersistedReadRejectsReintroduction (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.056s
+=== RUN   TestPR509Contract_ChildRBGFromLegacyTemplateIsAdmittedOnCreate
+--- PASS: TestPR509Contract_ChildRBGFromLegacyTemplateIsAdmittedOnCreate (0.00s)
+=== RUN   TestPR509Contract_CompatModeRejectionDoesNotAdviseReenablingTheFlag
+    zz_verify_pr509_test.go:107: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/api/workloads/v1alpha2/zz_verify_pr509_test.go:107
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestPR509Contract_CompatModeRejectionDoesNotAdviseReenablingTheFlag
+--- FAIL: TestPR509Contract_CompatModeRejectionDoesNotAdviseReenablingTheFlag (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.009s
+FAIL
+=== RUN   TestPR509Contract_CompatModeRejectionDoesNotAdviseReenablingTheFlag
+--- PASS: TestPR509Contract_CompatModeRejectionDoesNotAdviseReenablingTheFlag (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.008s

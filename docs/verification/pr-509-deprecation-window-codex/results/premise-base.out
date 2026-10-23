@@ -1,0 +1,5 @@
+=== RUN   TestP0_BaseAcceptsNewDeprecatedUseSilently
+    zz_premise_pr509_test.go:26: base: warnings=[] err=<nil>
+--- PASS: TestP0_BaseAcceptsNewDeprecatedUseSilently (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.008s

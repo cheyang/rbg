@@ -1,0 +1,23 @@
+=== RUN   TestPR509Contract_ChildRBGFromLegacyTemplateIsAdmittedOnCreate
+    zz_verify_pr509_test.go:89: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/api/workloads/v1alpha2/zz_verify_pr509_test.go:89
+        	Error:      	Received unexpected error:
+        	            	spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)
+        	Test:       	TestPR509Contract_ChildRBGFromLegacyTemplateIsAdmittedOnCreate
+        	Messages:   	compat window must admit controller-created children of an existing legacy RoleBasedGroupSet; otherwise scale-up and self-heal of such sets are broken by upgrading (PR #509 F1)
+--- FAIL: TestPR509Contract_ChildRBGFromLegacyTemplateIsAdmittedOnCreate (0.00s)
+=== RUN   TestPR509Contract_CompatModeRejectionDoesNotAdviseReenablingTheFlag
+    zz_verify_pr509_test.go:108: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/api/workloads/v1alpha2/zz_verify_pr509_test.go:108
+        	Error:      	"spec.roles[0] (role \"worker\"): workload type \"apps/v1/StatefulSet\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)" should not contain "re-enable the deprecated workload types"
+        	Test:       	TestPR509Contract_CompatModeRejectionDoesNotAdviseReenablingTheFlag
+        	Messages:   	in compat mode the flag is already true; advising the user to re-enable it is misleading (PR #509 F4)
+    zz_verify_pr509_test.go:110: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/api/workloads/v1alpha2/zz_verify_pr509_test.go:110
+        	Error:      	Should be false
+        	Test:       	TestPR509Contract_CompatModeRejectionDoesNotAdviseReenablingTheFlag
+        	Messages:   	compat-mode rejection must not recommend the flag value that is already in effect
+--- FAIL: TestPR509Contract_CompatModeRejectionDoesNotAdviseReenablingTheFlag (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.008s
+FAIL
