@@ -68,7 +68,49 @@
       "status": "refuted",
       "firstSeenSha": "9f61d4f73d72bb47e181c81f1d6a9a6de12f0d69",
       "origin": "initial-pr",
-      "note": "Round-1 claimed the CEL freeze also reproduces on 1.36.2; 5 fresh runs (3x at 60b1b7cb, 2x at 9f61d4f7) show 1.33.0/1.34.1/1.36.2 all ACCEPT the status write. The PR narrative (freeze only <=1.32) is correct."
+      "note": "Round-1 claimed the CEL freeze also reproduces on 1.36.2; 5 fresh runs show 1.33.0/1.34.1/1.36.2 all ACCEPT the status write. The PR narrative (freeze only <=1.32) is correct."
+    },
+    {
+      "id": "F4a",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyN1TargetDeletedMidRunWithActivePodStaysRunning"
+      ],
+      "status": "fixed",
+      "firstSeenSha": "60b1b7cb0b42f4f01417c616c5fb54f0108ac555",
+      "origin": "revision-regression",
+      "severity": "blocker",
+      "fixedAt": "b0915b21b09f6b5e3855180d07fbb427d970d5dc",
+      "note": "Round-2 blocker: target deleted mid-run with an ACTIVE Pod falsely completed as Completed/NoNodesMatched (Active=1). Round 3: N1 rewritten to the agreed contract \u2014 stays Running with Active=1 and TargetReady=False/RoleBasedGroupNotFound; completes with WarmupCompleted + preserved startTime once the Pod is terminal. Red at 60b1b7cb, green at b0915b21."
+    },
+    {
+      "id": "F4b",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyN4AllTargetPodsUnscheduledMidRunWaitsAndWarmsReplacement"
+      ],
+      "status": "fixed",
+      "firstSeenSha": "60b1b7cb0b42f4f01417c616c5fb54f0108ac555",
+      "origin": "revision-regression",
+      "severity": "blocker",
+      "fixedAt": "b0915b21b09f6b5e3855180d07fbb427d970d5dc",
+      "note": "Round-2 blocker: all selected target Pods momentarily unscheduled mid-run completed the job as NoNodesMatched while a Pod was active, and the replacement node was never warmed. Round 3: waits Running + requeue; replacement node warmed. Red at 60b1b7cb, green at b0915b21."
+    },
+    {
+      "id": "F5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyN5OrphanActivePodOnDepartedNodeFailsOnGlobalTimeout"
+      ],
+      "status": "fixed",
+      "firstSeenSha": "60b1b7cb0b42f4f01417c616c5fb54f0108ac555",
+      "origin": "revision-regression",
+      "severity": "major",
+      "fixedAt": "b0915b21b09f6b5e3855180d07fbb427d970d5dc",
+      "note": "Round-2 major: active Pod on a departed node defeated the creation-anchored timeout (wedged Running, orphan Pod kept, no requeue). Round 3: warmupReachedTerminalState counts active Pods on ALL nodes and intersects terminal accounting with the desired set. Red at 60b1b7cb, green at b0915b21."
     },
     {
       "id": "F6",
@@ -77,23 +119,40 @@
       "match": [
         "TestVerifyN3ExpiredTimeoutNotBypassedByStaleSucceededNode"
       ],
-      "status": "open",
+      "status": "fixed",
       "firstSeenSha": "60b1b7cb0b42f4f01417c616c5fb54f0108ac555",
       "origin": "initial-pr",
-      "severity": "minor"
+      "severity": "minor",
+      "fixedAt": "b0915b21b09f6b5e3855180d07fbb427d970d5dc",
+      "note": "Round-2 minor: stale succeeded node on a dropped node bypassed the expired deadline. Fixed by the desired-set intersection in the same commit."
     },
     {
       "id": "F7",
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerifyN1TargetDeletedMidRunWithActivePodReachesTerminal"
+        "TestVerifyN1TargetDeletedMidRunWithActivePodStaysRunning"
       ],
-      "status": "open",
+      "status": "fixed",
       "firstSeenSha": "60b1b7cb0b42f4f01417c616c5fb54f0108ac555",
       "origin": "initial-pr",
       "severity": "minor",
-      "note": "Contract part (terminal phase) passes; the F7 evidence is the observed wart logged by the test: Completed/NoNodesMatched with Active=1 and status.startTime clobbered on mid-run target deletion."
+      "fixedAt": "b0915b21b09f6b5e3855180d07fbb427d970d5dc",
+      "note": "Round-2 minor: desired==0 completions reported NoNodesMatched and clobbered startTime. Round 3: WarmupCompleted with a truthful message and preserved startTime (asserted in N1's terminal stage). Residual Q2 (TargetReady stays False on a terminal job) remains an open question."
+    },
+    {
+      "id": "F8",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestGeneratedWarmupCRDDoesNotValidateContainerImages"
+      ],
+      "status": "fixed",
+      "firstSeenSha": "60b1b7cb0b42f4f01417c616c5fb54f0108ac555",
+      "origin": "initial-pr",
+      "severity": "minor",
+      "fixedAt": "b0915b21b09f6b5e3855180d07fbb427d970d5dc",
+      "note": "Round-2 minor: the CRD guard read only image.XValidations; the removed #466 marker lived on the container item schema. b0915b21 adds the len(containers.Items.Schema.XValidations)==0 assertion. Verified green at head in the api package sweep."
     }
   ],
   "liveNote": "L3 (live cluster) skipped this round per the debate setup: unit + integration layers only. The kubectl-level scenarios in the PR body were not re-run against a live cluster; the envtest layer uses the real kube-apiserver 1.31.0 binary (same version as CI), which is where the CEL/ratcheting behavior lives.",
@@ -105,5 +164,6 @@
       "head": "60b1b7cb0b42f4f01417c616c5fb54f0108ac555",
       "delta": "9f61d4f7..60b1b7cb (commit 'fix(warmup): make target readiness terminal-safe and deterministic')"
     }
-  ]
+  ],
+  "lastReviewed": "b0915b21b09f6b5e3855180d07fbb427d970d5dc"
 }

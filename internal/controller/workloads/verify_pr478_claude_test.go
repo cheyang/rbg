@@ -29,6 +29,11 @@ package workloads
 //     branch (they reproduce premise problems 1 and 2 of the PR).
 //   - TestVerifyF*  bug canaries for findings F1/F2: RED at head while the bug
 //     is present; green at base (the base code reaches a terminal state).
+//   - TestVerifyN*  round-2/3 contracts: N1 (F4a false completion + F7 truthful
+//     reason/startTime), N2 (creation-anchored timeout), N3 (F6 stale-terminal
+//     bypass), N4 (F4b mid-run unscheduled gap + replacement warming), N5 (F5
+//     orphan active Pod vs the timeout safety net). N1/N4/N5 were RED at the
+//     round-2 head 60b1b7cb and are GREEN at b0915b21 (round 3).
 
 import (
 	"context"
@@ -36,6 +41,7 @@ import (
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -426,10 +432,15 @@ func TestVerifyF2CountersAndCompletionFrozenDuringWait(t *testing.T) {
 // Round 2 (head 60b1b7cb "make target readiness terminal-safe and deterministic")
 // ---------------------------------------------------------------------------
 
-// N1 (round 2, contract) — a Warmup whose warmup Pod is still ACTIVE when the
-// target RoleBasedGroup disappears must still reach a terminal phase (the F1 fix
-// extended to the active-pods case, not only the all-succeeded case).
-func TestVerifyN1TargetDeletedMidRunWithActivePodReachesTerminal(t *testing.T) {
+// N1 (round 3, contract — supersedes the round-2 polarity) — a Warmup whose warmup
+// Pod is still ACTIVE when the target RoleBasedGroup disappears must NOT complete:
+// Completed is terminal (TTL-only afterwards) and would misreport the in-flight job
+// and expose the still-running Pod to owner-ref GC. It stays Running with Active
+// accounting intact until the Pod itself reaches a terminal state, and then
+// completes with a truthful reason and a preserved startTime (the round-2 F4a/F7
+// contract). RED at the previous head 60b1b7cb (false Completed/NoNodesMatched
+// with Active=1); GREEN at b0915b21.
+func TestVerifyN1TargetDeletedMidRunWithActivePodStaysRunning(t *testing.T) {
 	ctx := context.Background()
 	warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
 		ObjectMeta: metav1.ObjectMeta{Name: "v478-n1", Namespace: "default", UID: "uid-v478-n1"},
@@ -438,7 +449,7 @@ func TestVerifyN1TargetDeletedMidRunWithActivePodReachesTerminal(t *testing.T) {
 	r := newWarmupReconciler(warmup, verify478RBG("v478-n1-rbg"),
 		verify478TargetPod("v478-n1-rbg", "v478-n1-worker-0", "node-1"))
 
-	// Creates the warmup Pod (still active).
+	// Creates the warmup Pod (still active) and records startTime.
 	if _, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)}); err != nil {
 		t.Fatalf("reconcile: %v", err)
 	}
@@ -449,6 +460,11 @@ func TestVerifyN1TargetDeletedMidRunWithActivePodReachesTerminal(t *testing.T) {
 	if len(pods.Items) != 1 {
 		t.Fatalf("expected 1 active warmup Pod, got %d", len(pods.Items))
 	}
+	started := verify478Get(t, r, warmup.Name)
+	if started.Status.StartTime == nil {
+		t.Fatalf("startTime must be recorded once a Pod exists")
+	}
+	startTime := *started.Status.StartTime
 
 	// Target RBG and its Pods vanish mid-run (teardown / namespace cleanup).
 	// The warmup Pod itself stays (it is still running).
@@ -474,18 +490,166 @@ func TestVerifyN1TargetDeletedMidRunWithActivePodReachesTerminal(t *testing.T) {
 		t.Fatalf("reconcile after target deletion: %v", err)
 	}
 	after := verify478Get(t, r, warmup.Name)
-	if after.Status.Phase != workloadsv1alpha2.WarmupJobPhaseCompleted &&
-		after.Status.Phase != workloadsv1alpha2.WarmupJobPhaseFailed {
-		t.Fatalf("N1: with an ACTIVE warmup Pod and the target gone, the Warmup must reach a terminal "+
-			"phase, got %q (conditions=%#v, active=%d)", after.Status.Phase, after.Status.Conditions, after.Status.Active)
+	if after.Status.Phase != workloadsv1alpha2.WarmupJobPhaseRunning {
+		t.Fatalf("N1/F4a: with an ACTIVE warmup Pod and the target gone, the Warmup must stay Running, "+
+			"got %q (conditions=%#v, active=%d)", after.Status.Phase, after.Status.Conditions, after.Status.Active)
 	}
-	// Observed warts worth a follow-up (recorded, not asserted — see findings N-doc):
-	// phase=Completed with reason NoNodesMatched ("No nodes matched the target
-	// configuration") even though node-1 was matched and warmed, status.startTime
-	// clobbered to the deletion moment, and Active=1 recorded on a Completed job.
-	t.Logf("N1 observed: phase=%q, conditions=%#v, counters: desired=%d active=%d succeeded=%d failed=%d, startTime=%v",
-		after.Status.Phase, after.Status.Conditions, after.Status.Desired, after.Status.Active,
-		after.Status.Succeeded, after.Status.Failed, after.Status.StartTime)
+	if after.Status.Active != 1 {
+		t.Fatalf("N1/F4a: Active must keep accounting the running Pod, got %d", after.Status.Active)
+	}
+	if cond := apimeta.FindStatusCondition(after.Status.Conditions, "TargetReady"); cond == nil ||
+		cond.Status != metav1.ConditionFalse || cond.Reason != "RoleBasedGroupNotFound" {
+		t.Fatalf("N1: expected TargetReady=False/RoleBasedGroupNotFound, got %#v", after.Status.Conditions)
+	}
+
+	// Once the Pod succeeds, the job completes with a truthful reason (not
+	// NoNodesMatched), accurate counters, and the original startTime (F7).
+	succeeded := pods.Items[0].DeepCopy()
+	succeeded.Status.Phase = corev1.PodSucceeded
+	if err := r.Status().Update(ctx, succeeded); err != nil {
+		t.Fatalf("succeed warmup pod: %v", err)
+	}
+	if _, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)}); err != nil {
+		t.Fatalf("reconcile after pod success: %v", err)
+	}
+	final := verify478Get(t, r, warmup.Name)
+	if final.Status.Phase != workloadsv1alpha2.WarmupJobPhaseCompleted {
+		t.Fatalf("N1: the Warmup must complete once its Pod is terminal, got %q (conditions=%#v)",
+			final.Status.Phase, final.Status.Conditions)
+	}
+	if cond := apimeta.FindStatusCondition(final.Status.Conditions, "Complete"); cond == nil || cond.Reason != "WarmupCompleted" {
+		t.Fatalf("N1/F7: completion reason must be WarmupCompleted for a job that warmed a node, got %#v",
+			final.Status.Conditions)
+	}
+	if final.Status.Succeeded != 1 || final.Status.Active != 0 {
+		t.Fatalf("N1: terminal counters must be accurate, got active=%d succeeded=%d",
+			final.Status.Active, final.Status.Succeeded)
+	}
+	if final.Status.StartTime == nil || !final.Status.StartTime.Time.Equal(startTime.Time) {
+		t.Fatalf("N1/F7: startTime must be preserved on mid-run-deletion completion, was %v now %v",
+			startTime, final.Status.StartTime)
+	}
+}
+
+// N4 (round 3, contract — the round-2 F4b repro) — when every selected target Pod
+// is momentarily unscheduled mid-run (eviction, node drain, recreate gap), the
+// Warmup must keep waiting instead of completing as NoNodesMatched while its own
+// Pod is still active, and the replacement node must be warmed once the target
+// Pod reschedules. RED at the previous head 60b1b7cb; GREEN at b0915b21.
+func TestVerifyN4AllTargetPodsUnscheduledMidRunWaitsAndWarmsReplacement(t *testing.T) {
+	ctx := context.Background()
+	warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
+		ObjectMeta: metav1.ObjectMeta{Name: "v478-n4", Namespace: "default", UID: "uid-v478-n4"},
+		Spec:       verify478Spec("v478-n4-rbg"),
+	}
+	r := newWarmupReconciler(warmup, verify478RBG("v478-n4-rbg"),
+		verify478TargetPod("v478-n4-rbg", "v478-n4-worker-0", "node-1"))
+
+	// Creates the warmup Pod on node-1 (still active).
+	if _, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)}); err != nil {
+		t.Fatalf("reconcile: %v", err)
+	}
+	pods := &corev1.PodList{}
+	if err := r.List(ctx, pods, client.MatchingLabels{LabelWarmupName: warmup.Name}); err != nil {
+		t.Fatalf("list warmup pods: %v", err)
+	}
+	if len(pods.Items) != 1 {
+		t.Fatalf("expected 1 active warmup Pod, got %d", len(pods.Items))
+	}
+
+	// Eviction / drain / recreate gap: the target Pod loses its node assignment.
+	gap := verify478TargetPod("v478-n4-rbg", "v478-n4-worker-0", "node-1")
+	gap.Spec.NodeName = ""
+	if err := r.Update(ctx, gap); err != nil {
+		t.Fatalf("unschedule target pod: %v", err)
+	}
+
+	result, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)})
+	if err != nil {
+		t.Fatalf("reconcile during gap: %v", err)
+	}
+	after := verify478Get(t, r, warmup.Name)
+	if after.Status.Phase != workloadsv1alpha2.WarmupJobPhaseRunning {
+		t.Fatalf("N4/F4b: a mid-run scheduling gap must not complete the Warmup, got %q "+
+			"(conditions=%#v, active=%d)", after.Status.Phase, after.Status.Conditions, after.Status.Active)
+	}
+	if after.Status.Active != 1 {
+		t.Fatalf("N4/F4b: Active must keep accounting the running Pod, got %d", after.Status.Active)
+	}
+	if cond := apimeta.FindStatusCondition(after.Status.Conditions, "TargetReady"); cond == nil ||
+		cond.Status != metav1.ConditionFalse || cond.Reason != "TargetPodsNotScheduled" {
+		t.Fatalf("N4: expected TargetReady=False/TargetPodsNotScheduled, got %#v", after.Status.Conditions)
+	}
+	if result.RequeueAfter == 0 {
+		t.Fatalf("N4/F4b: the Warmup must requeue to observe the replacement target Pod")
+	}
+
+	// The replacement target Pod lands on a new node; it must be warmed.
+	replacement := verify478TargetPod("v478-n4-rbg", "v478-n4-worker-1", "node-2")
+	if err := r.Create(ctx, replacement); err != nil {
+		t.Fatalf("create replacement target pod: %v", err)
+	}
+	stale := verify478TargetPod("v478-n4-rbg", "v478-n4-worker-0", "")
+	if err := r.Delete(ctx, stale); err != nil {
+		t.Fatalf("delete pending target pod: %v", err)
+	}
+	if _, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)}); err != nil {
+		t.Fatalf("reconcile after replacement scheduled: %v", err)
+	}
+	replacementPods := &corev1.PodList{}
+	if err := r.List(ctx, replacementPods, client.MatchingLabels{
+		LabelWarmupName: warmup.Name, LabelNodeName: "node-2"}); err != nil {
+		t.Fatalf("list replacement warmup pods: %v", err)
+	}
+	if len(replacementPods.Items) != 1 {
+		t.Fatalf("N4/F4b: the replacement node must be warmed, got %d warmup Pods on node-2",
+			len(replacementPods.Items))
+	}
+}
+
+// N5 (round 3, contract — the round-2 F5 repro) — an active warmup Pod on a node
+// that left the desired set keeps the job non-terminal, so the creation-anchored
+// global timeout must still fire: the job fails and the orphan Pod is deleted,
+// instead of being wedged in Running forever with no requeue.
+// RED at the previous head 60b1b7cb; GREEN at b0915b21.
+func TestVerifyN5OrphanActivePodOnDepartedNodeFailsOnGlobalTimeout(t *testing.T) {
+	ctx := context.Background()
+	warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:              "v478-n5",
+			Namespace:         "default",
+			UID:               "uid-v478-n5",
+			CreationTimestamp: metav1.NewTime(time.Now().Add(-10 * time.Minute)),
+		},
+		Spec: verify478Spec("v478-n5-rbg"),
+	}
+	warmup.Spec.Policies = &workloadsv1alpha2.WarmupPolicies{GlobalTimeoutSeconds: ptr.To(int64(60))}
+
+	// Desired is {node-2} (the target Pod migrated there); node-2 is terminal and
+	// node-1's warmup Pod is stuck active (e.g. ImagePullBackOff).
+	succeeded := makeWarmupPod("v478-n5-pod-ok", "default", warmup.Name, string(warmup.UID), "node-2", corev1.PodSucceeded)
+	stuck := makeWarmupPod("v478-n5-pod-stuck", "default", warmup.Name, string(warmup.UID), "node-1", corev1.PodRunning)
+	r := newWarmupReconciler(warmup, verify478RBG("v478-n5-rbg"),
+		verify478TargetPod("v478-n5-rbg", "v478-n5-worker-0", "node-2"),
+		succeeded, stuck)
+
+	if _, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)}); err != nil {
+		t.Fatalf("reconcile: %v", err)
+	}
+	after := verify478Get(t, r, warmup.Name)
+	if after.Status.Phase != workloadsv1alpha2.WarmupJobPhaseFailed {
+		t.Fatalf("N5/F5: an active Pod on a departed node must not defeat the expired global timeout; "+
+			"expected Failed/GlobalTimeoutExceeded, got %q (conditions=%#v, active=%d)",
+			after.Status.Phase, after.Status.Conditions, after.Status.Active)
+	}
+	if cond := apimeta.FindStatusCondition(after.Status.Conditions, "Failed"); cond == nil ||
+		cond.Reason != "GlobalTimeoutExceeded" {
+		t.Fatalf("N5/F5: expected Failed/GlobalTimeoutExceeded, got %#v", after.Status.Conditions)
+	}
+	err := r.Get(ctx, types.NamespacedName{Name: stuck.Name, Namespace: "default"}, &corev1.Pod{})
+	if !apierrors.IsNotFound(err) {
+		t.Fatalf("N5/F5: the orphan active Pod must be deleted on global timeout, got err=%v", err)
+	}
 }
 
 // N2 (round 2, contract) — the global timeout is anchored at the Warmup's
