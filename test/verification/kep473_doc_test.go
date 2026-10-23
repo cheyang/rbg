@@ -716,8 +716,10 @@ func TestKEP473_F17_ContractUpgradeBootstrap(t *testing.T) {
 		"upgrade bootstrap (F30 acceptance window closed)")
 	assertContains(t, doc, "`TopologyBootstrapBlocked`",
 		"upgrade bootstrap (blocked reason)")
-	assertContains(t, doc, "reupgrade after an older controller rotates the epoch",
-		"upgrade bootstrap (epoch rotation)")
+	assertContains(t, doc, "every return from a controller that lacks accepted-record persistence requires a new epoch",
+		"upgrade bootstrap (epoch rotation on reupgrade)")
+	assertContains(t, doc, "reupgrade after any older-controller interval uses a new epoch",
+		"upgrade strategy (epoch rotation on reupgrade)")
 	assertContains(t, doc, "33. Upgrade bootstrap:",
 		"unit test plan (bootstrap coverage)")
 	assertContains(t, doc, "24. Legacy upgrade:",
