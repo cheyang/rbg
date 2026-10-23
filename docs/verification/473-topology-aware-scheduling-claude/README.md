@@ -1,8 +1,40 @@
 # Verification — PR #473 (KEP-473: Topology-Aware Scheduling) — Reviewer A (Claude)
 
 PR: https://github.com/sgl-project/rbg/pull/473 — adds
-`keps/473-topology-aware-scheduling/{README.md,kep.yaml}` only (the Go files in the
-GitHub diff are a cherry-pick of main's already-merged #495, byte-identical — check C9).
+`keps/473-topology-aware-scheduling/{README.md,kep.yaml}` only (verified at head
+`9f682b0`: the net diff vs the merge base `d88b318` is exactly those two files —
+contracts LF27/C9; the round-3 #495 duplicate is gone, the author re-published the
+rebased history).
+
+**Round 4** (head `9f682b0`, delta `99b991c..9f682b0`, 8 KEP commits, net KEP diff +84
+lines of prose): every round-3 open finding is addressed, and all 42 harness checks are
+green at the new head. The two live canaries flipped and were inverted into fixed guards:
+F13→**LF7** (ledger F7: the DNS-1123 rule is now scoped to "Role names used as sources by
+a topology-bearing compiled plan", explicitly "adds no stricter naming admission to
+topology-free RBGs or gang-only policies" — compatible with `RoleSpec.Name` still having
+no pattern) and F8→**LF9** (ledger F9: an explicit RBAC matrix now enumerates verbs,
+status/finalizer subresources, Managed-vs-Imported asymmetry, nodes/CRDs read-only, plus
+cross-namespace retention visibility). New guards pin the other fixes: **LF8** (rejected
+unselected late policies take no finalizer; deleting them resumes the accepted
+none/role-only contract; test item 34), **LF16** (TopologyPolicyLate's message must
+identify the mismatch), **LF26** (fresh PR body describes the ClusterNetworkTopology
+design; all four stale legs gone — verified against the re-archived body fixture, with
+the round-3 body kept as `results/pr-body-round3.md` for the differential), **LF27**
+(net published diff is the two KEP files; bites via the previous-head run), **LF28**
+(create rejects known-but-unsupported schedulers incl. native kube-scheduler, without
+expanding the enum), **LF29** (HyperNode prefixes replace `.` with `-` *before*
+truncating; hash inputs are the unsanitized full values; dotted-boundary test), **LF30**
+(epoch-scoped CREATE provenance marker; legacy recordless RBGs persist `none` before
+candidate resolution; a policy already present before first reconcile is
+`TopologyPolicyLate`; test items 33/24/19). All round-1/2/3 guards (F1–F12, LF1–LF13,
+C1–C9, G1–G4) stay green. Bites: `results/l1-bites-check-round4.txt` — each new guard
+fails under a one-sentence perturbation, LF26 fails on the round-3 body fixture, and at
+the previous head 99b991c the new guards fail (LF27 red on the #495 Go duplicate) —
+previous fail / head pass for all nine. New this round: one open question (no guard —
+absence of statement): ledger F31, fresh-install epoch provisioning for the
+`contract-version` marker is specified only for the handover-from-older-controller path;
+a brand-new cluster install must still configure the epoch or CREATE admission fails
+closed on every RBG.
 
 **Round 3** (head `99b991c`, delta `6894a2e..99b991c`, force-push rebase onto `79f7e585`
 plus 3 new KEP commits `d5d89dc9/877db572/99b991c5`): the KEP nearly doubled and answers
@@ -17,10 +49,9 @@ New evidence contracts C4–C8 verify the KEP's new upstream scheduler-internal 
 v0.18.6 non-injective `calcDomainId` + level validation, Koordinator pinned-commit
 no-Bound-members limitation) against `results/upstream/round3/` snapshots fetched this
 round. G3/G4 needles updated for the rewritten KAI/Koordinator examples (harness update,
-not a defect). **Still live**: F8 = ledger F9 (RBAC never enumerated) and F13 = ledger
-F7 (DNS-1123 rule for "Role names" unscoped). Bite checks: reverting the LF1 guard, the
-PRR heading, or reintroducing "controller resync" flips exactly the matching contract —
-see `results/l1-bites-check-round3.txt`.
+not a defect). Round-4 note: the two canaries still live at 99b991c (F8 = ledger F9,
+F13 = ledger F7) flipped at 9f682b0 and are now the LF9/LF7 contracts. Bites:
+`results/l1-bites-check-round3.txt`.
 
 **Round 2** (head `6894a2e`, delta `2b65779b..6894a2e`, 3 commits clarifying review
 feedback): F1–F6 and F9 are fixed (canaries flipped; F4 via a PR-body edit —
@@ -46,7 +77,7 @@ strategy, the scheduler backends).
 
 | layer | what | how to run |
 | --- | --- | --- |
-| unit (python claim-check) | 13 canaries (F1–F13) + 4 contracts (P0, C1–C3) over the KEP text, the PR body, the repo, and upstream API snapshots | `python3 -I scripts/check_claims.py --repo <repo-root> --evidence results/` |
+| unit (python claim-check) | 42 contracts over the KEP text, the PR body fixture, the repo, and upstream API snapshots (fixed guards LF1–LF13/LF16/LF26–LF30, flipped-canary guards LF7/LF9, evidence contracts C1–C9, premise P0, round-1/2 guards F1–F12) | `python3 -I scripts/check_claims.py --repo <repo-root> --evidence results/` |
 | integration (go test) | strict-decodes the KEP's embedded example YAML into the real vendored upstream API types (Volcano `scheduling.volcano.sh/v1beta1`; scheduler-plugins `scheduling.x-k8s.io/v1alpha1`), structural check of the KAI example | `go test ./docs/verification/473-topology-aware-scheduling-claude/harness/ -v` |
 | live (L3) | **skipped** — the PR is documentation-only; nothing runs. (A cluster probe did find a reachable 2-node cluster; live coverage belongs to the implementation PRs of the KEP's phase plan.) | — |
 
@@ -56,6 +87,25 @@ Re-run everything against the current PR head (machine-independent, resolves the
 ```bash
 bash scripts/re-verify.sh            # or: bash scripts/re-verify.sh <fixed-ref>
 ```
+
+## Observed vs expected (round 4, head 9f682b0)
+
+| check | polarity | observed | verdict |
+| --- | --- | --- | --- |
+| LF7 ledger F7: DNS-1123 rule for 'Role names' unscoped | contract (flipped canary F13) | PASS | **FIXED** — scoped to topology-bearing compiled-plan sources; "no stricter naming admission to topology-free RBGs"; RoleSpec.Name still pattern-free, so only the scoped reading is compatible |
+| LF9 ledger F9: cluster-scoped reads/writes, RBAC unenumerated | contract (flipped canary F8) | PASS | **FIXED** — full RBAC matrix (verbs, /status, /finalizers, Managed vs Imported, nodes+CRDs read-only, events) + cross-namespace retention visibility + test item 26 |
+| LF8 ledger F8: never-accepted late policy finalizer/recovery unspecified | contract | PASS | **FIXED** — "acquires no ... finalizer or topology consumer reservation"; deleting it resumes the accepted none/role-only contract; applying requires a new lifecycle; test item 34 |
+| LF16 ledger F16: TopologyPolicyLate misdescribes 2 of 3 triggers | contract | PASS | **FIXED (documented)** — name retained, but "its message must identify which mismatch occurred" answers the kubectl-confusion concern |
+| LF26 ledger F26: PR body describes the pre-redesign architecture | contract | PASS | **FIXED** — fresh body centers on ClusterNetworkTopology; no TopologyResourceUnresolved, no 'selects the KAI Topology CR', no controller-default claim; body bullets agree with the KEP head text (bite: round-3 body fixture fails) |
+| LF27 ledger F27: byte-identical #495 duplicate in the PR diff | contract | PASS | **FIXED** — re-published rebased history; net diff vs merge base d88b318 is exactly the two KEP files (bite: fails at previous head 99b991c) |
+| LF28 ledger F28: scheduler enum vs native-scheduler create path | contract | PASS | **FIXED** — create rejects unknown *and* known-but-unsupported (incl. native kube-scheduler) with an admission error; "do not add an enum value merely to persist a failed topology CR"; test item 1 updated |
+| LF29 ledger F29: HyperNode name can truncate at a dot | contract | PASS | **FIXED** — sanitize dots to `-` before the 16-char truncation, "do not truncate before sanitizing", hash over unsanitized full values, dotted-boundary test in item 12 |
+| LF30 ledger F30: upgrade bootstrap for already-launched RBGs unspecified | contract | PASS | **FIXED** — epoch-scoped CREATE provenance marker, legacy recordless RBGs persist `none` (regardless of Pods/policies/templates), pre-arrival policy is TopologyPolicyLate, TopologyBootstrapBlocked, test items 33/24/19 |
+| F1–F12, LF1–LF13, C1–C9, G1–G4 (round-1/2/3 guards) | contract | PASS | all remain fixed/hold at 9f682b0 |
+
+Raw output round 4: `results/reverify/{unit.out,integration.out,unit.parsed,integration.parsed}`;
+bites + previous-head differential: `results/l1-bites-check-round4.txt`; fresh body
+fixture `results/pr-body.md` (round-3 body archived as `results/pr-body-round3.md`).
 
 ## Observed vs expected (round 3, head 99b991c)
 

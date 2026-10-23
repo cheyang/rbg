@@ -1,0 +1,100 @@
+# Round-4 bites-check + previous-head differential (head 9f682b0, previous 99b991c)
+# Generated 2026-10-23T08:05:51Z
+
+## A. Guard bites (perturb the fix text -> guard must flip to FAIL)
+LF7                  FAIL   (removed: Topology-bearing policy-rule names and Role names used as so)
+LF8                  FAIL   (removed: A rejected late policy that was never selected for acceptanc)
+LF9                  FAIL   (removed: The required RBAC surface is listed below)
+LF16                 FAIL   (removed: and its message must identify which mismatch occurred)
+LF28                 FAIL   (removed: reject creation if the active scheduler is unknown or is not)
+LF29                 FAIL   (removed: then taking the first 16 characters; do not truncate before )
+LF30                 FAIL   (removed: persist a legacy `none` record for that UID)
+LF26                 FAIL   (body leg: topologyName -> KAI Topology CR)
+LF26                 FAIL   (body leg: phantom TopologyResourceUnresolved re-added)
+LF26                 FAIL   (round-3 archived body fixture: the original failing state)
+
+## B. Previous-head differential (guards run at 99b991c with the harness grafted)
+# previous head 99b991c: LF27 FAIL (Go files in the net diff = the F27 defect),
+# LF7/LF8/LF9/LF16/LF28/LF29/LF30 FAIL (fixes absent), LF26 PASS with the fresh
+# body fixture (F26's defect lived in the body; see A for the body-fixture bite).
+# Full checker output at 99b991c:
+id   polarity  verdict         finding
+---- -------- --------------- -------------------------------------------
+LF9  contract FAIL            [fixed r4] the KEP enumerates the required RBAC matrix (ledger F9)
+     detail: intro=False; clusternetworktopologies verbs+status+finalizers=False; workload resources in managed namespaces=False; scheduler PodGroups incl. finalizers=False; Managed native create/delete (hypernodes/topologies)=False; Imported native read-only=False; nodes + CRD read-only=False; cross-namespace retention visibility=False
+LF7  contract FAIL            [fixed r4] the DNS-1123 rule is scoped to topology-bearing compiler sources (ledger F7)
+     detail: scoped sentence=False; no-tightening sentence=False; unqualified sentence gone=False; RoleSpec.Name pattern-free=True
+F1   contract PASS            [fixed r2] downgrade/rollback section documents the finalizer escape hatch
+     detail: downgrade section mentions finalizer=True; escape hatch documented=True
+F2   contract PASS            [fixed r2] RBGSet guard stated once, self-contained
+     detail: self-contained guard=True; contradictory informer-cache listing=False
+F3   contract PASS            [fixed r2] preferred<=required level ordering is validated (InvalidLevelOrder)
+     detail: InvalidLevelOrder validation documented=True
+F4   contract PASS            [fixed r2] PR body does not claim an absent in-tree Chinese translation
+     detail: body claims translation=False; kep dir has zh file=False
+F5   contract PASS            [fixed r2] Generated Group Names covers every dialect
+     detail: naming rules cover Volcano/Koordinator/KAI=True
+F6   contract PASS            [fixed r2] examples do not partition unconstrained roles per instance
+     detail: KAI decode-0/1 subGroups=False; Koordinator per-instance members=False; role-level decode documented=True
+F7   contract PASS            [fixed] KEP no longer cites the nonexistent hasSubGroupPolicy (ledger F14)
+     detail: hasSubGroupPolicy cited=False
+F9   contract PASS            [fixed r2] Koordinator PodGroup CRD dialect detection documented (ledger F25 mitigation)
+     detail: runtime dialect detection=True; sigs CRD >=1 divergence documented=True
+F10  contract PASS            [fixed r2] typo 'upto' absent (ledger F15)
+     detail: doc comment contains 'upto'=False
+F11  contract PASS            [fixed r3] Koordinator cross-role-only variant declared unsupported; Phase 2 members are role-level (ledger F3)
+     detail: cross-role-only unsupported=True; stale per-instance members=False; role-level Phase 2 members=True
+F12  contract PASS            [fixed r3] immutability is scoped to topology declarations, not whole Role (ledger F5)
+     detail: whole-Role immutability claim=False; topology-scoped wording=True; ordinary changes allowed=True
+LF1  contract PASS            [fixed r3] contract freeze specifies the uncached apiReader guard + explicit topologyPolicyRequired (ledger F1)
+     detail: uncached freeze read=True; explicit dependency=True; ordering claim downgraded=True; base controller exposes apiReader=True
+LF2  contract PASS            [fixed r3] no 'controller resync' drift trigger; event/retry wording only (ledger F2)
+     detail: resync mentioned=False; event-driven requeue documented=True
+LF4  contract PASS            [fixed r3] webhooks-disabled semantics reconciled with the contract freeze (ledger F4)
+     detail: webhooks required=True; controller-rejects-mismatch wording=True; stale 'renders latest desired'=False
+LF6  contract PASS            [fixed r3] KAI subGroup names carry an explicit 63-char budget (ledger F6)
+     detail: kind-prefixed bounded forms=True; budget stated=True; 63-char tests promised=True
+LF10 contract PASS            [fixed r3] zero-value threshold rendering is stated consistently (ledger F10)
+     detail: stale 'only where gang configured'=False; nonzero-only-from-gang=True; Volcano zero=True; KAI zero=True
+LF11 contract PASS            [fixed r3] Production Readiness Review questionnaire present (ledger F11)
+     detail: PRR section=True; feature gate named=True; kep.yaml gates+metrics=True
+LF12 contract PASS            [fixed r3] reconcile flow injects bindings before Role create/update (ledger F12)
+     detail: injection (step 11) precedes Role writes (step 12)=True; per-Pod handshake=True
+LF13 contract PASS            [fixed r3] Volcano instance subgroup example sets subGroupSize (ledger F13)
+     detail: example subGroupSize=4=True; ComputeSubGroupSize=True; threshold semantics=True
+LF8  contract FAIL            [fixed r4] rejected unselected late policies acquire no finalizer; deleting them resumes (ledger F8)
+     detail: no finalizer/reservation=False; delete-resumes=False; new lifecycle for applying=False; test item 34=False
+LF16 contract FAIL            [fixed r4] TopologyPolicyLate's message identifies which mismatch occurred (ledger F16)
+     detail: reason semantics + message identification documented=False
+LF26 contract PASS            [fixed r4] PR body describes the ClusterNetworkTopology design; stale legs gone (ledger F26)
+     detail: body mentions ClusterNetworkTopology=True; stale legs present=[]; replacement bullets agree with KEP=True
+LF27 contract FAIL            [fixed r4] the published branch's net diff is the two KEP files only (ledger F27)
+     detail: net changed files outside the harness: ['keps/473-topology-aware-scheduling/README.md', 'keps/473-topology-aware-scheduling/kep.yaml', 'pkg/reconciler/roleinstance/utils/instance_utils.go', 'pkg/reconciler/roleinstance/utils/instance_utils_test.go']
+LF28 contract FAIL            [fixed r4] topology create rejects known-but-unsupported schedulers incl. native kube-scheduler (ledger F28)
+     detail: create-rejection rule=False; no-enum-persistence=False; admission test item 1=False
+LF29 contract FAIL            [fixed r4] HyperNode readable prefixes sanitize dots before truncation (ledger F29)
+     detail: sanitize-then-truncate=False; order stated=False; hash inputs stable=False; boundary example=False; test item 12 dotted=False
+LF30 contract FAIL            [fixed r4] legacy recordless RBGs bootstrap to none; pre-arrival policy is late (ledger F30)
+     detail: CREATE marker=False; legacy none bootstrap=False; pre-arrival policy late=False; TopologyBootstrapBlocked=False; test items 33/24/19=False
+P0   contract PASS            premise: base branch has no topology-aware scheduling
+     detail: base(origin/main) first-party topology code files=[]; PR head first-party topology .go files=[] (vendor hits are the Volcano API dependency, unrelated)
+C1   contract PASS            codebase symbols the KEP builds on exist (ResolveGangStrategy, labels, conditions)
+     detail: ResolveGangStrategy / labels / IncompatibleGangConfig / GangConfigured / strategy+pattern types all present
+C2   contract PASS            vendored Volcano API matches the KEP dialect claims
+     detail: subGroupPolicy{networkTopology,subGroupSize}=True; networkTopology{mode,highestTierAllowed,highestTierName}=True; PodGroup minMember Minimum=0=True
+C3   contract PASS            upstream snapshots back the KEP's external API claims
+     detail: volcano HyperNode tier+tierName=True; kai PodGroup topologyConstraint/subGroups=True; kai Topology levels[].nodeLabel=True; koordinator network-topology-spec+gatherStrategy=True; koordinator groups annotation=True
+C4   contract PASS            r3: Volcano v1.14.4 subjob mechanics back the KEP claims
+     detail: first-non-empty-match policy selection=True; default subjob inherits PodGroup topology=True; subGroupSize->MinAvailable=True
+C5   contract PASS            r3: Volcano v1.14.4 restart domain recovery skips topology-less subjobs
+     detail: subjobs without own topology skipped=True; parent domain = LCA of recovered subjobs=True
+C6   contract PASS            r3: Volcano v1.14.4 allocate skips BestEffort; backfill direct-allocates from the full node list
+     detail: allocate skips empty-request tasks=True; backfill allocates directly from ssn.NodeList=True
+C7   contract PASS            r3: KAI v0.18.6 domain-ID encoding is non-injective; level/alias validation as cited
+     detail: unescaped '.' join=True; same-ID domain merge=True; MaxItems=16=True; nodeLabel immutable (alias edits only)=True; v2alpha2 PodGroup fields=True
+C8   contract PASS            r3: Koordinator pinned baseline limits topology to no-Bound-member jobs
+     detail: FIXME no-Bound-members/total==minimum=True; OnceSatisfied early-return path=True
+C9   contract PASS            r3: the PR's only Go delta is byte-identical to main's merged #495 (no net runtime change)
+     detail: diff vs origin/main empty=True; blob identical=True
+----
+RESULT: 8 check(s) not in the expected state: LF9, LF7, LF8, LF16, LF27, LF28, LF29, LF30
