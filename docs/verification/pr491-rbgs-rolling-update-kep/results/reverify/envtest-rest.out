@@ -1,0 +1,2 @@
+restart_policy: ok 202.7s (2026-10-23, KUBEBUILDER_ASSETS=1.36.2)
+webhook: ok 31.6s (2026-10-23)

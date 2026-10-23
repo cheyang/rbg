@@ -1,7 +1,7 @@
 # Verification — PR #491 (KEP-455: rbgset rolling update) — Reviewer B (Codex)
 
 PR under review: https://github.com/sgl-project/rbg/pull/491
-Head reviewed: `b03a7e67cf681599fb1c69537be2a2078ec35cf0` (round 2; round-1 head `719851a65959ebc91157ce90651aaa911c26f30c`)
+Head reviewed: `f711893c835648a49e2f73ff0be1b73d9c7a13ef` (round 3; round-2 head `b03a7e67cf681599fb1c69537be2a2078ec35cf0`; round-1 head `719851a65959ebc91157ce90651aaa911c26f30c`)
 Base: `79f7e5858fdc30ffaeadef4aea12c3809dcb348d` (merge-base `0821cb5b`)
 
 The PR is **docs-only**: it adds `keps/455-rbgs-rolling-update/{README.md,kep.yaml}`.
@@ -188,3 +188,72 @@ Kickoff prompt for a fresh machine: "Check out branch
 `verify/pr491-rbgs-rolling-update-kep-codex` of https://github.com/cheyang/rbg.git,
 then run `bash docs/verification/pr491-rbgs-rolling-update-kep/scripts/re-verify.sh`."
 
+
+## Round 3 (head f711893c, delta b03a7e6..f711893c)
+
+The round-3 revision (+193/-81 in the KEP README, docs-only) resolves the
+round-2 major N1 by redesign: the absent-condition exception is replaced by a
+persistent **request/acknowledgement** mechanism — the set advances a per-child
+`rbg.workloads.x-k8s.io/rollout-request` counter in the same
+resource-version-protected `Update` as spec/metadata/revision label; the RBG
+controller writes `status.observedRolloutRequest` only after policy migration,
+PodGroup reconciliation, role workload application, and orphan cleanup succeed
+plus a direct post-application recheck of every role workload; the consumer
+requires request == acknowledgement whenever the annotation exists, in addition
+to the generation/Ready/condition gates; a missing condition never bypasses a
+pending request; the legacy fallback is restricted to never-requested children;
+the counter gives A->B->A a fresh request; both values persist on the child
+object across controller restarts. The system-key list grew 4 -> 6 (+
+`rollout-request`, + `v1alpha1-pod-group-policy`) with restated scope; the
+replicas-only scenario is redefined (both strategies pace under the
+availability budget, Recreate preserves the UID); the test plan gained
+request/ack entries and a manual kind-validation list.
+
+Harness changes this round:
+- N1 contract replaced additively (harness-update): the round-2
+  `TestVerify_R2N1_AbsentBarrierExceptionIsGenerationGated` was remedy-shaped
+  (asserted the generation gate specifically, as disclosed in round 2). The
+  round-3 `TestVerify_R3N1_*` contracts assert the remedy-neutral acceptance
+  criterion (a spec-bumped child must not count as ready before its controller
+  has acknowledged the new request) plus the round-2 ask's risk-row/test-entry
+  alignment. Verified: FAIL on b03a7e6, PASS on f711893c.
+- New discrete-event exhibits `TestVerify_R3N1Exhibit_*`: budget held at
+  maxUnavailable=1 under controller latency; fail-safe stall (no completion)
+  with the child controller down; the decisive metadata-only case (generation
+  unchanged, Ready/condition stale-valid: control without the request gate
+  admits 2 concurrent rolls, with the gate concurrency=1); A->B->A revert never
+  reuses an acknowledgement (ready-window 0 ticks).
+- F1 and F3/F4 guards updated additively (section restructured; key list
+  extended with restated scope). Round-2 guards kept as historical records.
+- New finding contracts: R3M1 residual (stash/restore test entry + both wording
+  catches), R3F9 (request-writer scope vs drift-repair writes), R3F10
+  (replace-write strip fallback), R3Q3 (unbudgeted compatibility-annotation
+  convergence). Bites-checked: one-clause simulated fixes flip each green;
+  reverted clean.
+
+### Observed vs expected (head f711893c / previous head b03a7e6)
+
+| Test | Polarity | f711893c | b03a7e6 | Meaning |
+|------|----------|----------|---------|---------|
+| C1-C8 premise/code-fact contracts | contract | PASS | PASS | KEP premises still true; code unchanged outside keps/ |
+| R3F1 barrier section (restructured) | contract | PASS | FAIL | F1 still fixed |
+| R2F2 scale-subresource interaction | contract | PASS | PASS | F2 still fixed |
+| R3F3F4 6 system keys, hash+drift+sync scope | contract | PASS | FAIL | F3/F4 still fixed |
+| R2F5 checkpoint storage named | contract | PASS | PASS | F5 still fixed |
+| R2F6 numeric revision informational-only | contract | PASS | PASS | F6 still fixed |
+| R2F7 partition resolution timing | contract | PASS | PASS | F7 still fixed |
+| R2Q1 explicit-zero admission verdict | contract | PASS | PASS | Q1 still answered |
+| R2Q2 downgrade stance | contract | PASS | PASS | Q2 still answered |
+| R3N1 request/ack gate closes bootstrap window | contract | PASS | FAIL | **N1 FIXED** (remedy-neutral) |
+| R3N1 risk row + bootstrap test entry aligned | contract | PASS | FAIL | round-2 ask's second half done |
+| R3N1Exhibit budget under latency | exhibit | PASS | PASS | concurrency=1 with maxUnavailable=1, completes |
+| R3N1Exhibit child controller down | exhibit | PASS | PASS | fail-safe stall after first bump, no completion |
+| R3N1Exhibit metadata-only window | exhibit | PASS | PASS | request alone holds; control without it: concurrency=2 |
+| R3N1Exhibit A->B->A fresh request | exhibit | PASS | PASS | ready-window 0 ticks; completes |
+| R3M1 conversion stash entry + wording catches | contract | **FAIL** | FAIL | M1 residual reproduced (3 sub-checks) |
+| R3F9 request-writer scope covers repair writes | contract | **FAIL** | n/a | F9 reproduced (new) |
+| R3F10 request-strip fallback stated | contract | **FAIL** | n/a | F10 reproduced (new) |
+| R3Q3 unbudgeted convergence justified | contract | **FAIL** | n/a | Q3 reproduced (new) |
+
+Code layers at f711893c (code byte-identical to merge-base outside keps/):
+unit `internal/controller/workloads` PASS; envtest `test/envtest/testcase/{rbg,restart_policy,webhook}` PASS (see results/reverify/).
