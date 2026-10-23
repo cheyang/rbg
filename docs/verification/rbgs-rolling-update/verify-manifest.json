@@ -9,7 +9,8 @@
     "api/workloads/v1alpha2/rolebasedgroupset_admission_verify_test.go",
     "api/workloads/v1alpha1/rolebasedgroupset_conversion_verify_test.go",
     "internal/controller/workloads/rolebasedgroupset_inplace_verify_test.go",
-    "internal/controller/workloads/rolebasedgroupset_conversion_annotation_verify_test.go"
+    "internal/controller/workloads/rolebasedgroupset_conversion_annotation_verify_test.go",
+    "internal/controller/workloads/rolebasedgroupset_round5_verify_test.go"
   ],
   "premise": {
     "id": "P0",
