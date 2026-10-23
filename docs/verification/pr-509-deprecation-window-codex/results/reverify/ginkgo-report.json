@@ -1,0 +1,742 @@
+[
+  {
+    "SuitePath": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509",
+    "SuiteDescription": "PR509 Deprecation Window Suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": false,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 8,
+      "SpecsThatWillRun": 8
+    },
+    "StartTime": "2026-10-23T23:44:53.862517407+08:00",
+    "EndTime": "2026-10-23T23:45:01.086557454+08:00",
+    "RunTime": 7224040037,
+    "SuiteConfig": {
+      "RandomSeed": 1792770293,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": null,
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/suite_test.go",
+          "LineNumber": 77
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-23T23:44:53.862544408+08:00",
+        "EndTime": "2026-10-23T23:44:58.865054127+08:00",
+        "RunTime": 5002509719,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-23T23:44:53+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/config/crd/bases\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-23T23:44:56+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-23T23:44:57+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/convert\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleInstanceSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroup\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroup\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupSet\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=InstanceSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instanceset\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instanceset\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=Instance\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instance\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instance\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupScalingAdapter\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupscalingadapter\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupscalingadapter\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=ClusterEngineRuntimeProfile\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-clusterengineruntimeprofile\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-clusterengineruntimeprofile\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/probe-pr509\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tStarting webhook server\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.certwatcher\tUpdated current TLS certificate\t{\"cert\": \"/tmp/envtest-serving-certs-2793784499/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2793784499/tls.key\"}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.webhook\tServing webhook server\t{\"host\": \"127.0.0.1\", \"port\": 36145}\n2026-10-23T23:44:57+08:00\tINFO\tcontroller-runtime.certwatcher\tStarting certificate poll+watcher\t{\"cert\": \"/tmp/envtest-serving-certs-2793784499/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2793784499/tls.key\", \"interval\": \"10s\"}\n2026-10-23T23:44:58+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/suite_test.go",
+              "LineNumber": 77
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-10-23T23:44:53.862553708+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/suite_test.go",
+              "LineNumber": 77
+            },
+            "TimelineLocation": {
+              "Offset": 10260,
+              "Order": 3,
+              "Time": "2026-10-23T23:44:58.865052656+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 5002498948,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR #509 compat-window behavior against a real API server"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+            "LineNumber": 53
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+          "LineNumber": 58
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "seeds the pre-upgrade state (webhooks not installed yet)",
+        "State": "passed",
+        "StartTime": "2026-10-23T23:44:58.865091508+08:00",
+        "EndTime": "2026-10-23T23:45:00.935123821+08:00",
+        "RunTime": 2070032313,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-23T23:45:00+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 58
+            },
+            "TimelineLocation": {
+              "Order": 4,
+              "Time": "2026-10-23T23:44:58.865094368+08:00"
+            },
+            "Message": "seeds the pre-upgrade state (webhooks not installed yet)",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 58
+            },
+            "TimelineLocation": {
+              "Offset": 136,
+              "Order": 6,
+              "Time": "2026-10-23T23:45:00.935118851+08:00"
+            },
+            "Message": "seeds the pre-upgrade state (webhooks not installed yet)",
+            "Duration": 2070024483,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR #509 compat-window behavior against a real API server"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+            "LineNumber": 53
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+          "LineNumber": 95
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "installs the 0.9.0 validating webhook set (compat mode)",
+        "State": "passed",
+        "StartTime": "2026-10-23T23:45:00.935147982+08:00",
+        "EndTime": "2026-10-23T23:45:00.9384463+08:00",
+        "RunTime": 3298318,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 95
+            },
+            "TimelineLocation": {
+              "Order": 7,
+              "Time": "2026-10-23T23:45:00.935150572+08:00"
+            },
+            "Message": "installs the 0.9.0 validating webhook set (compat mode)",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 95
+            },
+            "TimelineLocation": {
+              "Order": 9,
+              "Time": "2026-10-23T23:45:00.938441889+08:00"
+            },
+            "Message": "installs the 0.9.0 validating webhook set (compat mode)",
+            "Duration": 3291328,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR #509 compat-window behavior against a real API server"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+            "LineNumber": 53
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+          "LineNumber": 99
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "E1: still admits updates to an existing legacy child RBG (documented exemption)",
+        "State": "passed",
+        "StartTime": "2026-10-23T23:45:00.9384675+08:00",
+        "EndTime": "2026-10-23T23:45:00.941381624+08:00",
+        "RunTime": 2914134,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 99
+            },
+            "TimelineLocation": {
+              "Order": 10,
+              "Time": "2026-10-23T23:45:00.938470501+08:00"
+            },
+            "Message": "E1: still admits updates to an existing legacy child RBG (documented exemption)",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 99
+            },
+            "TimelineLocation": {
+              "Order": 12,
+              "Time": "2026-10-23T23:45:00.941377344+08:00"
+            },
+            "Message": "E1: still admits updates to an existing legacy child RBG (documented exemption)",
+            "Duration": 2906844,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR #509 compat-window behavior against a real API server"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+            "LineNumber": 53
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+          "LineNumber": 107
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "E1: CONTRACT - the set's controller can still scale up / recreate children (scaleUp create is admitted)",
+        "State": "failed",
+        "StartTime": "2026-10-23T23:45:00.941398365+08:00",
+        "EndTime": "2026-10-23T23:45:00.942785804+08:00",
+        "RunTime": 1387439,
+        "ParallelProcess": 1,
+        "Failure": {
+          "Message": "F1: scale-up/self-heal of an existing legacy RoleBasedGroupSet must work during the compat window; got: admission webhook \"vrolebasedgroup.kb.io\" denied the request: spec.roles[0] (role \"worker\"): workload type \"apps/v1/StatefulSet\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\nUnexpected error:\n    \u003c*errors.StatusError | 0x31b94ae741e0\u003e: \n    admission webhook \"vrolebasedgroup.kb.io\" denied the request: spec.roles[0] (role \"worker\"): workload type \"apps/v1/StatefulSet\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\n    {\n        ErrStatus: {\n            TypeMeta: {Kind: \"\", APIVersion: \"\"},\n            ListMeta: {\n                SelfLink: \"\",\n                ResourceVersion: \"\",\n                Continue: \"\",\n                RemainingItemCount: nil,\n            },\n            Status: \"Failure\",\n            Message: \"admission webhook \\\"vrolebasedgroup.kb.io\\\" denied the request: spec.roles[0] (role \\\"worker\\\"): workload type \\\"apps/v1/StatefulSet\\\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)\",\n            Reason: \"Forbidden\",\n            Details: nil,\n            Code: 403,\n        },\n    }\noccurred",
+          "Location": {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+            "LineNumber": 118,
+            "FullStackTrace": "sigs.k8s.io/rbgs/test/envtest/testcase/verifypr509.init.func2.4()\n\t/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go:118 +0x2cf"
+          },
+          "TimelineLocation": {
+            "Order": 14,
+            "Time": "2026-10-23T23:45:00.942778814+08:00"
+          },
+          "FailureNodeContext": "leaf-node",
+          "FailureNodeType": "It",
+          "FailureNodeLocation": {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+            "LineNumber": 107
+          },
+          "ProgressReport": {
+            "LeafNodeLocation": {},
+            "SpecStartTime": "0001-01-01T00:00:00Z",
+            "CurrentNodeLocation": {},
+            "CurrentNodeStartTime": "0001-01-01T00:00:00Z",
+            "CurrentStepLocation": {},
+            "CurrentStepStartTime": "0001-01-01T00:00:00Z",
+            "TimelineLocation": {
+              "Time": "0001-01-01T00:00:00Z"
+            }
+          }
+        },
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 107
+            },
+            "TimelineLocation": {
+              "Order": 13,
+              "Time": "2026-10-23T23:45:00.941400345+08:00"
+            },
+            "Message": "E1: CONTRACT - the set's controller can still scale up / recreate children (scaleUp create is admitted)",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 107
+            },
+            "TimelineLocation": {
+              "Order": 15,
+              "Time": "2026-10-23T23:45:00.942782304+08:00"
+            },
+            "Message": "E1: CONTRACT - the set's controller can still scale up / recreate children (scaleUp create is admitted)",
+            "Duration": 1381959,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR #509 compat-window behavior against a real API server"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+            "LineNumber": 53
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+          "LineNumber": 123
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "E3: updating the defaulted v1alpha1 object is admitted (existing-role exemption end-to-end)",
+        "State": "passed",
+        "StartTime": "2026-10-23T23:45:00.942835786+08:00",
+        "EndTime": "2026-10-23T23:45:01.05023801+08:00",
+        "RunTime": 107402224,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-23T23:45:00+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n2026-10-23T23:45:00+08:00\tINFO\tcontroller-runtime.cache\tWarning: workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n2026-10-23T23:45:00+08:00\tINFO\tcontroller-runtime.cache\tWarning: workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n2026-10-23T23:45:01+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n2026-10-23T23:45:01+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 123
+            },
+            "TimelineLocation": {
+              "Order": 16,
+              "Time": "2026-10-23T23:45:00.942837406+08:00"
+            },
+            "Message": "E3: updating the defaulted v1alpha1 object is admitted (existing-role exemption end-to-end)",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 123
+            },
+            "TimelineLocation": {
+              "Offset": 762,
+              "Order": 18,
+              "Time": "2026-10-23T23:45:01.05023337+08:00"
+            },
+            "Message": "E3: updating the defaulted v1alpha1 object is admitted (existing-role exemption end-to-end)",
+            "Duration": 107395964,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR #509 compat-window behavior against a real API server"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+            "LineNumber": 53
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+          "LineNumber": 137
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "E3: the admission oldObj carries the schema-defaulted workload",
+        "State": "passed",
+        "StartTime": "2026-10-23T23:45:01.050255361+08:00",
+        "EndTime": "2026-10-23T23:45:01.050271751+08:00",
+        "RunTime": 16390,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 137
+            },
+            "TimelineLocation": {
+              "Order": 19,
+              "Time": "2026-10-23T23:45:01.050257511+08:00"
+            },
+            "Message": "E3: the admission oldObj carries the schema-defaulted workload",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 137
+            },
+            "TimelineLocation": {
+              "Order": 21,
+              "Time": "2026-10-23T23:45:01.050271082+08:00"
+            },
+            "Message": "E3: the admission oldObj carries the schema-defaulted workload",
+            "Duration": 13571,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR #509 compat-window behavior against a real API server"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+            "LineNumber": 53
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+          "LineNumber": 145
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "E4: a v1alpha1 write returns an admission warning and new deprecated uses are rejected",
+        "State": "passed",
+        "StartTime": "2026-10-23T23:45:01.050277592+08:00",
+        "EndTime": "2026-10-23T23:45:01.057484119+08:00",
+        "RunTime": 7206536,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 145
+            },
+            "TimelineLocation": {
+              "Order": 22,
+              "Time": "2026-10-23T23:45:01.050278302+08:00"
+            },
+            "Message": "E4: a v1alpha1 write returns an admission warning and new deprecated uses are rejected",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 145
+            },
+            "TimelineLocation": {
+              "Order": 24,
+              "Time": "2026-10-23T23:45:01.057475178+08:00"
+            },
+            "Message": "E4: a v1alpha1 write returns an admission warning and new deprecated uses are rejected",
+            "Duration": 7196866,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "PR #509 compat-window behavior against a real API server"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+            "LineNumber": 53
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+          "LineNumber": 161
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "E2: CONTRACT - deleting a v1alpha1 object is not blocked when the warning webhook is unreachable",
+        "State": "failed",
+        "StartTime": "2026-10-23T23:45:01.057504529+08:00",
+        "EndTime": "2026-10-23T23:45:01.062930702+08:00",
+        "RunTime": 5426173,
+        "ParallelProcess": 1,
+        "Failure": {
+          "Message": "F2: a warning-only webhook (verbs=create;update;delete, failurePolicy=Fail) must not block v1alpha1 deletes while the webhook server is down; got: Internal error occurred: failed calling webhook \"vrolebasedgroup-v1alpha1-deprecation-dead.kb.io\": failed to call webhook: Post \"https://127.0.0.1:1/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup?timeout=10s\": dial tcp 127.0.0.1:1: connect: connection refused\nUnexpected error:\n    \u003c*errors.StatusError | 0x31b949b16280\u003e: \n    Internal error occurred: failed calling webhook \"vrolebasedgroup-v1alpha1-deprecation-dead.kb.io\": failed to call webhook: Post \"https://127.0.0.1:1/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup?timeout=10s\": dial tcp 127.0.0.1:1: connect: connection refused\n    {\n        ErrStatus: {\n            TypeMeta: {Kind: \"\", APIVersion: \"\"},\n            ListMeta: {\n                SelfLink: \"\",\n                ResourceVersion: \"\",\n                Continue: \"\",\n                RemainingItemCount: nil,\n            },\n            Status: \"Failure\",\n            Message: \"Internal error occurred: failed calling webhook \\\"vrolebasedgroup-v1alpha1-deprecation-dead.kb.io\\\": failed to call webhook: Post \\\"https://127.0.0.1:1/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup?timeout=10s\\\": dial tcp 127.0.0.1:1: connect: connection refused\",\n            Reason: \"InternalError\",\n            Details: {\n                Name: \"\",\n                Group: \"\",\n                Kind: \"\",\n                UID: \"\",\n                Causes: [\n                    {\n                        Type: \"\",\n                        Message: \"failed calling webhook \\\"vrolebasedgroup-v1alpha1-deprecation-dead.kb.io\\\": failed to call webhook: Post \\\"https://127.0.0.1:1/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup?timeout=10s\\\": dial tcp 127.0.0.1:1: connect: connection refused\",\n                        Field: \"\",\n                    },\n                ],\n                RetryAfterSeconds: 0,\n            },\n            Code: 500,\n        },\n    }\noccurred",
+          "Location": {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+            "LineNumber": 200,
+            "FullStackTrace": "sigs.k8s.io/rbgs/test/envtest/testcase/verifypr509.init.func2.8()\n\t/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go:200 +0x702"
+          },
+          "TimelineLocation": {
+            "Offset": 422,
+            "Order": 26,
+            "Time": "2026-10-23T23:45:01.062069062+08:00"
+          },
+          "FailureNodeContext": "leaf-node",
+          "FailureNodeType": "It",
+          "FailureNodeLocation": {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+            "LineNumber": 161
+          },
+          "ProgressReport": {
+            "LeafNodeLocation": {},
+            "SpecStartTime": "0001-01-01T00:00:00Z",
+            "CurrentNodeLocation": {},
+            "CurrentNodeStartTime": "0001-01-01T00:00:00Z",
+            "CurrentStepLocation": {},
+            "CurrentStepStartTime": "0001-01-01T00:00:00Z",
+            "TimelineLocation": {
+              "Time": "0001-01-01T00:00:00Z"
+            }
+          }
+        },
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-23T23:45:01+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n2026-10-23T23:45:01+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n2026-10-23T23:45:01+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 161
+            },
+            "TimelineLocation": {
+              "Order": 25,
+              "Time": "2026-10-23T23:45:01.057506549+08:00"
+            },
+            "Message": "E2: CONTRACT - deleting a v1alpha1 object is not blocked when the warning webhook is unreachable",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 161
+            },
+            "TimelineLocation": {
+              "Offset": 422,
+              "Order": 27,
+              "Time": "2026-10-23T23:45:01.062073192+08:00"
+            },
+            "Message": "E2: CONTRACT - deleting a v1alpha1 object is not blocked when the warning webhook is unreachable",
+            "Duration": 4566633,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 193
+            },
+            "TimelineLocation": {
+              "Offset": 422,
+              "Order": 28,
+              "Time": "2026-10-23T23:45:01.062078192+08:00"
+            },
+            "Message": "PR #509 compat-window behavior against a real API server",
+            "NodeType": "DeferCleanup (Each)"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go",
+              "LineNumber": 193
+            },
+            "TimelineLocation": {
+              "Offset": 422,
+              "Order": 30,
+              "Time": "2026-10-23T23:45:01.062928442+08:00"
+            },
+            "Message": "PR #509 compat-window behavior against a real API server",
+            "Duration": 850250,
+            "NodeType": "DeferCleanup (Each)"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/suite_test.go",
+          "LineNumber": 187
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-23T23:45:01.062997505+08:00",
+        "EndTime": "2026-10-23T23:45:01.086550854+08:00",
+        "RunTime": 23553349,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-23T23:45:01+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-10-23T23:45:01+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-10-23T23:45:01+08:00\tINFO\tStopping and waiting for caches\n2026-10-23T23:45:01+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-10-23T23:45:01+08:00\tINFO\tStopping and waiting for webhooks\n2026-10-23T23:45:01+08:00\tINFO\tcontroller-runtime.webhook\tShutting down webhook server with timeout of 1 minute\n2026-10-23T23:45:01+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-watching file\t{\"cert\": \"/tmp/envtest-serving-certs-2793784499/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2793784499/tls.key\", \"error\": \"no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:235\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-23T23:45:01+08:00\tDEBUG\tcontroller-runtime.certwatcher\tcertificate event\t{\"cert\": \"/tmp/envtest-serving-certs-2793784499/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2793784499/tls.key\", \"event\": \"CHMOD         \\\"/tmp/envtest-serving-certs-2793784499/tls.key\\\"\"}\n2026-10-23T23:45:01+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-reading certificate\t{\"cert\": \"/tmp/envtest-serving-certs-2793784499/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2793784499/tls.key\", \"error\": \"open /tmp/envtest-serving-certs-2793784499/tls.crt: no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:243\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-23T23:45:01+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-watching file\t{\"cert\": \"/tmp/envtest-serving-certs-2793784499/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2793784499/tls.key\", \"error\": \"no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:235\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-23T23:45:01+08:00\tDEBUG\tcontroller-runtime.certwatcher\tcertificate event\t{\"cert\": \"/tmp/envtest-serving-certs-2793784499/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2793784499/tls.key\", \"event\": \"REMOVE        \\\"/tmp/envtest-serving-certs-2793784499/tls.key\\\"\"}\n2026-10-23T23:45:01+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-reading certificate\t{\"cert\": \"/tmp/envtest-serving-certs-2793784499/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2793784499/tls.key\", \"error\": \"open /tmp/envtest-serving-certs-2793784499/tls.crt: no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:243\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-23T23:45:01+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-10-23T23:45:01+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/suite_test.go",
+              "LineNumber": 187
+            },
+            "TimelineLocation": {
+              "Order": 31,
+              "Time": "2026-10-23T23:45:01.062998515+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/suite_test.go",
+              "LineNumber": 187
+            },
+            "TimelineLocation": {
+              "Offset": 3882,
+              "Order": 33,
+              "Time": "2026-10-23T23:45:01.086548374+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 23549869,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]

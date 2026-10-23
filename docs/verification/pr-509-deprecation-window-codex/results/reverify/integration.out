@@ -1,0 +1,101 @@
+Running Suite: PR509 Deprecation Window Suite - /home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509
+=============================================================================================================================================
+Random Seed: [1m1792770293[0m
+
+Will run [1m8[0m of [1m8[0m specs
+2026/10/23 23:44:57 http: TLS handshake error from 127.0.0.1:44392: EOF
+[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m
+[38;5;243m------------------------------[0m
+[38;5;9m• [FAILED] [0.001 seconds][0m
+[0mPR #509 compat-window behavior against a real API server [38;5;9m[1m[It] E1: CONTRACT - the set's controller can still scale up / recreate children (scaleUp create is admitted)[0m
+[38;5;243m/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go:107[0m
+
+  [38;5;9m[FAILED] F1: scale-up/self-heal of an existing legacy RoleBasedGroupSet must work during the compat window; got: admission webhook "vrolebasedgroup.kb.io" denied the request: spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)
+  Unexpected error:
+      <*errors.StatusError | 0x31b94ae741e0>: 
+      admission webhook "vrolebasedgroup.kb.io" denied the request: spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)
+      {
+          ErrStatus: {
+              TypeMeta: {Kind: "", APIVersion: ""},
+              ListMeta: {
+                  SelfLink: "",
+                  ResourceVersion: "",
+                  Continue: "",
+                  RemainingItemCount: nil,
+              },
+              Status: "Failure",
+              Message: "admission webhook \"vrolebasedgroup.kb.io\" denied the request: spec.roles[0] (role \"worker\"): workload type \"apps/v1/StatefulSet\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet on the role (or submit the object as v1alpha2, where RoleInstanceSet is the default), or re-enable the deprecated workload types (Helm: controller.deprecatedWorkloadTypes.enabled=true, controller: --enable-deprecated-workload-types=true)",
+              Reason: "Forbidden",
+              Details: nil,
+              Code: 403,
+          },
+      }
+  occurred[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go:118[0m [38;5;243m@ 10/23/26 23:45:00.942[0m
+[38;5;243m------------------------------[0m
+W1023 23:45:00.946607 1259360 deprecation_webhook.go:67] RoleBasedGroup legacy-defaulted: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+[38;5;10m•[0m[38;5;10m•[0mW1023 23:45:01.053111 1259360 deprecation_webhook.go:67] RoleBasedGroup explicit-ris: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+W1023 23:45:01.056038 1259360 deprecation_webhook.go:67] RoleBasedGroup new-defaulted: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+[38;5;10m•[0mW1023 23:45:01.061065 1259360 deprecation_webhook.go:67] RoleBasedGroup explicit-ris: workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+
+[38;5;243m------------------------------[0m
+[38;5;9m• [FAILED] [0.005 seconds][0m
+[0mPR #509 compat-window behavior against a real API server [38;5;9m[1m[It] E2: CONTRACT - deleting a v1alpha1 object is not blocked when the warning webhook is unreachable[0m
+[38;5;243m/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go:161[0m
+
+  [38;5;243mTimeline >>[0m
+  2026-10-23T23:45:01+08:00	INFO	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+  2026-10-23T23:45:01+08:00	INFO	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+  2026-10-23T23:45:01+08:00	INFO	workloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide
+  [38;5;9m[FAILED][0m in [It] - /home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go:200 [38;5;243m@ 10/23/26 23:45:01.062[0m
+  [38;5;243m<< Timeline[0m
+
+  [38;5;9m[FAILED] F2: a warning-only webhook (verbs=create;update;delete, failurePolicy=Fail) must not block v1alpha1 deletes while the webhook server is down; got: Internal error occurred: failed calling webhook "vrolebasedgroup-v1alpha1-deprecation-dead.kb.io": failed to call webhook: Post "https://127.0.0.1:1/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup?timeout=10s": dial tcp 127.0.0.1:1: connect: connection refused
+  Unexpected error:
+      <*errors.StatusError | 0x31b949b16280>: 
+      Internal error occurred: failed calling webhook "vrolebasedgroup-v1alpha1-deprecation-dead.kb.io": failed to call webhook: Post "https://127.0.0.1:1/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup?timeout=10s": dial tcp 127.0.0.1:1: connect: connection refused
+      {
+          ErrStatus: {
+              TypeMeta: {Kind: "", APIVersion: ""},
+              ListMeta: {
+                  SelfLink: "",
+                  ResourceVersion: "",
+                  Continue: "",
+                  RemainingItemCount: nil,
+              },
+              Status: "Failure",
+              Message: "Internal error occurred: failed calling webhook \"vrolebasedgroup-v1alpha1-deprecation-dead.kb.io\": failed to call webhook: Post \"https://127.0.0.1:1/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup?timeout=10s\": dial tcp 127.0.0.1:1: connect: connection refused",
+              Reason: "InternalError",
+              Details: {
+                  Name: "",
+                  Group: "",
+                  Kind: "",
+                  UID: "",
+                  Causes: [
+                      {
+                          Type: "",
+                          Message: "failed calling webhook \"vrolebasedgroup-v1alpha1-deprecation-dead.kb.io\": failed to call webhook: Post \"https://127.0.0.1:1/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup?timeout=10s\": dial tcp 127.0.0.1:1: connect: connection refused",
+                          Field: "",
+                      },
+                  ],
+                  RetryAfterSeconds: 0,
+              },
+              Code: 500,
+          },
+      }
+  occurred[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go:200[0m [38;5;243m@ 10/23/26 23:45:01.062[0m
+[38;5;243m------------------------------[0m
+
+[38;5;9m[1mSummarizing 2 Failures:[0m
+  [38;5;9m[FAIL][0m [0mPR #509 compat-window behavior against a real API server [38;5;9m[1m[It] E1: CONTRACT - the set's controller can still scale up / recreate children (scaleUp create is admitted)[0m
+  [38;5;243m/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go:118[0m
+  [38;5;9m[FAIL][0m [0mPR #509 compat-window behavior against a real API server [38;5;9m[1m[It] E2: CONTRACT - deleting a v1alpha1 object is not blocked when the warning webhook is unreachable[0m
+  [38;5;243m/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/verifypr509/deprecation_window_test.go:200[0m
+
+[38;5;9m[1mRan 8 of 8 Specs in 7.224 seconds[0m
+[38;5;9m[1mFAIL![0m -- [38;5;10m[1m6 Passed[0m | [38;5;9m[1m2 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- FAIL: TestVerifyPR509 (7.22s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/verifypr509	7.236s
+FAIL

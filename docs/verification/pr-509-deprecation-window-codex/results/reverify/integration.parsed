@@ -1,0 +1,8 @@
+seeds the pre-upgrade state (webhooks not installed yet)	pass
+installs the 0.9.0 validating webhook set (compat mode)	pass
+E1: still admits updates to an existing legacy child RBG (documented exemption)	pass
+E1: CONTRACT - the set's controller can still scale up / recreate children (scaleUp create is admitted)	fail
+E3: updating the defaulted v1alpha1 object is admitted (existing-role exemption end-to-end)	pass
+E3: the admission oldObj carries the schema-defaulted workload	pass
+E4: a v1alpha1 write returns an admission warning and new deprecated uses are rejected	pass
+E2: CONTRACT - deleting a v1alpha1 object is not blocked when the warning webhook is unreachable	fail
