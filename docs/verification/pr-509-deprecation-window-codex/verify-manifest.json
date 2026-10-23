@@ -1,0 +1,41 @@
+{
+  "topic": "pr-509-deprecation-window-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/509",
+  "harnessPaths": [
+    "docs/verification/pr-509-deprecation-window-codex",
+    "api/workloads/v1alpha2/zz_verify_pr509_test.go",
+    "api/workloads/v1alpha1/zz_verify_pr509_deprecation_test.go",
+    "test/envtest/testcase/verifypr509"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "v1alpha1 writes and deprecated workload types are silently accepted today; 0.9.0 needs a warning + new-use gate with a compatibility window",
+    "reportedComponent": "admission webhooks for workloads.x-k8s.io v1alpha1/v1alpha2",
+    "patchedComponent": "admission webhooks for workloads.x-k8s.io v1alpha1/v1alpha2",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "base ecdfd6e: RoleBasedGroupValidator with enableDeprecatedWorkloadTypes=true admits a brand-new deprecated role with zero warnings (results/premise-base.out); base has no v1alpha1 admission webhook at all",
+    "match": ["TestP0_BaseAcceptsNewDeprecatedUseSilently"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./api/workloads/v1alpha1/ ./api/workloads/v1alpha2/ -run 'TestPR509' -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=$(bin/setup-envtest use 1.31.0 --bin-dir bin -p path) go test ./test/envtest/testcase/verifypr509/ -timeout 10m -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit",        "match": ["TestPR509Contract_ChildRBGFromLegacyTemplateIsAdmittedOnCreate"] },
+    { "id": "F1", "polarity": "contract", "layer": "integration", "match": ["the set's controller can still scale up / recreate children"] },
+    { "id": "F2", "polarity": "contract", "layer": "integration", "match": ["deleting a v1alpha1 object is not blocked when the warning webhook is unreachable"] },
+    { "id": "F3", "polarity": "contract", "layer": "unit",        "match": ["TestPR509Contract_StalePersistedReadDoesNotGrantExemption"] },
+    { "id": "F4", "polarity": "contract", "layer": "unit",        "match": ["TestPR509Contract_CompatModeRejectionDoesNotAdviseReenablingTheFlag"] }
+  ],
+  "liveNote": "L3 intentionally skipped for this debate round (unit + integration layers only, per instructions)."
+}
