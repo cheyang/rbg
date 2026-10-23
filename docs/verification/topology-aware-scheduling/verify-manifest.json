@@ -122,11 +122,12 @@
     },
     {
       "id": "F12",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestKEP473_F12_RoleNameRuleUnscoped"
-      ]
+        "TestKEP473_F12_ContractRoleNameRuleScoped"
+      ],
+      "ledgerId": "F7"
     },
     {
       "id": "F14",
@@ -146,13 +147,77 @@
     },
     {
       "id": "F13",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F13_ContractRBACMatrixEnumerated"
+      ],
+      "ledgerId": "F9"
+    },
+    {
+      "id": "F16",
+      "ledgerId": "F29",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F16_ContractHyperNodeNameSanitizesDots"
+      ]
+    },
+    {
+      "id": "F17",
+      "ledgerId": "F30",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F17_ContractUpgradeBootstrap"
+      ]
+    },
+    {
+      "id": "F18",
+      "ledgerId": "F8",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F18_ContractLatePolicyRecovery"
+      ]
+    },
+    {
+      "id": "F19",
+      "ledgerId": "F28",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F19_ContractUnsupportedSchedulerRejected"
+      ]
+    },
+    {
+      "id": "F20",
+      "ledgerId": "F26",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F20_ContractPRBodyMatchesRedesign"
+      ]
+    },
+    {
+      "id": "F21",
+      "ledgerId": "F27",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP473_F21_ContractKEPOnlyDiff"
+      ]
+    },
+    {
+      "id": "F22",
+      "ledgerId": "F31",
       "polarity": "canary",
       "layer": "unit",
       "match": [
-        "TestKEP473_F13_RBACSectionMissing"
+        "TestKEP473_F22_FreshInstallEpochProvisioningUnspecified"
       ]
     }
   ],
   "liveNote": "Not applicable: this PR is a docs-only KEP (no runtime code), so there is no live layer. If implementation PRs arrive, re-run with `bash docs/verification/topology-aware-scheduling/scripts/re-verify.sh` (no args: resolves the current PR head from manifest.pr).",
-  "notes": "Round 3 (head 99b991c5): canaries F7-F11 flipped (round-2 findings fixed) and were inverted to contract tests; stale round-1 contract assertions updated to the rewritten text (Harness-update); F12/F13 are the remaining open text findings (unscoped DNS-1123 role rule, missing RBAC section)."
+  "notes": "Round 4 (head 9f682b08): canaries F12 (ledger F7, unscoped DNS-1123 role rule) and F13 (ledger F9, missing RBAC section) flipped and were inverted to contract tests pinning the fixed text. New contracts F16-F21 pin the round-4 resolutions of ledger F29 (HyperNode dot sanitization, incl. a behavioral simulation of the specified naming algorithm), F30 (upgrade bootstrap / creation provenance), F8 (late-policy recovery answer), F28 (unsupported-scheduler rejection), F26 (PR body matches the redesign; fixture re-archived from the live body), and F27 (KEP-only diff; live git check that merge-base..HEAD touches only the KEP dir plus harness paths). F4a dropped its stale body-fixture phrase (Harness-update: body rewritten; body-vs-KEP alignment now covered by F20). New canary F22 (ledger F31): fresh-install epoch provisioning is unspecified while CREATE admission is fail-closed on missing epoch configuration."
 }

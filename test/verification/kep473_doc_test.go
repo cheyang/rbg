@@ -41,9 +41,12 @@ limitations under the License.
 package verification
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"runtime"
@@ -384,8 +387,11 @@ func TestKEP473_F3_ContractRBGSetAdmissionSelfContained(t *testing.T) {
 // validation table now specifies that ordering check (InvalidLevelOrder)
 // instead of "Not validated by RBG".
 func TestKEP473_F4a_ContractValidationClaimAligned(t *testing.T) {
-	assertContains(t, prBodyFixture(t), "preferred level not broader than required",
-		"PR body fixture")
+	// Harness-update (round 4): the PR body was rewritten for the
+	// ClusterNetworkTopology redesign and no longer carries the exact round-1
+	// phrase "preferred level not broader than required"; body-vs-KEP alignment
+	// is now covered by TestKEP473_F20_ContractPRBodyMatchesRedesign. The
+	// KEP-side assertions below are unchanged.
 	assertNotContains(t, kepText(t), "| Not validated by RBG |",
 		"KEP validation text (relative-order punt must be gone)")
 	// Round-3 locus: reconcile-flow step 6 + the TopologyTranslated reason list.
@@ -579,28 +585,256 @@ func TestKEP473_F15_ContractZeroValueRenderingClarified(t *testing.T) {
 // text; must FLIP to red when the author fixes the document.
 // ---------------------------------------------------------------------------
 
-// Ledger F7 (open): the naming-safety rule still reads "Role names and
-// topology-bearing policy-rule names are validated at admission as DNS-1123
-// labels" — the role half is unscoped, while RoleSpec.Name today carries no
-// pattern validation (unlike TemplateRef.Name). Read literally this is a
-// schema tightening for pre-existing objects; the intent is almost certainly
-// roles bearing topology declarations.
-func TestKEP473_F12_RoleNameRuleUnscoped(t *testing.T) {
+// Ledger F7 FIXED at 9f682b08 (canary flipped -> inverted to a contract
+// test): the naming-safety rule is now scoped to topology compiler sources
+// ("Role names used as sources by a topology-bearing compiled plan"), with an
+// explicit non-tightening guarantee for topology-free RBGs and gang-only
+// policies. The old unscoped sentence must stay gone.
+func TestKEP473_F12_ContractRoleNameRuleScoped(t *testing.T) {
 	doc := kepText(t)
-	assertContains(t, doc,
+	assertNotContains(t, doc,
 		"Role names and topology-bearing policy-rule names are validated at admission as DNS-1123 labels",
-		"naming-safety rule (role half unscoped)")
+		"naming-safety rule (old unscoped sentence must stay gone)")
+	assertContains(t, doc,
+		"Role names used as sources by a topology-bearing compiled plan must be DNS-1123 labels",
+		"naming-safety rule (scoped to topology compiler sources)")
+	assertContains(t, doc,
+		"adds no stricter naming admission to topology-free RBGs or gang-only policies",
+		"naming-safety rule (explicit non-tightening guarantee for KEP-430 objects)")
 }
 
-// Ledger F9 (open, carried): the design now requires cluster-scoped reads and
-// writes the controller does not have today (Node list/watch for Volcano
-// materialization, HyperNode CRUD, KAI Topology CRUD, topology CR
-// status/finalizer writes), but the KEP still contains no RBAC/ClusterRole
-// section.
-func TestKEP473_F13_RBACSectionMissing(t *testing.T) {
+// Ledger F9 FIXED at 9f682b08 (canary flipped -> inverted to a contract
+// test): the Dependencies section now carries an explicit controller
+// service-account RBAC matrix covering the topology CR, scheduler PodGroups
+// per dialect, Managed vs Imported native permissions, Node/CRD reads, and
+// events, plus cross-namespace retention visibility and the
+// disablement-never-removes-cleanup rule.
+func TestKEP473_F13_ContractRBACMatrixEnumerated(t *testing.T) {
 	doc := kepText(t)
-	assertNotContains(t, doc, "RBAC", "KEP text (no RBAC discussion)")
-	assertNotContains(t, doc, "ClusterRole", "KEP text (no ClusterRole discussion)")
+	assertContains(t, doc, "The required RBAC surface is listed below",
+		"Dependencies (RBAC matrix preamble)")
+	assertContains(t, doc, "`topology.x-k8s.io/clusternetworktopologies` (cluster)",
+		"RBAC matrix (topology CR row)")
+	assertContains(t, doc, "`scheduling.volcano.sh`, `scheduling.sigs.k8s.io` (gated Koordinator), `scheduling.run.ai` (KAI)",
+		"RBAC matrix (scheduler PodGroups row)")
+	assertContains(t, doc, "Managed `kai.scheduler/topologies` or `topology.volcano.sh/hypernodes` (cluster)",
+		"RBAC matrix (Managed native row)")
+	assertContains(t, doc, "Imported `kai.scheduler/topologies` or `scheduling.koordinator.sh/clusternetworktopologies` (cluster)",
+		"RBAC matrix (Imported read-only row)")
+	assertContains(t, doc, "feature disablement never removes cleanup permissions",
+		"RBAC matrix (cleanup-permission retention rule)")
+	assertContains(t, doc, "RBAC: verify the documented resource/verb matrix",
+		"integration test plan (RBAC matrix verification)")
+}
+
+// ---------------------------------------------------------------------------
+// Round-4 contract tests (head 9f682b08): the round-4 KEP rewrite resolved
+// ledger findings F7/F8/F9/F26/F27/F28/F29/F30. These contracts pin the fixed
+// text so a regression turns red. F22 is the round-4 bug-canary for the one
+// newly found gap (ledger F31).
+// ---------------------------------------------------------------------------
+
+// Ledger F29 FIXED at 9f682b08: the Volcano HyperNode readable prefix is now
+// sanitized (dots -> hyphens) BEFORE the 16-char truncation, and the identity
+// hash covers the full (untruncated, unsanitized) topology UID, level name,
+// and ordered domain path. Doc pin plus a behavioral simulation of the
+// specified algorithm at the exact boundary case from the finding.
+func TestKEP473_F16_ContractHyperNodeNameSanitizesDots(t *testing.T) {
+	doc := kepText(t)
+	assertContains(t, doc, "replacing every `.` in the DNS-subdomain topology name with `-`, then taking the first 16 characters",
+		"Volcano HyperNode naming rule (sanitize before truncate)")
+	assertContains(t, doc, "do not truncate before sanitizing",
+		"Volcano HyperNode naming rule (ordering)")
+	assertContains(t, doc, "abcdefghijklmno.example.com",
+		"Volcano HyperNode naming rule (boundary example retained)")
+	assertContains(t, doc, "sanitization/truncation never changes those hash inputs",
+		"Volcano HyperNode naming rule (hash inputs are full identity)")
+
+	// Behavioral simulation of the algorithm exactly as the KEP specifies it.
+	dns1123Label := regexp.MustCompile(`^[a-z0-9]([-a-z0-9]*[a-z0-9])?$`)
+	name := func(topoUID, topoName, level string, domainPath []string) string {
+		prefix := strings.ReplaceAll(topoName, ".", "-")
+		if len(prefix) > 16 {
+			prefix = prefix[:16]
+		}
+		lvl := level
+		if len(lvl) > 16 {
+			lvl = lvl[:16]
+		}
+		h := sha256.Sum256([]byte(topoUID + "\x00" + level + "\x00" + strings.Join(domainPath, "\x00")))
+		return "r-" + prefix + "-" + lvl + "-" + hex.EncodeToString(h[:6])
+	}
+	cases := []struct {
+		uid, topo, level string
+		path             []string
+	}{
+		// The round-3 finding: dot exactly at the 16-char truncation boundary.
+		{"uid-1", "abcdefghijklmno.example.com", "rack", []string{"example.com", "rack-1"}},
+		// Maximal inputs: 253-char subdomain topology name + 32-char level.
+		{"uid-2", strings.Repeat("a", 250) + ".bc", strings.Repeat("l", 32), []string{"zone", "rack"}},
+		// Level name whose 16-char truncation ends on a hyphen.
+		{"uid-3", "topo", "0123456789abcde-fghijklmno", []string{"zone"}},
+		// Repeated rack names under different zones (full-domain hash must split them).
+		{"uid-4", "topo", "rack", []string{"zone-a", "rack"}},
+		{"uid-4", "topo", "rack", []string{"zone-b", "rack"}},
+	}
+	seen := map[string]bool{}
+	for _, c := range cases {
+		n := name(c.uid, c.topo, c.level, c.path)
+		if len(n) > 48 {
+			t.Errorf("name %q exceeds the documented 48-char bound (%d)", n, len(n))
+		}
+		if !dns1123Label.MatchString(n) {
+			t.Errorf("name %q is not a valid DNS-1123 label", n)
+		}
+		if seen[n] {
+			t.Errorf("name %q collides with an earlier case", n)
+		}
+		seen[n] = true
+	}
+	// Prefixes that sanitize identically but belong to different topology UIDs
+	// must still produce distinct names (hash covers the full identity).
+	a := name("uid-A", "a.b", "rack", []string{"x"})
+	b := name("uid-B", "a-b", "rack", []string{"x"})
+	if a == b {
+		t.Errorf("sanitize-identical prefixes collapsed: %q == %q", a, b)
+	}
+}
+
+// Ledger F30 FIXED at 9f682b08: the upgrade-bootstrap gap (Copilot flag
+// C4314247675) is closed by the creation-provenance design — a reserved
+// create-only contract-version annotation, conservative legacy `none`
+// bootstrap, TopologyPolicyLate for pre-first-reconcile policies, epoch
+// rotation on reupgrade, and TopologyBootstrapBlocked for unknown provenance.
+func TestKEP473_F17_ContractUpgradeBootstrap(t *testing.T) {
+	doc := kepText(t)
+	assertContains(t, doc, "`topology.x-k8s.io/contract-version: v1:<handover-uuid>`",
+		"upgrade bootstrap (provenance marker)")
+	assertContains(t, doc, "persist a legacy `none` record for that UID, regardless of current policy",
+		"upgrade bootstrap (conservative legacy none)")
+	assertContains(t, doc, "A topology-bearing policy already present before the new controller's first reconcile is late",
+		"upgrade bootstrap (F30 acceptance window closed)")
+	assertContains(t, doc, "`TopologyBootstrapBlocked`",
+		"upgrade bootstrap (blocked reason)")
+	assertContains(t, doc, "reupgrade after an older controller rotates the epoch",
+		"upgrade bootstrap (epoch rotation)")
+	assertContains(t, doc, "33. Upgrade bootstrap:",
+		"unit test plan (bootstrap coverage)")
+	assertContains(t, doc, "24. Legacy upgrade:",
+		"integration test plan (legacy upgrade coverage)")
+	assertContains(t, doc, "19. Upgrade handover:",
+		"e2e test plan (handover coverage)")
+}
+
+// Ledger F8 ANSWERED at 9f682b08 (was an open question): a never-selected
+// rejected late policy acquires no policy finalizer or consumer reservation,
+// and deleting it resumes the existing none/role-only contract; an
+// interrupted protected first acceptance stays on the retention protocol.
+func TestKEP473_F18_ContractLatePolicyRecovery(t *testing.T) {
+	doc := kepText(t)
+	assertContains(t, doc,
+		"A rejected late policy that was never selected for acceptance acquires no `topology.x-k8s.io/policy` finalizer or topology consumer reservation",
+		"late-policy recovery (no protection for unselected policies)")
+	assertContains(t, doc,
+		"Removing that policy restores the previously accepted role-only or `none` declarations and allows reconciliation to resume",
+		"late-policy recovery (delete-to-resume path)")
+	assertContains(t, doc,
+		"a policy already protected during an interrupted first acceptance remains subject to the retention protocol",
+		"late-policy recovery (interrupted acceptance excluded from the shortcut)")
+	assertContains(t, doc, "34. Late-policy recovery:",
+		"unit test plan (late-policy recovery coverage)")
+}
+
+// Ledger F28 ANSWERED at 9f682b08 (was an open question): topology CR
+// creation is rejected when the active scheduler is unknown or unsupported
+// (including a recognized native kube-scheduler), without widening the enum;
+// workloads referencing an existing topology under an unsupported scheduler
+// report SchedulerUnsupported.
+func TestKEP473_F19_ContractUnsupportedSchedulerRejected(t *testing.T) {
+	doc := kepText(t)
+	assertContains(t, doc,
+		"reject creation if the active scheduler is unknown or is not one of `KAI`, `Koordinator`, and `Volcano`, including a recognized native kube-scheduler configuration",
+		"topology CR admission (unsupported scheduler rejected)")
+	assertContains(t, doc,
+		"do not add an enum value merely to persist a failed topology CR",
+		"topology CR admission (enum not widened)")
+	assertContains(t, doc,
+		"A workload referencing an existing topology under an unsupported scheduler still reports `SchedulerUnsupported`",
+		"topology CR admission (workload failure path)")
+}
+
+// Ledger F26 FIXED at 9f682b08: the PR body was rewritten for the
+// ClusterNetworkTopology redesign. The fixture is the live body archived at
+// review time (results/pr-body.md); all four stale legs must stay gone.
+func TestKEP473_F20_ContractPRBodyMatchesRedesign(t *testing.T) {
+	body := prBodyFixture(t)
+	assertContains(t, body, "ClusterNetworkTopology",
+		"PR body (the CR the KEP centers on must be named)")
+	assertNotContains(t, body, "TopologyResourceUnresolved",
+		"PR body (phantom condition reason must stay gone)")
+	assertNotContains(t, body, "selects the KAI Topology CR",
+		"PR body (stale KAI-reference claim must stay gone)")
+	assertNotContains(t, body, "controller default can be overridden",
+		"PR body (stale controller-default claim must stay gone)")
+	assertContains(t, body, "only the two KEP files",
+		"PR body (KEP-only scope statement)")
+}
+
+// Ledger F27 FIXED at 9f682b08: the rebase dropped the byte-identical copy of
+// already-merged #495. Live git check: the merge-base..HEAD diff must touch
+// only the KEP directory (plus this harness's own paths when run on the
+// verify branch). On the round-3 head (99b991c5, which carried the #495
+// duplicate under pkg/) this test fails; grafted onto 9f682b08 it passes.
+func TestKEP473_F21_ContractKEPOnlyDiff(t *testing.T) {
+	root := repoRoot(t)
+	gitOut := func(args ...string) string {
+		cmd := exec.Command("git", args...)
+		cmd.Dir = root
+		out, err := cmd.Output()
+		if err != nil {
+			t.Fatalf("git %s: %v", strings.Join(args, " "), err)
+		}
+		return strings.TrimSpace(string(out))
+	}
+	base, err := exec.Command("git", "-C", root, "merge-base", "origin/main", "HEAD").Output()
+	if err != nil {
+		base, err = exec.Command("git", "-C", root, "merge-base", "main", "HEAD").Output()
+		if err != nil {
+			t.Skipf("no main ref available for merge-base: %v", err)
+		}
+	}
+	diff := gitOut("diff", "--name-only", strings.TrimSpace(string(base)), "HEAD")
+	allowed := func(path string) bool {
+		return strings.HasPrefix(path, "keps/473-topology-aware-scheduling/") ||
+			strings.HasPrefix(path, "docs/verification/") ||
+			strings.HasPrefix(path, "test/verification/")
+	}
+	for _, f := range strings.Split(diff, "\n") {
+		if f != "" && !allowed(f) {
+			t.Errorf("non-KEP path in PR diff: %s (F27 class: runtime files in a docs-only PR)", f)
+		}
+	}
+}
+
+// Ledger F31 (round-4 canary, NEW): the epoch UUID is "generated once per
+// handover from an older controller" and CREATE admission "fails closed if
+// that configuration is unavailable" — but the KEP never says who provisions
+// the initial epoch on a FRESH install (no older controller exists). Read
+// literally, a fresh deployment has no handover, hence no configured epoch,
+// hence fail-closed RBG CREATE (or TopologyBootstrapBlocked everywhere). One
+// sentence ("the deployment generates an initial epoch at install time;
+// upgrades rotate it") closes the gap. Canary: PASSES while the gap is
+// present; must FLIP when the author documents initial-epoch provisioning.
+func TestKEP473_F22_FreshInstallEpochProvisioningUnspecified(t *testing.T) {
+	doc := kepText(t)
+	assertContains(t, doc, "generated once per handover from an older controller",
+		"bootstrap section (epoch generation tied to handover)")
+	assertContains(t, doc, "fails closed if that configuration is unavailable",
+		"bootstrap section (fail-closed admission)")
+	assertNotContains(t, doc, "initial epoch",
+		"bootstrap section (no fresh-install provisioning path)")
+	assertNotContains(t, doc, "fresh install",
+		"bootstrap section (no fresh-install provisioning path)")
 }
 
 // ---------------------------------------------------------------------------

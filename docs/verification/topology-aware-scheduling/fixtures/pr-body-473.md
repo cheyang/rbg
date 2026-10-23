@@ -1,139 +1,43 @@
 ### Ⅰ. Motivation
 
-RBG workloads are increasingly topology-sensitive:
-
-1. **Multi-node instance packing.** A single inference instance may span several machines, and its pods must land inside one high-performance network domain (rack/block) to keep cross-machine RDMA traffic off oversubscribed spine links.
-2. **Prefill–decode co-location.** PD-disaggregated serving continuously transfers KV cache between prefill and decode; those roles need to stay inside the same network block, while unrelated roles should remain outside that constraint.
-
-Volcano, Koordinator, and KAI all model this, but each uses a different topology dialect. RBG should let users declare topology intent once and have it compiled faithfully by the configured scheduler.
+Multi-node inference instances need rack/block locality, and prefill/decode roles need a common network domain for KV-cache transfer. This KEP defines portable gather-only topology intent while preserving KEP-430 gang semantics and one physical placement membership per Pod. Spread and native kube-scheduler translation are out of scope.
 
 ### Ⅱ. Modifications
 
-Adds `keps/473-topology-aware-scheduling/`:
+Adds the English KEP and metadata under `keps/473-topology-aware-scheduling/`. The proposal covers:
 
-- **English KEP**: `README.md`
-- **Metadata**: `kep.yaml`
+1. **Portable topology vocabulary.** A cluster-scoped `topology.x-k8s.io/ClusterNetworkTopology` supports Managed materialization and Imported read-only binding. Its scheduler, ordered levels, and binding are immutable. Workload `topologyName` references this RBG CR, not a native KAI Topology or a controller-default override; `pack.required` and `pack.preferred` reference `status.levels`.
+2. **Attachment points.** `RoleSpec.InstanceTopologyConstraint` packs each RoleInstance independently and requires RoleInstanceSet backing. CoordinatedPolicy topology rules gather exactly their explicit role sets; the policy binds by the RBG's name and namespace.
+3. **One placement planner/compiler.** Gang and topology intents compose by `(Roles, PartitionBy)`: equal scopes merge, disjoint scopes remain independent, containment requires backend support, and partial overlap is rejected. Only the scheduler compiler renders PodGroups and Pod bindings, before Role creation. Gang-only rendering remains equivalent to KEP-430.
+4. **Backend capability boundaries.** Phase 1 targets Volcano Managed topology with a restricted scope matrix, effective subgroup inheritance, restart recovery, resource-request checks, and startup-dependency validation. `PreferredAbsorbed` reports unanchored preferences; `ImplicitInstanceGang` reports instance-local `subGroupSize` thresholds. Topology-only does not mean universally gang-free dispatch. The inspected Koordinator baseline lacks continuous cross-batch placement, and unpatched KAI v0.18.6 has ambiguous domain-path encoding: both remain unsupported for workload topology until verified backend fixes and scheduler-running tests pass. Vocabulary Ready alone does not authorize placement. Koordinator Phase 2 additionally requires fail-closed native semantic immutability and accepted mapping checks for layer names, label keys, and parent links.
+5. **Accepted contracts and recovery.** First acceptance reads the policy through uncached `apiReader`; immutable `topologyPolicyRequired` provides deterministic waiting for order-independent GitOps creation. Accepted declarations and physical layouts are frozen; late policies or incompatible changes do not overwrite bindings. KAI additionally snapshots the ordered alias/nodeLabel/depth mapping and renders stable nodeLabels. Explicit instance bindings use actual RI UIDs and an acknowledgement handshake. Legacy recordless RBGs conservatively bootstrap to none, including zero-replica/template-only cases and policies arriving before first reconciliation. Epoch-scoped CREATE provenance and a coordinated upgrade handover distinguish fresh lifecycles; reupgrade after an older controller rotates the epoch.
+6. **Retention and deletion.** Managed native resources use topology-UID labels and explicit cleanup, without ownerReferences. Consumer reservations serialize acceptance against topology deletion. RBG, RI, PodGroup, and policy protection drains creators, Pods, and groups before release. Cleanup remains active after feature disablement or scheduler mismatch. Downgrade to an older controller requires draining and removing topology-bearing lifecycles first.
+7. **Failure visibility and PRR.** Conditions and events report unresolved topology/levels, unsupported capabilities, mapping/layout changes, and lifecycle failures. Alpha uses the default-off `RBGTopologyAwareScheduling` gate, with enablement, disablement, rollback, observability, and metadata documented. An explicit RBAC matrix distinguishes Managed writes, Imported read-only access, and cross-namespace retention/cleanup permissions.
 
-Main design points:
+### Ⅲ. Scope
 
-1. **Public API**
-   - `RoleSpec.InstanceTopologyConstraint`
-     - group = one `RoleInstance`
-     - each instance independently selects a topology domain
-     - pattern-independent, applies to `LeaderWorkerPattern` and `CustomComponentsPattern`
-   - `CoordinatedPolicy.spec.policies[].strategy.scheduling.topologyConstraint`
-     - group = all pods of the rule’s `roles`
-   - `TopologyConstraint.topologyName`
-     - selects the scheduler topology resource where needed, currently KAI’s `Topology` CR
-   - `pack.required` / `pack.preferred`
-     - hard and soft gather semantics
+This is a design proposal; topology runtime implementation will follow in separate phase PRs.
 
-2. **Scheduler-independent placement planning**
-   - Gang and topology no longer independently partition PodGroups.
-   - The planner resolves all placement intents into one logical `PlacementPlan` / `PlacementGroup` tree.
-   - Gang and topology are attributes of the same logical group.
-   - Scopes are compared as `(Roles, PartitionBy)`:
-     - equal scopes merge
-     - disjoint scopes remain independent
-     - contained scopes form a parent/child tree
-     - partially overlapping scopes are rejected
-   - The scheduler compiler is the only component that renders physical PodGroups and pod bindings.
+The published branch contains only the two KEP files. The duplicate RoleInstance revision-selector diff already merged in #495 has been removed by publishing the rebased history.
 
-3. **Scheduler compilation**
-   - Volcano, Koordinator, and KAI each compile the same logical plan into their own dialect.
-   - Volcano uses `networkTopology` and `subGroupPolicy[].networkTopology`.
-   - Koordinator uses `network-topology-spec` gather strategies.
-   - KAI uses nested subGroups and `topologyConstraint`.
-   - Topology-only groups do not create gang semantics:
-     - Volcano: `minMember: 0`
-     - KAI: `minSubGroup: 0` / `minMember: 0`
+### Ⅳ. Tests
 
-4. **KAI topology identity**
-   - KAI levels are `nodeLabel` keys or `TopologyLevel.alias` identifiers, resolved against the selected `Topology` CR.
-   - `TopologyConstraint.topologyName` selects the KAI `Topology` CR.
-   - The controller default can be overridden by the API field.
-   - Missing or inconsistent topology names are reported as `TopologyResourceUnresolved` / `IncompatibleTopologyNames`.
+The KEP specifies unit, integration, and scheduler-running e2e requirements for admission, naming, KEP-430 equivalence, capability gates, contract/layout freeze, binding ordering, multi-writer status, consumer retention, real GC, restart, legacy upgrade/downgrade bootstrap, native semantic guards, and rollback. These are implementation acceptance requirements, not topology tests implemented or executed by this documentation PR.
 
-5. **Mutability**
-   - Topology declarations are immutable for the RBG and CoordinatedPolicy lifecycle.
-   - Admission rejects in-place additions, removals, and changes.
-   - To change topology, delete and recreate the affected workload and, when needed, its topology-bearing CoordinatedPolicy.
-   - The combined RBG/CoordinatedPolicy contract freezes when the controller first accepts a placement plan; a topology-bearing policy arriving after the RBG accepted `none`, or a changed contract, reports `TopologyPolicyLate` and gates role updates instead of applying to running pods.
-   - An active topology-bearing CoordinatedPolicy is protected by a controller-managed finalizer; release is keyed to the matching RBG's UID, a terminating policy matching that UID stays authoritative, a stale terminating policy is ignored and released, and manual finalizer removal is the documented rollback escape hatch.
-   - Rolling updates that change topology constraints are out of scope.
+### Ⅴ. Verification
 
-6. **Naming safety and explicit failure semantics**
-   - Reconcile validates:
-     - level existence
-     - parent/child level ordering
-     - preferred level not broader than required
-     - topology resource existence
-     - scheduler capability
-   - Failures surface as RBG conditions and events naming the declaring rule or role:
-     - `TopologyTranslated=False`, including `TopologyPolicyLate`
-     - `GangConfigured=False` (retained for gang-only failures)
-     - `TopologyTranslated=True` with reason `PreferredAbsorbed` when Volcano cannot anchor a preferred level
-   - Role create/update is gated when the plan or translation is invalid.
+Review `README.md` and `kep.yaml` in the KEP directory. Run Markdown validation with:
 
-7. **KEP-430 compatibility**
-   - `ResolveGangStrategy` semantics are unchanged.
-   - Gang-only workloads must produce the same PodGroup rendering as KEP-430.
-   - Gang and topology can compose on the same logical scope.
-   - A pod still has exactly one PodGroup membership.
-   - The scheduler compiler owns physical PodGroups and pod bindings, avoiding order-dependent translation.
+```sh
+npx --yes markdownlint-cli2 --config .github/.markdownlint.json keps/473-topology-aware-scheduling/README.md
+git diff --check
+```
 
-### Ⅲ. Does this pull request fix one issue?
+### Ⅵ. Review notes
 
-ref #473
-
-This PR adds the KEP and does not close the tracking issue. Implementation PRs will follow the phase plan.
-
-### Ⅳ. List the added test cases (unit test/integration test) if any, please explain if no tests are needed.
-
-No runtime code is added in this PR.
-
-The KEP includes a test plan for:
-
-- placement planning
-- KEP-430 equivalence
-- topology-only rendering
-- topology translation
-- mutability
-- scheduler capability detection
-- admission and reconcile validation
-- integration and e2e coverage
-
-### Ⅴ. Describe how to verify it
-
-Review:
-
-- `keps/473-topology-aware-scheduling/README.md`
-- `keps/473-topology-aware-scheduling/kep.yaml`
-
-Key design decisions worth reviewing:
-
-1. Placement planning is scheduler-independent.
-2. Gang and topology are attributes of the same logical placement group.
-3. PodGroup membership has one owner: the scheduler compiler.
-4. Role-level constraints are named `InstanceTopologyConstraint`.
-5. Cross-role constraints live on CoordinatedPolicy rules.
-6. KAI topology identity is explicit via `topologyName`.
-7. Topology constraints are immutable for the workload lifecycle.
-8. Unsupported scheduler capabilities are reported, not approximated.
-9. Generated source names are admitted as DNS-1123 labels; KAI subGroups use kind-prefixed, tree-unique names with consistent parent references and bindings.
-
-### Ⅵ. Special notes for reviews
-
-- This KEP intentionally narrows alpha topology rules to whole-role-scope co-location.
-- Segment-level grouping and spread are not part of this KEP.
-- Native kube-scheduler translation is explicitly unsupported.
-
-## Checklist
-
-- [ ] Format your code `make fmt`.
-- [ ] Add unit tests or integration tests.
-- [ ] Update the documentation related to the change.
-
-
-
+- Unsupported plans must fail explicitly, without dropping hard topology or declared gang minima.
+- Upper-level failure gating is not a global pause of downstream Pod recovery.
+- Koordinator and KAI examples are gated future targets, not certification of the inspected baselines.
+- HyperNode readable prefixes sanitize dots before truncation while retaining full identity hash inputs. Naming validation is scoped to topology compilation without tightening topology-free KEP-430 admission.
+- Rejected unselected late policies acquire no topology protection; removing them can resume an existing none/role-only lifecycle. Applying their topology requires a new lifecycle.
 
