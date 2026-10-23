@@ -28,7 +28,7 @@
     },
     "integration": {
       "kind": "ginkgo",
-      "cmd": "bash -c 'if [ ! -x bin/setup-envtest ]; then GOBIN=$(pwd)/bin go install sigs.k8s.io/controller-runtime/tools/setup-envtest@v0.24.1; fi; KUBEBUILDER_ASSETS=$(bin/setup-envtest use 1.31.0 --bin-dir bin -p path) go test ./test/envtest/testcase/verifypr509/ -timeout 10m -ginkgo.json-report=$GINKGO_REPORT'",
+      "cmd": "bash -c 'if [ ! -x bin/setup-envtest ]; then GOBIN=$(pwd)/bin go install sigs.k8s.io/controller-runtime/tools/setup-envtest@v0.24.1; fi; KUBEBUILDER_ASSETS=$(bin/setup-envtest use 1.31.0 --bin-dir $(pwd)/bin -p path) go test ./test/envtest/testcase/verifypr509/ -timeout 10m -ginkgo.json-report=$GINKGO_REPORT'",
       "report": "$GINKGO_REPORT"
     }
   },
