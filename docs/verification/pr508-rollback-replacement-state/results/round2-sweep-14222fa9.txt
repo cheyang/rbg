@@ -1,0 +1,25 @@
+# Round 2 full sweep on PR head 14222fa9 (tests-only delta a1d164a9..14222fa9)
+date: 2026-10-23T02:17:29Z
+
+delta: 2 test files, +113/-5, no production code change:
+  - TestEarlyRollbackPersistsBeforeInPlaceUpdate (persist-before-in-place-update ordering + failed-persist leaves instance untouched)
+  - TestEarlyRollbackProtectsNewReplacementsAfterScaleUp (scale-up scope extension, generation observation, release semantics)
+  - fakeInplaceControl made configurable; harness cleanup deletes updateExpectations
+
+$ go test -mod=vendor -count=1 -timeout 300s ./pkg/reconciler/roleinstanceset/statefulmode/... ./pkg/utils/expectations/... ./api/workloads/... ./internal/controller/workloads/...
+ok  sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode  0.099s
+ok  sigs.k8s.io/rbgs/pkg/utils/expectations  0.003s
+ok  sigs.k8s.io/rbgs/api/workloads/v1alpha1  0.011s
+ok  sigs.k8s.io/rbgs/api/workloads/v1alpha2  0.118s
+ok  sigs.k8s.io/rbgs/internal/controller/workloads  3.789s
+
+$ KUBEBUILDER_ASSETS=envtest 1.31.0 go test -mod=vendor -count=1 -timeout 10m ./test/envtest/testcase/stateful/...
+ok  sigs.k8s.io/rbgs/test/envtest/testcase/stateful  35.441s
+
+$ go test -run TestVerifyPR508 (reviewer harness V1 canary / V2 contract, overlayed onto 14222fa9)
+--- PASS: TestVerifyPR508_V1_RestartRetainsSurgeUntilReplacementReady (0.04s)
+--- PASS: TestVerifyPR508_V2_RevisionChangeEndsProtection (0.00s)
+
+upstream CI on 14222fa9: 22/22 checks pass.
+
+verdict: ready-to-merge stands; SHOULD F2 (update-strategy.md cross-link) and F3/F1 (follow-up issue) still open, not addressed by this delta.

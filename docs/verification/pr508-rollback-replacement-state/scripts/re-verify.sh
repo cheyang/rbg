@@ -27,6 +27,13 @@ fi
 
 git checkout "$head" 2>/dev/null || git checkout -B "pr-$pr_number-verify" "$head"
 
+# Overlay the reviewer harness (tracked on the verify branch, not in the PR)
+# onto the checked-out head so the contracts run against current PR code.
+VERIFY_BRANCH="verify/pr508-rollback-replacement-state"
+git checkout "$VERIFY_BRANCH" -- \
+  pkg/reconciler/roleinstanceset/statefulmode/rollback_replacement_verification_test.go \
+  2>/dev/null || echo "WARN: harness overlay failed; is $VERIFY_BRANCH present?" >&2
+
 echo
 echo "== unit harness =="
 go test -mod=vendor -count=1 -v -run 'TestVerifyPR508' ./pkg/reconciler/roleinstanceset/statefulmode/
