@@ -35,6 +35,33 @@ canary means "finding reproduced", not "all clear".
 
 ## Summary of results
 
+### Round 4 (head 9f682b08, `.last-reviewed` advanced)
+
+The round-4 delta (`99b991c5..9f682b08`, rebase plus KEP follow-up commits) resolves
+every carried open finding and adds the upgrade-bootstrap design. The PR diff against
+the merge-base is again KEP-only (`README.md` + `kep.yaml`); the duplicated #495
+commit from round 3 is gone.
+
+| ID | Claim (ledger ID) | Layer | Round-4 verdict | Evidence |
+|----|-------------------|-------|-----------------|----------|
+| F12 | (ledger F7) DNS-1123 rule unscoped for Role names | 1 | **Fixed** (canary flipped -> contract): rule scoped to "Role names used as sources by a topology-bearing compiled plan", with an explicit non-tightening guarantee for topology-free RBGs/gang-only policies | `TestKEP473_F12_ContractRoleNameRuleScoped` (fails on 99b991c5, passes on 9f682b08) |
+| F13 | (ledger F9) RBAC surface not enumerated | 1 | **Fixed** (canary flipped -> contract): Dependencies now carries a resource/verb RBAC matrix (topology CR + /status + /finalizers, scheduler PodGroups per dialect, Managed native CRUD, Imported read-only, Nodes/CRDs reads, events) plus cross-namespace visibility and disablement-retention rules; test-plan item 26 and a graduation criterion cover it | `TestKEP473_F13_ContractRBACMatrixEnumerated` (fails on 99b991c5, passes on 9f682b08) |
+| F16 | (ledger F29) HyperNode name invalid when a subdomain topology name truncates at a dot | 1 | **Fixed**: sanitize-then-truncate rule ("do not truncate before sanitizing"), hash inputs stay the full identity; behavioral simulation of the specified algorithm passes DNS-1123 at the exact boundary name and hits exactly 48 chars at maximal inputs | `TestKEP473_F16_ContractHyperNodeNameSanitizesDots`; `results/bites-check-round4.txt` (old algorithm produces the invalid `r-abcdefghijklmno.-rack-...`) |
+| F17 | (ledger F30) upgrade bootstrap undefined for recordless RBGs | 1 | **Fixed**: epoch-scoped CREATE provenance marker, conservative legacy `none` bootstrap regardless of policy/pods, `TopologyPolicyLate` for pre-first-reconcile policies, `TopologyBootstrapBlocked` for unknown provenance, epoch rotation on reupgrade; unit 33 / integration 24 / e2e 19 + graduation criteria | `TestKEP473_F17_ContractUpgradeBootstrap` (fails on 99b991c5, passes on 9f682b08) |
+| F18 | (ledger F8, question) late-policy finalizer/recovery | 1 | **Answered**: an unselected rejected policy acquires no finalizer/reservation; deleting it resumes the accepted contract; interrupted protected acceptances stay on retention; test-plan item 34 | `TestKEP473_F18_ContractLatePolicyRecovery` |
+| F19 | (ledger F28, question) native kube-scheduler create path | 1 | **Answered**: creation rejected when the active scheduler is unknown or not one of KAI/Koordinator/Volcano (incl. recognized kube-scheduler); no enum widening; existing-topology workloads report `SchedulerUnsupported` | `TestKEP473_F19_ContractUnsupportedSchedulerRejected` |
+| F20 | (ledger F26) PR body described the pre-redesign architecture | 1 | **Fixed**: live body re-archived (`results/pr-body.md`, fetched 2026-10-23); ClusterNetworkTopology present, all three stale claims gone | `TestKEP473_F20_ContractPRBodyMatchesRedesign` |
+| F21 | (ledger F27) duplicate #495 commit in the diff | 1 | **Fixed**: live git check — merge-base..HEAD touches only `keps/473-topology-aware-scheduling/` (fails on 99b991c5 which carried `pkg/reconciler/...`; passes on 9f682b08) | `TestKEP473_F21_ContractKEPOnlyDiff` |
+| F22 | (ledger F31, NEW, open) fresh-install epoch provisioning unspecified while CREATE admission fails closed without epoch configuration | 1 | **Still present** (canary green at head): epoch UUID is only "generated once per handover from an older controller"; no initial-epoch path for a fresh install | `TestKEP473_F22_FreshInstallEpochProvisioningUnspecified` |
+
+Harness-updates this round: F4a dropped its stale body-fixture phrase (the
+round-4 body rewrite no longer carries the round-1 sentence; body-vs-KEP
+alignment is covered by F20). Round-4 integration layer adds three pins for
+the new RBAC/semantic-identity claims, all verified live 2026-10-23: Volcano
+HyperNode group `topology.volcano.sh`, KAI PodGroup group `scheduling.run.ai`,
+Koordinator `scheduling.koordinator.sh` ClusterNetworkTopology with
+`networkTopologySpec`/`topologyLayer`/`parentTopologyLayer`/`labelKey` fields.
+
 ### Round 3 (head 99b991c5, `.last-reviewed` advanced)
 
 The round-3 delta (`6894a2e..99b991c5`) rewrites the KEP around a new
