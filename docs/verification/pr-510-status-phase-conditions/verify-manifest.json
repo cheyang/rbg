@@ -1,0 +1,47 @@
+{
+  "topic": "pr-510-status-phase-conditions",
+  "pr": "https://github.com/sgl-project/rbg/pull/510",
+  "harnessPaths": [
+    "docs/verification/pr-510-status-phase-conditions",
+    "internal/controller/workloads/zz_verify_pr510_lws_readiness_test.go",
+    "test/envtest/testcase/verifylws510"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #502: no queryable lifecycle phase; conditions are fact fragments; Progressing declared but never written; transient errors persisted as conditions. PR implements the status-reporting subset.",
+    "reportedComponent": "status of RBG, RoleInstanceSet, RoleInstance, RoleBasedGroupWarmup",
+    "patchedComponent": "same four components (API types, controllers, reconcilers)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "Design-gap premise validated by reading issue #502 (OPEN) and matching touched components; no runtime repro applies.",
+    "match": []
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyPR510_LWSRealWorldStatusReady|TestVerifyPR510_RBGReadyWithRealWorldLWS' -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=$(bin/setup-envtest use 1.31.0 --bin-dir $(pwd)/bin -p path) go test ./test/envtest/testcase/verifylws510/ -ginkgo.focus 'contract: RBG reports Ready once the LWS controller reports the role available' -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyPR510_LWSRealWorldStatusReady", "TestVerifyPR510_RBGReadyWithRealWorldLWS"]
+    },
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["contract: RBG reports Ready once the LWS controller reports the role available"]
+    }
+  ],
+  "liveNote": "L3 equivalent already ran as the PR's own CI e2e on real Kind clusters: 6 suites red, every failing test an LWS role waiting for RBG Ready=True (main green at run 39897214096)."
+}

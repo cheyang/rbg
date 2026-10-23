@@ -1,0 +1,30 @@
+=== RUN   TestVerifyPR510_LWSRealWorldStatusReady
+    zz_verify_pr510_lws_readiness_test.go:126: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/internal/controller/workloads/zz_verify_pr510_lws_readiness_test.go:126
+        	Error:      	Should be true
+        	Test:       	TestVerifyPR510_LWSRealWorldStatusReady
+        	Messages:   	converged LWS role must be ready; got phase=Running reason=WaitingForInstances (real LWS never sets condition observedGeneration)
+--- FAIL: TestVerifyPR510_LWSRealWorldStatusReady (0.04s)
+=== RUN   TestVerifyPR510_LWSStampedObservedGenerationReady
+--- PASS: TestVerifyPR510_LWSStampedObservedGenerationReady (0.00s)
+=== RUN   TestVerifyPR510_RBGReadyWithRealWorldLWS
+2026-10-24T01:44:00+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"verify-lws","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-10-23T17:44:00Z","message":"Configuration accepted","observedGeneration":2,"reason":"ValidSpec","status":"True","type":"Accepted"},{"lastTransitionTime":"2026-10-23T17:44:00Z","message":"WaitingForInstances","observedGeneration":2,"reason":"WaitingForInstances","status":"False","type":"Ready"},{"lastTransitionTime":"2026-10-23T17:44:00Z","message":"WaitingForInstances","observedGeneration":2,"reason":"WaitingForInstances","status":"True","type":"Progressing"}],"observedGeneration":2,"phase":"Running","roleStatuses":[{"name":"worker","readyReplicas":2,"replicas":2,"updatedReplicas":2}]}}}
+    zz_verify_pr510_lws_readiness_test.go:160: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/internal/controller/workloads/zz_verify_pr510_lws_readiness_test.go:160
+        	Error:      	Not equal: 
+        	            	expected: "True"
+        	            	actual  : "False"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1.ConditionStatus) (len=4) "True"
+        	            	+(v1.ConditionStatus) (len=5) "False"
+        	            	 
+        	Test:       	TestVerifyPR510_RBGReadyWithRealWorldLWS
+        	Messages:   	RBG Ready must become True for a converged LWS role
+--- FAIL: TestVerifyPR510_RBGReadyWithRealWorldLWS (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.055s
+FAIL
