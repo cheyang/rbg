@@ -1,0 +1,137 @@
+=== RUN   TestVerify_CollapsedSettleBypassesMaxFailedNodesTolerance
+2026-10-23T18:11:31+08:00	INFO	Start reconciling	{"warmup": {"name":"f9-tolerance","namespace":"default"}}
+2026-10-23T18:11:31+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"f9-tolerance","namespace":"default"}, "name": "f9-tolerance-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"f9-tolerance-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/pr478-probe/internal/controller/workloads/rolebasedgroupwarmup_controller.go:442
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/pr478-probe/internal/controller/workloads/rolebasedgroupwarmup_controller.go:222
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/pr478-probe/internal/controller/workloads/rolebasedgroupwarmup_controller.go:159
+sigs.k8s.io/rbgs/internal/controller/workloads.reconcileOnce
+	/tmp/pr478-probe/internal/controller/workloads/warmup_target_waits_verification_test.go:90
+sigs.k8s.io/rbgs/internal/controller/workloads.TestVerify_CollapsedSettleBypassesMaxFailedNodesTolerance
+	/tmp/pr478-probe/internal/controller/workloads/warmup_collapse_settle_verification_test.go:53
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-23T18:11:31+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"f9-tolerance","namespace":"default"}, "count": 0}
+2026-10-23T18:11:31+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"f9-tolerance","namespace":"default"}, "rbg": "f9-tolerance-rbg", "roles": 0, "nodes": 0}
+2026-10-23T18:11:31+08:00	INFO	Node permanently failed	{"warmup": {"name":"f9-tolerance","namespace":"default"}, "node": "node-b", "failCount": 1, "backoffLimit": 0}
+2026-10-23T18:11:31+08:00	INFO	Warmup job failed	{"warmup": {"name":"f9-tolerance","namespace":"default"}, "reason": "InvalidTarget", "succeeded": 1, "failed": 1}
+2026-10-23T18:11:31+08:00	INFO	Finished reconciling	{"warmup": {"name":"f9-tolerance","namespace":"default"}, "duration": "1.541655ms"}
+    warmup_collapse_settle_verification_test.go:66: F9 pinned: within-tolerance job settled as Failed/InvalidTarget after target deletion (maxFailedNodes=1, failed=1)
+--- PASS: TestVerify_CollapsedSettleBypassesMaxFailedNodesTolerance (0.04s)
+=== RUN   TestVerify_TargetDeletedMidRunWithActivePodsMustNotComplete
+2026-10-23T18:11:31+08:00	INFO	Start reconciling	{"warmup": {"name":"f4-gone","namespace":"default"}}
+2026-10-23T18:11:31+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"f4-gone","namespace":"default"}, "name": "f4-gone-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"f4-gone-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/pr478-probe/internal/controller/workloads/rolebasedgroupwarmup_controller.go:442
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/pr478-probe/internal/controller/workloads/rolebasedgroupwarmup_controller.go:222
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/pr478-probe/internal/controller/workloads/rolebasedgroupwarmup_controller.go:159
+sigs.k8s.io/rbgs/internal/controller/workloads.reconcileOnce
+	/tmp/pr478-probe/internal/controller/workloads/warmup_target_waits_verification_test.go:90
+sigs.k8s.io/rbgs/internal/controller/workloads.TestVerify_TargetDeletedMidRunWithActivePodsMustNotComplete
+	/tmp/pr478-probe/internal/controller/workloads/warmup_midrun_churn_verification_test.go:62
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-23T18:11:31+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"f4-gone","namespace":"default"}, "count": 0}
+2026-10-23T18:11:31+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"f4-gone","namespace":"default"}, "rbg": "f4-gone-rbg", "roles": 0, "nodes": 0}
+2026-10-23T18:11:31+08:00	INFO	Setting start time	{"warmup": {"name":"f4-gone","namespace":"default"}, "time": "2026-10-23 18:11:31.365441026 +0800 CST m=+0.049262855"}
+2026-10-23T18:11:31+08:00	INFO	No target nodes are observable, waiting	{"warmup": {"name":"f4-gone","namespace":"default"}, "active": 1, "pendingTargetPods": 0}
+2026-10-23T18:11:31+08:00	INFO	Updated status	{"warmup": {"name":"f4-gone","namespace":"default"}, "phase": "Running", "desired": 0, "active": 1, "succeeded": 0, "failed": 0}
+2026-10-23T18:11:31+08:00	INFO	Finished reconciling	{"warmup": {"name":"f4-gone","namespace":"default"}, "duration": "1.020836ms"}
+--- PASS: TestVerify_TargetDeletedMidRunWithActivePodsMustNotComplete (0.00s)
+=== RUN   TestVerify_AllTargetPodsUnscheduledMidRunMustNotComplete
+2026-10-23T18:11:31+08:00	INFO	Start reconciling	{"warmup": {"name":"f4-drain","namespace":"default"}}
+2026-10-23T18:11:31+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"f4-drain","namespace":"default"}, "count": 1}
+2026-10-23T18:11:31+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"f4-drain","namespace":"default"}, "rbg": "f4-drain-rbg", "roles": 0, "nodes": 0}
+2026-10-23T18:11:31+08:00	INFO	Setting start time	{"warmup": {"name":"f4-drain","namespace":"default"}, "time": "2026-10-23 18:11:31.368775705 +0800 CST m=+0.052597544"}
+2026-10-23T18:11:31+08:00	INFO	No target nodes are observable, waiting	{"warmup": {"name":"f4-drain","namespace":"default"}, "active": 1, "pendingTargetPods": 1}
+2026-10-23T18:11:31+08:00	INFO	Updated status	{"warmup": {"name":"f4-drain","namespace":"default"}, "phase": "Running", "desired": 0, "active": 1, "succeeded": 0, "failed": 0}
+2026-10-23T18:11:31+08:00	INFO	Finished reconciling	{"warmup": {"name":"f4-drain","namespace":"default"}, "duration": "1.257694ms"}
+--- PASS: TestVerify_AllTargetPodsUnscheduledMidRunMustNotComplete (0.00s)
+=== RUN   TestVerify_OrphanActivePodStillBoundedByGlobalTimeout
+2026-10-23T18:11:31+08:00	INFO	Start reconciling	{"warmup": {"name":"f5-orphan","namespace":"default"}}
+2026-10-23T18:11:31+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"f5-orphan","namespace":"default"}, "count": 1}
+2026-10-23T18:11:31+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"f5-orphan","namespace":"default"}, "node": "node-2", "role": "worker"}
+2026-10-23T18:11:31+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"f5-orphan","namespace":"default"}, "rbg": "f5-orphan-rbg", "roles": 1, "nodes": 1}
+2026-10-23T18:11:31+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"f5-orphan","namespace":"default"}, "timeout": "1m0s", "elapsed": "10m0.371280434s"}
+2026-10-23T18:11:31+08:00	INFO	Warmup job failed	{"warmup": {"name":"f5-orphan","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 1, "failed": 0}
+2026-10-23T18:11:31+08:00	INFO	Finished reconciling	{"warmup": {"name":"f5-orphan","namespace":"default"}, "duration": "1.030817ms"}
+--- PASS: TestVerify_OrphanActivePodStillBoundedByGlobalTimeout (0.00s)
+=== RUN   TestVerify_Premise_MissingTargetFailsTerminallyOnBase
+    warmup_premise_verification_test.go:77: premise claim: run on the base branch with VERIFY_PREMISE_ON_BASE=1
+--- SKIP: TestVerify_Premise_MissingTargetFailsTerminallyOnBase (0.00s)
+=== RUN   TestVerify_Premise_UnscheduledTargetPodsCompleteOnBase
+    warmup_premise_verification_test.go:114: premise claim: run on the base branch with VERIFY_PREMISE_ON_BASE=1
+--- SKIP: TestVerify_Premise_UnscheduledTargetPodsCompleteOnBase (0.00s)
+=== RUN   TestVerify_MidWarmupPendingPodBlocksCompletion
+=== RUN   TestVerify_MidWarmupPendingPodBlocksCompletion/control:_completes_when_no_pending_pod_interferes
+2026-10-23T18:11:31+08:00	INFO	Start reconciling	{"warmup": {"name":"f1-control","namespace":"default"}}
+2026-10-23T18:11:31+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"f1-control","namespace":"default"}, "count": 1}
+2026-10-23T18:11:31+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"f1-control","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-10-23T18:11:31+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"f1-control","namespace":"default"}, "rbg": "f1-control-rbg", "roles": 1, "nodes": 1}
+2026-10-23T18:11:31+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"f1-control","namespace":"default"}, "node": "node-1"}
+2026-10-23T18:11:31+08:00	INFO	Setting start time	{"warmup": {"name":"f1-control","namespace":"default"}, "time": "2026-10-23 18:11:31.375889478 +0800 CST m=+0.059711307"}
+2026-10-23T18:11:31+08:00	INFO	Warmup job running	{"warmup": {"name":"f1-control","namespace":"default"}}
+2026-10-23T18:11:31+08:00	INFO	Updated status	{"warmup": {"name":"f1-control","namespace":"default"}, "phase": "Running", "desired": 1, "active": 1, "succeeded": 0, "failed": 0}
+2026-10-23T18:11:31+08:00	INFO	Finished reconciling	{"warmup": {"name":"f1-control","namespace":"default"}, "duration": "2.53169ms"}
+2026-10-23T18:11:31+08:00	INFO	Start reconciling	{"warmup": {"name":"f1-control","namespace":"default"}}
+2026-10-23T18:11:31+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"f1-control","namespace":"default"}, "count": 1}
+2026-10-23T18:11:31+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"f1-control","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-10-23T18:11:31+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"f1-control","namespace":"default"}, "rbg": "f1-control-rbg", "roles": 1, "nodes": 1}
+2026-10-23T18:11:31+08:00	INFO	Warmup job completed	{"warmup": {"name":"f1-control","namespace":"default"}, "succeeded": 1, "failed": 0}
+2026-10-23T18:11:31+08:00	INFO	Updated status	{"warmup": {"name":"f1-control","namespace":"default"}, "phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+2026-10-23T18:11:31+08:00	INFO	Finished reconciling	{"warmup": {"name":"f1-control","namespace":"default"}, "duration": "1.064838ms"}
+=== RUN   TestVerify_MidWarmupPendingPodBlocksCompletion/contract:_all_work_done_must_still_complete_with_a_pending_selected_pod
+2026-10-23T18:11:31+08:00	INFO	Start reconciling	{"warmup": {"name":"f1-stall","namespace":"default"}}
+2026-10-23T18:11:31+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"f1-stall","namespace":"default"}, "count": 1}
+2026-10-23T18:11:31+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"f1-stall","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-10-23T18:11:31+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"f1-stall","namespace":"default"}, "rbg": "f1-stall-rbg", "roles": 1, "nodes": 1}
+2026-10-23T18:11:31+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"f1-stall","namespace":"default"}, "node": "node-1"}
+2026-10-23T18:11:31+08:00	INFO	Setting start time	{"warmup": {"name":"f1-stall","namespace":"default"}, "time": "2026-10-23 18:11:31.382235934 +0800 CST m=+0.066057773"}
+2026-10-23T18:11:31+08:00	INFO	Warmup job running	{"warmup": {"name":"f1-stall","namespace":"default"}}
+2026-10-23T18:11:31+08:00	INFO	Updated status	{"warmup": {"name":"f1-stall","namespace":"default"}, "phase": "Running", "desired": 1, "active": 1, "succeeded": 0, "failed": 0}
+2026-10-23T18:11:31+08:00	INFO	Finished reconciling	{"warmup": {"name":"f1-stall","namespace":"default"}, "duration": "2.638694ms"}
+2026-10-23T18:11:31+08:00	INFO	Start reconciling	{"warmup": {"name":"f1-stall","namespace":"default"}}
+2026-10-23T18:11:31+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"f1-stall","namespace":"default"}, "count": 2}
+2026-10-23T18:11:31+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"f1-stall","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-10-23T18:11:31+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"f1-stall","namespace":"default"}, "rbg": "f1-stall-rbg", "roles": 1, "nodes": 1}
+2026-10-23T18:11:31+08:00	INFO	Warmup job completed	{"warmup": {"name":"f1-stall","namespace":"default"}, "succeeded": 1, "failed": 0}
+2026-10-23T18:11:31+08:00	INFO	Updated status	{"warmup": {"name":"f1-stall","namespace":"default"}, "phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+2026-10-23T18:11:31+08:00	INFO	Finished reconciling	{"warmup": {"name":"f1-stall","namespace":"default"}, "duration": "1.613617ms"}
+2026-10-23T18:11:31+08:00	INFO	Start reconciling	{"warmup": {"name":"f1-stall","namespace":"default"}}
+2026-10-23T18:11:31+08:00	INFO	Finished reconciling	{"warmup": {"name":"f1-stall","namespace":"default"}, "duration": "360ns"}
+2026-10-23T18:11:31+08:00	INFO	Start reconciling	{"warmup": {"name":"f1-stall","namespace":"default"}}
+2026-10-23T18:11:31+08:00	INFO	Finished reconciling	{"warmup": {"name":"f1-stall","namespace":"default"}, "duration": "70ns"}
+--- PASS: TestVerify_MidWarmupPendingPodBlocksCompletion (0.02s)
+    --- PASS: TestVerify_MidWarmupPendingPodBlocksCompletion/control:_completes_when_no_pending_pod_interferes (0.01s)
+    --- PASS: TestVerify_MidWarmupPendingPodBlocksCompletion/contract:_all_work_done_must_still_complete_with_a_pending_selected_pod (0.01s)
+=== RUN   TestVerify_CompletedWorkSurvivesExpiredGlobalTimeout
+2026-10-23T18:11:31+08:00	INFO	Start reconciling	{"warmup": {"name":"f1-timeout","namespace":"default"}}
+2026-10-23T18:11:31+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"f1-timeout","namespace":"default"}, "count": 2}
+2026-10-23T18:11:31+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"f1-timeout","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-10-23T18:11:31+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"f1-timeout","namespace":"default"}, "rbg": "f1-timeout-rbg", "roles": 1, "nodes": 1}
+2026-10-23T18:11:31+08:00	INFO	Setting start time	{"warmup": {"name":"f1-timeout","namespace":"default"}, "time": "2026-10-23 18:11:31.390319602 +0800 CST m=+0.074141431"}
+2026-10-23T18:11:31+08:00	INFO	Warmup job completed	{"warmup": {"name":"f1-timeout","namespace":"default"}, "succeeded": 1, "failed": 0}
+2026-10-23T18:11:31+08:00	INFO	Updated status	{"warmup": {"name":"f1-timeout","namespace":"default"}, "phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+2026-10-23T18:11:31+08:00	INFO	Finished reconciling	{"warmup": {"name":"f1-timeout","namespace":"default"}, "duration": "1.090489ms"}
+--- PASS: TestVerify_CompletedWorkSurvivesExpiredGlobalTimeout (0.00s)
+=== RUN   TestVerify_GlobalTimeoutIsSingleCreationAnchoredBudget
+2026-10-23T18:11:31+08:00	INFO	Start reconciling	{"warmup": {"name":"f2-budget","namespace":"default"}}
+2026-10-23T18:11:31+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"f2-budget","namespace":"default"}, "count": 1}
+2026-10-23T18:11:31+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"f2-budget","namespace":"default"}, "rbg": "f2-rbg", "roles": 0, "nodes": 0}
+2026-10-23T18:11:31+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"f2-budget","namespace":"default"}, "timeout": "1m0s", "elapsed": "2m0.392820271s"}
+2026-10-23T18:11:31+08:00	INFO	Warmup job failed	{"warmup": {"name":"f2-budget","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-10-23T18:11:31+08:00	INFO	Finished reconciling	{"warmup": {"name":"f2-budget","namespace":"default"}, "duration": "1.571926ms"}
+--- PASS: TestVerify_GlobalTimeoutIsSingleCreationAnchoredBudget (0.00s)
+=== RUN   TestVerify_PendingPodsFailAfterGlobalTimeout
+2026-10-23T18:11:31+08:00	INFO	Start reconciling	{"warmup": {"name":"f3-timeout","namespace":"default"}}
+2026-10-23T18:11:31+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"f3-timeout","namespace":"default"}, "count": 1}
+2026-10-23T18:11:31+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"f3-timeout","namespace":"default"}, "rbg": "f3-rbg", "roles": 0, "nodes": 0}
+2026-10-23T18:11:31+08:00	INFO	Warmup job failed	{"warmup": {"name":"f3-timeout","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-10-23T18:11:31+08:00	INFO	Finished reconciling	{"warmup": {"name":"f3-timeout","namespace":"default"}, "duration": "941.243µs"}
+--- PASS: TestVerify_PendingPodsFailAfterGlobalTimeout (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.084s

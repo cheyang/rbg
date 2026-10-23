@@ -1,0 +1,26 @@
+=== RUN   TestVerify_CollapsedSettleBypassesMaxFailedNodesTolerance
+2026-10-23T18:11:30+08:00	INFO	Start reconciling	{"warmup": {"name":"f9-tolerance","namespace":"default"}}
+2026-10-23T18:11:30+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"f9-tolerance","namespace":"default"}, "name": "f9-tolerance-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"f9-tolerance-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/pr478-prev/internal/controller/workloads/rolebasedgroupwarmup_controller.go:324
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/pr478-prev/internal/controller/workloads/rolebasedgroupwarmup_controller.go:202
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/pr478-prev/internal/controller/workloads/rolebasedgroupwarmup_controller.go:141
+sigs.k8s.io/rbgs/internal/controller/workloads.reconcileOnce
+	/tmp/pr478-prev/internal/controller/workloads/warmup_target_waits_verification_test.go:90
+sigs.k8s.io/rbgs/internal/controller/workloads.TestVerify_CollapsedSettleBypassesMaxFailedNodesTolerance
+	/tmp/pr478-prev/internal/controller/workloads/warmup_collapse_settle_verification_test.go:53
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-23T18:11:30+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"f9-tolerance","namespace":"default"}, "count": 0}
+2026-10-23T18:11:30+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"f9-tolerance","namespace":"default"}, "rbg": "f9-tolerance-rbg", "roles": 0, "nodes": 0}
+2026-10-23T18:11:30+08:00	INFO	Node permanently failed	{"warmup": {"name":"f9-tolerance","namespace":"default"}, "node": "node-b", "failCount": 1, "backoffLimit": 0}
+2026-10-23T18:11:30+08:00	INFO	No nodes matched, completing immediately	{"warmup": {"name":"f9-tolerance","namespace":"default"}}
+2026-10-23T18:11:30+08:00	INFO	Updated status	{"warmup": {"name":"f9-tolerance","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 1, "failed": 1}
+2026-10-23T18:11:30+08:00	INFO	Finished reconciling	{"warmup": {"name":"f9-tolerance","namespace":"default"}, "duration": "1.563086ms"}
+    warmup_collapse_settle_verification_test.go:59: canary flipped: collapsed settle now honors tolerance or changed semantics; phase="Completed" conditions=[]v1.Condition{v1.Condition{Type:"TargetReady", Status:"False", ObservedGeneration:0, LastTransitionTime:time.Date(2026, time.October, 23, 18, 11, 30, 0, time.Local), Reason:"RoleBasedGroupNotFound", Message:"target RoleBasedGroup no longer exists"}, v1.Condition{Type:"Complete", Status:"True", ObservedGeneration:0, LastTransitionTime:time.Date(2026, time.October, 23, 18, 11, 30, 0, time.Local), Reason:"NoNodesMatched", Message:"No nodes matched the target configuration"}} — invert this canary into a contract test
+--- FAIL: TestVerify_CollapsedSettleBypassesMaxFailedNodesTolerance (0.04s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.052s
+FAIL
