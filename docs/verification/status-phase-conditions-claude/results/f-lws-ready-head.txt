@@ -1,0 +1,10 @@
+=== RUN   TestClaudeRoleWorkloadStatusLWSReady
+    rolebasedgroup_lws_status_claude_test.go:120: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project-rbg-pr510/internal/controller/workloads/rolebasedgroup_lws_status_claude_test.go:120
+        	Error:      	Should be true
+        	Test:       	TestClaudeRoleWorkloadStatusLWSReady
+        	Messages:   	F-lws-ready: LWS child is converged (Available=True, Replicas=1/1, UpdatedReplicas=1, revision label matches) but roleWorkloadStatus reports ready=false — the `fresh` gate compares available.ObservedGeneration (never set by LWS v0.7.0) against child.Generation
+--- FAIL: TestClaudeRoleWorkloadStatusLWSReady (0.04s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.049s
+FAIL

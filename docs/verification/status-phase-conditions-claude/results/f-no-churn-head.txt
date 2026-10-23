@@ -1,0 +1,5 @@
+=== RUN   TestClaudeStatelessNoChurnOnSecondReconcile
+I1024 00:44:41.646572 1310188 status.go:53] To update InstanceSet status for  default/ris, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rev update=rev
+--- PASS: TestClaudeStatelessNoChurnOnSecondReconcile (1.14s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode	(cached)

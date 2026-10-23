@@ -1,0 +1,4 @@
+0 issues.
+BASE_LINT_EXIT=0
+
+[exited with code 0]

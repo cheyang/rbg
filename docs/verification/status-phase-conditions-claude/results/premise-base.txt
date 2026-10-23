@@ -1,0 +1,31 @@
+P0 premise — evidence gathered on BASE a0b11e6ab95ca6dfcfdf6fca713352c8482ebd41
+(issue #502 "status: implement phase + condition status model…", OPEN, 2026-10-19)
+
+1. "There is no queryable lifecycle phase."
+   $ git grep -n "Phase" a0b11e6 -- api/workloads/v1alpha2/rolebasedgroup_types.go api/workloads/v1alpha2/roleinstanceset_types.go
+   → no status.Phase field on RoleBasedGroup or RoleInstanceSet (only
+     RoleBasedGroupScalingAdapter uses Status.Phase).
+   PR adds it: confirmed gap.
+
+2. "Progressing … declared but never written."
+   $ git grep -n "RoleBasedGroupProgressing" a0b11e6
+   → api/workloads/v1alpha1/rolebasedgroup_types.go:502 (constant only)
+     api/workloads/v1alpha2/rolebasedgroup_types.go:577 (constant only)
+   No controller write on base; the only SetStatusCondition calls in
+   rolebasedgroupwarmup_controller.go write Complete/Failed; the RBG controller writes only
+   the Ready condition (and GangConfigured). Confirmed gap.
+
+3. "Ready … does not require revision convergence."
+   Base updateRBGStatus: ready iff for every role
+   role.Replicas == rs.Replicas && rs.Replicas == rs.ReadyReplicas — no revision term.
+   Confirmed gap.
+
+4. "FailedScale/FailedUpdate persist reconcile errors as conditions."
+   Base statelessmode/reconciler.go + roleinstance/instance_reconciler.go append
+   FailedScale/FailedUpdate conditions on scale/update errors. Confirmed gap.
+
+5. Warmup: no Suspended condition, no stable reasons on base. Confirmed gap.
+
+Component match: the PR touches exactly RBG / RoleInstanceSet / RoleInstance / Warmup
+status code paths. Premise verdict: Confirmed (design gap; matches the issue's "Current
+behavior" section).

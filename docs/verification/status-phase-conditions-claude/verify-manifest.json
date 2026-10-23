@@ -1,0 +1,37 @@
+{
+  "topic": "status-phase-conditions-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/510",
+  "harnessPaths": [
+    "docs/verification/status-phase-conditions-claude",
+    "internal/controller/workloads/rolebasedgroup_lws_status_claude_test.go",
+    "pkg/reconciler/roleinstanceset/statelessmode/status_churn_claude_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "issue #502: no queryable lifecycle phase; Progressing declared but never written; Ready does not require revision convergence; FailedScale/FailedUpdate persist transient reconcile errors as conditions",
+    "reportedComponent": "RBG / RoleInstanceSet / RoleInstance / RoleBasedGroupWarmup status reporting",
+    "patchedComponent": "internal/controller/workloads/*, pkg/reconciler/roleinstance{,set}/**, pkg/inplace/instance/**, api/workloads/**",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "On base a0b11e6 RoleBasedGroupProgressing is an unwritten constant, no status.Phase on RBG/RIS, Ready compares only replica counts, FailedScale/FailedUpdate are written on error paths; see results/premise-base.txt",
+    "match": ["results/premise-base.txt"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ ./pkg/reconciler/roleinstanceset/statelessmode/ -run 'TestClaude' -v"
+    },
+    "lint": {
+      "kind": "script",
+      "cmd": "bash docs/verification/status-phase-conditions-claude/scripts/20-lint-diff.sh"
+    }
+  },
+  "findings": [
+    { "id": "F-lws-ready", "polarity": "contract", "layer": "unit", "match": ["TestClaudeRoleWorkloadStatusLWSReady", "TestClaudeRoleWorkloadStatusLWSObservedGenerationSet", "TestClaudeRoleWorkloadStatusDeploymentReady"] },
+    { "id": "F-lint-gocyclo", "polarity": "contract", "layer": "lint", "match": ["scripts/20-lint-diff.sh"] },
+    { "id": "F-no-churn", "polarity": "contract", "layer": "unit", "match": ["TestClaudeStatelessNoChurnOnSecondReconcile"] }
+  ],
+  "liveNote": "No cluster in the review sandbox (live layer skipped per debate setup). Cluster-level corroboration for F-lws-ready is the CI head-vs-base E2E differential recorded in results/e2e-evidence.md; after a fix, the LWS-bearing E2E jobs (workload/rollout/lifecycle revision specs/v1alpha1 compat/feature ScalingAdapter) should go green."
+}

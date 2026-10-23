@@ -1,0 +1,10 @@
+func (r *RoleBasedGroupReconciler) updateRBGStatus(
+^
+internal/controller/workloads/rolebasedgroup_controller.go:868:1: cyclomatic complexity 57 of func `(*RoleBasedGroupReconciler).roleWorkloadStatus` is high (> 30) (gocyclo)
+func (r *RoleBasedGroupReconciler) roleWorkloadStatus(ctx context.Context, rbg *workloadsv1alpha2.RoleBasedGroup, role *workloadsv1alpha2.RoleSpec, revision string) (workloadsv1alpha2.RoleBasedGroupPhase, string, bool, error) {
+^
+pkg/reconciler/roleinstanceset/status.go:33:1: cyclomatic complexity 45 of func `SetStatusConditions` is high (> 30) (gocyclo)
+func SetStatusConditions(set *v1alpha2.RoleInstanceSet, status *v1alpha2.RoleInstanceSetStatus, instances []*v1alpha2.RoleInstance, updatePending bool, scaleDelta int) {
+^
+3 issues:
+* gocyclo: 3
