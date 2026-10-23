@@ -1,0 +1,17 @@
+=== Round-5 harness bites check on 4a9043c3 (mutate mechanism -> contract must go RED; then restore) ===
+
+--- baseline: new round-5 contracts green on the unmodified head ---
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.101s
+
+--- mutation 1: requestGroupSetChildRollout drops the token write ---
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.061s
+FAIL
+restored: 6 tracked modifications
+
+--- mutation 2: ensureGroupSetRevision drops the policy snapshot + template re-attach ---
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.075s
+FAIL
+restored: 6 tracked modifications
+
+--- post-restore: contracts green again ---
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.097s

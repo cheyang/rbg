@@ -59,6 +59,7 @@ type inPlaceDrive struct {
 	*rollingDrive
 	specSeen map[string]string // child name -> last observed spec fingerprint
 	cooldown int               // passes a rewritten child stays not-ready
+	noAck    map[string]bool   // children whose simulated controller never acknowledges
 }
 
 func newInPlaceDrive(t *testing.T, set *workloadsv1alpha2.RoleBasedGroupSet) *inPlaceDrive {
@@ -66,6 +67,7 @@ func newInPlaceDrive(t *testing.T, set *workloadsv1alpha2.RoleBasedGroupSet) *in
 		rollingDrive: newRollingDrive(t, set),
 		specSeen:     map[string]string{},
 		cooldown:     2,
+		noAck:        map[string]bool{},
 	}
 }
 
@@ -116,11 +118,29 @@ func (d *inPlaceDrive) inPlaceSimulate() {
 		}
 		latest := &workloadsv1alpha2.RoleBasedGroup{}
 		require.NoError(d.t, d.c.Get(d.ctx, client.ObjectKeyFromObject(&item), latest))
-		if latest.Status.ObservedGeneration >= latest.Generation &&
-			meta.IsStatusConditionTrue(latest.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupReady)) {
+		ready := latest.Status.ObservedGeneration >= latest.Generation &&
+			meta.IsStatusConditionTrue(latest.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupReady))
+		request := latest.Annotations[verifyRolloutRequestAnnotation]
+		if ready && request != "" && latest.Status.ObservedRolloutRequest != request {
+			// Metadata-only writes never bump the generation; the child controller
+			// acknowledges the request token once its workloads have rolled out.
+			if d.noAck[item.Name] {
+				continue
+			}
+			if d.ackWait[item.Name] != request {
+				d.ackWait[item.Name] = request
+				continue
+			}
+			delete(d.ackWait, item.Name)
+			latest.Status.ObservedRolloutRequest = request
+			require.NoError(d.t, d.c.Status().Update(d.ctx, latest))
+			continue
+		}
+		if ready {
 			continue
 		}
 		latest.Status.ObservedGeneration = latest.Generation
+		latest.Status.ObservedRolloutRequest = request
 		meta.SetStatusCondition(&latest.Status.Conditions, metav1.Condition{
 			Type: string(workloadsv1alpha2.RoleBasedGroupReady), Status: metav1.ConditionTrue,
 			Reason: "Ready", ObservedGeneration: latest.Generation,
@@ -240,13 +260,14 @@ func TestVerify_InPlaceStalledChildBlocksProgress(t *testing.T) {
 		"a stalled rollout must keep reporting Rolling=True")
 }
 
-// TestVerify_InPlaceScaleOnlyPacing_Canary pins how a replicas-only template diff is
-// applied under InPlaceUpdate: children are updated in place but ONE AT A TIME, gated
-// by the rollout budget, because classifyGroupSetChildrenForRollout skips the scale-only
-// fast path for inPlaceUpdate. The PR body promises scaling is never paced by the
-// budget; if the author confirms pacing is intended for InPlace, promote this canary
-// to a contract and fix the docs.
-func TestVerify_InPlaceScaleOnlyPacing_Canary(t *testing.T) {
+// TestVerify_InPlaceScaleOnlyPacing_Contract pins how a replicas-only template diff
+// is applied under InPlaceUpdate: children are updated in place but ONE AT A TIME,
+// gated by the rollout budget. Promoted from canary to contract in round 5: commit
+// 4a9043c3 ("enforce availability budgets for Recreate replica updates") makes the
+// same pacing explicit for Recreate, so budget-paced replicas-only updates are the
+// author's settled intent under BOTH strategies; the PR body's "scaling stays
+// immediate" claim is stale doc drift (tracked by F10).
+func TestVerify_InPlaceScaleOnlyPacing_Contract(t *testing.T) {
 	set := rollingVerifySet("inplace-scale", 3, inPlaceStrategy(1))
 	d := newInPlaceDrive(t, set)
 	d.settle(20)
@@ -264,16 +285,19 @@ func TestVerify_InPlaceScaleOnlyPacing_Canary(t *testing.T) {
 		}
 	}
 	assert.Equal(t, 1, scaled,
-		"canary: a replicas-only diff under InPlaceUpdate is paced by the rollout budget (one child per window)")
+		"a replicas-only diff under InPlaceUpdate is paced by the rollout budget (one child per window)")
 }
 
-// TestVerify_RecreateScaleOnlyIsUnpaced is the contract companion of the canary above:
-// the Recreate path keeps the documented "replicas-only diff applies in place to every
-// child at once" behavior.
-func TestVerify_RecreateScaleOnlyIsUnpaced(t *testing.T) {
+// TestVerify_RecreateScaleOnlyPacedInPlace_Contract replaces the round-4 canary
+// TestVerify_RecreateScaleOnlyIsUnpaced, which FLIPPED on 4a9043c3 ("enforce
+// availability budgets for Recreate replica updates"): a replicas-only diff under
+// Recreate is now budget-paced like any other diff, but still applied IN PLACE
+// (child identity preserved). This contract pins the new intended behavior.
+func TestVerify_RecreateScaleOnlyPacedInPlace_Contract(t *testing.T) {
 	set := rollingVerifySet("recreate-scale", 3, intPtrStrategy(1, 0, 0))
 	d := newInPlaceDrive(t, set)
 	d.settle(20)
+	d.deleted = map[string]bool{}
 
 	latest := d.getSet()
 	latest.Spec.GroupTemplate.Spec.Roles[0].Replicas = ptr.To(int32(2))
@@ -286,7 +310,18 @@ func TestVerify_RecreateScaleOnlyIsUnpaced(t *testing.T) {
 			scaled++
 		}
 	}
-	assert.Equal(t, 3, scaled, "Recreate mode applies a replicas-only diff to every child in one pass")
+	assert.Equal(t, 1, scaled,
+		"maxUnavailable=1 paces a Recreate replicas-only diff to one child per readiness window")
+
+	d.settle(40)
+	for _, item := range d.listChildren() {
+		assert.Equal(t, int32(2), ptr.Deref(item.Spec.Roles[0].Replicas, -1),
+			"child %s must converge to the new replicas", item.Name)
+		assert.False(t, d.deleted[item.Name],
+			"replicas-only diff must update %s in place, never recreate it", item.Name)
+	}
+	final := d.getSet()
+	assert.Equal(t, "RolloutComplete", rollingCondition(t, final).Reason)
 }
 
 // TestVerify_GroupSetChildReadyBarrier pins the readiness gate the InPlace budget

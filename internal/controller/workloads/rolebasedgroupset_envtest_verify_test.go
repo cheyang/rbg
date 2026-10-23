@@ -121,6 +121,7 @@ func TestVerify_Envtest_RollingAgainstRealAPIServer(t *testing.T) {
 	// seenOnce tracks children observed at a previous poll, so a child only turns Ready
 	// after one full extra reconcile (simulated startup latency).
 	seenOnce := map[string]bool{}
+	ackSeen := map[string]string{}
 	recreates := map[string]int{}
 	lastUID := map[string]types.UID{}
 
@@ -151,14 +152,31 @@ func TestVerify_Envtest_RollingAgainstRealAPIServer(t *testing.T) {
 			if err := c.Get(ctx, client.ObjectKeyFromObject(&item), latest); err != nil {
 				continue
 			}
-			if latest.Status.ObservedGeneration >= latest.Generation &&
-				meta.IsStatusConditionTrue(latest.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupReady)) {
+			ready := latest.Status.ObservedGeneration >= latest.Generation &&
+				meta.IsStatusConditionTrue(latest.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupReady))
+			request := latest.Annotations[verifyRolloutRequestAnnotation]
+			if ready && request != "" && latest.Status.ObservedRolloutRequest != request {
+				// The real RBG controller acknowledges a requested rollout once its
+				// workloads have rolled out; model one poll of rollout time.
+				if ackSeen[item.Name] != request {
+					ackSeen[item.Name] = request
+					continue
+				}
+				delete(ackSeen, item.Name)
+				latest.Status.ObservedRolloutRequest = request
+				require.NoError(t, c.Status().Update(ctx, latest))
+				continue
+			}
+			if ready {
 				continue
 			}
 			latest.Status.ObservedGeneration = latest.Generation
 			latest.Status.RoleStatuses = []workloadsv1alpha2.RoleStatus{
 				{Name: "worker", ReadyReplicas: 1, Replicas: 1, UpdatedReplicas: 1},
 			}
+			// The real RBG controller acknowledges a requested rollout once its
+			// workloads have rolled out; this sim plays that controller.
+			latest.Status.ObservedRolloutRequest = latest.Annotations[verifyRolloutRequestAnnotation]
 			meta.SetStatusCondition(&latest.Status.Conditions, metav1.Condition{
 				Type: string(workloadsv1alpha2.RoleBasedGroupReady), Status: metav1.ConditionTrue,
 				Reason: "Ready", ObservedGeneration: latest.Generation,
@@ -326,6 +344,7 @@ func TestVerify_Envtest_InPlaceAgainstRealAPIServer(t *testing.T) {
 	// frozen children never report ready again (simulating a workload that never rolls).
 	frozen := map[string]bool{}
 	seenOnce := map[string]bool{}
+	ackSeen := map[string]string{}
 	lastUID := map[string]types.UID{}
 	genBumps := map[string]int{}
 	lastGen := map[string]int64{}
@@ -351,14 +370,31 @@ func TestVerify_Envtest_InPlaceAgainstRealAPIServer(t *testing.T) {
 			if err := c.Get(ctx, client.ObjectKeyFromObject(&item), latest); err != nil {
 				continue
 			}
-			if latest.Status.ObservedGeneration >= latest.Generation &&
-				meta.IsStatusConditionTrue(latest.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupReady)) {
+			ready := latest.Status.ObservedGeneration >= latest.Generation &&
+				meta.IsStatusConditionTrue(latest.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupReady))
+			request := latest.Annotations[verifyRolloutRequestAnnotation]
+			if ready && request != "" && latest.Status.ObservedRolloutRequest != request {
+				// The real RBG controller acknowledges a requested rollout once its
+				// workloads have rolled out; model one poll of rollout time.
+				if ackSeen[item.Name] != request {
+					ackSeen[item.Name] = request
+					continue
+				}
+				delete(ackSeen, item.Name)
+				latest.Status.ObservedRolloutRequest = request
+				require.NoError(t, c.Status().Update(ctx, latest))
+				continue
+			}
+			if ready {
 				continue
 			}
 			latest.Status.ObservedGeneration = latest.Generation
 			latest.Status.RoleStatuses = []workloadsv1alpha2.RoleStatus{
 				{Name: "worker", ReadyReplicas: 1, Replicas: 1, UpdatedReplicas: 1},
 			}
+			// The real RBG controller acknowledges a requested rollout once its
+			// workloads have rolled out; this sim plays that controller.
+			latest.Status.ObservedRolloutRequest = latest.Annotations[verifyRolloutRequestAnnotation]
 			meta.SetStatusCondition(&latest.Status.Conditions, metav1.Condition{
 				Type: string(workloadsv1alpha2.RoleBasedGroupReady), Status: metav1.ConditionTrue,
 				Reason: "Ready", ObservedGeneration: latest.Generation,

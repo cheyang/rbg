@@ -117,13 +117,13 @@
     },
     {
       "id": "F9",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerify_InPlaceScaleOnlyPacing_Canary",
-        "TestVerify_RecreateScaleOnlyIsUnpaced"
+        "TestVerify_InPlaceScaleOnlyPacing_Contract",
+        "TestVerify_RecreateScaleOnlyPacedInPlace_Contract"
       ],
-      "note": "canary pins observed behavior: replicas-only diffs under InPlaceUpdate are budget-paced one child per readiness window, while Recreate scales all children in one pass; PR body claims scaling is never paced. Flip/promote once intent is clarified."
+      "note": "RESOLVED round 5: commit 4a9043c3 deliberately paces replicas-only diffs through the rollout budget under BOTH strategies (Recreate side flipped the old canary; promoted to TestVerify_RecreateScaleOnlyPacedInPlace_Contract). The remaining gap is the stale PR-body claim 'scaling stays immediate', tracked by F10."
     },
     {
       "id": "G8",
@@ -134,7 +134,7 @@
         "TestVerify_InPlaceStalledChildBlocksProgress",
         "TestVerify_GroupSetChildReadyBarrier"
       ],
-      "note": "InPlace pacing, stall safety (budget held by an in-flight child), and the readiness-barrier semantics"
+      "note": "InPlace pacing, stall safety (budget held by an in-flight child), and the readiness-barrier semantics. Round 5: sims echo the new rollout-request acknowledgement (rbg.workloads.x-k8s.io/rollout-request -> status.observedRolloutRequest) the child controller now requires before a budgeted write counts as serving."
     },
     {
       "id": "G9",
@@ -173,7 +173,26 @@
         "TestVerify_ConversionAnnotation_CoordinationValueChangeReachesChildren",
         "TestVerify_ConversionAnnotation_StaticPathStillPropagates"
       ],
-      "note": "Propagation contract: rolling-path children must carry the template's coordination annotation (EnsureV1alpha1CoordinatedPolicy reads it), and coordination value changes must reach settled children. GREEN on 98720938; on 8c024b28 the systemManagedAnnotationKeys exclusion also strips the annotation from revision.template, which newRBGForSetRevision builds children from - REGRESSION candidate (revision-regression: contract passes on previous head, fails on this head)."
+      "note": "FIXED on 4a9043c3 (6dd7de5f): newRBGForSetRevision materializes live system-managed keys onto created children and an unbudgeted convergence loop repairs them on settled/held children. All three contracts GREEN on 4a9043c3; regression record: FAIL on 8c024b28, PASS on 98720938 (results/reverify round 4)."
+    },
+    {
+      "id": "R5ACK",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_RolloutAck_MetadataOnlyTemplateChangePaced"
+      ],
+      "note": "Round 5 (51bf17bb, answers C4273377135): a budgeted child write carries a monotonically increasing rbg.workloads.x-k8s.io/rollout-request token; groupSetChildReady counts the child as not-serving until status.observedRolloutRequest echoes it, so a metadata-only template change (no generation bump) still holds the rollout budget until the child controller acks. Bites check: neutering requestGroupSetChildRollout turns this RED (results/harness-bites-round5.txt)."
+    },
+    {
+      "id": "R5PGP",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_ConversionAnnotation_PodGroupPolicyRollingLifecycle",
+        "TestVerify_ConversionAnnotation_PodGroupPolicyHeldOrdinalKeepsSnapshot"
+      ],
+      "note": "Round 5 (6dd7de5f, closes F13): the v1alpha1 PodGroupPolicy stash propagates to rolling-path children at creation, converges in place on value change (unversioned key), is removed once the template drops it (removal gated on the previously owned revision snapshot), and a partition-held ordinal keeps the policy its pinned revision owns. Bites check: neutering the revision snapshot/template re-attach turns the lifecycle test RED (results/harness-bites-round5.txt)."
     }
   ],
   "liveNote": "L3 skipped per debate setup (no KUBECONFIG layer). The repo's own kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers the live path and is green in CI run 37802453289.",
@@ -195,5 +214,10 @@
     "head": "8c024b28ebd81234cebd706dfb2351bde757385c",
     "delta": "98720938..8c024b28 \u2014 conversion annotation keys moved into systemManagedAnnotationKeys (revision/sync exclusion).",
     "reverify": "results/reverify/ (round 4): carried contracts all green; R4FIX green (fix claims proven); R4M1 PARTIAL=regression \u2014 rolling-path create drops the coordination annotation and value changes never reach settled children (both contracts pass on 98720938, fail on 8c024b28; bites check in results/harness-bites-round4.txt)."
+  },
+  "round5": {
+    "head": "4a9043c3e812af016cbeca82d841259a54f17d0d",
+    "delta": "8c024b28..4a9043c3 - three fix commits: (6dd7de5f) conversion intent through the rolling path (F11/F13/F15/C4242488155), (51bf17bb) request/ack handshake for metadata-only child updates (C4273377135) + workload-shaping annotations folded into role hashes, (4a9043c3) Recreate replicas-only updates budget-paced (F9 canary flipped; PR body now stale on that clause).",
+    "reverify": "results/reverify/ (round 5): every carried contract green on 4a9043c3 - R4M1 (F11) and R4FIX FIXED, R4FIX stays green; F9 Recreate canary flipped as intended and was promoted; G5/G8/G9 needed harness ack-simulation (the sims now play the child controller's acknowledgement); new R5ACK + R5PGP contracts green with bites checks."
   }
 }

@@ -56,7 +56,8 @@ type rollingDrive struct {
 	c       client.Client
 	r       *RoleBasedGroupSetReconciler
 	key     types.NamespacedName
-	cool    map[string]int // child name -> reconcile steps until it reports Ready
+	cool    map[string]int    // child name -> reconcile steps until it reports Ready
+	ackWait map[string]string // child name -> rollout request token the sim is still "rolling out"
 	step    int
 	deleted map[string]bool // child names that disappeared in some reconcile step
 }
@@ -75,6 +76,7 @@ func newRollingDrive(t *testing.T, set *workloadsv1alpha2.RoleBasedGroupSet) *ro
 		r:       &RoleBasedGroupSetReconciler{client: c, apiReader: c, scheme: scheme},
 		key:     client.ObjectKeyFromObject(set),
 		cool:    map[string]int{},
+		ackWait: map[string]string{},
 		deleted: map[string]bool{},
 	}
 }
@@ -101,6 +103,11 @@ func rollingVerifySet(name string, replicas int32, strategy *workloadsv1alpha2.G
 		},
 	}
 }
+
+// verifyRolloutRequestAnnotation is the literal of constants.RolloutRequestAnnotationKey
+// (added by the round-5 head); the literal keeps this harness compilable on the
+// pre-handshake head 8c024b28 for differential control runs.
+const verifyRolloutRequestAnnotation = "rbg.workloads.x-k8s.io/rollout-request"
 
 func intPtrStrategy(maxUnavailable, maxSurge, partition int) *workloadsv1alpha2.GroupSetRolloutStrategy {
 	return &workloadsv1alpha2.GroupSetRolloutStrategy{
@@ -130,11 +137,26 @@ func (d *rollingDrive) simulateChildren() {
 		}
 		latest := &workloadsv1alpha2.RoleBasedGroup{}
 		require.NoError(d.t, d.c.Get(d.ctx, client.ObjectKeyFromObject(&item), latest))
-		if latest.Status.ObservedGeneration >= latest.Generation &&
-			meta.IsStatusConditionTrue(latest.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupReady)) {
+		ready := latest.Status.ObservedGeneration >= latest.Generation &&
+			meta.IsStatusConditionTrue(latest.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupReady))
+		request := latest.Annotations[verifyRolloutRequestAnnotation]
+		if ready && request != "" && latest.Status.ObservedRolloutRequest != request {
+			// The real RBG controller acknowledges a requested rollout only after its
+			// workloads finish rolling; model that in-flight window as one extra pass.
+			if d.ackWait[item.Name] != request {
+				d.ackWait[item.Name] = request
+				continue
+			}
+			delete(d.ackWait, item.Name)
+			latest.Status.ObservedRolloutRequest = request
+			require.NoError(d.t, d.c.Status().Update(d.ctx, latest))
+			continue
+		}
+		if ready {
 			continue
 		}
 		latest.Status.ObservedGeneration = latest.Generation
+		latest.Status.ObservedRolloutRequest = request
 		meta.SetStatusCondition(&latest.Status.Conditions, metav1.Condition{
 			Type: string(workloadsv1alpha2.RoleBasedGroupReady), Status: metav1.ConditionTrue,
 			Reason: "Ready", ObservedGeneration: latest.Generation,
