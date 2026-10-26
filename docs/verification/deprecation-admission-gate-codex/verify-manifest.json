@@ -45,9 +45,9 @@
       "polarity": "contract",
       "layer": "integration",
       "match": [
-        "F1 replacement child of legacy set is admitted",
-        "identical child without owner reference is rejected",
-        "migrated parent stops exempting"
+        "F1_replacement_child_of_legacy_set_is_admitted",
+        "identical_child_without_owner_reference_is_rejected",
+        "migrated_parent_stops_exempting"
       ]
     },
     {
@@ -72,8 +72,8 @@
       "polarity": "contract",
       "layer": "integration",
       "match": [
-        "re-introducing deprecated type after migration is rejected",
-        "grandfathered v1alpha1 update admitted with warning"
+        "re-introducing_deprecated_type_after_migration_is_rejected",
+        "grandfathered_v1alpha1_update_admitted_with_warning"
       ]
     },
     {
@@ -89,8 +89,8 @@
       "polarity": "canary",
       "layer": "integration",
       "match": [
-        "shipped policy (Fail): outage blocks a warning-only v1alpha1 write",
-        "fixed policy (Ignore): outage does not block the write"
+        "shipped_policy_(Fail):_outage_blocks_a_warning-only_v1alpha1_write",
+        "fixed_policy_(Ignore):_outage_does_not_block_the_write"
       ]
     },
     {
@@ -98,7 +98,7 @@
       "polarity": "canary",
       "layer": "integration",
       "match": [
-        "F6 canary: forged owner reference with known UID is admitted"
+        "F6_canary:_forged_owner_reference_with_known_UID_is_admitted"
       ]
     }
   ],
