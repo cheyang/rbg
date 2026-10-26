@@ -1009,3 +1009,100 @@ func TestVerifyN3ExpiredTimeoutNotBypassedByStaleSucceededNode(t *testing.T) {
 			after.Status.Phase, after.Status.Conditions, after.Status.Desired, after.Status.Succeeded)
 	}
 }
+
+// R4-F10 (round 4, contract — NEW finding, empirically confirmed) — a mid-run
+// target collapse must not erase the per-node customized-action diagnostics
+// while the Warmup is still Running (and on its within-tolerance settle).
+// evaluateCustomizedActionResults/preserveCustomizedActionResults scope
+// everything to the CURRENT desiredNodes map, so once the target disappears the
+// recorded customizedActionResults and the CustomizedAction conditions are
+// dropped even though the warmup Pods (and their per-container outcomes) are
+// still live. Base preserves the diagnostics (the terminal failure path keeps
+// them, pinned by the repo's own
+// TestFailWarmupJobPreservesCustomizedActionDiagnosticsWithoutDesiredNodes);
+// the collapsed-settle path introduced by this PR erases them.
+// RED at b0915b21 and at 92cb7ef; GREEN at the merge base.
+func TestVerifyR4F10CollapseKeepsCustomizedActionDiagnostics(t *testing.T) {
+	ctx := context.Background()
+	warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "v478-r4f10",
+			Namespace: "default",
+			UID:       "uid-v478-r4f10",
+		},
+		Spec: workloadsv1alpha2.RoleBasedGroupWarmupSpec{
+			TargetRoleBasedGroup: &workloadsv1alpha2.TargetRoleBasedGroup{
+				Name: "v478-r4f10-rbg",
+				Roles: map[string]workloadsv1alpha2.WarmupActions{
+					"worker": {CustomizedAction: &workloadsv1alpha2.CustomizedAction{
+						Containers: []corev1.Container{{Name: "node-check", Image: "busybox"}},
+					}},
+				},
+			},
+		},
+	}
+	rbg := &workloadsv1alpha2.RoleBasedGroup{
+		ObjectMeta: metav1.ObjectMeta{Name: "v478-r4f10-rbg", Namespace: "default"},
+		Spec: workloadsv1alpha2.RoleBasedGroupSpec{
+			Roles: []workloadsv1alpha2.RoleSpec{{Name: "worker", Replicas: ptr.To(int32(1))}},
+		},
+	}
+	targetPod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "v478-r4f10-worker-0",
+			Namespace: "default",
+			Labels: map[string]string{
+				constants.GroupNameLabelKey: "v478-r4f10-rbg",
+				constants.RoleNameLabelKey:  "worker",
+			},
+		},
+		Spec: corev1.PodSpec{NodeName: "node-1"},
+	}
+	r := newWarmupReconciler(warmup, rbg, targetPod)
+
+	// Start: the warmup Pod is created on node-1 with a running container.
+	if _, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)}); err != nil {
+		t.Fatalf("reconcile: %v", err)
+	}
+	pods := &corev1.PodList{}
+	if err := r.List(ctx, pods, client.MatchingLabels{LabelWarmupName: warmup.Name}); err != nil {
+		t.Fatalf("list warmup pods: %v", err)
+	}
+	if len(pods.Items) != 1 {
+		t.Fatalf("expected 1 warmup Pod, got %d", len(pods.Items))
+	}
+	wp := pods.Items[0].DeepCopy()
+	wp.Status.Phase = corev1.PodRunning
+	wp.Status.ContainerStatuses = []corev1.ContainerStatus{{
+		Name:  "custom-0",
+		State: corev1.ContainerState{Running: &corev1.ContainerStateRunning{}},
+	}}
+	if err := r.Status().Update(ctx, wp); err != nil {
+		t.Fatalf("update warmup pod status: %v", err)
+	}
+	if _, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)}); err != nil {
+		t.Fatalf("reconcile after container start: %v", err)
+	}
+	mid := verify478Get(t, r, warmup.Name)
+	if len(mid.Status.CustomizedActionResults) == 0 {
+		t.Fatalf("R4-F10 precondition: expected customizedActionResults recorded while running, got %#v",
+			mid.Status.CustomizedActionResults)
+	}
+
+	// The target RBG and its Pod vanish mid-run; the warmup Pod keeps running.
+	if err := r.Delete(ctx, targetPod); err != nil {
+		t.Fatalf("delete target pod: %v", err)
+	}
+	if err := r.Delete(ctx, rbg); err != nil {
+		t.Fatalf("delete rbg: %v", err)
+	}
+	if _, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)}); err != nil {
+		t.Fatalf("reconcile after collapse: %v", err)
+	}
+	collapsed := verify478Get(t, r, warmup.Name)
+	if len(collapsed.Status.CustomizedActionResults) == 0 {
+		t.Fatalf("R4-F10: the collapse must not erase customizedActionResults while the job is still "+
+			"Running (phase=%q active=%d conditions=%#v)", collapsed.Status.Phase, collapsed.Status.Active,
+			collapsed.Status.Conditions)
+	}
+}

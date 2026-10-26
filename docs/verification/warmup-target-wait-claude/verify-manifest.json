@@ -195,6 +195,19 @@
       "severity": "minor",
       "fixedAt": "92cb7ef16adc7f6777e2a1bc4e257f40e3f6df36",
       "note": "Round-3 open question: terminal jobs permanently carried TargetReady=False/RoleBasedGroupNotFound next to Complete=True. 92cb7ef records TargetReady=Unknown/RoleBasedGroupNotFound once a started Warmup target disappears; pinned by a dedicated contract test both while Running and on the terminal Completed job. N1 condition assertion kept polarity-stable (not-True + reason) so F4a/F7 attribution is unaffected; the exact Unknown contract lives in TestVerifyR4Q2 (red at b0915b21, green at 92cb7ef)."
+    },
+    {
+      "id": "F10",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyR4F10CollapseKeepsCustomizedActionDiagnostics"
+      ],
+      "status": "open",
+      "firstSeenSha": "92cb7ef16adc7f6777e2a1bc4e257f40e3f6df36",
+      "origin": "initial-pr",
+      "severity": "minor",
+      "note": "Round-4 NEW minor (Copilot C4381790591 advisory, empirically confirmed by Claude): a mid-run target collapse erases status.customizedActionResults and the CustomizedAction conditions while the Warmup is still Running (probe: phase=Running active=1 results 1->0, conditions dropped), and again on the within-tolerance settle. evaluateCustomizedActionResults/preserveCustomizedActionResults scope diagnostics to the CURRENT desiredNodes map, which is empty once the target disappears. Base preserves the diagnostics (failWarmupJob keeps them, pinned by the repo TestFailWarmupJobPreservesCustomizedActionDiagnosticsWithoutDesiredNodes); the collapsed-settle path introduced by this PR erases them. Copilot secondary claim (timeout failure path loses diagnostics) is REFUTED by TestReconcileGlobalTimeoutPreservesCustomizedActionDiagnostics, green at head. Bounded: diagnostics-only, counters/reasons unaffected."
     }
   ],
   "liveNote": "L3 (live cluster) skipped this round per the debate setup: unit + integration layers only. The kubectl-level scenarios in the PR body were not re-run against a live cluster; the envtest layer uses the real kube-apiserver 1.31.0 binary (same version as CI), which is where the CEL/ratcheting behavior lives.",
