@@ -124,6 +124,14 @@ func TestVerify_CollapsedSettleHonorsMaxFailedNodesTolerance(t *testing.T) {
 				(updated.Status.StartTime == nil || !updated.Status.StartTime.Time.Equal(started.Time)) {
 				t.Fatalf("startTime must be preserved, was %v now %v", started, updated.Status.StartTime)
 			}
+			// Deleted target: the terminal outcome must not be paired with
+			// TargetReady=False (Q2) on either the complete or the fail path.
+			if !tc.targetAlive {
+				tr := apimeta.FindStatusCondition(updated.Status.Conditions, ConditionTargetReady)
+				if tr == nil || tr.Status != metav1.ConditionUnknown || tr.Reason != "RoleBasedGroupNotFound" {
+					t.Fatalf("expected TargetReady=Unknown/RoleBasedGroupNotFound, got %#v", updated.Status.Conditions)
+				}
+			}
 		})
 	}
 }
