@@ -1,0 +1,840 @@
+[
+  {
+    "SuitePath": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg",
+    "SuiteDescription": "RoleBasedGroup Controller Suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": true,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 14,
+      "SpecsThatWillRun": 1
+    },
+    "StartTime": "2026-10-27T02:14:31.153862828+08:00",
+    "EndTime": "2026-10-27T02:14:40.522734322+08:00",
+    "RunTime": 9368871494,
+    "SuiteConfig": {
+      "RandomSeed": 1793038471,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": [
+        "converted from v1alpha1"
+      ],
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/suite_test.go",
+          "LineNumber": 32
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-27T02:14:31.153890959+08:00",
+        "EndTime": "2026-10-27T02:14:35.070306952+08:00",
+        "RunTime": 3916415983,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T02:14:31+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/config/crd/bases\"}\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-10-27T02:14:33+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T02:14:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/suite_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-10-27T02:14:31.153906349+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testutil/setup.go",
+              "LineNumber": 66
+            },
+            "TimelineLocation": {
+              "Order": 2,
+              "Time": "2026-10-27T02:14:31.153952541+08:00"
+            },
+            "Message": "bootstrapping test environment"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testutil/setup.go",
+              "LineNumber": 98
+            },
+            "TimelineLocation": {
+              "Offset": 4712,
+              "Order": 3,
+              "Time": "2026-10-27T02:14:34.966462324+08:00"
+            },
+            "Message": "setting up controller manager"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/suite_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Offset": 4712,
+              "Order": 5,
+              "Time": "2026-10-27T02:14:35.070305652+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 3916399303,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "SharedServiceSelection",
+          "When the policy is not set"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 37
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 143
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+          "LineNumber": 144
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should fall back to LeaderOnly and only give the leader component a serviceName",
+        "State": "skipped",
+        "StartTime": "2026-10-27T02:14:35.070373865+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "SharedServiceSelection",
+          "When the policy is All"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 37
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 173
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+          "LineNumber": 174
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should give every component a serviceName and a pod network identity",
+        "State": "skipped",
+        "StartTime": "2026-10-27T02:14:35.070396835+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "SharedServiceSelection",
+          "When the policy changes from All to LeaderOnly"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 37
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 208
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+          "LineNumber": 209
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should clear the worker component serviceName and narrow the shared service in place",
+        "State": "skipped",
+        "StartTime": "2026-10-27T02:14:35.070401986+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "SharedServiceSelection",
+          "When the role runs on a LeaderWorkerSet workload"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 37
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+            "LineNumber": 261
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/shared_service_selection_test.go",
+          "LineNumber": 266
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should accept an unset policy and reject an explicit LeaderOnly",
+        "State": "skipped",
+        "StartTime": "2026-10-27T02:14:35.070405776+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 39
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 58
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 59
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should create child Deployment for each role",
+        "State": "skipped",
+        "StartTime": "2026-10-27T02:14:35.070411166+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 39
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 58
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 108
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should reject v1alpha2 custom components with duplicate names",
+        "State": "skipped",
+        "StartTime": "2026-10-27T02:14:35.070416626+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 39
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 58
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 141
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should reject v1alpha1 components with duplicate names",
+        "State": "skipped",
+        "StartTime": "2026-10-27T02:14:35.070420016+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 39
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 58
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 170
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should reject RoleInstance components with duplicate names",
+        "State": "skipped",
+        "StartTime": "2026-10-27T02:14:35.070423176+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 39
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 58
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 193
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should allow v1alpha2 templateRef without patch",
+        "State": "skipped",
+        "StartTime": "2026-10-27T02:14:35.070428156+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 39
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 58
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 238
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should reject v1alpha2 role rolloutStrategy with invalid update type",
+        "State": "skipped",
+        "StartTime": "2026-10-27T02:14:35.070431836+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 39
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 58
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 270
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should reject RoleInstanceSet with invalid update strategy type",
+        "State": "skipped",
+        "StartTime": "2026-10-27T02:14:35.070435327+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 39
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 58
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 298
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should accept all valid v1alpha2 update strategy types",
+        "State": "skipped",
+        "StartTime": "2026-10-27T02:14:35.070438107+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When creating a RoleBasedGroup"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 39
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 58
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 337
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should allow updating a valid v1alpha2 rolloutStrategy",
+        "State": "skipped",
+        "StartTime": "2026-10-27T02:14:35.070441197+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "RoleBasedGroup Controller",
+          "When the RoleBasedGroup was converted from v1alpha1"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 39
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+            "LineNumber": 382
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+          "LineNumber": 385
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Should apply a named CoordinatedPolicy and still create the role workloads",
+        "State": "passed",
+        "StartTime": "2026-10-27T02:14:35.070445867+08:00",
+        "EndTime": "2026-10-27T02:14:40.500259022+08:00",
+        "RunTime": 5429813155,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleInstanceSet\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"source\": \"kind source: *v1.Pod\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1.Service\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupScalingAdapter\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.CoordinatedPolicy\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstanceSet\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupScalingAdapter\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting EventSource\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupSet\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting Controller\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting workers\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"worker count\": 1}\n2026-10-27T02:14:35+08:00\tINFO\tStarting Controller\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting workers\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"worker count\": 1}\n2026-10-27T02:14:35+08:00\tINFO\tStarting Controller\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting Controller\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting workers\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"worker count\": 1}\n2026-10-27T02:14:35+08:00\tINFO\tStarting workers\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"worker count\": 1}\n2026-10-27T02:14:35+08:00\tINFO\tStarting Controller\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-10-27T02:14:35+08:00\tINFO\tStarting workers\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"worker count\": 1}\n2026-10-27T02:14:37+08:00\tINFO\tenqueue: rbg create event\t{\"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}}\n2026-10-27T02:14:37+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}}\n2026-10-27T02:14:37+08:00\tINFO\trbgs controller watch RoleInstanceSet CRD\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tINFO\tCurrent revision need to be updated\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}}\n2026-10-27T02:14:37+08:00\tINFO\tCreate revision [coord-main-5677b7dccb-1] successfully\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}}\n2026-10-27T02:14:37+08:00\tDEBUG\tevents\tSuccessful create revision for RoleBasedGroup\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"test-rbg-1793038475070458188\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"230\"}, \"reason\": \"SucceedCreateRevision\"}\n2026-10-27T02:14:37+08:00\tINFO\tInitialized discovery config mode\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"mode\": \"refine\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"patchObject\": {\"apiVersion\":\"v1\",\"data\":{\"config.yaml\":\"group:\\n  name: coord-main\\n  roles:\\n  - prefill\\n  - decode\\n  size: 2\\nroles:\\n  decode:\\n    instances:\\n    - address: coord-main-decode-0.s-coord-main-decode\\n    size: 1\\n  prefill:\\n    instances:\\n    - address: coord-main-prefill-0.s-coord-main-prefill\\n    size: 1\\n\"},\"kind\":\"ConfigMap\",\"metadata\":{\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\"}]}}}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleBasedGroup\",\"metadata\":{\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"},\"status\":{\"conditions\":[{\"lastTransitionTime\":\"2026-10-26T18:14:37Z\",\"message\":\"Not all role ready\",\"observedGeneration\":1,\"reason\":\"RoleNotReady\",\"status\":\"False\",\"type\":\"Ready\"}],\"observedGeneration\":1,\"roleStatuses\":[{\"name\":\"prefill\",\"readyReplicas\":0,\"replicas\":0,\"updatedReplicas\":0},{\"name\":\"decode\",\"readyReplicas\":0,\"replicas\":0,\"updatedReplicas\":0}]}}}\n2026-10-27T02:14:37+08:00\tDEBUG\tapplying CoordinatedPolicy from v1alpha1 annotation\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"name\": \"coord-main\", \"namespace\": \"test-rbg-1793038475070458188\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"CoordinatedPolicy\",\"metadata\":{\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\"}]},\"spec\":{\"policies\":[{\"name\":\"pd-ratio\",\"roles\":[\"prefill\",\"decode\"],\"strategy\":{\"rollingUpdate\":{\"maxSkew\":\"50%\"}}}]}}}\n2026-10-27T02:14:37+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"roleOrder\": [[\"decode\",\"prefill\"]]}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to reconciling roleinstanceset workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tDEBUG\truntime is nil, skip inject sidecar\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tINFO\troleInstanceSet hash not equal, old: , new: 55c45cb756\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\", \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleInstanceSet\",\"metadata\":{\"annotations\":{\"rbg.workloads.x-k8s.io/role-instance-pattern\":\"Stateful\",\"rbg.workloads.x-k8s.io/role-size\":\"1\"},\"labels\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"decode\",\"rbg.workloads.x-k8s.io/role-revision-decode\":\"55c45cb756\",\"rbg.workloads.x-k8s.io/role-type\":\"PodTemplate\"},\"name\":\"coord-main-decode\",\"namespace\":\"test-rbg-1793038475070458188\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\"}]},\"spec\":{\"minReadySeconds\":0,\"podManagementPolicy\":\"Parallel\",\"replicas\":1,\"roleInstanceTemplate\":{\"components\":[{\"name\":\"decode\",\"serviceName\":\"s-coord-main-decode\",\"size\":1,\"template\":{\"metadata\":{\"labels\":{\"rbg.workloads.x-k8s.io/component-size\":\"1\",\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"decode\"}},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"RBG_COMPONENT_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/component-id']\"}}},{\"name\":\"RBG_COMPONENT_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/component-name']\"}}},{\"name\":\"RBG_GROUP_NAME\",\"value\":\"coord-main\"},{\"name\":\"RBG_ROLE_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/role-instance-index']\"}}},{\"name\":\"RBG_ROLE_INSTANCE_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/role-instance-name']\"}}},{\"name\":\"RBG_ROLE_NAME\",\"value\":\"decode\"}],\"image\":\"nginx:latest\",\"name\":\"nginx\",\"resources\":{},\"volumeMounts\":[{\"mountPath\":\"/etc/rbg\",\"name\":\"rbg-cluster-config\",\"readOnly\":true}]}],\"volumes\":[{\"configMap\":{\"items\":[{\"key\":\"config.yaml\",\"path\":\"config.yaml\"}],\"name\":\"coord-main\"},\"name\":\"rbg-cluster-config\"}]}}}],\"restartPolicy\":\"None\"},\"selector\":{\"matchLabels\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"decode\"}},\"updateStrategy\":{\"maxSurge\":0,\"maxUnavailable\":1,\"partition\":0,\"paused\":false,\"type\":\"InPlaceIfPossible\"}}}}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to reconciling headless service\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tERROR\tFailed to reconcile workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\", \"error\": \"RoleInstanceSet.workloads.x-k8s.io \\\"coord-main-decode\\\" not found\"}\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileSingleRole\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:604\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).reconcileRoles\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:549\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupReconciler).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/internal/controller/workloads/rolebasedgroup_controller.go:277\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Reconcile\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:216\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:461\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to reconciling roleinstanceset workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\truntime is nil, skip inject sidecar\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tevents\tFailed to reconcile role decode: RoleInstanceSet.workloads.x-k8s.io \"coord-main-decode\" not found\t{\"type\": \"Warning\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"test-rbg-1793038475070458188\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"233\"}, \"reason\": \"FailedReconcileWorkload\"}\n2026-10-27T02:14:37+08:00\tINFO\troleInstanceSet hash not equal, old: , new: 589db9684d\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\", \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleInstanceSet\",\"metadata\":{\"annotations\":{\"rbg.workloads.x-k8s.io/role-instance-pattern\":\"Stateful\",\"rbg.workloads.x-k8s.io/role-size\":\"1\"},\"labels\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"prefill\",\"rbg.workloads.x-k8s.io/role-revision-prefill\":\"589db9684d\",\"rbg.workloads.x-k8s.io/role-type\":\"PodTemplate\"},\"name\":\"coord-main-prefill\",\"namespace\":\"test-rbg-1793038475070458188\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\"}]},\"spec\":{\"minReadySeconds\":0,\"podManagementPolicy\":\"Parallel\",\"replicas\":1,\"roleInstanceTemplate\":{\"components\":[{\"name\":\"prefill\",\"serviceName\":\"s-coord-main-prefill\",\"size\":1,\"template\":{\"metadata\":{\"labels\":{\"rbg.workloads.x-k8s.io/component-size\":\"1\",\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"prefill\"}},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"RBG_COMPONENT_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/component-id']\"}}},{\"name\":\"RBG_COMPONENT_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/component-name']\"}}},{\"name\":\"RBG_GROUP_NAME\",\"value\":\"coord-main\"},{\"name\":\"RBG_ROLE_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/role-instance-index']\"}}},{\"name\":\"RBG_ROLE_INSTANCE_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/role-instance-name']\"}}},{\"name\":\"RBG_ROLE_NAME\",\"value\":\"prefill\"}],\"image\":\"nginx:latest\",\"name\":\"nginx\",\"resources\":{},\"volumeMounts\":[{\"mountPath\":\"/etc/rbg\",\"name\":\"rbg-cluster-config\",\"readOnly\":true}]}],\"volumes\":[{\"configMap\":{\"items\":[{\"key\":\"config.yaml\",\"path\":\"config.yaml\"}],\"name\":\"coord-main\"},\"name\":\"rbg-cluster-config\"}]}}}],\"restartPolicy\":\"None\"},\"selector\":{\"matchLabels\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"prefill\"}},\"updateStrategy\":{\"maxSurge\":0,\"maxUnavailable\":1,\"partition\":0,\"paused\":false,\"type\":\"InPlaceIfPossible\"}}}}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to reconciling headless service\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tsvc not equal, diff: objectMeta not equal: label not equal, old [map[]], new [map[rbg.workloads.x-k8s.io/group-name:coord-main rbg.workloads.x-k8s.io/group-uid:8e1512a6deb4ca6470b400e006b559e465a7c5f8 rbg.workloads.x-k8s.io/role-name:prefill]]\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\", \"patchObject\": {\"apiVersion\":\"v1\",\"kind\":\"Service\",\"metadata\":{\"annotations\":{\"rbg.workloads.x-k8s.io/role-size\":\"1\"},\"labels\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"prefill\"},\"name\":\"s-coord-main-prefill\",\"namespace\":\"test-rbg-1793038475070458188\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"kind\":\"RoleInstanceSet\",\"name\":\"coord-main-prefill\",\"uid\":\"ec623e9f-88bc-40fe-bc5e-71f5ac59db8a\"}]},\"spec\":{\"clusterIP\":\"None\",\"publishNotReadyAddresses\":true,\"selector\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/role-name\":\"prefill\"},\"type\":\"ClusterIP\"}}}\n2026-10-27T02:14:37+08:00\tDEBUG\tevents\tcreate RoleInstance coord-main-decode-0 in RoleInstanceSet coord-main-decode successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-rbg-1793038475070458188\",\"name\":\"coord-main-decode\",\"uid\":\"260009c4-15df-435d-9685-315b1b964c84\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"237\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T02:14:37+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"duration\": \"227.348766ms\"}\n2026-10-27T02:14:37+08:00\tERROR\tReconciler error\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"bd104b6a-0395-48e0-84bf-c130dc4360a1\", \"error\": \"RoleInstanceSet.workloads.x-k8s.io \\\"coord-main-decode\\\" not found\"}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296\n2026-10-27T02:14:37+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"patchObject\": {\"apiVersion\":\"v1\",\"data\":{\"config.yaml\":\"group:\\n  name: coord-main\\n  roles:\\n  - prefill\\n  - decode\\n  size: 2\\nroles:\\n  decode:\\n    instances:\\n    - address: coord-main-decode-0.s-coord-main-decode\\n    size: 1\\n  prefill:\\n    instances:\\n    - address: coord-main-prefill-0.s-coord-main-prefill\\n    size: 1\\n\"},\"kind\":\"ConfigMap\",\"metadata\":{\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\"}]}}}\n2026-10-27T02:14:37+08:00\tDEBUG\tenter workload.onUpdateFunc, test-rbg-1793038475070458188/coord-main-decode, type: *v1alpha2.RoleInstanceSet\n2026-10-27T02:14:37+08:00\tINFO\tenqueue: workload update event\t{\"rbg\": {\"name\":\"coord-main-decode\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"diff\": \"roleInstanceSet generation or status not equal\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tworkload status not yet observed, preserving last known status for this role\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\", \"role\": \"prefill\", \"generation\": 1, \"observedGeneration\": 0}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleBasedGroup\",\"metadata\":{\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"},\"status\":{\"conditions\":[{\"lastTransitionTime\":\"2026-10-26T18:14:37Z\",\"message\":\"Not all role ready\",\"observedGeneration\":1,\"reason\":\"RoleNotReady\",\"status\":\"False\",\"type\":\"Ready\"}],\"observedGeneration\":1,\"roleStatuses\":[{\"name\":\"prefill\",\"readyReplicas\":0,\"replicas\":0,\"updatedReplicas\":0},{\"name\":\"decode\",\"readyReplicas\":0,\"replicas\":1,\"updatedReplicas\":1}]}}}\n2026-10-27T02:14:37+08:00\tDEBUG\tevents\tsucceed to create pod coord-main-decode-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-rbg-1793038475070458188\",\"name\":\"coord-main-decode-0\",\"uid\":\"449a1417-bc2c-4de7-972d-ebeb5a00bcf2\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"241\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tevents\tcreate RoleInstance coord-main-prefill-0 in RoleInstanceSet coord-main-prefill successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-rbg-1793038475070458188\",\"name\":\"coord-main-prefill\",\"uid\":\"ec623e9f-88bc-40fe-bc5e-71f5ac59db8a\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"239\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tapplying CoordinatedPolicy from v1alpha1 annotation\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"name\": \"coord-main\", \"namespace\": \"test-rbg-1793038475070458188\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"CoordinatedPolicy\",\"metadata\":{\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\"}]},\"spec\":{\"policies\":[{\"name\":\"pd-ratio\",\"roles\":[\"prefill\",\"decode\"],\"strategy\":{\"rollingUpdate\":{\"maxSkew\":\"50%\"}}}]}}}\n2026-10-27T02:14:37+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"roleOrder\": [[\"decode\",\"prefill\"]]}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to reconciling roleinstanceset workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tDEBUG\truntime is nil, skip inject sidecar\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\", \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleInstanceSet\",\"metadata\":{\"annotations\":{\"rbg.workloads.x-k8s.io/role-instance-pattern\":\"Stateful\",\"rbg.workloads.x-k8s.io/role-size\":\"1\"},\"labels\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"decode\",\"rbg.workloads.x-k8s.io/role-revision-decode\":\"55c45cb756\",\"rbg.workloads.x-k8s.io/role-type\":\"PodTemplate\"},\"name\":\"coord-main-decode\",\"namespace\":\"test-rbg-1793038475070458188\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\"}]},\"spec\":{\"minReadySeconds\":0,\"podManagementPolicy\":\"Parallel\",\"replicas\":1,\"roleInstanceTemplate\":{\"components\":[{\"name\":\"decode\",\"serviceName\":\"s-coord-main-decode\",\"size\":1,\"template\":{\"metadata\":{\"labels\":{\"rbg.workloads.x-k8s.io/component-size\":\"1\",\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"decode\"}},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"RBG_COMPONENT_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/component-id']\"}}},{\"name\":\"RBG_COMPONENT_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/component-name']\"}}},{\"name\":\"RBG_GROUP_NAME\",\"value\":\"coord-main\"},{\"name\":\"RBG_ROLE_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/role-instance-index']\"}}},{\"name\":\"RBG_ROLE_INSTANCE_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/role-instance-name']\"}}},{\"name\":\"RBG_ROLE_NAME\",\"value\":\"decode\"}],\"image\":\"nginx:latest\",\"name\":\"nginx\",\"resources\":{},\"volumeMounts\":[{\"mountPath\":\"/etc/rbg\",\"name\":\"rbg-cluster-config\",\"readOnly\":true}]}],\"volumes\":[{\"configMap\":{\"items\":[{\"key\":\"config.yaml\",\"path\":\"config.yaml\"}],\"name\":\"coord-main\"},\"name\":\"rbg-cluster-config\"}]}}}],\"restartPolicy\":\"None\"},\"selector\":{\"matchLabels\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"decode\"}},\"updateStrategy\":{\"maxSurge\":0,\"maxUnavailable\":1,\"partition\":0,\"paused\":false,\"type\":\"InPlaceIfPossible\"}}}}\n2026-10-27T02:14:37+08:00\tDEBUG\tenter workload.onUpdateFunc, test-rbg-1793038475070458188/coord-main-prefill, type: *v1alpha2.RoleInstanceSet\n2026-10-27T02:14:37+08:00\tINFO\tenqueue: workload update event\t{\"rbg\": {\"name\":\"coord-main-prefill\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"diff\": \"roleInstanceSet generation or status not equal\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tevents\tsucceed to create pod coord-main-prefill-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-rbg-1793038475070458188\",\"name\":\"coord-main-prefill-0\",\"uid\":\"f3f9b818-118e-4b16-844a-91a3dd0df7aa\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"249\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to reconciling headless service\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tsvc not equal, diff: objectMeta not equal: label not equal, old [map[]], new [map[rbg.workloads.x-k8s.io/group-name:coord-main rbg.workloads.x-k8s.io/group-uid:8e1512a6deb4ca6470b400e006b559e465a7c5f8 rbg.workloads.x-k8s.io/role-name:decode]]\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\", \"patchObject\": {\"apiVersion\":\"v1\",\"kind\":\"Service\",\"metadata\":{\"annotations\":{\"rbg.workloads.x-k8s.io/role-size\":\"1\"},\"labels\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"decode\"},\"name\":\"s-coord-main-decode\",\"namespace\":\"test-rbg-1793038475070458188\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"kind\":\"RoleInstanceSet\",\"name\":\"coord-main-decode\",\"uid\":\"260009c4-15df-435d-9685-315b1b964c84\"}]},\"spec\":{\"clusterIP\":\"None\",\"publishNotReadyAddresses\":true,\"selector\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/role-name\":\"decode\"},\"type\":\"ClusterIP\"}}}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to reconciling roleinstanceset workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\truntime is nil, skip inject sidecar\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\", \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleInstanceSet\",\"metadata\":{\"annotations\":{\"rbg.workloads.x-k8s.io/role-instance-pattern\":\"Stateful\",\"rbg.workloads.x-k8s.io/role-size\":\"1\"},\"labels\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"prefill\",\"rbg.workloads.x-k8s.io/role-revision-prefill\":\"589db9684d\",\"rbg.workloads.x-k8s.io/role-type\":\"PodTemplate\"},\"name\":\"coord-main-prefill\",\"namespace\":\"test-rbg-1793038475070458188\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\"}]},\"spec\":{\"minReadySeconds\":0,\"podManagementPolicy\":\"Parallel\",\"replicas\":1,\"roleInstanceTemplate\":{\"components\":[{\"name\":\"prefill\",\"serviceName\":\"s-coord-main-prefill\",\"size\":1,\"template\":{\"metadata\":{\"labels\":{\"rbg.workloads.x-k8s.io/component-size\":\"1\",\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"prefill\"}},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"RBG_COMPONENT_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/component-id']\"}}},{\"name\":\"RBG_COMPONENT_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/component-name']\"}}},{\"name\":\"RBG_GROUP_NAME\",\"value\":\"coord-main\"},{\"name\":\"RBG_ROLE_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/role-instance-index']\"}}},{\"name\":\"RBG_ROLE_INSTANCE_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/role-instance-name']\"}}},{\"name\":\"RBG_ROLE_NAME\",\"value\":\"prefill\"}],\"image\":\"nginx:latest\",\"name\":\"nginx\",\"resources\":{},\"volumeMounts\":[{\"mountPath\":\"/etc/rbg\",\"name\":\"rbg-cluster-config\",\"readOnly\":true}]}],\"volumes\":[{\"configMap\":{\"items\":[{\"key\":\"config.yaml\",\"path\":\"config.yaml\"}],\"name\":\"coord-main\"},\"name\":\"rbg-cluster-config\"}]}}}],\"restartPolicy\":\"None\"},\"selector\":{\"matchLabels\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"prefill\"}},\"updateStrategy\":{\"maxSurge\":0,\"maxUnavailable\":1,\"partition\":0,\"paused\":false,\"type\":\"InPlaceIfPossible\"}}}}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to reconciling headless service\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tsvc equal, skip reconcile\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"coord-main-decode-0\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main-decode-0\", \"reconcileID\": \"0f7deb7e-739b-43a7-8f93-e4b7f667696a\", \"pod\": {\"name\":\"coord-main-decode-0\",\"namespace\":\"test-rbg-1793038475070458188\"}}\n2026-10-27T02:14:37+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"328eab15-d86c-4aa0-b8ad-75cc02d9d844\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"duration\": \"14.438374ms\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tevents\tReconcileSucceed\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"test-rbg-1793038475070458188\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"235\"}, \"reason\": \"Succeed\"}\n2026-10-27T02:14:37+08:00\tINFO\tStart reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to validate role declaration\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"patchObject\": {\"apiVersion\":\"v1\",\"data\":{\"config.yaml\":\"group:\\n  name: coord-main\\n  roles:\\n  - prefill\\n  - decode\\n  size: 2\\nroles:\\n  decode:\\n    instances:\\n    - address: coord-main-decode-0.s-coord-main-decode\\n    size: 1\\n  prefill:\\n    instances:\\n    - address: coord-main-prefill-0.s-coord-main-prefill\\n    size: 1\\n\"},\"kind\":\"ConfigMap\",\"metadata\":{\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\"}]}}}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleBasedGroup\",\"metadata\":{\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"},\"status\":{\"conditions\":[{\"lastTransitionTime\":\"2026-10-26T18:14:37Z\",\"message\":\"Not all role ready\",\"observedGeneration\":1,\"reason\":\"RoleNotReady\",\"status\":\"False\",\"type\":\"Ready\"}],\"observedGeneration\":1,\"roleStatuses\":[{\"name\":\"prefill\",\"readyReplicas\":0,\"replicas\":1,\"updatedReplicas\":1},{\"name\":\"decode\",\"readyReplicas\":0,\"replicas\":1,\"updatedReplicas\":1}]}}}\n2026-10-27T02:14:37+08:00\tDEBUG\tapplying CoordinatedPolicy from v1alpha1 annotation\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"name\": \"coord-main\", \"namespace\": \"test-rbg-1793038475070458188\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"CoordinatedPolicy\",\"metadata\":{\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\"}]},\"spec\":{\"policies\":[{\"name\":\"pd-ratio\",\"roles\":[\"prefill\",\"decode\"],\"strategy\":{\"rollingUpdate\":{\"maxSkew\":\"50%\"}}}]}}}\n2026-10-27T02:14:37+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"coord-main-prefill-0\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main-prefill-0\", \"reconcileID\": \"d25feb99-0f50-462d-bc42-2592dbd97e2f\", \"pod\": {\"name\":\"coord-main-prefill-0\",\"namespace\":\"test-rbg-1793038475070458188\"}}\n2026-10-27T02:14:37+08:00\tDEBUG\troleOrder\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"roleOrder\": [[\"decode\",\"prefill\"]]}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to reconciling roleinstanceset workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tDEBUG\truntime is nil, skip inject sidecar\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\", \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleInstanceSet\",\"metadata\":{\"annotations\":{\"rbg.workloads.x-k8s.io/role-instance-pattern\":\"Stateful\",\"rbg.workloads.x-k8s.io/role-size\":\"1\"},\"labels\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"decode\",\"rbg.workloads.x-k8s.io/role-revision-decode\":\"55c45cb756\",\"rbg.workloads.x-k8s.io/role-type\":\"PodTemplate\"},\"name\":\"coord-main-decode\",\"namespace\":\"test-rbg-1793038475070458188\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\"}]},\"spec\":{\"minReadySeconds\":0,\"podManagementPolicy\":\"Parallel\",\"replicas\":1,\"roleInstanceTemplate\":{\"components\":[{\"name\":\"decode\",\"serviceName\":\"s-coord-main-decode\",\"size\":1,\"template\":{\"metadata\":{\"labels\":{\"rbg.workloads.x-k8s.io/component-size\":\"1\",\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"decode\"}},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"RBG_COMPONENT_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/component-id']\"}}},{\"name\":\"RBG_COMPONENT_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/component-name']\"}}},{\"name\":\"RBG_GROUP_NAME\",\"value\":\"coord-main\"},{\"name\":\"RBG_ROLE_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/role-instance-index']\"}}},{\"name\":\"RBG_ROLE_INSTANCE_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/role-instance-name']\"}}},{\"name\":\"RBG_ROLE_NAME\",\"value\":\"decode\"}],\"image\":\"nginx:latest\",\"name\":\"nginx\",\"resources\":{},\"volumeMounts\":[{\"mountPath\":\"/etc/rbg\",\"name\":\"rbg-cluster-config\",\"readOnly\":true}]}],\"volumes\":[{\"configMap\":{\"items\":[{\"key\":\"config.yaml\",\"path\":\"config.yaml\"}],\"name\":\"coord-main\"},\"name\":\"rbg-cluster-config\"}]}}}],\"restartPolicy\":\"None\"},\"selector\":{\"matchLabels\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"decode\"}},\"updateStrategy\":{\"maxSurge\":0,\"maxUnavailable\":1,\"partition\":0,\"paused\":false,\"type\":\"InPlaceIfPossible\"}}}}\n2026-10-27T02:14:37+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"coord-main-decode-0\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main-decode-0\", \"reconcileID\": \"e9cd8722-3ee1-4a57-b1eb-7124dfa6ed47\", \"pod\": {\"name\":\"coord-main-decode-0\",\"namespace\":\"test-rbg-1793038475070458188\"}}\n2026-10-27T02:14:37+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"coord-main-prefill-0\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main-prefill-0\", \"reconcileID\": \"f20c2baa-486c-48d2-9318-074fa99663e7\", \"pod\": {\"name\":\"coord-main-prefill-0\",\"namespace\":\"test-rbg-1793038475070458188\"}}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to reconciling headless service\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tsvc equal, skip reconcile\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"decode\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to reconciling roleinstanceset workload\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\truntime is nil, skip inject sidecar\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tpatch content\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\", \"patchObject\": {\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"kind\":\"RoleInstanceSet\",\"metadata\":{\"annotations\":{\"rbg.workloads.x-k8s.io/role-instance-pattern\":\"Stateful\",\"rbg.workloads.x-k8s.io/role-size\":\"1\"},\"labels\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"prefill\",\"rbg.workloads.x-k8s.io/role-revision-prefill\":\"589db9684d\",\"rbg.workloads.x-k8s.io/role-type\":\"PodTemplate\"},\"name\":\"coord-main-prefill\",\"namespace\":\"test-rbg-1793038475070458188\",\"ownerReferences\":[{\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"blockOwnerDeletion\":true,\"controller\":true,\"kind\":\"RoleBasedGroup\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\"}]},\"spec\":{\"minReadySeconds\":0,\"podManagementPolicy\":\"Parallel\",\"replicas\":1,\"roleInstanceTemplate\":{\"components\":[{\"name\":\"prefill\",\"serviceName\":\"s-coord-main-prefill\",\"size\":1,\"template\":{\"metadata\":{\"labels\":{\"rbg.workloads.x-k8s.io/component-size\":\"1\",\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"prefill\"}},\"spec\":{\"containers\":[{\"env\":[{\"name\":\"RBG_COMPONENT_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/component-id']\"}}},{\"name\":\"RBG_COMPONENT_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/component-name']\"}}},{\"name\":\"RBG_GROUP_NAME\",\"value\":\"coord-main\"},{\"name\":\"RBG_ROLE_INDEX\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/role-instance-index']\"}}},{\"name\":\"RBG_ROLE_INSTANCE_NAME\",\"valueFrom\":{\"fieldRef\":{\"fieldPath\":\"metadata.labels['rbg.workloads.x-k8s.io/role-instance-name']\"}}},{\"name\":\"RBG_ROLE_NAME\",\"value\":\"prefill\"}],\"image\":\"nginx:latest\",\"name\":\"nginx\",\"resources\":{},\"volumeMounts\":[{\"mountPath\":\"/etc/rbg\",\"name\":\"rbg-cluster-config\",\"readOnly\":true}]}],\"volumes\":[{\"configMap\":{\"items\":[{\"key\":\"config.yaml\",\"path\":\"config.yaml\"}],\"name\":\"coord-main\"},\"name\":\"rbg-cluster-config\"}]}}}],\"restartPolicy\":\"None\"},\"selector\":{\"matchLabels\":{\"rbg.workloads.x-k8s.io/group-name\":\"coord-main\",\"rbg.workloads.x-k8s.io/group-uid\":\"8e1512a6deb4ca6470b400e006b559e465a7c5f8\",\"rbg.workloads.x-k8s.io/role-name\":\"prefill\"}},\"updateStrategy\":{\"maxSurge\":0,\"maxUnavailable\":1,\"partition\":0,\"paused\":false,\"type\":\"InPlaceIfPossible\"}}}}\n2026-10-27T02:14:37+08:00\tDEBUG\tstart to reconciling headless service\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tsvc equal, skip reconcile\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"role\": \"prefill\"}\n2026-10-27T02:14:37+08:00\tINFO\tFinished reconciling\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"RoleBasedGroup\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"namespace\": \"test-rbg-1793038475070458188\", \"name\": \"coord-main\", \"reconcileID\": \"3a8067d9-793c-47b3-83c1-e234cfcd7d35\", \"rbg\": {\"name\":\"coord-main\",\"namespace\":\"test-rbg-1793038475070458188\"}, \"duration\": \"100.315672ms\"}\n2026-10-27T02:14:37+08:00\tDEBUG\tevents\tReconcileSucceed\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleBasedGroup\",\"namespace\":\"test-rbg-1793038475070458188\",\"name\":\"coord-main\",\"uid\":\"0838ace8-2bf9-4535-87c0-a7fbb7740bdb\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"250\"}, \"reason\": \"Succeed\"}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+              "LineNumber": 49
+            },
+            "TimelineLocation": {
+              "Order": 6,
+              "Time": "2026-10-27T02:14:35.070450057+08:00"
+            },
+            "Message": "RoleBasedGroup Controller",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+              "LineNumber": 49
+            },
+            "TimelineLocation": {
+              "Offset": 3343,
+              "Order": 8,
+              "Time": "2026-10-27T02:14:35.074033885+08:00"
+            },
+            "Message": "RoleBasedGroup Controller",
+            "Duration": 3583828,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+              "LineNumber": 385
+            },
+            "TimelineLocation": {
+              "Offset": 3343,
+              "Order": 9,
+              "Time": "2026-10-27T02:14:35.074036675+08:00"
+            },
+            "Message": "Should apply a named CoordinatedPolicy and still create the role workloads",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+              "LineNumber": 385
+            },
+            "TimelineLocation": {
+              "Offset": 65016,
+              "Order": 11,
+              "Time": "2026-10-27T02:14:37.472152572+08:00"
+            },
+            "Message": "Should apply a named CoordinatedPolicy and still create the role workloads",
+            "Duration": 2398115896,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+              "LineNumber": 54
+            },
+            "TimelineLocation": {
+              "Offset": 65016,
+              "Order": 12,
+              "Time": "2026-10-27T02:14:37.472157892+08:00"
+            },
+            "Message": "RoleBasedGroup Controller",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/basic_test.go",
+              "LineNumber": 54
+            },
+            "TimelineLocation": {
+              "Offset": 66767,
+              "Order": 14,
+              "Time": "2026-10-27T02:14:40.500253272+08:00"
+            },
+            "Message": "RoleBasedGroup Controller",
+            "Duration": 3028095380,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/suite_test.go",
+          "LineNumber": 36
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-27T02:14:40.500293473+08:00",
+        "EndTime": "2026-10-27T02:14:40.522725992+08:00",
+        "RunTime": 22432519,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T02:14:40+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-10-27T02:14:40+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-10-27T02:14:40+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-10-27T02:14:40+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-10-27T02:14:40+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-10-27T02:14:40+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-10-27T02:14:40+08:00\tINFO\tAll workers finished\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-10-27T02:14:40+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-10-27T02:14:40+08:00\tINFO\tAll workers finished\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-10-27T02:14:40+08:00\tINFO\tAll workers finished\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-10-27T02:14:40+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-10-27T02:14:40+08:00\tINFO\tAll workers finished\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-10-27T02:14:40+08:00\tINFO\tAll workers finished\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-10-27T02:14:40+08:00\tINFO\tStopping and waiting for caches\n2026-10-27T02:14:40+08:00\tINFO\tStopping and waiting for webhooks\n2026-10-27T02:14:40+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-10-27T02:14:40+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/suite_test.go",
+              "LineNumber": 36
+            },
+            "TimelineLocation": {
+              "Order": 15,
+              "Time": "2026-10-27T02:14:40.500295033+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testutil/setup.go",
+              "LineNumber": 140
+            },
+            "TimelineLocation": {
+              "Order": 16,
+              "Time": "2026-10-27T02:14:40.500320664+08:00"
+            },
+            "Message": "tearing down the test environment"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg/suite_test.go",
+              "LineNumber": 36
+            },
+            "TimelineLocation": {
+              "Offset": 2441,
+              "Order": 18,
+              "Time": "2026-10-27T02:14:40.522724102+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 22429069,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]
