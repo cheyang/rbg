@@ -1,0 +1,32 @@
+=== RUN   TestEnsureV1alpha1CoordinatedPolicy_CreatesPolicy
+2026-10-27T02:11:02+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "my-rbg", "namespace": "default"}
+2026-10-27T02:11:02+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"my-rbg","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"my-rbg","uid":""}]},"spec":{"policies":[{"name":"c1","roles":["prefill","decode"]}]}}}
+--- PASS: TestEnsureV1alpha1CoordinatedPolicy_CreatesPolicy (0.04s)
+=== RUN   TestEnsureV1alpha1CoordinatedPolicy_RollingUpdateStrategy
+2026-10-27T02:11:02+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-ru", "namespace": "default"}
+2026-10-27T02:11:02+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-ru","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-ru","uid":""}]},"spec":{"policies":[{"name":"ru-coord","roles":["prefill","decode"],"strategy":{"rollingUpdate":{"maxSkew":"10%","maxUnavailable":"5%","partition":"20%"}}}]}}}
+--- PASS: TestEnsureV1alpha1CoordinatedPolicy_RollingUpdateStrategy (0.00s)
+=== RUN   TestEnsureV1alpha1CoordinatedPolicy_ScalingStrategy_OrderScheduled
+2026-10-27T02:11:02+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-sc", "namespace": "default"}
+2026-10-27T02:11:02+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-sc","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-sc","uid":""}]},"spec":{"policies":[{"name":"sc-coord","roles":["worker"],"strategy":{"scaling":{"maxSkew":"5%","progression":"OrderScheduled"}}}]}}}
+--- PASS: TestEnsureV1alpha1CoordinatedPolicy_ScalingStrategy_OrderScheduled (0.00s)
+=== RUN   TestEnsureV1alpha1CoordinatedPolicy_ScalingStrategy_OrderReady
+2026-10-27T02:11:02+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-ready", "namespace": "default"}
+2026-10-27T02:11:02+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-ready","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-ready","uid":""}]},"spec":{"policies":[{"name":"sc-ready","roles":["worker"],"strategy":{"scaling":{}}}]}}}
+--- PASS: TestEnsureV1alpha1CoordinatedPolicy_ScalingStrategy_OrderReady (0.00s)
+=== RUN   TestEnsureV1alpha1CoordinatedPolicy_MultipleRules
+2026-10-27T02:11:02+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-multi", "namespace": "default"}
+2026-10-27T02:11:02+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-multi","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-multi","uid":""}]},"spec":{"policies":[{"name":"ru","roles":["a","b"],"strategy":{"rollingUpdate":{"maxSkew":"10%"}}},{"name":"sc","roles":["c"],"strategy":{"scaling":{"maxSkew":"5%"}}}]}}}
+--- PASS: TestEnsureV1alpha1CoordinatedPolicy_MultipleRules (0.00s)
+=== RUN   TestEnsureV1alpha1CoordinatedPolicy_UpdatesExistingPolicy
+2026-10-27T02:11:02+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-upd", "namespace": "default"}
+2026-10-27T02:11:02+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-upd","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-upd","uid":""}]},"spec":{"policies":[{"name":"c1","roles":["new-role"]}]}}}
+--- PASS: TestEnsureV1alpha1CoordinatedPolicy_UpdatesExistingPolicy (0.00s)
+=== RUN   TestEnsureV1alpha1CoordinatedPolicy_NoAnnotation_Noop
+--- PASS: TestEnsureV1alpha1CoordinatedPolicy_NoAnnotation_Noop (0.00s)
+=== RUN   TestEnsureV1alpha1CoordinatedPolicy_NilStrategy
+2026-10-27T02:11:02+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-nil", "namespace": "default"}
+2026-10-27T02:11:02+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-nil","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-nil","uid":""}]},"spec":{"policies":[{"name":"c-nil","roles":["role-a"]}]}}}
+--- PASS: TestEnsureV1alpha1CoordinatedPolicy_NilStrategy (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.058s

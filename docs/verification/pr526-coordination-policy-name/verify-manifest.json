@@ -1,0 +1,67 @@
+{
+  "topic": "pr526-coordination-policy-name",
+  "pr": "https://github.com/sgl-project/rbg/pull/526",
+  "baseSha": "8a7bcfcb5dbf104788b35e8cb143d6090a3f6c37",
+  "headSha": "a9f998878b0767746d2ffff2b3f316723ef34d79",
+  "harnessPaths": [
+    "docs/verification/pr526-coordination-policy-name",
+    "test/envtest/testcase/rbg/basic_test.go",
+    "internal/controller/workloads/coordinatedpolicy_migration_controller_test.go",
+    "internal/controller/workloads/zz_verify_pr526_empty_name_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "On main, a RoleBasedGroup written through workloads.x-k8s.io/v1alpha1 with spec.coordination never gets any workloads: the SSA apply of the migrated CoordinatedPolicy is rejected because spec.policies[] entries omit the list-map key 'name', and the reconcile returns before step 8 creates role workloads (issue #517).",
+    "reportedComponent": "internal/controller/workloads/coordinatedpolicy_migration_controller.go (RBG reconcile step 5)",
+    "patchedComponent": "internal/controller/workloads/coordinatedpolicy_migration_controller.go",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "integration",
+    "verdict": "confirmed",
+    "evidence": "PR-head envtest grafted onto merge-base 8a7bcfcb fails after ~35s: controller logs repeat '.spec.policies: element 0: associative list with keys has an element that omits key field \"name\"', no CoordinatedPolicy is created (results/envtest-base.log, 13 Reconciler errors in one run). Same spec passes on PR head (results/envtest-focused-head.log).",
+    "match": [
+      "Should apply a named CoordinatedPolicy and still create the role workloads"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestEnsureV1alpha1CoordinatedPolicy|TestVerifyPR526' -count=1 -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64} go test ./test/envtest/testcase/rbg/ -count=1 -timeout 10m -args --ginkgo.focus 'converted from v1alpha1' --ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "Should apply a named CoordinatedPolicy and still create the role workloads"
+      ]
+    },
+    {
+      "id": "F1-unit",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestEnsureV1alpha1CoordinatedPolicy_CreatesPolicy"
+      ]
+    }
+  ],
+  "liveNote": "L3 skipped per debate instructions (no KUBECONFIG layer). The issue's live-cluster symptom (14 Reconciler errors in 45s, no CoordinatedPolicy/RoleInstanceSet/Pod) is reproduced at the integration layer against a real envtest apiserver.",
+  "informationalTests": [
+    {
+      "id": "E1",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR526_EmptyCoordinationName_StillSerializedEmpty"
+      ],
+      "note": "Minor, pre-existing: empty coordination name still rejected post-fix (schema minLength=1). Not a gate for this PR; documents current behavior. If a future change skips/defaults empty names, flip or delete."
+    }
+  ]
+}

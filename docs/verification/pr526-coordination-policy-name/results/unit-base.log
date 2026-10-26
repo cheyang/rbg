@@ -1,0 +1,19 @@
+2026-10-27T02:11:04+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "my-rbg", "namespace": "default"}
+2026-10-27T02:11:04+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"my-rbg","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"my-rbg","uid":""}]},"spec":{"policies":[{"roles":["prefill","decode"]}]}}}
+--- FAIL: TestEnsureV1alpha1CoordinatedPolicy_CreatesPolicy (0.04s)
+    coordinatedpolicy_migration_controller_test.go:96: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/base/internal/controller/workloads/coordinatedpolicy_migration_controller_test.go:96
+        	Error:      	Not equal: 
+        	            	expected: "c1"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-c1
+        	            	+
+        	Test:       	TestEnsureV1alpha1CoordinatedPolicy_CreatesPolicy
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.050s
+FAIL

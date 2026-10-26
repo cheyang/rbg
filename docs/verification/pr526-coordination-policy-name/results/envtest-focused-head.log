@@ -1,0 +1,23 @@
+=== RUN   TestRBGController
+Running Suite: RoleBasedGroup Controller Suite - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-27/pr-526/work/verify/test/envtest/testcase/rbg
+=======================================================================================================================================================
+Random Seed: [1m1793038271[0m
+
+Will run [1m1[0m of [1m14[0m specs
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0mI1027 02:11:17.615687 2924715 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-1793038275239914034/coord-main-decode" elapsedTime="6.846484ms"
+I1027 02:11:17.620892 2924715 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-1793038275239914034/coord-main-prefill" elapsedTime="5.127053ms"
+I1027 02:11:17.624953 2924715 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-1793038275239914034/coord-main-decode" elapsedTime="3.965571ms"
+I1027 02:11:17.627761 2924715 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-1793038275239914034/coord-main-prefill" elapsedTime="2.723807ms"
+I1027 02:11:17.630568 2924715 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-1793038275239914034/coord-main-decode" elapsedTime="2.720987ms"
+I1027 02:11:17.633397 2924715 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-1793038275239914034/coord-main-prefill" elapsedTime="2.755679ms"
+I1027 02:11:17.636302 2924715 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-1793038275239914034/coord-main-decode" elapsedTime="2.845711ms"
+I1027 02:11:17.639032 2924715 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-1793038275239914034/coord-main-prefill" elapsedTime="2.664864ms"
+I1027 02:11:17.641427 2924715 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-1793038275239914034/coord-main-decode" elapsedTime="2.339404ms"
+I1027 02:11:17.644013 2924715 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-1793038275239914034/coord-main-decode" elapsedTime="2.416526ms"
+[38;5;10m•[0m
+
+[38;5;10m[1mRan 1 of 14 Specs in 9.071 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m1 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m13 Skipped[0m
+--- PASS: TestRBGController (9.07s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	9.086s
