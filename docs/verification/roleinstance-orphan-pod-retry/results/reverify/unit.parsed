@@ -1,4 +1,0 @@
-TestVerifyForeignSameNamePodYieldsRetrySignal	pass
-TestVerifyOwnedSameNamePodIsSkippedWithoutError	pass
-TestVerifyOwnedTerminatingPodIsSkippedWithoutError	pass
-TestVerifyPartialForeignCollisionBlocksWholeBatch	pass

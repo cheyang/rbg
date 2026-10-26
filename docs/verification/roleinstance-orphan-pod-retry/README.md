@@ -79,6 +79,10 @@ bash docs/verification/roleinstance-orphan-pod-retry/scripts/re-verify.sh   # no
 ```
 
 Exit 0 iff every finding is fixed; the canary counts as fixed only when it flips.
+Last run against head `a8ef35f`: F-fix/F-fix-integration/F-regression-owned FIXED,
+F3 STILL-BROKEN (contract red on head by design), F2 STILL-PRESENT (canary).
+(`results/reverify/` is intentionally untracked: re-verify.sh's cleanup trap
+restores tracked files, so per-run raw output is machine-local.)
 
 ## Continuing after the fix / handoff
 
