@@ -1,0 +1,29 @@
+=== RUN   TestStatefulRoleInstanceSetController
+Running Suite: Stateful RoleInstanceSet Controller Suite - /home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful
+======================================================================================================================================================
+Random Seed: [1m1793035225[0m
+
+Will run [1m2[0m of [1m5[0m specs
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0mI1027 01:20:31.097491 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035228984683649/orphan-cond" elapsedTime="106.548425ms"
+I1027 01:20:31.099592 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035228984683649/orphan-cond" elapsedTime="2.012972ms"
+I1027 01:20:31.101570 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035228984683649/orphan-cond" elapsedTime="1.909098ms"
+I1027 01:20:31.103401 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035228984683649/orphan-cond" elapsedTime="1.754513ms"
+I1027 01:20:31.106292 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035228984683649/orphan-cond" elapsedTime="1.745423ms"
+I1027 01:20:31.252455 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035228984683649/orphan-cond" elapsedTime="2.029922ms"
+I1027 01:20:31.254286 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035228984683649/orphan-cond" elapsedTime="1.762393ms"
+[38;5;10m•[0mI1027 01:20:38.547802 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035238539807845/orphan-gc" elapsedTime="4.072455ms"
+I1027 01:20:38.549840 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035238539807845/orphan-gc" elapsedTime="1.97097ms"
+I1027 01:20:38.552705 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035238539807845/orphan-gc" elapsedTime="1.820135ms"
+I1027 01:20:38.554681 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035238539807845/orphan-gc" elapsedTime="1.933249ms"
+I1027 01:20:38.556533 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035238539807845/orphan-gc" elapsedTime="1.797634ms"
+I1027 01:20:38.803332 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035238539807845/orphan-gc" elapsedTime="1.931919ms"
+I1027 01:20:39.115461 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035238539807845/orphan-gc" elapsedTime="2.030272ms"
+I1027 01:20:39.117368 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035238539807845/orphan-gc" elapsedTime="1.832755ms"
+I1027 01:20:39.119193 2824943 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035238539807845/orphan-gc" elapsedTime="1.767463ms"
+[38;5;10m•[0m
+
+[38;5;10m[1mRan 2 of 5 Specs in 16.519 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m2 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m3 Skipped[0m
+--- PASS: TestStatefulRoleInstanceSetController (16.52s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/stateful	16.533s

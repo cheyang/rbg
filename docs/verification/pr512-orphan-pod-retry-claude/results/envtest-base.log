@@ -1,0 +1,99 @@
+Running Suite: Stateful RoleInstanceSet Controller Suite - /tmp/rbg512-base/test/envtest/testcase/stateful
+==========================================================================================================
+Random Seed: [1m1793035141[0m
+
+Will run [1m2[0m of [1m5[0m specs
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0mI1027 01:19:07.427178 2811953 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035145312493521/orphan-cond" elapsedTime="106.514273ms"
+I1027 01:19:07.429300 2811953 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035145312493521/orphan-cond" elapsedTime="2.037562ms"
+I1027 01:19:07.432878 2811953 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035145312493521/orphan-cond" elapsedTime="1.878287ms"
+I1027 01:19:07.434811 2811953 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035145312493521/orphan-cond" elapsedTime="1.879027ms"
+I1027 01:19:07.436690 2811953 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035145312493521/orphan-cond" elapsedTime="1.825536ms"
+I1027 01:19:07.580589 2811953 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035145312493521/orphan-cond" elapsedTime="1.850297ms"
+
+[38;5;243m------------------------------[0m
+[38;5;9m• [FAILED] [35.289 seconds][0m
+[0mMigration orphan Pod recovery (issue #511 / PR #512) [38;5;9m[1m[It] records FailedScale and retries while a foreign-owned Pod squats the stable name[0m
+[38;5;243m/tmp/rbg512-base/test/envtest/testcase/stateful/orphan_pod_recovery_test.go:109[0m
+
+  [38;5;243mTimeline >>[0m
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.CoordinatedPolicy"}
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleBasedGroupScalingAdapter"}
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "source": "kind source: *v1alpha2.RoleInstanceSet"}
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "source": "kind source: *v1alpha2.RoleInstance"}
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleInstanceSet"}
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1.Service"}
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter", "source": "kind source: *v1alpha2.RoleBasedGroupScalingAdapter"}
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "source": "kind source: *v1alpha2.RoleInstance"}
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet", "source": "kind source: *v1alpha2.RoleBasedGroupSet"}
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "source": "kind source: *v1.Pod"}
+  2026-10-27T01:19:05+08:00	INFO	Starting EventSource	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "source": "kind source: *v1alpha2.RoleInstance"}
+  2026-10-27T01:19:05+08:00	INFO	Starting Controller	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance"}
+  2026-10-27T01:19:05+08:00	INFO	Starting workers	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "worker count": 1}
+  2026-10-27T01:19:05+08:00	INFO	Starting Controller	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet"}
+  2026-10-27T01:19:05+08:00	INFO	Starting workers	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "worker count": 1}
+  2026-10-27T01:19:05+08:00	INFO	Starting Controller	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter"}
+  2026-10-27T01:19:05+08:00	INFO	Starting workers	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter", "worker count": 1}
+  2026-10-27T01:19:05+08:00	INFO	Starting Controller	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet"}
+  2026-10-27T01:19:05+08:00	INFO	Starting workers	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet", "worker count": 1}
+  2026-10-27T01:19:05+08:00	INFO	Starting Controller	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup"}
+  2026-10-27T01:19:05+08:00	INFO	Starting workers	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "worker count": 1}
+  2026-10-27T01:19:07+08:00	DEBUG	events	create RoleInstance orphan-cond-0 in RoleInstanceSet orphan-cond successful	{"type": "Normal", "object": {"kind":"RoleInstanceSet","namespace":"test-orphan-mig-1793035145312493521","name":"orphan-cond","uid":"ce1d8c89-8e5e-4b70-bf59-7b343d9a78e5","apiVersion":"workloads.x-k8s.io/v1alpha2","resourceVersion":"230"}, "reason": "SuccessfulCreate"}
+  2026-10-27T01:19:07+08:00	DEBUG	enter workload.onUpdateFunc, test-orphan-mig-1793035145312493521/orphan-cond, type: *v1alpha2.RoleInstanceSet
+  2026-10-27T01:19:07+08:00	DEBUG	events	succeed to create pod orphan-cond-0-worker-0	{"type": "Normal", "object": {"kind":"RoleInstance","namespace":"test-orphan-mig-1793035145312493521","name":"orphan-cond-0","uid":"b7f8efba-e7f9-4183-9ae9-54b3ebb25e1e","apiVersion":"workloads.x-k8s.io/v1alpha2","resourceVersion":"232"}, "reason": "SuccessfulCreate"}
+  2026-10-27T01:19:07+08:00	INFO	pod runtime not ready	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"orphan-cond-0","namespace":"test-orphan-mig-1793035145312493521"}, "namespace": "test-orphan-mig-1793035145312493521", "name": "orphan-cond-0", "reconcileID": "1108bf6a-c9a4-4447-b060-add4748b3e24", "pod": {"name":"orphan-cond-0-worker-0","namespace":"test-orphan-mig-1793035145312493521"}}
+  2026-10-27T01:19:07+08:00	INFO	pod runtime not ready	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"orphan-cond-0","namespace":"test-orphan-mig-1793035145312493521"}, "namespace": "test-orphan-mig-1793035145312493521", "name": "orphan-cond-0", "reconcileID": "9bb9ee0e-92aa-4105-8565-5102f05cac6a", "pod": {"name":"orphan-cond-0-worker-0","namespace":"test-orphan-mig-1793035145312493521"}}
+  [38;5;9m[FAILED][0m in [It] - /tmp/rbg512-base/test/envtest/testcase/stateful/orphan_pod_recovery_test.go:123 [38;5;243m@ 10/27/26 01:19:37.577[0m
+  [38;5;243m<< Timeline[0m
+
+  [38;5;9m[FAILED] Timed out after 30.000s.
+  the foreign same-name Pod must surface as a FailedScale condition, not be silently skipped
+  The function passed to Eventually returned the following error:
+      <*errors.errorString | 0x3574aa678530>: 
+      no FailedScale condition yet
+      {
+          s: "no FailedScale condition yet",
+      }[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/tmp/rbg512-base/test/envtest/testcase/stateful/orphan_pod_recovery_test.go:123[0m [38;5;243m@ 10/27/26 01:19:37.577[0m
+[38;5;243m------------------------------[0m
+I1027 01:19:40.609299 2811953 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035180601984186/orphan-gc" elapsedTime="4.094586ms"
+I1027 01:19:40.622864 2811953 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035180601984186/orphan-gc" elapsedTime="13.49123ms"
+I1027 01:19:40.624633 2811953 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035180601984186/orphan-gc" elapsedTime="1.722491ms"
+I1027 01:19:40.863845 2811953 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035180601984186/orphan-gc" elapsedTime="1.859796ms"
+I1027 01:19:40.865778 2811953 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-orphan-mig-1793035180601984186/orphan-gc" elapsedTime="1.870616ms"
+[38;5;9m• [FAILED] [33.282 seconds][0m
+[0mMigration orphan Pod recovery (issue #511 / PR #512) [38;5;9m[1m[It] creates the replacement Pod after the foreign Pod is GC'd, without a manual reconcile[0m
+[38;5;243m/tmp/rbg512-base/test/envtest/testcase/stateful/orphan_pod_recovery_test.go:138[0m
+
+  [38;5;243mTimeline >>[0m
+  2026-10-27T01:19:40+08:00	DEBUG	events	create RoleInstance orphan-gc-0 in RoleInstanceSet orphan-gc successful	{"type": "Normal", "object": {"kind":"RoleInstanceSet","namespace":"test-orphan-mig-1793035180601984186","name":"orphan-gc","uid":"93c09df0-26e9-4a61-8359-a84c65a6accb","apiVersion":"workloads.x-k8s.io/v1alpha2","resourceVersion":"252"}, "reason": "SuccessfulCreate"}
+  2026-10-27T01:19:40+08:00	DEBUG	enter workload.onUpdateFunc, test-orphan-mig-1793035180601984186/orphan-gc, type: *v1alpha2.RoleInstanceSet
+  2026-10-27T01:19:40+08:00	DEBUG	events	succeed to create pod orphan-gc-0-worker-0	{"type": "Normal", "object": {"kind":"RoleInstance","namespace":"test-orphan-mig-1793035180601984186","name":"orphan-gc-0","uid":"67158c74-00c7-4ecf-9265-f438c3d5a9d4","apiVersion":"workloads.x-k8s.io/v1alpha2","resourceVersion":"254"}, "reason": "SuccessfulCreate"}
+  2026-10-27T01:19:40+08:00	INFO	pod runtime not ready	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"orphan-gc-0","namespace":"test-orphan-mig-1793035180601984186"}, "namespace": "test-orphan-mig-1793035180601984186", "name": "orphan-gc-0", "reconcileID": "b07e03a9-e999-4928-b219-5be343b73bf3", "pod": {"name":"orphan-gc-0-worker-0","namespace":"test-orphan-mig-1793035180601984186"}}
+  2026-10-27T01:19:40+08:00	INFO	pod runtime not ready	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"orphan-gc-0","namespace":"test-orphan-mig-1793035180601984186"}, "namespace": "test-orphan-mig-1793035180601984186", "name": "orphan-gc-0", "reconcileID": "67743f48-9c2b-4a30-886b-4718cbb65427", "pod": {"name":"orphan-gc-0-worker-0","namespace":"test-orphan-mig-1793035180601984186"}}
+  [38;5;9m[FAILED][0m in [It] - /tmp/rbg512-base/test/envtest/testcase/stateful/orphan_pod_recovery_test.go:154 [38;5;243m@ 10/27/26 01:20:10.86[0m
+  [38;5;243m<< Timeline[0m
+
+  [38;5;9m[FAILED] Timed out after 30.001s.
+  collision observed before GC
+  Expected
+      <bool>: false
+  to be true[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/tmp/rbg512-base/test/envtest/testcase/stateful/orphan_pod_recovery_test.go:154[0m [38;5;243m@ 10/27/26 01:20:10.86[0m
+[38;5;243m------------------------------[0m
+
+[38;5;9m[1mSummarizing 2 Failures:[0m
+  [38;5;9m[FAIL][0m [0mMigration orphan Pod recovery (issue #511 / PR #512) [38;5;9m[1m[It] records FailedScale and retries while a foreign-owned Pod squats the stable name[0m
+  [38;5;243m/tmp/rbg512-base/test/envtest/testcase/stateful/orphan_pod_recovery_test.go:123[0m
+  [38;5;9m[FAIL][0m [0mMigration orphan Pod recovery (issue #511 / PR #512) [38;5;9m[1m[It] creates the replacement Pod after the foreign Pod is GC'd, without a manual reconcile[0m
+  [38;5;243m/tmp/rbg512-base/test/envtest/testcase/stateful/orphan_pod_recovery_test.go:154[0m
+
+[38;5;9m[1mRan 2 of 5 Specs in 72.222 seconds[0m
+[38;5;9m[1mFAIL![0m -- [38;5;10m[1m0 Passed[0m | [38;5;9m[1m2 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m3 Skipped[0m
+--- FAIL: TestStatefulRoleInstanceSetController (72.22s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/stateful	72.237s
+FAIL

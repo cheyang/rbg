@@ -1,0 +1,14 @@
+=== RUN   TestOrphanPodContractForeignOwner
+--- PASS: TestOrphanPodContractForeignOwner (0.05s)
+=== RUN   TestOrphanPodContractOwnedPodSkipped
+--- PASS: TestOrphanPodContractOwnedPodSkipped (0.00s)
+=== RUN   TestOrphanPodContractBarePodCollision
+--- PASS: TestOrphanPodContractBarePodCollision (0.00s)
+=== RUN   TestOrphanPodContractGangStillErrors
+--- PASS: TestOrphanPodContractGangStillErrors (0.00s)
+=== RUN   TestOrphanPodContractMultiComponentAbort
+--- PASS: TestOrphanPodContractMultiComponentAbort (0.00s)
+=== RUN   TestScaleErrorsAndCreatesAfterOrphanPodGC
+--- PASS: TestScaleErrorsAndCreatesAfterOrphanPodGC (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.077s

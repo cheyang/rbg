@@ -1,0 +1,77 @@
+{
+  "topic": "pr512-orphan-pod-retry-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/512",
+  "harnessPaths": [
+    "docs/verification/pr512-orphan-pod-retry-claude",
+    "pkg/reconciler/roleinstance/sync/instance_scale_orphan_contract_test.go",
+    "test/envtest/testcase/stateful/orphan_pod_recovery_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #511: during StatefulSet->RoleInstanceSet migration the new RoleInstance uses the same stable Pod name as the removed legacy workload; 'the replacement Pod was not automatically created' and the RoleInstance stayed unready ('pod ... is not controlled by RoleInstance ...') until a manual reconcile, because the old Pod's deletion event does not map to the new RoleInstance.",
+    "reportedComponent": "RoleInstance pod-creation / migration path (pkg/reconciler/roleinstance/sync)",
+    "patchedComponent": "pkg/reconciler/roleinstance/sync/instance_scale.go createPods — exact match",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit+integration",
+    "verdict": "confirmed",
+    "evidence": "Differential harness: on merge-base a0b11e6 a foreign-owned same-name Pod makes Scale return (false, nil) — no error, no requeue (results/unit-base.log: TestOrphanPodContractForeignOwner FAILS, 'An error is expected but got nil'), and the real controller in envtest never records FailedScale nor recreates the Pod after the foreign Pod is GC'd without a manual trigger (results/envtest-base.log: both specs FAIL). On PR head a8ef35f the same tests pass. The pod event handler (pkg/reconciler/roleinstance/instance_event_handler.go resolveControllerRef) only maps events for pods whose controller ref is a RoleInstance, so a foreign Pod's deletion cannot wake the stalled instance — mechanism matches the issue.",
+    "match": ["TestOrphanPodContractForeignOwner", "TestScaleErrorsAndCreatesAfterOrphanPodGC", "records FailedScale and retries while a foreign-owned Pod squats the stable name", "creates the replacement Pod after the foreign Pod is GC'd, without a manual reconcile"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -mod=mod -count=1 -json ./pkg/reconciler/roleinstance/sync -run 'TestOrphanPodContract|TestScaleErrorsAndCreatesAfterOrphanPodGC'"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=$(ls -d \"$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64\" 2>/dev/null || echo '') go test -mod=mod -count=1 ./test/envtest/testcase/stateful -run TestStatefulRoleInstanceSetController -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    {
+      "id": "P0",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestOrphanPodContractForeignOwner", "TestScaleErrorsAndCreatesAfterOrphanPodGC"],
+      "note": "Premise: foreign-owned same-name Pod must produce a Scale error (the retry signal). Red on base, green on head."
+    },
+    {
+      "id": "A2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["records FailedScale and retries while a foreign-owned Pod squats the stable name"],
+      "note": "Controller records RoleInstanceFailedScale with 'is not controlled by RoleInstance' and leaves the foreign Pod alone (no adopt/delete/replace). Red on base, green on head."
+    },
+    {
+      "id": "A3",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["creates the replacement Pod after the foreign Pod is GC'd, without a manual reconcile"],
+      "note": "The issue #511 contract: after GC removes the foreign Pod, the retry loop alone creates the replacement Pod owned by the same RoleInstance. Red on base, green on head."
+    },
+    {
+      "id": "A4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestOrphanPodContractOwnedPodSkipped"],
+      "note": "Regression guard: a Pod already controlled by this RoleInstance is skipped without error or duplicate creation. Green on base and head."
+    },
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestOrphanPodContractMultiComponentAbort"],
+      "note": "Behavior-change pin: on head the first foreign-name collision aborts sibling Pod creation too (base created siblings immediately). Intended all-or-nothing semantics of PR #512; test pins them so any future change is deliberate. Red on base, green on head."
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestOrphanPodContractBarePodCollision"],
+      "note": "Controller-less same-name Pod (permanent collision) also surfaces as a Scale error now instead of being silently skipped. Red on base, green on head."
+    }
+  ],
+  "liveNote": "L3 (skipped per debate policy: unit + integration only): deploy the controller and run the migration scenario from issue #511 against a real GC (v1alpha1 StatefulSet role -> v1alpha2 RoleInstanceSet via annotation removal); confirm the replacement Pod appears without a manual reconcile within the backoff window and the FailedScale condition clears."
+}

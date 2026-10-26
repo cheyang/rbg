@@ -1,0 +1,9 @@
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.074s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	0.015s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.016s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	0.017s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.072s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	0.013s
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	3.756s
+sweep+vet rc=0
