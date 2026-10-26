@@ -55,13 +55,13 @@
       "note": "End-to-end with a real API server: FailedScale while blocked, replacement Pod created by backoff retry after foreign Pod deletion. Red on base (60s timeout = issue #511 symptom), green on head."
     },
     {
-      "id": "F3",
+      "id": "F1",
       "polarity": "contract",
       "layer": "integration",
       "match": [
         "clears the FailedScale condition"
       ],
-      "note": "Review finding F3 (open): the FailedScale condition latched during the blocked window is never cleared after recovery \u2014 setInstanceConditions carries live conditions whose type is absent from the freshly computed set forward as if externally owned. Red on head (timed out 60s after recovery). Not evaluable on base (base never recovers; the spec fails earlier), which is itself the differential signal."
+      "note": "Review finding F1 (open): the FailedScale condition latched during the blocked window is never cleared after recovery \u2014 setInstanceConditions carries live conditions whose type is absent from the freshly computed set forward as if externally owned. Red on head (timed out 60s after recovery). Not evaluable on base (base never recovers; the spec fails earlier), which is itself the differential signal."
     },
     {
       "id": "F-regression-owned",

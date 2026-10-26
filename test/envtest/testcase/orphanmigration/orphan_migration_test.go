@@ -33,7 +33,7 @@ package orphanmigration
 //                   with exponential backoff, and a retry creates the
 //                   replacement Pod shortly after the foreign Pod is removed.
 //
-// It[2] "clears FailedScale after recovery" — review finding F3 contract.
+// It[2] "clears FailedScale after recovery" — review finding F1 contract.
 //   head (a8ef35f): FAILS — the FailedScale condition latched during the blocked
 //                   window is never cleared: setInstanceConditions carries any
 //                   live condition whose type is absent from the freshly
@@ -110,7 +110,7 @@ var _ = Describe("RoleInstance replacement Pod retry after foreign same-name Pod
 			}
 			return true
 		}, recoveryTimeout, pollInterval).Should(BeTrue(),
-			"FailedScale is a controller-computed condition and must not stay True after recovery (finding F3)")
+			"FailedScale is a controller-computed condition and must not stay True after recovery (finding F1)")
 	})
 })
 
