@@ -7,7 +7,8 @@
     "internal/controller/workloads/warmup_midrun_churn_verification_test.go",
     "internal/controller/workloads/warmup_premise_verification_test.go",
     "test/envtest/warmupcrdverify/warmup_crd_status_verify_test.go",
-    "internal/controller/workloads/warmup_collapse_settle_verification_test.go"
+    "internal/controller/workloads/warmup_collapse_settle_verification_test.go",
+    "internal/controller/workloads/warmup_round4_hardening_verification_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -108,12 +109,30 @@
     },
     {
       "id": "F9",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerify_CollapsedSettleBypassesMaxFailedNodesTolerance"
+        "TestVerify_CollapsedSettleHonorsMaxFailedNodesTolerance"
       ],
-      "note": "NEW round 3: collapsed-desired-set settle (failCollapsedDesiredSet / updateEmptyDesiredPhase, head b0915b21) ignores maxFailedNodes tolerance \u2014 a within-tolerance job settles Failed/InvalidTarget when the target is deleted before the settle reconcile. Canary pins current behavior; invert to a contract test if the author honors tolerance."
+      "note": "Round 4: canary flipped at 92cb7ef1 (3bd283a5 honors maxFailedNodes on the collapsed settle). Inverted to a 4-leg contract test (within/beyond/unset tolerance x deleted/scaled-to-zero target); red at b0915b21, green at 92cb7ef1."
+    },
+    {
+      "id": "Q4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_CrossRoleSurplusDoesNotMaskPendingPod"
+      ],
+      "note": "Round 4: per-role deficit accounting in countTargetPodsNotReady (3bd283a5). Red at b0915b21 (aggregate surplus masks pending), green at 92cb7ef1."
+    },
+    {
+      "id": "Q2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_TerminalSettleAfterTargetDeletionRecordsTargetReadyUnknown"
+      ],
+      "note": "Round 4: setTargetUnknown (92cb7ef1) records TargetReady=Unknown once a started job loses its target. Red at b0915b21 (False), green at head."
     }
   ],
   "liveNote": "Live layer skipped per review-scope decision (unit + integration only). If run later: on a real <=1.32 cluster, create a Warmup with a customized action container without image under the rule-less CRD, then install the #466 CRD and try PATCH /status -> expect rejection; then install the PR CRD -> expect acceptance. F4 on a live cluster: start a Warmup, then delete the target RBG (or drain the node hosting all selected target Pods) while a warmup Pod is mid-pull -> observe Completed/NoNodesMatched with Active=1. F5: let one node finish warming, then cordon/migrate the target Pod off a second node whose warmup Pod is stuck ImagePullBackOff with globalTimeoutSeconds set -> job stays Running past the deadline."
