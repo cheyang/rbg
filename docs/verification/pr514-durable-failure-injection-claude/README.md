@@ -24,10 +24,10 @@ anyway; the PR is reviewed on its merits as test infrastructure.
 | ID | Claim | Layer | Result | Evidence |
 | --- | --- | --- | --- | --- |
 | P0 | Base's status-patch failure injection is non-durable | code-path | **Confirmed** (mechanism + CI evidence) | base `test/utils/utils.go:146-166`; issue #490 CI runs |
-| F1 | Both backoff e2e specs inject the 2nd failure as a container restart (pod stays Running), so `checkRestartBackoff`'s slow path has no `PodFailed` pod and the generation/revision bypass (`pkg/reconciler/roleinstance/sync/instance_scale.go:413-416`) can be removed without either spec failing | unit (coverage guard) + code-path | **Confirmed (still open at head)** | `TestBackoffSpecsRetainTerminalFailureCoverage` FAILS; mutation: removing the bypass makes the envtest freeze spec fail (`results/mutation-bypass-removed.out`) while the same mutation is invisible on the new e2e injection path |
-| A4 | `ExecInPod` forwards the suite kubeconfig, preserves args verbatim, reports pod/container + command output | unit | **Pass** | `TestPodFailureInjection`; bites: dropping kubeconfig forwarding fails it (`results/mutation-kubeconfig-dropped.out`) |
-| A5 | The terminal-failure fixture is healthy until the marker, then exits exactly 1 (failPod's watch requires ExitCode==1), and exits 0 on TERM | unit | **Pass** | `TestFailingPodTemplateFixture`; bites: `exit 1` → `exit 0` fails it (`results/mutation-fixture-exit0.out`) |
-| G1 | Controller contracts the migrated specs rely on: restartCount triggers Recreate, Ignore annotation suppresses it, Failed-pod-only replacement under None, backoff delay, update-not-frozen-during-backoff | integration (envtest) | **Pass** (24/24 specs, 201s) | `results/envtest-head.out`; mutation: bypass removed → freeze spec FAILS, restored → passes |
+| F1 | Both backoff e2e specs inject the 2nd failure as a container restart (pod stays Running), so `checkRestartBackoff`'s slow path has no `PodFailed` pod and the generation/revision bypass (`pkg/reconciler/roleinstance/sync/instance_scale.go:413-416`) can be removed without either spec failing | unit (coverage guard) + code-path | **Confirmed (still open at head)** | `TestBackoffSpecsRetainTerminalFailureCoverage` FAILS; mutation: removing the bypass makes the envtest freeze spec fail (`results/mutation-bypass-removed.log`) while the same mutation is invisible on the new e2e injection path |
+| A4 | `ExecInPod` forwards the suite kubeconfig, preserves args verbatim, reports pod/container + command output | unit | **Pass** | `TestPodFailureInjection`; bites: dropping kubeconfig forwarding fails it (`results/mutation-kubeconfig-dropped.log`) |
+| A5 | The terminal-failure fixture is healthy until the marker, then exits exactly 1 (failPod's watch requires ExitCode==1), and exits 0 on TERM | unit | **Pass** | `TestFailingPodTemplateFixture`; bites: `exit 1` → `exit 0` fails it (`results/mutation-fixture-exit0.log`) |
+| G1 | Controller contracts the migrated specs rely on: restartCount triggers Recreate, Ignore annotation suppresses it, Failed-pod-only replacement under None, backoff delay, update-not-frozen-during-backoff | integration (envtest) | **Pass** (24/24 specs, 201s) | `results/envtest-head.log`; mutation: bypass removed → freeze spec FAILS, restored → passes |
 
 ## How to run
 
@@ -48,10 +48,10 @@ bash docs/verification/pr514-durable-failure-injection-claude/scripts/re-verify.
 
 | Mutation | Expected | Observed |
 | --- | --- | --- |
-| `pod_failure.go`: drop `--kubeconfig` forwarding | `TestPodFailureInjection` FAILS | FAILS (`results/mutation-kubeconfig-dropped.out`) |
+| `pod_failure.go`: drop `--kubeconfig` forwarding | `TestPodFailureInjection` FAILS | FAILS (`results/mutation-kubeconfig-dropped.log`) |
 | `pod_failure.go`: drop `-c <container> --` args | `TestPodFailureInjection` FAILS | FAILS (run in session; same shape as above) |
-| `inactive_pod.go`: fixture `exit 1` → `exit 0` | `TestFailingPodTemplateFixture` FAILS | FAILS (`results/mutation-fixture-exit0.out`) |
-| `instance_scale.go`: remove generation/revision bypass (413-416) | envtest freeze spec FAILS | FAILS in 46.8s (`results/mutation-bypass-removed.out`); restored → PASSES (`results/mutation-bypass-restored.out`) |
+| `inactive_pod.go`: fixture `exit 1` → `exit 0` | `TestFailingPodTemplateFixture` FAILS | FAILS (`results/mutation-fixture-exit0.log`) |
+| `instance_scale.go`: remove generation/revision bypass (413-416) | envtest freeze spec FAILS | FAILS in 46.8s (`results/mutation-bypass-removed.log`); restored → PASSES (`results/mutation-bypass-restored.log`) |
 
 ## F1 detail (the one change-requesting finding)
 

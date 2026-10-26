@@ -1,0 +1,25 @@
+=== RUN   TestPodFailureInjection
+=== RUN   TestPodFailureInjection/restart_nginx_in_the_selected_cluster
+=== RUN   TestPodFailureInjection/report_failed_injection_with_pod_and_command_output
+--- PASS: TestPodFailureInjection (0.00s)
+    --- PASS: TestPodFailureInjection/restart_nginx_in_the_selected_cluster (0.00s)
+    --- PASS: TestPodFailureInjection/report_failed_injection_with_pod_and_command_output (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/utils	0.015s
+=== RUN   TestFailingPodTemplateFixture
+=== RUN   TestFailingPodTemplateFixture/stays_healthy_until_the_marker_exists,_then_exits_1
+=== RUN   TestFailingPodTemplateFixture/exits_0_on_TERM_before_the_marker_exists
+--- PASS: TestFailingPodTemplateFixture (3.00s)
+    --- PASS: TestFailingPodTemplateFixture/stays_healthy_until_the_marker_exists,_then_exits_1 (2.00s)
+    --- PASS: TestFailingPodTemplateFixture/exits_0_on_TERM_before_the_marker_exists (1.00s)
+=== RUN   TestBackoffSpecsRetainTerminalFailureCoverage
+    inactive_pod_fixture_test.go:143: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/e2e/testcase/v1alpha2/inactive_pod_fixture_test.go:143
+        	Error:      	Should be true
+        	Test:       	TestBackoffSpecsRetainTerminalFailureCoverage
+        	Messages:   	no backoff spec injects a terminal Failed Pod (failPod/buildFailingPodTemplate); the container-restart injection alone cannot detect removal of the generation/revision bypass in checkRestartBackoff (see finding F1)
+--- FAIL: TestBackoffSpecsRetainTerminalFailureCoverage (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/e2e/testcase/v1alpha2	3.016s
+FAIL
+unit exit: 1

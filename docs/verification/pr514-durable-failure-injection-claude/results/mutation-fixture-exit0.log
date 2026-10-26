@@ -1,0 +1,11 @@
+--- FAIL: TestFailingPodTemplateFixture (3.00s)
+    --- FAIL: TestFailingPodTemplateFixture/stays_healthy_until_the_marker_exists,_then_exits_1 (2.00s)
+        inactive_pod_fixture_test.go:77: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/e2e/testcase/v1alpha2/inactive_pod_fixture_test.go:77
+            	Error:      	An error is expected but got nil.
+            	Test:       	TestFailingPodTemplateFixture/stays_healthy_until_the_marker_exists,_then_exits_1
+            	Messages:   	container must exit non-zero to be observed as failed
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/e2e/testcase/v1alpha2	3.016s
+FAIL
+exit: 1
