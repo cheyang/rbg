@@ -1,0 +1,67 @@
+{
+  "topic": "pr514-durable-failure-injection-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/514",
+  "harnessPaths": [
+    "docs/verification/pr514-durable-failure-injection-claude",
+    "test/e2e/testcase/v1alpha2/inactive_pod_fixture_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #490: 'Patching a live Pod's status to Failed (test/utils.SetPodFailed) ... Pod status is owned by the kubelet, which rewrites the patched phase ... Either way the failure trigger can evaporate before the controller acts on it', causing intermittent timeouts / vacuous passes in the restart-backoff e2e specs.",
+    "reportedComponent": "test/e2e/testcase/v1alpha2 (restart_policy_stability.go, inactive_pod.go, restart_policy_fields.go) + test/utils",
+    "patchedComponent": "same files — exact match",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "Tests-only PR (premise carve-out applies); mechanism verified on base: SetPodFailed/SetPodEvicted used rclient.Status().Update on live pods (8a7bcfcb:test/utils/utils.go:146-166), and kubelet owns pod status so a patched phase is transient. Issue #490 documents CI failures (runs 37258247385, 35559402297, 35751708068). Not reproduced locally: the live kubelet layer is out of scope this round.",
+    "match": ["TestPodFailureInjection"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -mod=mod ./test/utils ./test/e2e/testcase/v1alpha2 -run 'TestPodFailureInjection|TestFailingPodTemplateFixture|TestBackoffSpecsRetainTerminalFailureCoverage' -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=$(ls -d \"$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64\" 2>/dev/null || echo '') go test -mod=mod ./test/envtest/testcase/restart_policy/... -count=1 -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestBackoffSpecsRetainTerminalFailureCoverage"],
+      "note": "Backoff e2e specs lost the terminal-Failure trigger; the generation/revision bypass regression (instance_scale.go:413-416) is no longer detectable at the e2e layer. Green only when a backoff spec injects a terminal Failed Pod via buildFailingPodTemplate/failPod."
+    },
+    {
+      "id": "A4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestPodFailureInjection"],
+      "note": "PR's own helper unit test: kubeconfig forwarding, verbatim args, error reporting."
+    },
+    {
+      "id": "A5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestFailingPodTemplateFixture"],
+      "note": "Reviewer-added fixture contract: healthy until marker, exit code exactly 1 after marker, exit 0 on TERM."
+    },
+    {
+      "id": "G1",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "should not freeze rolling update when revision mismatch occurs during backoff",
+        "should delay second recreation due to backoff",
+        "should only replace the failed pod, not recreate all pods",
+        "should recreate all pods when container RestartCount > 0"
+      ],
+      "note": "Controller contracts the migrated e2e specs now rely on, guarded at the envtest layer. Mutation evidence: removing the generation/revision bypass makes the freeze spec fail (results/mutation-bypass-removed.out) while the current head passes (results/mutation-bypass-restored.out)."
+    }
+  ],
+  "liveNote": "L3 (skipped this round per debate policy: unit + integration only): deploy the controller, run the 'update' e2e slice (make test-e2e E2E_LABEL_FILTER='(update && !rollout) && !v1alpha1'), and confirm the migrated specs pass against a real kubelet: failPod's watch observes PodFailed with ExitCode=1, and both backoff specs keep their Consistently windows non-vacuous."
+}
