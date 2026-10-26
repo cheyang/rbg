@@ -1,0 +1,106 @@
+{
+  "topic": "deprecation-admission-gate-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/524",
+  "harnessPaths": [
+    "docs/verification/deprecation-admission-gate-codex",
+    "api/workloads/v1alpha1/zz_verify_pr524_test.go",
+    "api/workloads/v1alpha2/zz_verify_pr524_test.go",
+    "test/verifycodex"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "default mode (--enable-deprecated-workload-types=true) needs a compatibility gate: existing deprecated workload uses keep working, new uses are rejected, v1alpha1 writes return deprecation warnings",
+    "reportedComponent": "admission webhooks for workloads.x-k8s.io v1alpha1/v1alpha2",
+    "patchedComponent": "admission webhooks for workloads.x-k8s.io v1alpha1/v1alpha2",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "base 885d655: RoleBasedGroupValidator with enableDeprecatedWorkloadTypes=true admits a brand-new deprecated role with zero warnings (results/premise-base.out); same test fails on head because the gate rejects (results/premise-head.out); base registers no v1alpha1 admission webhook",
+    "match": [
+      "TestP0_BaseAdmitsNewDeprecatedUseSilently"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./api/workloads/v1alpha1/ ./api/workloads/v1alpha2/ -run 'TestPR524' -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "bash -c 'if [ ! -x bin/setup-envtest ]; then GOBIN=$(pwd)/bin go install sigs.k8s.io/controller-runtime/tools/setup-envtest@v0.24.1; fi; KUBEBUILDER_ASSETS=$(bin/setup-envtest use 1.31.0 --bin-dir $(pwd)/bin -p path) go test ./test/verifycodex/ -count=1 -timeout 10m -json'"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestPR524Contract_LegacySetExemptionGuards"
+      ]
+    },
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "F1 replacement child of legacy set is admitted",
+        "identical child without owner reference is rejected",
+        "migrated parent stops exempting"
+      ]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestDeleteNotInterceptedDuringOutage"
+      ]
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestPR524Contract_V1alpha1UpdateTrustsRequestOldObj",
+        "TestPR524Contract_ReintroductionRejected"
+      ]
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "re-introducing deprecated type after migration is rejected",
+        "grandfathered v1alpha1 update admitted with warning"
+      ]
+    },
+    {
+      "id": "F4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestPR524Contract_CompatRejectionHasNoReenableAdvice"
+      ]
+    },
+    {
+      "id": "F5",
+      "polarity": "canary",
+      "layer": "integration",
+      "match": [
+        "shipped policy (Fail): outage blocks a warning-only v1alpha1 write",
+        "fixed policy (Ignore): outage does not block the write"
+      ]
+    },
+    {
+      "id": "F6",
+      "polarity": "canary",
+      "layer": "integration",
+      "match": [
+        "F6 canary: forged owner reference with known UID is admitted"
+      ]
+    }
+  ],
+  "liveNote": "L3 intentionally skipped for this debate round (unit + integration layers only, per instructions). On a live cluster, the upgrade-ordering question (new Fail webhook paths 404 until the new binary serves them) is the thing to watch: apply manifests, then immediately write a v1alpha1 object during the controller rollout."
+}
