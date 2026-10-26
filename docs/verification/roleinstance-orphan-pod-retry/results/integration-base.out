@@ -1,0 +1,62 @@
+Running Suite: RoleInstance Orphan-Pod Retry Suite (PR #512 verification) - /tmp/rbg-base-pr512/test/envtest/testcase/orphanmigration
+=====================================================================================================================================
+Random Seed: [1m1793035421[0m
+
+Will run [1m1[0m of [1m1[0m specs
+[38;5;243m------------------------------[0m
+[38;5;9m• [FAILED] [79.080 seconds][0m
+[0mRoleInstance replacement Pod retry after foreign same-name Pod GC [38;5;9m[1m[It] creates the replacement Pod via error-driven retry after the foreign Pod is removed[0m
+[38;5;243m/tmp/rbg-base-pr512/test/envtest/testcase/orphanmigration/orphan_migration_test.go:75[0m
+
+  [38;5;243mTimeline >>[0m
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "source": "kind source: *v1.Pod"}
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.CoordinatedPolicy"}
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1.Service"}
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleInstanceSet"}
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "source": "kind source: *v1alpha2.RoleInstance"}
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "source": "kind source: *v1alpha2.RoleInstance"}
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "source": "kind source: *v1alpha2.RoleInstance"}
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet", "source": "kind source: *v1alpha2.RoleBasedGroupSet"}
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter", "source": "kind source: *v1alpha2.RoleBasedGroupScalingAdapter"}
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleBasedGroupScalingAdapter"}
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "source": "kind source: *v1alpha2.RoleInstanceSet"}
+  2026-10-27T01:23:45+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  [1mSTEP:[0m creating a RoleInstance (PodTemplate type, size 1) [38;5;243m@ 10/27/26 01:23:45.138[0m
+  2026-10-27T01:23:45+08:00	INFO	Starting Controller	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance"}
+  2026-10-27T01:23:45+08:00	INFO	Starting workers	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "worker count": 1}
+  2026-10-27T01:23:45+08:00	INFO	Starting Controller	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet"}
+  2026-10-27T01:23:45+08:00	INFO	Starting workers	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "worker count": 1}
+  2026-10-27T01:23:45+08:00	INFO	Starting Controller	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter"}
+  2026-10-27T01:23:45+08:00	INFO	Starting Controller	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet"}
+  2026-10-27T01:23:45+08:00	INFO	Starting Controller	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup"}
+  2026-10-27T01:23:45+08:00	INFO	Starting workers	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter", "worker count": 1}
+  2026-10-27T01:23:45+08:00	INFO	Starting workers	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "worker count": 1}
+  2026-10-27T01:23:45+08:00	INFO	Starting workers	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet", "worker count": 1}
+  [1mSTEP:[0m creating a same-name Pod owned by a legacy StatefulSet (the migration orphan window) [38;5;243m@ 10/27/26 01:23:47.141[0m
+  [1mSTEP:[0m observing the blocked window: the foreign Pod is neither adopted nor replaced [38;5;243m@ 10/27/26 01:23:47.143[0m
+  [1mSTEP:[0m deleting the foreign Pod (as garbage collection would) [38;5;243m@ 10/27/26 01:24:01.182[0m
+  [1mSTEP:[0m expecting an error-driven retry to create the replacement Pod without any manual trigger [38;5;243m@ 10/27/26 01:24:01.185[0m
+  [38;5;9m[FAILED][0m in [It] - /tmp/rbg-base-pr512/test/envtest/testcase/orphanmigration/orphan_migration_test.go:166 [38;5;243m@ 10/27/26 01:25:01.186[0m
+  [38;5;243m<< Timeline[0m
+
+  [38;5;9m[FAILED] Timed out after 60.001s.
+  the replacement Pod must be created by a controller retry, not a manual reconcile (issue #511)
+  Expected
+      <bool>: false
+  to be true[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/tmp/rbg-base-pr512/test/envtest/testcase/orphanmigration/orphan_migration_test.go:166[0m [38;5;243m@ 10/27/26 01:25:01.186[0m
+[38;5;243m------------------------------[0m
+
+[38;5;9m[1mSummarizing 1 Failure:[0m
+  [38;5;9m[FAIL][0m [0mRoleInstance replacement Pod retry after foreign same-name Pod GC [38;5;9m[1m[It] creates the replacement Pod via error-driven retry after the foreign Pod is removed[0m
+  [38;5;243m/tmp/rbg-base-pr512/test/envtest/testcase/orphanmigration/orphan_migration_test.go:166[0m
+
+[38;5;9m[1mRan 1 of 1 Specs in 83.945 seconds[0m
+[38;5;9m[1mFAIL![0m -- [38;5;10m[1m0 Passed[0m | [38;5;9m[1m1 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- FAIL: TestOrphanMigrationRetry (83.95s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/orphanmigration	83.959s
+FAIL

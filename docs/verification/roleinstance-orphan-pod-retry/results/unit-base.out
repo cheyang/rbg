@@ -1,0 +1,25 @@
+=== RUN   TestVerifyForeignSameNamePodYieldsRetrySignal
+    orphan_retry_verify_test.go:132: 
+        	Error Trace:	/tmp/rbg-base-pr512/pkg/reconciler/roleinstance/sync/orphan_retry_verify_test.go:132
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerifyForeignSameNamePodYieldsRetrySignal
+        	Messages:   	a foreign-owned same-name Pod must yield an error so controller-runtime retries (issue #511)
+--- FAIL: TestVerifyForeignSameNamePodYieldsRetrySignal (0.04s)
+=== RUN   TestVerifyOwnedSameNamePodIsSkippedWithoutError
+--- PASS: TestVerifyOwnedSameNamePodIsSkippedWithoutError (0.00s)
+=== RUN   TestVerifyOwnedTerminatingPodIsSkippedWithoutError
+--- PASS: TestVerifyOwnedTerminatingPodIsSkippedWithoutError (0.00s)
+=== RUN   TestVerifyPartialForeignCollisionBlocksWholeBatch
+    orphan_retry_verify_test.go:247: 
+        	Error Trace:	/tmp/rbg-base-pr512/pkg/reconciler/roleinstance/sync/orphan_retry_verify_test.go:247
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerifyPartialForeignCollisionBlocksWholeBatch
+    orphan_retry_verify_test.go:257: 
+        	Error Trace:	/tmp/rbg-base-pr512/pkg/reconciler/roleinstance/sync/orphan_retry_verify_test.go:257
+        	Error:      	Should be zero, but was 1
+        	Test:       	TestVerifyPartialForeignCollisionBlocksWholeBatch
+        	Messages:   	head behavior: a single foreign name collision aborts creation of the whole batch (base created the siblings)
+--- FAIL: TestVerifyPartialForeignCollisionBlocksWholeBatch (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.051s
+FAIL
