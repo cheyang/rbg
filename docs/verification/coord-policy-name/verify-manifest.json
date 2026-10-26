@@ -1,0 +1,51 @@
+{
+  "topic": "coord-policy-name",
+  "pr": "https://github.com/sgl-project/rbg/pull/526",
+  "harnessPaths": [
+    "docs/verification/coord-policy-name",
+    "test/envtest/testcase/rbg/coord_migration_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "On main, a RoleBasedGroup written through workloads.x-k8s.io/v1alpha1 with spec.coordination never gets any workloads: the v1alpha1 conversion stores the coordination as the conversion.workloads.x-k8s.io/v1alpha1-coordination annotation, and EnsureV1alpha1CoordinatedPolicy server-side-applies a CoordinatedPolicy whose spec.policies[] entries carry no name, so the apply is rejected (.spec.policies: element 0: associative list with keys has an element that omits all key fields [\"name\"]) and the reconcile returns before step 8 creates any role workload. (issue #517, quoted)",
+    "reportedComponent": "internal/controller/workloads/coordinatedpolicy_migration_controller.go (RBG reconcile step 5, CoordinatedPolicy SSA)",
+    "patchedComponent": "internal/controller/workloads/coordinatedpolicy_migration_controller.go:94 (.WithName(c.Name))",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "integration",
+    "verdict": "confirmed",
+    "evidence": "results/base-verify-specs.out — harness grafted onto merge-base 8a7bcfcb: the exact #517 SSA error repeats as 'Reconciler error' and the contract spec times out waiting for the CoordinatedPolicy (no policy, no RoleInstanceSet).",
+    "match": ["contract: names every applied policy so the apply is accepted and workloads appear"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestEnsureV1alpha1CoordinatedPolicy' -count=1 -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64}\" go test ./test/envtest/testcase/rbg/ -count=1 -ginkgo.focus 'v1alpha1 coordination migration' -ginkgo.json-report=$GINKGO_REPORT -timeout 20m",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    {
+      "id": "coordname-policy-name-missing",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "contract: names every applied policy so the apply is accepted and workloads appear",
+        "Should apply a named CoordinatedPolicy and still create the role workloads"
+      ]
+    },
+    {
+      "id": "coordname-strategy-less-gap",
+      "polarity": "canary",
+      "layer": "integration",
+      "match": [
+        "canary: a strategy-less v1alpha1 coordination is still rejected by the apiserver"
+      ]
+    }
+  ],
+  "liveNote": "L3 (live cluster) not run this round: the claim is decided at the apiserver admission layer, which envtest exercises with a real apiserver. If a live check is wanted, apply the #517 v1alpha1 manifest against a controller built from the PR head and confirm coordinatedpolicies/roleinstancesets/pods appear and no 'Reconciler error' repeats."
+}
