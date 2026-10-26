@@ -18,17 +18,21 @@
     "runsAgainst": "base",
     "layer": "unit+integration",
     "verdict": "confirmed",
-    "evidence": "unit: TestVerifyForeignSameNamePodYieldsRetrySignal FAILS on base ('An error is expected but got nil' — Scale returns (false,0,nil), no retry signal) and PASSES on head; integration envtest on base times out 60s waiting for the replacement Pod after the foreign Pod is deleted, on head passes in ~15s. See results/unit-base.out, results/integration-base.out.",
-    "match": ["TestVerifyForeignSameNamePodYieldsRetrySignal", "creates the replacement Pod via error-driven retry"]
+    "evidence": "unit: TestVerifyForeignSameNamePodYieldsRetrySignal FAILS on base ('An error is expected but got nil' \u2014 Scale returns (false,0,nil), no retry signal) and PASSES on head; integration envtest on base times out 60s waiting for the replacement Pod after the foreign Pod is deleted, on head passes in ~15s. See results/unit-base.out, results/integration-base.out.",
+    "match": [
+      "TestVerifyForeignSameNamePodYieldsRetrySignal",
+      "creates the replacement Pod via error-driven retry"
+    ]
   },
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test -mod=vendor ./pkg/reconciler/roleinstance/sync/ -run 'TestVerify' -count=1 -v"
+      "cmd": "go test -mod=vendor ./pkg/reconciler/roleinstance/sync/ -run 'TestVerify' -count=1 -json"
     },
     "integration": {
       "kind": "ginkgo",
-      "cmd": "KUBEBUILDER_ASSETS=$(ls -d \"$HOME\"/.local/share/kubebuilder-envtest/k8s/*-linux-amd64 2>/dev/null | sort -V | tail -1) go test -mod=vendor ./test/envtest/testcase/orphanmigration/ -count=1 -timeout 5m"
+      "cmd": "KUBEBUILDER_ASSETS=$(ls -d \"$HOME\"/.local/share/kubebuilder-envtest/k8s/*-linux-amd64 2>/dev/null | sort -V | tail -1) go test -mod=vendor ./test/envtest/testcase/orphanmigration/ -count=1 -timeout 5m -args -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
     }
   },
   "findings": [
@@ -36,28 +40,37 @@
       "id": "F-fix",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestVerifyForeignSameNamePodYieldsRetrySignal"],
+      "match": [
+        "TestVerifyForeignSameNamePodYieldsRetrySignal"
+      ],
       "note": "The fix itself: foreign-owned same-name Pod must yield an error (retry signal); replacement created after GC. Red on base, green on head."
     },
     {
       "id": "F-fix-integration",
       "polarity": "contract",
       "layer": "integration",
-      "match": ["creates the replacement Pod via error-driven retry"],
+      "match": [
+        "creates the replacement Pod via error-driven retry"
+      ],
       "note": "End-to-end with a real API server: FailedScale while blocked, replacement Pod created by backoff retry after foreign Pod deletion. Red on base, green on head."
     },
     {
       "id": "F-regression-owned",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestVerifyOwnedSameNamePodIsSkippedWithoutError", "TestVerifyOwnedTerminatingPodIsSkippedWithoutError"],
+      "match": [
+        "TestVerifyOwnedSameNamePodIsSkippedWithoutError",
+        "TestVerifyOwnedTerminatingPodIsSkippedWithoutError"
+      ],
       "note": "Regression guards: an already-owned (or owned-terminating) same-name Pod must NOT produce an error/retry storm. Green on base and head."
     },
     {
       "id": "F2",
       "polarity": "canary",
       "layer": "unit",
-      "match": ["TestVerifyPartialForeignCollisionBlocksWholeBatch"],
+      "match": [
+        "TestVerifyPartialForeignCollisionBlocksWholeBatch"
+      ],
       "note": "Behavior change under discussion (review finding F2): with a size-2 component, one foreign name collision now aborts creation of the whole batch; base created the non-colliding sibling. If maintainers prefer create-what-you-can + aggregated error, flip this canary."
     }
   ],
