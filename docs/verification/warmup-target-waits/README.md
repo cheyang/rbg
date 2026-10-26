@@ -9,9 +9,15 @@ https://github.com/sgl-project/rbg/pull/478 (reviewer B / codex).
   mid-run-churn regressions found and confirmed: **F4** (false `Completed/NoNodesMatched`
   with in-flight Pods) and **F5** (global timeout no longer bounds jobs with an active Pod on
   a non-desired node).
-- Round 3 (this round): head `b0915b21` — delta `60b1b7cb..b0915b21` after a rebase onto
+- Round 3: head `b0915b21` — delta `60b1b7cb..b0915b21` after a rebase onto
   `ecdfd6e6`. F4a/F4b/F5/F6/F7/F8 verified **fixed**; one new minor semantics finding **F9**
   (collapsed-set settle bypasses `maxFailedNodes` tolerance), pinned as a canary.
+- Round 4 (this round): head `92cb7ef1` — delta `b0915b21..92cb7ef1` (commits `3bd283a5` +
+  `92cb7ef1`). **F9 canary flipped → inverted to a 4-leg contract test (fixed)**; round-3 open
+  questions **Q4** (cross-role surplus masks a pending Pod) and **Q2** (terminal
+  `TargetReady=False` contradiction) are fixed in code and pinned as contract tests. N2 (dead
+  duplicate settle branch) removed, N3 (RBGSA RBAC marker) added, Q1 answered in the KEP —
+  verified by code reading.
 
 Layers run against the code under review:
 
@@ -81,6 +87,24 @@ orthogonal to the wait/completion logic) and added three commits: `e313d507`
 | **F9** | Collapsed-set settle should honor `maxFailedNodes` tolerance | 1 | n/a (path did not exist) | **CANARY pinned**: within-tolerance job settles `Failed/InvalidTarget` when the target is deleted pre-settle | Open (minor — see findings) |
 
 Raw output: `results/reverify/` (round-3 run against `b0915b21`).
+
+## Round 4 results (head `92cb7ef1`, delta `b0915b21..92cb7ef1`)
+
+| ID | Claim | Layer | previous `b0915b21` | head `92cb7ef1` | Verdict |
+|----|-------|-------|--------------------|-----------------|---------|
+| F1a..F5, P0-3 | all round-1/2/3 contracts | 1+2 | pass | **pass** | Still fixed (regression suite green) |
+| **F9** | Collapsed-set settle honors `maxFailedNodes` (within/unset → `Completed` with `status.failed` recorded; beyond → `Failed/MaxFailedNodesExceeded`) | 1 | **FAIL** (`Failed/InvalidTarget` or `/TargetNoLongerSelectsNodes` regardless of tolerance) | **pass** (4 legs) | **Fixed** (canary flipped → inverted) |
+| **Q4** | Surplus scheduled Pods in one selected role must not mask a missing/Pending Pod in another | 1 | **FAIL** (`TargetReady=True/RoleBasedGroupReady`, warmup Pods created) | **pass** (waits `TargetPodsNotScheduled`, 0 Pods) | **Fixed** (per-role deficits) |
+| **Q2** | Started job losing its target settles with `TargetReady=Unknown/RoleBasedGroupNotFound`, not `False` beside the terminal condition | 1 | **FAIL** (`Complete=True` + `TargetReady=False`) | **pass** | **Fixed** (`setTargetUnknown`) |
+
+PR's own new tests green at head: `TestReconcile_CollapsedDesiredSetHonorsMaxFailedNodes`
+(3 legs), `TestReconcile_CrossRoleSurplusDoesNotMaskPendingTargetPod`,
+`TestReconcile_TargetDeletedMidRunCompletes` + `...KeepsStartTimeAndReason` Unknown
+assertions (`results/unit-round4-pr-tests-head.txt`). Full unit sweep
+`./internal/... ./api/... ./pkg/...` green at head; repo envtest suite (1.31.0: rbg, restart_policy, stateful, webhook) green at head (`results/envtest-round4-head-92cb7ef1.txt`).
+
+Raw output: `results/unit-round4-head-92cb7ef1.txt`, `results/unit-round4-prev-b0915b21.txt`,
+`results/reverify/VERDICTS-round4.txt`, `results/reverify/VERDICTS-round4-at-previous-head-b0915b21.txt`.
 
 ## Per-finding detail (round 2)
 

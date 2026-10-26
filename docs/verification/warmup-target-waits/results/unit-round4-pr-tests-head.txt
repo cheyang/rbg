@@ -1,0 +1,78 @@
+=== RUN   TestReconcile_TargetDeletedMidRunCompletes
+2026-10-27T04:05:34+08:00	INFO	Start reconciling	{"warmup": {"name":"deleted-mid-run","namespace":"default"}}
+2026-10-27T04:05:34+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"deleted-mid-run","namespace":"default"}, "name": "deleted-mid-run-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"deleted-mid-run-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/pr478-r4-head/internal/controller/workloads/rolebasedgroupwarmup_controller.go:454
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/pr478-r4-head/internal/controller/workloads/rolebasedgroupwarmup_controller.go:220
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/pr478-r4-head/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_TargetDeletedMidRunCompletes
+	/tmp/pr478-r4-head/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1621
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-27T04:05:34+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"deleted-mid-run","namespace":"default"}, "count": 0}
+2026-10-27T04:05:34+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"deleted-mid-run","namespace":"default"}, "rbg": "deleted-mid-run-rbg", "roles": 0, "nodes": 0}
+2026-10-27T04:05:34+08:00	INFO	Setting start time	{"warmup": {"name":"deleted-mid-run","namespace":"default"}, "time": "2026-10-27 04:05:34.287207626 +0800 CST m=+0.048518359"}
+2026-10-27T04:05:34+08:00	INFO	Warmup completed after the target no longer selects any node	{"warmup": {"name":"deleted-mid-run","namespace":"default"}, "succeeded": 1, "failed": 0}
+2026-10-27T04:05:34+08:00	INFO	Updated status	{"warmup": {"name":"deleted-mid-run","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 1, "failed": 0}
+2026-10-27T04:05:34+08:00	INFO	Finished reconciling	{"warmup": {"name":"deleted-mid-run","namespace":"default"}, "duration": "1.502993ms"}
+--- PASS: TestReconcile_TargetDeletedMidRunCompletes (0.04s)
+=== RUN   TestReconcile_CrossRoleSurplusDoesNotMaskPendingTargetPod
+2026-10-27T04:05:34+08:00	INFO	Start reconciling	{"warmup": {"name":"cross-role-surplus","namespace":"default"}}
+2026-10-27T04:05:34+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"cross-role-surplus","namespace":"default"}, "count": 3}
+2026-10-27T04:05:34+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"cross-role-surplus","namespace":"default"}, "node": "node-1", "role": "router"}
+2026-10-27T04:05:34+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"cross-role-surplus","namespace":"default"}, "node": "node-2", "role": "router"}
+2026-10-27T04:05:34+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"cross-role-surplus","namespace":"default"}, "rbg": "cross-role-rbg", "roles": 1, "nodes": 2}
+2026-10-27T04:05:34+08:00	INFO	Target not ready, waiting	{"warmup": {"name":"cross-role-surplus","namespace":"default"}, "reason": "TargetPodsNotScheduled", "message": "1 selected target RoleBasedGroup Pod(s) are missing or not scheduled yet"}
+2026-10-27T04:05:34+08:00	INFO	Finished reconciling	{"warmup": {"name":"cross-role-surplus","namespace":"default"}, "duration": "1.273355ms"}
+--- PASS: TestReconcile_CrossRoleSurplusDoesNotMaskPendingTargetPod (0.00s)
+=== RUN   TestReconcile_CollapsedDesiredSetHonorsMaxFailedNodes
+=== RUN   TestReconcile_CollapsedDesiredSetHonorsMaxFailedNodes/unset_maxFailedNodes_tolerates_the_failed_attempt
+2026-10-27T04:05:34+08:00	INFO	Start reconciling	{"warmup": {"name":"unset-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}}
+2026-10-27T04:05:34+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"unset-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "name": "collapsed-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"collapsed-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/pr478-r4-head/internal/controller/workloads/rolebasedgroupwarmup_controller.go:454
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/pr478-r4-head/internal/controller/workloads/rolebasedgroupwarmup_controller.go:220
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/pr478-r4-head/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_CollapsedDesiredSetHonorsMaxFailedNodes.func1
+	/tmp/pr478-r4-head/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:2232
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-27T04:05:34+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"unset-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "count": 0}
+2026-10-27T04:05:34+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"unset-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "rbg": "collapsed-rbg", "roles": 0, "nodes": 0}
+2026-10-27T04:05:34+08:00	INFO	Warmup completed after the target no longer selects any node	{"warmup": {"name":"unset-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "succeeded": 0, "failed": 1}
+2026-10-27T04:05:34+08:00	INFO	Updated status	{"warmup": {"name":"unset-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 0, "failed": 1}
+2026-10-27T04:05:34+08:00	INFO	Finished reconciling	{"warmup": {"name":"unset-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "duration": "1.046548ms"}
+=== RUN   TestReconcile_CollapsedDesiredSetHonorsMaxFailedNodes/failure_within_maxFailedNodes_tolerates_the_failed_attempt
+2026-10-27T04:05:34+08:00	INFO	Start reconciling	{"warmup": {"name":"failure-within-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}}
+2026-10-27T04:05:34+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"failure-within-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "count": 0}
+2026-10-27T04:05:34+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"failure-within-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "rbg": "collapsed-rbg", "roles": 0, "nodes": 0}
+2026-10-27T04:05:34+08:00	INFO	Warmup completed after the target no longer selects any node	{"warmup": {"name":"failure-within-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "succeeded": 0, "failed": 1}
+2026-10-27T04:05:34+08:00	INFO	Updated status	{"warmup": {"name":"failure-within-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 0, "failed": 1}
+2026-10-27T04:05:34+08:00	INFO	Finished reconciling	{"warmup": {"name":"failure-within-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "duration": "1.055158ms"}
+=== RUN   TestReconcile_CollapsedDesiredSetHonorsMaxFailedNodes/failure_exceeding_maxFailedNodes_fails
+2026-10-27T04:05:34+08:00	INFO	Start reconciling	{"warmup": {"name":"failure-exceeding-maxfailednodes-fails","namespace":"default"}}
+2026-10-27T04:05:34+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"failure-exceeding-maxfailednodes-fails","namespace":"default"}, "name": "collapsed-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"collapsed-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/pr478-r4-head/internal/controller/workloads/rolebasedgroupwarmup_controller.go:454
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/pr478-r4-head/internal/controller/workloads/rolebasedgroupwarmup_controller.go:220
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/pr478-r4-head/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_CollapsedDesiredSetHonorsMaxFailedNodes.func1
+	/tmp/pr478-r4-head/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:2232
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-10-27T04:05:34+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"failure-exceeding-maxfailednodes-fails","namespace":"default"}, "count": 0}
+2026-10-27T04:05:34+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"failure-exceeding-maxfailednodes-fails","namespace":"default"}, "rbg": "collapsed-rbg", "roles": 0, "nodes": 0}
+2026-10-27T04:05:34+08:00	INFO	Warmup job failed	{"warmup": {"name":"failure-exceeding-maxfailednodes-fails","namespace":"default"}, "reason": "MaxFailedNodesExceeded", "succeeded": 0, "failed": 1}
+2026-10-27T04:05:34+08:00	INFO	Finished reconciling	{"warmup": {"name":"failure-exceeding-maxfailednodes-fails","namespace":"default"}, "duration": "1.011996ms"}
+--- PASS: TestReconcile_CollapsedDesiredSetHonorsMaxFailedNodes (0.01s)
+    --- PASS: TestReconcile_CollapsedDesiredSetHonorsMaxFailedNodes/unset_maxFailedNodes_tolerates_the_failed_attempt (0.00s)
+    --- PASS: TestReconcile_CollapsedDesiredSetHonorsMaxFailedNodes/failure_within_maxFailedNodes_tolerates_the_failed_attempt (0.00s)
+    --- PASS: TestReconcile_CollapsedDesiredSetHonorsMaxFailedNodes/failure_exceeding_maxFailedNodes_fails (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.065s

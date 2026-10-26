@@ -1,0 +1,23 @@
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+F1a    contract  unit         FIXED          pass=1 fail=0 miss=0
+F1b    contract  unit         FIXED          pass=1 fail=0 miss=0
+F2     contract  unit         FIXED          pass=1 fail=0 miss=0
+F3     contract  unit         FIXED          pass=1 fail=0 miss=0
+F4a    contract  unit         FIXED          pass=1 fail=0 miss=0
+F4b    contract  unit         FIXED          pass=1 fail=0 miss=0
+F5     contract  unit         FIXED          pass=1 fail=0 miss=0
+P0-3   contract  integration  SKIPPED        layer not in --layers
+F9     contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+Q4     contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+Q2     contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+
+Live layer (manual): Live layer skipped per review-scope decision (unit + integration only). If run later: on a real <=1.32 cluster, create a Warmup with a customized action container without image under the rule-less CRD, then install the #466 CRD and try PATCH /status -> expect rejection; then install the PR CRD -> expect acceptance. F4 on a live cluster: start a Warmup, then delete the target RBG (or drain the node hosting all selected target Pods) while a warmup Pod is mid-pull -> observe Completed/NoNodesMatched with Active=1. F5: let one node finish warming, then cordon/migrate the target Pod off a second node whose warmup Pod is stuck ImagePullBackOff with globalTimeoutSeconds set -> job stays Running past the deadline.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/warmup-target-waits/results/reverify
+
+Review delta this round: 92cb7ef16adc7f6777e2a1bc4e257f40e3f6df36..b0915b21b09f6b5e3855180d07fbb427d970d5dc
+After reviewing that delta, advance the marker for the next round:
+  echo b0915b21b09f6b5e3855180d07fbb427d970d5dc > docs/verification/warmup-target-waits/.last-reviewed && git add docs/verification/warmup-target-waits/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.
