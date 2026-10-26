@@ -1,0 +1,24 @@
+should verify the full controller chain creates all objects	pass
+should recreate pod when it fails with single-pod LeaderWorker pattern	pass
+should recreate all component pods when worker fails in LeaderWorker pattern	pass
+should set and clear Restarting condition during recreation cycle	pass
+should not recreate when container restart is on Ignore-annotated pod	pass
+should only replace the failed pod, not recreate all pods	pass
+should resolve both-unset-defaults-to-recreate on leaderWorkerPattern	pass
+should resolve config-none on leaderWorkerPattern	pass
+should resolve conflict-config-none-wins on leaderWorkerPattern	pass
+should resolve conflict-config-recreate-wins on leaderWorkerPattern	pass
+should resolve legacy-none on leaderWorkerPattern	pass
+should resolve legacy-recreate on leaderWorkerPattern	pass
+should resolve the deprecated field on customComponentsPattern	pass
+should not trigger instance recreation when pod fails	pass
+should recreate all pods when container RestartCount > 0	pass
+should not recreate during initial creation (instance not yet Ready)	pass
+should only recreate the affected role's instance, not other roles	pass
+should not trigger recreation again during an active restart cycle	pass
+should track RestartCount and LastRestartTime after recreation	pass
+should delay second recreation due to backoff	pass
+should propagate BaseDelaySeconds and MaxDelaySeconds from RBG to RoleInstance	pass
+should reset RestartCount after stable period	pass
+should not bypass wasInstanceReady check after stable threshold	pass
+should not freeze rolling update when revision mismatch occurs during backoff	pass
