@@ -1,0 +1,26 @@
+## L1 unit: PR's new helper test
+=== RUN   TestPodFailureInjection
+=== RUN   TestPodFailureInjection/restart_nginx_in_the_selected_cluster
+=== RUN   TestPodFailureInjection/report_failed_injection_with_pod_and_command_output
+--- PASS: TestPodFailureInjection (0.00s)
+    --- PASS: TestPodFailureInjection/restart_nginx_in_the_selected_cluster (0.00s)
+    --- PASS: TestPodFailureInjection/report_failed_injection_with_pod_and_command_output (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/utils	0.012s
+
+## L1 unit: full test/utils package
+ok  	sigs.k8s.io/rbgs/test/utils	0.013s
+
+## L1 unit: controller anchor identities (existing + review tripwire)
+=== RUN   TestCheckRestartBackoff_Branches
+=== RUN   TestCheckRestartBackoff_Branches/restarting_==_true_(from_fresh):_returns_0
+=== RUN   TestCheckRestartBackoff_Branches/restarting_==_true_(from_informer,_fresh_==_nil):_returns_0
+=== RUN   TestCheckRestartBackoff_Branches/restarting_==_true_from_informer_overridden_by_fresh_==_false:_proceeds_with_backoff
+=== RUN   TestCheckRestartBackoff_Branches/baseDelay_==_0_&&_maxDelay_==_0:_returns_0_(disabled)
+=== RUN   TestCheckRestartBackoff_Branches/fresh_!=_nil:_uses_fresh_RestartCount_for_delay_calculation
+=== RUN   TestCheckRestartBackoff_Branches/fresh_!=_nil_with_nil_LastRestartTime:_returns_0
+=== RUN   TestCheckRestartBackoff_Branches/Generation_mismatch_with_failed_pods:_returns_0_(no_backoff_freeze)
+=== RUN   TestCheckRestartBackoff_Branches/CurrentRevision_!=_UpdateRevision_with_failed_pods:_returns_0_(no_backoff_freeze)
+--- PASS: TestCheckRestartBackoff_Branches (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.012s

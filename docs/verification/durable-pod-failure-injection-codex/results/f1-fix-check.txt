@@ -1,0 +1,10 @@
+## F1 fix check: go mod vendor (proposed fix), then vendor-mode build, then revert
+-- after 'go mod vendor': go build ./...
+exit=0
+-- vendor changes introduced by the fix:
+ M vendor/modules.txt
+?? vendor/k8s.io/client-go/tools/watch/
+-- after revert: go build ./...
+test/e2e/testcase/v1alpha2/inactive_pod.go:30:2: cannot find module providing package k8s.io/client-go/tools/watch: import lookup disabled by -mod=vendor
+	(Go version in go.mod is at least 1.14 and vendor directory exists.)
+exit=1

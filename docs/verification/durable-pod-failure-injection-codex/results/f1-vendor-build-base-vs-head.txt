@@ -1,0 +1,7 @@
+## base 8a7bcfcb: go build ./... (default vendor mode)
+exit=0
+
+## head 288a840a: go build ./... (default vendor mode)
+test/e2e/testcase/v1alpha2/inactive_pod.go:30:2: cannot find module providing package k8s.io/client-go/tools/watch: import lookup disabled by -mod=vendor
+	(Go version in go.mod is at least 1.14 and vendor directory exists.)
+exit=1

@@ -1,0 +1,57 @@
+{
+  "pr": "https://github.com/sgl-project/rbg/pull/514",
+  "reviewer": "codex",
+  "baseSha": "8a7bcfcb5dbf104788b35e8cb143d6090a3f6c37",
+  "headSha": "288a840a91b7e3a45c164b06fe006475c41937d3",
+  "premise": {
+    "claim": "Patching a live Pod's status to Failed is not durable (kubelet owns pod status), causing intermittent timeouts/vacuous passes in restart-policy e2e specs (issue #490).",
+    "runsAgainst": "base",
+    "verdict": "confirmed-by-report",
+    "evidence": "Issue sgl-project/rbg#490 (OPEN) documents CI failures on k8s 1.31/1.36 kind clusters with run links; PR #489 previously fixed the same mechanism in one spec. Live-layer reproduction (real kubelet) intentionally skipped per round policy; mechanism validated by code reading (shouldRecreateInstance/containerRestarted) and by the migration's green CI e2e run.",
+    "componentMatch": "e2e failure-injection helpers and specs; matches files touched."
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "title": "New k8s.io/client-go/tools/watch import not vendored; default (vendor-mode) go build ./... fails at head, passed at base",
+      "severity": "major",
+      "polarity": "contract",
+      "layer": "unit",
+      "introducedByPR": true,
+      "tests": [
+        {
+          "name": "vendor-mode build of the whole module",
+          "command": "go build ./...",
+          "expectOnFixed": "exit 0 (requires 'go mod vendor' to be run and committed)",
+          "observedOnHead": "FAIL: test/e2e/testcase/v1alpha2/inactive_pod.go:30:2: cannot find module providing package k8s.io/client-go/tools/watch: import lookup disabled by -mod=vendor",
+          "results": "results/f1-vendor-build-base-vs-head.txt, results/f1-fix-check.txt"
+        }
+      ]
+    },
+    {
+      "id": "P1",
+      "title": "Positive: PR helper unit test, controller anchor identities, e2e spec-tree construction",
+      "severity": "info",
+      "polarity": "contract",
+      "layer": "unit+integration(no cluster)",
+      "tests": [
+        {
+          "name": "TestPodFailureInjection",
+          "command": "go test -mod=mod ./test/utils -count=1 -run TestPodFailureInjection",
+          "results": "results/l1-unit.txt"
+        },
+        {
+          "name": "anchor identities (existing + review tripwire)",
+          "command": "go test -mod=mod -run 'TestCalculateRestartDelay|TestShouldRecreateInstance$|TestCheckRestartBackoff|TestReviewAnchor' ./pkg/reconciler/roleinstance/sync/ -count=1",
+          "results": "results/l1-unit.txt"
+        },
+        {
+          "name": "e2e compile + ginkgo dry-run spec registration under the CI update filter",
+          "command": "go test -c -mod=mod ./test/e2e && ./e2e.test -ginkgo.dry-run -ginkgo.label-filter='update && !rollout && !volcano && !scheduler-plugins && !v1alpha1'",
+          "results": "results/l2-spec-tree.txt"
+        }
+      ]
+    }
+  ],
+  "liveNote": "L3 (real Kind cluster e2e) intentionally skipped this round per debate policy. On a live cluster the signal to check: the renamed specs run in the 'E2E update' job and fail if failure injection is non-durable (PR-head CI: all green)."
+}
