@@ -94,7 +94,7 @@ func TestVerify_TerminalSettleAfterTargetDeletionRecordsTargetReadyUnknown(t *te
 		Spec: verifySpec("q2-unknown-rbg"),
 	}
 	warmup.Status.Phase = workloadsv1alpha2.WarmupJobPhaseRunning
-	started := metav1.NewTime(time.Now().Add(-3 * time.Minute))
+	started := metav1.NewTime(time.Now().Add(-3 * time.Minute).Truncate(time.Second))
 	warmup.Status.StartTime = &started
 
 	r := newWarmupReconciler(

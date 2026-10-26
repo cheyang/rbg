@@ -86,7 +86,7 @@ func TestVerify_CollapsedSettleHonorsMaxFailedNodesTolerance(t *testing.T) {
 			}
 			warmup.Spec.Policies = tc.policies
 			warmup.Status.Phase = workloadsv1alpha2.WarmupJobPhaseRunning
-			started := metav1.NewTime(time.Now().Add(-2 * time.Minute))
+			started := metav1.NewTime(time.Now().Add(-2 * time.Minute).Truncate(time.Second))
 			warmup.Status.StartTime = &started
 
 			objs := []runtime.Object{
