@@ -52,7 +52,7 @@ Run it:
 
 ```bash
 export KUBEBUILDER_ASSETS="$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64"
-go test ./test/envtest/testcase/rbg/ -count=1 -ginkgo.focus "v1alpha1 coordination migration" -ginkgo.v -v -timeout 20m
+go test ./test/envtest/testcase/rbg/ -count=1 -ginkgo.focus "v1alpha1 coordination migration|converted from v1alpha1" -ginkgo.v -v -timeout 20m
 ```
 
 ## Harness bites (step 4)
