@@ -1,0 +1,10 @@
+=== RUN   TestVerifyForeignSameNamePodYieldsRetrySignal
+--- PASS: TestVerifyForeignSameNamePodYieldsRetrySignal (0.04s)
+=== RUN   TestVerifyOwnedSameNamePodIsSkippedWithoutError
+--- PASS: TestVerifyOwnedSameNamePodIsSkippedWithoutError (0.00s)
+=== RUN   TestVerifyOwnedTerminatingPodIsSkippedWithoutError
+--- PASS: TestVerifyOwnedTerminatingPodIsSkippedWithoutError (0.00s)
+=== RUN   TestVerifyPartialForeignCollisionBlocksWholeBatch
+--- PASS: TestVerifyPartialForeignCollisionBlocksWholeBatch (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.052s
