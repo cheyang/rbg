@@ -172,3 +172,91 @@ empty targets correctly). The rebased round-2 content is `99d49326`.
   override, on a DeepCopy), with the author's
   `TestReconcile_ScalingAdapterReplicasGateExpectedTargetPods` and RBAC verified
   (`controller-role` grants `get` on `rolebasedgroupscalingadapters`).
+
+## Round 4 — head `92cb7ef` ("harden target readiness and collapsed-settle semantics")
+
+Delta `b0915b21..92cb7ef` = two commits (`3bd283a5` harden target readiness and
+collapsed-settle semantics, `92cb7ef` mark deleted targets unknown after start),
+answering the round-3 SHOULD list. Three new harness contract tests
+(`TestVerifyR4*`) were added; N1's TargetReady assertion was kept polarity-stable
+(not-True + reason) so F4a/F7 attribution is unaffected by the condition's
+False→Unknown evolution, with the exact Unknown contract pinned by
+`TestVerifyR4Q2DeletedTargetMidRunRecordsTargetReadyUnknown`.
+
+### Findings verdicts (differential: previous `b0915b21` → head `92cb7ef`)
+
+| ID | Test | b0915b21 (prev) | 92cb7ef (head) | Verdict |
+|---|---|---|---|---|
+| F9 | `TestVerifyR4CollapsedSettleHonorsMaxFailedNodes` (new) | **FAIL** (within tolerance settled `Failed/InvalidTarget`) | **PASS** | **FIXED** |
+| Q4 | `TestVerifyR4CrossRoleSurplusDoesNotMaskPendingTargetPod` (new) | **FAIL** (aggregate subtraction masked the worker's deficit) | **PASS** | **FIXED** (promoted from open question) |
+| Q2 | `TestVerifyR4Q2DeletedTargetMidRunRecordsTargetReadyUnknown` (new) | **FAIL** (`TargetReady=False` on a terminal Completed job) | **PASS** | **FIXED** (promoted from open question) |
+| F10 | `TestVerifyR4F10CollapseKeepsCustomizedActionDiagnostics` (new) | **FAIL** | **FAIL** | **OPEN** (minor, new; see below) |
+| F1/F2/F4a/F4b/F5/F6/F7/F8 + premise | unchanged | PASS | PASS | still FIXED / confirmed |
+
+Base control (`ecdfd6e6`): F10 **passes** (the base's terminal failure path
+preserves the diagnostics), so F10 is a PR-introduced diagnostics regression:
+base=pass, previous=fail, head=fail.
+
+- **F9 fix mechanism (verified):** `failCollapsedDesiredSet` now consults
+  `spec.policies.maxFailedNodes` — within tolerance the settle completes
+  `Completed/WarmupCompleted` with `status.failed` counting the unsucceeded
+  nodes ("N node(s) warmed up and M node(s) failed within tolerance…"), beyond
+  it fails `Failed/MaxFailedNodesExceeded`. `ReasonTargetNoLongerSelectsNodes`
+  is removed; no stale references remain (grep-verified). The PR replaced
+  `TestReconcile_TargetDeletedWithRetryableFailedPodFails` with
+  `TestReconcile_CollapsedDesiredSetHonorsMaxFailedNodes` (3 subtests).
+- **Q4 fix mechanism (verified):** `countTargetPodsNotReady` computes expected
+  and observed Pods per selected role; a surplus in one role can no longer
+  satisfy another role's deficit. PR test
+  `TestReconcile_CrossRoleSurplusDoesNotMaskPendingTargetPod`.
+- **Q2 fix mechanism (verified):** `setTargetUnknown` records
+  `TargetReady=Unknown/RoleBasedGroupNotFound` once a started Warmup's target
+  disappears, both while Running and on the terminal settle. KEP adds the
+  Unknown row and the "Complete/Failed is authoritative" guidance.
+- **N2 (fixed):** the production-unreachable duplicate failure branch in
+  `updateEmptyDesiredPhase` was deleted; collapsed-set semantics now have a
+  single implementation (diff-verified).
+- **N3 (fixed):** the `rolebasedgroupscalingadapters` kubebuilder RBAC marker
+  was added. `make manifests` at head regenerates a **clean tree** (verified —
+  the aggregated manager ClusterRole already carried `get`), so the permission
+  is declared, not an undeclared dependency.
+- **Q1 (resolved as documented):** the KEP gains a "Controller upgrade
+  compatibility" paragraph and the PR body a matching upgrade note: the
+  creation-anchored timeout can immediately fail pre-upgrade `Running` Warmups;
+  pausing does not pause the clock.
+- **F10 (new, minor, OPEN — Copilot C4381790591 first half, empirically
+  confirmed):** a mid-run target collapse erases
+  `status.customizedActionResults` (1→0 in the probe) and drops the
+  `CustomizedAction*` conditions **while the job is still Running** (active=1),
+  and again on the within-tolerance settle, because
+  `evaluateCustomizedActionResults`/`preserveCustomizedActionResults` scope the
+  diagnostics to the *current* `desiredNodes` map. Base preserves them (the
+  `failWarmupJob` path keeps diagnostics, pinned by the repo's own
+  `TestFailWarmupJobPreservesCustomizedActionDiagnosticsWithoutDesiredNodes`).
+  Copilot's second claim (the global-timeout failure path loses diagnostics) is
+  **refuted** — `TestReconcileGlobalTimeoutPreservesCustomizedActionDiagnostics`
+  is green at head. Bounded: diagnostics-only; phases, counters and reasons are
+  unaffected. Contract test red at head and previous head, green at base.
+- **Two more round-4 Copilot advisories assessed:**
+  - C4381790485 (same-role rollout surplus masking a Pending replacement):
+    mechanism is real but **matches the documented contract** — `TargetReady=True`
+    requires all *expected* (spec-derived) selected Pods to be scheduled, and the
+    KEP explicitly says a newly pending target Pod does not block completion once
+    warmup Pods exist. A semantics change, not a defect → carried as open
+    question Q5 (maintainer decision), non-gating.
+  - C4381790640 (`targetWaitRequeueAfter` returns 0 when the remaining budget is
+    exhausted at requeue time): mechanism code-confirmed; the exploitable window
+    is the µs between the `globalTimeoutExpired` check and the requeue
+    computation, and a controller restart or any target event recovers → nit
+    (N4), pre-existing PR code, non-gating.
+- **Harness-bites:** every new `TestVerifyR4*` contract test is red on
+  `b0915b21` (the round-3 content) and green on `92cb7ef` — the differential
+  itself proves the tests bite. F10 is red at head (open finding) with its
+  precondition assertion green.
+- **Upstream sweep at head:** `go test ./internal/controller/workloads/
+  ./api/workloads/v1alpha2/` green; `go build`/`go vet` clean; `make manifests`
+  produces no diff.
+- **Integration layer:** P0c/P0d green on envtest k8s 1.31.0 (run by
+  `re-verify.sh`, `results/reverify/integration.out`).
+- **CI on `92cb7ef`:** all checks SUCCESS (23 rollup entries / 21 unique,
+  queried via the GitHub API), including all e2e suites; attribution unknown.
