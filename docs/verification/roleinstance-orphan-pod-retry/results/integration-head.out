@@ -1,1 +1,113 @@
-ok  	sigs.k8s.io/rbgs/test/envtest/testcase/orphanmigration	15.191s
+Running Suite: RoleInstance Orphan-Pod Retry Suite (PR #512 verification) - /home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/orphanmigration
+=============================================================================================================================================================================
+Random Seed: [1m1793036222[0m
+
+Will run [1m2[0m of [1m2[0m specs
+[38;5;10m•[0m
+[38;5;243m------------------------------[0m
+[38;5;9m• [FAILED] [68.542 seconds][0m
+[0mRoleInstance replacement Pod retry after foreign same-name Pod GC [38;5;9m[1m[It] clears the FailedScale condition after the replacement Pod is created[0m
+[38;5;243m/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/orphanmigration/orphan_migration_test.go:93[0m
+
+  [38;5;243mTimeline >>[0m
+  [1mSTEP:[0m creating a RoleInstance (PodTemplate type, size 1) [38;5;243m@ 10/27/26 01:37:16.924[0m
+  [1mSTEP:[0m creating a same-name Pod owned by a legacy StatefulSet (the migration orphan window) [38;5;243m@ 10/27/26 01:37:16.926[0m
+  [1mSTEP:[0m observing the blocked window: the foreign Pod is neither adopted nor replaced [38;5;243m@ 10/27/26 01:37:16.928[0m
+  2026-10-27T01:37:16+08:00	DEBUG	events	failed to create pod: pods "migrate-role-0" already exists, the server was not able to generate a unique name for the object, pod: {"metadata":{"name":"migrate-role-0","generateName":"migrate-role-0-","namespace":"test-orphan-retry-1793036236923652311","labels":{"controller-revision-hash":"5bc8898796","rbg.workloads.x-k8s.io/component-id":"0","rbg.workloads.x-k8s.io/component-name":"role","rbg.workloads.x-k8s.io/role-instance-name":"migrate-role-0"},"ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleInstance","name":"migrate-role-0","uid":"69c03f38-f723-4381-aefb-aebc0cd60734","controller":true,"blockOwnerDeletion":true}]},"spec":{"containers":[{"name":"main","image":"rbg:latest","resources":{}}],"readinessGates":[{"conditionType":"InPlaceUpdateReady"},{"conditionType":"InstancePodReady"}]},"status":{}}	{"type": "Warning", "object": {"kind":"RoleInstance","namespace":"test-orphan-retry-1793036236923652311","name":"migrate-role-0","uid":"69c03f38-f723-4381-aefb-aebc0cd60734","apiVersion":"workloads.x-k8s.io/v1alpha2","resourceVersion":"255"}, "reason": "FailedCreate"}
+  2026-10-27T01:37:16+08:00	ERROR	Reconciler error	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"migrate-role-0","namespace":"test-orphan-retry-1793036236923652311"}, "namespace": "test-orphan-retry-1793036236923652311", "name": "migrate-role-0", "reconcileID": "8207022b-a037-4435-b0ce-d3147ae4ba68", "error": "pods \"migrate-role-0\" already exists, the server was not able to generate a unique name for the object", "errorCauses": [{"error": "pods \"migrate-role-0\" already exists, the server was not able to generate a unique name for the object"}]}
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296
+  2026-10-27T01:37:16+08:00	ERROR	Reconciler error	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"migrate-role-0","namespace":"test-orphan-retry-1793036236923652311"}, "namespace": "test-orphan-retry-1793036236923652311", "name": "migrate-role-0", "reconcileID": "2ea0ca16-f720-48ce-9f48-c3e18083e5eb", "error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)", "errorCauses": [{"error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)"}]}
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296
+  2026-10-27T01:37:16+08:00	ERROR	Reconciler error	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"migrate-role-0","namespace":"test-orphan-retry-1793036236923652311"}, "namespace": "test-orphan-retry-1793036236923652311", "name": "migrate-role-0", "reconcileID": "e9cbf53e-8cd8-4754-99c1-2d6638267314", "error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)", "errorCauses": [{"error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)"}]}
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296
+  2026-10-27T01:37:16+08:00	ERROR	Reconciler error	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"migrate-role-0","namespace":"test-orphan-retry-1793036236923652311"}, "namespace": "test-orphan-retry-1793036236923652311", "name": "migrate-role-0", "reconcileID": "4928bab1-2615-4c59-8ece-69437739d6ae", "error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)", "errorCauses": [{"error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)"}]}
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296
+  2026-10-27T01:37:16+08:00	ERROR	Reconciler error	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"migrate-role-0","namespace":"test-orphan-retry-1793036236923652311"}, "namespace": "test-orphan-retry-1793036236923652311", "name": "migrate-role-0", "reconcileID": "b0d4005e-dea4-468c-b88a-312f8790a0ea", "error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)", "errorCauses": [{"error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)"}]}
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296
+  2026-10-27T01:37:17+08:00	ERROR	Reconciler error	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"migrate-role-0","namespace":"test-orphan-retry-1793036236923652311"}, "namespace": "test-orphan-retry-1793036236923652311", "name": "migrate-role-0", "reconcileID": "f0b76141-d6c2-4fe4-b6df-9627a562f37c", "error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)", "errorCauses": [{"error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)"}]}
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296
+  2026-10-27T01:37:17+08:00	ERROR	Reconciler error	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"migrate-role-0","namespace":"test-orphan-retry-1793036236923652311"}, "namespace": "test-orphan-retry-1793036236923652311", "name": "migrate-role-0", "reconcileID": "8e445b49-3417-4dae-8822-ffcc2bdd5787", "error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)", "errorCauses": [{"error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)"}]}
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296
+  2026-10-27T01:37:17+08:00	ERROR	Reconciler error	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"migrate-role-0","namespace":"test-orphan-retry-1793036236923652311"}, "namespace": "test-orphan-retry-1793036236923652311", "name": "migrate-role-0", "reconcileID": "48883e43-ad89-4ff5-bbb3-b4aaec4ba9a0", "error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)", "errorCauses": [{"error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)"}]}
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296
+  2026-10-27T01:37:18+08:00	ERROR	Reconciler error	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"migrate-role-0","namespace":"test-orphan-retry-1793036236923652311"}, "namespace": "test-orphan-retry-1793036236923652311", "name": "migrate-role-0", "reconcileID": "d76309d1-1727-4471-98ef-adb89695f53e", "error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)", "errorCauses": [{"error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)"}]}
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296
+  2026-10-27T01:37:19+08:00	ERROR	Reconciler error	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"migrate-role-0","namespace":"test-orphan-retry-1793036236923652311"}, "namespace": "test-orphan-retry-1793036236923652311", "name": "migrate-role-0", "reconcileID": "10fece32-0982-4788-9951-c7d1106a134f", "error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)", "errorCauses": [{"error": "pod test-orphan-retry-1793036236923652311/migrate-role-0 is not controlled by RoleInstance test-orphan-retry-1793036236923652311/migrate-role-0 (UID 69c03f38-f723-4381-aefb-aebc0cd60734)"}]}
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:474
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:421
+  sigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1
+  	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/internal/controller/controller.go:296
+  [1mSTEP:[0m deleting the foreign Pod (as garbage collection would) [38;5;243m@ 10/27/26 01:37:21.43[0m
+  [1mSTEP:[0m expecting an error-driven retry to create the replacement Pod without any manual trigger [38;5;243m@ 10/27/26 01:37:21.433[0m
+  2026-10-27T01:37:22+08:00	DEBUG	events	succeed to create pod migrate-role-0	{"type": "Normal", "object": {"kind":"RoleInstance","namespace":"test-orphan-retry-1793036236923652311","name":"migrate-role-0","uid":"69c03f38-f723-4381-aefb-aebc0cd60734","apiVersion":"workloads.x-k8s.io/v1alpha2","resourceVersion":"260"}, "reason": "SuccessfulCreate"}
+  2026-10-27T01:37:22+08:00	INFO	pod runtime not ready	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"migrate-role-0","namespace":"test-orphan-retry-1793036236923652311"}, "namespace": "test-orphan-retry-1793036236923652311", "name": "migrate-role-0", "reconcileID": "9e29c9db-8157-4c0b-95a4-8d6db2879981", "pod": {"name":"migrate-role-0","namespace":"test-orphan-retry-1793036236923652311"}}
+  2026-10-27T01:37:22+08:00	INFO	pod runtime not ready	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"migrate-role-0","namespace":"test-orphan-retry-1793036236923652311"}, "namespace": "test-orphan-retry-1793036236923652311", "name": "migrate-role-0", "reconcileID": "279f0ff5-fa06-4e57-bcd1-89c8f7c15438", "pod": {"name":"migrate-role-0","namespace":"test-orphan-retry-1793036236923652311"}}
+  [1mSTEP:[0m expecting the latched FailedScale condition to clear once scaling succeeds again [38;5;243m@ 10/27/26 01:37:22.437[0m
+  [38;5;9m[FAILED][0m in [It] - /home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/orphanmigration/orphan_migration_test.go:112 [38;5;243m@ 10/27/26 01:38:22.438[0m
+  [38;5;243m<< Timeline[0m
+
+  [38;5;9m[FAILED] Timed out after 60.001s.
+  FailedScale is a controller-computed condition and must not stay True after recovery (finding F3)
+  Expected
+      <bool>: false
+  to be true[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/orphanmigration/orphan_migration_test.go:112[0m [38;5;243m@ 10/27/26 01:38:22.438[0m
+[38;5;243m------------------------------[0m
+
+[38;5;9m[1mSummarizing 1 Failure:[0m
+  [38;5;9m[FAIL][0m [0mRoleInstance replacement Pod retry after foreign same-name Pod GC [38;5;9m[1m[It] clears the FailedScale condition after the replacement Pod is created[0m
+  [38;5;243m/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/orphanmigration/orphan_migration_test.go:112[0m
+
+[38;5;9m[1mRan 2 of 2 Specs in 83.714 seconds[0m
+[38;5;9m[1mFAIL![0m -- [38;5;10m[1m1 Passed[0m | [38;5;9m[1m1 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- FAIL: TestOrphanMigrationRetry (83.71s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/orphanmigration	83.728s
+FAIL

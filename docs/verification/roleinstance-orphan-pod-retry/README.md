@@ -39,12 +39,23 @@ reconcile.
 | F-fix-integration | same scenario end-to-end via the real RoleInstance reconciler + envtest API server | contract | integration | FAIL (60s timeout, exact #511 symptom) | PASS (~15s) | `results/integration-{base,head}.out` |
 | F-regression-owned | already-owned / owned-terminating same-name Pod is skipped quietly (no error storm) | contract | unit | PASS | PASS | `results/unit-*.out` |
 | F2 | partial collision (size-2 component, one foreign ordinal) now aborts the whole create batch; base created the sibling | canary | unit | FAIL (created 1 sibling) | PASS (0 created + error) | `results/unit-*.out` |
+| F3 | the FailedScale condition latched during the blocked window never clears after recovery (carry-forward in `setInstanceConditions` treats it as externally owned); recovered instance reports FailedScale=True indefinitely | contract | integration | n/a (base never recovers; spec fails earlier) | FAIL (still True 60s after recovery) | `results/integration-*.out` |
 
-Harness-bites: the contract tests are red on base and green on head (the PR is
-the fix), and the two regression contracts are green on both — so the tests
+Harness-bites: the fix contract tests are red on base and green on head (the PR
+is the fix), and the two regression contracts are green on both — so the tests
 exercise the changed path, not a coincidental pass. The canary (F2) encodes
 current head behavior; flip it if maintainers choose create-what-you-can +
-aggregated error instead.
+aggregated error instead. F3 is a contract test for an OPEN finding: it is red
+on head by design and turns green only once the status updater clears
+controller-owned conditions that were not recomputed this reconcile.
+
+Note on base behavior nuance: the base run of It[2] logged a transient
+`FailedCreate: pods "migrate-role-0" already exists` — a cache-lag window where
+the old `hasOrphanPod` Get missed the just-created foreign Pod, attempted the
+create, and got AlreadyExists. That transient error self-extinguishes once the
+cache catches up (`continue`, nil error, no further retries), so the base still
+converges to the stuck state: 60s after the foreign Pod's deletion, no
+replacement Pod existed in either base spec.
 
 ## How to run
 
