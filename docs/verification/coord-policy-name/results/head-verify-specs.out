@@ -1,0 +1,25 @@
+=== RUN   TestRBGController
+Running Suite: RoleBasedGroup Controller Suite - /home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/rbg
+=======================================================================================================================================
+Random Seed: [1m1793038124[0m
+
+Will run [1m2[0m of [1m16[0m specs
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0mI1027 02:08:50.755175 2908687 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-verify-coord-1793038128378268528/verify-coord-two-decode" elapsedTime="6.792691ms"
+I1027 02:08:50.760372 2908687 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-verify-coord-1793038128378268528/verify-coord-two-prefill" elapsedTime="5.125612ms"
+I1027 02:08:50.765417 2908687 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-verify-coord-1793038128378268528/verify-coord-two-router" elapsedTime="4.964828ms"
+I1027 02:08:50.767973 2908687 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-verify-coord-1793038128378268528/verify-coord-two-decode" elapsedTime="2.492849ms"
+I1027 02:08:50.770947 2908687 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-verify-coord-1793038128378268528/verify-coord-two-prefill" elapsedTime="2.898103ms"
+I1027 02:08:50.773761 2908687 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-verify-coord-1793038128378268528/verify-coord-two-router" elapsedTime="2.747448ms"
+I1027 02:08:50.778379 2908687 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-verify-coord-1793038128378268528/verify-coord-two-decode" elapsedTime="4.542732ms"
+I1027 02:08:50.780998 2908687 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-verify-coord-1793038128378268528/verify-coord-two-router" elapsedTime="2.53979ms"
+I1027 02:08:50.783958 2908687 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-verify-coord-1793038128378268528/verify-coord-two-prefill" elapsedTime="2.889633ms"
+I1027 02:08:50.786351 2908687 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-verify-coord-1793038128378268528/verify-coord-two-decode" elapsedTime="2.327233ms"
+I1027 02:08:50.788853 2908687 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-verify-coord-1793038128378268528/verify-coord-two-router" elapsedTime="2.442467ms"
+I1027 02:08:50.791252 2908687 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-verify-coord-1793038128378268528/verify-coord-two-decode" elapsedTime="2.341393ms"
+[38;5;10m•[0m[38;5;10m•[0m
+
+[38;5;10m[1mRan 2 of 16 Specs in 12.581 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m2 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m14 Skipped[0m
+--- PASS: TestRBGController (12.58s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	12.595s

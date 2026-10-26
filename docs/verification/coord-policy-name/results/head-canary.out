@@ -1,0 +1,8 @@
+Running Suite: RoleBasedGroup Controller Suite - /home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/rbg
+Will run 1 of 16 specs
+  2026-10-27T02:09:42+08:00	ERROR	Using server side apply to patch object	{"error": "CoordinatedPolicy.workloads.x-k8s.io \"verify-coord-bare\" is invalid: spec.policies[0].strategy: Required value"}
+  STEP: EnsureV1alpha1CoordinatedPolicy returned: apply CoordinatedPolicy test-rbg-verify-coord-1793038180398838454/verify-coord-bare: CoordinatedPolicy.workloads.x-k8s.io "verify-coord-bare" is invalid: spec.policies[0].strategy: Required value @ 10/27/26 02:09:42.553
+Ran 1 of 16 Specs in 9.055 seconds
+SUCCESS! -- 1 Passed | 0 Failed | 0 Pending | 15 Skipped
+--- PASS: TestRBGController (9.06s)
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	9.069s
