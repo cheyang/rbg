@@ -1,0 +1,855 @@
+[
+  {
+    "SuitePath": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful",
+    "SuiteDescription": "Stateful RoleInstanceSet Controller Suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": true,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 5,
+      "SpecsThatWillRun": 5
+    },
+    "StartTime": "2026-10-27T01:21:39.3460745+08:00",
+    "EndTime": "2026-10-27T01:22:25.903217035+08:00",
+    "RunTime": 46557142535,
+    "SuiteConfig": {
+      "RandomSeed": 1793035299,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": null,
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/suite_test.go",
+          "LineNumber": 32
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-27T01:21:39.346114421+08:00",
+        "EndTime": "2026-10-27T01:21:42.581580676+08:00",
+        "RunTime": 3235466255,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T01:21:39+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/config/crd/bases\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T01:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T01:21:42+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/suite_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-10-27T01:21:39.346122742+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testutil/setup.go",
+              "LineNumber": 66
+            },
+            "TimelineLocation": {
+              "Order": 2,
+              "Time": "2026-10-27T01:21:39.346161783+08:00"
+            },
+            "Message": "bootstrapping test environment"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testutil/setup.go",
+              "LineNumber": 98
+            },
+            "TimelineLocation": {
+              "Offset": 4696,
+              "Order": 3,
+              "Time": "2026-10-27T01:21:42.477695407+08:00"
+            },
+            "Message": "setting up controller manager"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/suite_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Offset": 4696,
+              "Order": 5,
+              "Time": "2026-10-27T01:21:42.581579366+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 3235456624,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful RoleInstanceSet rollout recovery"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+            "LineNumber": 40
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+          "LineNumber": 57
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "replaces a stably unhealthy rollout target through the controller requeue path",
+        "State": "passed",
+        "StartTime": "2026-10-27T01:21:42.581623647+08:00",
+        "EndTime": "2026-10-27T01:21:58.144893404+08:00",
+        "RunTime": 15563269746,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"source\": \"kind source: *v1.Pod\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupScalingAdapter\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstanceSet\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupSet\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.CoordinatedPolicy\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1.Service\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleInstanceSet\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupScalingAdapter\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting Controller\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting Controller\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting workers\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"worker count\": 1}\n2026-10-27T01:21:42+08:00\tINFO\tStarting workers\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"worker count\": 1}\n2026-10-27T01:21:42+08:00\tINFO\tStarting Controller\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting Controller\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting Controller\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-10-27T01:21:42+08:00\tINFO\tStarting workers\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"worker count\": 1}\n2026-10-27T01:21:42+08:00\tINFO\tStarting workers\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"worker count\": 1}\n2026-10-27T01:21:42+08:00\tINFO\tStarting workers\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"worker count\": 1}\n2026-10-27T01:21:44+08:00\tDEBUG\tevents\tcreate RoleInstance stale-rollout-0 in RoleInstanceSet stale-rollout successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035302581634268\",\"name\":\"stale-rollout\",\"uid\":\"78825f02-fbdf-4e2c-a3a4-2e230dfb24e9\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"230\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:21:44+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035302581634268/stale-rollout, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:21:44+08:00\tDEBUG\tevents\tsucceed to create pod stale-rollout-0-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-stateful-rollout-1793035302581634268\",\"name\":\"stale-rollout-0\",\"uid\":\"9c62d021-37be-426e-b157-3a0c99fa459e\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"232\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:21:44+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"159ac7ec-f786-429b-b9ac-3ebb6792533e\", \"pod\": {\"name\":\"stale-rollout-0-worker-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}}\n2026-10-27T01:21:44+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"e071ec8a-69ce-4d80-9d58-5be1dd1dbe12\", \"pod\": {\"name\":\"stale-rollout-0-worker-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}}\n2026-10-27T01:21:44+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"a164535d-f906-4c96-99a1-6d82bcab54b6\", \"pod\": {\"name\":\"stale-rollout-0-worker-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}}\n2026-10-27T01:21:44+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035302581634268/stale-rollout, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:21:45+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"a23389a6-b35d-4938-a9fa-d2b5da4f40c6\", \"pod\": {\"name\":\"stale-rollout-0-worker-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}}\n2026-10-27T01:21:45+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"c1abd897-f2b1-4458-bd3c-2c9d3a002aff\", \"pod\": {\"name\":\"stale-rollout-0-worker-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}}\n2026-10-27T01:21:45+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"4357c562-1772-4648-9c6f-4e28b7090934\", \"pod\": {\"name\":\"stale-rollout-0-worker-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}}\n2026-10-27T01:21:45+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035302581634268/stale-rollout, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:21:45+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035302581634268/stale-rollout, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:21:45+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035302581634268/stale-rollout, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:21:55+08:00\tDEBUG\tevents\tdelete RoleInstance stale-rollout-0 in RoleInstanceSet stale-rollout successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035302581634268\",\"name\":\"stale-rollout\",\"uid\":\"78825f02-fbdf-4e2c-a3a4-2e230dfb24e9\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"255\"}, \"reason\": \"SuccessfulDelete\"}\n2026-10-27T01:21:55+08:00\tINFO\tInstance has been deleted\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"80dc7b01-9d96-470b-95df-7dab5508ee21\"}\n2026-10-27T01:21:55+08:00\tDEBUG\tevents\tcreate RoleInstance stale-rollout-0 in RoleInstanceSet stale-rollout successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035302581634268\",\"name\":\"stale-rollout\",\"uid\":\"78825f02-fbdf-4e2c-a3a4-2e230dfb24e9\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"255\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:21:55+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035302581634268/stale-rollout, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:21:55+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"798bf104-3ad1-4756-96bd-61d47cd7c301\", \"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:21:55+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"91c8d464-1f5a-4a63-b497-c5a6ff6ef5a7\", \"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:21:55+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"f3bde223-4794-4e68-a8d4-c9bd0386b78f\", \"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:21:55+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"f9d15176-5036-48d8-828a-25180c79dc93\", \"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:21:55+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"a6361a3e-76ec-49b7-8dad-c016052623b5\", \"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:21:55+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"0327aff1-468f-4c41-887b-e4b3c9090920\", \"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:21:55+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"9bd72a62-373b-4b49-8615-8bc601857918\", \"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:21:55+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"6f65a633-c00c-4c6d-98fd-4da63050af15\", \"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:21:56+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"92cd5316-5b06-4cac-a91b-207473f6c837\", \"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:21:57+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"b18434d6-a578-4acc-b773-5d39c60f8bf7\", \"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 48
+            },
+            "TimelineLocation": {
+              "Order": 6,
+              "Time": "2026-10-27T01:21:42.581627278+08:00"
+            },
+            "Message": "Stateful RoleInstanceSet rollout recovery",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 48
+            },
+            "TimelineLocation": {
+              "Offset": 3343,
+              "Order": 8,
+              "Time": "2026-10-27T01:21:42.584969997+08:00"
+            },
+            "Message": "Stateful RoleInstanceSet rollout recovery",
+            "Duration": 3342719,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 57
+            },
+            "TimelineLocation": {
+              "Offset": 3343,
+              "Order": 9,
+              "Time": "2026-10-27T01:21:42.584973027+08:00"
+            },
+            "Message": "replaces a stably unhealthy rollout target through the controller requeue path",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 57
+            },
+            "TimelineLocation": {
+              "Offset": 13884,
+              "Order": 11,
+              "Time": "2026-10-27T01:21:55.116402449+08:00"
+            },
+            "Message": "replaces a stably unhealthy rollout target through the controller requeue path",
+            "Duration": 12531429422,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 53
+            },
+            "TimelineLocation": {
+              "Offset": 13884,
+              "Order": 12,
+              "Time": "2026-10-27T01:21:55.11640702+08:00"
+            },
+            "Message": "Stateful RoleInstanceSet rollout recovery",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 53
+            },
+            "TimelineLocation": {
+              "Offset": 25460,
+              "Order": 14,
+              "Time": "2026-10-27T01:21:58.144887324+08:00"
+            },
+            "Message": "Stateful RoleInstanceSet rollout recovery",
+            "Duration": 3028480313,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful RoleInstanceSet rollout recovery"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+            "LineNumber": 40
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+          "LineNumber": 134
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "recovers early-rollback surge protection from persisted status",
+        "State": "passed",
+        "StartTime": "2026-10-27T01:21:58.144924705+08:00",
+        "EndTime": "2026-10-27T01:22:05.942572518+08:00",
+        "RunTime": 7797647813,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T01:21:58+08:00\tDEBUG\tevents\tcreate RoleInstance persisted-rollback-0 in RoleInstanceSet persisted-rollback successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035318144938015\",\"name\":\"persisted-rollback\",\"uid\":\"8a55b18e-b4cc-4698-842d-c1234b830d62\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"267\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:21:58+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035318144938015/persisted-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:21:58+08:00\tDEBUG\tevents\tsucceed to create pod persisted-rollback-0-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-stateful-rollout-1793035318144938015\",\"name\":\"persisted-rollback-0\",\"uid\":\"ab7b029e-697c-4511-9d7b-4ce0ffb5a9cc\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"269\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:21:58+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"persisted-rollback-0\",\"namespace\":\"test-stateful-rollout-1793035318144938015\"}, \"namespace\": \"test-stateful-rollout-1793035318144938015\", \"name\": \"persisted-rollback-0\", \"reconcileID\": \"f10caf89-e6eb-4f38-a695-ff612a0bb06a\", \"pod\": {\"name\":\"persisted-rollback-0-worker-0\",\"namespace\":\"test-stateful-rollout-1793035318144938015\"}}\n2026-10-27T01:21:58+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"persisted-rollback-0\",\"namespace\":\"test-stateful-rollout-1793035318144938015\"}, \"namespace\": \"test-stateful-rollout-1793035318144938015\", \"name\": \"persisted-rollback-0\", \"reconcileID\": \"58db3e76-4edb-44bf-90a5-7d70b779bb50\", \"pod\": {\"name\":\"persisted-rollback-0-worker-0\",\"namespace\":\"test-stateful-rollout-1793035318144938015\"}}\n2026-10-27T01:21:58+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035318144938015/persisted-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:21:58+08:00\tDEBUG\tevents\tsucceed to create pod persisted-rollback-1-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-stateful-rollout-1793035318144938015\",\"name\":\"persisted-rollback-1\",\"uid\":\"2efeca6e-f298-4c75-9232-6405ab9cd424\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"280\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:21:58+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035318144938015/persisted-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:21:58+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"persisted-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035318144938015\"}, \"namespace\": \"test-stateful-rollout-1793035318144938015\", \"name\": \"persisted-rollback-1\", \"reconcileID\": \"96bfab6e-ed73-443f-977b-5e82d7659438\", \"pod\": {\"name\":\"persisted-rollback-1-worker-0\",\"namespace\":\"test-stateful-rollout-1793035318144938015\"}}\n2026-10-27T01:21:58+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"persisted-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035318144938015\"}, \"namespace\": \"test-stateful-rollout-1793035318144938015\", \"name\": \"persisted-rollback-1\", \"reconcileID\": \"33e16191-9086-4391-9a8b-792706773319\", \"pod\": {\"name\":\"persisted-rollback-1-worker-0\",\"namespace\":\"test-stateful-rollout-1793035318144938015\"}}\n2026-10-27T01:21:58+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"persisted-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035318144938015\"}, \"namespace\": \"test-stateful-rollout-1793035318144938015\", \"name\": \"persisted-rollback-1\", \"reconcileID\": \"3cc10c01-5ad1-4420-ba81-f06c10b08f32\", \"pod\": {\"name\":\"persisted-rollback-1-worker-0\",\"namespace\":\"test-stateful-rollout-1793035318144938015\"}}\n2026-10-27T01:21:58+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035318144938015/persisted-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:00+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"d2783e80-f0e4-4afb-b090-7f00704fe162\", \"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:00+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035318144938015/persisted-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:00+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035318144938015/persisted-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:02+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"persisted-rollback-0\",\"namespace\":\"test-stateful-rollout-1793035318144938015\"}, \"namespace\": \"test-stateful-rollout-1793035318144938015\", \"name\": \"persisted-rollback-0\", \"reconcileID\": \"60c2b3c1-7ad7-47ea-9cf6-059475900010\", \"pod\": {\"name\":\"persisted-rollback-0-worker-0\",\"namespace\":\"test-stateful-rollout-1793035318144938015\"}}\n2026-10-27T01:22:02+08:00\tDEBUG\tevents\tdelete RoleInstance persisted-rollback-1 in RoleInstanceSet persisted-rollback successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035318144938015\",\"name\":\"persisted-rollback\",\"uid\":\"8a55b18e-b4cc-4698-842d-c1234b830d62\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"297\"}, \"reason\": \"SuccessfulDelete\"}\n2026-10-27T01:22:02+08:00\tINFO\tInstance has been deleted\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"persisted-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035318144938015\"}, \"namespace\": \"test-stateful-rollout-1793035318144938015\", \"name\": \"persisted-rollback-1\", \"reconcileID\": \"7036238b-31fa-488e-bf8e-04902d842856\"}\n2026-10-27T01:22:02+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035318144938015/persisted-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:02+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035318144938015/persisted-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:05+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"b13c7efa-67ec-4658-a678-27e0294de017\", \"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 48
+            },
+            "TimelineLocation": {
+              "Order": 15,
+              "Time": "2026-10-27T01:21:58.144930065+08:00"
+            },
+            "Message": "Stateful RoleInstanceSet rollout recovery",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 48
+            },
+            "TimelineLocation": {
+              "Order": 17,
+              "Time": "2026-10-27T01:21:58.146926866+08:00"
+            },
+            "Message": "Stateful RoleInstanceSet rollout recovery",
+            "Duration": 1996801,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 134
+            },
+            "TimelineLocation": {
+              "Order": 18,
+              "Time": "2026-10-27T01:21:58.146928386+08:00"
+            },
+            "Message": "recovers early-rollback surge protection from persisted status",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 134
+            },
+            "TimelineLocation": {
+              "Offset": 7754,
+              "Order": 20,
+              "Time": "2026-10-27T01:22:02.917834128+08:00"
+            },
+            "Message": "recovers early-rollback surge protection from persisted status",
+            "Duration": 4770905742,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 53
+            },
+            "TimelineLocation": {
+              "Offset": 7754,
+              "Order": 21,
+              "Time": "2026-10-27T01:22:02.917839378+08:00"
+            },
+            "Message": "Stateful RoleInstanceSet rollout recovery",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 53
+            },
+            "TimelineLocation": {
+              "Offset": 9201,
+              "Order": 23,
+              "Time": "2026-10-27T01:22:05.942567308+08:00"
+            },
+            "Message": "Stateful RoleInstanceSet rollout recovery",
+            "Duration": 3024727930,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful RoleInstanceSet rollout recovery"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+            "LineNumber": 40
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+          "LineNumber": 218
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "retains surge through a complete A to B to A rollback when partition decreases",
+        "State": "passed",
+        "StartTime": "2026-10-27T01:22:05.94261396+08:00",
+        "EndTime": "2026-10-27T01:22:14.550002758+08:00",
+        "RunTime": 8607388798,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T01:22:05+08:00\tDEBUG\tevents\tcreate RoleInstance complete-rollback-0 in RoleInstanceSet complete-rollback successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback\",\"uid\":\"25e0ad31-25b5-466b-864a-3ae1cb1408c3\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"310\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:05+08:00\tDEBUG\tevents\tcreate RoleInstance complete-rollback-1 in RoleInstanceSet complete-rollback successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback\",\"uid\":\"25e0ad31-25b5-466b-864a-3ae1cb1408c3\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"310\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:05+08:00\tDEBUG\tevents\tsucceed to create pod complete-rollback-0-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback-0\",\"uid\":\"a03999a5-4c4e-449b-86de-8d641a5a9f16\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"312\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:05+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:05+08:00\tDEBUG\tevents\tsucceed to create pod complete-rollback-1-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback-1\",\"uid\":\"127d70cc-2d78-44a1-9bb1-5188ec2da0f1\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"315\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:05+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-0\", \"reconcileID\": \"8abed7a5-50b0-4109-a9a6-7d7606ce91a2\", \"pod\": {\"name\":\"complete-rollback-0-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:05+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"8e2b1146-f102-449c-ab51-1c4f45d205d4\", \"pod\": {\"name\":\"complete-rollback-1-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:05+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-0\", \"reconcileID\": \"413463b4-0a1f-4dc8-a937-3885f7a51ba0\", \"pod\": {\"name\":\"complete-rollback-0-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:05+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"e820a3e3-64b0-4dff-a23b-2c65137be559\", \"pod\": {\"name\":\"complete-rollback-1-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:06+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"e60b0326-d516-4082-8bd0-f88ad0d80aa0\", \"pod\": {\"name\":\"complete-rollback-1-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:06+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:06+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-0\", \"reconcileID\": \"c661c257-0704-43c8-ba51-c092118c7c74\", \"pod\": {\"name\":\"complete-rollback-0-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:06+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:06+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:06+08:00\tDEBUG\tevents\tcreate RoleInstance complete-rollback-2 in RoleInstanceSet complete-rollback successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback\",\"uid\":\"25e0ad31-25b5-466b-864a-3ae1cb1408c3\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"343\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:06+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:06+08:00\tDEBUG\tevents\tsucceed to create pod complete-rollback-2-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback-2\",\"uid\":\"1fd51bb4-4ef5-413d-8087-0830957e57bc\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"345\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:06+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"9dea59ed-8249-4035-8389-77aa124df968\", \"pod\": {\"name\":\"complete-rollback-2-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:06+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"a8b9dd8f-8d98-4330-a7f9-fe027fb93a69\", \"pod\": {\"name\":\"complete-rollback-2-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:06+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"d66cf6fc-9dfd-497b-a014-e2fa3a72d6bc\", \"pod\": {\"name\":\"complete-rollback-2-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:06+08:00\tDEBUG\tevents\tdelete RoleInstance complete-rollback-1 in RoleInstanceSet complete-rollback successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback\",\"uid\":\"25e0ad31-25b5-466b-864a-3ae1cb1408c3\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"348\"}, \"reason\": \"SuccessfulDelete\"}\n2026-10-27T01:22:06+08:00\tINFO\tInstance has been deleted\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"fdb77a7d-0add-445e-bbbd-f5c2d2477924\"}\n2026-10-27T01:22:06+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:06+08:00\tDEBUG\tevents\tcreate RoleInstance complete-rollback-1 in RoleInstanceSet complete-rollback successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback\",\"uid\":\"25e0ad31-25b5-466b-864a-3ae1cb1408c3\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"348\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:06+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"6472a3f6-5dec-4fda-96f7-99f59012123d\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID 733061a3-acaa-4aaf-b675-1e10ba27e4fa)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID 733061a3-acaa-4aaf-b675-1e10ba27e4fa)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:06+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"6be850de-05f8-4966-98df-a03d9ca9613d\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID 733061a3-acaa-4aaf-b675-1e10ba27e4fa)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID 733061a3-acaa-4aaf-b675-1e10ba27e4fa)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:06+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"1124ed10-bb0b-43f5-aa1a-29af8d009ce7\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID 733061a3-acaa-4aaf-b675-1e10ba27e4fa)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID 733061a3-acaa-4aaf-b675-1e10ba27e4fa)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:06+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:07+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"b11460ad-cbfa-42eb-82ec-a1e536067608\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID 733061a3-acaa-4aaf-b675-1e10ba27e4fa)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID 733061a3-acaa-4aaf-b675-1e10ba27e4fa)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:07+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"9f95ead8-623b-4163-a951-9900cd7038c1\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID 733061a3-acaa-4aaf-b675-1e10ba27e4fa)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID 733061a3-acaa-4aaf-b675-1e10ba27e4fa)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:07+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"4b441b9c-3b49-4bec-ad1b-e6a77f841f05\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID 733061a3-acaa-4aaf-b675-1e10ba27e4fa)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID 733061a3-acaa-4aaf-b675-1e10ba27e4fa)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:07+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"9a2c4620-245b-464d-901d-1a8c3c5be54f\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID 733061a3-acaa-4aaf-b675-1e10ba27e4fa)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID 733061a3-acaa-4aaf-b675-1e10ba27e4fa)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:07+08:00\tDEBUG\tevents\tsucceed to create pod complete-rollback-1-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback-1\",\"uid\":\"733061a3-acaa-4aaf-b675-1e10ba27e4fa\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"366\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:07+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"260054f9-339c-4bf7-9af7-05b879de7598\", \"pod\": {\"name\":\"complete-rollback-1-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:07+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"048291aa-08b0-4c7a-b361-305686d737f0\", \"pod\": {\"name\":\"complete-rollback-1-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:07+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"56c1ceb4-5c87-4fbc-9a89-27743c7c3931\", \"pod\": {\"name\":\"complete-rollback-1-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:07+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"14612632-5e0f-4700-90a2-7596297df5c3\", \"pod\": {\"name\":\"complete-rollback-1-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:07+08:00\tDEBUG\tevents\tdelete RoleInstance complete-rollback-2 in RoleInstanceSet complete-rollback successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback\",\"uid\":\"25e0ad31-25b5-466b-864a-3ae1cb1408c3\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"367\"}, \"reason\": \"SuccessfulDelete\"}\n2026-10-27T01:22:07+08:00\tINFO\tInstance has been deleted\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"8fac2d36-bafa-40c4-9d8b-44b66aa578fb\"}\n2026-10-27T01:22:07+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:07+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:07+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:07+08:00\tDEBUG\tevents\tcreate RoleInstance complete-rollback-2 in RoleInstanceSet complete-rollback successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback\",\"uid\":\"25e0ad31-25b5-466b-864a-3ae1cb1408c3\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"385\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:07+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:07+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"ffee4bec-978f-452e-bd6e-97c7923c40ea\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-2-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-2 (UID f11d6b11-4242-4ead-afc3-c8768b014f7f)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-2-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-2 (UID f11d6b11-4242-4ead-afc3-c8768b014f7f)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:07+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"bd70b864-b22a-4fac-be34-8343624f6412\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-2-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-2 (UID f11d6b11-4242-4ead-afc3-c8768b014f7f)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-2-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-2 (UID f11d6b11-4242-4ead-afc3-c8768b014f7f)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:07+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"0643fccf-5640-4bcc-bd1d-fcc8acb90967\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-2-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-2 (UID f11d6b11-4242-4ead-afc3-c8768b014f7f)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-2-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-2 (UID f11d6b11-4242-4ead-afc3-c8768b014f7f)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:07+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"927bee5f-b80a-4b02-a42c-9637493e3a44\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-2-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-2 (UID f11d6b11-4242-4ead-afc3-c8768b014f7f)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-2-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-2 (UID f11d6b11-4242-4ead-afc3-c8768b014f7f)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:07+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"588d381b-54cb-414d-be63-a8ea6f2a1b38\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-2-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-2 (UID f11d6b11-4242-4ead-afc3-c8768b014f7f)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-2-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-2 (UID f11d6b11-4242-4ead-afc3-c8768b014f7f)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:07+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"5731f133-ae07-4523-a51f-2901221b2fb6\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-2-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-2 (UID f11d6b11-4242-4ead-afc3-c8768b014f7f)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-2-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-2 (UID f11d6b11-4242-4ead-afc3-c8768b014f7f)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:07+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"0ab540bf-99ed-4eb3-8be0-de685f18e56b\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-2-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-2 (UID f11d6b11-4242-4ead-afc3-c8768b014f7f)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-2-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-2 (UID f11d6b11-4242-4ead-afc3-c8768b014f7f)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:07+08:00\tDEBUG\tevents\tsucceed to create pod complete-rollback-2-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback-2\",\"uid\":\"f11d6b11-4242-4ead-afc3-c8768b014f7f\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"391\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:07+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"ca8e76b4-1488-4105-b70a-b72b2b7971db\", \"pod\": {\"name\":\"complete-rollback-2-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:07+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"256744ed-1be5-44da-a19c-2ad6b0583761\", \"pod\": {\"name\":\"complete-rollback-2-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:08+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"7f8e9c54-932b-4b05-9827-4c0c36c086b4\", \"pod\": {\"name\":\"complete-rollback-2-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:08+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"53ecec01-e131-46ba-a4af-5783a8cf13a9\", \"pod\": {\"name\":\"complete-rollback-2-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:08+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:08+08:00\tDEBUG\tevents\tdelete RoleInstance complete-rollback-1 in RoleInstanceSet complete-rollback successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback\",\"uid\":\"25e0ad31-25b5-466b-864a-3ae1cb1408c3\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"404\"}, \"reason\": \"SuccessfulDelete\"}\n2026-10-27T01:22:08+08:00\tINFO\tInstance has been deleted\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"cc7d6298-43e2-4e0b-82b3-e5d3bbfc9fb2\"}\n2026-10-27T01:22:08+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:08+08:00\tDEBUG\tevents\tcreate RoleInstance complete-rollback-1 in RoleInstanceSet complete-rollback successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback\",\"uid\":\"25e0ad31-25b5-466b-864a-3ae1cb1408c3\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"408\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:08+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:08+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"e1b354f5-5116-4cf7-8542-1ee5389d806e\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID f547fcf2-8ecb-46a8-9530-a64e18a9c37e)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID f547fcf2-8ecb-46a8-9530-a64e18a9c37e)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:08+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"6199e384-f174-4ff3-a300-003491ee11d6\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID f547fcf2-8ecb-46a8-9530-a64e18a9c37e)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID f547fcf2-8ecb-46a8-9530-a64e18a9c37e)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:08+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"7800d5e9-836e-4822-bbc4-9fa20b9729a2\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID f547fcf2-8ecb-46a8-9530-a64e18a9c37e)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID f547fcf2-8ecb-46a8-9530-a64e18a9c37e)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:08+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"433419e9-236a-4bc6-bd02-c01c8d1977e6\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID f547fcf2-8ecb-46a8-9530-a64e18a9c37e)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID f547fcf2-8ecb-46a8-9530-a64e18a9c37e)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:08+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"17a4bc75-fb6d-4f65-a8b4-ae3f18b154e6\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID f547fcf2-8ecb-46a8-9530-a64e18a9c37e)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID f547fcf2-8ecb-46a8-9530-a64e18a9c37e)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:08+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"56a5769f-897a-423e-bd21-785fd9d4fc4a\", \"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID f547fcf2-8ecb-46a8-9530-a64e18a9c37e)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035325942630180/complete-rollback-1-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035325942630180/complete-rollback-1 (UID f547fcf2-8ecb-46a8-9530-a64e18a9c37e)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:08+08:00\tDEBUG\tevents\tsucceed to create pod complete-rollback-1-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback-1\",\"uid\":\"f547fcf2-8ecb-46a8-9530-a64e18a9c37e\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"412\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:08+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"93ff85d6-aed3-4313-94e9-86db2d15026d\", \"pod\": {\"name\":\"complete-rollback-1-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:08+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"8a8b3a8e-f4b4-4b77-ba88-aa86b7e6e458\", \"pod\": {\"name\":\"complete-rollback-1-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:08+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"136dab13-3b77-4819-914f-bd4ddbd1ee49\", \"pod\": {\"name\":\"complete-rollback-1-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:08+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:08+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:11+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-1\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-1\", \"reconcileID\": \"8141920d-dbc1-44da-8be8-42ca0b48980e\", \"pod\": {\"name\":\"complete-rollback-1-worker-0\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}}\n2026-10-27T01:22:11+08:00\tDEBUG\tevents\tdelete RoleInstance complete-rollback-2 in RoleInstanceSet complete-rollback successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-stateful-rollout-1793035325942630180\",\"name\":\"complete-rollback\",\"uid\":\"25e0ad31-25b5-466b-864a-3ae1cb1408c3\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"422\"}, \"reason\": \"SuccessfulDelete\"}\n2026-10-27T01:22:11+08:00\tINFO\tInstance has been deleted\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"74d8d0da-06c4-4d38-b5e0-74bf8ca63948\"}\n2026-10-27T01:22:11+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:11+08:00\tDEBUG\tenter workload.onUpdateFunc, test-stateful-rollout-1793035325942630180/complete-rollback, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:11+08:00\tINFO\tInstance has been deleted\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"932792d2-8d43-47d1-b72c-de9bd4ec5d8f\"}\n2026-10-27T01:22:11+08:00\tINFO\tInstance has been deleted\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"complete-rollback-2\",\"namespace\":\"test-stateful-rollout-1793035325942630180\"}, \"namespace\": \"test-stateful-rollout-1793035325942630180\", \"name\": \"complete-rollback-2\", \"reconcileID\": \"bb14f7e9-2181-4042-a086-21fce7e54c59\"}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 48
+            },
+            "TimelineLocation": {
+              "Order": 24,
+              "Time": "2026-10-27T01:22:05.94261715+08:00"
+            },
+            "Message": "Stateful RoleInstanceSet rollout recovery",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 48
+            },
+            "TimelineLocation": {
+              "Order": 26,
+              "Time": "2026-10-27T01:22:05.944204966+08:00"
+            },
+            "Message": "Stateful RoleInstanceSet rollout recovery",
+            "Duration": 1587806,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 218
+            },
+            "TimelineLocation": {
+              "Order": 27,
+              "Time": "2026-10-27T01:22:05.944206666+08:00"
+            },
+            "Message": "retains surge through a complete A to B to A rollback when partition decreases",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 228
+            },
+            "TimelineLocation": {
+              "Order": 28,
+              "Time": "2026-10-27T01:22:05.945563315+08:00"
+            },
+            "Message": "bringing both initial A instances to Ready"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 238
+            },
+            "TimelineLocation": {
+              "Offset": 5088,
+              "Order": 29,
+              "Time": "2026-10-27T01:22:06.709332652+08:00"
+            },
+            "Message": "rolling out B to ordinal 1 while ordinal 0 remains at A"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 251
+            },
+            "TimelineLocation": {
+              "Offset": 23086,
+              "Order": 30,
+              "Time": "2026-10-27T01:22:07.732593301+08:00"
+            },
+            "Message": "rolling back to A and holding the replacement base unready"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 263
+            },
+            "TimelineLocation": {
+              "Offset": 48936,
+              "Order": 31,
+              "Time": "2026-10-27T01:22:08.75448145+08:00"
+            },
+            "Message": "lowering partition without releasing the Ready surge"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 274
+            },
+            "TimelineLocation": {
+              "Offset": 49244,
+              "Order": 32,
+              "Time": "2026-10-27T01:22:11.010342341+08:00"
+            },
+            "Message": "releasing surge only after the replacement base is Ready"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 218
+            },
+            "TimelineLocation": {
+              "Offset": 51705,
+              "Order": 34,
+              "Time": "2026-10-27T01:22:11.520336742+08:00"
+            },
+            "Message": "retains surge through a complete A to B to A rollback when partition decreases",
+            "Duration": 5576130076,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 53
+            },
+            "TimelineLocation": {
+              "Offset": 51705,
+              "Order": 35,
+              "Time": "2026-10-27T01:22:11.520343542+08:00"
+            },
+            "Message": "Stateful RoleInstanceSet rollout recovery",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/rollout_recovery_test.go",
+              "LineNumber": 53
+            },
+            "TimelineLocation": {
+              "Offset": 51705,
+              "Order": 37,
+              "Time": "2026-10-27T01:22:14.549996928+08:00"
+            },
+            "Message": "Stateful RoleInstanceSet rollout recovery",
+            "Duration": 3029653386,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Migration orphan Pod recovery (issue #511 / PR #512)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+            "LineNumber": 56
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+          "LineNumber": 109
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "records FailedScale and retries while a foreign-owned Pod squats the stable name",
+        "State": "passed",
+        "StartTime": "2026-10-27T01:22:14.550049339+08:00",
+        "EndTime": "2026-10-27T01:22:22.09179005+08:00",
+        "RunTime": 7541740711,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T01:22:14+08:00\tDEBUG\tevents\tcreate RoleInstance orphan-cond-0 in RoleInstanceSet orphan-cond successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-orphan-mig-1793035334550060910\",\"name\":\"orphan-cond\",\"uid\":\"b75642ce-dd13-4806-a78d-66e79bb4fb7a\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"438\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:14+08:00\tDEBUG\tenter workload.onUpdateFunc, test-orphan-mig-1793035334550060910/orphan-cond, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:14+08:00\tDEBUG\tevents\tsucceed to create pod orphan-cond-0-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-orphan-mig-1793035334550060910\",\"name\":\"orphan-cond-0\",\"uid\":\"65dd77b9-94f8-47ed-be40-1f32eae462b2\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"440\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:14+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"fa9af6f7-0063-4c5b-b01a-e0843c0d940f\", \"pod\": {\"name\":\"orphan-cond-0-worker-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}}\n2026-10-27T01:22:14+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"aed0ebb7-647d-4c98-b973-fd43ee3eb1af\", \"pod\": {\"name\":\"orphan-cond-0-worker-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}}\n2026-10-27T01:22:14+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"ba3e4753-55d2-4066-88dc-75a88a3b8168\", \"pod\": {\"name\":\"orphan-cond-0-worker-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}}\n2026-10-27T01:22:14+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"cbe3b006-126a-4daa-bfbf-9fa894d29f7e\", \"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:14+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"ff68ff26-44ae-40b5-a5f6-cb92fe7354c2\", \"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:14+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"5d38d4cf-20ca-49fd-9cab-6678a98feefc\", \"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:14+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"db73ca3f-6061-43e6-8e95-7a6a214c1820\", \"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:14+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"d351019f-2ef9-47ff-9a52-df14ca74ea47\", \"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:14+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"2149e9ae-e0b4-4e10-bd93-e519a6bfaaed\", \"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:15+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"cf6aad7a-6625-47d8-b9c2-61fae1e3e85f\", \"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:15+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"b6cd7682-725a-4127-b6aa-fe4ce6f23cc6\", \"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:15+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stale-rollout-0\",\"namespace\":\"test-stateful-rollout-1793035302581634268\"}, \"namespace\": \"test-stateful-rollout-1793035302581634268\", \"name\": \"stale-rollout-0\", \"reconcileID\": \"608efb71-035e-4161-a877-7e235f98491c\", \"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\", \"errorCauses\": [{\"error\": \"pod test-stateful-rollout-1793035302581634268/stale-rollout-0-worker-0 is not controlled by RoleInstance test-stateful-rollout-1793035302581634268/stale-rollout-0 (UID 5738abc6-766f-4a41-aabd-8ba0d2c7fc4a)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:16+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"c0881c2a-2508-48d0-bb3e-2a71fa31bcf2\", \"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:17+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"7ce4afe6-349d-4214-a7a0-5fc06fde2f36\", \"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:19+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"e3cd6351-c5df-4b8f-9a65-f03795874014\", \"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+              "LineNumber": 64
+            },
+            "TimelineLocation": {
+              "Order": 38,
+              "Time": "2026-10-27T01:22:14.55005375+08:00"
+            },
+            "Message": "Migration orphan Pod recovery (issue #511 / PR #512)",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+              "LineNumber": 64
+            },
+            "TimelineLocation": {
+              "Order": 40,
+              "Time": "2026-10-27T01:22:14.551997449+08:00"
+            },
+            "Message": "Migration orphan Pod recovery (issue #511 / PR #512)",
+            "Duration": 1943709,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+              "LineNumber": 109
+            },
+            "TimelineLocation": {
+              "Order": 41,
+              "Time": "2026-10-27T01:22:14.551999769+08:00"
+            },
+            "Message": "records FailedScale and retries while a foreign-owned Pod squats the stable name",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+              "LineNumber": 109
+            },
+            "TimelineLocation": {
+              "Offset": 17742,
+              "Order": 43,
+              "Time": "2026-10-27T01:22:19.064469807+08:00"
+            },
+            "Message": "records FailedScale and retries while a foreign-owned Pod squats the stable name",
+            "Duration": 4512470038,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+              "LineNumber": 69
+            },
+            "TimelineLocation": {
+              "Offset": 17742,
+              "Order": 44,
+              "Time": "2026-10-27T01:22:19.064483728+08:00"
+            },
+            "Message": "Migration orphan Pod recovery (issue #511 / PR #512)",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+              "LineNumber": 69
+            },
+            "TimelineLocation": {
+              "Offset": 19141,
+              "Order": 46,
+              "Time": "2026-10-27T01:22:22.09178452+08:00"
+            },
+            "Message": "Migration orphan Pod recovery (issue #511 / PR #512)",
+            "Duration": 3027300802,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Migration orphan Pod recovery (issue #511 / PR #512)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+            "LineNumber": 56
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+          "LineNumber": 138
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "creates the replacement Pod after the foreign Pod is GC'd, without a manual reconcile",
+        "State": "passed",
+        "StartTime": "2026-10-27T01:22:22.091828721+08:00",
+        "EndTime": "2026-10-27T01:22:25.880696042+08:00",
+        "RunTime": 3788867321,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T01:22:22+08:00\tDEBUG\tevents\tcreate RoleInstance orphan-gc-0 in RoleInstanceSet orphan-gc successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-orphan-mig-1793035342091842072\",\"name\":\"orphan-gc\",\"uid\":\"2849bbaf-e1b9-4a24-b0f3-23638f4108a4\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"456\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:22+08:00\tDEBUG\tenter workload.onUpdateFunc, test-orphan-mig-1793035342091842072/orphan-gc, type: *v1alpha2.RoleInstanceSet\n2026-10-27T01:22:22+08:00\tDEBUG\tevents\tsucceed to create pod orphan-gc-0-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-orphan-mig-1793035342091842072\",\"name\":\"orphan-gc-0\",\"uid\":\"18f02ab0-2c36-49d1-b260-25d968338c87\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"458\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:22+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-gc-0\",\"namespace\":\"test-orphan-mig-1793035342091842072\"}, \"namespace\": \"test-orphan-mig-1793035342091842072\", \"name\": \"orphan-gc-0\", \"reconcileID\": \"612e0783-9842-43a5-8413-53f929092045\", \"pod\": {\"name\":\"orphan-gc-0-worker-0\",\"namespace\":\"test-orphan-mig-1793035342091842072\"}}\n2026-10-27T01:22:22+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-gc-0\",\"namespace\":\"test-orphan-mig-1793035342091842072\"}, \"namespace\": \"test-orphan-mig-1793035342091842072\", \"name\": \"orphan-gc-0\", \"reconcileID\": \"4876e723-2bac-44d1-842f-96289e9e6181\", \"pod\": {\"name\":\"orphan-gc-0-worker-0\",\"namespace\":\"test-orphan-mig-1793035342091842072\"}}\n2026-10-27T01:22:22+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-gc-0\",\"namespace\":\"test-orphan-mig-1793035342091842072\"}, \"namespace\": \"test-orphan-mig-1793035342091842072\", \"name\": \"orphan-gc-0\", \"reconcileID\": \"2a6e06b2-098d-4fa1-938d-ac01f59dd25a\", \"error\": \"pod test-orphan-mig-1793035342091842072/orphan-gc-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035342091842072/orphan-gc-0 (UID 18f02ab0-2c36-49d1-b260-25d968338c87)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035342091842072/orphan-gc-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035342091842072/orphan-gc-0 (UID 18f02ab0-2c36-49d1-b260-25d968338c87)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:22+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-gc-0\",\"namespace\":\"test-orphan-mig-1793035342091842072\"}, \"namespace\": \"test-orphan-mig-1793035342091842072\", \"name\": \"orphan-gc-0\", \"reconcileID\": \"44cd6733-dcd6-4b56-a86d-409ce0baa828\", \"error\": \"pod test-orphan-mig-1793035342091842072/orphan-gc-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035342091842072/orphan-gc-0 (UID 18f02ab0-2c36-49d1-b260-25d968338c87)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035342091842072/orphan-gc-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035342091842072/orphan-gc-0 (UID 18f02ab0-2c36-49d1-b260-25d968338c87)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:22+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-gc-0\",\"namespace\":\"test-orphan-mig-1793035342091842072\"}, \"namespace\": \"test-orphan-mig-1793035342091842072\", \"name\": \"orphan-gc-0\", \"reconcileID\": \"cf371eca-4bad-4cae-a14c-f880e23cd4df\", \"error\": \"pod test-orphan-mig-1793035342091842072/orphan-gc-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035342091842072/orphan-gc-0 (UID 18f02ab0-2c36-49d1-b260-25d968338c87)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035342091842072/orphan-gc-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035342091842072/orphan-gc-0 (UID 18f02ab0-2c36-49d1-b260-25d968338c87)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:22+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-gc-0\",\"namespace\":\"test-orphan-mig-1793035342091842072\"}, \"namespace\": \"test-orphan-mig-1793035342091842072\", \"name\": \"orphan-gc-0\", \"reconcileID\": \"1e11340b-2455-4db3-91c8-2ea8e44fd712\", \"error\": \"pod test-orphan-mig-1793035342091842072/orphan-gc-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035342091842072/orphan-gc-0 (UID 18f02ab0-2c36-49d1-b260-25d968338c87)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035342091842072/orphan-gc-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035342091842072/orphan-gc-0 (UID 18f02ab0-2c36-49d1-b260-25d968338c87)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:22+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-gc-0\",\"namespace\":\"test-orphan-mig-1793035342091842072\"}, \"namespace\": \"test-orphan-mig-1793035342091842072\", \"name\": \"orphan-gc-0\", \"reconcileID\": \"18a13c6e-6a44-4c10-9c96-4fc53dab7f05\", \"error\": \"pod test-orphan-mig-1793035342091842072/orphan-gc-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035342091842072/orphan-gc-0 (UID 18f02ab0-2c36-49d1-b260-25d968338c87)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035342091842072/orphan-gc-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035342091842072/orphan-gc-0 (UID 18f02ab0-2c36-49d1-b260-25d968338c87)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:22+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-gc-0\",\"namespace\":\"test-orphan-mig-1793035342091842072\"}, \"namespace\": \"test-orphan-mig-1793035342091842072\", \"name\": \"orphan-gc-0\", \"reconcileID\": \"48d90d99-3472-4346-849a-002ebbbb5cf5\", \"error\": \"pod test-orphan-mig-1793035342091842072/orphan-gc-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035342091842072/orphan-gc-0 (UID 18f02ab0-2c36-49d1-b260-25d968338c87)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035342091842072/orphan-gc-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035342091842072/orphan-gc-0 (UID 18f02ab0-2c36-49d1-b260-25d968338c87)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n2026-10-27T01:22:22+08:00\tDEBUG\tevents\tsucceed to create pod orphan-gc-0-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-orphan-mig-1793035342091842072\",\"name\":\"orphan-gc-0\",\"uid\":\"18f02ab0-2c36-49d1-b260-25d968338c87\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"469\"}, \"reason\": \"SuccessfulCreate\"}\n2026-10-27T01:22:22+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-gc-0\",\"namespace\":\"test-orphan-mig-1793035342091842072\"}, \"namespace\": \"test-orphan-mig-1793035342091842072\", \"name\": \"orphan-gc-0\", \"reconcileID\": \"38dce757-29b3-4b02-9f27-c7941008ffb6\", \"pod\": {\"name\":\"orphan-gc-0-worker-0\",\"namespace\":\"test-orphan-mig-1793035342091842072\"}}\n2026-10-27T01:22:22+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-gc-0\",\"namespace\":\"test-orphan-mig-1793035342091842072\"}, \"namespace\": \"test-orphan-mig-1793035342091842072\", \"name\": \"orphan-gc-0\", \"reconcileID\": \"f6e84542-c355-427e-8acf-9ae77e2d4e5a\", \"pod\": {\"name\":\"orphan-gc-0-worker-0\",\"namespace\":\"test-orphan-mig-1793035342091842072\"}}\n2026-10-27T01:22:25+08:00\tERROR\tReconciler error\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"orphan-cond-0\",\"namespace\":\"test-orphan-mig-1793035334550060910\"}, \"namespace\": \"test-orphan-mig-1793035334550060910\", \"name\": \"orphan-cond-0\", \"reconcileID\": \"1af0b6ee-1928-4cce-880d-d8521e4d8ce0\", \"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\", \"errorCauses\": [{\"error\": \"pod test-orphan-mig-1793035334550060910/orphan-cond-0-worker-0 is not controlled by RoleInstance test-orphan-mig-1793035334550060910/orphan-cond-0 (UID 65dd77b9-94f8-47ed-be40-1f32eae462b2)\"}]}\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).reconcileHandler\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:474\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).processNextWorkItem\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:421\nsigs.k8s.io/controller-runtime/pkg/internal/controller.(*Controller[...]).Start.func1.1\n\t/home/ecs-user/go/pkg/mod/sigs.k8s.io/controller-runtime@v0.22.1/pkg/internal/controller/controller.go:296\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+              "LineNumber": 64
+            },
+            "TimelineLocation": {
+              "Order": 47,
+              "Time": "2026-10-27T01:22:22.091833221+08:00"
+            },
+            "Message": "Migration orphan Pod recovery (issue #511 / PR #512)",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+              "LineNumber": 64
+            },
+            "TimelineLocation": {
+              "Order": 49,
+              "Time": "2026-10-27T01:22:22.093633196+08:00"
+            },
+            "Message": "Migration orphan Pod recovery (issue #511 / PR #512)",
+            "Duration": 1799964,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+              "LineNumber": 138
+            },
+            "TimelineLocation": {
+              "Order": 50,
+              "Time": "2026-10-27T01:22:22.093635306+08:00"
+            },
+            "Message": "creates the replacement Pod after the foreign Pod is GC'd, without a manual reconcile",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+              "LineNumber": 138
+            },
+            "TimelineLocation": {
+              "Offset": 11415,
+              "Order": 52,
+              "Time": "2026-10-27T01:22:22.856662227+08:00"
+            },
+            "Message": "creates the replacement Pod after the foreign Pod is GC'd, without a manual reconcile",
+            "Duration": 763026911,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+              "LineNumber": 69
+            },
+            "TimelineLocation": {
+              "Offset": 11415,
+              "Order": 53,
+              "Time": "2026-10-27T01:22:22.856668127+08:00"
+            },
+            "Message": "Migration orphan Pod recovery (issue #511 / PR #512)",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/orphan_pod_recovery_test.go",
+              "LineNumber": 69
+            },
+            "TimelineLocation": {
+              "Offset": 12814,
+              "Order": 55,
+              "Time": "2026-10-27T01:22:25.880690182+08:00"
+            },
+            "Message": "Migration orphan Pod recovery (issue #511 / PR #512)",
+            "Duration": 3024022065,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/suite_test.go",
+          "LineNumber": 36
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-27T01:22:25.880731044+08:00",
+        "EndTime": "2026-10-27T01:22:25.903207844+08:00",
+        "RunTime": 22476790,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T01:22:25+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-10-27T01:22:25+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-10-27T01:22:25+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-10-27T01:22:25+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-10-27T01:22:25+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-10-27T01:22:25+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-10-27T01:22:25+08:00\tINFO\tAll workers finished\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-10-27T01:22:25+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-10-27T01:22:25+08:00\tINFO\tAll workers finished\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-10-27T01:22:25+08:00\tINFO\tAll workers finished\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-10-27T01:22:25+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-10-27T01:22:25+08:00\tINFO\tAll workers finished\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-10-27T01:22:25+08:00\tINFO\tAll workers finished\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-10-27T01:22:25+08:00\tINFO\tStopping and waiting for caches\n2026-10-27T01:22:25+08:00\tINFO\tStopping and waiting for webhooks\n2026-10-27T01:22:25+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-10-27T01:22:25+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/suite_test.go",
+              "LineNumber": 36
+            },
+            "TimelineLocation": {
+              "Order": 56,
+              "Time": "2026-10-27T01:22:25.880732494+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testutil/setup.go",
+              "LineNumber": 140
+            },
+            "TimelineLocation": {
+              "Order": 57,
+              "Time": "2026-10-27T01:22:25.880754575+08:00"
+            },
+            "Message": "tearing down the test environment"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/stateful/suite_test.go",
+              "LineNumber": 36
+            },
+            "TimelineLocation": {
+              "Offset": 2441,
+              "Order": 59,
+              "Time": "2026-10-27T01:22:25.903206064+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 22473570,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]

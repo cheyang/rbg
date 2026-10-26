@@ -1,0 +1,5 @@
+replaces a stably unhealthy rollout target through the controller requeue path	pass
+recovers early-rollback surge protection from persisted status	pass
+retains surge through a complete A to B to A rollback when partition decreases	pass
+records FailedScale and retries while a foreign-owned Pod squats the stable name	pass
+creates the replacement Pod after the foreign Pod is GC'd, without a manual reconcile	pass

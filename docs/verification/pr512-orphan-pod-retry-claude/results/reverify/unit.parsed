@@ -1,0 +1,6 @@
+TestOrphanPodContractForeignOwner	pass
+TestOrphanPodContractOwnedPodSkipped	pass
+TestOrphanPodContractBarePodCollision	pass
+TestOrphanPodContractGangStillErrors	pass
+TestOrphanPodContractMultiComponentAbort	pass
+TestScaleErrorsAndCreatesAfterOrphanPodGC	pass
