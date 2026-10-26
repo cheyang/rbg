@@ -34,9 +34,15 @@ package workloads
 //     bypass), N4 (F4b mid-run unscheduled gap + replacement warming), N5 (F5
 //     orphan active Pod vs the timeout safety net). N1/N4/N5 were RED at the
 //     round-2 head 60b1b7cb and are GREEN at b0915b21 (round 3).
+//   - TestVerifyR4* round-4 contracts (head 92cb7ef): R4-F9 (collapsed-settle
+//     honors maxFailedNodes) and R4-Q4 (per-role readiness deficits; surplus
+//     scheduled Pods in one role cannot mask a Pending Pod in another). Both RED
+//     at the round-3 head b0915b21 and GREEN at 92cb7ef. N1's TargetReady
+//     assertion was updated to Unknown (the round-4 Q2 contract).
 
 import (
 	"context"
+	"strings"
 	"testing"
 	"time"
 
@@ -497,9 +503,13 @@ func TestVerifyN1TargetDeletedMidRunWithActivePodStaysRunning(t *testing.T) {
 	if after.Status.Active != 1 {
 		t.Fatalf("N1/F4a: Active must keep accounting the running Pod, got %d", after.Status.Active)
 	}
+	// Condition polarity is deliberately loose here so N1 stays a stable F4a/F7
+	// regression test across the round-3 (False) and round-4 (Unknown) condition
+	// evolution; the exact Unknown contract is pinned by TestVerifyR4Q2 below.
 	if cond := apimeta.FindStatusCondition(after.Status.Conditions, "TargetReady"); cond == nil ||
-		cond.Status != metav1.ConditionFalse || cond.Reason != "RoleBasedGroupNotFound" {
-		t.Fatalf("N1: expected TargetReady=False/RoleBasedGroupNotFound, got %#v", after.Status.Conditions)
+		cond.Reason != "RoleBasedGroupNotFound" || cond.Status == metav1.ConditionTrue {
+		t.Fatalf("N1: expected TargetReady!=True/RoleBasedGroupNotFound after a started target "+
+			"disappears, got %#v", after.Status.Conditions)
 	}
 
 	// Once the Pod succeeds, the job completes with a truthful reason (not
@@ -528,6 +538,237 @@ func TestVerifyN1TargetDeletedMidRunWithActivePodStaysRunning(t *testing.T) {
 	if final.Status.StartTime == nil || !final.Status.StartTime.Time.Equal(startTime.Time) {
 		t.Fatalf("N1/F7: startTime must be preserved on mid-run-deletion completion, was %v now %v",
 			startTime, final.Status.StartTime)
+	}
+}
+
+// R4-Q2 (round 4, contract — the round-3 Q2 fix) — once a started Warmup's
+// target disappears, TargetReady is recorded as Unknown/RoleBasedGroupNotFound
+// (not False) both while the job keeps Running and on its terminal Completed
+// state, so Complete=True is never paired with a claim that a deleted target is
+// currently not-ready/ready. RED at b0915b21 (recorded False); GREEN at 92cb7ef.
+func TestVerifyR4Q2DeletedTargetMidRunRecordsTargetReadyUnknown(t *testing.T) {
+	ctx := context.Background()
+	warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
+		ObjectMeta: metav1.ObjectMeta{Name: "v478-r4q2", Namespace: "default", UID: "uid-v478-r4q2"},
+		Spec:       verify478Spec("v478-r4q2-rbg"),
+	}
+	r := newWarmupReconciler(warmup, verify478RBG("v478-r4q2-rbg"),
+		verify478TargetPod("v478-r4q2-rbg", "v478-r4q2-worker-0", "node-1"))
+
+	// Creates the warmup Pod (still active).
+	if _, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)}); err != nil {
+		t.Fatalf("reconcile: %v", err)
+	}
+	pods := &corev1.PodList{}
+	if err := r.List(ctx, pods, client.MatchingLabels{LabelWarmupName: warmup.Name}); err != nil {
+		t.Fatalf("list warmup pods: %v", err)
+	}
+	if len(pods.Items) != 1 {
+		t.Fatalf("expected 1 active warmup Pod, got %d", len(pods.Items))
+	}
+
+	// The target RBG and its Pods vanish mid-run; the warmup Pod keeps running.
+	target := &corev1.PodList{}
+	if err := r.List(ctx, target, client.MatchingLabels{constants.GroupNameLabelKey: "v478-r4q2-rbg"}); err != nil {
+		t.Fatalf("list target pods: %v", err)
+	}
+	for i := range target.Items {
+		if err := r.Delete(ctx, &target.Items[i]); err != nil {
+			t.Fatalf("delete target pod: %v", err)
+		}
+	}
+	rbg := &workloadsv1alpha2.RoleBasedGroup{}
+	if err := r.Get(ctx, types.NamespacedName{Name: "v478-r4q2-rbg", Namespace: "default"}, rbg); err != nil {
+		t.Fatalf("get rbg: %v", err)
+	}
+	if err := r.Delete(ctx, rbg); err != nil {
+		t.Fatalf("delete rbg: %v", err)
+	}
+
+	if _, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)}); err != nil {
+		t.Fatalf("reconcile after target deletion: %v", err)
+	}
+	after := verify478Get(t, r, warmup.Name)
+	if cond := apimeta.FindStatusCondition(after.Status.Conditions, "TargetReady"); cond == nil ||
+		cond.Status != metav1.ConditionUnknown || cond.Reason != "RoleBasedGroupNotFound" {
+		t.Fatalf("R4-Q2: while Running with the target gone, expected "+
+			"TargetReady=Unknown/RoleBasedGroupNotFound, got %#v", after.Status.Conditions)
+	}
+
+	// The Pod succeeds; the terminal Completed job must keep the Unknown status.
+	succeeded := pods.Items[0].DeepCopy()
+	succeeded.Status.Phase = corev1.PodSucceeded
+	if err := r.Status().Update(ctx, succeeded); err != nil {
+		t.Fatalf("succeed warmup pod: %v", err)
+	}
+	if _, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)}); err != nil {
+		t.Fatalf("reconcile after pod success: %v", err)
+	}
+	final := verify478Get(t, r, warmup.Name)
+	if final.Status.Phase != workloadsv1alpha2.WarmupJobPhaseCompleted {
+		t.Fatalf("R4-Q2: the Warmup must complete once its Pod is terminal, got %q (conditions=%#v)",
+			final.Status.Phase, final.Status.Conditions)
+	}
+	if cond := apimeta.FindStatusCondition(final.Status.Conditions, "TargetReady"); cond == nil ||
+		cond.Status != metav1.ConditionUnknown || cond.Reason != "RoleBasedGroupNotFound" {
+		t.Fatalf("R4-Q2: a terminal Completed job must not pair Complete=True with "+
+			"TargetReady=False; expected Unknown/RoleBasedGroupNotFound, got %#v", final.Status.Conditions)
+	}
+}
+
+// R4-F9 (round 4, contract — the round-3 F9 fix) — a Warmup whose desired set
+// collapsed mid-run applies the same maxFailedNodes tolerance as a non-empty
+// desired set: a failed attempt within tolerance completes the job (with the
+// failure counted) instead of failing it, and only failures beyond the threshold
+// fail with MaxFailedNodesExceeded. RED at b0915b21 (within tolerance settled
+// Failed/InvalidTarget); GREEN at 92cb7ef.
+func TestVerifyR4CollapsedSettleHonorsMaxFailedNodes(t *testing.T) {
+	ctx := context.Background()
+	cases := []struct {
+		name        string
+		policies    *workloadsv1alpha2.WarmupPolicies
+		wantFailed  bool
+		wantReason  string
+		wantFailedN int32
+	}{
+		{
+			name:        "no policy tolerates the failed attempt",
+			policies:    nil,
+			wantFailed:  false,
+			wantReason:  "WarmupCompleted",
+			wantFailedN: 1,
+		},
+		{
+			name: "failure within maxFailedNodes completes",
+			policies: &workloadsv1alpha2.WarmupPolicies{
+				BackoffLimitPerNode: ptr.To(int32(2)),
+				MaxFailedNodes:      ptr.To(int32(1)),
+			},
+			wantFailed:  false,
+			wantReason:  "WarmupCompleted",
+			wantFailedN: 1,
+		},
+		{
+			name: "failure beyond maxFailedNodes fails",
+			policies: &workloadsv1alpha2.WarmupPolicies{
+				BackoffLimitPerNode: ptr.To(int32(2)),
+				MaxFailedNodes:      ptr.To(int32(0)),
+			},
+			wantFailed:  true,
+			wantReason:  "MaxFailedNodesExceeded",
+			wantFailedN: 1,
+		},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			started := metav1.NewTime(time.Now().Add(-5 * time.Minute))
+			warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      "v478-r4f9-" + strings.ToLower(strings.ReplaceAll(tc.name, " ", "-")),
+					Namespace: "default",
+					UID:       types.UID("uid-v478-r4f9-" + strings.ToLower(strings.ReplaceAll(tc.name, " ", "-"))),
+				},
+				Spec:   verify478Spec("v478-r4f9-rbg"),
+				Status: workloadsv1alpha2.RoleBasedGroupWarmupStatus{Phase: workloadsv1alpha2.WarmupJobPhaseRunning, StartTime: &started},
+			}
+			warmup.Spec.Policies = tc.policies
+			// The target RBG was deleted mid-run after node-1's attempt failed.
+			failed := makeWarmupPod("v478-r4f9-pod", "default", warmup.Name, string(warmup.UID), "node-1", corev1.PodFailed)
+			r := newWarmupReconciler(warmup, failed)
+
+			if _, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)}); err != nil {
+				t.Fatalf("reconcile: %v", err)
+			}
+			after := verify478Get(t, r, warmup.Name)
+			condType, wantPhase := "Complete", workloadsv1alpha2.WarmupJobPhaseCompleted
+			if tc.wantFailed {
+				condType, wantPhase = "Failed", workloadsv1alpha2.WarmupJobPhaseFailed
+			}
+			if after.Status.Phase != wantPhase {
+				t.Fatalf("R4-F9: expected phase %q, got %q (conditions=%#v)",
+					wantPhase, after.Status.Phase, after.Status.Conditions)
+			}
+			if cond := apimeta.FindStatusCondition(after.Status.Conditions, condType); cond == nil || cond.Reason != tc.wantReason {
+				t.Fatalf("R4-F9: expected %s/%s, got %#v", condType, tc.wantReason, after.Status.Conditions)
+			}
+			if after.Status.Failed != tc.wantFailedN {
+				t.Fatalf("R4-F9: the unsucceeded attempt must be counted, expected failed=%d got %d",
+					tc.wantFailedN, after.Status.Failed)
+			}
+		})
+	}
+}
+
+// R4-Q4 (round 4, contract — the round-3 Q4 fix) — readiness deficits are
+// computed per selected role, so surplus scheduled Pods in one role must not
+// mask a missing/Pending Pod in another selected role. RED at b0915b21 (the
+// aggregate expected-scheduled subtraction masked the worker's deficit);
+// GREEN at 92cb7ef.
+func TestVerifyR4CrossRoleSurplusDoesNotMaskPendingTargetPod(t *testing.T) {
+	ctx := context.Background()
+	warmup := &workloadsv1alpha2.RoleBasedGroupWarmup{
+		ObjectMeta: metav1.ObjectMeta{Name: "v478-r4q4", Namespace: "default", UID: "uid-v478-r4q4"},
+		Spec: workloadsv1alpha2.RoleBasedGroupWarmupSpec{
+			TargetRoleBasedGroup: &workloadsv1alpha2.TargetRoleBasedGroup{
+				Name: "v478-r4q4-rbg",
+				Roles: map[string]workloadsv1alpha2.WarmupActions{
+					"router": {ImagePreload: &workloadsv1alpha2.ImagePreloadAction{Images: []string{"busybox:1.36"}}},
+					"worker": {ImagePreload: &workloadsv1alpha2.ImagePreloadAction{Images: []string{"busybox:1.36"}}},
+				},
+			},
+		},
+	}
+	rbg := &workloadsv1alpha2.RoleBasedGroup{
+		ObjectMeta: metav1.ObjectMeta{Name: "v478-r4q4-rbg", Namespace: "default"},
+		Spec: workloadsv1alpha2.RoleBasedGroupSpec{
+			Roles: []workloadsv1alpha2.RoleSpec{
+				{Name: "router", Replicas: ptr.To(int32(1))},
+				{Name: "worker", Replicas: ptr.To(int32(1))},
+			},
+		},
+	}
+	targetPod := func(name, role, node string) *corev1.Pod {
+		return &corev1.Pod{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      name,
+				Namespace: "default",
+				Labels: map[string]string{
+					constants.GroupNameLabelKey: "v478-r4q4-rbg",
+					constants.RoleNameLabelKey:  role,
+				},
+			},
+			Spec: corev1.PodSpec{NodeName: node},
+		}
+	}
+	// Rollout surge: two live scheduled router Pods (replicas=1, one extra) while
+	// the worker Pod is still Pending (no node assignment).
+	r := newWarmupReconciler(warmup, rbg,
+		targetPod("v478-r4q4-router-0", "router", "node-1"),
+		targetPod("v478-r4q4-router-1", "router", "node-2"),
+		targetPod("v478-r4q4-worker-0", "worker", ""))
+
+	result, err := r.Reconcile(ctx, ctrl.Request{NamespacedName: client.ObjectKeyFromObject(warmup)})
+	if err != nil {
+		t.Fatalf("reconcile: %v", err)
+	}
+	after := verify478Get(t, r, warmup.Name)
+	if after.Status.Phase == workloadsv1alpha2.WarmupJobPhaseCompleted {
+		t.Fatalf("R4-Q4: a Pending worker Pod must not be masked by surplus router Pods "+
+			"(phase=%q, conditions=%#v)", after.Status.Phase, after.Status.Conditions)
+	}
+	if cond := apimeta.FindStatusCondition(after.Status.Conditions, "TargetReady"); cond == nil ||
+		cond.Status != metav1.ConditionFalse || cond.Reason != "TargetPodsNotScheduled" {
+		t.Fatalf("R4-Q4: expected TargetReady=False/TargetPodsNotScheduled, got %#v", after.Status.Conditions)
+	}
+	if result.RequeueAfter == 0 {
+		t.Fatalf("R4-Q4: the Warmup must requeue while a selected role is not ready")
+	}
+	pods := &corev1.PodList{}
+	if err := r.List(ctx, pods, client.MatchingLabels{LabelWarmupName: warmup.Name}); err != nil {
+		t.Fatalf("list warmup pods: %v", err)
+	}
+	if len(pods.Items) != 0 {
+		t.Fatalf("R4-Q4: no warmup Pod may start while a selected role is not ready, got %d", len(pods.Items))
 	}
 }
 
