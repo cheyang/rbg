@@ -1,0 +1,1 @@
+428:exclude the child from `readyReplicas` and `updatedReadyReplicas`, even when its

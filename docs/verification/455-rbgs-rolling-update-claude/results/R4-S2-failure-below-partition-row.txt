@@ -1,0 +1,1 @@
+284:| A group is already unavailable when a surge rollout starts | Its failure has spent part of `maxUnavailable`, but it must not stall the batch: surge is sized from the headroom the ready base count actually has left, so the serving in-scope groups still get their replacements and capacity stays at the floor. The failed group never becomes an update candidate. |

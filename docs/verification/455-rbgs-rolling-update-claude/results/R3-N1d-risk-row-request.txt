@@ -1,0 +1,1 @@
+94:| A metadata-only `InPlaceUpdate` retains old Ready and rollout conditions | Persist a new request with the child update; keep the child unavailable to the rollout budget until its controller acknowledges downstream completion. Include Pod-shaping group annotations in expected role hashes. See [Child Rollout Barrier](#child-rollout-barrier). |

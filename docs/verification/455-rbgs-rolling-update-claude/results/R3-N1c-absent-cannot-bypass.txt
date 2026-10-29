@@ -1,0 +1,2 @@
+302:condition retains the legacy fallback, but never bypasses a pending request.
+542:  readiness fallback, but a missing condition cannot bypass an issued request.

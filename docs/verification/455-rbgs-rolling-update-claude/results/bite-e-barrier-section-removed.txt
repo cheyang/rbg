@@ -1,0 +1,13 @@
+bite E (round 2, 2026-10-14): "### Child Rollout Barrier" section stripped from
+the KEP (round-1 state simulated), KEP text only (no code touched).
+Commit object built via temp-index commit-tree on parent b03a7e67; origin/pr/491
+temporarily pointed at it, then restored to b03a7e67.
+R2-F1 grep with the section removed (expect no matches, rc=1):
+rc=1 (no matches)
+R2-F1 at real head (expect matches):
+288:### Child Rollout Barrier
+297:**Producer.** ...
+307:**Ordering invariant.** ...
+314:**Consumer.** ...
+Conclusion: the R2-F1 contract check genuinely detects the barrier design's
+presence; it is a real regression test for the round-1 fix.

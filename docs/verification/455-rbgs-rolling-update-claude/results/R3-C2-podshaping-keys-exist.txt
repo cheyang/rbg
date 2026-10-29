@@ -1,0 +1,3 @@
+25:	GroupExclusiveTopologyKey = RBGPrefix + "group-exclusive-topology"
+43:	GangSchedulingAnnotationKey = RBGPrefix + "group-gang-scheduling"
+120:	RoleInstanceGangSchedulingAnnotationKey = RBGPrefix + "role-instance-gang-scheduling"

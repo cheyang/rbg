@@ -1,0 +1,2 @@
+228:- **Canonical payload:** The hashed bytes and the stored `data` are the same
+462:- **Canonical payload**: the stored `data` stays byte-identical when a

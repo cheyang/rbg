@@ -1,0 +1,3 @@
+48:func PatchObjectApplyConfiguration(
+71:			ctx, patch, client.Apply, &client.PatchOptions{
+84:			ctx, patch, client.Apply,

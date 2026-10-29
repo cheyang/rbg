@@ -1,0 +1,543 @@
+{
+  "topic": "455-rbgs-rolling-update-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/491",
+  "harnessPaths": [
+    "docs/verification/455-rbgs-rolling-update-claude",
+    "internal/controller/workloads/verify_pr491_claude_test.go",
+    "test/envtest/verify491r4"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #455 (open): RoleBasedGroupSet needs set-level rolling update (update unit = child RBG, with partition/maxUnavailable/maxSurge); KEP also claims children today never receive groupTemplate.spec.roleTemplates.",
+    "reportedComponent": "RBGSet API + controller (api/workloads/v1alpha2/rolebasedgroupset_types.go, internal/controller/workloads/rolebasedgroupset_controller.go)",
+    "patchedComponent": "docs only (keps/455-rbgs-rolling-update/) \u2014 design for the reported component",
+    "componentMatch": true,
+    "runsAgainst": "head (code identical to base 0821cb5b: docs-only PR)",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "issue OPEN (results/P0-issue-455.txt); TestVerify491P0PropagationGap proves roleTemplates dropped by newRBGForSet and updateExistingRBGs; results/unit-l1-verify491.out"
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerify491' -count=1"
+    },
+    "integration": {
+      "kind": "gotest-envtest",
+      "cmd": "KUBEBUILDER_ASSETS=$HOME/.local/share/kubebuilder-envtest/k8s/1.36.2-linux-amd64 go test ./test/envtest/testcase/... -count=1 -timeout 25m"
+    },
+    "evidence": {
+      "kind": "script",
+      "cmd": "bash docs/verification/455-rbgs-rolling-update-claude/scripts/re-verify.sh"
+    }
+  },
+  "findings": [
+    {
+      "id": "P0",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify491P0PropagationGap"
+      ]
+    },
+    {
+      "id": "E1-blast-radius",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify491E1SpecBlastRadiusBounded"
+      ]
+    },
+    {
+      "id": "E2-condition-unwritten",
+      "polarity": "contract",
+      "layer": "evidence",
+      "match": [
+        "E2-no-writer"
+      ]
+    },
+    {
+      "id": "E3-scale-subresource-unaddressed",
+      "polarity": "contract",
+      "layer": "evidence",
+      "match": [
+        "E3a-scale-subresource-crd",
+        "E3b-scale-subresource-api",
+        "E3c-kep-silent-on-scale"
+      ]
+    },
+    {
+      "id": "E5-naming-collision",
+      "polarity": "contract",
+      "layer": "evidence",
+      "match": [
+        "E5-role-level-naming"
+      ]
+    },
+    {
+      "id": "E6-conversion-injected-template-annotation",
+      "polarity": "contract",
+      "layer": "evidence",
+      "match": [
+        "E6-conversion-injects-template-annotation"
+      ]
+    },
+    {
+      "id": "E4-controller-owned-annotations",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerify491E4ControllerOwnedAnnotationWipe",
+        "E4a-discovery-writer",
+        "E4b-annotation-wholesale"
+      ],
+      "note": "canary: pins today's wipe/oscillation behavior; flip on fix"
+    },
+    {
+      "id": "E7-canonical-payload",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestVerify491E7CanonicalPayload/E7a-sorted-payload-byte-stable",
+        "TestVerify491E7CanonicalPayload/E7b-struct-ordered-payload-rejected"
+      ],
+      "note": "round 4: E7a contract \u2014 canonical (sorted-key) ControllerRevision data survives a strategic-merge patch byte-identically (what orphan cascading needs); E7b mechanism \u2014 struct-ordered data is rejected by the SMP validation with 'data: Invalid value: {sorted}: field is immutable' (the error shows the re-serialization), confirming the KEP's canonical-payload rationale. E7b doubles as the bite check for E7a."
+    }
+  ],
+  "bites": {
+    "unit": "mutating newRBGForSet to propagate roleTemplates flips TestVerify491P0 red (results/bite-a-with-propagation-fix.txt); reverted after; mutating needsTemplateAnnotationUpdate to skip the controller-owned key flips TestVerify491E4 red (results/bite-b-annotation-fix.txt) \u2014 reverted after",
+    "script": "inserting 'scale subresource' into the KEP Status heading flips E3c grep 0->1 (results/bite-check.txt)"
+  },
+  "liveNote": "L3 skipped this round (debate setup: unit + integration only). Probe for the record: a cluster was reachable (kubectl get no: 2 nodes, v1.36.2); it was not used.",
+  "round2": {
+    "date": "2026-10-14",
+    "head": "b03a7e67cf681599fb1c69537be2a2078ec35cf0",
+    "previousHead": "719851a65959ebc91157ce90651aaa911c26f30c",
+    "delta": "keps/455-rbgs-rolling-update/README.md +114/-5 (force-pushed amendment answering round 1); code still identical to merge-base 0821cb5b outside keps/",
+    "baseMovement": "main 0821cb5b -> 375fdfd5 (PRs #484/#488/#494/#495); none of the finding-referenced files (rolebasedgroup{,set}_controller.go, rolebasedgroupset_conversion.go, pkg/utils/revision_utils.go, RBGSet CRD) changed; round-1 code-path contracts remain valid",
+    "findings": [
+      {
+        "id": "F1",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F1-barrier-section",
+          "R2-F1b-ordering-matches-code",
+          "R2-F1c-api-reader-exists"
+        ],
+        "note": "Child Rollout Barrier section designs producer (RBG controller, apiReader uncached reads), ordering invariant (Step 4 status write before Step 8 role mutation \u2014 verified to map onto the real controller: constructAndUpdateRoleStatuses:689 calls updateRBGStatus; Step 8 at :276), and consumer (groupSetChildReady, absent-or-False with ObservedGeneration>=Generation). E2 (no writer in code) is expected to keep passing until the implementation PR lands."
+      },
+      {
+        "id": "F2",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "E3c-kep-addresses-scale"
+        ],
+        "note": "Scale subresource interaction paragraph added; HPA-during-surge scoped out as unsupported with reason. Round-1 canary inverted to contract check."
+      },
+      {
+        "id": "F3",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F3-key-enumeration"
+        ],
+        "note": "One enumerated 4-key list (discovery-config-mode + conversion.workloads.x-k8s.io/{v1alpha1-coordination,v1alpha2-rollout-strategy,v1alpha2-rollout-status}) governing revision hash, drift comparison, and metadata sync; syncRBGMetadata carries the keys over. Design-level fix; E4 unit canary stays green until implementation."
+      },
+      {
+        "id": "F4",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F3-key-enumeration"
+        ],
+        "note": "v1alpha1-coordination now in the enumerated exclusion list."
+      },
+      {
+        "id": "F5",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F5-checkpoint-storage"
+        ],
+        "note": "Appendix names annotation rbg.workloads.x-k8s.io/groupset-observed-replicas on the RBGSet. Residual note (non-gating): GitOps full-object writes can strip a live-object annotation; a one-line fallback statement would harden it."
+      },
+      {
+        "id": "F6",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F6-numeric-informational"
+        ],
+        "note": "Appendix: numeric revision informational only; name equality decides."
+      },
+      {
+        "id": "F7",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F7-partition-timing"
+        ],
+        "note": "Appendix: partition resolves against current spec.replicas at reconcile time; completed batches not re-evaluated."
+      },
+      {
+        "id": "Q1",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-Q1-zero-verdict"
+        ],
+        "note": "Appendix: webhook rejects explicit maxUnavailable 0 under InPlaceUpdate."
+      },
+      {
+        "id": "Q2",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-Q2-downgrade-stance"
+        ],
+        "note": "Appendix: operator-downgrade stance written down."
+      },
+      {
+        "id": "F9",
+        "status": "open",
+        "polarity": "contract",
+        "evidenceKind": "code-path",
+        "origin": "revision",
+        "introducedByPR": true,
+        "firstSeenSha": "b03a7e67cf681599fb1c69537be2a2078ec35cf0",
+        "checks": [
+          "R2-F9-bootstrap-window"
+        ],
+        "note": "NEW round-2 finding: the barrier design accepts an absent condition as ready for ALL children. For a child the set has just spec-bumped whose RBG controller has not yet reconciled (post-upgrade bootstrap window), no barrier exists yet, so the set can spend the next budget slot on stale capacity \u2014 the producer invariant does not cover that window because the producer has not run since the spec bump. One-sentence fix: accept absence only for children not yet updated in the current rollout (e.g. groupset-revision label still currentRevision). Expected-FAIL reproduction at head; bite D proves the check detects the fix."
+      },
+      {
+        "id": "M1",
+        "status": "partial",
+        "evidenceKind": "code-path",
+        "checks": [
+          "residual-open scan"
+        ],
+        "note": "Test-plan entries added for all four round-1 gaps (barrier set/clear, bootstrap semantics, scale subresource, controller-owned annotation survival). Two Reviewer C wording catches remain: line 434 'old template, not the current one' vs currentRevision=old terminology; the in-place ordering sentence at :401 still gates the higher ordinal on its own completion."
+      },
+      {
+        "id": "F8",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "checks": [
+          "F8-cross-reference"
+        ],
+        "note": "No cross-reference for the set-level vs role-level Recreate vocabulary collision."
+      },
+      {
+        "id": "O1",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "checks": [
+          "O1-template-sections"
+        ],
+        "note": "Graduation Criteria / Release Signoff / PRR sections still absent."
+      },
+      {
+        "id": "C4238820879",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "note": "Lowercase 'rbg' at line 478 still present."
+      }
+    ],
+    "bites": {
+      "D": "results/bite-d-f9-simulated-fix.txt \u2014 simulated one-sentence F9 fix flips R2-F9 0->1",
+      "E": "results/bite-e-barrier-section-removed.txt \u2014 stripping the barrier section makes R2-F1 fail (rc=1)"
+    }
+  },
+  "round3": {
+    "date": "2026-10-23",
+    "head": "f711893c835648a49e2f73ff0be1b73d9c7a13ef",
+    "previousHead": "b03a7e67cf681599fb1c69537be2a2078ec35cf0",
+    "delta": "keps/455-rbgs-rolling-update/README.md +193/-81 (single commit 'kep: clarify child rollout acknowledgement and replica-change budgets'); kep.yaml untouched; headings/TOC unchanged; code still identical to merge-base 0821cb5b outside keps/",
+    "baseMovement": "main fd84f3b3 -> a0b11e6a (PRs #497/#487/#501/#504/#506/#505/#500/#508): set-controller orphan adoption/UID filtering (#500) and RBG scaling-adapter ownership (#487/#497) changed; no KEP-referenced code fact changed; all E-checks and R2-* guards re-run green at head",
+    "findings": [
+      {
+        "id": "N1",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R3-N1a-consumer-request-gate",
+          "R3-N1b-request-atomic-write",
+          "R3-N1c-absent-cannot-bypass",
+          "R3-N1d-risk-row-request",
+          "R3-N1e-restart-persistence",
+          "R3-N1f-pending-excludes-ready",
+          "R3-N1g-aba-fresh-request",
+          "R3-N1h-bootstrap-test-entry",
+          "R2-F9-bootstrap-window (disjunction)"
+        ],
+        "note": "Round-2 major fixed by a different, stronger remedy than the exemplar clause: persistent rollout-request/acknowledgement protocol. The set writes the request in the same resource-version-protected Update as the spec bump, so the post-bump observation window cannot look ready; the RBG controller acknowledges only after applying and re-verifying workloads; pending requests exclude the child from readyReplicas/updatedReadyReplicas (no silent RolloutComplete); restart/leader-handover safe; A->B->A fresh counter; missing condition never bypasses an issued request. Also closes the metadata-only window (no generation bump), which the generation-gate exemplar would NOT have covered. Harness-update: R2-F9 was remedy-shaped, updated to a disjunction; mechanism pinned by R3-N1a-h. Verification: previous=fail (round-2 reproduction), head=pass."
+      },
+      {
+        "id": "F1",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F1-barrier-section",
+          "R2-F1b-ordering-matches-code",
+          "R2-F1c-api-reader-exists"
+        ],
+        "note": "Guards still green; rollout-condition paragraph re-designed (producer checks now include desired replica count, target revisions, readiness)."
+      },
+      {
+        "id": "F2",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "E3c-kep-addresses-scale"
+        ],
+        "note": "Guard still green; paragraph unchanged at :424-430."
+      },
+      {
+        "id": "F3",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F3-key-enumeration",
+          "R3-F3b-key-enumeration-6"
+        ],
+        "note": "Round-3 refinement: exclusion list grew to 6 keys (adds rollout-request, v1alpha1-pod-group-policy); sync semantics refined to 'preserve child-side values, template annotations applied over them; rollout-request never copied from template'. Still meets the criterion (enumerated once, governs hash+drift; sync preserves rather than wipes). Keys stay excluded from drift comparison, so no spec-level churn regression."
+      },
+      {
+        "id": "F4",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F3-key-enumeration",
+          "R3-F3b-key-enumeration-6"
+        ],
+        "note": "v1alpha1-coordination still in the list; pod-group-policy added."
+      },
+      {
+        "id": "F5",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F5-checkpoint-storage"
+        ],
+        "note": "Annotation still named (:564-567). Residual hardening nit (replace-write can strip the checkpoint annotation) still unaddressed; same class as new F10."
+      },
+      {
+        "id": "F6",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F6-numeric-informational"
+        ],
+        "note": "Unchanged (:568-572)."
+      },
+      {
+        "id": "F7",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-F7-partition-timing"
+        ],
+        "note": "Unchanged (:573-576)."
+      },
+      {
+        "id": "Q1",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R2-Q1-zero-verdict"
+        ],
+        "note": "Unchanged (:577-579)."
+      },
+      {
+        "id": "Q2",
+        "status": "fixed",
+        "evidenceKind": "hypothesis",
+        "checks": [
+          "R2-Q2-downgrade-stance"
+        ],
+        "note": "Unchanged (:580-585). Does not mention the new rollout-request annotation surviving downgrade; covered in substance by the conversion round-trip entry."
+      },
+      {
+        "id": "F10",
+        "status": "open",
+        "severity": "minor",
+        "polarity": "doc-gap contract (EXPECTED-FAIL while open)",
+        "evidenceKind": "code-path",
+        "origin": "initial-pr",
+        "introducedByPR": true,
+        "firstSeenSha": "f711893c835648a49e2f73ff0be1b73d9c7a13ef",
+        "checks": [
+          "R3-F10-request-strip-fallback"
+        ],
+        "note": "NEW round-3 finding (minor, non-gating): a replace-style full-object write on a child RBG can strip the live rollout-request annotation; the set keeps no independent record of issued requests (key drift-excluded, no re-issue), so a stripped pending request reopens the N1 window (stale Ready + no request -> legacy fallback -> budget slot released while workloads roll). Same hazard class as the round-2 F5 checkpoint nit. One hardening sentence (detection or re-issue) closes it."
+      },
+      {
+        "id": "Q3",
+        "status": "open",
+        "severity": "minor",
+        "evidenceKind": "code-path",
+        "origin": "initial-pr",
+        "introducedByPR": true,
+        "firstSeenSha": "f711893c835648a49e2f73ff0be1b73d9c7a13ef",
+        "checks": [
+          "residual scan + code fact"
+        ],
+        "note": "NEW round-3 question: compatibility-annotation convergence is explicitly ungated (:203-209, :367-368 'independently of revision changes and rollout budgets') while coordination data drives role-replica application (rolebasedgroup_controller.go:590). Confirm intended and state the rationale (compatibility data is not user-serving template content)."
+      },
+      {
+        "id": "M1",
+        "status": "partial",
+        "evidenceKind": "code-path",
+        "checks": [
+          "residual-open scan"
+        ],
+        "note": "Child-level Conversion entry added (:475-476) plus a manual-validation paragraph (:552-560) covering v1alpha1 acknowledgement preservation; set-level v1alpha1 strategy/status round-trip entry still missing; wording catches unchanged at :494 and :530."
+      },
+      {
+        "id": "F8",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "checks": [
+          "F8-cross-reference"
+        ],
+        "note": "No set-level vs role-level vocabulary cross-reference (0 hits)."
+      },
+      {
+        "id": "O1",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "checks": [
+          "O1-template-sections"
+        ],
+        "note": "Graduation Criteria / PRR / Release Signoff still absent (0 hits)."
+      },
+      {
+        "id": "C4238820879",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "note": "Lowercase 'rbg' at :590."
+      }
+    ],
+    "bites": {
+      "F": "results/bite-f-n1-fix-removed.txt \u2014 removing the request-gate sentences from a temp KEP copy makes R3-N1a/N1c/N1f fail and returns the R2-F9 disjunction to EXPECTED-FAIL",
+      "G": "results/bite-g-f10-simulated-fix.txt \u2014 a simulated one-sentence hardening (re-issue on stripped request) flips R3-F10 0->1"
+    },
+    "codeFacts": {
+      "ssa": "utils.PatchObjectApplyConfiguration (pkg/utils/utils.go:48, FieldManager 'rbg', force) \u2014 the KEP's 'shared SSA serializer' is real",
+      "podshaping": "GroupExclusiveTopologyKey / GangSchedulingAnnotationKey exist (api/workloads/constants/annotation.go:25,43)",
+      "rolehash": "per-role FNV-32a (pkg/utils/revision_utils.go:357,445)"
+    }
+  },
+  "round4": {
+    "date": "2026-10-29",
+    "head": "5f14daaf45a91a9a94f74abb26f6a7db41f4aed9",
+    "previousHead": "f711893c835648a49e2f73ff0be1b73d9c7a13ef",
+    "delta": "keps/455-rbgs-rolling-update/README.md +71/-22 (single commit 'kep: correct the description related to Round 3'); code still identical to merge-base 0821cb5b outside keps/",
+    "baseMovement": "main a0b11e6a -> a2e797c6 at round freeze (81971432 at re-verify time; PRs #514/#478/#526/#525/#515/#523/#516/#512): only warmup CRD/controller, RoleInstance reconciler, coordinatedpolicy SSA naming, CI/docs changed; no KEP-referenced code fact changed (set/RBG controllers, conversion, RBGSet CRD, webhooks untouched); all prior guards re-run green at the new head",
+    "findings": [
+      {
+        "id": "W1",
+        "status": "fixed",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R4-W1-no-admission-check-phrase",
+          "R4-W1b-availability-gate-phrase"
+        ],
+        "note": "'admission check' -> 'availability gate' (:312); 0 remaining instances of the overloaded phrase."
+      },
+      {
+        "id": "M1",
+        "status": "partial",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R4-V1-v1alpha1-lossy-declared",
+          "R4-V2-template-metadata-drop-both-sites",
+          "R4-V3-release-note-ask",
+          "R4-V4-conversion-injects-only-compat"
+        ],
+        "note": "Reviewer C extension FIXED by narrowing: the v1alpha1 round-trip is declared not lossless (groupTemplate labels/annotations drop, revision identity changes, write-through-v1alpha2 release-note ask) in three consistent places; code-verified the converter injects only the coordination key into template annotations. M1 residuals (a) set-level stash/restore automated entry, (b) :532 ordering wording, (c) :571 old/current terminology still open."
+      },
+      {
+        "id": "E7-canonical-payload",
+        "status": "confirmed",
+        "evidenceKind": "differential",
+        "checks": [
+          "R4-C1-canonical-payload-section",
+          "R4-C2-stateful-path-canonicalizes",
+          "R4-C3-revision-equality-byte-wise",
+          "TestVerify491E7CanonicalPayload"
+        ],
+        "note": "KEP's new canonical-payload design verified end-to-end against a real apiserver: SMP on struct-ordered data rejected ('field is immutable', error shows the sorted re-serialization); canonical data byte-stable. Repo already stores canonical sorted-key data in the stateful path (getPatch map round-trip) and EqualRevision is byte-wise on Data.Raw. GC half (orphan finalizer block) is a code-path argument: envtest runs no kube-controller-manager and the GC package is not vendored."
+      },
+      {
+        "id": "F9",
+        "status": "partial",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R4-Q1-request-writer-generalized",
+          "R4-F9-repair-write-request-scope"
+        ],
+        "note": "Generalized to 'every budgeted child write' with a three-class enumeration; drift-repair and the one-shot upgrade rewrite still neither named as request-advancing nor scoped out. R4-F9 EXPECTED-FAIL at head."
+      },
+      {
+        "id": "F11",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R4-F11-expected-updated-clamped"
+        ],
+        "note": "NEW round 4: expectedUpdatedReplicas = replicas - partition can go negative now that partition is unbounded (autoscaler scenario row makes it reachable). No clamp stated. One clause fixes it. R4-F11 EXPECTED-FAIL at head."
+      },
+      {
+        "id": "F10",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "checks": [
+          "R3-F10-request-strip-fallback"
+        ],
+        "note": "Unchanged: no stated fallback/re-issue for a replace-write stripping the rollout-request annotation."
+      },
+      {
+        "id": "Q3",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "checks": [
+          "Q3-ungated-convergence",
+          "Q3-code-fact-coordination-drives-replicas"
+        ],
+        "note": "Unchanged (:206). Base #526 fixed the SSA rejection on the coordination path, confirming it is live."
+      },
+      {
+        "id": "F8",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "checks": [],
+        "note": "No set-level vs role-level strategy vocabulary cross-reference yet."
+      },
+      {
+        "id": "O1",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "checks": [],
+        "note": "Graduation Criteria / Release Signoff / PRR still absent."
+      },
+      {
+        "id": "C4238820879",
+        "status": "open",
+        "evidenceKind": "code-path",
+        "checks": [],
+        "note": "Lowercase 'rbg' at :639 (Reviewer C advisory, non-gating)."
+      }
+    ],
+    "bites": "E7b is the bite for E7a (same patch path, non-canonical payload -> rejected). R4-* grep checks are remedy-shaped on the round-4 text (same mechanism as bites B/E/F).",
+    "codeFacts": {
+      "webhook-rule-no-scale": "kubebuilder:webhook marker on rolebasedgroupset_admission.go:31 matches resources=rolebasedgroupsets (verbs create;update) only - a rolebasedgroupsets/scale write skips admission (premise of the new autoscaler-below-partition scenario row)",
+      "legacy-adoption-on-main": "main #500 (ecdfd6e6) added isOwnedOrAdoptable + adoption to the set controller - the KEP's 'matching the legacy path' adoption claim is accurate against main; the PR merge-base predates it",
+      "stateful-path-canonical": "getPatch round-trips the template through map[string]interface{} before json.Marshal (stateful_instance_set_helper.go:118), so existing revision payloads are already sorted-key canonical",
+      "revision-equality-byte-wise": "EqualRevision compares Data.Raw with bytes.Equal (revision_utils.go:99)"
+    }
+  }
+}

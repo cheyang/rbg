@@ -1,0 +1,4 @@
+221:	// Step 4: Construct role statuses
+276:	// Step 8: Reconcile roles, do create/update actions for roles.
+1:func (r *RoleBasedGroupReconciler) constructAndUpdateRoleStatuses(
+35:	if err := r.updateRBGStatus(ctx, rbg, roleStatuses); err != nil {

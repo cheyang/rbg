@@ -1,0 +1,1 @@
+622:  current `spec.replicas` at reconcile time. A change to `replicas` re-resolves
