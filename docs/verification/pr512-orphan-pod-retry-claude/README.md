@@ -107,3 +107,32 @@ https://github.com/sgl-project/rbg/pull/512. Checkout branch
 `docs/verification/pr512-orphan-pod-retry-claude/README.md`, run
 `bash docs/verification/pr512-orphan-pod-retry-claude/scripts/re-verify.sh`, then review
 the `last-reviewed..head` delta and update the table."
+
+## Round 2 — head `9d1e7654` ("address RoleInstance migration review follow-ups")
+
+Delta `a8ef35fd..9d1e7654` answers every open item from the round-1 debate:
+
+| round-1 finding | delta fix | verdict at `9d1e7654` |
+| --- | --- | --- |
+| **ENVTEST-GAP** (blocking major: no upstream integration coverage for the retry mechanism) | new `test/envtest/testcase/stateful/orphan_gc_recovery_test.go` in the repo-convention location; focused run: "recreates a replacement Pod through the controller retry after orphan GC" **passed**; full stateful suite `ok` (42s) | **FIXED** |
+| **FAILEDSCALE-LATCH** (major SHOULD: FailedScale never clears after recovery) | `setInstanceConditions` drops stale FailedScale/FailedUpdate from the live object when absent from fresh conditions (`controllerFailureConditionTypes`); unit `TestTransientFailureConditionsClearAfterRecovery` + A3 envtest now asserts the condition clears after recovery | **FIXED** |
+| **SIBLING-ABORT** (minor: first collision aborted sibling creation) | non-gang: siblings still created, collision error aggregated and returned after; gang keeps all-or-nothing | **FIXED** — F1 harness rewritten to pin the reviewed semantics (`TestOrphanPodContractMultiComponentSiblingsProceed`, red on base) |
+| **NO-WARNING-EVENT** (minor) | `FailedCreate` warning event on collision; asserted in the rewritten F1 test (new finding F4) | **FIXED** |
+
+Full re-verify at `9d1e7654`: P0/A2/A3/A4/F1/F2/F4 all **FIXED** ("all findings fixed").
+Harness-bites: the rewritten F1 test is red on the merge-base (no error, no event) and green
+at head; the earlier round-1 base run already proved the envtest specs red on base.
+Upstream sweep at head: `./pkg/reconciler/...` green, `go vet` clean, full stateful envtest
+green, CI green at head.
+
+Harness updates this round: F1 test renamed and rewritten (the PR's all-or-nothing abort
+semantics were reversed by design in `9d1e7654` — pinned semantics now match the review);
+A3 spec extended with the FailedScale-clears assertion; F4 added; one assertion corrected
+(presence check → not-adopted check, since the foreign squatter exists by fixture).
+
+### Round-2 verdict
+
+**ready-to-merge.** The single gating finding (ENVTEST-GAP) and all three open
+SHOULD/minors are fixed and verified at head; no new findings from the delta review
+(the instance_status latch-drop and the createPods aggregation were both read
+line-by-line and are covered by tests both in-tree and in this harness).
