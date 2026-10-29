@@ -129,12 +129,15 @@ func TestVerify_R4F11_AppendixRationaleForPartitionClamp(t *testing.T) {
 	}
 	appendix := kepSectionR4(t, "## Appendix", "## Alternatives")
 	// An Appendix entry carrying the partition rationale must mention partition
-	// AND the scale/writability reasoning (autoscaler / scale subresource /
-	// stays writable). The percentage-partition timing entry (F7) does not
-	// qualify: it covers resolution timing, not why partition > replicas is
-	// admitted.
-	rationale := regexp.MustCompile(`(?i)partition[^.\n]{0,200}(scale|autoscal|writable|writable for every later request|not bounded|above)`).MatchString(unwrap(appendix)) ||
-		regexp.MustCompile(`(?i)(scale|autoscal)[^.\n]{0,200}partition`).MatchString(unwrap(appendix))
+	// AND the actual clamp/admission reasoning in the same sentence: the clamp
+	// (min(partition, replicas)), the admission non-bound, or the scale
+	// subresource / autoscaler writability argument. Neither the
+	// percentage-partition timing entry (F7) nor the observed-replicas
+	// checkpoint entry ('scale-out ... below a newly raised partition')
+	// qualifies — neither explains why partition > replicas is admitted.
+	a := unwrap(appendix)
+	rationale := regexp.MustCompile(`(?i)partition[^.\n]{0,240}(min\(|not bounded|autoscal|writable|scale subresource)`).MatchString(a) ||
+		regexp.MustCompile(`(?i)(min\(|not bounded|autoscal|writable|scale subresource)[^.\n]{0,240}partition`).MatchString(a)
 	if !rationale {
 		t.Errorf("R4-F11 reproduced: scenario row says 'Rationale in the Appendix' but the Appendix has no partition-clamping entry (dangling cross-reference)")
 	}

@@ -179,14 +179,22 @@
    "note": "Round-3 nit: 'admission check' overloaded the webhook term for the runtime availability floor. Round-4 (5f14daaf): FIXED - 'The same availability gate applies to Recreate replicas-only in-place updates'. Guard red at f711893c, green at 5f14daaf."
   },
   {
-   "id": "R4CR",
+   "id": "R4CR-text",
    "polarity": "contract",
-   "layer": "unit,integration",
+   "layer": "unit",
    "match": [
-    "TestVerify_R4CR_CanonicalPayloadRequirement",
+    "TestVerify_R4CR_CanonicalPayloadRequirement"
+   ],
+   "note": "Round-4 addition: canonical-payload requirement text (sorted keys, byte-wise immutability, SMP re-serialization hazard, GC orphan connection) plus test-plan fixture caveat and envtest entry. Green at 5f14daaf, red at f711893c."
+  },
+  {
+   "id": "R4CR-apiserver",
+   "polarity": "contract",
+   "layer": "integration",
+   "match": [
     "TestVerify_R4CR_ControllerRevisionDataImmutableUnderPatch"
    ],
-   "note": "Round-4 addition: canonical-payload requirement for ControllerRevision data. Text contract green at 5f14daaf. envtest proves the hazard empirically (unsorted data + SMP/JMP metadata patch -> Invalid 'field is immutable'; sorted canonical -> patch succeeds, data byte-identical). KEP's mechanism claim CONFIRMED."
+   "note": "Round-4 envtest L2: against a real kube-apiserver 1.34.1, SMP and JSON-merge metadata patches on a struct-ordered (unsorted) ControllerRevision.data are REJECTED as Invalid 'field is immutable'; a canonically sorted payload survives both patch flavors byte-identical. KEP's hazard claim CONFIRMED empirically. GC-orphan half source-verified at k8s.io/kubernetes v1.34.2 (garbagecollector/patch.go:92 SMP-first, JMP fallback only on UnsupportedMediaType; apps/validation/validation.go:366 Data immutable; apimachinery semantic.go: no RawExtension equality -> byte-wise)."
   },
   {
    "id": "R4Orphan",
