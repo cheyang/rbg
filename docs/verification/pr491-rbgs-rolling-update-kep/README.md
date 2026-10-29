@@ -257,3 +257,97 @@ Harness changes this round:
 
 Code layers at f711893c (code byte-identical to merge-base outside keps/):
 unit `internal/controller/workloads` PASS; envtest `test/envtest/testcase/{rbg,restart_policy,webhook}` PASS (see results/reverify/).
+
+## Round 4 (head 5f14daaf, delta f711893c..5f14daaf)
+
+The round-4 revision ("kep: correct the description related to Round 3",
++71/-22, KEP-only) makes six substantive changes, all verified this round:
+
+1. **v1alpha1 round-trip guarantee narrowed** (risk row, scenario table,
+   appendix): the conversion webhook no longer claims losslessness;
+   `groupTemplate.labels`/`annotations` cannot round-trip through v1alpha1 and
+   such a write changes revision identity and rolls every child; rolling sets
+   must be written through v1alpha2. Closes the C4359588718 advisory extension
+   of M1 on the design-text side (the stash/restore *test-plan entry* remains
+   owed — M1 stays open). Guard: `TestVerify_R4V1alpha1_NotLosslessStatedConsistently`
+   (red at f711893c, green at 5f14daaf).
+2. **partition may exceed replicas**: admission does not bound it, the
+   validating rule does not match `rolebasedgroupsets/scale`, the controller
+   resolves `min(partition, replicas)` (StatefulSet parity — confirmed:
+   StatefulSet validation bounds partition only at >= 0). Guard:
+   `TestVerify_R4Partition_ClampAndAdmissionStated`. New finding **F11**: the
+   scenario row says "Rationale in the Appendix" but the Appendix carries no
+   such entry — dangling cross-reference, reproduced RED at head
+   (`TestVerify_R4F11_AppendixRationaleForPartitionClamp`), bites-checked with
+   a simulated appendix entry (flips green, reverted clean).
+3. **canonical payload requirement** for ControllerRevision data (sorted keys,
+   standard HTML escaping; byte-wise immutability vs strategic-merge
+   re-serialization; GC orphan connection). Text contract
+   `TestVerify_R4CR_CanonicalPayloadRequirement` green at head. The apiserver
+   mechanism is **empirically confirmed** at the integration layer:
+   `TestVerify_R4CR_ControllerRevisionDataImmutableUnderPatch` (envtest,
+   kube-apiserver 1.34.1) — SMP and JSON-merge metadata patches on a
+   struct-ordered (unsorted) `data` are REJECTED as Invalid "field is
+   immutable"; a canonically sorted payload survives both patch flavors
+   byte-identical. Source-verified at k8s.io/kubernetes v1.34.2:
+   `pkg/apis/apps/validation/validation.go:366` (Data immutable),
+   `apimachinery/pkg/api/equality/semantic.go` (no RawExtension equality →
+   byte-wise), `pkg/controller/garbagecollector/patch.go:92` (GC orphans with
+   SMP first, JMP fallback only on UnsupportedMediaType → an Invalid rejection
+   is terminal for the orphan attempt, blocking the owner's orphan finalizer).
+4. **surge sized from the live availability budget** (serving-only cover;
+   headroom = ready base count above the floor; existing surge subtracted).
+   Formula self-consistency re-derived against both worked examples
+   (4/5/0 → four surge; maxUnavailable=1 → three; below-partition failure →
+   headroom 0, surge = serving in-scope). Guard `TestVerify_R4Surge_LiveBudgetSizingStated`.
+   New question **Q4**: the new row's "The failed group never becomes an
+   update candidate" is unscoped and collides with the availability
+   paragraph's budget-free repair of already-unready outdated groups
+   (`TestVerify_R4Q4_FailedGroupCandidacyClarified` RED at head; simulated
+   scoping clause flips green, reverted clean).
+5. **orphan adoption scenario row** claiming parity with the legacy path.
+   Code facts verified against the PR BASE tree a2e797c6 (`RBG_BASE_ROOT`;
+   the PR head's non-KEP code is the stale merge-base 0821cb5b):
+   children listed by `GroupSetNameLabelKey`; `isOwnedOrAdoptable` = no
+   controllerRef + name label, else UID match; adoption precedes scaleUp;
+   collision path detects foreign UID. CONFIRMED —
+   `TestVerify_R4Orphan_LegacyAdoptionFactsMatchKEP`.
+6. **requeue scope pinned** (unacknowledged request = the barrier's only
+   periodic requeue; neither controller polls) + W1 wording fix ("admission
+   check" → "availability gate"). Guards `TestVerify_R4Requeue_ScopeStated`,
+   `TestVerify_R4W1_AvailabilityGateWording` — W1 FIXED this round.
+
+### Observed vs expected (head 5f14daaf / previous head f711893c)
+
+| Test | Polarity | 5f14daaf | f711893c | Meaning |
+|------|----------|----------|----------|---------|
+| C1-C8 premise/code-fact contracts | contract | PASS | PASS | KEP premises still true; PR head code unchanged outside keps/ (byte-identical to merge-base 0821cb5b) |
+| R3F1 barrier section | contract | PASS | PASS | F1 still fixed (section unchanged this round) |
+| R2F2 / R3F3F4 / R2F5 / R2F6 / R2F7 / R2Q1 / R2Q2 | contract | PASS | PASS | F2-F7, Q1, Q2 still fixed |
+| R3N1 contracts + exhibits (6) | contract | PASS | PASS | N1 still fixed (request/ack paragraphs refined, mechanism intact) |
+| R4W1 availability-gate wording | contract | PASS | FAIL | **W1 FIXED this round** |
+| R4Partition clamp + admission stated | contract | PASS | FAIL | round-4 partition rule present |
+| R4F11 appendix rationale for clamp | contract | **FAIL** | SKIP | **F11 reproduced** (dangling "Rationale in the Appendix") |
+| R4CR canonical payload text | contract | PASS | FAIL | round-4 requirement present |
+| R4CR apiserver hazard (envtest 1.34.1) | contract | PASS | n/a | KEP mechanism claim CONFIRMED empirically |
+| R4Orphan legacy parity (base a2e797c6) | contract | PASS | FAIL | KEP row matches current main |
+| R4Surge live-budget sizing | contract | PASS | FAIL | round-4 surge rule present, self-consistent |
+| R4Q4 failed-group candidacy clarified | contract | **FAIL** | SKIP | **Q4 reproduced** (unscoped "never becomes an update candidate") |
+| R4V1alpha1 not-lossless narrowed | contract | PASS | FAIL | C4359588718 design-text half closed |
+| R4Requeue scope stated | contract | PASS | FAIL | round-4 requeue pin present |
+| R3M1 stash/restore + wording catches | contract | **FAIL** | FAIL | M1 residual still open (design narrowing done; test entry + wording catches unchanged at :532/:571) |
+| R3F9 repair-write request scope | contract | **FAIL** | FAIL | F9 still open (writer widened to "every budgeted child write" + metadata-only, but repair/one-shot-rewrite still unnamed) |
+| R3F10 request strip fallback | contract | **FAIL** | FAIL | F10 still open (consumer section unchanged) |
+| R3Q3 unbudgeted convergence justified | contract | **FAIL** | FAIL | Q3 still open (sync semantics unchanged) |
+
+Repo code layers re-run at the grafted head (docs-only delta, same code as
+round 3): `go test ./internal/controller/workloads` ok 3.6s; envtest rbg ok
+47.9s (k8s 1.31.0 assets). CI at 5f14daaf: envtest/build/unit-test/lint/
+markdown-check/copyright-check/e2e-matrix-coverage/check-changes SUCCESS; e2e
+variants SKIPPED (docs-only path) — observed rollup, attribution unknown.
+
+Harness notes: F11/Q4 SKIP (not FAIL) at f711893c because their anchors are
+round-4 text — they are new findings first seen at 5f14daaf. The R4Orphan
+code-fact contract evaluates against `RBG_BASE_ROOT` (a base checkout) rather
+than the grafted head, because the PR head's controller code predates the
+base movement that introduced the orphan-adoption path the KEP now references.
