@@ -172,6 +172,22 @@ var _ = Describe("Migration orphan Pod recovery (issue #511 / PR #512)", func() 
 		}, timeout, interval).Should(BeTrue(),
 			"the replacement Pod must be created and owned by the same RoleInstance via the retry loop alone")
 
+		// Round-2 contract (head 9d1e7654): FailedScale is transient — once the
+		// replacement Pod exists, a healthy reconcile drops the stale condition
+		// instead of latching it True forever (review: FAILEDSCALE-LATCH).
+		Eventually(func() (bool, error) {
+			instance := &workloadsv1alpha2.RoleInstance{}
+			if err := testutil.K8sClient.Get(testutil.Ctx, instanceKey, instance); err != nil {
+				return false, err
+			}
+			for _, cond := range instance.Status.Conditions {
+				if cond.Type == workloadsv1alpha2.RoleInstanceFailedScale {
+					return cond.Status != corev1.ConditionTrue, nil
+				}
+			}
+			return true, nil
+		}, timeout, interval).Should(BeTrue(), "FailedScale must clear after recovery")
+
 		instance := &workloadsv1alpha2.RoleInstance{}
 		Expect(testutil.K8sClient.Get(testutil.Ctx, instanceKey, instance)).To(Succeed())
 		Expect(instance.UID).To(Equal(instanceUID), "the RoleInstance must not be recreated in the process")

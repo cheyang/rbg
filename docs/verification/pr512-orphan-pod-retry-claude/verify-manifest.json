@@ -16,7 +16,12 @@
     "layer": "unit+integration",
     "verdict": "confirmed",
     "evidence": "Differential harness: on merge-base a0b11e6 a foreign-owned same-name Pod makes Scale return (false, nil) — no error, no requeue (results/unit-base.log: TestOrphanPodContractForeignOwner FAILS, 'An error is expected but got nil'), and the real controller in envtest never records FailedScale nor recreates the Pod after the foreign Pod is GC'd without a manual trigger (results/envtest-base.log: both specs FAIL). On PR head a8ef35f the same tests pass. The pod event handler (pkg/reconciler/roleinstance/instance_event_handler.go resolveControllerRef) only maps events for pods whose controller ref is a RoleInstance, so a foreign Pod's deletion cannot wake the stalled instance — mechanism matches the issue.",
-    "match": ["TestOrphanPodContractForeignOwner", "TestScaleErrorsAndCreatesAfterOrphanPodGC", "records FailedScale and retries while a foreign-owned Pod squats the stable name", "creates the replacement Pod after the foreign Pod is GC'd, without a manual reconcile"]
+    "match": [
+      "TestOrphanPodContractForeignOwner",
+      "TestScaleErrorsAndCreatesAfterOrphanPodGC",
+      "records FailedScale and retries while a foreign-owned Pod squats the stable name",
+      "creates the replacement Pod after the foreign Pod is GC'd, without a manual reconcile"
+    ]
   },
   "layers": {
     "unit": {
@@ -34,43 +39,65 @@
       "id": "P0",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestOrphanPodContractForeignOwner", "TestScaleErrorsAndCreatesAfterOrphanPodGC"],
+      "match": [
+        "TestOrphanPodContractForeignOwner",
+        "TestScaleErrorsAndCreatesAfterOrphanPodGC"
+      ],
       "note": "Premise: foreign-owned same-name Pod must produce a Scale error (the retry signal). Red on base, green on head."
     },
     {
       "id": "A2",
       "polarity": "contract",
       "layer": "integration",
-      "match": ["records FailedScale and retries while a foreign-owned Pod squats the stable name"],
+      "match": [
+        "records FailedScale and retries while a foreign-owned Pod squats the stable name"
+      ],
       "note": "Controller records RoleInstanceFailedScale with 'is not controlled by RoleInstance' and leaves the foreign Pod alone (no adopt/delete/replace). Red on base, green on head."
     },
     {
       "id": "A3",
       "polarity": "contract",
       "layer": "integration",
-      "match": ["creates the replacement Pod after the foreign Pod is GC'd, without a manual reconcile"],
-      "note": "The issue #511 contract: after GC removes the foreign Pod, the retry loop alone creates the replacement Pod owned by the same RoleInstance. Red on base, green on head."
+      "match": [
+        "creates the replacement Pod after the foreign Pod is GC'd, without a manual reconcile"
+      ],
+      "note": "The issue #511 contract: after GC removes the foreign Pod, the retry loop alone creates the replacement Pod owned by the same RoleInstance. Red on base, green on head. Round 2 also asserts the FailedScale condition clears after recovery (FAILEDSCALE-LATCH, fixed in 9d1e7654)."
     },
     {
       "id": "A4",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestOrphanPodContractOwnedPodSkipped"],
+      "match": [
+        "TestOrphanPodContractOwnedPodSkipped"
+      ],
       "note": "Regression guard: a Pod already controlled by this RoleInstance is skipped without error or duplicate creation. Green on base and head."
     },
     {
       "id": "F1",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestOrphanPodContractMultiComponentAbort"],
-      "note": "Behavior-change pin: on head the first foreign-name collision aborts sibling Pod creation too (base created siblings immediately). Intended all-or-nothing semantics of PR #512; test pins them so any future change is deliberate. Red on base, green on head."
+      "match": [
+        "TestOrphanPodContractMultiComponentSiblingsProceed"
+      ],
+      "note": "Behavior-change pin, round 2 (head 9d1e7654): non-gang instances create non-colliding siblings during a foreign-name collision and return the aggregated collision error after those Pods are created (the first revision's all-or-nothing abort was the review's SIBLING-ABORT finding; 9d1e7654 restored sibling creation). Red on base (no error at all), green on 9d1e7654."
     },
     {
       "id": "F2",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestOrphanPodContractBarePodCollision"],
+      "match": [
+        "TestOrphanPodContractBarePodCollision"
+      ],
       "note": "Controller-less same-name Pod (permanent collision) also surfaces as a Scale error now instead of being silently skipped. Red on base, green on head."
+    },
+    {
+      "id": "F4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestOrphanPodContractMultiComponentSiblingsProceed"
+      ],
+      "note": "NO-WARNING-EVENT (review round 1, fixed in 9d1e7654): a foreign-name collision emits a FailedCreate warning event so operators can see the retry cause. Covered by the warning-event assertion in the siblings-proceed contract test."
     }
   ],
   "liveNote": "L3 (skipped per debate policy: unit + integration only): deploy the controller and run the migration scenario from issue #511 against a real GC (v1alpha1 StatefulSet role -> v1alpha2 RoleInstanceSet via annotation removal); confirm the replacement Pod appears without a manual reconcile within the backoff window and the FailedScale condition clears."

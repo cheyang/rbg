@@ -26,13 +26,14 @@ package sync
 // PASS on the PR head. On the merge-base (a0b11e6) the non-gang foreign-pod
 // path returned (false, nil) — no error, no requeue — so
 // TestOrphanPodContractForeignOwner, TestOrphanPodContractBarePodCollision and
-// TestOrphanPodContractMultiComponentAbort FAIL there: that failure is the
-// reproduction of issue #511 at the unit layer.
+// TestOrphanPodContractMultiComponentSiblingsProceed FAIL there: that failure
+// is the reproduction of issue #511 at the unit layer.
 // TestOrphanPodContractGangStillErrors and TestOrphanPodContractOwnedPodSkipped
 // pass on both head and base and act as controls / regression guards.
 
 import (
 	"context"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -226,14 +227,16 @@ func TestOrphanPodContractGangStillErrors(t *testing.T) {
 	assert.Error(t, err)
 }
 
-// Behavior-change contract (documents PR #512's new abort semantics): when one
-// component's stable Pod name collides with a foreign Pod, creation of the
-// OTHER components' Pods is aborted too and retried on the next reconcile.
-// On base, the sibling Pod was created immediately while the colliding name
-// was skipped. The new all-or-nothing behavior is intentional (the PR's fix
-// returns on the first collision); this test pins it so any future change is
-// deliberate.
-func TestOrphanPodContractMultiComponentAbort(t *testing.T) {
+// Behavior-change contract, round 2 (head 9d1e7654): when one component's
+// stable Pod name collides with a foreign Pod, a NON-GANG instance still
+// creates the other components' Pods, emits a FailedCreate warning event, and
+// returns the collision error (aggregated) after those Pods are created, so
+// controller-runtime retries with backoff. The first PR revision (a8ef35f)
+// aborted sibling creation on the first collision — the review's SIBLING-ABORT
+// finding — and 9d1e7654 restored sibling creation. Gang scheduling keeps the
+// all-or-nothing abort (TestOrphanPodContractGangStillErrors). This test pins
+// the reviewed semantics so any future change is deliberate.
+func TestOrphanPodContractMultiComponentSiblingsProceed(t *testing.T) {
 	ctx := context.Background()
 	instance := newOrphanContractInstance("multi-0", constants.ComponentsTemplateType,
 		[]workloadsv1alpha2.RoleInstanceComponent{orphanContractComponent("c1"), orphanContractComponent("c2")})
@@ -251,14 +254,25 @@ func TestOrphanPodContractMultiComponentAbort(t *testing.T) {
 	for _, p := range podList.Items {
 		names = append(names, p.Name)
 	}
-	assert.NotContains(t, names, "multi-0-c2-0",
-		"head aborts sibling creation until the collision resolves (retry creates it later)")
+	assert.Contains(t, names, "multi-0-c2-0",
+		"non-gang instances keep creating non-colliding siblings during a name collision")
+	assert.NotContains(t, names, "multi-0-c1-0", "the colliding name is never adopted or recreated")
 
-	// Once the collision is gone, both components' Pods are created.
+	// The collision surfaces as a FailedCreate warning event (review:
+	// NO-WARNING-EVENT — operators must be able to see the retry cause).
+	recorder := ctrl.recorder.(*record.FakeRecorder)
+	warned := false
+	for len(recorder.Events) > 0 {
+		if ev := <-recorder.Events; strings.Contains(ev, "FailedCreate") && strings.Contains(ev, "multi-0-c1-0") {
+			warned = true
+		}
+	}
+	assert.True(t, warned, "a FailedCreate warning event must be emitted for the collision")
+
+	// Once the collision is gone, the colliding component's Pod is created too.
 	assert.NoError(t, fakeClient.Delete(ctx, foreignOwnedPod("multi-0-c1-0", "default", "old-statefulset")))
-	scaling, _, err := ctrl.Scale(ctx, instance, revision, revision, nil, nil, nil)
+	_, _, err = ctrl.Scale(ctx, instance, revision, revision, nil, nil, nil)
 	assert.NoError(t, err)
-	assert.True(t, scaling)
 	assert.NoError(t, fakeClient.List(ctx, podList, client.InNamespace("default")))
 	names = []string{}
 	for _, p := range podList.Items {
