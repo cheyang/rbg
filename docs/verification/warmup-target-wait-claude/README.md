@@ -260,3 +260,47 @@ base=pass, previous=fail, head=fail.
   `re-verify.sh`, `results/reverify/integration.out`).
 - **CI on `92cb7ef`:** all checks SUCCESS (23 rollup entries / 21 unique,
   queried via the GitHub API), including all e2e suites; attribution unknown.
+
+## Round 5 — head `407b5216` ("support partial CRD startup and preserve diagnostics" + test flake fix)
+
+Delta `92cb7ef16..407b5216`: two commits pushed 2026-10-27 in response to the round-4
+review and diw-zw's comments.
+
+- **`b4b29ff0`** — fixes every item the round-4 review left open:
+  - **F10 (the round-4 open minor):** new `customizedActionDiagnosticNodes` = desired ∪
+    (owned Pods carrying a customized action) ∪ (previously recorded results).
+    `failWarmupJob` / `updateStatusWithTarget` / `reconcileUnfinished` now use it, so a
+    mid-run target collapse no longer erases `customizedActionResults` or the
+    CustomizedAction conditions (the old code skipped all of that when
+    `desiredNodes == nil`). Two new regression tests pin it:
+    `TestUpdateStatusKeepsCustomizedActionDiagnosticsAfterTargetCollapse`,
+    `TestFailWarmupJobKeepsCustomizedActionDiagnosticsAfterTargetCollapse`.
+  - **N4 (zero-requeue edge):** `targetWaitRequeueAfter` now returns `time.Millisecond`
+    instead of `0` when the budget is already expired, so the timer can never be
+    disabled between the expiry check and the requeue computation
+    (`TestTargetWaitRequeueAfterExpiredBudgetSchedulesReconcile`).
+  - **N5 (settle message):** the empty-desired settle message omits the
+    "and 0 node(s) failed within tolerance" clause when nothing failed.
+  - **Partial CRD startup** (diw-zw's comment): `shouldWatchTargetRBGs` now handles the
+    CRD-missing / CRD-establishing cases (`TestShouldWatchTargetRBGsWhenCRDIs{Missing,Established}`).
+- **`407b5216`** — test-only: widens the `TestReconcile_TargetWaitRequeueHonorsGlobalTimeout`
+  fixture margin (59s → 55s) so scheduling jitter cannot flip the "deadline still active"
+  case into expiry.
+
+### Full re-verify at `407b5216` (2026-10-29)
+
+All 13 findings FIXED (`results/reverify-round5-full-at-head-407b5216.txt`), including
+F10 — the round-4 open item. Premise checks C1–C5 green at head. Upstream unit sweep
+`./internal/controller/workloads/...` green (includes the delta's own new tests).
+CI green at head (22/22, incl. envtest + E2E). L3/live skipped per the debate setup.
+
+Artifact note: `results/reverify/unit.parsed` carried a stale `C2 fail` line contradicting
+its own `unit.out` (zero fail events; C2 PASS) — re-parse and a direct `-v` re-run both
+pass; the line is a write artifact, not a failure.
+
+### Round-5 verdict
+
+**ready-to-merge.** No open findings; every MUST and every minor item from rounds 1–4 is
+fixed and differentially verified. Merge decision rests with the maintainer (diw-zw is
+actively reviewing; the PR's GitHub `CHANGES_REQUESTED` label is the round-3 review's
+stale REQUEST_CHANGES, superseded by this branch's evidence).

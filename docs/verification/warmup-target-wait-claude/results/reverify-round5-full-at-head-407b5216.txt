@@ -1,0 +1,38 @@
+# Round 5 re-verify — head 407b5216 (delta 92cb7ef16..407b5216, commits b4b29ff0 + 407b5216)
+
+## Verdict table (live run 2026-10-29T12:08:05+08:00)
+```
+ID     POLARITY  LAYER        VERDICT        DETAIL
+F1     contract  unit         FIXED          pass=1 fail=0 miss=0
+F2     contract  unit         FIXED          pass=1 fail=0 miss=0
+F4-evidence contract  integration  FIXED          pass=2 fail=0 miss=0
+F4a    contract  unit         FIXED          pass=1 fail=0 miss=0
+F4b    contract  unit         FIXED          pass=1 fail=0 miss=0
+F5     contract  unit         FIXED          pass=1 fail=0 miss=0
+F6     contract  unit         FIXED          pass=1 fail=0 miss=0
+F7     contract  unit         FIXED          pass=1 fail=0 miss=0
+F8     contract  unit         FIXED          pass=1 fail=0 miss=0
+F9     contract  unit         FIXED          pass=1 fail=0 miss=0
+Q4     contract  unit         FIXED          pass=1 fail=0 miss=0
+Q2     contract  unit         FIXED          pass=1 fail=0 miss=0
+F10    contract  unit         FIXED          pass=1 fail=0 miss=0
+RESULT: all findings fixed.
+```
+
+## Premise checks C1-C5 (re-run directly at head with harness grafted, 2026-10-29T12:08:05+08:00)
+```
+go version go1.27.0 linux/amd64
+go test ./internal/controller/workloads/ -run 'TestVerifyC[1-5]' -count=1 -v
+all 5 PASS (C1 0.04s, C2 0.00s, C3 0.00s, C4 0.00s, C5 0.01s)
+```
+
+## Upstream unit sweep at head 407b5216
+```
+ok  sigs.k8s.io/rbgs/internal/controller/workloads  3.874s
+```
+
+## Note on results/reverify/*.parsed
+unit.parsed carried a stale 'TestVerifyC2UnscheduledTargetPodsWaitInsteadOfCompleting fail'
+line that contradicts its own source unit.out (0 '"Action":"fail"' entries; C2 PASS in
+raw output). Re-parsing unit.out with the script's own jq yields all-pass, and a direct
+-v re-run of C1-C5 at head passes. The parsed line is a write artifact, disregarded.
