@@ -16,7 +16,7 @@
     "runsAgainst": "base",
     "layer": "unit",
     "verdict": "confirmed",
-    "evidence": "round 1: base's own test asserts 'deprecated workload types enabled, StatefulSet - no error' (results/premise-base.txt); api/workloads/v1alpha1/ on base 885d655 contains zero webhook markers. round 2: base moved to a2e797c6 (#514, test/e2e infra + vendor only — no api/, config/, cmd/, internal/, pkg/ files), so the premise evidence carries over verbatim; re-confirmed zero kubebuilder:webhook markers in api/workloads/v1alpha1/ on a2e797c6.",
+    "evidence": "round 1: base's own test asserts 'deprecated workload types enabled, StatefulSet - no error' (results/premise-base.txt); api/workloads/v1alpha1/ on base 885d655 contains zero webhook markers. round 2: base moved to a2e797c6 (#514, test/e2e infra + vendor only \u2014 no api/, config/, cmd/, internal/, pkg/ files), so the premise evidence carries over verbatim; re-confirmed zero kubebuilder:webhook markers in api/workloads/v1alpha1/ on a2e797c6.",
     "match": [
       "TestRoleBasedGroupValidator_ValidateCreate_DeprecatedWorkloadTypesDisabled"
     ]
@@ -24,11 +24,11 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./api/workloads/v1alpha1 ./api/workloads/v1alpha2 ./cmd/rbgs ./internal/controller/workloads ./test/envtest/testcase/deprecation/... ./test/envtest/testcase/webhook/..."
+      "cmd": "go test -json ./api/workloads/v1alpha1 ./api/workloads/v1alpha2 ./cmd/rbgs ./internal/controller/workloads"
     },
     "integration": {
       "kind": "ginkgo",
-      "cmd": "KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64}\" go test -count=1 ./test/envtest/testcase/deprecationv1a1/... ./test/envtest/testcase/deprecationv1a1outage/... ./test/envtest/testcase/deprecationv1a1spoof/..."
+      "cmd": "D=\"${GINKGO_REPORT%/*}\"; KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64}\" ; go test -count=1 ./test/envtest/testcase/deprecationv1a1/... -ginkgo.json-report=\"$D/r-deprecationv1a1.json\" && go test -count=1 ./test/envtest/testcase/deprecationv1a1outage/... -ginkgo.json-report=\"$D/r-outage.json\" && go test -count=1 ./test/envtest/testcase/deprecationv1a1spoof/... -ginkgo.json-report=\"$D/r-spoof.json\"; rc=$?; jq -s 'add' \"$D/r-deprecationv1a1.json\" \"$D/r-outage.json\" \"$D/r-spoof.json\" > \"$GINKGO_REPORT\"; exit $rc"
     }
   },
   "findings": [
@@ -64,7 +64,7 @@
       "polarity": "canary",
       "layer": "integration",
       "status": "open",
-      "note": "F3 canary: pins the current permissive behavior. Still green on 22acc570 — the exemption is still claimable by any writer that knows the parent's name and UID, and the docstring still overclaims. If the gate is tightened, this spec flips red and must be inverted.",
+      "note": "F3 canary: pins the current permissive behavior. Still green on 22acc570 \u2014 the exemption is still claimable by any writer that knows the parent's name and UID, and the docstring still overclaims. If the gate is tightened, this spec flips red and must be inverted.",
       "match": [
         "grants the exemption to an ordinary writer that knows the parent's name and UID"
       ]
