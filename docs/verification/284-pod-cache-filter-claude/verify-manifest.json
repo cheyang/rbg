@@ -1,0 +1,54 @@
+{
+  "topic": "284-pod-cache-filter-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/530",
+  "harnessPaths": [
+    "docs/verification/284-pod-cache-filter-claude",
+    "cmd/rbgs/cache_options_pod_filter_test.go",
+    "pkg/utils/managed_marker_system_label_test.go",
+    "pkg/utils/kep284_selector_semantics_test.go",
+    "pkg/reconciler/managed_marker_template_drift_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue sgl-project/rbg#284: \"By turning on pprof, we could observe details and the reason is that irrelevant Pods consume most of the memory\" \u2014 the rbg operator's informer cache retains every Pod in the cluster because cacheOptions() only filters Service/StatefulSet/Deployment by the group-name label.",
+    "reportedComponent": "operator informer cache (cmd/rbgs cacheOptions / controller-runtime cache)",
+    "patchedComponent": "design of the same cache (KEP-284 proposes the Pod admission rule); this PR is the KEP document only, implementation is TBD",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "TestCacheOptionsConstrainsPodCache fails on the base code: cacheOptions() has 3 ByObject entries (Service, StatefulSet, Deployment) and none for *corev1.Pod, so the Pod informer is unfiltered \u2014 see results/unit-head.txt",
+    "match": [
+      "TestCacheOptionsConstrainsPodCache"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./cmd/rbgs/ ./pkg/utils/ ./pkg/reconciler/ -run 'TestKEP284|TestFilterSystemLabelsIgnoresManagedMarker|TestPodTemplateSpecEqualIgnoresManagedMarker|TestCacheOptionsConstrainsPodCache' -count=1 -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestFilterSystemLabelsIgnoresManagedMarker",
+        "TestPodTemplateSpecEqualIgnoresManagedMarker"
+      ]
+    },
+    {
+      "id": "P0-mechanics",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP284NoSingleSelectorCoversTheUnion",
+        "TestKEP284LegacyPodWithManagedFalseStaysAdmitted",
+        "TestKEP284DisjointPartitionIsExpressible"
+      ],
+      "note": "Guard tests: they PASS on base and head by design (they pin the label-selector semantics the KEP builds on). They are not bug repros; treat FIXED here as \"semantics unchanged\". A flip means the vendored client-go changed selector semantics."
+    }
+  ],
+  "liveNote": "No live layer: the PR is a design document (keps/284-pod-cache-filter/**) and changes no runtime code, so there is nothing to exercise against a cluster in this round. When the implementation PR lands, graft this harness onto it: F1's contract tests must be green (either the implementation extends FilterSystemLabels/objects-meta comparison to ignore rbg.workloads.x-k8s.io/managed, or the KEP stops putting the marker into workload pod templates), and TestCacheOptionsConstrainsPodCache must be green (a Pod filter exists)."
+}

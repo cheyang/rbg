@@ -1,0 +1,18 @@
+# Harness-bites check (skill step 4) — 2026-10-31T12:59:04Z
+# Proposed F1 fix applied temporarily: pkg/utils/utils.go FilterSystemLabels
+# also ignores rbg.workloads.x-k8s.io/managed. Production code was reverted after
+# the check; git status shows only the additive harness files.
+
+=== RUN   TestFilterSystemLabelsIgnoresManagedMarker
+--- PASS: TestFilterSystemLabelsIgnoresManagedMarker (0.00s)
+ok  	sigs.k8s.io/rbgs/pkg/utils	0.014s
+=== RUN   TestPodTemplateSpecEqualIgnoresManagedMarker
+--- PASS: TestPodTemplateSpecEqualIgnoresManagedMarker (0.00s)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.014s
+
+# After revert (production diff empty):
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/utils	0.014s
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.015s
+FAIL

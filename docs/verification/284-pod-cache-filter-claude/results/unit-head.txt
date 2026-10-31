@@ -1,0 +1,26 @@
+=== RUN   TestCacheOptionsConstrainsPodCache
+    cache_options_pod_filter_test.go:52: P0 premise CONFIRMED: cacheOptions() configures 3 ByObject entries but none for *corev1.Pod; the operator's Pod informer retains every Pod in the cluster
+--- FAIL: TestCacheOptionsConstrainsPodCache (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/cmd/rbgs	0.017s
+=== RUN   TestKEP284NoSingleSelectorCoversTheUnion
+    kep284_selector_semantics_test.go:91: source "source" matches "rbg native workload pod (group-name only)"
+    kep284_selector_semantics_test.go:91: source "source" matches "standalone roleinstance pod (role-instance-name only)"
+    kep284_selector_semantics_test.go:91: source "source" matches "warmup pod (warmup-name only)"
+    kep284_selector_semantics_test.go:91: source "source" matches "new creation path pod (managed only)"
+--- PASS: TestKEP284NoSingleSelectorCoversTheUnion (0.00s)
+=== RUN   TestKEP284LegacyPodWithManagedFalseStaysAdmitted
+--- PASS: TestKEP284LegacyPodWithManagedFalseStaysAdmitted (0.00s)
+=== RUN   TestKEP284DisjointPartitionIsExpressible
+--- PASS: TestKEP284DisjointPartitionIsExpressible (0.00s)
+=== RUN   TestFilterSystemLabelsIgnoresManagedMarker
+    managed_marker_system_label_test.go:55: F1 confirmed: FilterSystemLabels keeps "rbg.workloads.x-k8s.io/managed", so adding the managed marker to a workload pod template is label drift for objectMetaEqual and triggers a workload update that rolls existing Pods; expected the marker to be ignored like app.kubernetes.io/*
+--- FAIL: TestFilterSystemLabelsIgnoresManagedMarker (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/utils	0.015s
+=== RUN   TestPodTemplateSpecEqualIgnoresManagedMarker
+    managed_marker_template_drift_test.go:62: F1 confirmed: podTemplateSpecEqual reports templates that differ only by rbg.workloads.x-k8s.io/managed as unequal (objectMeta not equal: label not equal, old [map[rbg.workloads.x-k8s.io/group-name:rbg-a rbg.workloads.x-k8s.io/role-name:role-0]], new [map[rbg.workloads.x-k8s.io/group-name:rbg-a rbg.workloads.x-k8s.io/managed:true rbg.workloads.x-k8s.io/role-name:role-0]]); the workload apply path will patch the object and the native controller will roll every Pod, contradicting KEP-284's no-rolling-update guarantee
+--- FAIL: TestPodTemplateSpecEqualIgnoresManagedMarker (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.014s
+FAIL
