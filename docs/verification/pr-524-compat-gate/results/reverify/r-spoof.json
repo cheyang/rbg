@@ -1,0 +1,302 @@
+[
+  {
+    "SuitePath": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof",
+    "SuiteDescription": "v1alpha1 Replacement-Child Exemption Spoof Suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": true,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 2,
+      "SpecsThatWillRun": 2
+    },
+    "StartTime": "2026-10-31T17:00:06.068326718+08:00",
+    "EndTime": "2026-10-31T17:00:12.420534019+08:00",
+    "RunTime": 6352207311,
+    "SuiteConfig": {
+      "RandomSeed": 1793437206,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": null,
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+          "LineNumber": 82
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-31T17:00:06.068356879+08:00",
+        "EndTime": "2026-10-31T17:00:12.390135217+08:00",
+        "RunTime": 6321778338,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-31T17:00:06+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-10-31T17:00:08+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-10-31T17:00:08+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/config/crd/bases\"}\n2026-10-31T17:00:08+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-10-31T17:00:08+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-10-31T17:00:08+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-10-31T17:00:08+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-10-31T17:00:08+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-10-31T17:00:08+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-10-31T17:00:08+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-10-31T17:00:08+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-10-31T17:00:08+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-10-31T17:00:08+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-10-31T17:00:08+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-10-31T17:00:08+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:09+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:10+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/convert\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=CoordinatedPolicy\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleInstanceSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroup\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroup\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupSet\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=InstanceSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instanceset\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instanceset\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=Instance\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instance\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instance\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupScalingAdapter\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupscalingadapter\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupscalingadapter\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=ClusterEngineRuntimeProfile\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-clusterengineruntimeprofile\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-clusterengineruntimeprofile\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tStarting webhook server\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.certwatcher\tUpdated current TLS certificate\t{\"cert\": \"/tmp/envtest-serving-certs-328692416/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-328692416/tls.key\"}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.webhook\tServing webhook server\t{\"host\": \"127.0.0.1\", \"port\": 43455}\n2026-10-31T17:00:10+08:00\tINFO\tcontroller-runtime.certwatcher\tStarting certificate poll+watcher\t{\"cert\": \"/tmp/envtest-serving-certs-328692416/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-328692416/tls.key\", \"interval\": \"10s\"}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+              "LineNumber": 82
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-10-31T17:00:06.068364919+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+              "LineNumber": 156
+            },
+            "TimelineLocation": {
+              "Offset": 10399,
+              "Order": 2,
+              "Time": "2026-10-31T17:00:10.23213857+08:00"
+            },
+            "Message": "seeding the legacy v1alpha2 set before any webhook configuration exists"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+              "LineNumber": 159
+            },
+            "TimelineLocation": {
+              "Offset": 10399,
+              "Order": 3,
+              "Time": "2026-10-31T17:00:12.307627188+08:00"
+            },
+            "Message": "installing the production webhook configurations"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+              "LineNumber": 82
+            },
+            "TimelineLocation": {
+              "Offset": 10399,
+              "Order": 5,
+              "Time": "2026-10-31T17:00:12.390134086+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 6321769167,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "replacement-child exemption (v1alpha2 gate)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+            "LineNumber": 170
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+          "LineNumber": 177
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "grants the exemption to an ordinary writer that knows the parent's name and UID",
+        "State": "passed",
+        "StartTime": "2026-10-31T17:00:12.390162787+08:00",
+        "EndTime": "2026-10-31T17:00:12.395801208+08:00",
+        "RunTime": 5638410,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+              "LineNumber": 177
+            },
+            "TimelineLocation": {
+              "Order": 6,
+              "Time": "2026-10-31T17:00:12.390165107+08:00"
+            },
+            "Message": "grants the exemption to an ordinary writer that knows the parent's name and UID",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+              "LineNumber": 177
+            },
+            "TimelineLocation": {
+              "Order": 8,
+              "Time": "2026-10-31T17:00:12.395798068+08:00"
+            },
+            "Message": "grants the exemption to an ordinary writer that knows the parent's name and UID",
+            "Duration": 5632961,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "replacement-child exemption (v1alpha2 gate)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+            "LineNumber": 170
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+          "LineNumber": 202
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects the same deprecated-type child without the owner reference",
+        "State": "passed",
+        "StartTime": "2026-10-31T17:00:12.395821139+08:00",
+        "EndTime": "2026-10-31T17:00:12.398016827+08:00",
+        "RunTime": 2195698,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+              "LineNumber": 202
+            },
+            "TimelineLocation": {
+              "Order": 9,
+              "Time": "2026-10-31T17:00:12.395822319+08:00"
+            },
+            "Message": "rejects the same deprecated-type child without the owner reference",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+              "LineNumber": 202
+            },
+            "TimelineLocation": {
+              "Order": 11,
+              "Time": "2026-10-31T17:00:12.398014357+08:00"
+            },
+            "Message": "rejects the same deprecated-type child without the owner reference",
+            "Duration": 2192038,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+          "LineNumber": 165
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-31T17:00:12.398032358+08:00",
+        "EndTime": "2026-10-31T17:00:12.420526039+08:00",
+        "RunTime": 22493681,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-31T17:00:12+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-10-31T17:00:12+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-10-31T17:00:12+08:00\tINFO\tStopping and waiting for caches\n2026-10-31T17:00:12+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-10-31T17:00:12+08:00\tINFO\tStopping and waiting for webhooks\n2026-10-31T17:00:12+08:00\tINFO\tcontroller-runtime.webhook\tShutting down webhook server with timeout of 1 minute\n2026-10-31T17:00:12+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-watching file\t{\"cert\": \"/tmp/envtest-serving-certs-328692416/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-328692416/tls.key\", \"error\": \"no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:235\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-31T17:00:12+08:00\tDEBUG\tcontroller-runtime.certwatcher\tcertificate event\t{\"cert\": \"/tmp/envtest-serving-certs-328692416/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-328692416/tls.key\", \"event\": \"CHMOD         \\\"/tmp/envtest-serving-certs-328692416/tls.key\\\"\"}\n2026-10-31T17:00:12+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-reading certificate\t{\"cert\": \"/tmp/envtest-serving-certs-328692416/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-328692416/tls.key\", \"error\": \"open /tmp/envtest-serving-certs-328692416/tls.crt: no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:243\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-31T17:00:12+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-10-31T17:00:12+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+              "LineNumber": 165
+            },
+            "TimelineLocation": {
+              "Order": 12,
+              "Time": "2026-10-31T17:00:12.398033168+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof/spoof_test.go",
+              "LineNumber": 165
+            },
+            "TimelineLocation": {
+              "Offset": 2309,
+              "Order": 14,
+              "Time": "2026-10-31T17:00:12.420523499+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 22490331,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]

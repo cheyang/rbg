@@ -1,0 +1,825 @@
+[
+  {
+    "SuitePath": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1",
+    "SuiteDescription": "v1alpha1 Deprecation Contract Suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": true,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 7,
+      "SpecsThatWillRun": 7
+    },
+    "StartTime": "2026-10-31T16:59:52.383076808+08:00",
+    "EndTime": "2026-10-31T16:59:58.607711766+08:00",
+    "RunTime": 6224634968,
+    "SuiteConfig": {
+      "RandomSeed": 1793437192,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": null,
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/suite_test.go",
+          "LineNumber": 37
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-31T16:59:52.383120269+08:00",
+        "EndTime": "2026-10-31T16:59:58.491887691+08:00",
+        "RunTime": 6108767412,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-31T16:59:52+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/config/crd/bases\"}\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-10-31T16:59:54+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T16:59:55+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T16:59:56+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/convert\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=CoordinatedPolicy\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleInstanceSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroup\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroup\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupSet\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=InstanceSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instanceset\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instanceset\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=Instance\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instance\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instance\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupScalingAdapter\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupscalingadapter\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupscalingadapter\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=ClusterEngineRuntimeProfile\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-clusterengineruntimeprofile\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-clusterengineruntimeprofile\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tStarting webhook server\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.certwatcher\tUpdated current TLS certificate\t{\"cert\": \"/tmp/envtest-serving-certs-648413173/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-648413173/tls.key\"}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.webhook\tServing webhook server\t{\"host\": \"127.0.0.1\", \"port\": 45993}\n2026-10-31T16:59:56+08:00\tINFO\tcontroller-runtime.certwatcher\tStarting certificate poll+watcher\t{\"cert\": \"/tmp/envtest-serving-certs-648413173/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-648413173/tls.key\", \"interval\": \"10s\"}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/suite_test.go",
+              "LineNumber": 37
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-10-31T16:59:52.38312841+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testutil/v1alpha1_contract_setup.go",
+              "LineNumber": 112
+            },
+            "TimelineLocation": {
+              "Order": 2,
+              "Time": "2026-10-31T16:59:52.383182792+08:00"
+            },
+            "Message": "bootstrapping the v1alpha1 contract test environment"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testutil/v1alpha1_contract_setup.go",
+              "LineNumber": 143
+            },
+            "TimelineLocation": {
+              "Offset": 4710,
+              "Order": 3,
+              "Time": "2026-10-31T16:59:56.302408685+08:00"
+            },
+            "Message": "registering the production webhook handlers"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testutil/v1alpha1_contract_setup.go",
+              "LineNumber": 183
+            },
+            "TimelineLocation": {
+              "Offset": 10399,
+              "Order": 4,
+              "Time": "2026-10-31T16:59:56.404582823+08:00"
+            },
+            "Message": "installing the shipped webhook manifests"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/suite_test.go",
+              "LineNumber": 37
+            },
+            "TimelineLocation": {
+              "Offset": 10399,
+              "Order": 6,
+              "Time": "2026-10-31T16:59:58.491885991+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 6108757592,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation contract"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+            "LineNumber": 32
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+          "LineNumber": 37
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "returns the on-the-wire deprecation warning for v1alpha1 creates",
+        "State": "passed",
+        "StartTime": "2026-10-31T16:59:58.491923163+08:00",
+        "EndTime": "2026-10-31T16:59:58.496043159+08:00",
+        "RunTime": 4119996,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 33
+            },
+            "TimelineLocation": {
+              "Order": 7,
+              "Time": "2026-10-31T16:59:58.491925913+08:00"
+            },
+            "Message": "v1alpha1 deprecation contract",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 33
+            },
+            "TimelineLocation": {
+              "Order": 9,
+              "Time": "2026-10-31T16:59:58.491937873+08:00"
+            },
+            "Message": "v1alpha1 deprecation contract",
+            "Duration": 11970,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 37
+            },
+            "TimelineLocation": {
+              "Order": 10,
+              "Time": "2026-10-31T16:59:58.491938673+08:00"
+            },
+            "Message": "returns the on-the-wire deprecation warning for v1alpha1 creates",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 37
+            },
+            "TimelineLocation": {
+              "Order": 12,
+              "Time": "2026-10-31T16:59:58.496039199+08:00"
+            },
+            "Message": "returns the on-the-wire deprecation warning for v1alpha1 creates",
+            "Duration": 4100526,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation contract"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+            "LineNumber": 32
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+          "LineNumber": 44
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "returns the on-the-wire deprecation warning for v1alpha1 updates",
+        "State": "passed",
+        "StartTime": "2026-10-31T16:59:58.49606188+08:00",
+        "EndTime": "2026-10-31T16:59:58.503308088+08:00",
+        "RunTime": 7246208,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 33
+            },
+            "TimelineLocation": {
+              "Order": 13,
+              "Time": "2026-10-31T16:59:58.49606406+08:00"
+            },
+            "Message": "v1alpha1 deprecation contract",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 33
+            },
+            "TimelineLocation": {
+              "Order": 15,
+              "Time": "2026-10-31T16:59:58.496074761+08:00"
+            },
+            "Message": "v1alpha1 deprecation contract",
+            "Duration": 10711,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 44
+            },
+            "TimelineLocation": {
+              "Order": 16,
+              "Time": "2026-10-31T16:59:58.496075501+08:00"
+            },
+            "Message": "returns the on-the-wire deprecation warning for v1alpha1 updates",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 44
+            },
+            "TimelineLocation": {
+              "Order": 18,
+              "Time": "2026-10-31T16:59:58.503303778+08:00"
+            },
+            "Message": "returns the on-the-wire deprecation warning for v1alpha1 updates",
+            "Duration": 7228267,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation contract"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+            "LineNumber": 32
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+          "LineNumber": 54
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "returns the on-the-wire warning for a warning-only kind create",
+        "State": "passed",
+        "StartTime": "2026-10-31T16:59:58.503330509+08:00",
+        "EndTime": "2026-10-31T16:59:58.507909392+08:00",
+        "RunTime": 4578883,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 33
+            },
+            "TimelineLocation": {
+              "Order": 19,
+              "Time": "2026-10-31T16:59:58.503333519+08:00"
+            },
+            "Message": "v1alpha1 deprecation contract",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 33
+            },
+            "TimelineLocation": {
+              "Order": 21,
+              "Time": "2026-10-31T16:59:58.50334558+08:00"
+            },
+            "Message": "v1alpha1 deprecation contract",
+            "Duration": 12061,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 54
+            },
+            "TimelineLocation": {
+              "Order": 22,
+              "Time": "2026-10-31T16:59:58.50334635+08:00"
+            },
+            "Message": "returns the on-the-wire warning for a warning-only kind create",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 54
+            },
+            "TimelineLocation": {
+              "Order": 24,
+              "Time": "2026-10-31T16:59:58.507906662+08:00"
+            },
+            "Message": "returns the on-the-wire warning for a warning-only kind create",
+            "Duration": 4560302,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation contract"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+            "LineNumber": 32
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+          "LineNumber": 78
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a new deprecated workload use through the v1alpha1 API",
+        "State": "passed",
+        "StartTime": "2026-10-31T16:59:58.507925153+08:00",
+        "EndTime": "2026-10-31T16:59:58.510387801+08:00",
+        "RunTime": 2462648,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 33
+            },
+            "TimelineLocation": {
+              "Order": 25,
+              "Time": "2026-10-31T16:59:58.507927743+08:00"
+            },
+            "Message": "v1alpha1 deprecation contract",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 33
+            },
+            "TimelineLocation": {
+              "Order": 27,
+              "Time": "2026-10-31T16:59:58.507939523+08:00"
+            },
+            "Message": "v1alpha1 deprecation contract",
+            "Duration": 11790,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 78
+            },
+            "TimelineLocation": {
+              "Order": 28,
+              "Time": "2026-10-31T16:59:58.507940363+08:00"
+            },
+            "Message": "rejects a new deprecated workload use through the v1alpha1 API",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 78
+            },
+            "TimelineLocation": {
+              "Order": 30,
+              "Time": "2026-10-31T16:59:58.510386+08:00"
+            },
+            "Message": "rejects a new deprecated workload use through the v1alpha1 API",
+            "Duration": 2445627,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation contract"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+            "LineNumber": 32
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+          "LineNumber": 89
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a new deprecated workload use in a v1alpha1 set template",
+        "State": "passed",
+        "StartTime": "2026-10-31T16:59:58.510400341+08:00",
+        "EndTime": "2026-10-31T16:59:58.577835592+08:00",
+        "RunTime": 67435261,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 33
+            },
+            "TimelineLocation": {
+              "Order": 31,
+              "Time": "2026-10-31T16:59:58.510402021+08:00"
+            },
+            "Message": "v1alpha1 deprecation contract",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 33
+            },
+            "TimelineLocation": {
+              "Order": 33,
+              "Time": "2026-10-31T16:59:58.510412491+08:00"
+            },
+            "Message": "v1alpha1 deprecation contract",
+            "Duration": 10470,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 89
+            },
+            "TimelineLocation": {
+              "Order": 34,
+              "Time": "2026-10-31T16:59:58.510413161+08:00"
+            },
+            "Message": "rejects a new deprecated workload use in a v1alpha1 set template",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 89
+            },
+            "TimelineLocation": {
+              "Order": 36,
+              "Time": "2026-10-31T16:59:58.577831102+08:00"
+            },
+            "Message": "rejects a new deprecated workload use in a v1alpha1 set template",
+            "Duration": 67417951,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation contract"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+            "LineNumber": 32
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+          "LineNumber": 106
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "does not warn on v1alpha2 writes through Exact match policy",
+        "State": "passed",
+        "StartTime": "2026-10-31T16:59:58.577856913+08:00",
+        "EndTime": "2026-10-31T16:59:58.580886641+08:00",
+        "RunTime": 3029728,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 33
+            },
+            "TimelineLocation": {
+              "Order": 37,
+              "Time": "2026-10-31T16:59:58.577859723+08:00"
+            },
+            "Message": "v1alpha1 deprecation contract",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 33
+            },
+            "TimelineLocation": {
+              "Order": 39,
+              "Time": "2026-10-31T16:59:58.577871824+08:00"
+            },
+            "Message": "v1alpha1 deprecation contract",
+            "Duration": 12101,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 106
+            },
+            "TimelineLocation": {
+              "Order": 40,
+              "Time": "2026-10-31T16:59:58.577872613+08:00"
+            },
+            "Message": "does not warn on v1alpha2 writes through Exact match policy",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 106
+            },
+            "TimelineLocation": {
+              "Order": 42,
+              "Time": "2026-10-31T16:59:58.580884411+08:00"
+            },
+            "Message": "does not warn on v1alpha2 writes through Exact match policy",
+            "Duration": 3011798,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation contract"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+            "LineNumber": 32
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+          "LineNumber": 132
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "leaves v1alpha1 deletes ungated by the deprecation webhooks",
+        "State": "passed",
+        "StartTime": "2026-10-31T16:59:58.580900591+08:00",
+        "EndTime": "2026-10-31T16:59:58.585836197+08:00",
+        "RunTime": 4935606,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 33
+            },
+            "TimelineLocation": {
+              "Order": 43,
+              "Time": "2026-10-31T16:59:58.580902511+08:00"
+            },
+            "Message": "v1alpha1 deprecation contract",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 33
+            },
+            "TimelineLocation": {
+              "Order": 45,
+              "Time": "2026-10-31T16:59:58.580910852+08:00"
+            },
+            "Message": "v1alpha1 deprecation contract",
+            "Duration": 8341,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 132
+            },
+            "TimelineLocation": {
+              "Order": 46,
+              "Time": "2026-10-31T16:59:58.580911552+08:00"
+            },
+            "Message": "leaves v1alpha1 deletes ungated by the deprecation webhooks",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/contract_test.go",
+              "LineNumber": 132
+            },
+            "TimelineLocation": {
+              "Order": 48,
+              "Time": "2026-10-31T16:59:58.585833817+08:00"
+            },
+            "Message": "leaves v1alpha1 deletes ungated by the deprecation webhooks",
+            "Duration": 4922265,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/suite_test.go",
+          "LineNumber": 43
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-31T16:59:58.585846957+08:00",
+        "EndTime": "2026-10-31T16:59:58.607694055+08:00",
+        "RunTime": 21847098,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-31T16:59:58+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-10-31T16:59:58+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-10-31T16:59:58+08:00\tINFO\tStopping and waiting for caches\n2026-10-31T16:59:58+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-10-31T16:59:58+08:00\tINFO\tStopping and waiting for webhooks\n2026-10-31T16:59:58+08:00\tINFO\tcontroller-runtime.webhook\tShutting down webhook server with timeout of 1 minute\n2026-10-31T16:59:58+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-watching file\t{\"cert\": \"/tmp/envtest-serving-certs-648413173/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-648413173/tls.key\", \"error\": \"no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:235\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-31T16:59:58+08:00\tDEBUG\tcontroller-runtime.certwatcher\tcertificate event\t{\"cert\": \"/tmp/envtest-serving-certs-648413173/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-648413173/tls.key\", \"event\": \"CHMOD         \\\"/tmp/envtest-serving-certs-648413173/tls.key\\\"\"}\n2026-10-31T16:59:58+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-reading certificate\t{\"cert\": \"/tmp/envtest-serving-certs-648413173/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-648413173/tls.key\", \"error\": \"open /tmp/envtest-serving-certs-648413173/tls.crt: no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:243\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-31T16:59:58+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-10-31T16:59:58+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/suite_test.go",
+              "LineNumber": 43
+            },
+            "TimelineLocation": {
+              "Order": 49,
+              "Time": "2026-10-31T16:59:58.585848608+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testutil/setup.go",
+              "LineNumber": 140
+            },
+            "TimelineLocation": {
+              "Order": 50,
+              "Time": "2026-10-31T16:59:58.585863778+08:00"
+            },
+            "Message": "tearing down the test environment"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1/suite_test.go",
+              "LineNumber": 43
+            },
+            "TimelineLocation": {
+              "Offset": 2309,
+              "Order": 52,
+              "Time": "2026-10-31T16:59:58.607692055+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 21843449,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]

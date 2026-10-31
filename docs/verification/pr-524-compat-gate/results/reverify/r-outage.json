@@ -1,0 +1,304 @@
+[
+  {
+    "SuitePath": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage",
+    "SuiteDescription": "v1alpha1 Warning-Only Webhook Outage Suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": true,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 2,
+      "SpecsThatWillRun": 2
+    },
+    "StartTime": "2026-10-31T16:59:59.53369141+08:00",
+    "EndTime": "2026-10-31T17:00:05.116154521+08:00",
+    "RunTime": 5582463111,
+    "SuiteConfig": {
+      "RandomSeed": 1793437199,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": null,
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+          "LineNumber": 113
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-31T16:59:59.533719281+08:00",
+        "EndTime": "2026-10-31T17:00:05.088636771+08:00",
+        "RunTime": 5554917490,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-31T16:59:59+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-10-31T17:00:01+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-10-31T17:00:01+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/config/crd/bases\"}\n2026-10-31T17:00:01+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-10-31T17:00:01+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-10-31T17:00:01+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-10-31T17:00:01+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-10-31T17:00:01+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-10-31T17:00:01+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-10-31T17:00:01+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-10-31T17:00:01+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-10-31T17:00:01+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-10-31T17:00:01+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-10-31T17:00:01+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-10-31T17:00:01+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-31T17:00:02+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n2026-10-31T17:00:05+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 InstanceSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleInstanceSet\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+              "LineNumber": 113
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-10-31T16:59:59.533729202+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+              "LineNumber": 141
+            },
+            "TimelineLocation": {
+              "Offset": 4710,
+              "Order": 2,
+              "Time": "2026-10-31T17:00:02.975404539+08:00"
+            },
+            "Message": "creating the outage namespaces"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+              "LineNumber": 152
+            },
+            "TimelineLocation": {
+              "Offset": 4710,
+              "Order": 3,
+              "Time": "2026-10-31T17:00:03.079628151+08:00"
+            },
+            "Message": "installing the shipped warning-only webhooks against a dead endpoint"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+              "LineNumber": 113
+            },
+            "TimelineLocation": {
+              "Offset": 4844,
+              "Order": 5,
+              "Time": "2026-10-31T17:00:05.088635561+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 5554906359,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "warning-only v1alpha1 webhooks during an outage"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+            "LineNumber": 169
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+          "LineNumber": 170
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "admits a v1alpha1 InstanceSet write while the warning-only webhooks are unreachable",
+        "State": "passed",
+        "StartTime": "2026-10-31T17:00:05.088673502+08:00",
+        "EndTime": "2026-10-31T17:00:05.092351493+08:00",
+        "RunTime": 3678001,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-31T17:00:05+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 InstanceSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleInstanceSet\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+              "LineNumber": 170
+            },
+            "TimelineLocation": {
+              "Order": 6,
+              "Time": "2026-10-31T17:00:05.088676082+08:00"
+            },
+            "Message": "admits a v1alpha1 InstanceSet write while the warning-only webhooks are unreachable",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+              "LineNumber": 170
+            },
+            "TimelineLocation": {
+              "Offset": 134,
+              "Order": 8,
+              "Time": "2026-10-31T17:00:05.092348173+08:00"
+            },
+            "Message": "admits a v1alpha1 InstanceSet write while the warning-only webhooks are unreachable",
+            "Duration": 3672091,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "warning-only v1alpha1 webhooks during an outage"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+            "LineNumber": 169
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+          "LineNumber": 179
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects the same write when the identical dead endpoint carries failurePolicy=Fail",
+        "State": "passed",
+        "StartTime": "2026-10-31T17:00:05.092375294+08:00",
+        "EndTime": "2026-10-31T17:00:05.094424697+08:00",
+        "RunTime": 2049393,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-31T17:00:05+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 InstanceSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleInstanceSet\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+              "LineNumber": 179
+            },
+            "TimelineLocation": {
+              "Order": 9,
+              "Time": "2026-10-31T17:00:05.092377464+08:00"
+            },
+            "Message": "rejects the same write when the identical dead endpoint carries failurePolicy=Fail",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+              "LineNumber": 179
+            },
+            "TimelineLocation": {
+              "Offset": 134,
+              "Order": 11,
+              "Time": "2026-10-31T17:00:05.094422367+08:00"
+            },
+            "Message": "rejects the same write when the identical dead endpoint carries failurePolicy=Fail",
+            "Duration": 2044903,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+          "LineNumber": 164
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-31T17:00:05.094436418+08:00",
+        "EndTime": "2026-10-31T17:00:05.116149201+08:00",
+        "RunTime": 21712784,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+              "LineNumber": 164
+            },
+            "TimelineLocation": {
+              "Order": 12,
+              "Time": "2026-10-31T17:00:05.094437158+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go",
+              "LineNumber": 164
+            },
+            "TimelineLocation": {
+              "Order": 14,
+              "Time": "2026-10-31T17:00:05.116148051+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 21710893,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]
