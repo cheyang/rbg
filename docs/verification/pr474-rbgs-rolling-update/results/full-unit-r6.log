@@ -1,0 +1,57 @@
+?   	sigs.k8s.io/rbgs/api/workloads/constants	[no test files]
+?   	sigs.k8s.io/rbgs/api/workloads/pub/inplace_update	[no test files]
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.084s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.369s
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	5.762s
+ok  	sigs.k8s.io/rbgs/pkg/component-discovery	0.052s
+ok  	sigs.k8s.io/rbgs/pkg/coordination/coordinationscaling	0.069s
+ok  	sigs.k8s.io/rbgs/pkg/dependency	0.175s
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.234s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance	0.031s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/clientdapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	0.066s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/readiness	0.126s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/specifieddelete	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod	0.029s
+?   	sigs.k8s.io/rbgs/pkg/inplace/pod/clientadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/inplaceupdate	0.198s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/readiness	0.026s
+ok  	sigs.k8s.io/rbgs/pkg/port-allocator	0.039s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.537s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.157s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	0.074s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.079s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	0.047s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.174s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	0.052s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.187s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode	0.041s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/core	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision	0.042s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/sync	0.114s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/utils	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/utils/revisionadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/scale	0.046s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler	0.121s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/common	0.115s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/k8s-scheduler-plugin	0.090s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/volcano	0.102s
+ok  	sigs.k8s.io/rbgs/pkg/utils	0.111s
+?   	sigs.k8s.io/rbgs/pkg/utils/client	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/expectations	0.005s
+?   	sigs.k8s.io/rbgs/pkg/utils/fieldindex	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/history	0.019s
+?   	sigs.k8s.io/rbgs/pkg/utils/ratelimiter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/requeueduration	0.003s
+?   	sigs.k8s.io/rbgs/pkg/utils/revisionadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/webhook	0.097s
+?   	sigs.k8s.io/rbgs/pkg/webhook/cert/generator	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/webhook/cert/writer	1.349s
+?   	sigs.k8s.io/rbgs/cmd/cli	[no test files]
+?   	sigs.k8s.io/rbgs/cmd/cli/cmd	[no test files]
+ok  	sigs.k8s.io/rbgs/cmd/cli/cmd/rollout	0.014s
+ok  	sigs.k8s.io/rbgs/cmd/cli/cmd/status	0.011s
+ok  	sigs.k8s.io/rbgs/cmd/cli/util	0.014s
+ok  	sigs.k8s.io/rbgs/cmd/rbgs	0.061s

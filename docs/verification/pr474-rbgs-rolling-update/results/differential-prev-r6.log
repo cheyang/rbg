@@ -1,0 +1,12 @@
+== differential: new round-6 contracts run on the PREVIOUS head 4a9043c ==
+-- #521 admission (api/workloads/v1alpha2):
+--- FAIL: TestVerifyPR474_Webhook_PartitionNotBoundedByReplicas (partition bound still enforced)
+--- FAIL: TestVerifyPR474_Webhook_ScaledDownSetStillAcceptsMetadataWrites (stuck object rejected)
+-- #519 surge (internal/controller/workloads, standalone differential copy):
+--- FAIL: TestVerifyPR474_Surge_UnreadyHeldBackOrdinalStillWarmsSurge
+         Error: map[string]string{"surge-live-0":"v1","surge-live-1":"v1","surge-live-2":"v1","surge-live-3":"v1"} does not contain "surge-live-4"
+-- adoption/finalize/canonical contracts: build fails at 4a9043c (symbols adoptGroupSetOrphans/
+   canonicalGroupSetTemplateJSON/finalizeRolloutStatus introduced by this delta) — feature-absent,
+   recorded as not-run rather than harness-update.
+
+== same contracts on the head af9dd84b: all PASS (results/unit-verify-r6.log) ==

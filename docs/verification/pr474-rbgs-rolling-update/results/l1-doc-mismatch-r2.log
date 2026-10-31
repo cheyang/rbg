@@ -1,0 +1,86 @@
+== PR #474 round 2 (head 9e423e86) — PR-body vs shipped API divergence evidence ==
+(PR body is byte-identical to round 1; diffed against 2026-10-09 body: identical)
+
+-- 1. body documents spec.rolloutStrategy.paused ("Freezes template propagation")
+   and a Paused status condition; shipped API fields:
+   (no paused field or condition anywhere in the types)
+9161:                                paused:
+9163:                                    Paused indicates that the InstanceSet is paused.
+33802:                                    paused:
+
+-- 2. body claims: type enum {Recreate}, default Recreate, "InPlaceUpdate is reserved
+   and rejected by the CRD enum"; shipped:
+76:	// Defaults to InPlaceUpdate when omitted or empty.
+77:	// +kubebuilder:validation:Enum=Recreate;InPlaceUpdate
+78:	// +kubebuilder:default=InPlaceUpdate
+
+-- 3. body claims 17 unit tests (TestRollingUpdate_*, TestRecreateDeleteCarriesUIDPrecondition,
+   TestRoleBasedGroupSetReconciler_TerminatingChildIsNotCountedReady, TestOnlyReplicasChanged, ...); shipped test names:
+Test_CalculateNextRollingTarget_MinProgressWhenNoRoleReady
+Test_CalculateNextRollingTarget_WithNormalCases
+TestConstructRoleStatusesPublishesRolloutBarrier
+TestConvertCoordinationStrategyApplyConfiguration_RollingUpdate
+TestEnsureV1alpha1CoordinatedPolicy_RollingUpdateStrategy
+TestGroupSetMatchesRevision_IgnoresControllerOwnedAnnotations
+TestGroupSetOnlyReplicasChanged_IgnoresControllerOwnedAnnotations
+TestLeaderWorkerSetRolloutChecksTargetRevisionChain
+Test_mergeStrategyRollingUpdate
+TestNormalizedGroupSetTemplate_DropsControllerOwnedKeys
+TestReadyReplicasSyncWithScale
+TestResolveGroupSetRollout
+TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync
+TestRoleBasedGroupSetReconciler_needsTemplateAnnotationUpdate
+TestRoleBasedGroupSetReconciler_needsTemplateLabelUpdate
+TestRoleBasedGroupSetReconciler_needsUpdate
+TestRoleBasedGroupSetReconciler_Reconcile_OptimizedOrder
+TestRoleBasedGroupSetReconciler_Reconcile_StatusUpdate
+TestRoleBasedGroupSetReconciler_scaleDown
+TestRoleBasedGroupSetReconciler_scaleUp
+TestRoleBasedGroupSetReconciler_updateExistingRBGs_NormalizesLegacyStrategy
+TestRoleInstanceSetRolloutChecksLiveInstances
+TestRoleWorkloadRolloutComplete
+TestRolloutStatusAPIError
+TestSyncRBGMetadata
+TestSyncRollingGroupSet_EmptyStrategyUpdatesInPlace
+TestSyncRollingGroupSet_InPlaceUpdateBudgetAndOrder
+TestSyncRollingGroupSet_InPlaceUpdateFullSpecAndMetadata
+TestSyncRollingGroupSet_InPlaceUpdateIgnoresStoredSurge
+TestSyncRollingGroupSet_InPlaceUpdateRapidTemplateChangeAndRollback
+
+-- 4. body claims a webhook e2e (test/e2e/testcase/v1alpha2/webhook_validation.go):
+-- 4. body claims a webhook e2e (test/e2e/testcase/v1alpha2/webhook_validation.go):
+test/e2e/testcase/v1alpha2/webhook_validation.go
+9e423e86 feat: support InPlaceUpdate rollout strategy
+44241903 feat: support RoleBasedGroupSet rolling update
+
+-- 5. body claims "pure content comparison with no revision history"; shipped revision machinery:
+7
+168:	// CurrentRevision is the revision of the last fully completed rollout.
+170:	CurrentRevision string `json:"currentRevision,omitempty"`
+172:	// UpdateRevision is the revision of the current GroupTemplate.
+174:	UpdateRevision string `json:"updateRevision,omitempty"`
+
+-- 6. body claims budget = maxUnavailable + readySurge and an isServing predicate; shipped:
+98:func groupSetChildReady(child *workloadsv1alpha2.RoleBasedGroup) bool {
+217:	minimumReady := max(0, replicas-limits.maxUnavailable)
+221:		if groupSetChildReady(&children.Items[i]) {
+230:			isReady := groupSetChildReady(child)
+231:			if child.DeletionTimestamp.IsZero() && (!isReady || ready > minimumReady) {
+357:	minimumReady := max(0, replicas-limits.maxUnavailable)
+
+-- 7. body claims a replicas-only diff is "not paced by the budget and still happens while
+   paused"; shipped (InPlaceUpdate disables the scale-only shortcut -> budget-paced):
+307:		if !limits.inPlaceUpdate && groupSetOnlyReplicasChanged(child, update.template) {
+
+-- 8. body e2e list includes "paused holds the rollout still until it is lifted"; shipped e2e:
+   (no paused e2e)
+
+-- 9. round-2 author-added coverage (for contrast — what DID land):
+api/workloads/v1alpha1/rolebasedgroupset_conversion.go
+api/workloads/v1alpha1/rolebasedgroupset_conversion_test.go
+api/workloads/v1alpha1/rolebasedgroupset_conversion_verify_test.go
+
+test/envtest/testcase/rbgs_rolling/:
+helpers_test.go
+rolling_test.go
+suite_test.go

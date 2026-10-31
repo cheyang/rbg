@@ -1,0 +1,5 @@
+# Full envtest suite (regression, no focus) — PR head 44241903, 2026-10-08T18:48:52Z
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	66.287s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy	203.225s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/webhook	31.599s
+EXIT:0

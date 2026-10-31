@@ -1,0 +1,8 @@
+# Author envtest suites on PR head 98720938 (round 3, 2026-10-13)
+cmd: KUBEBUILDER_ASSETS=$HOME/envtest-assets/k8s/1.37.0-linux-amd64 go test ./test/envtest/testcase/rbgs_rolling/ ./test/envtest/testcase/webhook/ -count=1 -timeout 25m
+
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbgs_rolling	134.627s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/webhook	60.802s
+exit=0
+
+[exited with code 0]

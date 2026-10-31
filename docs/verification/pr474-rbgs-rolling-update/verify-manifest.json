@@ -1,0 +1,312 @@
+{
+  "topic": "pr474-rbgs-rolling-update",
+  "pr": "https://github.com/sgl-project/rbg/pull/474",
+  "harnessPaths": [
+    "docs/verification/pr474-rbgs-rolling-update",
+    "internal/controller/workloads/rolebasedgroupset_verify_test.go",
+    "api/workloads/v1alpha2/rolebasedgroupset_rollout_verify_test.go",
+    "api/workloads/v1alpha1/rolebasedgroupset_conversion_verify_test.go",
+    "test/envtest/testcase/rbg/rbgs_rolling_verify_test.go",
+    "internal/controller/workloads/rolebasedgroupset_convann_verify_test.go",
+    "internal/controller/workloads/rolebasedgroupset_round6_verify_test.go",
+    "api/workloads/v1alpha2/rolebasedgroupset_round6_verify_test.go",
+    "pkg/reconciler/round6_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "\"when the template changes, every outdated child is updated within a single reconcile, with no ordering and no availability gating. For a set of N groups that means all N groups can restart at once\"",
+    "reportedComponent": "RoleBasedGroupSet controller static propagation path (internal/controller/workloads/rolebasedgroupset_controller.go)",
+    "patchedComponent": "same file plus rolebasedgroupset_rolling.go / rolebasedgroupset_revision.go / rolebasedgroup_rollout_status.go",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "On base 0821cb5b one Reconcile call updated all 3 outdated children in one pass ('Updating existing RoleBasedGroups count: 3'); results/premise-base.log. The round-2 base move (0821cb5b..79f7e585) does not touch the RBGS controller or rolling code, so the premise is unchanged on the new base."
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ ./api/workloads/v1alpha2/ ./api/workloads/v1alpha1/ ./pkg/reconciler/ -run 'TestVerifyPR474' -count=1 -v"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=$HOME/envtest-assets/k8s/1.37.0-linux-amd64 go test ./test/envtest/testcase/rbg/ -count=1 -ginkgo.focus 'PR #474' -timeout 20m"
+    }
+  },
+  "findings": [
+    {
+      "id": "P0",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Premise_StaticPathUpdatesAllChildrenAtOnce"
+      ],
+      "note": "runs on base too; documents the un-paced static path"
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Webhook_ZeroBudgetRejectedSymmetrically",
+        "TestVerifyPR474_Webhook_InPlaceUpdateRules"
+      ],
+      "note": "round 1 canary TestVerifyPR474_Webhook_ZeroBudgetIsSpellingSensitive FLIPPED RED on 9e423e86 (the fix evidence); promoted to contract"
+    },
+    {
+      "id": "F2b",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Resolver_PercentZeroBecomesOne"
+      ],
+      "note": "documents the persisted-object both-zero fallback (unreachable via admission for exact zeros since round 2)"
+    },
+    {
+      "id": "F3",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_StaticPathWipesChildRoleTemplates"
+      ],
+      "note": "documents the static-path full-spec overwrite"
+    },
+    {
+      "id": "F8",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_V1alpha1RoundTrip_PreservesRolloutStrategy",
+        "TestVerifyPR474_V1alpha1RoundTrip_ClearsStaleStash",
+        "TestVerifyPR474_V1alpha1RoundTrip_GarbageStashFailsClosed"
+      ],
+      "note": "round-1 consensus blocker: v1alpha1 conversion dropped spec.rolloutStrategy; fixed via annotation stash at f6019ead"
+    },
+    {
+      "id": "F8b",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_V1alpha1RoundTrip_DroppedStashLosesStrategy"
+      ],
+      "note": "residual limitation of the stash design: a stash-less v1alpha1 write reverts to the static path"
+    },
+    {
+      "id": "POS1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Rollout_PacedRecreate",
+        "TestVerifyPR474_Rollout_ConvergesUnderBudget",
+        "TestVerifyPR474_Rollout_MigrationNoRecreate"
+      ],
+      "note": "Recreate-path regression suite, carried from round 1"
+    },
+    {
+      "id": "POS2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "I1: recreates one group at a time",
+        "I2: enabling rolloutStrategy over matching legacy",
+        "I3: maxUnavailable=0 with surge"
+      ]
+    },
+    {
+      "id": "POS3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_InPlaceUpdate_PacesSpecUpdates",
+        "TestVerifyPR474_InPlaceUpdate_ResolverLimits",
+        "TestVerifyPR474_Resolver_RejectsUnknownType"
+      ],
+      "note": "round 2: InPlaceUpdate pacing, identity, gating, resolver"
+    },
+    {
+      "id": "POS4",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "I4: InPlaceUpdate propagates the template without recreating any child"
+      ],
+      "note": "round 2: InPlaceUpdate against a real API server, UID preservation, RolloutComplete"
+    },
+    {
+      "id": "F11",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Rolling_CoordinationChangePropagatesToChildren"
+      ],
+      "note": "round 4, revision-regression at 8c024b28 (PASS on 98720938, FAIL on 8c024b28). FIXED at 4a9043c (6dd7de5f): converter propagates the compatibility keys onto the child template, newRBGForSetRevision copies unversioned live keys, and syncRollingGroupSet converges them on every child. Contract TestVerifyPR474_Rolling_CoordinationChangePropagatesToChildren PASS on 4a9043c (results/unit-verify-r5.log); author added direct coverage (TestGroupSetConversionAnnotationsExcludedFromRevision, TestNewRBGForSetRevision_SystemAnnotations, TestSyncRollingGroupSet_SystemAnnotations, envtest real-converter/SSA cases)."
+    },
+    {
+      "id": "F12",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Canary_LegacyRevisionLabelRerolledOnce"
+      ],
+      "note": "round 4 canary: one-time migration re-roll for sets whose revisions were minted by an intermediate PR commit. STILL PRESENT at 4a9043c: canary TestVerifyPR474_Canary_LegacyRevisionLabelRerolledOnce still PASSes (churn observed); 6dd7de5f additionally folds the oldest child's labels/annotations into the legacy current-revision template, which changes that revision's hash again. Disputed severity, nit; needs a one-time migration note, not a code change."
+    },
+    {
+      "id": "F13",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Rolling_PreservesChildConversionStash"
+      ],
+      "note": "round 4: v1alpha1-pod-group-policy wiped from children (FAIL on both prior heads). FIXED at 4a9043c (6dd7de5f): key added to systemManagedAnnotationKeys, snapshot onto the owning ControllerRevision, syncGroupSetPodGroupPolicy with removal gated on the previously owned snapshot. Contract TestVerifyPR474_Rolling_PreservesChildConversionStash PASS on 4a9043c (results/unit-verify-r5.log)."
+    },
+    {
+      "id": "POS5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_RevisionHash_IgnoresConversionAnnotations"
+      ],
+      "note": "round 4, the delta's own claim (coverage the delta did not add): the revision hash ignores the conversion annotations. FAIL on 98720938, PASS on 8c024b28."
+    },
+    {
+      "id": "C10",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_InPlaceUpdate_PacesSpecUpdates (ack-gated slot release)"
+      ],
+      "note": "round 5, new in 51bf17bb: a child's done-looking conditions must NOT release the rollout slot; only echoing rbg.workloads.x-k8s.io/rollout-request into status.observedRolloutRequest does (RoleBasedGroupReconciler.acknowledgeRolloutRequest). Round-4 harness fixture did not model the ack (POS3 failed red on first re-run); harness-updated additively \u2014 verifyMarkChildDone(name, acknowledge bool). PASS on 4a9043c (results/unit-verify-r5.log); envtest 4/4 specs pass with real controllers acking (results/integration-verify-r5.log)."
+    },
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": [
+        "scripts/doc-match-r6.sh -> results/l1-doc-match-r6.log"
+      ],
+      "note": "round 6: FIXED. The body was rewritten for the round-6 delta and now matches the shipped API \u2014 46/46 doc-match checks PASS on af9dd84b (round 5: 14/16 on 4a9043c). Replica-only pacing is stated for both strategies, the rollout-request/observedRolloutRequest surface is documented, no stale test names, and every #519/#521/orphan-history claim maps to code."
+    },
+    {
+      "id": "C11",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Surge_UnreadyHeldBackOrdinalStillWarmsSurge"
+      ],
+      "note": "round 6, #519 (a06fa803): an unready held-back ordinal no longer starves the surge. Differential: FAIL on 4a9043c (no surge group created \u2014 the exact issue symptom), PASS on af9dd84b with the base floor intact (results/differential-prev-r6.log)."
+    },
+    {
+      "id": "C12",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Webhook_PartitionNotBoundedByReplicas",
+        "TestVerifyPR474_Webhook_ScaledDownSetStillAcceptsMetadataWrites"
+      ],
+      "note": "round 6, #521 (13cbcab4): admission no longer bounds partition by replicas while the percentage/negative rules stay. Differential: both FAIL on 4a9043c, PASS on af9dd84b (results/differential-prev-r6.log)."
+    },
+    {
+      "id": "C13",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Rolling_AdoptsOrphanChildrenBeforeBudgetedUpdates"
+      ],
+      "note": "round 6 (13cbcab4): label-matching orphan children are adopted with UID retention before budgeted writes; a foreign-owned child is not taken over. Legacy path parity confirmed in the same commit."
+    },
+    {
+      "id": "C14",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Revisions_AdoptOrphanPredecessorHistory"
+      ],
+      "note": "round 6 (af9dd84b): controller-less label-matching ControllerRevisions are adopted and unused history is pruned to DefaultRevisionHistoryLimit=5 while the update revision stays protected."
+    },
+    {
+      "id": "C15",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Finalize_CompletesStandaloneWithoutRequest"
+      ],
+      "note": "round 6 (6649fe36): finalizeRolloutStatus clears a True rollout barrier with no request outstanding (standalone RBGs) once target workloads are complete."
+    },
+    {
+      "id": "C16",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_Set_IdleReconcileDoesNotPoll",
+        "TestVerifyPR474_CanonicalRevisionJSON_MatchesAPIServerReencode"
+      ],
+      "note": "round 6 (13cbcab4): an unchanged blocked set returns no periodic requeue; revision data is byte-stable under an API-server re-encode (GC strategic-merge patches stay valid)."
+    },
+    {
+      "id": "C17",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_GroupAnnotationFold_LabelOnlyRefresh"
+      ],
+      "note": "round 6, F16/F17 follow-up: a pre-fold role hash on an existing Deployment is refreshed to the folded hash with the pod template, replicas and selector unchanged \u2014 the upgrade is a label refresh, not a workload re-roll (the round-5 ledger's re-roll framing is corrected; the body's new claim is accurate)."
+    },
+    {
+      "id": "C4358788576",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR474_EmptyRoleAnnotations_DroppedBySerialization"
+      ],
+      "note": "round 6: REFUTED. rolesEqual's DeepEqual does diverge on empty-map vs nil, but omitempty drops an empty annotations map on every serialization, so neither the stored set template nor a written child can retain the divergent state \u2014 no perpetual-outdated loop is reachable through the API."
+    }
+  ],
+  "liveNote": "L3 (live layer) was NOT run: the debate pipeline mandates unit + integration only. The author's kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers paced recreate, surge, partition, and InPlaceUpdate UID preservation on a real cluster; make test-e2e is wired to PR CI.",
+  "rounds": [
+    {
+      "round": 3,
+      "head": "98720938fff0135a7ffb98a8fefdf6baa7028b88",
+      "base": "79f7e5858fdc30ffaeadef4aea12c3809dcb348d",
+      "treeDeltaFromPreviousHead": "examples/basic/rbgs/rbgs-rolling-update.yaml only (history force-pushed, content otherwise identical)",
+      "results": [
+        "results/reverify-r3.log",
+        "results/l1-doc-match-r3.log",
+        "results/author-envtest-r3.log"
+      ]
+    },
+    {
+      "round": 4,
+      "head": "8c024b28ebd81234cebd706dfb2351bde757385c",
+      "base": "79f7e5858fdc30ffaeadef4aea12c3809dcb348d",
+      "treeDeltaFromPreviousHead": "single commit 8c024b28 'fix(rbgs): exclude conversion annotations from RBGSet revision and sync' \u2014 annotation.go constants, v1alpha1 conversion consts, systemManagedAnnotationKeys expansion",
+      "results": [
+        "results/convann-differential-r4.log",
+        "results/convann-bites-r4.log",
+        "results/reverify-r4.log",
+        "results/integration-verify-r4.log",
+        "results/author-envtest-r4.log",
+        "results/l1-doc-match-r4.log"
+      ]
+    },
+    {
+      "round": 5,
+      "head": "4a9043c3e812af016cbeca82d841259a54f17d0d",
+      "previousHead": "8c024b28ebd81234cebd706dfb2351bde757385c",
+      "delta": "6dd7de5f (v1alpha1 conversion intent through rolling path) + 51bf17bb (rollout-request handshake, role-hash group annotations) + 4a9043c (Recreate replica updates budgeted)",
+      "unit": "results/unit-verify-r5.log \u2014 19/19 PASS (after harness-update modeling the ack)",
+      "integration": "results/integration-verify-r5.log \u2014 Ran 4 of 17 specs, 4 Passed",
+      "docMatch": "results/l1-doc-match-r5.log \u2014 14/16 PASS; scale-only clause + body-listed test name FAIL (F1 reopened)"
+    },
+    {
+      "round": 6,
+      "head": "af9dd84b74b88927b7c3b408c8fb44548eb13ecf",
+      "base": "885d655bd1b4c26e6d14837709eeda675f3ae886",
+      "previousHead": "4a9043c3e812af016cbeca82d841259a54f17d0d",
+      "delta": "13cbcab4 (review findings: requeue scope, canonical revision JSON, rolling orphan adoption, partition bound dropped) + a06fa803 (#519 live-budget surge) + 6649fe36 (metadata-only completion) + af9dd84b (orphan revision history), rebased onto main 8a7bcfcb (base moved from 79f7e585 via 885d655b; only docs commits beyond the merge base)",
+      "unit": "results/unit-verify-r6.log \u2014 29/29 PASS (19 carried + 10 new); full sweep results/full-unit-r6.log \u2014 40/40 packages ok",
+      "integration": "results/reverify-r6.log + results/author-envtest-r6.log \u2014 envtest PR #474 specs 4/4 and the full rbgs_rolling suite on the merged tree (rebase re-verification)",
+      "docMatch": "results/l1-doc-match-r6.log \u2014 46/46 PASS; F1 fixed",
+      "differential": "results/differential-prev-r6.log \u2014 #519 and #521 contracts FAIL on 4a9043c, PASS on af9dd84b"
+    }
+  ]
+}
