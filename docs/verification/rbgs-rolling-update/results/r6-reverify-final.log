@@ -1,0 +1,42 @@
+re-verify: manifest = docs/verification/rbgs-rolling-update/verify-manifest.json
+re-verify: last-reviewed = 4a9043c3e812af016cbeca82d841259a54f17d0d  (review delta = 4a9043c3e812af016cbeca82d841259a54f17d0d..af9dd84b74b88927b7c3b408c8fb44548eb13ecf)
+re-verify: fixed-ref=af9dd84b74b88927b7c3b408c8fb44548eb13ecf  harness-from=verify/rbgs-rolling-update-codex
+re-verify: running layer 'unit' (gotest)
+re-verify: running layer 'integration' (gotest)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+F1     contract  unit         FIXED          pass=2 fail=0 miss=0
+F3     contract  unit         FIXED          pass=4 fail=0 miss=0
+G1     contract  unit         FIXED          pass=1 fail=0 miss=0
+G2     contract  unit         FIXED          pass=1 fail=0 miss=0
+G3     contract  unit         FIXED          pass=1 fail=0 miss=0
+G4     contract  unit         FIXED          pass=1 fail=0 miss=0
+G5     contract  unit         FIXED          pass=1 fail=0 miss=0
+G6     contract  unit         FIXED          pass=1 fail=0 miss=0
+G7     contract  integration  FIXED          pass=1 fail=0 miss=0
+F9     contract  unit         FIXED          pass=2 fail=0 miss=0
+G8     contract  unit         FIXED          pass=3 fail=0 miss=0
+G9     contract  integration  FIXED          pass=1 fail=0 miss=0
+F10    canary    unit         STILL-PRESENT  pass=1 fail=0 miss=0
+R4FIX  contract  unit         FIXED          pass=2 fail=0 miss=0
+R4M1   contract  unit         FIXED          pass=3 fail=0 miss=0
+R5ACK  contract  unit         FIXED          pass=1 fail=0 miss=0
+R5PGP  contract  unit         FIXED          pass=2 fail=0 miss=0
+R6SURGE contract  unit         FIXED          pass=1 fail=0 miss=0
+R6ADOPT contract  unit         FIXED          pass=3 fail=0 miss=0
+R6REVADOPT contract  unit         FIXED          pass=2 fail=0 miss=0
+R6FINALIZE contract  unit         FIXED          pass=1 fail=0 miss=0
+R6PARTITION contract  unit         FIXED          pass=1 fail=0 miss=0
+R6REVDATA contract  integration  FIXED          pass=1 fail=0 miss=0
+R6EMPTYANN contract  integration  STILL-BROKEN   pass=0 fail=1 miss=0
+
+Live layer (manual): L3 skipped per debate setup (no KUBECONFIG layer). The repo's own kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers the live path and is green in CI run 37802453289.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/rbgs-rolling-update/results/reverify
+
+Review delta this round: 4a9043c3e812af016cbeca82d841259a54f17d0d..af9dd84b74b88927b7c3b408c8fb44548eb13ecf
+After reviewing that delta, advance the marker for the next round:
+  echo af9dd84b74b88927b7c3b408c8fb44548eb13ecf > docs/verification/rbgs-rolling-update/.last-reviewed && git add docs/verification/rbgs-rolling-update/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.

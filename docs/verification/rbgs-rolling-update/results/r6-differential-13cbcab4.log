@@ -1,0 +1,32 @@
+--- FAIL: TestVerify_R6_RequestlessLabelsOnlyCompletesInSameReconcile (0.07s)
+    rolebasedgroupset_round6_verify_test.go:440: 
+        	Error Trace:	/tmp/rbg-r6-mid/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:440
+        	Error:      	Not equal: 
+        	            	expected: "False"
+        	            	actual  : "True"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1.ConditionStatus) (len=5) "False"
+        	            	+(v1.ConditionStatus) (len=4) "True"
+        	            	 
+        	Test:       	TestVerify_R6_RequestlessLabelsOnlyCompletesInSameReconcile
+        	Messages:   	the reconcile that applies a labels-only change must itself complete the rollout
+    rolebasedgroupset_round6_verify_test.go:442: 
+        	Error Trace:	/tmp/rbg-r6-mid/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:442
+        	Error:      	Not equal: 
+        	            	expected: "AllRolesUpdated"
+        	            	actual  : "RolesUpdating"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-AllRolesUpdated
+        	            	+RolesUpdating
+        	Test:       	TestVerify_R6_RequestlessLabelsOnlyCompletesInSameReconcile
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.086s
+FAIL

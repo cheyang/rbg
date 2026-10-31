@@ -219,3 +219,41 @@ R5PGP lifecycle RED; production tree restored byte-identical after both.
 Re-verify (results/reverify/): every carried contract FIXED on 4a9043c3 —
 F1, F3, G1-G9 (unit+integration), F9 (promoted), R4FIX, R4M1, R5ACK, R5PGP.
 F10 canary STILL-PRESENT (doc drift unchanged).
+
+## Round 6 — head af9dd84b (rebased; 4 new commits 13cbcab4..af9dd84b)
+
+Range-diff shows the 7 round-5 commits byte-identical through the rebase (one e2e
+label change); the review delta is the four new commits plus the new upstream base.
+
+Harness update (disclosed, not a product signal): 13cbcab4 replaced the rolling
+path's 1s poll with event-driven progress (`changed || adopted`). The sim settle
+loops keyed off requeue requests and exited mid-rollout (G5/F9/G8/R5ACK initial
+failures, results/r6-reverify-initial-harness-failures.log); settle now stops at a
+true world fixpoint (children + set status + sim timers). All re-run contracts pass
+at head after the fix; the frozen-ack budget-hold phase is untouched.
+
+New contracts (all GREEN at head af9dd84b unless noted; differentials in
+results/r6-differential-4a9043c.log and results/r6-differential-13cbcab4.log):
+
+| id | test | claim | previous head |
+|----|------|-------|---------------|
+| R6SURGE | TestVerify_R6_SurgeSizedFromLiveAvailability_Contract | #519: failed held-back group spends maxUnavailable yet surge is still created from live availability; in-scope base group waits for surge readiness; floor never breached; surge reclaimed at PartitionComplete | RED on 4a9043c (stall) |
+| R6ADOPT | TestVerify_R6_RollingPathAdoptsOrphans_Contract | rolling path adopts label-matching orphans, UID preserved, higher ordinals still filled | RED on 4a9043c (create collision error) |
+| R6ADOPT | TestVerify_R6_RollingPathRefusesForeignChild_Contract | foreign-UID child refused with error, never adopted | PASS both heads (pre-existing guard) |
+| R6ADOPT | TestVerify_R6_TerminatingOrphanDoesNotBlockAdoption_Contract | terminating orphan skipped, live sibling adopted | RED on 4a9043c |
+| R6REVADOPT | TestVerify_R6_OrphanRevisionHistoryReclaimed_Contract | orphan predecessor revisions adopted; protected (child-referenced) survive; unused pruned to 5, oldest first | RED on 4a9043c (no adoption, no pruning) |
+| R6REVADOPT | TestVerify_R6_RevisionAdoptionRefusedWhenParentReplaced_Contract | stale-parent UID mismatch refuses adoption loudly | RED on 4a9043c |
+| R6FINALIZE | TestVerify_R6_RequestlessLabelsOnlyCompletesInSameReconcile | requestless labels-only role change completes in the applying reconcile; no ack stamped, no requeue | RED on 13cbcab4 (wedge: barrier True + no requeue); RED on 4a9043c strict same-reconcile assert (2s poll cleared it next pass) |
+| R6PARTITION | TestVerify_R6_PartitionAboveReplicasAdmitted_Contract | #521: partition>replicas admitted on create and metadata-only update; negative and >100% still rejected | RED on 4a9043c ("must be between 0 and replicas") |
+| R6REVDATA | TestVerify_R6_ControllerRevisionCanonicalDataOrphanPatch (envtest) | canonical revision data accepts the GC strategic-merge orphan patch byte-identically; the legacy struct-order form is REJECTED ("data: field is immutable") — premise confirmed on a real apiserver | n/a (behavioral premise probe) |
+| R6EMPTYANN | TestVerify_R6_EmptyRoleAnnotationsMapNoWedge (envtest) | C4358788576 CONFIRMED: roles[].annotations:{} (stored via raw patch, omitted from children via omitempty) makes rolesEqual DeepEqual mismatch → child perpetually outdated, rewritten every pass (rollout-request token 3→4 in one quiescent pass), rollout never completes | RED at head = bug present |
+
+Author suites at head (with harness grafted): full unit sweep EXIT=0
+(results/r6-full-unit-head.log), -race ./internal/controller/workloads EXIT=0
+(results/r6-race-head.log), envtest rbgs_rolling 236.7s EXIT=0
+(results/r6-author-envtest-head.log). CI: 22/22 SUCCESS on af9dd84b.
+
+Re-verify (results/r6-reverify-final.log): every carried contract FIXED at head
+(F1, F3, G1-G9, F9, R4FIX, R4M1, R5ACK, R5PGP + all R6 contracts except
+R6EMPTYANN). F10 canary STILL-PRESENT (behavior pin; the body no longer makes the
+contradicted claim — the round-5 body findings F1/F10 are resolved by the rewrite).

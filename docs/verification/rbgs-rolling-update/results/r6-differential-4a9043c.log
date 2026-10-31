@@ -1,0 +1,162 @@
+--- FAIL: TestVerify_R6_SurgeSizedFromLiveAvailability_Contract (0.08s)
+    rolebasedgroupset_round6_verify_test.go:120: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:120
+        	Error:      	Should be true
+        	Test:       	TestVerify_R6_SurgeSizedFromLiveAvailability_Contract
+        	Messages:   	a failed held-back group must not stall a surge-enabled rollout (#519)
+    rolebasedgroupset_round6_verify_test.go:126: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:126
+        	Error:      	Not equal: 
+        	            	expected: "image:v2"
+        	            	actual  : "image:v1"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-image:v2
+        	            	+image:v1
+        	Test:       	TestVerify_R6_SurgeSizedFromLiveAvailability_Contract
+        	Messages:   	in-scope ordinal 3 must roll once surge covers it
+    rolebasedgroupset_round6_verify_test.go:129: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:129
+        	Error:      	Not equal: 
+        	            	expected: "PartitionComplete"
+        	            	actual  : "RolloutInProgress"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-PartitionComplete
+        	            	+RolloutInProgress
+        	Test:       	TestVerify_R6_SurgeSizedFromLiveAvailability_Contract
+        	Messages:   	the in-scope batch completes even though the held-back failure keeps full RolloutComplete open
+--- FAIL: TestVerify_R6_RollingPathAdoptsOrphans_Contract (0.00s)
+    rolebasedgroupset_round6_verify_test.go:164: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:164
+        	Error:      	Received unexpected error:
+        	            	RoleBasedGroup test-0 already exists and is not owned by RoleBasedGroupSet test
+        	Test:       	TestVerify_R6_RollingPathAdoptsOrphans_Contract
+--- FAIL: TestVerify_R6_TerminatingOrphanDoesNotBlockAdoption_Contract (0.00s)
+    rolebasedgroupset_round6_verify_test.go:219: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:219
+        	Error:      	Received unexpected error:
+        	            	RoleBasedGroup test-0 already exists and is not owned by RoleBasedGroupSet test
+        	Test:       	TestVerify_R6_TerminatingOrphanDoesNotBlockAdoption_Contract
+--- FAIL: TestVerify_R6_OrphanRevisionHistoryReclaimed_Contract (0.00s)
+    rolebasedgroupset_round6_verify_test.go:274: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:274
+        	Error:      	Should be true
+        	Test:       	TestVerify_R6_OrphanRevisionHistoryReclaimed_Contract
+        	Messages:   	surviving revision rbgs-live-referenced must be adopted by the set
+    rolebasedgroupset_round6_verify_test.go:274: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:274
+        	Error:      	Should be true
+        	Test:       	TestVerify_R6_OrphanRevisionHistoryReclaimed_Contract
+        	Messages:   	surviving revision rbgs-orphan-0 must be adopted by the set
+    rolebasedgroupset_round6_verify_test.go:274: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:274
+        	Error:      	Should be true
+        	Test:       	TestVerify_R6_OrphanRevisionHistoryReclaimed_Contract
+        	Messages:   	surviving revision rbgs-orphan-1 must be adopted by the set
+    rolebasedgroupset_round6_verify_test.go:274: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:274
+        	Error:      	Should be true
+        	Test:       	TestVerify_R6_OrphanRevisionHistoryReclaimed_Contract
+        	Messages:   	surviving revision rbgs-orphan-2 must be adopted by the set
+    rolebasedgroupset_round6_verify_test.go:274: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:274
+        	Error:      	Should be true
+        	Test:       	TestVerify_R6_OrphanRevisionHistoryReclaimed_Contract
+        	Messages:   	surviving revision rbgs-orphan-3 must be adopted by the set
+    rolebasedgroupset_round6_verify_test.go:274: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:274
+        	Error:      	Should be true
+        	Test:       	TestVerify_R6_OrphanRevisionHistoryReclaimed_Contract
+        	Messages:   	surviving revision rbgs-orphan-4 must be adopted by the set
+    rolebasedgroupset_round6_verify_test.go:274: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:274
+        	Error:      	Should be true
+        	Test:       	TestVerify_R6_OrphanRevisionHistoryReclaimed_Contract
+        	Messages:   	surviving revision rbgs-orphan-5 must be adopted by the set
+    rolebasedgroupset_round6_verify_test.go:274: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:274
+        	Error:      	Should be true
+        	Test:       	TestVerify_R6_OrphanRevisionHistoryReclaimed_Contract
+        	Messages:   	surviving revision rbgs-orphan-6 must be adopted by the set
+    rolebasedgroupset_round6_verify_test.go:278: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:278
+        	Error:      	Not equal: 
+        	            	expected: 6
+        	            	actual  : 8
+        	Test:       	TestVerify_R6_OrphanRevisionHistoryReclaimed_Contract
+        	Messages:   	referenced revisions plus at most DefaultRevisionHistoryLimit unused ones survive
+    rolebasedgroupset_round6_verify_test.go:280: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:280
+        	Error:      	Should be false
+        	Test:       	TestVerify_R6_OrphanRevisionHistoryReclaimed_Contract
+        	Messages:   	the oldest unused orphan is pruned first
+    rolebasedgroupset_round6_verify_test.go:281: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:281
+        	Error:      	Should be false
+        	Test:       	TestVerify_R6_OrphanRevisionHistoryReclaimed_Contract
+        	Messages:   	the second-oldest unused orphan is pruned
+--- FAIL: TestVerify_R6_RevisionAdoptionRefusedWhenParentReplaced_Contract (0.00s)
+    rolebasedgroupset_round6_verify_test.go:313: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:313
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerify_R6_RevisionAdoptionRefusedWhenParentReplaced_Contract
+        	Messages:   	adoption must be refused when the parent was replaced
+--- FAIL: TestVerify_R6_RequestlessLabelsOnlyCompletesInSameReconcile (0.03s)
+    rolebasedgroupset_round6_verify_test.go:440: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:440
+        	Error:      	Not equal: 
+        	            	expected: "False"
+        	            	actual  : "True"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1.ConditionStatus) (len=5) "False"
+        	            	+(v1.ConditionStatus) (len=4) "True"
+        	            	 
+        	Test:       	TestVerify_R6_RequestlessLabelsOnlyCompletesInSameReconcile
+        	Messages:   	the reconcile that applies a labels-only change must itself complete the rollout
+    rolebasedgroupset_round6_verify_test.go:442: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:442
+        	Error:      	Not equal: 
+        	            	expected: "AllRolesUpdated"
+        	            	actual  : "RolesUpdating"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-AllRolesUpdated
+        	            	+RolesUpdating
+        	Test:       	TestVerify_R6_RequestlessLabelsOnlyCompletesInSameReconcile
+    rolebasedgroupset_round6_verify_test.go:443: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_round6_verify_test.go:443
+        	Error:      	Should be zero, but was 2s
+        	Test:       	TestVerify_R6_RequestlessLabelsOnlyCompletesInSameReconcile
+        	Messages:   	a completed requestless rollout must not keep polling
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.131s
+--- FAIL: TestVerify_R6_PartitionAboveReplicasAdmitted_Contract (0.00s)
+    rolebasedgroupset_admission_round6_verify_test.go:72: 
+        	Error Trace:	/tmp/rbg-r6-prev/api/workloads/v1alpha2/rolebasedgroupset_admission_round6_verify_test.go:72
+        	Error:      	Received unexpected error:
+        	            	spec.rolloutStrategy.partition: must be between 0 and replicas (1)
+        	Test:       	TestVerify_R6_PartitionAboveReplicasAdmitted_Contract
+        	Messages:   	partition > replicas must be admitted; the controller clamps
+    rolebasedgroupset_admission_round6_verify_test.go:78: 
+        	Error Trace:	/tmp/rbg-r6-prev/api/workloads/v1alpha2/rolebasedgroupset_admission_round6_verify_test.go:78
+        	Error:      	Received unexpected error:
+        	            	spec.rolloutStrategy.partition: must be between 0 and replicas (1)
+        	Test:       	TestVerify_R6_PartitionAboveReplicasAdmitted_Contract
+        	Messages:   	a metadata-only update must not fail on the stored partition
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.010s
+FAIL
