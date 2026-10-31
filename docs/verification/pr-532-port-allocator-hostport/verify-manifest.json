@@ -27,7 +27,7 @@
     },
     "integration": {
       "kind": "gotest",
-      "cmd": "KUBEBUILDER_ASSETS=$(if [ -x bin/setup-envtest ]; then bin/setup-envtest use 1.31.0 --bin-dir bin -p path; elif command -v setup-envtest >/dev/null 2>&1; then setup-envtest use 1.31.0 -p path; else go run sigs.k8s.io/controller-runtime/tools/setup-envtest@release-0.20 use 1.31.0 -p path; fi) go test -count=1 ./test/envtest/testcase/verifypr532/ -json"
+      "cmd": "KUBEBUILDER_ASSETS=$(if [ -x bin/setup-envtest ]; then bin/setup-envtest use 1.31.0 --bin-dir \"$PWD/bin\" -p path; elif command -v setup-envtest >/dev/null 2>&1; then setup-envtest use 1.31.0 -p path; else go run sigs.k8s.io/controller-runtime/tools/setup-envtest@release-0.20 use 1.31.0 -p path; fi) go test -count=1 ./test/envtest/testcase/verifypr532/ -json"
     }
   },
   "findings": [
