@@ -1,0 +1,12 @@
+PASS: P0: cacheOptions has no Pod filter (operator caches all Pods today)
+PASS: P0: cacheOptions filters corev1.Service{} by group-name (matches issue #284 description)
+PASS: P0: cacheOptions filters appsv1.StatefulSet{} by group-name (matches issue #284 description)
+PASS: P0: cacheOptions filters appsv1.Deployment{} by group-name (matches issue #284 description)
+PASS: C2: getExistingPod exists and is called from the pod-create path (KEP item 1 target)
+PASS: C5: no existing 'managed' label constant — KEP introduces it as a new marker
+PASS: D1: kep-number 284
+PASS: D1: status provisional
+PASS: D1: see-also issue #284
+PASS: D1: README titled KEP-284
+All KEP-284 numeric claims are internally consistent.
+PASS: D2: performance/README numbers internally consistent

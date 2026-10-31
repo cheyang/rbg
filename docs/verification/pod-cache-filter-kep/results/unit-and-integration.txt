@@ -1,0 +1,15 @@
+=== RUN   TestAdmissionRuleTable
+--- PASS: TestAdmissionRuleTable (0.00s)
+=== RUN   TestAdmissionRuleNotExpressibleAsOneSelector
+--- PASS: TestAdmissionRuleNotExpressibleAsOneSelector (0.00s)
+=== RUN   TestLegacyLabelKeysMatchKEPTable
+--- PASS: TestLegacyLabelKeysMatchKEPTable (0.00s)
+=== RUN   TestWorkloadPodTemplatesCarryGroupName
+--- PASS: TestWorkloadPodTemplatesCarryGroupName (0.00s)
+=== RUN   TestRoleInstancePodsCarryRoleInstanceName
+--- PASS: TestRoleInstancePodsCarryRoleInstanceName (0.00s)
+=== RUN   TestAdmissionRuleAgainstRealAPIServer
+    selector_envtest_test.go:185: serial union of 4 filtered sources admitted [p-group-only p-instance-only p-legacy-managed-false p-managed-only p-warmup-only]; per-source map[group-name:[p-group-only p-legacy-managed-false] managed:[p-managed-only] role-instance-name:[p-instance-only] warmup-name:[p-warmup-only]]
+--- PASS: TestAdmissionRuleAgainstRealAPIServer (2.71s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/kep284	2.722s
