@@ -10,7 +10,10 @@
     "api/workloads/v1alpha1/rolebasedgroupset_conversion_verify_test.go",
     "internal/controller/workloads/rolebasedgroupset_inplace_verify_test.go",
     "internal/controller/workloads/rolebasedgroupset_conversion_annotation_verify_test.go",
-    "internal/controller/workloads/rolebasedgroupset_round5_verify_test.go"
+    "internal/controller/workloads/rolebasedgroupset_round5_verify_test.go",
+    "internal/controller/workloads/rolebasedgroupset_round6_verify_test.go",
+    "internal/controller/workloads/rolebasedgroupset_envtest_round6_verify_test.go",
+    "api/workloads/v1alpha2/rolebasedgroupset_admission_round6_verify_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -33,7 +36,7 @@
     },
     "integration": {
       "kind": "gotest",
-      "cmd": "KUBEBUILDER_ASSETS=$(ls -d $HOME/.local/share/kubebuilder-envtest/k8s/*-linux-amd64 2>/dev/null | head -1) go test ./internal/controller/workloads/ -run 'TestVerify_Envtest' -count=1 -timeout 8m -json"
+      "cmd": "KUBEBUILDER_ASSETS=$(ls -d $HOME/.local/share/kubebuilder-envtest/k8s/*-linux-amd64 2>/dev/null | head -1) go test ./internal/controller/workloads/ -run 'TestVerify_Envtest|TestVerify_R6_Controller|TestVerify_R6_Empty' -count=1 -timeout 8m -json"
     }
   },
   "findings": [
@@ -194,6 +197,72 @@
         "TestVerify_ConversionAnnotation_PodGroupPolicyHeldOrdinalKeepsSnapshot"
       ],
       "note": "Round 5 (6dd7de5f, closes F13): the v1alpha1 PodGroupPolicy stash propagates to rolling-path children at creation, converges in place on value change (unversioned key), is removed once the template drops it (removal gated on the previously owned revision snapshot), and a partition-held ordinal keeps the policy its pinned revision owns. Bites check: neutering the revision snapshot/template re-attach turns the lifecycle test RED (results/harness-bites-round5.txt)."
+    },
+    {
+      "id": "R6SURGE",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R6_SurgeSizedFromLiveAvailability_Contract"
+      ],
+      "note": "#519: surge sized from live availability; held-back failure spends maxUnavailable yet the free maxSurge slot is used, in-scope base waits for surge readiness. RED on 4a9043c (stall), GREEN at head."
+    },
+    {
+      "id": "R6ADOPT",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R6_RollingPathAdoptsOrphans_Contract",
+        "TestVerify_R6_RollingPathRefusesForeignChild_Contract",
+        "TestVerify_R6_TerminatingOrphanDoesNotBlockAdoption_Contract"
+      ],
+      "note": "13cbcab4: rolling path adopts label-matching orphans (UID preserved, fill proceeds), refuses foreign-UID children, skips terminating orphans. Adoption/collision tests RED on 4a9043c; foreign-refusal passes on both (pre-existing guard)."
+    },
+    {
+      "id": "R6REVADOPT",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R6_OrphanRevisionHistoryReclaimed_Contract",
+        "TestVerify_R6_RevisionAdoptionRefusedWhenParentReplaced_Contract"
+      ],
+      "note": "af9dd84b: orphan predecessor ControllerRevisions adopted and pruned to DefaultRevisionHistoryLimit; child-referenced protected; parent-replace refused. RED on 4a9043c."
+    },
+    {
+      "id": "R6FINALIZE",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R6_RequestlessLabelsOnlyCompletesInSameReconcile"
+      ],
+      "note": "6649fe36: requestless labels-only change completes in the applying reconcile (no poll needed). RED on 13cbcab4 (poll removed, finalize absent -> wedge: barrier True, no requeue); RED on 4a9043c strict same-reconcile assert (2s poll would clear it next pass); GREEN at head."
+    },
+    {
+      "id": "R6PARTITION",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R6_PartitionAboveReplicasAdmitted_Contract"
+      ],
+      "note": "#521: partition>replicas admitted on create and on metadata-only update; negatives and >100%% still rejected. RED on 4a9043c ('must be between 0 and replicas')."
+    },
+    {
+      "id": "R6REVDATA",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestVerify_R6_ControllerRevisionCanonicalDataOrphanPatch"
+      ],
+      "note": "13cbcab4: canonical revision data accepts the GC strategic-merge orphan patch with byte-identical data; the legacy struct-order form is REJECTED ('data: field is immutable') - premise confirmed on a real apiserver."
+    },
+    {
+      "id": "R6EMPTYANN",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestVerify_R6_EmptyRoleAnnotationsMapNoWedge"
+      ],
+      "note": "C4358788576 CONFIRMED on af9dd84b: roles[].annotations:{} stored via raw patch, child omits it (omitempty), rolesEqual DeepEqual mismatch -> child perpetually outdated, rewritten every pass (rollout-request token 3->4), rollout never completes. CONTRACT RED at head = bug present; must flip GREEN when rolesEqual normalizes empty maps."
     }
   ],
   "liveNote": "L3 skipped per debate setup (no KUBECONFIG layer). The repo's own kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers the live path and is green in CI run 37802453289.",
@@ -220,5 +289,12 @@
     "head": "4a9043c3e812af016cbeca82d841259a54f17d0d",
     "delta": "8c024b28..4a9043c3 - three fix commits: (6dd7de5f) conversion intent through the rolling path (F11/F13/F15/C4242488155), (51bf17bb) request/ack handshake for metadata-only child updates (C4273377135) + workload-shaping annotations folded into role hashes, (4a9043c3) Recreate replicas-only updates budget-paced (F9 canary flipped; PR body now stale on that clause).",
     "reverify": "results/reverify/ (round 5): every carried contract green on 4a9043c3 - R4M1 (F11) and R4FIX FIXED, R4FIX stays green; F9 Recreate canary flipped as intended and was promoted; G5/G8/G9 needed harness ack-simulation (the sims now play the child controller's acknowledgement); new R5ACK + R5PGP contracts green with bites checks."
+  },
+  "round6": {
+    "head": "af9dd84b74b88927b7c3b408c8fb44548eb13ecf",
+    "previousHead": "4a9043c3e812af016cbeca82d841259a54f17d0d",
+    "harnessUpdate": "13cbcab4 replaced the rolling path's 1s poll with event-driven progress (changed||adopted). The sim settle loops keyed off requeue requests and stopped early (G5/F9/G8/R5ACK harness failures, not product regressions); settle now stops at a true world fixpoint (children+set status+sim timers). All re-run contracts pass at head after the fix; frozen-ack budget-hold phase untouched.",
+    "differentials": "R6SURGE/R6ADOPT/R6REVADOPT/R6PARTITION RED on 4a9043c; R6FINALIZE RED on 13cbcab4 (wedge) and 4a9043c (poll-dependent); R6REVDATA premise probe: legacy byte form rejected by real apiserver; R6EMPTYANN RED at head (confirmed bug).",
+    "authorSuites": "full unit sweep EXIT=0; -race ./internal/controller/workloads EXIT=0; envtest rbgs_rolling 236.7s EXIT=0 at af9dd84b (all with harness grafted)."
   }
 }
