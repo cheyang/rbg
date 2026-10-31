@@ -1,0 +1,1053 @@
+=== RUN   TestRoleBasedGroupSetRolling
+Running Suite: RoleBasedGroupSet Rolling Update Suite - /home/ecs-user/.pr-debate/homes/claude/wt-pr474-verify-claude/test/envtest/testcase/rbgs_rolling
+========================================================================================================================================================
+Random Seed: [1m1793440562[0m
+
+Will run [1m22[0m of [1m22[0m specs
+I1031 17:56:08.430720 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440566038639142/rbgs-coordination-0-test-role" elapsedTime="5.547258ms"
+I1031 17:56:08.433574 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440566038639142/rbgs-coordination-0-test-role" elapsedTime="2.694756ms"
+I1031 17:56:08.441976 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440566038639142/rbgs-coordination-1-test-role" elapsedTime="3.487694ms"
+I1031 17:56:08.445007 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440566038639142/rbgs-coordination-1-test-role" elapsedTime="2.80962ms"
+I1031 17:56:18.656200 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440566038639142/rbgs-coordination-1-test-role" elapsedTime="600.701µs"
+I1031 17:56:19.410976 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440566038639142/rbgs-coordination-1-test-role" elapsedTime="3.780325ms"
+I1031 17:56:19.413709 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440566038639142/rbgs-coordination-1-test-role" elapsedTime="2.667185ms"
+I1031 17:56:19.688548 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440566038639142/rbgs-coordination-0-test-role" elapsedTime="466.967µs"
+I1031 17:56:20.446896 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440566038639142/rbgs-coordination-0-test-role" elapsedTime="3.509815ms"
+I1031 17:56:20.449732 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440566038639142/rbgs-coordination-0-test-role" elapsedTime="2.632763ms"
+[38;5;10m•[0mI1031 17:56:23.697233 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440583667310876/rbgs-coordination-0-test-role" elapsedTime="3.350789ms"
+I1031 17:56:23.700092 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440583667310876/rbgs-coordination-0-test-role" elapsedTime="2.572861ms"
+I1031 17:56:23.707978 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440583667310876/rbgs-coordination-1-test-role" elapsedTime="3.180283ms"
+I1031 17:56:23.711149 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440583667310876/rbgs-coordination-1-test-role" elapsedTime="3.104721ms"
+[38;5;10m•[0mI1031 17:56:37.025878 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="7.454106ms"
+I1031 17:56:37.041596 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="15.634117ms"
+I1031 17:56:37.046664 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-1-test-role" elapsedTime="4.987148ms"
+I1031 17:56:37.049373 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="2.635484ms"
+I1031 17:56:37.054794 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="5.360351ms"
+I1031 17:56:37.057570 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-1-test-role" elapsedTime="2.706487ms"
+I1031 17:56:37.060276 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="2.628454ms"
+I1031 17:56:37.063208 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="2.662745ms"
+I1031 17:56:37.065965 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="2.675116ms"
+I1031 17:56:37.068569 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="2.53292ms"
+I1031 17:56:37.513442 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="2.510249ms"
+I1031 17:56:37.516047 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-1-test-role" elapsedTime="2.52746ms"
+I1031 17:56:37.518604 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="2.488119ms"
+I1031 17:56:37.523238 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-1-test-role" elapsedTime="4.265992ms"
+I1031 17:56:37.614605 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="2.742827ms"
+I1031 17:56:37.629664 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="14.970113ms"
+I1031 17:56:37.632447 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="2.703037ms"
+I1031 17:56:37.977968 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="553.08µs"
+I1031 17:56:37.981592 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="499.748µs"
+I1031 17:56:38.488961 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="532.709µs"
+I1031 17:56:39.239694 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="4.900774ms"
+I1031 17:56:39.255023 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="15.240952ms"
+I1031 17:56:39.257413 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="2.322963ms"
+I1031 17:56:42.699094 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="8.101538ms"
+I1031 17:56:42.703987 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-2-test-role" elapsedTime="4.686046ms"
+I1031 17:56:42.815588 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-1-test-role" elapsedTime="516.479µs"
+I1031 17:56:42.819312 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-1-test-role" elapsedTime="524.338µs"
+I1031 17:56:43.326156 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-1-test-role" elapsedTime="538.359µs"
+I1031 17:56:44.079800 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-1-test-role" elapsedTime="5.255287ms"
+I1031 17:56:44.083049 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-1-test-role" elapsedTime="3.156093ms"
+I1031 17:56:44.085924 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-1-test-role" elapsedTime="2.787319ms"
+I1031 17:56:44.088666 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-1-test-role" elapsedTime="2.670225ms"
+I1031 17:56:44.091465 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-1-test-role" elapsedTime="2.733568ms"
+I1031 17:56:47.535511 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-1-test-role" elapsedTime="2.80529ms"
+I1031 17:56:47.538180 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-1-test-role" elapsedTime="2.592332ms"
+I1031 17:56:47.648280 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="526.428µs"
+I1031 17:56:47.651850 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="451.246µs"
+I1031 17:56:48.157837 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="534.679µs"
+I1031 17:56:48.909573 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="5.808287ms"
+I1031 17:56:48.912434 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="2.783209ms"
+I1031 17:56:48.915184 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="2.657425ms"
+I1031 17:56:48.918352 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="3.09622ms"
+I1031 17:56:48.921005 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="2.586892ms"
+I1031 17:56:52.362496 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="2.547261ms"
+I1031 17:56:52.377684 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="15.108578ms"
+I1031 17:56:52.386671 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440596986334375/rbgs-zero-budget-0-test-role" elapsedTime="8.856506ms"
+[38;5;10m•[0mI1031 17:56:55.680165 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="5.495536ms"
+I1031 17:56:55.682896 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="2.648134ms"
+I1031 17:56:55.686572 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="2.925834ms"
+I1031 17:56:55.692250 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="5.61524ms"
+I1031 17:56:55.695403 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="3.06822ms"
+I1031 17:56:55.698390 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="2.872392ms"
+I1031 17:56:55.703515 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="5.065871ms"
+I1031 17:56:55.706112 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="2.51854ms"
+I1031 17:56:55.708876 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="2.698297ms"
+I1031 17:56:55.712618 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="2.811661ms"
+I1031 17:56:55.715789 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="3.06314ms"
+I1031 17:56:56.173843 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="2.597323ms"
+I1031 17:56:56.176600 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="2.667035ms"
+I1031 17:56:56.179163 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="2.492099ms"
+I1031 17:56:56.181804 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="2.563861ms"
+I1031 17:56:56.184699 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="2.779629ms"
+I1031 17:56:56.187279 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="2.513719ms"
+I1031 17:56:56.694417 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="587.561µs"
+I1031 17:56:56.698010 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="483.378µs"
+I1031 17:56:57.204770 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="585.081µs"
+I1031 17:56:57.955392 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="4.783151ms"
+I1031 17:56:57.971010 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="15.544654ms"
+I1031 17:56:57.973540 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="2.460377ms"
+I1031 17:57:01.310572 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="2.563111ms"
+I1031 17:57:01.325085 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="14.445485ms"
+I1031 17:57:01.327831 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-2-test-role" elapsedTime="2.665175ms"
+I1031 17:57:01.423466 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="493.777µs"
+I1031 17:57:01.427043 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="393.174µs"
+I1031 17:57:01.934230 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="553.879µs"
+I1031 17:57:02.688834 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="5.422193ms"
+I1031 17:57:02.691714 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="2.780799ms"
+I1031 17:57:02.694847 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="2.816671ms"
+I1031 17:57:02.697635 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="2.716357ms"
+I1031 17:57:02.700213 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="2.513109ms"
+I1031 17:57:06.143795 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="2.445987ms"
+I1031 17:57:06.158075 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="14.212946ms"
+I1031 17:57:06.160589 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-1-test-role" elapsedTime="2.447517ms"
+I1031 17:57:06.256848 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="517.638µs"
+I1031 17:57:06.260752 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="481.217µs"
+I1031 17:57:06.766470 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="525.839µs"
+I1031 17:57:07.517189 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="5.192334ms"
+I1031 17:57:07.531464 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="14.187145ms"
+I1031 17:57:07.533985 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="2.453217ms"
+I1031 17:57:10.975315 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="2.609033ms"
+I1031 17:57:10.990230 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="14.837348ms"
+I1031 17:57:10.993672 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440615647607951/rbgs-zero-budget-0-test-role" elapsedTime="3.35831ms"
+[38;5;10m•[0mI1031 17:57:14.284293 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-0-test-role" elapsedTime="5.460944ms"
+I1031 17:57:14.287139 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-0-test-role" elapsedTime="2.767289ms"
+I1031 17:57:14.289882 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-0-test-role" elapsedTime="2.653495ms"
+I1031 17:57:14.295056 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="5.103222ms"
+I1031 17:57:14.297765 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-0-test-role" elapsedTime="2.621993ms"
+I1031 17:57:14.300691 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="2.842721ms"
+I1031 17:57:14.303396 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="2.617323ms"
+I1031 17:57:14.305923 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="2.445587ms"
+I1031 17:57:14.775006 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-0-test-role" elapsedTime="2.687566ms"
+I1031 17:57:14.777722 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="2.645345ms"
+I1031 17:57:14.780287 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-0-test-role" elapsedTime="2.488798ms"
+I1031 17:57:14.782916 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="2.581132ms"
+I1031 17:57:15.043543 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="531.499µs"
+I1031 17:57:15.046911 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="450.696µs"
+I1031 17:57:15.553821 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="513.838µs"
+I1031 17:57:16.300223 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="4.754659ms"
+I1031 17:57:16.315094 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="14.790747ms"
+I1031 17:57:16.317632 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="2.445047ms"
+I1031 17:57:23.299219 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="2.613033ms"
+I1031 17:57:23.301790 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="2.492029ms"
+I1031 17:57:23.304219 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440634252644664/rbgs-fault-1-test-role" elapsedTime="2.370705ms"
+[38;5;10m•[0mI1031 17:57:26.605010 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-0-test-role" elapsedTime="5.500325ms"
+I1031 17:57:26.608119 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-0-test-role" elapsedTime="3.022758ms"
+I1031 17:57:26.610843 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-0-test-role" elapsedTime="2.643534ms"
+I1031 17:57:26.615768 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-1-test-role" elapsedTime="4.860533ms"
+I1031 17:57:26.618556 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-0-test-role" elapsedTime="2.729507ms"
+I1031 17:57:26.621175 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-1-test-role" elapsedTime="2.555801ms"
+I1031 17:57:26.626074 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="4.847772ms"
+I1031 17:57:26.629043 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-1-test-role" elapsedTime="2.903113ms"
+I1031 17:57:26.631766 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="2.656805ms"
+I1031 17:57:26.636103 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="2.999096ms"
+I1031 17:57:26.638536 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="2.373155ms"
+I1031 17:57:27.098151 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-0-test-role" elapsedTime="2.630744ms"
+I1031 17:57:27.100711 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-1-test-role" elapsedTime="2.489029ms"
+I1031 17:57:27.103460 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-0-test-role" elapsedTime="2.682896ms"
+I1031 17:57:27.105983 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-1-test-role" elapsedTime="2.467317ms"
+I1031 17:57:27.198082 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="2.394586ms"
+I1031 17:57:27.213036 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="14.87997ms"
+I1031 17:57:27.215535 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="2.435867ms"
+I1031 17:57:27.475977 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="4.374966ms"
+I1031 17:57:27.478659 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="2.603872ms"
+I1031 17:57:27.481117 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="2.381195ms"
+I1031 17:57:27.483959 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="2.762398ms"
+I1031 17:57:27.486607 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="2.574851ms"
+I1031 17:57:30.974010 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="2.915934ms"
+I1031 17:57:30.976765 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="2.663105ms"
+I1031 17:57:30.979248 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-2-test-role" elapsedTime="2.422026ms"
+I1031 17:57:31.103292 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-1-test-role" elapsedTime="4.335845ms"
+I1031 17:57:31.118279 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-1-test-role" elapsedTime="14.887871ms"
+I1031 17:57:31.120945 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-1-test-role" elapsedTime="2.575421ms"
+I1031 17:57:34.547908 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-1-test-role" elapsedTime="2.539541ms"
+I1031 17:57:34.550493 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-1-test-role" elapsedTime="2.505169ms"
+I1031 17:57:34.552958 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-1-test-role" elapsedTime="2.405496ms"
+I1031 17:57:34.879910 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-0-test-role" elapsedTime="4.145657ms"
+I1031 17:57:34.882587 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-0-test-role" elapsedTime="2.589782ms"
+I1031 17:57:34.885395 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-0-test-role" elapsedTime="2.730227ms"
+I1031 17:57:34.888386 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-0-test-role" elapsedTime="2.914794ms"
+I1031 17:57:34.890913 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-0-test-role" elapsedTime="2.455318ms"
+I1031 17:57:35.427628 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-0-test-role" elapsedTime="2.463168ms"
+I1031 17:57:35.442772 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-0-test-role" elapsedTime="15.083467ms"
+I1031 17:57:35.445233 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440646574618248/rbgs-scaling-0-test-role" elapsedTime="2.391335ms"
+[38;5;10m•[0mI1031 17:57:38.732288 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:38.735337 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, replicas=0 ready=0 available=0 updated=0 updatedReady=0, revisions current=rbgs-scaling-0-test-role-6db64d7786 update=rbgs-scaling-0-test-role-6db64d7786
+I1031 17:57:38.737155 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 4.854524ms
+I1031 17:57:38.737210 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:38.737574 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-scaling-0-test-role-6db64d7786 update=rbgs-scaling-0-test-role-6db64d7786
+I1031 17:57:38.739724 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 2.506819ms
+I1031 17:57:38.739803 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:38.740415 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 605.811µs
+I1031 17:57:38.740471 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:38.740982 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 505.628µs
+I1031 17:57:38.741287 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:38.743962 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, replicas=0 ready=0 available=0 updated=0 updatedReady=0, revisions current=rbgs-scaling-1-test-role-67446797b4 update=rbgs-scaling-1-test-role-67446797b4
+I1031 17:57:38.745898 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 4.602324ms
+I1031 17:57:38.745955 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:38.746372 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 413.095µs
+I1031 17:57:38.746407 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:38.746699 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-scaling-1-test-role-67446797b4 update=rbgs-scaling-1-test-role-67446797b4
+I1031 17:57:38.748684 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 2.270611ms
+I1031 17:57:38.748746 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:38.751788 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 3.036988ms
+I1031 17:57:38.751844 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:38.752231 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 382.913µs
+I1031 17:57:38.752271 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:38.755159 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, replicas=0 ready=0 available=0 updated=0 updatedReady=0, revisions current=rbgs-scaling-2-test-role-5f7d7644b9 update=rbgs-scaling-2-test-role-5f7d7644b9
+I1031 17:57:38.757159 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 4.881404ms
+I1031 17:57:38.757224 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:38.757676 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 447.556µs
+I1031 17:57:38.757712 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:38.758017 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 301.78µs
+I1031 17:57:38.758054 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:38.758394 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-scaling-2-test-role-5f7d7644b9 update=rbgs-scaling-2-test-role-5f7d7644b9
+I1031 17:57:38.760291 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 2.231739ms
+I1031 17:57:38.760348 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:38.762977 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 2.623053ms
+I1031 17:57:38.763036 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:38.763544 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 503.308µs
+I1031 17:57:38.763597 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:38.764109 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 506.288µs
+I1031 17:57:38.765605 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:38.766009 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 396.834µs
+I1031 17:57:38.766044 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:38.766360 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 313.331µs
+I1031 17:57:38.768557 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:38.768939 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 373.393µs
+I1031 17:57:38.768973 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:38.769279 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 302.5µs
+I1031 17:57:38.772033 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:38.774496 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 2.454197ms
+I1031 17:57:38.774543 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:38.774887 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 341.062µs
+I1031 17:57:38.774915 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:38.775200 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 282.04µs
+I1031 17:57:38.777108 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:38.778745 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 1.519394ms
+I1031 17:57:38.779168 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:38.779660 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 487.057µs
+I1031 17:57:39.303798 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:39.304228 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-scaling-0-test-role-6db64d7786 update=rbgs-scaling-0-test-role-6db64d7786
+I1031 17:57:39.306412 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 2.601063ms
+I1031 17:57:39.306488 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:39.306892 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-scaling-1-test-role-67446797b4 update=rbgs-scaling-1-test-role-67446797b4
+I1031 17:57:39.308928 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 2.433867ms
+I1031 17:57:39.308983 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:39.309413 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 425.966µs
+I1031 17:57:39.309459 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:39.309773 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 310.721µs
+I1031 17:57:39.309802 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:39.310078 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-scaling-2-test-role-5f7d7644b9 update=rbgs-scaling-2-test-role-5f7d7644b9
+I1031 17:57:39.312081 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 2.274001ms
+I1031 17:57:39.312134 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:39.312510 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 371.923µs
+I1031 17:57:39.734362 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:39.736614 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-scaling-2-test-role-5f7d7644b9 update=rbgs-scaling-2-test-role-5f7d7644b9
+I1031 17:57:39.738816 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 4.438278ms
+I1031 17:57:39.738891 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:39.739318 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, replicas=2 ready=1 available=1 updated=2 updatedReady=1, revisions current=rbgs-scaling-2-test-role-5f7d7644b9 update=rbgs-scaling-2-test-role-5f7d7644b9
+I1031 17:57:39.741459 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 2.560961ms
+I1031 17:57:39.741529 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:39.741936 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 402.064µs
+I1031 17:57:39.741987 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:39.742507 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 514.389µs
+I1031 17:57:39.745374 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:39.747770 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 2.388345ms
+I1031 17:57:39.747922 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:39.748294 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 368.813µs
+I1031 17:57:39.748325 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:39.748632 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 305.001µs
+I1031 17:57:39.750304 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:39.750670 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 359.492µs
+I1031 17:57:39.750702 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:39.750994 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 289.24µs
+I1031 17:57:43.142604 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:43.143034 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, replicas=2 ready=2 available=2 updated=2 updatedReady=2, revisions current=rbgs-scaling-2-test-role-5f7d7644b9 update=rbgs-scaling-2-test-role-5f7d7644b9
+I1031 17:57:43.145002 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 2.384545ms
+I1031 17:57:43.145069 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:43.145485 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, replicas=2 ready=2 available=2 updated=2 updatedReady=2, revisions current=rbgs-scaling-2-test-role-5f7d7644b9 update=rbgs-scaling-2-test-role-5f7d7644b9
+I1031 17:57:43.147626 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 2.551161ms
+I1031 17:57:43.147674 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role
+I1031 17:57:43.148026 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-2-test-role, cost 348.753µs
+I1031 17:57:43.266248 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:43.268224 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-scaling-1-test-role-67446797b4 update=rbgs-scaling-1-test-role-67446797b4
+I1031 17:57:43.270392 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 4.122397ms
+I1031 17:57:43.270502 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:43.271222 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, replicas=2 ready=1 available=1 updated=2 updatedReady=1, revisions current=rbgs-scaling-1-test-role-67446797b4 update=rbgs-scaling-1-test-role-67446797b4
+I1031 17:57:43.273567 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 3.057439ms
+I1031 17:57:43.273650 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:43.274222 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, replicas=2 ready=1 available=1 updated=2 updatedReady=1, revisions current=rbgs-scaling-1-test-role-67446797b4 update=rbgs-scaling-1-test-role-67446797b4
+I1031 17:57:43.284359 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 10.698381ms
+I1031 17:57:43.284476 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:43.284917 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 437.825µs
+I1031 17:57:43.287071 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:43.290282 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 3.194874ms
+I1031 17:57:43.290351 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:43.290797 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 442.336µs
+I1031 17:57:43.290834 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:43.291139 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 301.961µs
+I1031 17:57:43.293505 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:43.293914 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 400.414µs
+I1031 17:57:43.293952 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:43.294251 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 296.391µs
+I1031 17:57:46.654347 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:46.655906 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, replicas=2 ready=2 available=2 updated=2 updatedReady=2, revisions current=rbgs-scaling-1-test-role-67446797b4 update=rbgs-scaling-1-test-role-67446797b4
+I1031 17:57:46.658638 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 4.276332ms
+I1031 17:57:46.658719 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role
+I1031 17:57:46.659124 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-1-test-role, cost 401.685µs
+I1031 17:57:46.980046 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:46.982122 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-scaling-0-test-role-6db64d7786 update=rbgs-scaling-0-test-role-6db64d7786
+I1031 17:57:46.984169 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 4.107646ms
+I1031 17:57:46.984246 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:46.984726 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, replicas=2 ready=1 available=1 updated=2 updatedReady=1, revisions current=rbgs-scaling-0-test-role-6db64d7786 update=rbgs-scaling-0-test-role-6db64d7786
+I1031 17:57:46.986753 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 2.500589ms
+I1031 17:57:46.986822 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:46.987339 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 506.518µs
+I1031 17:57:46.987426 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:46.987779 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 347.872µs
+I1031 17:57:46.987815 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:46.988113 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 295.01µs
+I1031 17:57:46.991647 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:46.994304 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 2.648024ms
+I1031 17:57:46.994359 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:46.994764 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 400.324µs
+I1031 17:57:46.994800 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:46.995120 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 317.021µs
+I1031 17:57:46.997152 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:46.997564 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 403.345µs
+I1031 17:57:46.997600 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:46.997899 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 295.25µs
+I1031 17:57:47.479468 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:47.479923 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, replicas=2 ready=2 available=2 updated=2 updatedReady=2, revisions current=rbgs-scaling-0-test-role-6db64d7786 update=rbgs-scaling-0-test-role-6db64d7786
+I1031 17:57:47.481932 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 2.451048ms
+I1031 17:57:47.481997 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:47.482403 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, replicas=2 ready=2 available=2 updated=2 updatedReady=2, revisions current=rbgs-scaling-0-test-role-6db64d7786 update=rbgs-scaling-0-test-role-6db64d7786
+I1031 17:57:47.484318 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 2.315813ms
+I1031 17:57:47.484365 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role
+I1031 17:57:47.484737 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440658708854796/rbgs-scaling-0-test-role, cost 367.753µs
+[38;5;10m•[0mI1031 17:57:50.794577 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-0-test-role" elapsedTime="5.632141ms"
+I1031 17:57:50.797275 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-0-test-role" elapsedTime="2.599702ms"
+I1031 17:57:50.800868 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-0-test-role" elapsedTime="2.586512ms"
+I1031 17:57:50.805837 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-1-test-role" elapsedTime="4.912245ms"
+I1031 17:57:50.808521 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-0-test-role" elapsedTime="2.619173ms"
+I1031 17:57:50.811200 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-1-test-role" elapsedTime="2.616774ms"
+I1031 17:57:50.816538 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="5.254888ms"
+I1031 17:57:50.822543 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-1-test-role" elapsedTime="5.821818ms"
+I1031 17:57:50.829495 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="6.841324ms"
+I1031 17:57:50.833348 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="3.726922ms"
+I1031 17:57:50.836336 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="2.857182ms"
+I1031 17:57:50.839314 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="2.911914ms"
+I1031 17:57:51.287866 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-0-test-role" elapsedTime="2.562542ms"
+I1031 17:57:51.290583 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-1-test-role" elapsedTime="2.639105ms"
+I1031 17:57:51.293135 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-0-test-role" elapsedTime="2.496509ms"
+I1031 17:57:51.295718 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-1-test-role" elapsedTime="2.52485ms"
+I1031 17:57:51.388263 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="2.426107ms"
+I1031 17:57:51.403424 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="15.091477ms"
+I1031 17:57:51.406196 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="2.706066ms"
+I1031 17:57:51.668083 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="4.240381ms"
+I1031 17:57:51.670820 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="2.648045ms"
+I1031 17:57:51.673890 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="2.766889ms"
+I1031 17:57:51.676655 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="2.685546ms"
+I1031 17:57:51.679189 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="2.470118ms"
+I1031 17:57:55.211880 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="2.52213ms"
+I1031 17:57:55.226813 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="14.850609ms"
+I1031 17:57:55.229334 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-2-test-role" elapsedTime="2.443947ms"
+I1031 17:57:55.340222 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-1-test-role" elapsedTime="4.181029ms"
+I1031 17:57:55.343023 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-1-test-role" elapsedTime="2.667315ms"
+I1031 17:57:55.346044 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-1-test-role" elapsedTime="2.801749ms"
+I1031 17:57:55.348898 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-1-test-role" elapsedTime="2.772179ms"
+I1031 17:57:55.351678 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-1-test-role" elapsedTime="2.709957ms"
+I1031 17:57:58.800015 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-1-test-role" elapsedTime="2.564381ms"
+I1031 17:57:58.815250 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-1-test-role" elapsedTime="15.15065ms"
+I1031 17:57:58.817779 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-1-test-role" elapsedTime="2.439867ms"
+I1031 17:57:59.129882 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-0-test-role" elapsedTime="4.631035ms"
+I1031 17:57:59.133831 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-0-test-role" elapsedTime="3.667721ms"
+I1031 17:57:59.136714 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-0-test-role" elapsedTime="2.786089ms"
+I1031 17:57:59.140445 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-0-test-role" elapsedTime="2.627033ms"
+I1031 17:57:59.143442 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-0-test-role" elapsedTime="2.915034ms"
+I1031 17:57:59.677095 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-0-test-role" elapsedTime="2.550191ms"
+I1031 17:57:59.692043 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-0-test-role" elapsedTime="14.860489ms"
+I1031 17:57:59.694607 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440670765281544/rbgs-scaling-0-test-role" elapsedTime="2.501819ms"
+[38;5;10m•[0mI1031 17:58:02.984467 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:02.987296 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, replicas=0 ready=0 available=0 updated=0 updatedReady=0, revisions current=rbgs-scaling-0-test-role-5cc86777db update=rbgs-scaling-0-test-role-5cc86777db
+I1031 17:58:02.989130 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 4.644536ms
+I1031 17:58:02.989193 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:02.989609 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-scaling-0-test-role-5cc86777db update=rbgs-scaling-0-test-role-5cc86777db
+I1031 17:58:02.991819 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 2.619004ms
+I1031 17:58:02.991889 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:02.992302 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-scaling-0-test-role-5cc86777db update=rbgs-scaling-0-test-role-5cc86777db
+I1031 17:58:02.994624 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 2.727387ms
+I1031 17:58:02.994708 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:02.997362 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, replicas=0 ready=0 available=0 updated=0 updatedReady=0, revisions current=rbgs-scaling-1-test-role-c99f854b6 update=rbgs-scaling-1-test-role-c99f854b6
+I1031 17:58:02.999343 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 4.630085ms
+I1031 17:58:02.999404 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:03.002021 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 2.610233ms
+I1031 17:58:03.002089 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:03.002531 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-scaling-1-test-role-c99f854b6 update=rbgs-scaling-1-test-role-c99f854b6
+I1031 17:58:03.004585 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 2.490019ms
+I1031 17:58:03.004646 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:03.005045 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 394.654µs
+I1031 17:58:03.005085 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:03.005392 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 304.251µs
+I1031 17:58:03.005959 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.008983 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, replicas=0 ready=0 available=0 updated=0 updatedReady=0, revisions current=rbgs-scaling-2-test-role-788d77886f update=rbgs-scaling-2-test-role-788d77886f
+I1031 17:58:03.010950 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 4.974817ms
+I1031 17:58:03.011024 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:03.011487 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 457.986µs
+I1031 17:58:03.011528 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:03.014006 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 2.472659ms
+I1031 17:58:03.014073 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.014469 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-scaling-2-test-role-788d77886f update=rbgs-scaling-2-test-role-788d77886f
+I1031 17:58:03.018461 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 4.381676ms
+I1031 17:58:03.018549 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:03.019151 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 597.831µs
+I1031 17:58:03.019449 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.019980 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 525.418µs
+I1031 17:58:03.021399 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.022019 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 602.572µs
+I1031 17:58:03.022108 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.022638 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 524.429µs
+I1031 17:58:03.027657 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:03.028095 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 427.815µs
+I1031 17:58:03.028132 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:03.028452 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 317.621µs
+I1031 17:58:03.033141 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.036645 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 3.486155ms
+I1031 17:58:03.036716 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.037148 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 428.096µs
+I1031 17:58:03.037183 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.037525 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 339.572µs
+I1031 17:58:03.040138 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.040533 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 387.854µs
+I1031 17:58:03.040563 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.040906 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 340.093µs
+I1031 17:58:03.531234 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:03.531680 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-scaling-0-test-role-5cc86777db update=rbgs-scaling-0-test-role-5cc86777db
+I1031 17:58:03.533769 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 2.523509ms
+I1031 17:58:03.533829 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:03.534203 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 369.283µs
+I1031 17:58:03.534238 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:03.534563 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-scaling-1-test-role-c99f854b6 update=rbgs-scaling-1-test-role-c99f854b6
+I1031 17:58:03.536422 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 2.177988ms
+I1031 17:58:03.536511 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:03.537081 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 563.12µs
+I1031 17:58:03.537124 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:03.537582 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 453.816µs
+I1031 17:58:03.537616 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.537905 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-scaling-2-test-role-788d77886f update=rbgs-scaling-2-test-role-788d77886f
+I1031 17:58:03.539763 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 2.141637ms
+I1031 17:58:03.540049 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.540467 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 411.715µs
+I1031 17:58:03.958048 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.960108 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-scaling-2-test-role-788d77886f update=rbgs-scaling-2-test-role-788d77886f
+I1031 17:58:03.962288 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 4.22542ms
+I1031 17:58:03.962362 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.962814 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, replicas=2 ready=1 available=1 updated=2 updatedReady=1, revisions current=rbgs-scaling-2-test-role-788d77886f update=rbgs-scaling-2-test-role-788d77886f
+I1031 17:58:03.964622 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 2.254101ms
+I1031 17:58:03.964691 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.965079 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, replicas=2 ready=1 available=1 updated=2 updatedReady=1, revisions current=rbgs-scaling-2-test-role-788d77886f update=rbgs-scaling-2-test-role-788d77886f
+I1031 17:58:03.967051 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 2.354014ms
+I1031 17:58:03.967116 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.967541 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 420.745µs
+I1031 17:58:03.969121 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.972724 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 3.595168ms
+I1031 17:58:03.972790 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.973224 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 430.495µs
+I1031 17:58:03.973274 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.973605 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 327.352µs
+I1031 17:58:03.975410 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.975785 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 369.703µs
+I1031 17:58:03.975817 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:03.976117 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 297.24µs
+I1031 17:58:07.364753 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:07.365296 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, replicas=2 ready=2 available=2 updated=2 updatedReady=2, revisions current=rbgs-scaling-2-test-role-788d77886f update=rbgs-scaling-2-test-role-788d77886f
+I1031 17:58:07.367388 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 2.621883ms
+I1031 17:58:07.367456 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:07.368849 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, replicas=2 ready=2 available=2 updated=2 updatedReady=2, revisions current=rbgs-scaling-2-test-role-788d77886f update=rbgs-scaling-2-test-role-788d77886f
+I1031 17:58:07.371406 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 3.94422ms
+I1031 17:58:07.371467 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role
+I1031 17:58:07.371882 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-2-test-role, cost 410.585µs
+I1031 17:58:07.489993 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:07.491985 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-scaling-1-test-role-c99f854b6 update=rbgs-scaling-1-test-role-c99f854b6
+I1031 17:58:07.494053 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 4.046524ms
+I1031 17:58:07.494129 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:07.494653 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, replicas=2 ready=1 available=1 updated=2 updatedReady=1, revisions current=rbgs-scaling-1-test-role-c99f854b6 update=rbgs-scaling-1-test-role-c99f854b6
+I1031 17:58:07.496585 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 2.447896ms
+I1031 17:58:07.496658 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:07.497117 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 452.617µs
+I1031 17:58:07.497155 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:07.497521 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 362.993µs
+I1031 17:58:07.500602 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:07.503124 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 2.513189ms
+I1031 17:58:07.503176 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:07.503591 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 411.575µs
+I1031 17:58:07.503627 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:07.503957 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 327.271µs
+I1031 17:58:07.505863 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:07.506301 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 430.086µs
+I1031 17:58:07.506342 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:07.506688 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 342.673µs
+I1031 17:58:10.876430 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:10.876895 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, replicas=2 ready=2 available=2 updated=2 updatedReady=2, revisions current=rbgs-scaling-1-test-role-c99f854b6 update=rbgs-scaling-1-test-role-c99f854b6
+I1031 17:58:10.878892 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 2.450297ms
+I1031 17:58:10.878955 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:10.879346 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, replicas=2 ready=2 available=2 updated=2 updatedReady=2, revisions current=rbgs-scaling-1-test-role-c99f854b6 update=rbgs-scaling-1-test-role-c99f854b6
+I1031 17:58:10.881445 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 2.484798ms
+I1031 17:58:10.881494 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role
+I1031 17:58:10.881851 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-1-test-role, cost 354.313µs
+I1031 17:58:11.201872 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:11.204122 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-scaling-0-test-role-5cc86777db update=rbgs-scaling-0-test-role-5cc86777db
+I1031 17:58:11.206487 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 4.600654ms
+I1031 17:58:11.206572 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:11.207085 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, replicas=2 ready=1 available=1 updated=2 updatedReady=1, revisions current=rbgs-scaling-0-test-role-5cc86777db update=rbgs-scaling-0-test-role-5cc86777db
+I1031 17:58:11.208971 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 2.393065ms
+I1031 17:58:11.209172 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:11.209567 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 389.684µs
+I1031 17:58:11.209613 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:11.209906 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 289.631µs
+I1031 17:58:11.212739 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:11.215224 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 2.476128ms
+I1031 17:58:11.215283 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:11.215651 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 364.503µs
+I1031 17:58:11.215684 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:11.215984 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 296.92µs
+I1031 17:58:11.217857 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:11.218273 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 410.175µs
+I1031 17:58:11.702033 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:11.702483 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, replicas=2 ready=2 available=2 updated=2 updatedReady=2, revisions current=rbgs-scaling-0-test-role-5cc86777db update=rbgs-scaling-0-test-role-5cc86777db
+I1031 17:58:11.704381 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 2.334603ms
+I1031 17:58:11.704440 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:11.704836 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, replicas=2 ready=2 available=2 updated=2 updatedReady=2, revisions current=rbgs-scaling-0-test-role-5cc86777db update=rbgs-scaling-0-test-role-5cc86777db
+I1031 17:58:11.706892 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 2.445857ms
+I1031 17:58:11.706959 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role
+I1031 17:58:11.707394 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440682961030253/rbgs-scaling-0-test-role, cost 431.475µs
+[38;5;10m•[0mI1031 17:58:15.034119 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="7.114393ms"
+I1031 17:58:15.050468 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="16.259819ms"
+I1031 17:58:15.055595 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="5.05198ms"
+I1031 17:58:15.058618 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="2.951474ms"
+I1031 17:58:15.061489 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="2.78886ms"
+I1031 17:58:15.064330 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="2.739728ms"
+I1031 17:58:15.067206 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="2.79131ms"
+I1031 17:58:15.524276 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="2.608682ms"
+I1031 17:58:15.526810 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="2.458838ms"
+I1031 17:58:15.535558 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="8.674059ms"
+I1031 17:58:15.540773 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="5.04526ms"
+I1031 17:58:15.806073 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" targets=[0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:58:15.806090 1166381 stateful_instance_set_control.go:909] "Updating instance" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" instance="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role-0" from="rbgs-downstream-1-test-role-f7765b786" to="rbgs-downstream-1-test-role-7b798f67c6" isSurge=false free=false
+I1031 17:58:15.812532 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="8.275394ms"
+I1031 17:58:15.813093 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:15.827885 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="15.269954ms"
+I1031 17:58:15.843735 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:15.858165 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="30.198565ms" result={"Requeue":false,"RequeueAfter":9984694565}
+I1031 17:58:15.858727 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:15.874215 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="15.982439ms" result={"Requeue":false,"RequeueAfter":9969696110}
+I1031 17:58:15.874754 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:15.876748 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="2.459147ms" result={"Requeue":false,"RequeueAfter":9953668280}
+I1031 17:58:19.305299 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:58:19.307418 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="2.634654ms"
+I1031 17:58:19.307987 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:58:19.322552 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="15.059266ms"
+I1031 17:58:19.325071 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="2.449348ms"
+I1031 17:58:19.327628 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="2.431517ms"
+I1031 17:58:19.530958 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" targets=[0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:58:19.530975 1166381 stateful_instance_set_control.go:909] "Updating instance" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" instance="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role-0" from="rbgs-downstream-0-test-role-67d87c68f9" to="rbgs-downstream-0-test-role-6956ffdff7" isSurge=false free=false
+I1031 17:58:19.535112 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="5.945521ms"
+I1031 17:58:19.535646 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:19.549373 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="14.192715ms"
+I1031 17:58:19.564899 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:19.579463 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="30.020148ms" result={"Requeue":false,"RequeueAfter":9985015806}
+I1031 17:58:19.580022 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:19.582018 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="2.482239ms" result={"Requeue":false,"RequeueAfter":9969883567}
+I1031 17:58:19.582596 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:19.584535 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="2.443747ms" result={"Requeue":false,"RequeueAfter":9967309406}
+I1031 17:58:22.979474 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:58:22.981559 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="2.569961ms"
+I1031 17:58:22.982087 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:58:22.997169 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="15.533423ms"
+I1031 17:58:22.999995 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="2.750008ms"
+I1031 17:58:23.002768 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="2.621544ms"
+I1031 17:58:25.833790 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-1-test-role" elapsedTime="3.043219ms"
+[38;5;10m•[0mI1031 17:58:26.364149 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:26.368263 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, replicas=0 ready=0 available=0 updated=0 updatedReady=0, revisions current=rbgs-downstream-0-test-role-6fb58bb4f6 update=rbgs-downstream-0-test-role-6fb58bb4f6
+I1031 17:58:26.370435 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 6.272173ms
+I1031 17:58:26.370510 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:26.370881 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-downstream-0-test-role-6fb58bb4f6 update=rbgs-downstream-0-test-role-6fb58bb4f6
+I1031 17:58:26.372913 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 2.395105ms
+I1031 17:58:26.372999 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:26.373481 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 476.407µs
+I1031 17:58:26.373525 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:26.373964 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 434.416µs
+I1031 17:58:26.374419 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:26.374860 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 433.566µs
+I1031 17:58:26.374894 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:26.377935 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, replicas=0 ready=0 available=0 updated=0 updatedReady=0, revisions current=rbgs-downstream-1-test-role-7bbc99c555 update=rbgs-downstream-1-test-role-7bbc99c555
+I1031 17:58:26.379888 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 4.985888ms
+I1031 17:58:26.379960 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:26.382499 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 2.53215ms
+I1031 17:58:26.382564 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:26.383031 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-downstream-1-test-role-7bbc99c555 update=rbgs-downstream-1-test-role-7bbc99c555
+I1031 17:58:26.385403 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 2.832381ms
+I1031 17:58:26.385467 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:26.385895 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 423.925µs
+I1031 17:58:26.385929 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:26.386277 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 344.472µs
+I1031 17:58:26.387091 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:26.387540 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 441.075µs
+I1031 17:58:26.387581 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:26.387926 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 342.002µs
+I1031 17:58:26.390765 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:26.393245 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 2.472948ms
+I1031 17:58:26.393307 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:26.393705 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 393.084µs
+I1031 17:58:26.393741 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:26.394100 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 355.353µs
+I1031 17:58:26.395761 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:26.396089 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 321.742µs
+I1031 17:58:26.396125 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:26.396429 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 301.411µs
+I1031 17:58:26.858334 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:26.858770 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-downstream-0-test-role-6fb58bb4f6 update=rbgs-downstream-0-test-role-6fb58bb4f6
+I1031 17:58:26.860779 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 2.433976ms
+I1031 17:58:26.860845 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:26.861207 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-downstream-1-test-role-7bbc99c555 update=rbgs-downstream-1-test-role-7bbc99c555
+I1031 17:58:26.863192 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 2.341803ms
+I1031 17:58:26.863243 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:26.863636 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 389.464µs
+I1031 17:58:26.863667 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:26.863957 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 287.091µs
+I1031 17:58:27.139295 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:27.160046 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, replicas=1 ready=1 available=1 updated=0 updatedReady=0, revisions current=rbgs-downstream-1-test-role-7bbc99c555 update=rbgs-downstream-1-test-role-86d5bdf77f
+I1031 17:58:27.162966 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 23.654453ms
+I1031 17:58:27.163068 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:27.163525 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-downstream-1-test-role-86d5bdf77f update=rbgs-downstream-1-test-role-86d5bdf77f
+I1031 17:58:27.165873 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 2.79804ms
+I1031 17:58:27.165946 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:27.166416 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-downstream-1-test-role-86d5bdf77f update=rbgs-downstream-1-test-role-86d5bdf77f
+I1031 17:58:27.168834 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 2.881853ms
+I1031 17:58:27.168893 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:27.169317 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 419.605µs
+I1031 17:58:27.171499 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:27.171929 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 421.985µs
+I1031 17:58:27.171968 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:27.172319 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 346.992µs
+I1031 17:58:27.175422 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:27.180312 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 4.881224ms
+I1031 17:58:27.180369 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:27.180501 1166381 reconciler.go:91] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 127.554µs, result: {false 4m59.999999891s}
+I1031 17:58:27.180594 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:27.181024 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 422.575µs
+I1031 17:58:27.181060 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:27.181400 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 336.401µs
+I1031 17:58:27.194417 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:27.194852 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 427.435µs
+I1031 17:58:27.194890 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:27.195211 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 317.781µs
+I1031 17:58:29.554777 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440695000341042/rbgs-downstream-0-test-role" elapsedTime="2.675176ms"
+I1031 17:58:30.678930 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:30.679358 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-downstream-1-test-role-86d5bdf77f update=rbgs-downstream-1-test-role-86d5bdf77f
+I1031 17:58:30.681301 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 2.359054ms
+I1031 17:58:30.681370 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:30.681806 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-downstream-1-test-role-86d5bdf77f update=rbgs-downstream-1-test-role-86d5bdf77f
+I1031 17:58:30.683873 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 2.497669ms
+I1031 17:58:30.683924 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role
+I1031 17:58:30.684304 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-1-test-role, cost 376.113µs
+I1031 17:58:30.803247 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:30.821724 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, replicas=1 ready=1 available=1 updated=0 updatedReady=0, revisions current=rbgs-downstream-0-test-role-6fb58bb4f6 update=rbgs-downstream-0-test-role-68ccdf8b46
+I1031 17:58:30.823623 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 20.357104ms
+I1031 17:58:30.823693 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:30.824080 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-downstream-0-test-role-68ccdf8b46 update=rbgs-downstream-0-test-role-68ccdf8b46
+I1031 17:58:30.826023 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 2.325053ms
+I1031 17:58:30.826078 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:30.826536 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 452.766µs
+I1031 17:58:30.827044 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:30.827529 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 476.077µs
+I1031 17:58:30.831042 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:30.831527 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 477.527µs
+I1031 17:58:30.831569 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:30.831908 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 336.232µs
+I1031 17:58:30.834736 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:30.839682 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 4.939055ms
+I1031 17:58:30.839724 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:30.839850 1166381 reconciler.go:91] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 122.554µs, result: {false 4m59.99999988s}
+I1031 17:58:30.839884 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:30.840233 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 345.322µs
+I1031 17:58:30.852436 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:30.852883 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 438.285µs
+I1031 17:58:30.852919 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:30.853212 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 290.05µs
+I1031 17:58:34.375098 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:34.375584 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-downstream-0-test-role-68ccdf8b46 update=rbgs-downstream-0-test-role-68ccdf8b46
+I1031 17:58:34.377772 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 2.656915ms
+I1031 17:58:34.377829 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:34.378198 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-downstream-0-test-role-68ccdf8b46 update=rbgs-downstream-0-test-role-68ccdf8b46
+I1031 17:58:34.380293 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 2.458218ms
+I1031 17:58:34.380345 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role
+I1031 17:58:34.380738 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440706340343008/rbgs-downstream-0-test-role, cost 388.964µs
+[38;5;10m•[0mI1031 17:58:37.702478 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="5.150123ms"
+I1031 17:58:37.705247 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="2.687275ms"
+I1031 17:58:37.708113 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="2.780469ms"
+I1031 17:58:37.711469 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="3.271836ms"
+I1031 17:58:37.716162 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="4.639705ms"
+I1031 17:58:37.719432 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="3.191344ms"
+I1031 17:58:37.722294 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="2.744028ms"
+I1031 17:58:37.725450 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="3.08445ms"
+I1031 17:58:37.728025 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="2.511639ms"
+I1031 17:58:38.193380 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="2.721997ms"
+I1031 17:58:38.196061 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="2.607873ms"
+I1031 17:58:38.198482 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="2.356424ms"
+I1031 17:58:38.201026 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="2.480519ms"
+I1031 17:58:38.203447 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="2.365665ms"
+I1031 17:58:38.560200 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" targets=[0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:58:38.560219 1166381 stateful_instance_set_control.go:909] "Updating instance" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" instance="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role-0" from="rbgs-downstream-1-test-role-5cbcb9655" to="rbgs-downstream-1-test-role-6bc8c7d77b" isSurge=false free=false
+I1031 17:58:38.564483 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="5.922931ms"
+I1031 17:58:38.565068 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:38.579600 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="15.039535ms"
+I1031 17:58:38.580179 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:38.594674 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="14.999314ms"
+I1031 17:58:38.610295 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:38.612288 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="17.550425ms" result={"Requeue":false,"RequeueAfter":9984862881}
+I1031 17:58:38.612875 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:38.627003 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="14.630291ms" result={"Requeue":false,"RequeueAfter":9982275139}
+I1031 17:58:38.627577 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:38.629737 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="2.657705ms" result={"Requeue":false,"RequeueAfter":9967571795}
+I1031 17:58:42.055645 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:58:42.057630 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="2.491028ms"
+I1031 17:58:42.058214 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:58:42.072316 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="14.59624ms"
+I1031 17:58:42.074623 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="2.24596ms"
+I1031 17:58:42.077266 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="2.410135ms"
+I1031 17:58:42.281512 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" targets=[0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:58:42.281527 1166381 stateful_instance_set_control.go:909] "Updating instance" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" instance="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role-0" from="rbgs-downstream-0-test-role-776d5c8b47" to="rbgs-downstream-0-test-role-5f4f488566" isSurge=false free=false
+I1031 17:58:42.285800 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="6.030075ms"
+I1031 17:58:42.286356 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:42.301048 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="15.173801ms"
+I1031 17:58:42.301707 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:42.316269 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="15.15384ms"
+I1031 17:58:42.331889 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:42.333793 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="17.463932ms" result={"Requeue":false,"RequeueAfter":9984884332}
+I1031 17:58:42.334297 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:42.348435 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="14.580609ms" result={"Requeue":false,"RequeueAfter":9982470636}
+I1031 17:58:42.348957 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:58:42.350915 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="2.416106ms" result={"Requeue":false,"RequeueAfter":9967810544}
+I1031 17:58:45.732929 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:58:45.734937 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="2.53698ms"
+I1031 17:58:45.735418 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:58:45.752761 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="17.757292ms"
+I1031 17:58:45.756318 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="3.400612ms"
+I1031 17:58:45.759312 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="2.794099ms"
+I1031 17:58:48.601274 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-1-test-role" elapsedTime="3.028028ms"
+[38;5;10m•[0mI1031 17:58:49.114227 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:49.117230 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, replicas=0 ready=0 available=0 updated=0 updatedReady=0, revisions current=rbgs-downstream-0-test-role-76ffff9f7 update=rbgs-downstream-0-test-role-76ffff9f7
+I1031 17:58:49.119217 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 4.977177ms
+I1031 17:58:49.119290 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:49.119693 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-downstream-0-test-role-76ffff9f7 update=rbgs-downstream-0-test-role-76ffff9f7
+I1031 17:58:49.121882 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 2.584983ms
+I1031 17:58:49.121947 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:49.122361 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 410.245µs
+I1031 17:58:49.122865 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:49.123895 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 1.017466ms
+I1031 17:58:49.123979 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.127166 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, replicas=0 ready=0 available=0 updated=0 updatedReady=0, revisions current=rbgs-downstream-1-test-role-66d66d967b update=rbgs-downstream-1-test-role-66d66d967b
+I1031 17:58:49.129275 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 5.287098ms
+I1031 17:58:49.129375 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:49.132070 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 2.687046ms
+I1031 17:58:49.132139 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.132572 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-downstream-1-test-role-66d66d967b update=rbgs-downstream-1-test-role-66d66d967b
+I1031 17:58:49.134518 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 2.371984ms
+I1031 17:58:49.134598 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:49.135009 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 407.175µs
+I1031 17:58:49.135042 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.135372 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 326.602µs
+I1031 17:58:49.135905 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:49.136348 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 433.705µs
+I1031 17:58:49.136387 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:49.136719 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 328.752µs
+I1031 17:58:49.139385 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.141945 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 2.547351ms
+I1031 17:58:49.142002 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.142400 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 395.144µs
+I1031 17:58:49.142433 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.142790 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 354.743µs
+I1031 17:58:49.144737 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.145109 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 365.313µs
+I1031 17:58:49.145142 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.145452 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 306.851µs
+I1031 17:58:49.609017 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:49.609479 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-downstream-0-test-role-76ffff9f7 update=rbgs-downstream-0-test-role-76ffff9f7
+I1031 17:58:49.611335 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 2.304631ms
+I1031 17:58:49.611393 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:49.611801 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-downstream-0-test-role-76ffff9f7 update=rbgs-downstream-0-test-role-76ffff9f7
+I1031 17:58:49.613934 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 2.53573ms
+I1031 17:58:49.613986 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.614356 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-downstream-1-test-role-66d66d967b update=rbgs-downstream-1-test-role-66d66d967b
+I1031 17:58:49.616555 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 2.564421ms
+I1031 17:58:49.616605 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:49.616973 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 364.042µs
+I1031 17:58:49.617004 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.617335 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 327.971µs
+I1031 17:58:49.889387 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.908334 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, replicas=1 ready=1 available=1 updated=0 updatedReady=0, revisions current=rbgs-downstream-1-test-role-66d66d967b update=rbgs-downstream-1-test-role-7db4bf8dcc
+I1031 17:58:49.910279 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 20.879463ms
+I1031 17:58:49.910346 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.910728 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-downstream-1-test-role-7db4bf8dcc update=rbgs-downstream-1-test-role-7db4bf8dcc
+I1031 17:58:49.913107 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 2.737407ms
+I1031 17:58:49.913260 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.914317 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 1.050347ms
+I1031 17:58:49.914362 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.914715 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 349.962µs
+I1031 17:58:49.929021 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.929450 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 422.775µs
+I1031 17:58:49.929489 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.929810 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 318.041µs
+I1031 17:58:49.931336 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.936173 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 4.828971ms
+I1031 17:58:49.936225 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.936359 1166381 reconciler.go:91] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 130.704µs, result: {false 4m59.99999988s}
+I1031 17:58:49.936400 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.936753 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 350.112µs
+I1031 17:58:49.948921 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.949325 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 396.014µs
+I1031 17:58:49.949358 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:49.949669 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 308.151µs
+I1031 17:58:52.322485 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440717673145258/rbgs-downstream-0-test-role" elapsedTime="2.961275ms"
+I1031 17:58:53.432386 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:53.432859 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-downstream-1-test-role-7db4bf8dcc update=rbgs-downstream-1-test-role-7db4bf8dcc
+I1031 17:58:53.435052 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 2.652635ms
+I1031 17:58:53.435118 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role
+I1031 17:58:53.435534 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-1-test-role, cost 411.375µs
+I1031 17:58:53.558091 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:53.577436 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, replicas=1 ready=1 available=1 updated=0 updatedReady=0, revisions current=rbgs-downstream-0-test-role-76ffff9f7 update=rbgs-downstream-0-test-role-5fd5f8ffcd
+I1031 17:58:53.579301 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 21.197184ms
+I1031 17:58:53.579356 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:53.579729 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-downstream-0-test-role-5fd5f8ffcd update=rbgs-downstream-0-test-role-5fd5f8ffcd
+I1031 17:58:53.581523 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 2.158756ms
+I1031 17:58:53.581597 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:53.582020 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-downstream-0-test-role-5fd5f8ffcd update=rbgs-downstream-0-test-role-5fd5f8ffcd
+I1031 17:58:53.584226 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 2.621673ms
+I1031 17:58:53.584307 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:53.584886 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 572.22µs
+I1031 17:58:53.584939 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:53.585474 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 529.799µs
+I1031 17:58:53.587021 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:53.591902 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 4.870283ms
+I1031 17:58:53.591955 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:53.592079 1166381 reconciler.go:91] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 119.804µs, result: {false 4m59.999999891s}
+I1031 17:58:53.592114 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:53.592459 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 341.262µs
+I1031 17:58:53.605684 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:53.606101 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 410.025µs
+I1031 17:58:53.606137 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:53.606461 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 321.932µs
+I1031 17:58:57.132143 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:57.132691 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-downstream-0-test-role-5fd5f8ffcd update=rbgs-downstream-0-test-role-5fd5f8ffcd
+I1031 17:58:57.134819 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 2.661594ms
+I1031 17:58:57.134900 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:57.135368 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 463.567µs
+I1031 17:58:57.135404 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role
+I1031 17:58:57.135726 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440729091016397/rbgs-downstream-0-test-role, cost 319.292µs
+[38;5;10m•[0mI1031 17:59:00.504112 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440740473491705/rbgs-role-labels-0-test-role" elapsedTime="5.513987ms"
+I1031 17:59:00.519333 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440740473491705/rbgs-role-labels-0-test-role" elapsedTime="15.139359ms"
+I1031 17:59:00.524310 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440740473491705/rbgs-role-labels-1-test-role" elapsedTime="4.906715ms"
+I1031 17:59:00.527156 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440740473491705/rbgs-role-labels-0-test-role" elapsedTime="2.782419ms"
+I1031 17:59:00.529710 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440740473491705/rbgs-role-labels-1-test-role" elapsedTime="2.487568ms"
+I1031 17:59:00.532293 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440740473491705/rbgs-role-labels-1-test-role" elapsedTime="2.5243ms"
+I1031 17:59:00.534913 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440740473491705/rbgs-role-labels-1-test-role" elapsedTime="2.557502ms"
+I1031 17:59:00.995982 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440740473491705/rbgs-role-labels-0-test-role" elapsedTime="2.687315ms"
+I1031 17:59:00.998744 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440740473491705/rbgs-role-labels-1-test-role" elapsedTime="2.674615ms"
+I1031 17:59:01.001418 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440740473491705/rbgs-role-labels-0-test-role" elapsedTime="2.577112ms"
+I1031 17:59:01.003963 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440740473491705/rbgs-role-labels-1-test-role" elapsedTime="2.463248ms"
+I1031 17:59:01.279079 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440740473491705/rbgs-role-labels-1-test-role" elapsedTime="2.618953ms"
+I1031 17:59:01.392055 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440740473491705/rbgs-role-labels-0-test-role" elapsedTime="2.428896ms"
+[38;5;10m•[0mI1031 17:59:07.625948 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440747606897305/rbg-role-labels-test-role" elapsedTime="4.986477ms"
+I1031 17:59:07.641410 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440747606897305/rbg-role-labels-test-role" elapsedTime="15.377898ms"
+I1031 17:59:07.643926 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440747606897305/rbg-role-labels-test-role" elapsedTime="2.452538ms"
+I1031 17:59:08.122903 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440747606897305/rbg-role-labels-test-role" elapsedTime="2.370705ms"
+I1031 17:59:08.125407 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440747606897305/rbg-role-labels-test-role" elapsedTime="2.436896ms"
+I1031 17:59:08.127951 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440747606897305/rbg-role-labels-test-role" elapsedTime="2.486829ms"
+I1031 17:59:08.386680 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440747606897305/rbg-role-labels-test-role" elapsedTime="2.538971ms"
+[38;5;10m•[0mI1031 17:59:14.767417 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="5.073531ms"
+I1031 17:59:14.770982 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="3.474464ms"
+I1031 17:59:14.773592 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="2.53261ms"
+I1031 17:59:14.778330 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="4.680387ms"
+I1031 17:59:14.780971 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="2.579742ms"
+I1031 17:59:14.783750 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="2.717087ms"
+I1031 17:59:14.786334 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="2.51648ms"
+I1031 17:59:14.788848 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="2.452947ms"
+I1031 17:59:15.258272 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="2.870822ms"
+I1031 17:59:15.260824 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="2.472058ms"
+I1031 17:59:15.263391 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="2.50487ms"
+I1031 17:59:15.266141 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="2.700416ms"
+I1031 17:59:15.538132 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" targets=[0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:59:15.538149 1166381 stateful_instance_set_control.go:909] "Updating instance" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" instance="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role-0" from="rbgs-topology-1-test-role-559c7b5447" to="rbgs-topology-1-test-role-847f68ff" isSurge=false free=false
+I1031 17:59:15.543058 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="7.217237ms"
+I1031 17:59:15.543660 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:59:15.557433 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="14.305669ms"
+I1031 17:59:15.572857 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:59:15.587578 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="30.065591ms" result={"Requeue":false,"RequeueAfter":9985226234}
+I1031 17:59:15.588249 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:59:15.602977 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="15.319975ms" result={"Requeue":false,"RequeueAfter":9969822495}
+I1031 17:59:15.603592 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:59:15.605577 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="2.52049ms" result={"Requeue":false,"RequeueAfter":9954478289}
+I1031 17:59:19.034531 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:59:19.036763 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="2.921524ms"
+I1031 17:59:19.037391 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:59:19.052038 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="15.187671ms"
+I1031 17:59:19.054719 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="2.619124ms"
+I1031 17:59:19.057403 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="2.52784ms"
+I1031 17:59:19.355811 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" targets=[0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:59:19.355830 1166381 stateful_instance_set_control.go:909] "Updating instance" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" instance="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role-0" from="rbgs-topology-0-test-role-86d8b7c59b" to="rbgs-topology-0-test-role-848bbc588" isSurge=false free=false
+I1031 17:59:19.360469 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="6.631386ms"
+I1031 17:59:19.361121 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:59:19.375552 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="14.996694ms"
+I1031 17:59:19.392212 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:59:19.394445 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="18.81719ms" result={"Requeue":false,"RequeueAfter":9983924268}
+I1031 17:59:19.395077 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:59:19.410583 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="16.054321ms" result={"Requeue":false,"RequeueAfter":9981055816}
+I1031 17:59:19.411188 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1031 17:59:19.413312 1166381 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="2.655775ms" result={"Requeue":false,"RequeueAfter":9964943762}
+I1031 17:59:22.921250 1166381 stateful_instance_set_control.go:734] "Progress rolling update" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1031 17:59:22.923530 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="2.853171ms"
+I1031 17:59:22.926325 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="2.710727ms"
+I1031 17:59:22.929192 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="2.765338ms"
+I1031 17:59:25.564247 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-1-test-role" elapsedTime="3.472884ms"
+[38;5;10m•[0mI1031 17:59:26.297583 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:26.300924 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, replicas=0 ready=0 available=0 updated=0 updatedReady=0, revisions current=rbgs-topology-0-test-role-78744b8f68 update=rbgs-topology-0-test-role-78744b8f68
+I1031 17:59:26.303088 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 5.492645ms
+I1031 17:59:26.303148 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:26.303576 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-topology-0-test-role-78744b8f68 update=rbgs-topology-0-test-role-78744b8f68
+I1031 17:59:26.305603 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 2.445107ms
+I1031 17:59:26.305682 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:26.306113 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 426.585µs
+I1031 17:59:26.306148 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:26.306452 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 300.76µs
+I1031 17:59:26.306863 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:26.309608 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, replicas=0 ready=0 available=0 updated=0 updatedReady=0, revisions current=rbgs-topology-1-test-role-5445cf6757 update=rbgs-topology-1-test-role-5445cf6757
+I1031 17:59:26.311671 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 4.797981ms
+I1031 17:59:26.312089 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:26.316338 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 4.232521ms
+I1031 17:59:26.316413 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:26.316846 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-topology-1-test-role-5445cf6757 update=rbgs-topology-1-test-role-5445cf6757
+I1031 17:59:26.318982 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 2.563271ms
+I1031 17:59:26.319031 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:26.319427 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 391.954µs
+I1031 17:59:26.319469 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:26.319771 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 298.93µs
+I1031 17:59:26.320567 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:26.320920 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 346.912µs
+I1031 17:59:26.320957 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:26.321277 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 317.431µs
+I1031 17:59:26.324359 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:26.326972 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 2.600413ms
+I1031 17:59:26.327033 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:26.327451 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 412.935µs
+I1031 17:59:26.327482 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:26.327808 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 322.621µs
+I1031 17:59:26.329738 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:26.330105 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 360.092µs
+I1031 17:59:26.330137 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:26.330465 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 325.311µs
+I1031 17:59:26.791107 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:26.791543 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-topology-0-test-role-78744b8f68 update=rbgs-topology-0-test-role-78744b8f68
+I1031 17:59:26.793455 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 2.333123ms
+I1031 17:59:26.793517 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:26.793916 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-topology-0-test-role-78744b8f68 update=rbgs-topology-0-test-role-78744b8f68
+I1031 17:59:26.795957 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 2.434536ms
+I1031 17:59:26.796011 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:26.796394 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-topology-1-test-role-5445cf6757 update=rbgs-topology-1-test-role-5445cf6757
+I1031 17:59:26.798301 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 2.284462ms
+I1031 17:59:26.798352 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:26.798707 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 351.852µs
+I1031 17:59:26.798738 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:26.799046 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 305.702µs
+I1031 17:59:27.066145 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:27.085706 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, replicas=1 ready=1 available=1 updated=0 updatedReady=0, revisions current=rbgs-topology-1-test-role-5445cf6757 update=rbgs-topology-1-test-role-75d77577f7
+I1031 17:59:27.087725 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 21.565378ms
+I1031 17:59:27.087795 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:27.088396 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-topology-1-test-role-75d77577f7 update=rbgs-topology-1-test-role-75d77577f7
+I1031 17:59:27.090436 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 2.634604ms
+I1031 17:59:27.090492 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:27.090983 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-topology-1-test-role-75d77577f7 update=rbgs-topology-1-test-role-75d77577f7
+I1031 17:59:27.093061 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 2.563481ms
+I1031 17:59:27.093121 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:27.093574 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 448.796µs
+I1031 17:59:27.095849 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:27.096344 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 487.867µs
+I1031 17:59:27.096381 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:27.097644 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 1.250784ms
+I1031 17:59:27.100737 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:27.106330 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 5.579439ms
+I1031 17:59:27.106410 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:27.106588 1166381 reconciler.go:91] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 173.056µs, result: {false 4m59.99999988s}
+I1031 17:59:27.106634 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:27.107071 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 433.285µs
+I1031 17:59:27.120173 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:27.120679 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 499.378µs
+I1031 17:59:27.120716 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:27.121103 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 384.484µs
+I1031 17:59:29.381775 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440754661652004/rbgs-topology-0-test-role" elapsedTime="3.117801ms"
+I1031 17:59:30.636498 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:30.637015 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-topology-1-test-role-75d77577f7 update=rbgs-topology-1-test-role-75d77577f7
+I1031 17:59:30.639219 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 2.708576ms
+I1031 17:59:30.639298 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:30.639774 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-topology-1-test-role-75d77577f7 update=rbgs-topology-1-test-role-75d77577f7
+I1031 17:59:30.641920 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 2.616044ms
+I1031 17:59:30.641979 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role
+I1031 17:59:30.642424 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-1-test-role, cost 441.616µs
+I1031 17:59:30.761038 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:30.780894 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, replicas=1 ready=1 available=1 updated=0 updatedReady=0, revisions current=rbgs-topology-0-test-role-78744b8f68 update=rbgs-topology-0-test-role-646fd8fd94
+I1031 17:59:30.782969 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 21.90933ms
+I1031 17:59:30.783025 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:30.783451 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-topology-0-test-role-646fd8fd94 update=rbgs-topology-0-test-role-646fd8fd94
+I1031 17:59:30.785372 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 2.340063ms
+I1031 17:59:30.785437 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:30.785878 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, replicas=1 ready=0 available=0 updated=1 updatedReady=0, revisions current=rbgs-topology-0-test-role-646fd8fd94 update=rbgs-topology-0-test-role-646fd8fd94
+I1031 17:59:30.787956 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 2.512389ms
+I1031 17:59:30.788025 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:30.788461 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 432.625µs
+I1031 17:59:30.790726 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:30.791207 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 471.947µs
+I1031 17:59:30.791244 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:30.791617 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 369.503µs
+I1031 17:59:30.794723 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:30.800189 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 5.457245ms
+I1031 17:59:30.800244 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:30.800398 1166381 reconciler.go:91] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 149.985µs, result: {false 4m59.99999985s}
+I1031 17:59:30.800437 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:30.800811 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 371.303µs
+I1031 17:59:30.814104 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:30.814565 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 452.656µs
+I1031 17:59:30.814603 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:30.814996 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 390.274µs
+I1031 17:59:34.234285 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:34.234841 1166381 status.go:51] To update InstanceSet status for  test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, replicas=1 ready=1 available=1 updated=1 updatedReady=1, revisions current=rbgs-topology-0-test-role-646fd8fd94 update=rbgs-topology-0-test-role-646fd8fd94
+I1031 17:59:34.237063 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 2.760588ms
+I1031 17:59:34.237173 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:34.237715 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 538.52µs
+I1031 17:59:34.237753 1166381 reconciler.go:82] Start syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role
+I1031 17:59:34.238136 1166381 reconciler.go:93] Finished syncing InstanceSet test-rbgs-rolling-1793440766272946381/rbgs-topology-0-test-role, cost 380.274µs
+[38;5;10m•[0mI1031 17:59:37.555546 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440777525347348/rbgs-default-0-test-role" elapsedTime="3.437313ms"
+I1031 17:59:37.558326 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440777525347348/rbgs-default-0-test-role" elapsedTime="2.628614ms"
+[38;5;10m•[0mI1031 17:59:40.852166 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440780822754348/rbgs-inplace-metadata-0-test-role" elapsedTime="3.618768ms"
+I1031 17:59:40.854945 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440780822754348/rbgs-inplace-metadata-0-test-role" elapsedTime="2.636644ms"
+I1031 17:59:40.862422 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440780822754348/rbgs-inplace-metadata-1-test-role" elapsedTime="3.306188ms"
+I1031 17:59:40.864988 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440780822754348/rbgs-inplace-metadata-1-test-role" elapsedTime="2.390765ms"
+[38;5;10m•[0mI1031 17:59:44.816422 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440784787409809/rbgs-orphan-merge-0-test-role" elapsedTime="3.63691ms"
+I1031 17:59:44.819144 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440784787409809/rbgs-orphan-merge-0-test-role" elapsedTime="2.559401ms"
+I1031 17:59:44.826554 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440784787409809/rbgs-orphan-merge-1-test-role" elapsedTime="3.458043ms"
+I1031 17:59:44.829211 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440784787409809/rbgs-orphan-merge-1-test-role" elapsedTime="2.51903ms"
+[38;5;10m•[0mI1031 17:59:48.163730 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440788087744143/rbgs-orphan-history-0-test-role" elapsedTime="3.557816ms"
+I1031 17:59:48.166836 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440788087744143/rbgs-orphan-history-0-test-role" elapsedTime="2.927424ms"
+I1031 17:59:48.172941 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440788087744143/rbgs-orphan-history-1-test-role" elapsedTime="3.113331ms"
+I1031 17:59:48.175578 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440788087744143/rbgs-orphan-history-1-test-role" elapsedTime="2.500739ms"
+[38;5;10m•[0mI1031 17:59:55.222110 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440795202870792/rbgs-legacy-0-test-role" elapsedTime="3.38344ms"
+I1031 17:59:55.224863 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440795202870792/rbgs-legacy-0-test-role" elapsedTime="2.638934ms"
+I1031 17:59:55.232539 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440795202870792/rbgs-legacy-1-test-role" elapsedTime="3.560927ms"
+I1031 17:59:55.235107 1166381 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbgs-rolling-1793440795202870792/rbgs-legacy-1-test-role" elapsedTime="2.437217ms"
+[38;5;10m•[0m
+
+[38;5;10m[1mRan 22 of 22 Specs in 237.407 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m22 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- PASS: TestRoleBasedGroupSetRolling (237.41s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbgs_rolling	237.426s
