@@ -1,0 +1,531 @@
+[
+  {
+    "SuitePath": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful",
+    "SuiteDescription": "Stateful RoleInstanceSet Controller Suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": true,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 8,
+      "SpecsThatWillRun": 2
+    },
+    "StartTime": "2026-11-01T01:15:24.732497173+08:00",
+    "EndTime": "2026-11-01T01:15:48.786176591+08:00",
+    "RunTime": 24053679407,
+    "SuiteConfig": {
+      "RandomSeed": 1793466924,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": [
+        "F1 regret"
+      ],
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/suite_test.go",
+          "LineNumber": 32
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-11-01T01:15:24.732518984+08:00",
+        "EndTime": "2026-11-01T01:15:28.925972703+08:00",
+        "RunTime": 4193453729,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-11-01T01:15:24+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/config/crd/bases\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-11-01T01:15:27+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-01T01:15:28+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/suite_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-11-01T01:15:24.732529795+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testutil/setup.go",
+              "LineNumber": 66
+            },
+            "TimelineLocation": {
+              "Order": 2,
+              "Time": "2026-11-01T01:15:24.732568876+08:00"
+            },
+            "Message": "bootstrapping test environment"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testutil/setup.go",
+              "LineNumber": 98
+            },
+            "TimelineLocation": {
+              "Offset": 4712,
+              "Order": 3,
+              "Time": "2026-11-01T01:15:28.822567231+08:00"
+            },
+            "Message": "setting up controller manager"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/suite_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Offset": 4712,
+              "Order": 5,
+              "Time": "2026-11-01T01:15:28.925971343+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 4193441548,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful RoleInstance orphan Pod recovery"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/orphan_gc_recovery_test.go",
+            "LineNumber": 36
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/orphan_gc_recovery_test.go",
+          "LineNumber": 53
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "recreates a replacement Pod through the controller retry after orphan GC",
+        "State": "skipped",
+        "StartTime": "2026-11-01T01:15:28.926015864+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful RoleInstanceSet rollout recovery"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/rollout_recovery_test.go",
+            "LineNumber": 40
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/rollout_recovery_test.go",
+          "LineNumber": 57
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "replaces a stably unhealthy rollout target through the controller requeue path",
+        "State": "skipped",
+        "StartTime": "2026-11-01T01:15:28.926033795+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful RoleInstanceSet rollout recovery"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/rollout_recovery_test.go",
+            "LineNumber": 40
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/rollout_recovery_test.go",
+          "LineNumber": 134
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "recovers early-rollback surge protection from persisted status",
+        "State": "skipped",
+        "StartTime": "2026-11-01T01:15:28.926038885+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful RoleInstanceSet rollout recovery"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/rollout_recovery_test.go",
+            "LineNumber": 40
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/rollout_recovery_test.go",
+          "LineNumber": 218
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "retains surge through a complete A to B to A rollback when partition decreases",
+        "State": "skipped",
+        "StartTime": "2026-11-01T01:15:28.926041135+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful RoleInstanceSet PreDelete",
+          "waits before deleting and resumes when the handler is released"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/predelete_test.go",
+            "LineNumber": 35
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/predelete_test.go",
+            "LineNumber": 51
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/predelete_test.go",
+          "LineNumber": 115
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Parallel",
+        "State": "skipped",
+        "StartTime": "2026-11-01T01:15:28.926045785+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful RoleInstanceSet PreDelete",
+          "waits before deleting and resumes when the handler is released"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/predelete_test.go",
+            "LineNumber": 35
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/predelete_test.go",
+            "LineNumber": 51
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/predelete_test.go",
+          "LineNumber": 116
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "OrderedReady",
+        "State": "skipped",
+        "StartTime": "2026-11-01T01:15:28.926048626+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Verify F1: Stateful PreDelete regret"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/predelete_regret_verify_test.go",
+            "LineNumber": 106
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/predelete_regret_verify_test.go",
+          "LineNumber": 107
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "F1 regret keeps stale PreparingDelete state [Parallel]",
+        "State": "passed",
+        "StartTime": "2026-11-01T01:15:28.926052696+08:00",
+        "EndTime": "2026-11-01T01:15:39.71956196+08:00",
+        "RunTime": 10793509275,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.CoordinatedPolicy\"}\n2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1.Service\"}\n2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"source\": \"kind source: *v1.Pod\"}\n2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupScalingAdapter\"}\n2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupScalingAdapter\"}\n2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleInstanceSet\"}\n2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstanceSet\"}\n2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-11-01T01:15:28+08:00\tINFO\tStarting EventSource\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupSet\"}\n2026-11-01T01:15:29+08:00\tINFO\tStarting Controller\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-11-01T01:15:29+08:00\tINFO\tStarting Controller\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-11-01T01:15:29+08:00\tINFO\tStarting workers\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"worker count\": 1}\n2026-11-01T01:15:29+08:00\tINFO\tStarting workers\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"worker count\": 1}\n2026-11-01T01:15:29+08:00\tINFO\tStarting Controller\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-11-01T01:15:29+08:00\tINFO\tStarting workers\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"worker count\": 1}\n2026-11-01T01:15:29+08:00\tINFO\tStarting Controller\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-11-01T01:15:29+08:00\tINFO\tStarting Controller\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-11-01T01:15:29+08:00\tINFO\tStarting workers\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"worker count\": 1}\n2026-11-01T01:15:29+08:00\tINFO\tStarting workers\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"worker count\": 1}\n2026-11-01T01:15:31+08:00\tDEBUG\tevents\tcreate RoleInstance regret-0 in RoleInstanceSet regret successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-predelete-regret-1793466928926060026\",\"name\":\"regret\",\"uid\":\"87725db0-e580-445f-a41e-f31960d6dcb2\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"230\"}, \"reason\": \"SuccessfulCreate\"}\n2026-11-01T01:15:31+08:00\tDEBUG\tevents\tcreate RoleInstance regret-1 in RoleInstanceSet regret successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-predelete-regret-1793466928926060026\",\"name\":\"regret\",\"uid\":\"87725db0-e580-445f-a41e-f31960d6dcb2\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"230\"}, \"reason\": \"SuccessfulCreate\"}\n2026-11-01T01:15:31+08:00\tDEBUG\tenter workload.onUpdateFunc, test-predelete-regret-1793466928926060026/regret, type: *v1alpha2.RoleInstanceSet\n2026-11-01T01:15:31+08:00\tDEBUG\tevents\tsucceed to create pod regret-0-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-predelete-regret-1793466928926060026\",\"name\":\"regret-0\",\"uid\":\"28eed4c8-dfaa-4f79-8339-c93a80a03883\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"232\"}, \"reason\": \"SuccessfulCreate\"}\n2026-11-01T01:15:31+08:00\tDEBUG\tevents\tsucceed to create pod regret-1-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-predelete-regret-1793466928926060026\",\"name\":\"regret-1\",\"uid\":\"c8ae2c7c-1c89-4267-975f-13ccce584dc3\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"233\"}, \"reason\": \"SuccessfulCreate\"}\n2026-11-01T01:15:31+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"regret-0\",\"namespace\":\"test-predelete-regret-1793466928926060026\"}, \"namespace\": \"test-predelete-regret-1793466928926060026\", \"name\": \"regret-0\", \"reconcileID\": \"9ae52d28-628a-481c-82f2-a12f62449c55\", \"pod\": {\"name\":\"regret-0-worker-0\",\"namespace\":\"test-predelete-regret-1793466928926060026\"}}\n2026-11-01T01:15:31+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"regret-1\",\"namespace\":\"test-predelete-regret-1793466928926060026\"}, \"namespace\": \"test-predelete-regret-1793466928926060026\", \"name\": \"regret-1\", \"reconcileID\": \"4ce51415-a6a2-459a-b706-ccdb762b049a\", \"pod\": {\"name\":\"regret-1-worker-0\",\"namespace\":\"test-predelete-regret-1793466928926060026\"}}\n2026-11-01T01:15:31+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"regret-0\",\"namespace\":\"test-predelete-regret-1793466928926060026\"}, \"namespace\": \"test-predelete-regret-1793466928926060026\", \"name\": \"regret-0\", \"reconcileID\": \"026157ab-7cd4-4b37-81d0-845a8a91cd9a\", \"pod\": {\"name\":\"regret-0-worker-0\",\"namespace\":\"test-predelete-regret-1793466928926060026\"}}\n2026-11-01T01:15:31+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"regret-1\",\"namespace\":\"test-predelete-regret-1793466928926060026\"}, \"namespace\": \"test-predelete-regret-1793466928926060026\", \"name\": \"regret-1\", \"reconcileID\": \"b88b61ce-9787-49c4-b2ed-ca0505e91eda\", \"pod\": {\"name\":\"regret-1-worker-0\",\"namespace\":\"test-predelete-regret-1793466928926060026\"}}\n2026-11-01T01:15:31+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"regret-0\",\"namespace\":\"test-predelete-regret-1793466928926060026\"}, \"namespace\": \"test-predelete-regret-1793466928926060026\", \"name\": \"regret-0\", \"reconcileID\": \"1279f8f7-1729-494e-9f6f-d7b7bc7d2f8a\", \"pod\": {\"name\":\"regret-0-worker-0\",\"namespace\":\"test-predelete-regret-1793466928926060026\"}}\n2026-11-01T01:15:31+08:00\tDEBUG\tenter workload.onUpdateFunc, test-predelete-regret-1793466928926060026/regret, type: *v1alpha2.RoleInstanceSet\n2026-11-01T01:15:31+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"regret-1\",\"namespace\":\"test-predelete-regret-1793466928926060026\"}, \"namespace\": \"test-predelete-regret-1793466928926060026\", \"name\": \"regret-1\", \"reconcileID\": \"fbb5add0-8dad-4d46-8ac7-c09d1b580607\", \"pod\": {\"name\":\"regret-1-worker-0\",\"namespace\":\"test-predelete-regret-1793466928926060026\"}}\n2026-11-01T01:15:31+08:00\tDEBUG\tenter workload.onUpdateFunc, test-predelete-regret-1793466928926060026/regret, type: *v1alpha2.RoleInstanceSet\n2026-11-01T01:15:31+08:00\tDEBUG\tenter workload.onUpdateFunc, test-predelete-regret-1793466928926060026/regret, type: *v1alpha2.RoleInstanceSet\n2026-11-01T01:15:31+08:00\tDEBUG\tenter workload.onUpdateFunc, test-predelete-regret-1793466928926060026/regret, type: *v1alpha2.RoleInstanceSet\n2026-11-01T01:15:31+08:00\tDEBUG\tenter workload.onUpdateFunc, test-predelete-regret-1793466928926060026/regret, type: *v1alpha2.RoleInstanceSet\n2026-11-01T01:15:31+08:00\tDEBUG\tenter workload.onUpdateFunc, test-predelete-regret-1793466928926060026/regret, type: *v1alpha2.RoleInstanceSet\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/predelete_regret_verify_test.go",
+              "LineNumber": 107
+            },
+            "TimelineLocation": {
+              "Order": 6,
+              "Time": "2026-11-01T01:15:28.926055086+08:00"
+            },
+            "Message": "F1 regret keeps stale PreparingDelete state [Parallel]",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/predelete_regret_verify_test.go",
+              "LineNumber": 107
+            },
+            "TimelineLocation": {
+              "Offset": 10458,
+              "Order": 8,
+              "Time": "2026-11-01T01:15:39.71955657+08:00"
+            },
+            "Message": "F1 regret keeps stale PreparingDelete state [Parallel]",
+            "Duration": 10793501474,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Verify F1: Stateful PreDelete regret"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/predelete_regret_verify_test.go",
+            "LineNumber": 106
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/predelete_regret_verify_test.go",
+          "LineNumber": 110
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "F1 regret keeps stale PreparingDelete state [OrderedReady]",
+        "State": "passed",
+        "StartTime": "2026-11-01T01:15:39.719587561+08:00",
+        "EndTime": "2026-11-01T01:15:48.760562919+08:00",
+        "RunTime": 9040975368,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-11-01T01:15:39+08:00\tDEBUG\tevents\tcreate RoleInstance regret-0 in RoleInstanceSet regret successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-predelete-regret-1793466939719595252\",\"name\":\"regret\",\"uid\":\"3b03b3d7-d099-4aa6-9cdf-5d7548132b62\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"273\"}, \"reason\": \"SuccessfulCreate\"}\n2026-11-01T01:15:39+08:00\tDEBUG\tenter workload.onUpdateFunc, test-predelete-regret-1793466939719595252/regret, type: *v1alpha2.RoleInstanceSet\n2026-11-01T01:15:39+08:00\tDEBUG\tevents\tsucceed to create pod regret-0-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-predelete-regret-1793466939719595252\",\"name\":\"regret-0\",\"uid\":\"f269b60d-fa6d-4515-912c-ca6ceb9ab62e\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"275\"}, \"reason\": \"SuccessfulCreate\"}\n2026-11-01T01:15:39+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"regret-0\",\"namespace\":\"test-predelete-regret-1793466939719595252\"}, \"namespace\": \"test-predelete-regret-1793466939719595252\", \"name\": \"regret-0\", \"reconcileID\": \"c162f7a6-12ba-44b9-bef4-29dbea861494\", \"pod\": {\"name\":\"regret-0-worker-0\",\"namespace\":\"test-predelete-regret-1793466939719595252\"}}\n2026-11-01T01:15:39+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"regret-0\",\"namespace\":\"test-predelete-regret-1793466939719595252\"}, \"namespace\": \"test-predelete-regret-1793466939719595252\", \"name\": \"regret-0\", \"reconcileID\": \"29123d16-d813-46a3-a9ef-9c24cd304499\", \"pod\": {\"name\":\"regret-0-worker-0\",\"namespace\":\"test-predelete-regret-1793466939719595252\"}}\n2026-11-01T01:15:39+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"regret-0\",\"namespace\":\"test-predelete-regret-1793466939719595252\"}, \"namespace\": \"test-predelete-regret-1793466939719595252\", \"name\": \"regret-0\", \"reconcileID\": \"5a75151a-39e1-47eb-b7b5-e505abc1854f\", \"pod\": {\"name\":\"regret-0-worker-0\",\"namespace\":\"test-predelete-regret-1793466939719595252\"}}\n2026-11-01T01:15:39+08:00\tDEBUG\tevents\tcreate RoleInstance regret-1 in RoleInstanceSet regret successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-predelete-regret-1793466939719595252\",\"name\":\"regret\",\"uid\":\"3b03b3d7-d099-4aa6-9cdf-5d7548132b62\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"277\"}, \"reason\": \"SuccessfulCreate\"}\n2026-11-01T01:15:39+08:00\tDEBUG\tenter workload.onUpdateFunc, test-predelete-regret-1793466939719595252/regret, type: *v1alpha2.RoleInstanceSet\n2026-11-01T01:15:39+08:00\tDEBUG\tevents\tsucceed to create pod regret-1-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-predelete-regret-1793466939719595252\",\"name\":\"regret-1\",\"uid\":\"5995341d-7055-4cd4-b5ba-ef80c2fe2cbf\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"289\"}, \"reason\": \"SuccessfulCreate\"}\n2026-11-01T01:15:39+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"regret-1\",\"namespace\":\"test-predelete-regret-1793466939719595252\"}, \"namespace\": \"test-predelete-regret-1793466939719595252\", \"name\": \"regret-1\", \"reconcileID\": \"13411b68-5cfe-475d-ace8-f2f9c2a0eba3\", \"pod\": {\"name\":\"regret-1-worker-0\",\"namespace\":\"test-predelete-regret-1793466939719595252\"}}\n2026-11-01T01:15:39+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"regret-1\",\"namespace\":\"test-predelete-regret-1793466939719595252\"}, \"namespace\": \"test-predelete-regret-1793466939719595252\", \"name\": \"regret-1\", \"reconcileID\": \"78062d6d-02c5-4f6d-b7b9-b28216c4f9fc\", \"pod\": {\"name\":\"regret-1-worker-0\",\"namespace\":\"test-predelete-regret-1793466939719595252\"}}\n2026-11-01T01:15:40+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"regret-1\",\"namespace\":\"test-predelete-regret-1793466939719595252\"}, \"namespace\": \"test-predelete-regret-1793466939719595252\", \"name\": \"regret-1\", \"reconcileID\": \"f1c0a235-16cb-40ac-aff6-73baf7bf514d\", \"pod\": {\"name\":\"regret-1-worker-0\",\"namespace\":\"test-predelete-regret-1793466939719595252\"}}\n2026-11-01T01:15:40+08:00\tDEBUG\tenter workload.onUpdateFunc, test-predelete-regret-1793466939719595252/regret, type: *v1alpha2.RoleInstanceSet\n2026-11-01T01:15:40+08:00\tDEBUG\tenter workload.onUpdateFunc, test-predelete-regret-1793466939719595252/regret, type: *v1alpha2.RoleInstanceSet\n2026-11-01T01:15:40+08:00\tDEBUG\tenter workload.onUpdateFunc, test-predelete-regret-1793466939719595252/regret, type: *v1alpha2.RoleInstanceSet\n2026-11-01T01:15:40+08:00\tDEBUG\tenter workload.onUpdateFunc, test-predelete-regret-1793466939719595252/regret, type: *v1alpha2.RoleInstanceSet\n2026-11-01T01:15:40+08:00\tDEBUG\tenter workload.onUpdateFunc, test-predelete-regret-1793466939719595252/regret, type: *v1alpha2.RoleInstanceSet\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/predelete_regret_verify_test.go",
+              "LineNumber": 110
+            },
+            "TimelineLocation": {
+              "Order": 9,
+              "Time": "2026-11-01T01:15:39.719589801+08:00"
+            },
+            "Message": "F1 regret keeps stale PreparingDelete state [OrderedReady]",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/predelete_regret_verify_test.go",
+              "LineNumber": 110
+            },
+            "TimelineLocation": {
+              "Offset": 5319,
+              "Order": 11,
+              "Time": "2026-11-01T01:15:48.760558269+08:00"
+            },
+            "Message": "F1 regret keeps stale PreparingDelete state [OrderedReady]",
+            "Duration": 9040968468,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/suite_test.go",
+          "LineNumber": 36
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-11-01T01:15:48.76058253+08:00",
+        "EndTime": "2026-11-01T01:15:48.786170951+08:00",
+        "RunTime": 25588421,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-11-01T01:15:48+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-11-01T01:15:48+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-11-01T01:15:48+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-11-01T01:15:48+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-11-01T01:15:48+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-11-01T01:15:48+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-11-01T01:15:48+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-11-01T01:15:48+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-11-01T01:15:48+08:00\tINFO\tAll workers finished\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-11-01T01:15:48+08:00\tINFO\tAll workers finished\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-11-01T01:15:48+08:00\tINFO\tAll workers finished\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-11-01T01:15:48+08:00\tINFO\tAll workers finished\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-11-01T01:15:48+08:00\tINFO\tAll workers finished\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-11-01T01:15:48+08:00\tINFO\tStopping and waiting for caches\n2026-11-01T01:15:48+08:00\tINFO\tStopping and waiting for webhooks\n2026-11-01T01:15:48+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-11-01T01:15:48+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/suite_test.go",
+              "LineNumber": 36
+            },
+            "TimelineLocation": {
+              "Order": 12,
+              "Time": "2026-11-01T01:15:48.76058402+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testutil/setup.go",
+              "LineNumber": 140
+            },
+            "TimelineLocation": {
+              "Order": 13,
+              "Time": "2026-11-01T01:15:48.760603641+08:00"
+            },
+            "Message": "tearing down the test environment"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/verify/test/envtest/testcase/stateful/suite_test.go",
+              "LineNumber": 36
+            },
+            "TimelineLocation": {
+              "Offset": 2441,
+              "Order": 15,
+              "Time": "2026-11-01T01:15:48.786168681+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 25584671,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]

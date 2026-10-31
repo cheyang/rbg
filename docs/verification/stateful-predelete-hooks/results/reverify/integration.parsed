@@ -1,0 +1,8 @@
+recreates a replacement Pod through the controller retry after orphan GC	skipped
+replaces a stably unhealthy rollout target through the controller requeue path	skipped
+recovers early-rollback surge protection from persisted status	skipped
+retains surge through a complete A to B to A rollback when partition decreases	skipped
+Parallel	skipped
+OrderedReady	skipped
+F1 regret keeps stale PreparingDelete state [Parallel]	pass
+F1 regret keeps stale PreparingDelete state [OrderedReady]	pass
