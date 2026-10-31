@@ -1,0 +1,61 @@
+2026-10-31T18:43:40+08:00	DEBUG	controller-runtime.test-env	starting control plane
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	installing CRDs
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	reading CRDs from path	{"path": "/tmp/rbg-r6-prev/config/crd/bases"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_clusterengineruntimeprofiles.yaml"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_coordinatedpolicies.yaml"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_instances.yaml"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_instancesets.yaml"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroups.yaml"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupsets.yaml"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupwarmups.yaml"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_roleinstances.yaml"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_roleinstancesets.yaml"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "clusterengineruntimeprofiles.workloads.x-k8s.io"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "coordinatedpolicies.workloads.x-k8s.io"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "instancesets.workloads.x-k8s.io"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroups.workloads.x-k8s.io"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupscalingadapters.workloads.x-k8s.io"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupwarmups.workloads.x-k8s.io"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "roleinstances.workloads.x-k8s.io"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "instances.workloads.x-k8s.io"}
+2026-10-31T18:43:42+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupsets.workloads.x-k8s.io"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "roleinstancesets.workloads.x-k8s.io"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-10-31T18:43:43+08:00	DEBUG	controller-runtime.test-env	installing webhooks
+--- FAIL: TestVerify_R6_EmptyRoleAnnotationsMapNoWedge (7.90s)
+    rolebasedgroupset_envtest_round6_verify_test.go:144: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_envtest_round6_verify_test.go:144
+        	Error:      	Not equal: 
+        	            	expected: "250"
+        	            	actual  : "255"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-250
+        	            	+255
+        	Test:       	TestVerify_R6_EmptyRoleAnnotationsMapNoWedge
+        	Messages:   	no writes at all once the child matches the revision (observed on af9dd84b: one rewrite per pass, rollout-request token climbing)
+    rolebasedgroupset_envtest_round6_verify_test.go:153: 
+        	Error Trace:	/tmp/rbg-r6-prev/internal/controller/workloads/rolebasedgroupset_envtest_round6_verify_test.go:153
+        	Error:      	Should be true
+        	Test:       	TestVerify_R6_EmptyRoleAnnotationsMapNoWedge
+        	Messages:   	the child must match the update revision; rolesEqual must not distinguish nil from an empty annotations map
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	7.917s
+FAIL
