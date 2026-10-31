@@ -35,6 +35,7 @@ import (
 	"k8s.io/kubernetes/pkg/controller/history"
 	"k8s.io/utils/lru"
 	"k8s.io/utils/ptr"
+	"sigs.k8s.io/rbgs/api/workloads/constants"
 	workloadsv1alpha2 "sigs.k8s.io/rbgs/api/workloads/v1alpha2"
 	instanceinplace "sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate"
 	instancelifecycle "sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle"
@@ -1202,11 +1203,14 @@ func (ssc *defaultStatefulInstanceSetControl) processCondemned(
 	}
 
 	klog.V(2).InfoS("InstanceSet terminating condemned Instance", "instanceSet", klog.KObj(set), "instance", klog.KObj(condemned[i]))
-	if err := ssc.instanceControl.DeleteStatefulInstance(set, condemned[i]); err != nil {
+	_, actualDeleting, err := ssc.deleteInstance(set, condemned[i])
+	if err != nil {
 		return monotonic, err
 	}
 
-	return false, nil
+	// OrderedReady must wait for this instance's hook before proceeding to
+	// the next ordinal. Parallel may prepare other condemned instances.
+	return monotonic && !actualDeleting, nil
 }
 
 func (ssc *defaultStatefulInstanceSetControl) updateInstanceSetStatus(
@@ -1326,6 +1330,15 @@ func (ssc *defaultStatefulInstanceSetControl) deleteInstance(
 ) (bool, bool, error) {
 	if isTerminating(instance) {
 		return false, false, nil
+	}
+
+	// Scale-down and recreate-based updates must both honor the same hook.
+	// A successful lifecycle patch is not a successful deletion: callers must
+	// retain the old replica in their rollout accounting while it is blocked.
+	if set.Spec.Lifecycle != nil && instancelifecycle.IsRoleInstanceHooked(set.Spec.Lifecycle.PreDelete, instance) {
+		_, _, err := ssc.lifecycleControl.UpdateRoleInstanceLifecycle(instance,
+			constants.RoleInstanceLifecycleStatePreparingDelete, set.Spec.Lifecycle.PreDelete.MarkNotReady)
+		return false, false, err
 	}
 
 	err := ssc.instanceControl.DeleteStatefulInstance(set, instance)
