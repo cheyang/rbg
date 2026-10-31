@@ -1,0 +1,20 @@
+=== RUN   TestPortAllocatorHostPortInjection
+Running Suite: Port Allocator Host Port Injection Suite - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-532/wt-verify/test/envtest/testcase/portallocator
+========================================================================================================================================================================
+Random Seed: [1m1793448651[0m
+
+Will run [1m1[0m of [1m1[0m specs
+I1031 20:10:58.021104 1598855 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-portallocator-1793448655632944733/hostport-inject-prefill" elapsedTime="7.553749ms"
+I1031 20:10:58.024315 1598855 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-portallocator-1793448655632944733/hostport-inject-prefill" elapsedTime="3.122582ms"
+I1031 20:10:58.027701 1598855 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-portallocator-1793448655632944733/hostport-inject-prefill" elapsedTime="3.303828ms"
+I1031 20:10:58.032733 1598855 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-portallocator-1793448655632944733/hostport-inject-prefill" elapsedTime="3.037998ms"
+I1031 20:10:58.036278 1598855 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-portallocator-1793448655632944733/hostport-inject-prefill" elapsedTime="3.441353ms"
+I1031 20:10:58.044726 1598855 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-portallocator-1793448655632944733/hostport-inject-prefill" elapsedTime="5.386522ms"
+I1031 20:10:58.047990 1598855 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-portallocator-1793448655632944733/hostport-inject-prefill" elapsedTime="3.157223ms"
+[38;5;10m•[0m
+
+[38;5;10m[1mRan 1 of 1 Specs in 9.440 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m1 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- PASS: TestPortAllocatorHostPortInjection (9.44s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/portallocator	9.457s

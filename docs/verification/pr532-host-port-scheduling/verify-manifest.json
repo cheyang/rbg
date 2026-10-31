@@ -1,0 +1,123 @@
+{
+  "topic": "pr532-host-port-scheduling",
+  "pr": "https://github.com/sgl-project/rbg/pull/532",
+  "headSha": "c05052c28c9e6cd5e0aab6362172c4ac651510ae",
+  "baseSha": "7894133d5b59d44f2a19dcf6b75c531996285bcf",
+  "reviewer": "claude",
+  "layerPolicy": "unit + integration only (no live cluster layer this round)",
+  "premise": {
+    "id": "P0",
+    "claim": "The port allocator can hand the same randomly allocated port to different host-network pods, and nothing tells the scheduler, so two pods with the same port can be co-located on one node and the second process fails to bind.",
+    "runsAgainst": "base",
+    "tests": [
+      {
+        "name": "TestVerifyP0BasePremiseHostNetworkPodIsInvisibleToScheduler",
+        "file": "scripts/base_premise_test.go (copied into pkg/port-allocator/ on the base worktree)",
+        "polarity": "contract",
+        "layer": "unit"
+      },
+      {
+        "name": "L2 base differential: test/envtest/testcase/portallocator suite copied onto base",
+        "file": "results/l2-envtest-base.txt",
+        "polarity": "contract",
+        "layer": "integration"
+      }
+    ],
+    "verdict": "confirmed",
+    "evidence": "results/base-premise.txt (FAIL on base 7894133: scheduler-visible host ports empty), results/l2-envtest-base.txt (FAIL on base: 'host-network pod ... must declare hostPort 30012 for the scheduler')"
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "title": "Injected pod specs must pass real kube-apiserver create-time validation",
+      "status": "refuted-as-bug (verified compliant)",
+      "tests": [
+        {
+          "name": "TestVerifyInjectedPodSpecsPassRealAPIServerValidation",
+          "file": "pkg/port-allocator/verify_hostport_scheduling_test.go",
+          "polarity": "contract",
+          "layer": "unit"
+        },
+        {
+          "name": "TestVerifyControlApIServerHostNetworkPortSemantics",
+          "file": "pkg/port-allocator/verify_hostport_scheduling_test.go",
+          "polarity": "contract",
+          "layer": "unit"
+        }
+      ],
+      "verification": { "base": "not-run", "previous": "not-run", "head": "pass" }
+    },
+    {
+      "id": "F2",
+      "title": "Re-injection of the same allocations is idempotent and stays API-valid",
+      "status": "refuted-as-bug (verified compliant)",
+      "tests": [
+        {
+          "name": "TestVerifyInjectionIsIdempotentAcrossReinjection",
+          "file": "pkg/port-allocator/verify_hostport_scheduling_test.go",
+          "polarity": "contract",
+          "layer": "unit"
+        }
+      ],
+      "verification": { "base": "not-run", "previous": "not-run", "head": "pass" }
+    },
+    {
+      "id": "F3",
+      "title": "Upgrade gap: pods created before the controller change never declare hostPort, so NodePorts cannot protect them; docs do not state that the guarantee applies only to newly created pods",
+      "status": "open",
+      "severity": "minor",
+      "origin": "initial-pr",
+      "introducedByPR": false,
+      "evidenceKind": "code-path",
+      "tests": [
+        {
+          "name": "TestVerifyCanaryLegacyPodWithoutDeclarationIsInvisibleToNodePorts",
+          "file": "pkg/port-allocator/verify_hostport_scheduling_test.go",
+          "polarity": "canary",
+          "layer": "unit",
+          "note": "canary: passes while the gap exists; invert/promote if declarations are ever backfilled or legacy pods recreated"
+        }
+      ],
+      "verification": { "base": "not-run", "previous": "not-run", "head": "pass (canary documents the gap)" }
+    },
+    {
+      "id": "V4",
+      "title": "Full chain: RBG -> RoleInstanceSet (RoleScoped allocation) -> RoleInstance -> pod created through a real apiserver with containerPort == hostPort == allocated port",
+      "status": "verified",
+      "tests": [
+        {
+          "name": "TestPortAllocatorHostPortInjection (It: declares scheduler-visible host ports...)",
+          "file": "test/envtest/testcase/portallocator/hostport_injection_test.go",
+          "polarity": "contract",
+          "layer": "integration"
+        }
+      ],
+      "verification": { "base": "fail", "previous": "not-run", "head": "pass" }
+    },
+    {
+      "id": "V5",
+      "title": "Non-host-network pods declare containerPort with hostPort == 0 (declarative, no node-port reservation)",
+      "status": "verified",
+      "tests": [
+        {
+          "name": "TestVerifyP0NonHostNetworkPodStaysPortReservationFree",
+          "file": "pkg/port-allocator/verify_hostport_scheduling_test.go",
+          "polarity": "contract",
+          "layer": "unit"
+        },
+        {
+          "name": "TestPortAllocatorHostPortInjection (plain pod assertions)",
+          "file": "test/envtest/testcase/portallocator/hostport_injection_test.go",
+          "polarity": "contract",
+          "layer": "integration"
+        }
+      ],
+      "verification": { "base": "not-run", "previous": "not-run", "head": "pass" }
+    }
+  ],
+  "liveNote": "L3 (live cluster) not run this round: the spread-across-nodes contract needs a real kube-scheduler; the PR's own e2e test covers it and skips on <2 schedulable nodes. If run live, check: two host-network pods sharing a RoleScoped port land on different nodes (controller logs show both pods declaring the same hostPort).",
+  "commands": {
+    "l1": "go test ./pkg/port-allocator/ -run 'TestVerify' -v",
+    "l2": "KUBEBUILDER_ASSETS=<envtest-bin> go test ./test/envtest/testcase/portallocator/... -v"
+  }
+}

@@ -1,0 +1,32 @@
+=== RUN   TestVerifyP0HostNetworkPodDeclaresSchedulerVisibleHostPort
+--- PASS: TestVerifyP0HostNetworkPodDeclaresSchedulerVisibleHostPort (0.00s)
+=== RUN   TestVerifyP0NonHostNetworkPodStaysPortReservationFree
+--- PASS: TestVerifyP0NonHostNetworkPodStaysPortReservationFree (0.00s)
+=== RUN   TestVerifyInjectedPodSpecsPassRealAPIServerValidation
+=== RUN   TestVerifyInjectedPodSpecsPassRealAPIServerValidation/single_TCP_allocation_on_host-network_pod
+=== RUN   TestVerifyInjectedPodSpecsPassRealAPIServerValidation/two_TCP_allocations_on_host-network_pod
+=== RUN   TestVerifyInjectedPodSpecsPassRealAPIServerValidation/UDP_allocation_on_host-network_pod
+=== RUN   TestVerifyInjectedPodSpecsPassRealAPIServerValidation/SCTP_allocation_on_host-network_pod
+=== RUN   TestVerifyInjectedPodSpecsPassRealAPIServerValidation/two_same-protocol_allocations_with_the_same_port_value
+=== RUN   TestVerifyInjectedPodSpecsPassRealAPIServerValidation/same_port_with_different_protocols
+=== RUN   TestVerifyInjectedPodSpecsPassRealAPIServerValidation/reuses_user-declared_matching_container_port
+=== RUN   TestVerifyInjectedPodSpecsPassRealAPIServerValidation/port_declared_by_a_later_container
+=== RUN   TestVerifyInjectedPodSpecsPassRealAPIServerValidation/non-host-network_pod_with_user-declared_hostPort
+--- PASS: TestVerifyInjectedPodSpecsPassRealAPIServerValidation (0.00s)
+    --- PASS: TestVerifyInjectedPodSpecsPassRealAPIServerValidation/single_TCP_allocation_on_host-network_pod (0.00s)
+    --- PASS: TestVerifyInjectedPodSpecsPassRealAPIServerValidation/two_TCP_allocations_on_host-network_pod (0.00s)
+    --- PASS: TestVerifyInjectedPodSpecsPassRealAPIServerValidation/UDP_allocation_on_host-network_pod (0.00s)
+    --- PASS: TestVerifyInjectedPodSpecsPassRealAPIServerValidation/SCTP_allocation_on_host-network_pod (0.00s)
+    --- PASS: TestVerifyInjectedPodSpecsPassRealAPIServerValidation/two_same-protocol_allocations_with_the_same_port_value (0.00s)
+    --- PASS: TestVerifyInjectedPodSpecsPassRealAPIServerValidation/same_port_with_different_protocols (0.00s)
+    --- PASS: TestVerifyInjectedPodSpecsPassRealAPIServerValidation/reuses_user-declared_matching_container_port (0.00s)
+    --- PASS: TestVerifyInjectedPodSpecsPassRealAPIServerValidation/port_declared_by_a_later_container (0.00s)
+    --- PASS: TestVerifyInjectedPodSpecsPassRealAPIServerValidation/non-host-network_pod_with_user-declared_hostPort (0.00s)
+=== RUN   TestVerifyControlApIServerHostNetworkPortSemantics
+--- PASS: TestVerifyControlApIServerHostNetworkPortSemantics (0.00s)
+=== RUN   TestVerifyInjectionIsIdempotentAcrossReinjection
+--- PASS: TestVerifyInjectionIsIdempotentAcrossReinjection (0.00s)
+=== RUN   TestVerifyCanaryLegacyPodWithoutDeclarationIsInvisibleToNodePorts
+--- PASS: TestVerifyCanaryLegacyPodWithoutDeclarationIsInvisibleToNodePorts (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/port-allocator	0.012s

@@ -1,0 +1,32 @@
+Harness-bites check (review-finding-verifier Step 4): temporarily mutating production
+code on the PR head, re-running the harness, then reverting (production diff empty).
+
+All three mutations were applied to pkg/port-allocator/manager.go, detected by the
+harness, and reverted with `git checkout -- pkg/port-allocator/manager.go`
+(final `git status` clean; full package suite green afterwards).
+
+Mutation 1 — drop hostPort for hostNetwork pods (base-like behavior):
+    containerPort.HostPort = port  ->  guarded by `if false && pod.Spec.HostNetwork`
+Command: go test ./pkg/port-allocator/ -run 'TestVerifyP0HostNetworkPodDeclaresSchedulerVisibleHostPort'
+Observed: FAIL — "host-network Pod must expose the allocated port to the scheduler
+(NodePorts only filters on hostPort > 0)"; visible host ports were empty.
+Bites: P0.
+
+Mutation 2 — hostPort off by one (hostPort = port + 1):
+Command: go test ./pkg/port-allocator/ -run 'TestVerifyInjectedPodSpecsPassRealAPIServerValidation'
+Observed: FAIL (4 scenarios) — real kube-apiserver validation error:
+    spec.containers[0].ports[0].hostPort: Invalid value: 30001:
+    must match `containerPort` when `hostNetwork` is true
+Bites: F1 (validity contract).
+
+Mutation 3 — never reuse an existing declaration (skip the first reuse loop):
+    inserted `continue` after the (protocol, containerPort) match check
+Command: go test ./pkg/port-allocator/ -run 'TestVerify'
+Observed: FAIL — real kube-apiserver validation error on the appended duplicate:
+    spec.containers[0].ports[1].hostPort: Duplicate value: "TCP//30000"
+    (also: spec.containers[1].ports[0].hostPort: Duplicate value: "TCP//30000"
+     for the later-container scenario, and TestVerifyInjectionIsIdempotentAcrossReinjection FAILED)
+Bites: F1 (duplicate-hostPort key is protocol/hostIP/port), F2 (idempotency).
+Note: this also demonstrates WHY the reuse-across-all-containers loop from commit
+c05052c matters — without it, a declaration in a later container would make the
+appended declaration a within-pod duplicate hostPort, which the apiserver rejects.

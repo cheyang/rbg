@@ -1,0 +1,10 @@
+=== RUN   TestVerifyP0BasePremiseHostNetworkPodIsInvisibleToScheduler
+    zz_base_premise_test.go:96: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-532/wt-base/pkg/port-allocator/zz_base_premise_test.go:96
+        	Error:      	Should NOT be empty, but was []
+        	Test:       	TestVerifyP0BasePremiseHostNetworkPodIsInvisibleToScheduler
+        	Messages:   	base branch: host-network pod exposes no scheduler-visible host ports — NodePorts cannot prevent co-placement of two pods sharing the allocated port
+--- FAIL: TestVerifyP0BasePremiseHostNetworkPodIsInvisibleToScheduler (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/port-allocator	0.013s
+FAIL
