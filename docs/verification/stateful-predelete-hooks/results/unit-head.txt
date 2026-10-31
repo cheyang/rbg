@@ -1,0 +1,14 @@
+=== RUN   TestVerifyP0HookedCondemnedInstanceDeletedOutright
+    predelete_verify_test.go:103: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/head/pkg/reconciler/roleinstanceset/statefulmode/predelete_verify_test.go:103
+        	Error:      	Should NOT be empty, but was []
+        	Test:       	TestVerifyP0HookedCondemnedInstanceDeletedOutright
+        	Messages:   	P0 canary: base deletes a hooked instance outright; on the fixed code no delete is issued
+--- FAIL: TestVerifyP0HookedCondemnedInstanceDeletedOutright (0.04s)
+=== RUN   TestVerifyContractScaleDownBlockedUntilRelease
+--- PASS: TestVerifyContractScaleDownBlockedUntilRelease (0.00s)
+=== RUN   TestVerifyF1RegretLeavesInstanceInPreparingDelete
+--- PASS: TestVerifyF1RegretLeavesInstanceInPreparingDelete (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.057s
+FAIL

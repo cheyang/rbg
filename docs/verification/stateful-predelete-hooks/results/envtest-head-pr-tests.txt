@@ -1,0 +1,1 @@
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/stateful	17.677s

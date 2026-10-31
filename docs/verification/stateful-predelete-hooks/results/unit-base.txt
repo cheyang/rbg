@@ -1,0 +1,18 @@
+=== RUN   TestVerifyP0HookedCondemnedInstanceDeletedOutright
+--- PASS: TestVerifyP0HookedCondemnedInstanceDeletedOutright (0.04s)
+=== RUN   TestVerifyContractScaleDownBlockedUntilRelease
+    predelete_verify_test.go:122: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/base/pkg/reconciler/roleinstanceset/statefulmode/predelete_verify_test.go:122
+        	Error:      	Should be empty, but was [contract-0]
+        	Test:       	TestVerifyContractScaleDownBlockedUntilRelease
+        	Messages:   	reconcile 0: hooked instance must not be deleted
+--- FAIL: TestVerifyContractScaleDownBlockedUntilRelease (0.00s)
+=== RUN   TestVerifyF1RegretLeavesInstanceInPreparingDelete
+    predelete_verify_test.go:156: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/base/pkg/reconciler/roleinstanceset/statefulmode/predelete_verify_test.go:156
+        	Error:      	Should be empty, but was [regret-0]
+        	Test:       	TestVerifyF1RegretLeavesInstanceInPreparingDelete
+--- FAIL: TestVerifyF1RegretLeavesInstanceInPreparingDelete (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.059s
+FAIL

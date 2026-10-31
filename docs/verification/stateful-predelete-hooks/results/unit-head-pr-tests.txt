@@ -1,0 +1,34 @@
+=== RUN   TestStatefulPreDeleteBlocksAndReleases
+=== RUN   TestStatefulPreDeleteBlocksAndReleases/label/markNotReady=false
+=== RUN   TestStatefulPreDeleteBlocksAndReleases/label/markNotReady=true
+=== RUN   TestStatefulPreDeleteBlocksAndReleases/finalizer/markNotReady=false
+=== RUN   TestStatefulPreDeleteBlocksAndReleases/finalizer/markNotReady=true
+=== RUN   TestStatefulPreDeleteBlocksAndReleases/both/markNotReady=false
+=== RUN   TestStatefulPreDeleteBlocksAndReleases/both/markNotReady=true
+--- PASS: TestStatefulPreDeleteBlocksAndReleases (0.05s)
+    --- PASS: TestStatefulPreDeleteBlocksAndReleases/label/markNotReady=false (0.04s)
+    --- PASS: TestStatefulPreDeleteBlocksAndReleases/label/markNotReady=true (0.00s)
+    --- PASS: TestStatefulPreDeleteBlocksAndReleases/finalizer/markNotReady=false (0.00s)
+    --- PASS: TestStatefulPreDeleteBlocksAndReleases/finalizer/markNotReady=true (0.00s)
+    --- PASS: TestStatefulPreDeleteBlocksAndReleases/both/markNotReady=false (0.00s)
+    --- PASS: TestStatefulPreDeleteBlocksAndReleases/both/markNotReady=true (0.00s)
+=== RUN   TestStatefulPreDeleteDoesNotChangeUnhookedDeletion
+--- PASS: TestStatefulPreDeleteDoesNotChangeUnhookedDeletion (0.00s)
+=== RUN   TestStatefulPreDeletePatchFailureDoesNotDelete
+--- PASS: TestStatefulPreDeletePatchFailureDoesNotDelete (0.00s)
+=== RUN   TestStatefulPreDeleteScaleDownOrdering
+=== RUN   TestStatefulPreDeleteScaleDownOrdering/ordered=false
+=== RUN   TestStatefulPreDeleteScaleDownOrdering/ordered=true
+--- PASS: TestStatefulPreDeleteScaleDownOrdering (0.00s)
+    --- PASS: TestStatefulPreDeleteScaleDownOrdering/ordered=false (0.00s)
+    --- PASS: TestStatefulPreDeleteScaleDownOrdering/ordered=true (0.00s)
+=== RUN   TestStatefulPreDeleteRolloutKeepsCurrentReplicas
+I1101 01:09:20.198529 1905975 stateful_instance_set_control.go:735] "Progress rolling update" instanceSet="default/rollout-hook" targets=[1,0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1101 01:09:20.198549 1905975 stateful_instance_set_control.go:910] "Updating instance" instanceSet="default/rollout-hook" instance="default/rollout-hook-1" from="old-rev" to="update-rev" isSurge=false free=false
+I1101 01:09:20.198849 1905975 stateful_instance_set_control.go:766] "Rolling update budget exhausted" instanceSet="default/rollout-hook" instance="default/rollout-hook-0" initialBaseUnavail=0 newlyUnavail=1 effectiveBudget=1
+I1101 01:09:20.198969 1905975 stateful_instance_set_control.go:735] "Progress rolling update" instanceSet="default/rollout-hook" targets=[1,0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1101 01:09:20.198975 1905975 stateful_instance_set_control.go:910] "Updating instance" instanceSet="default/rollout-hook" instance="default/rollout-hook-1" from="old-rev" to="update-rev" isSurge=false free=false
+I1101 01:09:20.198987 1905975 stateful_instance_set_control.go:766] "Rolling update budget exhausted" instanceSet="default/rollout-hook" instance="default/rollout-hook-0" initialBaseUnavail=0 newlyUnavail=1 effectiveBudget=1
+--- PASS: TestStatefulPreDeleteRolloutKeepsCurrentReplicas (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.070s

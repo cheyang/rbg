@@ -1,0 +1,20 @@
+=== RUN   TestVerifyF1RegretLeavesInstanceInPreparingDelete
+    predelete_verify_test.go:172: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-01/pr-535/work/head/pkg/reconciler/roleinstanceset/statefulmode/predelete_verify_test.go:172
+        	Error:      	Not equal: 
+        	            	expected: "PreparingDelete"
+        	            	actual  : "Normal"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(constants.RoleInstanceLifecycleStateType) (len=15) "PreparingDelete"
+        	            	+(constants.RoleInstanceLifecycleStateType) (len=6) "Normal"
+        	            	 
+        	Test:       	TestVerifyF1RegretLeavesInstanceInPreparingDelete
+        	Messages:   	F1 canary: regretted instance keeps the stale PreparingDelete state; flip me when a rescue path lands
+--- FAIL: TestVerifyF1RegretLeavesInstanceInPreparingDelete (0.04s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.056s
+FAIL
