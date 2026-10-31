@@ -1,0 +1,28 @@
+candidate fixes applied
+=== RUN   TestPremiseNoPhaseFieldInStatus
+--- PASS: TestPremiseNoPhaseFieldInStatus (0.00s)
+=== RUN   TestPremiseProgressingRollingUpdateDeclaredButUnwritten
+--- PASS: TestPremiseProgressingRollingUpdateDeclaredButUnwritten (0.00s)
+=== RUN   TestPremiseFailedScaleFailedUpdatePersisted
+--- PASS: TestPremiseFailedScaleFailedUpdatePersisted (0.00s)
+=== RUN   TestPremiseRISRIConditionsLackObservedGeneration
+--- PASS: TestPremiseRISRIConditionsLackObservedGeneration (0.00s)
+=== RUN   TestPremiseRBGReadyReplicaCountBasedAndUnchangedDuringDeletion
+--- PASS: TestPremiseRBGReadyReplicaCountBasedAndUnchangedDuringDeletion (0.00s)
+=== RUN   TestRBGCandidateReasonsDefined
+--- PASS: TestRBGCandidateReasonsDefined (0.00s)
+=== RUN   TestExampleConsistentWithPriorityRule
+--- PASS: TestExampleConsistentWithPriorityRule (0.00s)
+=== RUN   TestProgressingFalseCoversConfigRejection
+--- PASS: TestProgressingFalseCoversConfigRejection (0.00s)
+=== RUN   TestReadyTerminatingChangeAcknowledged
+--- PASS: TestReadyTerminatingChangeAcknowledged (0.00s)
+=== RUN   TestTOCComplete
+--- PASS: TestTOCComplete (0.00s)
+=== RUN   TestKepYAMLWellFormed
+--- PASS: TestKepYAMLWellFormed (0.00s)
+=== RUN   TestYAMLExamplesParse
+--- PASS: TestYAMLExamplesParse (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/keps/502-workload-status-model	0.007s
+bites-check: all green with candidate fixes; reverting

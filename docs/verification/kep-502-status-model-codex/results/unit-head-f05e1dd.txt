@@ -1,0 +1,32 @@
+=== RUN   TestPremiseNoPhaseFieldInStatus
+--- PASS: TestPremiseNoPhaseFieldInStatus (0.00s)
+=== RUN   TestPremiseProgressingRollingUpdateDeclaredButUnwritten
+--- PASS: TestPremiseProgressingRollingUpdateDeclaredButUnwritten (0.00s)
+=== RUN   TestPremiseFailedScaleFailedUpdatePersisted
+--- PASS: TestPremiseFailedScaleFailedUpdatePersisted (0.00s)
+=== RUN   TestPremiseRISRIConditionsLackObservedGeneration
+--- PASS: TestPremiseRISRIConditionsLackObservedGeneration (0.00s)
+=== RUN   TestPremiseRBGReadyReplicaCountBasedAndUnchangedDuringDeletion
+--- PASS: TestPremiseRBGReadyReplicaCountBasedAndUnchangedDuringDeletion (0.00s)
+=== RUN   TestRBGCandidateReasonsDefined
+    doc_consistency_test.go:239: F1: RBG Progressing=True candidate reasons not anchored in the Reason Taxonomy and Aggregation section (family/activity tables): Preparing (row Progressing=True)
+--- FAIL: TestRBGCandidateReasonsDefined (0.00s)
+=== RUN   TestExampleConsistentWithPriorityRule
+    doc_consistency_test.go:313: F2: priority rule contradicts the RBG example: ChildReadiness is in the blocker priority list ('a current blocker outranks an activity reason'), yet the example reports Progressing reason="ScalingOrUpdating" while a child-readiness fact holds (Ready=False). Clarify whether child-readiness outranks activity reasons.
+--- FAIL: TestExampleConsistentWithPriorityRule (0.00s)
+=== RUN   TestProgressingFalseCoversConfigRejection
+    doc_consistency_test.go:355: F3: Progressing=False covers 'configuration rejected' but these Accepted=False rejection reasons have no defined Progressing=False mapping: TemplateInvalid, DependencyCycle
+--- FAIL: TestProgressingFalseCoversConfigRejection (0.00s)
+=== RUN   TestReadyTerminatingChangeAcknowledged
+    doc_consistency_test.go:402: F4: KEP adds Ready=False on terminating (a change vs the current controller, which early-returns on deletion and never rewrites Ready) while marking Ready '[Retained]' and without covering the new False trigger in the upgrade strategy or risks
+--- FAIL: TestReadyTerminatingChangeAcknowledged (0.00s)
+=== RUN   TestTOCComplete
+    doc_consistency_test.go:449: F5: headings missing from the TOC: Reason Taxonomy and Aggregation
+--- FAIL: TestTOCComplete (0.00s)
+=== RUN   TestKepYAMLWellFormed
+--- PASS: TestKepYAMLWellFormed (0.00s)
+=== RUN   TestYAMLExamplesParse
+--- PASS: TestYAMLExamplesParse (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/keps/502-workload-status-model	0.007s
+FAIL

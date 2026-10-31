@@ -1,0 +1,35 @@
+{
+  "topic": "kep-502-status-model-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/528",
+  "harnessPaths": [
+    "docs/verification/kep-502-status-model-codex",
+    "keps/502-workload-status-model/doc_consistency_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "RBG / RIS / RI lack status.phase; RBG declares Progressing and RollingUpdateInProgress but built-in controllers on main do not write them; RIS / RI FailedScale and FailedUpdate record individual operation failures as sticky conditions; RBG Ready reflects replica readiness without revision convergence (issue #502 'Current limitations', restated in the KEP Motivation).",
+    "reportedComponent": "RBG / RIS / RI status model (workloads.x-k8s.io/v1alpha2)",
+    "patchedComponent": "keps/502-workload-status-model/ (design doc only)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "TestPremise* pass at reviewed head f05e1dd; PR diff touches only keps/, so head == base 885d655 for every file read. See results/unit-head-f05e1dd.txt and results/issue-502.json.",
+    "match": ["TestPremise"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./keps/502-workload-status-model/ -run 'Test' -json"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestRBGCandidateReasonsDefined"] },
+    { "id": "F2", "polarity": "contract", "layer": "unit", "match": ["TestExampleConsistentWithPriorityRule"] },
+    { "id": "F3", "polarity": "contract", "layer": "unit", "match": ["TestProgressingFalseCoversConfigRejection"] },
+    { "id": "F4", "polarity": "contract", "layer": "unit", "match": ["TestReadyTerminatingChangeAcknowledged"] },
+    { "id": "F5", "polarity": "contract", "layer": "unit", "match": ["TestTOCComplete"] },
+    { "id": "G1", "polarity": "contract", "layer": "unit", "match": ["TestKepYAMLWellFormed", "TestYAMLExamplesParse"] }
+  ],
+  "liveNote": "Docs-only KEP PR: no live layer. Integration replay (markdownlint-cli2 with .github/.markdownlint.json, YAML parsing of kep.yaml and the 3 examples) is recorded in results/markdownlint.txt and embedded as Go guards (TestKepYAMLWellFormed, TestYAMLExamplesParse)."
+}
