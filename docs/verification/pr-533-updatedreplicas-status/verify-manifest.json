@@ -1,0 +1,56 @@
+{
+  "topic": "pr-533-updatedreplicas-status",
+  "pr": "https://github.com/sgl-project/rbg/pull/533",
+  "harnessPaths": [
+    "docs/verification/pr-533-updatedreplicas-status",
+    "internal/controller/workloads/pr533_verify_unit_test.go",
+    "internal/controller/workloads/pr533_verify_envtest_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "RBG status synchronization only compared Replicas and ReadyReplicas, so changes to UpdatedReplicas alone were ignored, leaving stale rollout progress even after repeated reconciliations.",
+    "reportedComponent": "internal/controller/workloads/rolebasedgroup_controller.go updateRBGStatus",
+    "patchedComponent": "internal/controller/workloads/rolebasedgroup_controller.go updateRBGStatus",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "results/unit-base.json: UpdatedReplicas-only contract tests FAIL on base 7894133d; results/integration-base.json: API server retains stale updatedReplicas=1 after reconcile",
+    "match": ["TestVerifyPR533UpdatedReplicasOnlyChangePropagates"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./internal/controller/workloads/ -run 'TestVerifyPR533|TestUpdateRBGStatusUpdatedReplicas' -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "export KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$(./bin/setup-envtest use 1.31.0 --bin-dir ./bin -p path 2>/dev/null || true)}\"; go test ./internal/controller/workloads/ -run 'TestVerifyPR533UpdatedReplicasPersistedServerSide' -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR533UpdatedReplicasOnlyChangePropagates",
+        "TestVerifyPR533UpdatedReplicasResetToZeroPropagates",
+        "TestUpdateRBGStatusUpdatedReplicas"
+      ]
+    },
+    {
+      "id": "F1-integration",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["TestVerifyPR533UpdatedReplicasPersistedServerSide"]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyPR533ReadyReplicasChangeStillPropagates"]
+    }
+  ],
+  "liveNote": "L3 skipped in this debate round (unit + integration only). If run live: watch rbg controller logs and `kubectl get rbg -o jsonpath='{.status.roleStatuses[*].updatedReplicas}'` during a rolling update; it must track the workload's status.updatedReplicas within one reconcile."
+}
