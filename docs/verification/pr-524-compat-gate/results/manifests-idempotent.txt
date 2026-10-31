@@ -1,0 +1,9 @@
+$ make manifests   # controller-gen v0.17.2 via Makefile tool pin
+... (regenerated config/crd, config/rbac, config/webhook, deploy/kubectl)
+$ git status --short config/ deploy/
+(no output)
+
+Result: `make manifests` on head 993dcf10 leaves config/webhook/manifests.yaml and
+deploy/kubectl/manifests.yaml byte-identical (git diff --quiet clean). The PR's
+claim that the checked-in webhook manifests equal the controller-gen output and
+that generation is idempotent is confirmed.

@@ -1,0 +1,4 @@
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.011s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.129s
+ok  	sigs.k8s.io/rbgs/cmd/rbgs	0.056s
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	3.741s

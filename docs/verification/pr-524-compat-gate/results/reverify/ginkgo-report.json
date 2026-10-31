@@ -1,0 +1,702 @@
+[
+  {
+    "SuitePath": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1",
+    "SuiteDescription": "v1alpha1 Deprecation Gate (production manifests) Suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": true,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 8,
+      "SpecsThatWillRun": 8
+    },
+    "StartTime": "2026-10-27T03:10:14.449799582+08:00",
+    "EndTime": "2026-10-27T03:10:20.621292368+08:00",
+    "RunTime": 6171492776,
+    "SuiteConfig": {
+      "RandomSeed": 1793041814,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": null,
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/suite_test.go",
+          "LineNumber": 120
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-27T03:10:14.449823343+08:00",
+        "EndTime": "2026-10-27T03:10:20.561092705+08:00",
+        "RunTime": 6111269362,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T03:10:14+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-10-27T03:10:16+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-10-27T03:10:16+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/tmp/pr524-head/config/crd/bases\"}\n2026-10-27T03:10:16+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-10-27T03:10:16+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-10-27T03:10:16+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-10-27T03:10:16+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-10-27T03:10:16+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-10-27T03:10:16+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T03:10:17+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-10-27T03:10:18+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/convert\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=CoordinatedPolicy\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleInstanceSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroup\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroup\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupSet\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=InstanceSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instanceset\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instanceset\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=Instance\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instance\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-instance\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupScalingAdapter\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupscalingadapter\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupscalingadapter\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha1, Kind=ClusterEngineRuntimeProfile\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha1-clusterengineruntimeprofile\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha1-clusterengineruntimeprofile\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tStarting webhook server\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.certwatcher\tUpdated current TLS certificate\t{\"cert\": \"/tmp/envtest-serving-certs-2518153536/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2518153536/tls.key\"}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.webhook\tServing webhook server\t{\"host\": \"127.0.0.1\", \"port\": 33241}\n2026-10-27T03:10:18+08:00\tINFO\tcontroller-runtime.certwatcher\tStarting certificate poll+watcher\t{\"cert\": \"/tmp/envtest-serving-certs-2518153536/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2518153536/tls.key\", \"interval\": \"10s\"}\n2026-10-27T03:10:20+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n2026-10-27T03:10:20+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet\n2026-10-27T03:10:20+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n2026-10-27T03:10:20+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/suite_test.go",
+              "LineNumber": 120
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-10-27T03:10:14.449835474+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/suite_test.go",
+              "LineNumber": 202
+            },
+            "TimelineLocation": {
+              "Offset": 10344,
+              "Order": 2,
+              "Time": "2026-10-27T03:10:18.411592811+08:00"
+            },
+            "Message": "creating the gate namespace"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/suite_test.go",
+              "LineNumber": 207
+            },
+            "TimelineLocation": {
+              "Offset": 10344,
+              "Order": 3,
+              "Time": "2026-10-27T03:10:18.4146348+08:00"
+            },
+            "Message": "seeding the pre-upgrade objects before any webhook configuration exists"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/suite_test.go",
+              "LineNumber": 217
+            },
+            "TimelineLocation": {
+              "Offset": 10622,
+              "Order": 4,
+              "Time": "2026-10-27T03:10:20.554184739+08:00"
+            },
+            "Message": "installing the production webhook configurations from config/webhook/manifests.yaml"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/suite_test.go",
+              "LineNumber": 120
+            },
+            "TimelineLocation": {
+              "Offset": 10908,
+              "Order": 6,
+              "Time": "2026-10-27T03:10:20.561091455+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 6111255972,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation gate (production webhook configurations)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+            "LineNumber": 82
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+          "LineNumber": 85
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a new v1alpha1 create that names a deprecated workload type",
+        "State": "passed",
+        "StartTime": "2026-10-27T03:10:20.561139136+08:00",
+        "EndTime": "2026-10-27T03:10:20.563046654+08:00",
+        "RunTime": 1907528,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T03:10:20+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n2026-10-27T03:10:20+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 85
+            },
+            "TimelineLocation": {
+              "Order": 7,
+              "Time": "2026-10-27T03:10:20.561141237+08:00"
+            },
+            "Message": "rejects a new v1alpha1 create that names a deprecated workload type",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 85
+            },
+            "TimelineLocation": {
+              "Offset": 286,
+              "Order": 9,
+              "Time": "2026-10-27T03:10:20.563043494+08:00"
+            },
+            "Message": "rejects a new v1alpha1 create that names a deprecated workload type",
+            "Duration": 1902267,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation gate (production webhook configurations)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+            "LineNumber": 82
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+          "LineNumber": 95
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a new v1alpha1 create whose workload is only the schema default",
+        "State": "passed",
+        "StartTime": "2026-10-27T03:10:20.563067355+08:00",
+        "EndTime": "2026-10-27T03:10:20.564988314+08:00",
+        "RunTime": 1920959,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T03:10:20+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n2026-10-27T03:10:20+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 95
+            },
+            "TimelineLocation": {
+              "Order": 10,
+              "Time": "2026-10-27T03:10:20.563069355+08:00"
+            },
+            "Message": "rejects a new v1alpha1 create whose workload is only the schema default",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 95
+            },
+            "TimelineLocation": {
+              "Offset": 286,
+              "Order": 12,
+              "Time": "2026-10-27T03:10:20.564984633+08:00"
+            },
+            "Message": "rejects a new v1alpha1 create whose workload is only the schema default",
+            "Duration": 1915288,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation gate (production webhook configurations)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+            "LineNumber": 82
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+          "LineNumber": 126
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "admits a new v1alpha1 create that names RoleInstanceSet and returns an admission warning",
+        "State": "passed",
+        "StartTime": "2026-10-27T03:10:20.565007184+08:00",
+        "EndTime": "2026-10-27T03:10:20.568636793+08:00",
+        "RunTime": 3629599,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 126
+            },
+            "TimelineLocation": {
+              "Order": 13,
+              "Time": "2026-10-27T03:10:20.565008834+08:00"
+            },
+            "Message": "admits a new v1alpha1 create that names RoleInstanceSet and returns an admission warning",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 126
+            },
+            "TimelineLocation": {
+              "Order": 15,
+              "Time": "2026-10-27T03:10:20.568633663+08:00"
+            },
+            "Message": "admits a new v1alpha1 create that names RoleInstanceSet and returns an admission warning",
+            "Duration": 3624829,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation gate (production webhook configurations)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+            "LineNumber": 82
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+          "LineNumber": 141
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "keeps a grandfathered v1alpha1 RoleBasedGroup writable and warns",
+        "State": "passed",
+        "StartTime": "2026-10-27T03:10:20.568649834+08:00",
+        "EndTime": "2026-10-27T03:10:20.572243482+08:00",
+        "RunTime": 3593648,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 141
+            },
+            "TimelineLocation": {
+              "Order": 16,
+              "Time": "2026-10-27T03:10:20.568651644+08:00"
+            },
+            "Message": "keeps a grandfathered v1alpha1 RoleBasedGroup writable and warns",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 141
+            },
+            "TimelineLocation": {
+              "Order": 18,
+              "Time": "2026-10-27T03:10:20.572240342+08:00"
+            },
+            "Message": "keeps a grandfathered v1alpha1 RoleBasedGroup writable and warns",
+            "Duration": 3588688,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation gate (production webhook configurations)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+            "LineNumber": 82
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+          "LineNumber": 156
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects introducing a new deprecated role into a grandfathered v1alpha1 RoleBasedGroup",
+        "State": "passed",
+        "StartTime": "2026-10-27T03:10:20.572259132+08:00",
+        "EndTime": "2026-10-27T03:10:20.575911652+08:00",
+        "RunTime": 3652510,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T03:10:20+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n2026-10-27T03:10:20+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup\n2026-10-27T03:10:20+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 156
+            },
+            "TimelineLocation": {
+              "Order": 19,
+              "Time": "2026-10-27T03:10:20.572260922+08:00"
+            },
+            "Message": "rejects introducing a new deprecated role into a grandfathered v1alpha1 RoleBasedGroup",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 156
+            },
+            "TimelineLocation": {
+              "Offset": 422,
+              "Order": 21,
+              "Time": "2026-10-27T03:10:20.575909372+08:00"
+            },
+            "Message": "rejects introducing a new deprecated role into a grandfathered v1alpha1 RoleBasedGroup",
+            "Duration": 3648450,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation gate (production webhook configurations)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+            "LineNumber": 82
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+          "LineNumber": 176
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a new v1alpha1 RoleBasedGroupSet with a deprecated workload template",
+        "State": "passed",
+        "StartTime": "2026-10-27T03:10:20.575922043+08:00",
+        "EndTime": "2026-10-27T03:10:20.577918564+08:00",
+        "RunTime": 1996521,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T03:10:20+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 RoleBasedGroupSet is deprecated; use workloads.x-k8s.io/v1alpha2 RoleBasedGroupSet\n2026-10-27T03:10:20+08:00\tINFO\tworkloads.x-k8s.io/v1alpha1 is deprecated and will be removed in 0.10.0; migrate to v1alpha2 using the migration guide\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 176
+            },
+            "TimelineLocation": {
+              "Order": 22,
+              "Time": "2026-10-27T03:10:20.575923493+08:00"
+            },
+            "Message": "rejects a new v1alpha1 RoleBasedGroupSet with a deprecated workload template",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 176
+            },
+            "TimelineLocation": {
+              "Offset": 292,
+              "Order": 24,
+              "Time": "2026-10-27T03:10:20.577915864+08:00"
+            },
+            "Message": "rejects a new v1alpha1 RoleBasedGroupSet with a deprecated workload template",
+            "Duration": 1992361,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation gate (production webhook configurations)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+            "LineNumber": 82
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+          "LineNumber": 191
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "serves the warning-only v1alpha1 endpoints registered by the production manifest",
+        "State": "passed",
+        "StartTime": "2026-10-27T03:10:20.577931254+08:00",
+        "EndTime": "2026-10-27T03:10:20.587342969+08:00",
+        "RunTime": 9411715,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 191
+            },
+            "TimelineLocation": {
+              "Order": 25,
+              "Time": "2026-10-27T03:10:20.577933024+08:00"
+            },
+            "Message": "serves the warning-only v1alpha1 endpoints registered by the production manifest",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 191
+            },
+            "TimelineLocation": {
+              "Order": 27,
+              "Time": "2026-10-27T03:10:20.587336739+08:00"
+            },
+            "Message": "serves the warning-only v1alpha1 endpoints registered by the production manifest",
+            "Duration": 9403715,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation gate (production webhook configurations)",
+          "replacement-child exemption (v1alpha2 gate)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+            "LineNumber": 82
+          },
+          {
+            "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+            "LineNumber": 210
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+          "LineNumber": 217
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "grants the exemption to an ordinary writer that knows the parent's name and UID",
+        "State": "passed",
+        "StartTime": "2026-10-27T03:10:20.587381271+08:00",
+        "EndTime": "2026-10-27T03:10:20.598251938+08:00",
+        "RunTime": 10870667,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 217
+            },
+            "TimelineLocation": {
+              "Order": 28,
+              "Time": "2026-10-27T03:10:20.587384491+08:00"
+            },
+            "Message": "grants the exemption to an ordinary writer that knows the parent's name and UID",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go",
+              "LineNumber": 217
+            },
+            "TimelineLocation": {
+              "Order": 30,
+              "Time": "2026-10-27T03:10:20.598246928+08:00"
+            },
+            "Message": "grants the exemption to an ordinary writer that knows the parent's name and UID",
+            "Duration": 10862447,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/suite_test.go",
+          "LineNumber": 223
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-10-27T03:10:20.598272528+08:00",
+        "EndTime": "2026-10-27T03:10:20.621282578+08:00",
+        "RunTime": 23010050,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-10-27T03:10:20+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-10-27T03:10:20+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-watching file\t{\"cert\": \"/tmp/envtest-serving-certs-2518153536/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2518153536/tls.key\", \"error\": \"no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/tmp/pr524-head/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:235\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/tmp/pr524-head/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-27T03:10:20+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-10-27T03:10:20+08:00\tINFO\tStopping and waiting for caches\n2026-10-27T03:10:20+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-10-27T03:10:20+08:00\tDEBUG\tcontroller-runtime.certwatcher\tcertificate event\t{\"cert\": \"/tmp/envtest-serving-certs-2518153536/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2518153536/tls.key\", \"event\": \"CHMOD         \\\"/tmp/envtest-serving-certs-2518153536/tls.key\\\"\"}\n2026-10-27T03:10:20+08:00\tINFO\tStopping and waiting for webhooks\n2026-10-27T03:10:20+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-reading certificate\t{\"cert\": \"/tmp/envtest-serving-certs-2518153536/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2518153536/tls.key\", \"error\": \"open /tmp/envtest-serving-certs-2518153536/tls.crt: no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/tmp/pr524-head/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:243\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/tmp/pr524-head/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-27T03:10:20+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-watching file\t{\"cert\": \"/tmp/envtest-serving-certs-2518153536/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2518153536/tls.key\", \"error\": \"no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/tmp/pr524-head/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:235\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/tmp/pr524-head/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-27T03:10:20+08:00\tDEBUG\tcontroller-runtime.certwatcher\tcertificate event\t{\"cert\": \"/tmp/envtest-serving-certs-2518153536/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2518153536/tls.key\", \"event\": \"REMOVE        \\\"/tmp/envtest-serving-certs-2518153536/tls.key\\\"\"}\n2026-10-27T03:10:20+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-reading certificate\t{\"cert\": \"/tmp/envtest-serving-certs-2518153536/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-2518153536/tls.key\", \"error\": \"open /tmp/envtest-serving-certs-2518153536/tls.crt: no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/tmp/pr524-head/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:243\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/tmp/pr524-head/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-10-27T03:10:20+08:00\tINFO\tcontroller-runtime.webhook\tShutting down webhook server with timeout of 1 minute\n2026-10-27T03:10:20+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-10-27T03:10:20+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/suite_test.go",
+              "LineNumber": 223
+            },
+            "TimelineLocation": {
+              "Order": 31,
+              "Time": "2026-10-27T03:10:20.598273859+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/suite_test.go",
+              "LineNumber": 223
+            },
+            "TimelineLocation": {
+              "Offset": 3530,
+              "Order": 33,
+              "Time": "2026-10-27T03:10:20.621280978+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 23007109,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]

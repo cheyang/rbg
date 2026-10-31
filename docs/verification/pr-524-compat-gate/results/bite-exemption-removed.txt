@@ -1,0 +1,87 @@
+Running Suite: v1alpha1 Deprecation Gate (production manifests) Suite - /tmp/pr524-head/test/envtest/testcase/deprecationv1a1
+=============================================================================================================================
+Random Seed: [1m1793041620[0m
+
+Will run [1m8[0m of [1m8[0m specs
+2026/10/27 03:07:04 http: TLS handshake error from 127.0.0.1:43334: EOF
+[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m
+[38;5;243m------------------------------[0m
+[38;5;9m• [FAILED] [0.003 seconds][0m
+[0mv1alpha1 deprecation gate (production webhook configurations) [38;5;243mreplacement-child exemption (v1alpha2 gate) [38;5;9m[1m[It] grants the exemption to an ordinary writer that knows the parent's name and UID[0m
+[38;5;243m/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go:217[0m
+
+  [38;5;9m[FAILED] Expected success, but got an error:
+      <*errors.StatusError | 0x1bf2314dc000>: 
+      admission webhook "vrolebasedgroup.kb.io" denied the request: spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: migrate this role to RoleInstanceSet (set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet, or submit the object as v1alpha2, where RoleInstanceSet is the default); roles that already used the deprecated workload type before the upgrade remain accepted while controller.deprecatedWorkloadTypes.enabled=true
+      {
+          ErrStatus: {
+              TypeMeta: {Kind: "", APIVersion: ""},
+              ListMeta: {
+                  SelfLink: "",
+                  ResourceVersion: "",
+                  Continue: "",
+                  RemainingItemCount: nil,
+              },
+              Status: "Failure",
+              Message: "admission webhook \"vrolebasedgroup.kb.io\" denied the request: spec.roles[0] (role \"worker\"): workload type \"apps/v1/StatefulSet\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: migrate this role to RoleInstanceSet (set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet, or submit the object as v1alpha2, where RoleInstanceSet is the default); roles that already used the deprecated workload type before the upgrade remain accepted while controller.deprecatedWorkloadTypes.enabled=true",
+              Reason: "Forbidden",
+              Details: nil,
+              Code: 403,
+          },
+      }[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go:239[0m [38;5;243m@ 10/27/26 03:07:07.015[0m
+[38;5;243m------------------------------[0m
+
+[38;5;9m[1mSummarizing 1 Failure:[0m
+  [38;5;9m[FAIL][0m [0mv1alpha1 deprecation gate (production webhook configurations) [38;5;243mreplacement-child exemption (v1alpha2 gate) [38;5;9m[1m[It] grants the exemption to an ordinary writer that knows the parent's name and UID[0m
+  [38;5;243m/tmp/pr524-head/test/envtest/testcase/deprecationv1a1/gate_test.go:239[0m
+
+[38;5;9m[1mRan 8 of 8 Specs in 7.121 seconds[0m
+[38;5;9m[1mFAIL![0m -- [38;5;10m[1m7 Passed[0m | [38;5;9m[1m1 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- FAIL: TestV1Alpha1DeprecationGate (7.12s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/deprecationv1a1	7.132s
+Running Suite: Deprecated Workload Compatibility Gate Suite - /tmp/pr524-head/test/envtest/testcase/deprecation
+===============================================================================================================
+Random Seed: [1m1793041621[0m
+
+Will run [1m5[0m of [1m5[0m specs
+2026/10/27 03:07:05 http: TLS handshake error from 127.0.0.1:39142: EOF
+[38;5;243m------------------------------[0m
+[38;5;9m• [FAILED] [0.003 seconds][0m
+[0mDeprecated workload compatibility gate [38;5;9m[1m[It] admits the set controller's replacement child for an un-migrated legacy template[0m
+[38;5;243m/tmp/pr524-head/test/envtest/testcase/deprecation/compat_test.go:113[0m
+
+  [38;5;9m[FAILED] Expected success, but got an error:
+      <*errors.StatusError | 0x78bd0a82a00>: 
+      admission webhook "vrolebasedgroup.kb.io" denied the request: spec.roles[0] (role "worker"): workload type "apps/v1/StatefulSet" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: migrate this role to RoleInstanceSet (set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet, or submit the object as v1alpha2, where RoleInstanceSet is the default); roles that already used the deprecated workload type before the upgrade remain accepted while controller.deprecatedWorkloadTypes.enabled=true
+      {
+          ErrStatus: {
+              TypeMeta: {Kind: "", APIVersion: ""},
+              ListMeta: {
+                  SelfLink: "",
+                  ResourceVersion: "",
+                  Continue: "",
+                  RemainingItemCount: nil,
+              },
+              Status: "Failure",
+              Message: "admission webhook \"vrolebasedgroup.kb.io\" denied the request: spec.roles[0] (role \"worker\"): workload type \"apps/v1/StatefulSet\" is deprecated; new uses are not accepted; note: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet, so a role submitted via the v1alpha1 API carries a deprecated workload type even if you never set one; fix: migrate this role to RoleInstanceSet (set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and workload.kind=RoleInstanceSet, or submit the object as v1alpha2, where RoleInstanceSet is the default); roles that already used the deprecated workload type before the upgrade remain accepted while controller.deprecatedWorkloadTypes.enabled=true",
+              Reason: "Forbidden",
+              Details: nil,
+              Code: 403,
+          },
+      }[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/tmp/pr524-head/test/envtest/testcase/deprecation/compat_test.go:120[0m [38;5;243m@ 10/27/26 03:07:07.488[0m
+[38;5;243m------------------------------[0m
+[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m
+
+[38;5;9m[1mSummarizing 1 Failure:[0m
+  [38;5;9m[FAIL][0m [0mDeprecated workload compatibility gate [38;5;9m[1m[It] admits the set controller's replacement child for an un-migrated legacy template[0m
+  [38;5;243m/tmp/pr524-head/test/envtest/testcase/deprecation/compat_test.go:120[0m
+
+[38;5;9m[1mRan 5 of 5 Specs in 6.324 seconds[0m
+[38;5;9m[1mFAIL![0m -- [38;5;10m[1m4 Passed[0m | [38;5;9m[1m1 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- FAIL: TestDeprecatedWorkloadGate (6.32s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/deprecation	6.338s
+FAIL

@@ -1,0 +1,8 @@
+# PR #524 round-2 (head 22acc570) — make manifests idempotency (AC8)
+# command: make manifests (controller-gen v0.17.2 + kustomize, auto-installed to ./bin)
+# result: git status --porcelain shows NO tracked-file changes; deploy/kubectl/manifests.yaml and config/webhook/manifests.yaml regenerate byte-identical, including the four failurePolicy: Ignore entries
+gen-helm-rbac: wrote deploy/helm/rbgs/templates/rbac/clusterrole.yaml from config/rbac/role.yaml
+
+/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/bin/kustomize build config/default > deploy/kubectl/manifests.yaml
+--- post-run git status (tracked files; empty = byte-idempotent) ---
+(end)

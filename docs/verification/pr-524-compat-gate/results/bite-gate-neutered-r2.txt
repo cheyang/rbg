@@ -1,0 +1,9 @@
+# BITE CHECK (F1/AC11): compat gate neutered (every role skipped in validateV1alpha1DeprecatedRoles)
+# expect: BeforeSuite FAILS at 'the shipped v1alpha1 gate did not become active'
+[38;5;9m[BeforeSuite] [FAILED] [13.582 seconds][0m
+  [1mSTEP:[0m registering the production webhook handlers [38;5;243m@ 10/31/26 16:55:16.42[0m
+  2026-10-31T16:55:16+08:00	INFO	controller-runtime.builder	Conversion webhook enabled	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup"}
+  2026-10-31T16:55:16+08:00	INFO	controller-runtime.builder	Conversion webhook enabled	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet"}
+  2026-10-31T16:55:16+08:00	INFO	controller-runtime.builder	Conversion webhook enabled	{"GVK": "workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroup"}
+  2026-10-31T16:55:16+08:00	INFO	controller-runtime.builder	Conversion webhook enabled	{"GVK": "workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupSet"}
+restored: 0 modified (0 = clean)

@@ -1,0 +1,15 @@
+# PR #524 round-2 (head 22acc570) — F3 spoof canary suite
+# command: go test -count=1 -v ./test/envtest/testcase/deprecationv1a1spoof/...
+=== RUN   TestV1alpha1SpoofExemption
+Running Suite: v1alpha1 Replacement-Child Exemption Spoof Suite - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1spoof
+=======================================================================================================================================================================================
+Random Seed: [1m1793436833[0m
+
+Will run [1m2[0m of [1m2[0m specs
+[38;5;10m•[0m[38;5;10m•[0m
+
+[38;5;10m[1mRan 2 of 2 Specs in 6.245 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m2 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- PASS: TestV1alpha1SpoofExemption (6.25s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/deprecationv1a1spoof	6.260s

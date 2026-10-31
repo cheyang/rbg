@@ -1,0 +1,8 @@
+rejects a new v1alpha1 create that names a deprecated workload type	pass
+rejects a new v1alpha1 create whose workload is only the schema default	pass
+admits a new v1alpha1 create that names RoleInstanceSet and returns an admission warning	pass
+keeps a grandfathered v1alpha1 RoleBasedGroup writable and warns	pass
+rejects introducing a new deprecated role into a grandfathered v1alpha1 RoleBasedGroup	pass
+rejects a new v1alpha1 RoleBasedGroupSet with a deprecated workload template	pass
+serves the warning-only v1alpha1 endpoints registered by the production manifest	pass
+grants the exemption to an ordinary writer that knows the parent's name and UID	pass

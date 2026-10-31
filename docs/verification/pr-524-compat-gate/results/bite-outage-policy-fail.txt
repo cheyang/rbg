@@ -1,0 +1,12 @@
+# BITE CHECK (F2): shipped manifest reverted to the pre-fix failurePolicy=Fail on the four warning-only webhooks
+# expect: 'admits a v1alpha1 InstanceSet write while the warning-only webhooks are unreachable' FAILS with 'failed calling webhook ... connection refused'
+flipped entries: 4
+Running Suite: v1alpha1 Warning-Only Webhook Outage Suite - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage
+[38;5;9m• [FAILED] [0.001 seconds][0m
+  [38;5;9m[FAILED][0m in [It] - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1outage/outage_test.go:176 [38;5;243m@ 10/31/26 16:54:48.752[0m
+  [38;5;9m[FAILED] Expected success, but got an error:
+      Internal error occurred: failed calling webhook "vinstanceset-v1alpha1-deprecation.kb.io": failed to call webhook: Post "https://127.0.0.1:36809/validate-workloads-x-k8s-io-v1alpha1-instanceset?timeout=10s": dial tcp 127.0.0.1:36809: connect: connection refused
+              Message: "Internal error occurred: failed calling webhook \"vinstanceset-v1alpha1-deprecation.kb.io\": failed to call webhook: Post \"https://127.0.0.1:36809/validate-workloads-x-k8s-io-v1alpha1-instanceset?timeout=10s\": dial tcp 127.0.0.1:36809: connect: connection refused",
+                          Message: "failed calling webhook \"vinstanceset-v1alpha1-deprecation.kb.io\": failed to call webhook: Post \"https://127.0.0.1:36809/validate-workloads-x-k8s-io-v1alpha1-instanceset?timeout=10s\": dial tcp 127.0.0.1:36809: connect: connection refused",
+[38;5;9m[1mRan 2 of 2 Specs in 5.481 seconds[0m
+restored: 0 modified (0 = clean)

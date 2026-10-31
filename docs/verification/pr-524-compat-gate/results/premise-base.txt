@@ -1,0 +1,48 @@
+=== RUN   TestRoleBasedGroupValidator_ValidateCreate_DeprecatedWorkloadTypesDisabled
+=== RUN   TestRoleBasedGroupValidator_ValidateCreate_DeprecatedWorkloadTypesDisabled/deprecated_workload_types_disabled,_RoleInstanceSet_-_no_error
+=== RUN   TestRoleBasedGroupValidator_ValidateCreate_DeprecatedWorkloadTypesDisabled/deprecated_workload_types_disabled,_StatefulSet_-_error
+=== RUN   TestRoleBasedGroupValidator_ValidateCreate_DeprecatedWorkloadTypesDisabled/deprecated_workload_types_enabled,_StatefulSet_-_no_error
+--- PASS: TestRoleBasedGroupValidator_ValidateCreate_DeprecatedWorkloadTypesDisabled (0.04s)
+    --- PASS: TestRoleBasedGroupValidator_ValidateCreate_DeprecatedWorkloadTypesDisabled/deprecated_workload_types_disabled,_RoleInstanceSet_-_no_error (0.04s)
+    --- PASS: TestRoleBasedGroupValidator_ValidateCreate_DeprecatedWorkloadTypesDisabled/deprecated_workload_types_disabled,_StatefulSet_-_error (0.00s)
+    --- PASS: TestRoleBasedGroupValidator_ValidateCreate_DeprecatedWorkloadTypesDisabled/deprecated_workload_types_enabled,_StatefulSet_-_no_error (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.048s
+clusterengineruntimeprofile_types.go
+constant.go
+doc.go
+groupversion_info.go
+helper.go
+helper_test.go
+instanceset_types.go
+instance_types.go
+register.go
+rolebasedgroup_conversion.go
+rolebasedgroup_conversion_test.go
+rolebasedgroupscalingadapter_types.go
+rolebasedgroupset_conversion.go
+rolebasedgroupset_conversion_test.go
+rolebasedgroupset_types.go
+rolebasedgroup_types.go
+roletemplate_validation.go
+roletemplate_validation_test.go
+zz_generated.deepcopy.go
+api/workloads/v1alpha1/roletemplate_validation.go:0
+api/workloads/v1alpha1/roletemplate_validation_test.go:0
+api/workloads/v1alpha1/rolebasedgroupscalingadapter_types.go:0
+api/workloads/v1alpha1/rolebasedgroupset_conversion.go:0
+api/workloads/v1alpha1/rolebasedgroup_types.go:0
+api/workloads/v1alpha1/helper.go:0
+api/workloads/v1alpha1/helper_test.go:0
+api/workloads/v1alpha1/rolebasedgroupset_conversion_test.go:0
+api/workloads/v1alpha1/clusterengineruntimeprofile_types.go:0
+api/workloads/v1alpha1/zz_generated.deepcopy.go:0
+api/workloads/v1alpha1/rolebasedgroupset_types.go:0
+api/workloads/v1alpha1/doc.go:0
+api/workloads/v1alpha1/register.go:0
+api/workloads/v1alpha1/rolebasedgroup_conversion.go:0
+api/workloads/v1alpha1/rolebasedgroup_conversion_test.go:0
+api/workloads/v1alpha1/groupversion_info.go:0
+api/workloads/v1alpha1/constant.go:0
+api/workloads/v1alpha1/instance_types.go:0
+api/workloads/v1alpha1/instanceset_types.go:0

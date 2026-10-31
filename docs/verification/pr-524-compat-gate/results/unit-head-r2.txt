@@ -1,0 +1,8 @@
+# PR #524 round-2 (head 22acc570) — unit layer
+# command: go test ./api/workloads/v1alpha1 ./api/workloads/v1alpha2 ./cmd/rbgs ./internal/controller/workloads ./test/envtest/testcase/deprecation/... ./test/envtest/testcase/webhook/...
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	(cached)
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.131s
+ok  	sigs.k8s.io/rbgs/cmd/rbgs	(cached)
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	(cached)
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/deprecation	6.294s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/webhook	30.137s

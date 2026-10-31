@@ -1,0 +1,74 @@
+{
+  "topic": "pr-524-compat-gate",
+  "pr": "https://github.com/sgl-project/rbg/pull/524",
+  "round": 2,
+  "harnessPaths": [
+    "docs/verification/pr-524-compat-gate",
+    "test/envtest/testcase/deprecationv1a1outage",
+    "test/envtest/testcase/deprecationv1a1spoof"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "0.9.0 needs a migration window: 'existing deprecated workload roles remain reconcilable, while new deprecated workload uses are rejected' plus an admission warning on every v1alpha1 write. On base, with the default flag, a NEW deprecated workload use is admitted silently and no v1alpha1 admission webhook exists.",
+    "reportedComponent": "admission validation layer (v1alpha2 validators + v1alpha1 webhooks)",
+    "patchedComponent": "api/workloads/v1alpha1/deprecation_webhook.go, api/workloads/v1alpha2/*_admission.go, cmd/rbgs/main.go, config/webhook/manifests.yaml",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "round 1: base's own test asserts 'deprecated workload types enabled, StatefulSet - no error' (results/premise-base.txt); api/workloads/v1alpha1/ on base 885d655 contains zero webhook markers. round 2: base moved to a2e797c6 (#514, test/e2e infra + vendor only — no api/, config/, cmd/, internal/, pkg/ files), so the premise evidence carries over verbatim; re-confirmed zero kubebuilder:webhook markers in api/workloads/v1alpha1/ on a2e797c6.",
+    "match": [
+      "TestRoleBasedGroupValidator_ValidateCreate_DeprecatedWorkloadTypesDisabled"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./api/workloads/v1alpha1 ./api/workloads/v1alpha2 ./cmd/rbgs ./internal/controller/workloads ./test/envtest/testcase/deprecation/... ./test/envtest/testcase/webhook/..."
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64}\" go test -count=1 ./test/envtest/testcase/deprecationv1a1/... ./test/envtest/testcase/deprecationv1a1outage/... ./test/envtest/testcase/deprecationv1a1spoof/..."
+    }
+  },
+  "findings": [
+    {
+      "id": "GATE-V1A1-WIRING",
+      "polarity": "contract",
+      "layer": "integration",
+      "status": "fixed-in-repo",
+      "note": "Round 2: the PR itself now ships this coverage in-repo at test/envtest/testcase/deprecationv1a1 (grafted from this harness's round-1 suite). The specs below run from the PR's own tree, not from the grafted harness; re-verify runs them via the integration layer command.",
+      "match": [
+        "returns the on-the-wire deprecation warning for v1alpha1 creates",
+        "returns the on-the-wire deprecation warning for v1alpha1 updates",
+        "returns the on-the-wire warning for a warning-only kind create",
+        "rejects a new deprecated workload use through the v1alpha1 API",
+        "rejects a new deprecated workload use in a v1alpha1 set template",
+        "does not warn on v1alpha2 writes through Exact match policy",
+        "leaves v1alpha1 deletes ungated by the deprecation webhooks"
+      ]
+    },
+    {
+      "id": "F2-WARNING-ONLY-OUTAGE",
+      "polarity": "contract",
+      "layer": "integration",
+      "status": "fixed",
+      "note": "F2: the four warning-only v1alpha1 webhooks must not block writes when unreachable. Fixed on 22acc570 (failurePolicy=ignore in markers + both shipped manifests). Bite check: reverting the manifest to Fail makes the contract spec fail with 'connection refused' (results/bite-outage-policy-fail.txt).",
+      "match": [
+        "admits a v1alpha1 InstanceSet write while the warning-only webhooks are unreachable",
+        "rejects the same write when the identical dead endpoint carries failurePolicy=Fail"
+      ]
+    },
+    {
+      "id": "F3-SPOOF-EXEMPTION",
+      "polarity": "canary",
+      "layer": "integration",
+      "status": "open",
+      "note": "F3 canary: pins the current permissive behavior. Still green on 22acc570 — the exemption is still claimable by any writer that knows the parent's name and UID, and the docstring still overclaims. If the gate is tightened, this spec flips red and must be inverted.",
+      "match": [
+        "grants the exemption to an ordinary writer that knows the parent's name and UID"
+      ]
+    }
+  ],
+  "liveNote": "L3 not run per round policy (no KUBECONFIG). Unit + integration layers cover the gate decision logic, manifest wiring, warning delivery, and the outage fail-open contract. The e2e layers (compat expectations, upgrade fixtures, #514 pod-failure interaction) are exercised by the PR's CI matrix, which is green on 22acc570."
+}

@@ -1,0 +1,15 @@
+# PR #524 round-2 (head 22acc570) — PR's in-repo v1alpha1 contract suite (AC11)
+# command: go test -count=1 -v ./test/envtest/testcase/deprecationv1a1/...
+=== RUN   TestV1alpha1DeprecationContract
+Running Suite: v1alpha1 Deprecation Contract Suite - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1
+=====================================================================================================================================================================
+Random Seed: [1m1793436812[0m
+
+Will run [1m7[0m of [1m7[0m specs
+[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m
+
+[38;5;10m[1mRan 7 of 7 Specs in 5.558 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m7 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- PASS: TestV1alpha1DeprecationContract (5.56s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/deprecationv1a1	5.575s
