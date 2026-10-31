@@ -1,0 +1,10 @@
+=== RUN   TestVerifyPR532_P0_CollidingHostNetworkPodsDeclareHostPort
+    zz_verify_pr532_test.go:97: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg-wt-pr532-base/pkg/port-allocator/zz_verify_pr532_test.go:97
+        	Error:      	"[]" should have 1 item(s), but has 0
+        	Test:       	TestVerifyPR532_P0_CollidingHostNetworkPodsDeclareHostPort
+        	Messages:   	host-network pod verify-instance-worker-0 must declare the colliding port so the scheduler can spread them
+--- FAIL: TestVerifyPR532_P0_CollidingHostNetworkPodsDeclareHostPort (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/port-allocator	0.012s
+FAIL

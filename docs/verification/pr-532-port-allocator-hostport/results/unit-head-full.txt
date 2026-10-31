@@ -1,0 +1,166 @@
+=== RUN   TestInjectPortsIntoPodRejectsInvalidPortValues
+=== RUN   TestInjectPortsIntoPodRejectsInvalidPortValues/empty_value
+=== RUN   TestInjectPortsIntoPodRejectsInvalidPortValues/zero
+=== RUN   TestInjectPortsIntoPodRejectsInvalidPortValues/negative_value
+=== RUN   TestInjectPortsIntoPodRejectsInvalidPortValues/above_maximum
+=== RUN   TestInjectPortsIntoPodRejectsInvalidPortValues/non-numeric_value
+--- PASS: TestInjectPortsIntoPodRejectsInvalidPortValues (0.00s)
+    --- PASS: TestInjectPortsIntoPodRejectsInvalidPortValues/empty_value (0.00s)
+    --- PASS: TestInjectPortsIntoPodRejectsInvalidPortValues/zero (0.00s)
+    --- PASS: TestInjectPortsIntoPodRejectsInvalidPortValues/negative_value (0.00s)
+    --- PASS: TestInjectPortsIntoPodRejectsInvalidPortValues/above_maximum (0.00s)
+    --- PASS: TestInjectPortsIntoPodRejectsInvalidPortValues/non-numeric_value (0.00s)
+=== RUN   TestInjectPortsIntoPodRequiresRegularContainer
+--- PASS: TestInjectPortsIntoPodRequiresRegularContainer (0.00s)
+=== RUN   TestInjectPortsIntoPodHandlesExistingPortDeclarations
+=== RUN   TestInjectPortsIntoPodHandlesExistingPortDeclarations/reuses_an_existing_non-host-network_container_port
+=== RUN   TestInjectPortsIntoPodHandlesExistingPortDeclarations/fills_the_host_port_for_an_existing_host-network_container_port
+=== RUN   TestInjectPortsIntoPodHandlesExistingPortDeclarations/reuses_an_identical_host-network_port_declaration
+=== RUN   TestInjectPortsIntoPodHandlesExistingPortDeclarations/rejects_a_host-network_declaration_with_mismatched_host_and_container_ports
+=== RUN   TestInjectPortsIntoPodHandlesExistingPortDeclarations/rejects_an_existing_host_port_mapped_to_another_container_port
+=== RUN   TestInjectPortsIntoPodHandlesExistingPortDeclarations/keeps_declarations_for_different_protocols_separate
+--- PASS: TestInjectPortsIntoPodHandlesExistingPortDeclarations (0.00s)
+    --- PASS: TestInjectPortsIntoPodHandlesExistingPortDeclarations/reuses_an_existing_non-host-network_container_port (0.00s)
+    --- PASS: TestInjectPortsIntoPodHandlesExistingPortDeclarations/fills_the_host_port_for_an_existing_host-network_container_port (0.00s)
+    --- PASS: TestInjectPortsIntoPodHandlesExistingPortDeclarations/reuses_an_identical_host-network_port_declaration (0.00s)
+    --- PASS: TestInjectPortsIntoPodHandlesExistingPortDeclarations/rejects_a_host-network_declaration_with_mismatched_host_and_container_ports (0.00s)
+    --- PASS: TestInjectPortsIntoPodHandlesExistingPortDeclarations/rejects_an_existing_host_port_mapped_to_another_container_port (0.00s)
+    --- PASS: TestInjectPortsIntoPodHandlesExistingPortDeclarations/keeps_declarations_for_different_protocols_separate (0.00s)
+=== RUN   TestInjectPortsIntoPodReusesPortWithOmittedProtocol
+=== RUN   TestInjectPortsIntoPodReusesPortWithOmittedProtocol/non-host-network_pod
+=== RUN   TestInjectPortsIntoPodReusesPortWithOmittedProtocol/host-network_pod
+--- PASS: TestInjectPortsIntoPodReusesPortWithOmittedProtocol (0.00s)
+    --- PASS: TestInjectPortsIntoPodReusesPortWithOmittedProtocol/non-host-network_pod (0.00s)
+    --- PASS: TestInjectPortsIntoPodReusesPortWithOmittedProtocol/host-network_pod (0.00s)
+=== RUN   TestInjectPortsIntoPodReusesPortDeclaredInLaterContainer
+=== RUN   TestInjectPortsIntoPodReusesPortDeclaredInLaterContainer/non-host-network_pod
+=== RUN   TestInjectPortsIntoPodReusesPortDeclaredInLaterContainer/host-network_pod
+--- PASS: TestInjectPortsIntoPodReusesPortDeclaredInLaterContainer (0.00s)
+    --- PASS: TestInjectPortsIntoPodReusesPortDeclaredInLaterContainer/non-host-network_pod (0.00s)
+    --- PASS: TestInjectPortsIntoPodReusesPortDeclaredInLaterContainer/host-network_pod (0.00s)
+=== RUN   TestInjectPortsIntoPodRejectsLaterContainerHostPortConflict
+--- PASS: TestInjectPortsIntoPodRejectsLaterContainerHostPortConflict (0.00s)
+=== RUN   TestInjectPortsIntoPodOnlyDeclaresPortsOnFirstRegularContainer
+--- PASS: TestInjectPortsIntoPodOnlyDeclaresPortsOnFirstRegularContainer (0.00s)
+=== RUN   TestParsePortAllocatorConfig
+=== RUN   TestParsePortAllocatorConfig/nil_pod
+=== RUN   TestParsePortAllocatorConfig/no_annotation
+=== RUN   TestParsePortAllocatorConfig/valid_config_with_pod-scoped_allocation
+=== RUN   TestParsePortAllocatorConfig/valid_config_with_role-scoped_allocation
+=== RUN   TestParsePortAllocatorConfig/config_with_references
+=== RUN   TestParsePortAllocatorConfig/invalid_JSON
+=== RUN   TestParsePortAllocatorConfig/missing_required_name_field
+=== RUN   TestParsePortAllocatorConfig/missing_required_env_field
+=== RUN   TestParsePortAllocatorConfig/default_scope_to_PodScoped
+=== RUN   TestParsePortAllocatorConfig/default_protocol_to_TCP
+=== RUN   TestParsePortAllocatorConfig/valid_protocol
+=== RUN   TestParsePortAllocatorConfig/valid_SCTP_protocol
+=== RUN   TestParsePortAllocatorConfig/invalid_scope_value
+=== RUN   TestParsePortAllocatorConfig/invalid_protocol_value
+--- PASS: TestParsePortAllocatorConfig (0.00s)
+    --- PASS: TestParsePortAllocatorConfig/nil_pod (0.00s)
+    --- PASS: TestParsePortAllocatorConfig/no_annotation (0.00s)
+    --- PASS: TestParsePortAllocatorConfig/valid_config_with_pod-scoped_allocation (0.00s)
+    --- PASS: TestParsePortAllocatorConfig/valid_config_with_role-scoped_allocation (0.00s)
+    --- PASS: TestParsePortAllocatorConfig/config_with_references (0.00s)
+    --- PASS: TestParsePortAllocatorConfig/invalid_JSON (0.00s)
+    --- PASS: TestParsePortAllocatorConfig/missing_required_name_field (0.00s)
+    --- PASS: TestParsePortAllocatorConfig/missing_required_env_field (0.00s)
+    --- PASS: TestParsePortAllocatorConfig/default_scope_to_PodScoped (0.00s)
+    --- PASS: TestParsePortAllocatorConfig/default_protocol_to_TCP (0.00s)
+    --- PASS: TestParsePortAllocatorConfig/valid_protocol (0.00s)
+    --- PASS: TestParsePortAllocatorConfig/valid_SCTP_protocol (0.00s)
+    --- PASS: TestParsePortAllocatorConfig/invalid_scope_value (0.00s)
+    --- PASS: TestParsePortAllocatorConfig/invalid_protocol_value (0.00s)
+=== RUN   TestGetPodScopedAllocations
+--- PASS: TestGetPodScopedAllocations (0.00s)
+=== RUN   TestGetRoleScopedAllocations
+--- PASS: TestGetRoleScopedAllocations (0.00s)
+=== RUN   TestParseReference
+=== RUN   TestParseReference/valid_reference
+=== RUN   TestParseReference/valid_reference_with_numbers
+=== RUN   TestParseReference/empty_reference
+=== RUN   TestParseReference/missing_port_name
+=== RUN   TestParseReference/missing_component_name
+=== RUN   TestParseReference/missing_role_name
+=== RUN   TestParseReference/no_dot
+=== RUN   TestParseReference/only_two_parts
+--- PASS: TestParseReference (0.00s)
+    --- PASS: TestParseReference/valid_reference (0.00s)
+    --- PASS: TestParseReference/valid_reference_with_numbers (0.00s)
+    --- PASS: TestParseReference/empty_reference (0.00s)
+    --- PASS: TestParseReference/missing_port_name (0.00s)
+    --- PASS: TestParseReference/missing_component_name (0.00s)
+    --- PASS: TestParseReference/missing_role_name (0.00s)
+    --- PASS: TestParseReference/no_dot (0.00s)
+    --- PASS: TestParseReference/only_two_parts (0.00s)
+=== RUN   TestFormatPortKey
+--- PASS: TestFormatPortKey (0.00s)
+=== RUN   TestHasPortAllocatorConfig
+--- PASS: TestHasPortAllocatorConfig (0.00s)
+=== RUN   TestPodScopedPortAllocation
+--- PASS: TestPodScopedPortAllocation (0.00s)
+=== RUN   TestRoleScopedPortAllocation
+--- PASS: TestRoleScopedPortAllocation (0.00s)
+=== RUN   TestInjectPortsIntoPod
+--- PASS: TestInjectPortsIntoPod (0.00s)
+=== RUN   TestInjectPortsIntoPodWithoutHostNetworkOmitsHostPort
+--- PASS: TestInjectPortsIntoPodWithoutHostNetworkOmitsHostPort (0.00s)
+=== RUN   TestInjectPortsIntoPodUsesConfiguredProtocol
+--- PASS: TestInjectPortsIntoPodUsesConfiguredProtocol (0.00s)
+=== RUN   TestGetReferencePodName
+=== RUN   TestGetReferencePodName/worker_to_leader_reference_(ComponentsTemplateType)
+=== RUN   TestGetReferencePodName/leader_to_worker_reference_(ComponentsTemplateType)
+=== RUN   TestGetReferencePodName/worker_to_leader_reference_(LWS_pattern)
+=== RUN   TestGetReferencePodName/leader_reference_from_worker_pod_(LWS_pattern)
+--- PASS: TestGetReferencePodName (0.00s)
+    --- PASS: TestGetReferencePodName/worker_to_leader_reference_(ComponentsTemplateType) (0.00s)
+    --- PASS: TestGetReferencePodName/leader_to_worker_reference_(ComponentsTemplateType) (0.00s)
+    --- PASS: TestGetReferencePodName/worker_to_leader_reference_(LWS_pattern) (0.00s)
+    --- PASS: TestGetReferencePodName/leader_reference_from_worker_pod_(LWS_pattern) (0.00s)
+=== RUN   TestPortRangeValidation
+--- PASS: TestPortRangeValidation (0.00s)
+=== RUN   TestMultiplePodsPodScopedPorts
+--- PASS: TestMultiplePodsPodScopedPorts (0.00s)
+=== RUN   TestParsePortAllocatorConfigFromAnnotations
+=== RUN   TestParsePortAllocatorConfigFromAnnotations/nil_annotations
+=== RUN   TestParsePortAllocatorConfigFromAnnotations/no_port_allocator_annotation
+=== RUN   TestParsePortAllocatorConfigFromAnnotations/valid_config
+=== RUN   TestParsePortAllocatorConfigFromAnnotations/invalid_JSON
+--- PASS: TestParsePortAllocatorConfigFromAnnotations (0.00s)
+    --- PASS: TestParsePortAllocatorConfigFromAnnotations/nil_annotations (0.00s)
+    --- PASS: TestParsePortAllocatorConfigFromAnnotations/no_port_allocator_annotation (0.00s)
+    --- PASS: TestParsePortAllocatorConfigFromAnnotations/valid_config (0.00s)
+    --- PASS: TestParsePortAllocatorConfigFromAnnotations/invalid_JSON (0.00s)
+=== RUN   TestRandomAllocator_AllocateBatch
+=== RUN   TestRandomAllocator_AllocateBatch/allocate_single_port
+=== RUN   TestRandomAllocator_AllocateBatch/allocate_multiple_ports
+=== RUN   TestRandomAllocator_AllocateBatch/allocate_zero_ports
+=== RUN   TestRandomAllocator_AllocateBatch/allocate_negative_ports
+=== RUN   TestRandomAllocator_AllocateBatch/allocate_more_than_range
+--- PASS: TestRandomAllocator_AllocateBatch (0.00s)
+    --- PASS: TestRandomAllocator_AllocateBatch/allocate_single_port (0.00s)
+    --- PASS: TestRandomAllocator_AllocateBatch/allocate_multiple_ports (0.00s)
+    --- PASS: TestRandomAllocator_AllocateBatch/allocate_zero_ports (0.00s)
+    --- PASS: TestRandomAllocator_AllocateBatch/allocate_negative_ports (0.00s)
+    --- PASS: TestRandomAllocator_AllocateBatch/allocate_more_than_range (0.00s)
+=== RUN   TestRandomAllocator_PortRange
+--- PASS: TestRandomAllocator_PortRange (0.00s)
+=== RUN   TestRandomAllocator_UniquePorts
+--- PASS: TestRandomAllocator_UniquePorts (0.00s)
+=== RUN   TestRandomAllocator_Release
+--- PASS: TestRandomAllocator_Release (0.00s)
+=== RUN   TestRandomAllocator_Start
+--- PASS: TestRandomAllocator_Start (0.00s)
+=== RUN   TestRandomAllocator_Registration
+--- PASS: TestRandomAllocator_Registration (0.00s)
+=== RUN   TestVerifyPR532_P0_CollidingHostNetworkPodsDeclareHostPort
+--- PASS: TestVerifyPR532_P0_CollidingHostNetworkPodsDeclareHostPort (0.00s)
+=== RUN   TestVerifyPR532_AC2_NonHostNetworkOmitsHostPort
+--- PASS: TestVerifyPR532_AC2_NonHostNetworkOmitsHostPort (0.00s)
+=== RUN   TestVerifyPR532_AC4_CrossBatchCollisionSamePodSameProtocol
+--- PASS: TestVerifyPR532_AC4_CrossBatchCollisionSamePodSameProtocol (0.00s)
+=== RUN   TestVerifyPR532_AC4_ConflictingUserHostPortFailsClosed
+--- PASS: TestVerifyPR532_AC4_ConflictingUserHostPortFailsClosed (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/port-allocator	0.014s

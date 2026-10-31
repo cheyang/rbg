@@ -1,0 +1,22 @@
+=== RUN   TestVerifyPR532Envtest
+=== RUN   TestVerifyPR532Envtest/InjectedPodSpecsAcceptedByAPIServer
+=== RUN   TestVerifyPR532Envtest/InjectedPodSpecsAcceptedByAPIServer/hostnetwork-tcp
+=== RUN   TestVerifyPR532Envtest/InjectedPodSpecsAcceptedByAPIServer/hostnetwork-udp
+=== RUN   TestVerifyPR532Envtest/InjectedPodSpecsAcceptedByAPIServer/hostnetwork-sctp
+=== RUN   TestVerifyPR532Envtest/InjectedPodSpecsAcceptedByAPIServer/regular-tcp
+=== RUN   TestVerifyPR532Envtest/APIServerDefaultsHostNetworkHostPort
+=== RUN   TestVerifyPR532Envtest/APIServerDefaultsHostNetworkHostPort/hostnetwork
+    apiserver_defaulting_test.go:80: hostNetwork=true: apiserver returned hostPort=30000
+=== RUN   TestVerifyPR532Envtest/APIServerDefaultsHostNetworkHostPort/regular
+    apiserver_defaulting_test.go:80: hostNetwork=false: apiserver returned hostPort=0
+--- PASS: TestVerifyPR532Envtest (2.58s)
+    --- PASS: TestVerifyPR532Envtest/InjectedPodSpecsAcceptedByAPIServer (0.01s)
+        --- PASS: TestVerifyPR532Envtest/InjectedPodSpecsAcceptedByAPIServer/hostnetwork-tcp (0.00s)
+        --- PASS: TestVerifyPR532Envtest/InjectedPodSpecsAcceptedByAPIServer/hostnetwork-udp (0.00s)
+        --- PASS: TestVerifyPR532Envtest/InjectedPodSpecsAcceptedByAPIServer/hostnetwork-sctp (0.00s)
+        --- PASS: TestVerifyPR532Envtest/InjectedPodSpecsAcceptedByAPIServer/regular-tcp (0.00s)
+    --- PASS: TestVerifyPR532Envtest/APIServerDefaultsHostNetworkHostPort (0.10s)
+        --- PASS: TestVerifyPR532Envtest/APIServerDefaultsHostNetworkHostPort/hostnetwork (0.00s)
+        --- PASS: TestVerifyPR532Envtest/APIServerDefaultsHostNetworkHostPort/regular (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/verifypr532	2.597s
