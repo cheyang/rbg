@@ -86,12 +86,13 @@
     },
     {
       "id": "F5",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "integration",
       "match": [
-        "shipped_policy_(Fail):_outage_blocks_a_warning-only_v1alpha1_write",
-        "fixed_policy_(Ignore):_outage_does_not_block_the_write"
-      ]
+        "TestShippedWarningOnlyPolicy",
+        "TestWarningOnlyWebhookOutage"
+      ],
+      "note": "Ledger F2 fixed in 22acc570: warning-only v1alpha1 webhooks now ship failurePolicy=Ignore. Canary inverted into shipped-bytes contract TestShippedWarningOnlyPolicy (parses the shipped manifests; red on pre-fix head 993dcf10, green on 22acc570); TestWarningOnlyWebhookOutage kept as the self-contained outage-mechanism demo with renamed subtests."
     },
     {
       "id": "F6",

@@ -99,25 +99,24 @@ func installInstanceSetWebhook(t *testing.T, name string, policy admissionregist
 	}
 }
 
-// TestWarningOnlyWebhookOutage demonstrates the consequence of the shipped
-// configuration (F5): the four warning-only v1alpha1 deprecation webhooks
-// (Instance, InstanceSet, ScalingAdapter, ClusterEngineRuntimeProfile) carry
-// failurePolicy=Fail on CREATE+UPDATE, so while the webhook server is
-// unreachable every v1alpha1 write to those legacy types is rejected — with
-// zero enforcement value, because the handler can only ever return a warning.
-// The same PR deliberately does NOT register DELETE for exactly this reason;
-// the demo also confirms deletes stay unblocked under the shipped verb set.
+// TestWarningOnlyWebhookOutage demonstrates the outage mechanism behind
+// ledger F2: with failurePolicy=Fail a dead warning-only webhook rejects every
+// v1alpha1 write to that kind — with zero enforcement value, because the
+// handler can only ever return a warning — while failurePolicy=Ignore admits
+// the same write. The shipped bytes themselves are pinned by
+// TestShippedWarningOnlyPolicy (warning-only = Ignore since 22acc570); this
+// test stays as the self-contained mechanism proof and regression demo for why
+// the policy choice matters. The same PR deliberately does NOT register DELETE
+// for exactly this reason; TestDeleteNotInterceptedDuringOutage covers that.
 //
-// Polarity: contract — "a warning-only webhook outage must not block writes".
-// The Fail-policy subtest fails against the shipped policy shape; the Ignore
-// subtest is the control proving the harness exercises the outage path.
+// Polarity: contract — both subtests assert the intended mechanism behavior.
 func TestWarningOnlyWebhookOutage(t *testing.T) {
 	ensureNamespace(t)
 	ops := []admissionregistrationv1.OperationType{
 		admissionregistrationv1.Create, admissionregistrationv1.Update,
 	}
 
-	t.Run("shipped policy (Fail): outage blocks a warning-only v1alpha1 write", func(t *testing.T) {
+	t.Run("Fail policy blocks a warning-only v1alpha1 write during outage", func(t *testing.T) {
 		installInstanceSetWebhook(t, "outage-fail", admissionregistrationv1.Fail, ops)
 		err := k8sClient.Create(testCtx, instanceSetV1alpha1("blocked-write"))
 		if err == nil {
@@ -126,10 +125,10 @@ func TestWarningOnlyWebhookOutage(t *testing.T) {
 		if !strings.Contains(err.Error(), "failed calling webhook") {
 			t.Fatalf("unexpected error shape: %v", err)
 		}
-		t.Logf("observed (shipped policy): %v", err)
+		t.Logf("observed (Fail policy): %v", err)
 	})
 
-	t.Run("fixed policy (Ignore): outage does not block the write", func(t *testing.T) {
+	t.Run("Ignore policy does not block the write during outage", func(t *testing.T) {
 		installInstanceSetWebhook(t, "outage-ignore", admissionregistrationv1.Ignore, ops)
 		if err := k8sClient.Create(testCtx, instanceSetV1alpha1("allowed-write")); err != nil {
 			t.Fatalf("Ignore policy must admit during outage, got: %v", err)
