@@ -16,7 +16,9 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "RandomAllocator guarantees uniqueness only within one AllocateBatch call (random.go doc comment); per-pod PodScoped allocations are separate calls. Deterministic repro with a 1-port range: two AllocateBatch calls both return 30000; on base d162208e the injected host-network pods declare zero container ports, so the scheduler's NodePorts plugin sees nothing (results/unit-base-p0.txt). On head c05052c2 both pods declare hostPort == containerPort == 30000 (results/unit-head-full.txt).",
-    "match": ["TestVerifyPR532_P0_CollidingHostNetworkPodsDeclareHostPort"]
+    "match": [
+      "TestVerifyPR532_P0_CollidingHostNetworkPodsDeclareHostPort"
+    ]
   },
   "layers": {
     "unit": {
@@ -25,18 +27,81 @@
     },
     "integration": {
       "kind": "gotest",
-      "cmd": "KUBEBUILDER_ASSETS=$(bin/setup-envtest use 1.31.0 --bin-dir bin -p path 2>/dev/null || echo $KUBEBUILDER_ASSETS) go test -count=1 -v ./test/envtest/testcase/verifypr532/ -json"
+      "cmd": "KUBEBUILDER_ASSETS=$(if [ -x bin/setup-envtest ]; then bin/setup-envtest use 1.31.0 --bin-dir bin -p path; elif command -v setup-envtest >/dev/null 2>&1; then setup-envtest use 1.31.0 -p path; else go run sigs.k8s.io/controller-runtime/tools/setup-envtest@release-0.20 use 1.31.0 -p path; fi) go test -count=1 ./test/envtest/testcase/verifypr532/ -json"
     }
   },
   "findings": [
-    { "id": "AC1", "polarity": "contract", "layer": "unit",        "match": ["TestVerifyPR532_P0_CollidingHostNetworkPodsDeclareHostPort"] },
-    { "id": "AC1", "polarity": "contract", "layer": "integration", "match": ["InjectedPodSpecsAcceptedByAPIServer/hostnetwork-tcp", "InjectedPodSpecsAcceptedByAPIServer/hostnetwork-udp", "InjectedPodSpecsAcceptedByAPIServer/hostnetwork-sctp"] },
-    { "id": "AC2", "polarity": "contract", "layer": "unit",        "match": ["TestVerifyPR532_AC2_NonHostNetworkOmitsHostPort"] },
-    { "id": "AC2", "polarity": "contract", "layer": "integration", "match": ["InjectedPodSpecsAcceptedByAPIServer/regular-tcp"] },
-    { "id": "AC3", "polarity": "contract", "layer": "unit",        "match": ["TestInjectPortsIntoPodRejectsInvalidPortValues", "TestParsePortAllocatorConfig"] },
-    { "id": "AC4", "polarity": "contract", "layer": "unit",        "match": ["TestVerifyPR532_AC4_CrossBatchCollisionSamePodSameProtocol", "TestVerifyPR532_AC4_ConflictingUserHostPortFailsClosed", "TestInjectPortsIntoPodHandlesExistingPortDeclarations", "TestInjectPortsIntoPodRejectsLaterContainerHostPortConflict", "TestInjectPortsIntoPodReusesPortDeclaredInLaterContainer"] },
-    { "id": "AC6", "polarity": "contract", "layer": "integration", "match": ["InjectedPodSpecsAcceptedByAPIServer"] },
-    { "id": "F3-evidence", "polarity": "contract", "layer": "integration", "match": ["APIServerDefaultsHostNetworkHostPort"] }
+    {
+      "id": "AC1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR532_P0_CollidingHostNetworkPodsDeclareHostPort"
+      ]
+    },
+    {
+      "id": "AC1",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "InjectedPodSpecsAcceptedByAPIServer/hostnetwork-tcp",
+        "InjectedPodSpecsAcceptedByAPIServer/hostnetwork-udp",
+        "InjectedPodSpecsAcceptedByAPIServer/hostnetwork-sctp"
+      ]
+    },
+    {
+      "id": "AC2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR532_AC2_NonHostNetworkOmitsHostPort"
+      ]
+    },
+    {
+      "id": "AC2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "InjectedPodSpecsAcceptedByAPIServer/regular-tcp"
+      ]
+    },
+    {
+      "id": "AC3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestInjectPortsIntoPodRejectsInvalidPortValues",
+        "TestParsePortAllocatorConfig"
+      ]
+    },
+    {
+      "id": "AC4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR532_AC4_CrossBatchCollisionSamePodSameProtocol",
+        "TestVerifyPR532_AC4_ConflictingUserHostPortFailsClosed",
+        "TestInjectPortsIntoPodHandlesExistingPortDeclarations",
+        "TestInjectPortsIntoPodRejectsLaterContainerHostPortConflict",
+        "TestInjectPortsIntoPodReusesPortDeclaredInLaterContainer"
+      ]
+    },
+    {
+      "id": "AC6",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "InjectedPodSpecsAcceptedByAPIServer"
+      ]
+    },
+    {
+      "id": "F3-evidence",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "APIServerDefaultsHostNetworkHostPort"
+      ]
+    }
   ],
   "liveNote": "AC5 (two host-network pods sharing a RoleScoped port land on different nodes) is covered by the PR's own e2e test 'should spread host-network pods sharing a role-scoped host port', which requires >=2 Ready+schedulable nodes and therefore skips on the single-node CI kind cluster; not run in this harness (live layer out of scope). The scheduler-side mechanism is upstream kube-scheduler NodePorts behavior. Note: kube-apiserver defaultHostNetworkPorts defaults hostPort=containerPort for hostNetwork pods at admission, so persisted-pod assertions cannot distinguish controller-set from apiserver-defaulted hostPort."
 }
