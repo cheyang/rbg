@@ -1,0 +1,7 @@
+--- FAIL: TestStatefulPreDeleteBlocksAndReleases (0.05s)
+--- FAIL: TestStatefulPreDeletePatchFailureDoesNotDelete (0.00s)
+--- FAIL: TestStatefulPreDeleteScaleDownOrdering (0.00s)
+--- FAIL: TestStatefulPreDeleteRolloutKeepsCurrentReplicas (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.064s
+FAIL

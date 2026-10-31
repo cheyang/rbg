@@ -1,0 +1,13 @@
+--- FAIL: TestVerifyRegretRevertsPreparingDeleteState (0.04s)
+        	Error:      	Not equal: 
+--- FAIL: TestVerifyRegretLeavesInstanceUnavailableCanary (0.00s)
+        	Error:      	Not equal: 
+--- FAIL: TestVerifyRegretOrderedReadyFreezesScaleUpCanary (0.00s)
+        	Error:      	Not equal: 
+--- FAIL: TestVerifyOrderedReadyTerminatingCondemnedBlocksLowerCanary (0.00s)
+        	Error:      	Should be empty, but was [terminating-condemned-2 terminating-condemned-1]
+--- FAIL: TestVerifyMarkNotReadyWithoutGateIsNoOpCanary (0.00s)
+        	Error:      	Should be false
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.062s
+FAIL

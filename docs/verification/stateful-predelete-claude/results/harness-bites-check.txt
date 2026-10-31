@@ -1,0 +1,37 @@
+Harness-bites check (review-finding-verifier Step 4) — PR #535, finding F1
+=========================================================================
+Branch: verify/stateful-predelete-claude (production code == PR head 6d650165)
+
+1. Red on head (reproduction):
+   $ go test ./pkg/reconciler/roleinstanceset/statefulmode/ -run 'TestVerifyRegretRevertsPreparingDeleteState' -v
+   --- FAIL: TestVerifyRegretRevertsPreparingDeleteState
+        Error: Not equal: expected: "Normal", actual: "PreparingDelete"
+
+2. Apply the proposed minimal fix (reviewer-local, NOT committed):
+   Added to updateStatefulInstanceSet, after persistTerminatingRolloutReplacement,
+   a stateless-parity revert for in-range instances still labeled PreparingDelete
+   (gated on !instancelifecycle.IsLifecycleMarkRoleInstanceNotReady, mirroring
+   statelessmode sync.managePreparingDelete).
+
+   $ go test ./pkg/reconciler/roleinstanceset/statefulmode/ -run 'TestVerify|TestStatefulPreDelete'
+   ok    sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode  0.081s
+   -> contract test goes green, PR's own tests stay green.
+
+3. Revert the fix:
+   $ git checkout -- pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go
+   $ git status --short
+   ?? pkg/reconciler/roleinstanceset/statefulmode/verify_predelete_gaps_test.go   (harness only)
+   $ go test ./pkg/reconciler/roleinstanceset/statefulmode/ -run 'TestVerify'
+   FAIL   (contract test red again)
+
+Conclusion: the F1 test exercises the real code path and bites — it fails for
+the intended reason and flips when a plausible fix is applied. The production
+diff on this branch is empty (harness is additive only).
+
+Note: the canaries for the MarkNotReady=true variants
+(TestVerifyRegretLeavesInstanceUnavailableCanary,
+TestVerifyRegretOrderedReadyFreezesScaleUpCanary) intentionally stay green with
+this minimal fix, because stateless mode also deliberately refuses to revert
+PreparingDelete once MarkNotReady is set (see the comment in
+statelessmode/sync/scale.go managePreparingDelete). They document the residual
+gap that needs the Task-2 readiness work.
