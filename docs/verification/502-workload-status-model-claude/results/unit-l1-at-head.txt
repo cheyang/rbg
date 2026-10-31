@@ -1,0 +1,15 @@
+# check_kep502.py at PR head f05e1dd (unit layer, L1) — 2026-10-31T08:08:22Z
+# contract checks C2-C4 RED => findings F2-F4 present in the KEP; C1/C5/C6 green.
+
+  [C1-retained-fields-exist] PASS: RIS 'retains' and RI 'Preserve' inventories all exist in the current API
+  [C2-progressing-reasons-defined] FAIL: candidate reasons: Preparing, Creating, ScalingOrUpdating, Recovering; not defined/used elsewhere: Preparing (1 line(s))
+  [C3-reason-collision-ack] FAIL: unacknowledged near-colliding reason pairs: RoleNotReady vs RolesNotReady
+  [C4-ri-readiness-reasons-match-code] FAIL: KEP: {InPlaceUpdateNotReady, PodsNotReady, ReadinessGatesNotReady, Ready} vs code RoleInstanceReady reasons: {InplaceUpdateNotReady, PodsNotReady, ReadinessGatesNotReady, Ready}; diff: InPlaceUpdateNotReady, InplaceUpdateNotReady
+  [C5-premise-motivation-claims] PASS: KEP motivation claims vs base code: all verified accurate
+  [C6-yaml-examples-parse] PASS: 3/3 YAML example blocks parse; kep.yaml: OK
+C1-retained-fields-exist	pass
+C2-progressing-reasons-defined	fail
+C3-reason-collision-ack	fail
+C4-ri-readiness-reasons-match-code	fail
+C5-premise-motivation-claims	pass
+C6-yaml-examples-parse	pass

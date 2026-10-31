@@ -1,0 +1,73 @@
+{
+  "topic": "502-workload-status-model-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/528",
+  "reviewer": "claude",
+  "headSha": "f05e1dd83d2691e4157bf1bd3548fe405b2a49d5",
+  "baseSha": "885d655bd1b4c26e6d14837709eeda675f3ae886",
+  "harnessPaths": [
+    "docs/verification/502-workload-status-model-claude"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "KEP-502 motivation (docs-only PR, premise check run as motivation-claims verification): RBG/RIS/RI lack status.phase today; RBG declares Progressing and RollingUpdateInProgress but the built-in controllers never write them; RBG Ready reflects all-replicas readiness without revision convergence; RIS/RI record operation failures as FailedScale/FailedUpdate conditions.",
+    "reportedComponent": "api/workloads/v1alpha2/{rolebasedgroup,roleinstanceset,roleinstance}_types.go + internal/controller/workloads + pkg/reconciler",
+    "patchedComponent": "keps/502-workload-status-model/ (design document only; no API/controller changes in this PR)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "C5 green at head (results/unit-l1-at-head.txt): no json:\"phase\" tag in any of the three v1alpha2 status types; zero writes of RoleBasedGroupProgressing / RoleBasedGroupRollingUpdateInProgress / \"Progressing\" / \"RollingUpdateInProgress\" in internal/ and pkg/ non-test Go; FailedScale/FailedUpdate declared in v1alpha2 RIS and RI condition enums and written by statelessmode/reconciler.go:237,251 and instance_reconciler.go:191,235; RBG Ready computed purely from role.Replicas == rs.Replicas == rs.ReadyReplicas (rolebasedgroup_controller.go:783-793) with no revision check, reasons AllRolesReady/RoleNotReady at :796/:804.",
+    "match": ["C5-premise-motivation-claims"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "script",
+      "cmd": "python3 -I docs/verification/502-workload-status-model-claude/scripts/check_kep502.py"
+    },
+    "integration": {
+      "kind": "script",
+      "cmd": "bash docs/verification/502-workload-status-model-claude/scripts/lint.sh ."
+    }
+  },
+  "findings": [
+    {
+      "id": "F2-undefined-reason-preparing",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["C2-progressing-reasons-defined"],
+      "firstSeenSha": "f05e1dd83d2691e4157bf1bd3548fe405b2a49d5",
+      "note": "keps/502-workload-status-model/README.md:275 lists Preparing as a Progressing=True candidate reason, but it is never defined or used anywhere else in the KEP; the KEP's own rule (README.md:130) requires controller-written reasons to be valid and consistent. Fix: define it or drop it from the row."
+    },
+    {
+      "id": "F3-reason-collision-role-not-ready",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["C3-reason-collision-ack"],
+      "firstSeenSha": "f05e1dd83d2691e4157bf1bd3548fe405b2a49d5",
+      "note": "The KEP introduces RolesNotReady (ChildReadiness family reason for Progressing, README.md:158,276) alongside the retained RoleNotReady (Ready=False reason, README.md:222,278; matches code rolebasedgroup_controller.go:804). Two machine-readable strings on the same object differing by one letter, never called out. Fix: acknowledge the distinction explicitly or rename the family reason."
+    },
+    {
+      "id": "F4-inplace-reason-casing",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["C4-ri-readiness-reasons-match-code"],
+      "firstSeenSha": "f05e1dd83d2691e4157bf1bd3548fe405b2a49d5",
+      "note": "README.md:413 lists InPlaceUpdateNotReady as an RI aggregated-readiness candidate reason, but the current controller writes InplaceUpdateNotReady (pkg/reconciler/roleinstance/instance_status.go:298, lowercase p) for the RoleInstanceReady condition whose reasons the KEP marks retained/compatible. Case-sensitive mismatch. Fix: match the code spelling or explicitly mark the reason as renamed."
+    }
+  ],
+  "refutedHypotheses": [
+    {
+      "id": "F1-phantom-rollout-replacement-state",
+      "claim": "Reviewer hypothesis during stage 1: 'RIS retains ... rolloutReplacementState' names a field that does not exist in the current API, making the KEP's retained-field inventory factually wrong.",
+      "verdict": "refuted",
+      "evidence": "C1 green at head AND at base 885d655: api/workloads/v1alpha2/roleinstanceset_types.go:201 declares RolloutReplacementState *RolloutReplacementState json:\"rolloutReplacementState,omitempty\" in RoleInstanceSetStatus. The initial grep that suggested absence ran in a stale checkout at an older commit. All 12 retained fields named at README.md:340-341 and the three preserved RI fields at README.md:415 exist in the current API.",
+      "match": ["C1-retained-fields-exist"]
+    }
+  ],
+  "acceptanceChecks": {
+    "AC-retained-fields": "C1-retained-fields-exist (unit)",
+    "AC-doc-tooling": "C6-yaml-examples-parse (unit) + C7-markdownlint (integration)",
+    "AC-reason-consistency": "C2/C3/C4 (unit)"
+  },
+  "liveNote": "L3 skipped (debate setup: unit + integration layers only). This is a docs-only KEP PR; there is no live runtime signal to observe."
+}

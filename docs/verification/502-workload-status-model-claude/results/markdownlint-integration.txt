@@ -1,0 +1,8 @@
+# integration layer: markdownlint-cli2 with repo config (reproduces the PR body claim)
+
+C7-markdownlint	pass
+
+markdownlint-cli2 v0.24.0 (markdownlint v0.42.0)
+Finding: keps/502-workload-status-model/README.md
+Linting: 1 file
+Summary: 0 issues in 0 files

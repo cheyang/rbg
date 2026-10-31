@@ -1,0 +1,18 @@
+# harness-bites check: proposed fixes applied to a scratch copy (/tmp/kep502-bite)
+# C2/C3/C4 flip to pass => the tests exercise the defects; production KEP untouched.
+
+  [C1-retained-fields-exist] PASS: RIS 'retains' and RI 'Preserve' inventories all exist in the current API
+  [C2-progressing-reasons-defined] PASS: candidate reasons: Creating, ScalingOrUpdating, Recovering; not defined/used elsewhere: (none)
+  [C3-reason-collision-ack] PASS: unacknowledged near-colliding reason pairs: (none)
+  [C4-ri-readiness-reasons-match-code] PASS: KEP: {InplaceUpdateNotReady, PodsNotReady, ReadinessGatesNotReady, Ready} vs code RoleInstanceReady reasons: {InplaceUpdateNotReady, PodsNotReady, ReadinessGatesNotReady, Ready}; diff: (none)
+  [C5-premise-motivation-claims] PASS: KEP motivation claims vs base code: all verified accurate
+  [C6-yaml-examples-parse] PASS: 3/3 YAML example blocks parse; kep.yaml: OK
+C1-retained-fields-exist	pass
+C2-progressing-reasons-defined	pass
+C3-reason-collision-ack	pass
+C4-ri-readiness-reasons-match-code	pass
+C5-premise-motivation-claims	pass
+C6-yaml-examples-parse	pass
+
+# production diff after bite check (must be empty):
+(empty — clean)
