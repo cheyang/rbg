@@ -1,0 +1,2 @@
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/deprecation	6.525s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/webhook	30.316s

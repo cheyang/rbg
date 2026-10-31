@@ -1,7 +1,8 @@
 # PR #524 verification — 0.9.0 compatibility admission gate (core gate)
 
 PR: https://github.com/sgl-project/rbg/pull/524
-Reviewed head: `993dcf10c618f0b8f143ce2471d72d820126e260` (base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
+Reviewed head (round 2): `22acc57039523bf4fc7f28c47c93bd29961930ba` (base `a2e797c6aa5702059b4e3341f3d8837972df130f`)
+Round-1 head: `993dcf10c618f0b8f143ce2471d72d820126e260` (base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
 Reviewer: Codex (debate Reviewer B). Production code untouched; this branch adds tests + docs only.
 This PR is the first slice split out of the closed PR #509; findings F1–F4 from
 the #509 review (branch `verify/pr-509-deprecation-window-codex`) are carried
@@ -19,6 +20,24 @@ warning and no error (`results/premise-base.out`), and the base registers no
 v1alpha1 admission webhook at all. The same premise test FAILS on the PR head
 (`results/premise-head.out`) because the gate now rejects — polarity control.
 Component match: the problem and the patch both live in the admission webhooks.
+
+
+## Round 2 (head 22acc570, 2026-10-31) — re-verification
+
+The head was force-pushed: rebase onto `a2e797c` (#514; the only base delta,
+which already contained the `inactive_pod.go` rewrite, so the old fixture
+hunk was dropped unchanged in effect) plus one new commit `22acc570`
+("fail-open warning-only webhooks and pin the v1alpha1 contract").
+
+| Ledger ID | Harness | Round-1 verdict | Round-2 observed | Verdict |
+|-----------|---------|-----------------|------------------|---------|
+| F2 (warning-only webhooks ship Fail) | harness F5 canary + check-shipped-webhook-policy.sh | Confirmed (major) | shipped bytes now: 4 warning-only `Ignore`, 2 enforcing `Fail`, no DELETE (`results/shipped-webhook-policy-22acc570.out`); new contract `TestShippedWarningOnlyPolicy` red on 993dcf10 bytes, green on head; outage mechanism demo green | **Fixed** |
+| F1/missingTests (no in-repo v1alpha1 admission coverage) | PR's own new `test/envtest/testcase/deprecationv1a1` | open (major) | PR now ships a 7-spec envtest suite that installs the shipped `config/webhook/manifests.yaml` against the production manager registrations and asserts on-the-wire warnings, new-use rejection (RBG + set template), Exact routing, ungated deletes: 7/7 green on head (`results/pr-suite-deprecationv1a1-22acc570.txt`); bite-checked: neutered warning fails spec 1 (`...-bite-warning.txt`), neutered gate fails the BeforeSuite readiness probe (`...-bite-gate.txt`); wired into CI (`go test ./test/envtest/testcase/...`, envtest job green) | **Fixed** |
+| F3 (exemption forgeable / docstring overclaims) | harness F6 canary | Confirmed (minor) | exemption code unchanged (range-diff: only commit 3's fixture hunk + new commit); canary still green = forged ownerRef with known UID still admitted | **Still open (minor)** |
+| F4/F7/O1 (nits: fixture names, dead objectKey, hint spelling) | static | open | `objectKey` still present (deprecation_webhook.go:181); hint and fixture names untouched by 22acc570 | **Still open (nit)** |
+| Copilot advisories C4381195150 / C4381195073 / C4381195209 | code inspection | unconfirmed | all three addressed in 22acc570 (debug.go checks RoleInstanceSet first; compat checker asserts per-component template metadata — component names `leader`/`worker`/`role.Name` cross-checked against pkg/reconciler/roleinstanceset_reconciler.go:442-498; upgrade fixtures pin StatefulSet/LeaderWorkerSet explicitly) | **Fixed (by inspection; e2e layer not run locally)** |
+| Regression sweep | re-verify.sh unit+integration | — | all carried contracts green on 22acc570 (F1-F4 harness, E1-E3); PR unit tests + envtest deprecation/webhook suites green (`results/pr-unit-22acc570.txt`, `results/pr-envtest-22acc570.txt`); `make manifests` byte-idempotent | **No regression** |
+| CI | gh pr checks | success (previous head) | all checks pass on 22acc570 (unit-test, envtest, lint, 12 e2e jobs incl. v1alpha1 + manifest-installation) | **success** |
 
 ## Findings and observed-vs-expected
 
@@ -101,10 +120,11 @@ bash docs/verification/deprecation-admission-gate-codex/scripts/re-verify.sh
 ```
 
 (no ref needed: it fetches the current PR head from `manifest.pr`; the delta
-since the last round comes from `.last-reviewed`). Polarity: F1–F4 + E1–E3 are
-contract tests (green = good); F5/F6 are canaries pinning the current shipped
-behavior and FLIP red when fixed — invert or promote them to contract tests
-then.
+since the last round comes from `.last-reviewed`). Polarity: F1–F5 + E1–E3 are
+contract tests (green = good; F5 was inverted from a canary to the
+shipped-bytes contract `TestShippedWarningOnlyPolicy` after the 22acc570 fix).
+Only F6 remains a canary pinning the current exemption behavior — it FLIPS red
+when the exemption is hardened; invert or promote it then.
 
 ## Proposed fixes (reviewer suggestions, not applied)
 

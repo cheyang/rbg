@@ -1,0 +1,14 @@
+=== RUN   TestV1alpha1DeprecationContract
+Running Suite: v1alpha1 Deprecation Contract Suite - /tmp/rbg-head-22acc570/test/envtest/testcase/deprecationv1a1
+=================================================================================================================
+Random Seed: [1m1793436408[0m
+
+Will run [1m7[0m of [1m7[0m specs
+2026/10/31 16:46:53 http: TLS handshake error from 127.0.0.1:59656: EOF
+[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m
+
+[38;5;10m[1mRan 7 of 7 Specs in 6.308 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m7 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- PASS: TestV1alpha1DeprecationContract (6.31s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/deprecationv1a1	6.323s

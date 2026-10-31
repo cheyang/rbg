@@ -1,0 +1,9 @@
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.011s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.134s
+?   	sigs.k8s.io/rbgs/cmd/cli	[no test files]
+?   	sigs.k8s.io/rbgs/cmd/cli/cmd	[no test files]
+ok  	sigs.k8s.io/rbgs/cmd/cli/cmd/rollout	0.014s
+ok  	sigs.k8s.io/rbgs/cmd/cli/cmd/status	0.011s
+ok  	sigs.k8s.io/rbgs/cmd/cli/util	0.012s
+ok  	sigs.k8s.io/rbgs/cmd/rbgs	0.059s
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	4.127s
