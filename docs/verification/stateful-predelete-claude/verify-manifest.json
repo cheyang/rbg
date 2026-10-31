@@ -81,6 +81,14 @@
         "Parallel",
         "OrderedReady"
       ]
+    },
+    {
+      "id": "F4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyOrderedReadyMarkNotReadyReleaseResumes"
+      ]
     }
   ],
   "liveNote": "L3 (live cluster) was not run per round policy: unit + integration layers only. A live check would repeat the issue #534 reproduction (scale the parent RBG down with the drain-protection label held) and observe the RoleInstance entering PreparingDelete without a deletionTimestamp.",

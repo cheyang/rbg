@@ -308,3 +308,30 @@ func TestVerifyMarkNotReadyWithoutGateIsNoOpCanary(t *testing.T) {
 		}
 	}
 }
+
+// ---------------------------------------------------------------------------
+// F4 (independent check of the "OrderedReady stall after hook release" claim):
+// with MarkNotReady=true and the readiness gate present, the blocked instance
+// is Ready=False. The processCondemned health gate must still let the released
+// instance be deleted (it is the firstUnhealthy instance, so the gate passes).
+// CONTRACT: releasing the hook must resume the actual deletion.
+// ---------------------------------------------------------------------------
+func TestVerifyOrderedReadyMarkNotReadyReleaseResumes(t *testing.T) {
+	h := newVerifyHarness(t, "release-ordered", constants.OrderedReadyPodManagement, true, true)
+
+	h.setReplicas(t, 1)
+	h.reconcile(t)
+	require.Equal(t, constants.RoleInstanceLifecycleStatePreparingDelete,
+		instancelifecycle.GetRoleInstanceLifecycleState(h.instance(t, 1)))
+	require.Empty(t, h.objects.deleted)
+
+	// Release the hook label; the instance is still NotReady (the readiness
+	// key is never removed on release until Task 2 lands).
+	got := h.instance(t, 1)
+	delete(got.Labels, verifyHookLabel)
+	require.NoError(t, h.client.Update(context.Background(), got))
+
+	h.reconcile(t)
+	require.Contains(t, h.objects.deleted, h.set.Name+"-1",
+		"hook release must resume the deletion even while the instance is NotReady")
+}

@@ -1,0 +1,6 @@
+Parallel	pass
+OrderedReady	pass
+replaces a stably unhealthy rollout target through the controller requeue path	pass
+recovers early-rollback surge protection from persisted status	pass
+retains surge through a complete A to B to A rollback when partition decreases	pass
+recreates a replacement Pod through the controller retry after orphan GC	pass
