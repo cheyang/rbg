@@ -1,0 +1,12 @@
+# envtest rbg suite (regression sweep)
+date: 2026-10-31T11:31:30Z
+KUBEBUILDER_ASSETS=
+
+== head 4ab4a5ee63f7836ae93b6e0684bdb20e433086f1
+ok\tsigs.k8s.io/rbgs/test/envtest/testcase/rbg\t48.790s
+
+== base 7894133d5b59d44f2a19dcf6b75c531996285bcf
+ok\tsigs.k8s.io/rbgs/test/envtest/testcase/rbg\t51.944s
+
+command: KUBEBUILDER_ASSETS=... go test ./test/envtest/testcase/rbg/... -count=1
+both green -> CI-level regression sweep shows no PR-caused failure

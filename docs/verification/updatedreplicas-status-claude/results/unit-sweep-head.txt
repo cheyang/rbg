@@ -1,0 +1,5 @@
+# unit sweep (regression)
+== head: go test ./internal/controller/workloads/ ./pkg/reconciler/ ./pkg/utils/ -count=1
+ok sigs.k8s.io/rbgs/internal/controller/workloads 9.901s
+ok sigs.k8s.io/rbgs/pkg/reconciler 0.224s
+ok sigs.k8s.io/rbgs/pkg/utils 0.073s
