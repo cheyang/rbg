@@ -30,6 +30,8 @@ package workloads
 
 import (
 	"context"
+	"encoding/json"
+	"sort"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -60,6 +62,9 @@ type rollingDrive struct {
 	ackWait map[string]string // child name -> rollout request token the sim is still "rolling out"
 	step    int
 	deleted map[string]bool // child names that disappeared in some reconcile step
+	// notReady pins a child unready in the sim (the sim never marks it Ready and never
+	// acknowledges its requests): a held-back group that failed and stays down.
+	notReady map[string]bool
 }
 
 func newRollingDrive(t *testing.T, set *workloadsv1alpha2.RoleBasedGroupSet) *rollingDrive {
@@ -78,6 +83,7 @@ func newRollingDrive(t *testing.T, set *workloadsv1alpha2.RoleBasedGroupSet) *ro
 		cool:    map[string]int{},
 		ackWait: map[string]string{},
 		deleted: map[string]bool{},
+		notReady: map[string]bool{},
 	}
 }
 
@@ -137,6 +143,17 @@ func (d *rollingDrive) simulateChildren() {
 		}
 		latest := &workloadsv1alpha2.RoleBasedGroup{}
 		require.NoError(d.t, d.c.Get(d.ctx, client.ObjectKeyFromObject(&item), latest))
+		if d.notReady[item.Name] {
+			// A failed group: the sim keeps it unready and never acknowledges.
+			if meta.IsStatusConditionTrue(latest.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupReady)) {
+				meta.SetStatusCondition(&latest.Status.Conditions, metav1.Condition{
+					Type: string(workloadsv1alpha2.RoleBasedGroupReady), Status: metav1.ConditionFalse,
+					Reason: "Failed", ObservedGeneration: latest.Generation,
+				})
+				require.NoError(d.t, d.c.Status().Update(d.ctx, latest))
+			}
+			continue
+		}
 		ready := latest.Status.ObservedGeneration >= latest.Generation &&
 			meta.IsStatusConditionTrue(latest.Status.Conditions, string(workloadsv1alpha2.RoleBasedGroupReady))
 		request := latest.Annotations[verifyRolloutRequestAnnotation]
@@ -223,13 +240,35 @@ func childImage(child *workloadsv1alpha2.RoleBasedGroup) string {
 	return child.Spec.Roles[0].StandalonePattern.Template.Spec.Containers[0].Image
 }
 
-// waitSettled reconciles until the controller itself stops asking for a requeue, or the
-// step budget runs out.
+// worldFingerprint snapshots every observable the reconcile loop can read or write:
+// the children (spec, labels, annotations, status) and the set status. Round 6 made the
+// rolling path event-driven (it no longer requeues a pass that changed nothing), so a
+// requeue request alone can no longer tell the sim whether progress remains; a fixpoint
+// on the world can. In a real cluster the child status write re-enqueues the set; here
+// the next sim step plays that event.
+func (d *rollingDrive) worldFingerprint() string {
+	children := d.listChildren()
+	sort.Slice(children, func(i, j int) bool { return children[i].Name < children[j].Name })
+	data, err := json.Marshal(struct {
+		Children []workloadsv1alpha2.RoleBasedGroup `json:"children"`
+		Set      workloadsv1alpha2.RoleBasedGroupSetStatus
+		// The sim's own timers are part of the world: a pass that only burns a
+		// cooldown or an ack window changes nothing observable but is not a fixpoint.
+		Cool    map[string]int
+		AckWait map[string]string
+	}{children, d.getSet().Status, d.cool, d.ackWait})
+	require.NoError(d.t, err)
+	return string(data)
+}
+
+// waitSettled reconciles until a full pass (sim + reconcile) changes nothing and the
+// controller asks for no requeue - a true fixpoint - or the step budget runs out.
 func (d *rollingDrive) waitSettled(replicas, maxUnavailable, maxSteps int) ctrl.Result {
 	var res ctrl.Result
 	for i := 0; i < maxSteps; i++ {
+		before := d.worldFingerprint()
 		res = d.reconcileOnce(replicas, maxUnavailable)
-		if res.RequeueAfter == 0 && !res.Requeue {
+		if res.RequeueAfter == 0 && !res.Requeue && before == d.worldFingerprint() {
 			return res
 		}
 	}
@@ -254,11 +293,12 @@ func TestVerify_RollingRecreatePacedAndConverges(t *testing.T) {
 	// A real template change: 3 groups must be recreated one at a time.
 	d.triggerTemplateChange("image:v2")
 	for i := 0; i < 30; i++ {
+		before := d.worldFingerprint()
 		res := d.reconcileOnce(3, 1)
 		// Invariant: at most one group may be down at a time (maxUnavailable=1, no surge).
 		assert.GreaterOrEqualf(t, countReadyNonTerminating(d.listChildren()), 2,
 			"step %d: ready groups dropped below replicas-maxUnavailable", d.step)
-		if res.RequeueAfter == 0 && !res.Requeue {
+		if res.RequeueAfter == 0 && !res.Requeue && before == d.worldFingerprint() {
 			break
 		}
 	}
@@ -296,13 +336,14 @@ func TestVerify_RollingSurgeBacksZeroMaxUnavailable(t *testing.T) {
 	d.triggerTemplateChange("image:v2")
 	peakChildren := 0
 	for i := 0; i < 40; i++ {
+		before := d.worldFingerprint()
 		res := d.reconcileOnce(2, 0)
 		children := d.listChildren()
 		peakChildren = max(peakChildren, len(children))
 		// Invariant: maxUnavailable=0 with surge=1 must never drop serving below replicas.
 		assert.GreaterOrEqualf(t, countReadyNonTerminating(children), 2,
 			"step %d: serving groups dropped below replicas with surge backing", d.step)
-		if res.RequeueAfter == 0 && !res.Requeue {
+		if res.RequeueAfter == 0 && !res.Requeue && before == d.worldFingerprint() {
 			break
 		}
 	}

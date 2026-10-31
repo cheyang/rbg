@@ -168,10 +168,15 @@ func (d *inPlaceDrive) inFlight() int {
 	return n
 }
 
+// settle drives passes until a true fixpoint: no requeue requested AND the pass changed
+// nothing observable. Round 6 made the rolling path event-driven, so a pass that is
+// waiting on a child ack no longer requeues; in a real cluster the child's status write
+// re-enqueues the set, and here the next sim step plays that event.
 func (d *inPlaceDrive) settle(maxSteps int) {
 	for i := 0; i < maxSteps; i++ {
+		before := d.worldFingerprint()
 		res, _ := d.step()
-		if res.RequeueAfter == 0 && !res.Requeue {
+		if res.RequeueAfter == 0 && !res.Requeue && before == d.worldFingerprint() {
 			return
 		}
 	}
@@ -190,12 +195,13 @@ func TestVerify_InPlaceRolloutPacedNoRecreate(t *testing.T) {
 
 	d.triggerTemplateChange("image:v2")
 	for i := 0; i < 60; i++ {
+		before := d.worldFingerprint()
 		res, rewritten := d.step()
 		assert.LessOrEqualf(t, rewritten, 1,
 			"step %d: maxUnavailable=1 allows at most one child rewrite per pass, got %d", d.step, rewritten)
 		assert.LessOrEqualf(t, d.inFlight(), 1,
 			"step %d: at most one child may be in flight at a time", d.step)
-		if res.RequeueAfter == 0 && !res.Requeue {
+		if res.RequeueAfter == 0 && !res.Requeue && before == d.worldFingerprint() {
 			break
 		}
 	}
