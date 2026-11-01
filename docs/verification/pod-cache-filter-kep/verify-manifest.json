@@ -1,8 +1,8 @@
 {
   "pr": "https://github.com/sgl-project/rbg/pull/530",
   "topic": "pod-cache-filter-kep",
-  "reviewedHead": "139b91cdad4e917e2b27949cc3d4ca4a340b4280",
-  "base": "d162208e457a13006c9a550944cb08d5b5cf7fbd",
+  "reviewedHead": "f8d67fa701956638658594bccfe34b7947222e36",
+  "base": "4a0765f78b0930114a4b73a64433ee8f27c34372",
   "premise": {
     "id": "P0",
     "claim": "The rbgs operator caches ALL Pods today (cacheOptions filters Service/StatefulSet/Deployment but not Pod), so unrelated Pods dominate operator memory (issue #284).",
@@ -13,6 +13,7 @@
   },
   "harnessPaths": [
     "test/kep284",
+    "pkg/reconciler/zz_kep284_drift_contract_test.go",
     "docs/verification/pod-cache-filter-kep"
   ],
   "layers": {
@@ -28,6 +29,11 @@
     "static": {
       "kind": "script",
       "cmd": "bash docs/verification/pod-cache-filter-kep/scripts/kep284-static-checks.sh"
+    },
+    "unitdrift": {
+      "kind": "gotest",
+      "cmd": "go test ./test/kep284/ -run 'TestFilterSystemLabelsIgnoresManagedMarker|TestGroupNameDriftStillDetected|TestFIFOsDoNotImplementTransformingStore' -count=1 -json && go test ./pkg/reconciler/ -run TestPodTemplateSpecEqualIgnoresManagedMarker -count=1 -json",
+      "note": "Drift contract suite for the IMPLEMENTATION PR. At the docs-only head f8d67fa the two marker-exemption tests are RED by design (the KEP now specifies the key-scoped FilterSystemLabels exemption but implementation is a follow-up PR). Run with --layers unitdrift; excluded from the default unit+integration sweep."
     }
   },
   "findings": [
@@ -77,17 +83,57 @@
       "match": [
         "kep284-static-checks.sh"
       ]
+    },
+    {
+      "id": "D3",
+      "title": "Round2: managed-marker drift exemption contract (KEP 'Marker and Backfill')",
+      "polarity": "contract",
+      "layer": "unitdrift",
+      "match": [
+        "TestFilterSystemLabelsIgnoresManagedMarker",
+        "TestPodTemplateSpecEqualIgnoresManagedMarker"
+      ],
+      "note": "RED at f8d67fa by design; must flip GREEN in the implementation PR. Harness-bites verified: a one-line key-scoped FilterSystemLabels exemption flips both green, then was reverted."
+    },
+    {
+      "id": "D4",
+      "title": "Round2: exemption scope guard \u2014 group-name drift still detected",
+      "polarity": "contract",
+      "layer": "unitdrift",
+      "match": [
+        "TestGroupNameDriftStillDetected"
+      ],
+      "note": "GREEN at f8d67fa; flipping red would mean the exemption stripped more than the marker key."
+    },
+    {
+      "id": "D5",
+      "title": "Round2: client-go FIFOs do not implement TransformingStore (why the watch wrapper exists)",
+      "polarity": "contract",
+      "layer": "unitdrift",
+      "match": [
+        "TestFIFOsDoNotImplementTransformingStore"
+      ],
+      "note": "GREEN at f8d67fa on vendored client-go v0.34.2. TransformingStore embeds the full Store interface; FIFOs implement only ReflectorStore. If this flips red after a client-go upgrade, the KEP's wrapper drawback is obsolete."
     }
   ],
   "liveNote": "L3 intentionally skipped (docs-only PR; no KUBECONFIG layer). Memory/RSS re-measurement on the production operator is graduation work owned by the implementation PR.",
   "designGaps": [
     {
-      "id": "F1",
-      "note": "tombstone re-admission named GET: error semantics unspecified; per-replacement cost unbudgeted"
-    },
-    {
-      "id": "F2",
-      "note": "per-create boundary reads (getExistingPod confirm) missing from scalability accounting"
+      "id": "-",
+      "note": "Round 1 design gaps (B-F1 tombstone re-admit semantics, B-F2 per-create boundary reads) were dissolved by the round-2 redesign: the merge layer, boundary GETs and in-leader backfill are gone. See findings-codex.md for per-finding disposition."
     }
-  ]
+  ],
+  "round2": {
+    "head": "f8d67fa701956638658594bccfe34b7947222e36",
+    "summary": "PR revised from the four-source union design to the single-informer transform stub (the A-F3 alternative), with the in-repo reproducible harness test/podcacheunion. Reviewer re-ran: author's -race suite both gate configs (pass), the sync-heap diagnostic (reproduced: store-only streaming buffers whole objects until Replace, 71.3 MiB peak vs 18.3 MiB with the wrapper), direct TransformingStore assertion probes (KEP mechanism claim confirmed), a one-shape smoke campaign reproducing the headline -86% retained-heap figure on Linux amd64, and the drift contract suite (red by design until the implementation PR).",
+    "evidence": [
+      "results/round2-static.txt",
+      "results/round2-drift-and-mechanism.txt",
+      "results/round2-author-suite-and-diag.txt",
+      "results/round2-probes.txt",
+      "results/round2-campaign-smoke-summary.md",
+      "results/round2-campaign-smoke-provenance.txt",
+      "results/reverify/"
+    ]
+  }
 }

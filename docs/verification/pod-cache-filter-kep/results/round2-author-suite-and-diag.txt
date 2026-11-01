@@ -1,0 +1,10 @@
+=== author's correctness suite, WatchList off (head f8d67fa, Linux amd64, go1.27.0) ===
+KUBE_FEATURE_WatchListClient=false ... go test -race: ok sigs.k8s.io/rbgs/test/podcacheunion 7.057s
+
+=== author's correctness suite, WatchList on ===
+KUBE_FEATURE_WatchListClient=true RBG_POD_UNION_APISERVER_FEATURE_GATES=WatchList=true ... go test -race: ok 12.759s
+
+=== author's diagnostic TestAPITransformSyncHeapTimeline, streaming on (decisive for the wrapper claim) ===
+full streaming=true: sync 520ms; transform calls 0; peak HeapAlloc 73.9 MiB above 4.5 MiB baseline
+transform-labels-owners streaming=true: sync 1.151s; transform calls 1048 (first 1.149s, last 1.15s); peak HeapAlloc 71.3 MiB  <- store-only: whole stream buffered, transform at Replace
+transform-labels-owners-watch streaming=true: sync 1.214s; transform calls 2096 (first 2ms); peak HeapAlloc 18.3 MiB  <- wrapper: early transform

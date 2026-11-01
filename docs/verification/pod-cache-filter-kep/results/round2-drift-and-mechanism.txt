@@ -1,0 +1,16 @@
+=== RUN   TestFilterSystemLabelsIgnoresManagedMarker
+    drift_contract_test.go:52: FilterSystemLabels kept the managed marker; KEP-284 requires the "rbg.workloads.x-k8s.io/managed" key to be exempt from drift comparison (got map[app:x rbg.workloads.x-k8s.io/group-name:g1 rbg.workloads.x-k8s.io/managed:true])
+--- FAIL: TestFilterSystemLabelsIgnoresManagedMarker (0.00s)
+=== RUN   TestGroupNameDriftStillDetected
+--- PASS: TestGroupNameDriftStillDetected (0.00s)
+=== RUN   TestFIFOsDoNotImplementTransformingStore
+--- PASS: TestFIFOsDoNotImplementTransformingStore (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/kep284	0.013s
+FAIL
+=== RUN   TestPodTemplateSpecEqualIgnoresManagedMarker
+    zz_kep284_drift_contract_test.go:47: managed marker in a pod template registers as drift (equal=false, err=objectMeta not equal: label not equal, old [map[rbg.workloads.x-k8s.io/group-name:g1 rbg.workloads.x-k8s.io/role-name:r1]], new [map[rbg.workloads.x-k8s.io/group-name:g1 rbg.workloads.x-k8s.io/managed:true rbg.workloads.x-k8s.io/role-name:r1]]); KEP-284 requires a key-scoped exemption for "rbg.workloads.x-k8s.io/managed" so adding the marker cannot roll existing Pods
+--- FAIL: TestPodTemplateSpecEqualIgnoresManagedMarker (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.012s
+FAIL

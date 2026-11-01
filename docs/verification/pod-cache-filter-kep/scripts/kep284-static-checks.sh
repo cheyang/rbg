@@ -34,7 +34,7 @@ else
 fi
 
 # --- C5: the managed label does not exist yet (KEP introduces it) -------------
-if grep -rn "workloads.x-k8s.io/managed" --include="*.go" api/ pkg/ internal/ cmd/ | grep -v test/kep284 | grep -q .; then
+if grep -rn "workloads.x-k8s.io/managed" --include="*.go" api/ pkg/ internal/ cmd/ | grep -v '_test.go' | grep -q .; then
   bad "C5: an rbg 'managed' label already exists in code — KEP novelty claim is stale"
 else
   ok "C5: no existing 'managed' label constant — KEP introduces it as a new marker"

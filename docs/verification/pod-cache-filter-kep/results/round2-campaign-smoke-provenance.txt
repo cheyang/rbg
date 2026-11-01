@@ -1,0 +1,28 @@
+date: 2026-11-01T20:42:47Z
+base commit: f8d67fa701956638658594bccfe34b7947222e36
+os: Alibaba Cloud Linux 4.0.5 (OpenAnolis Edition) kernel 6.6.102-7.alnx4.x86_64 x86_64
+cpus: 48; memory bytes: 97752571904
+go: go version go1.27.0 linux/amd64
+GOMAXPROCS=4; GOGC=100; GOMEMLIMIT=off
+apiserver: Kubernetes v1.31.0
+etcd: etcd Version: 3.5.15
+batches: list stream; shapes: 48:1000; rounds: 0; modes: default
+test binary sha256: 5ee90c8f2a6841ae8e0013c12923da71fe849e00552ad33822bbd743d4337a1c
+source sha256 go.mod: 11d788042d2b049f342913b407185561662319fe4a85e62716a359b88b26342f
+source sha256 vendor/modules.txt: b9bbec26a65bf0a0e780c3de6fe194990dd3d3be327cd1cb48320bda8d938c02
+source sha256 test/podcacheunion/envtest_test.go: 0cfb16bc1676ed17a8a6d7342b36531795d727faca572221c531582b9dc03d04
+source sha256 test/podcacheunion/sampler_test.go: 042da9f7adb22ab9193249e923d0a2b1ffeca4fc3ce66821c39c33cef259422c
+source sha256 test/podcacheunion/transform.go: 9efcc14d0fd12cafbc42451918ae81206f3b1ea65e67d074a6ef49f08707e51d
+source sha256 test/podcacheunion/transform_diag_test.go: e7340bcaebc3b5a3c282cd23f9d0eaa84d40e92ff55306a8a71f6251fb33bb86
+source sha256 test/podcacheunion/transform_measure_test.go: efd629ca0437c35ed4d6898569e5f9727ebb4323cb09691ab5b5c0c042cc2268
+source sha256 test/podcacheunion/transform_readpath_test.go: 63a0b5c721a2f13606f3a555449be1d1526649ffa2117964f5fdef797164dca0
+source sha256 test/podcacheunion/transform_stream.go: 24105ab018a34c638f85616d3badf5da790469e59c0825dd0a682a5f888f1adf
+source sha256 test/podcacheunion/transform_stream_test.go: 2891dbfc326f5bd30b1de76e9297a1d0179a83101a6f8aa37169f52c7b15eb24
+source sha256 test/podcacheunion/transform_test.go: e4ec6595d8337b9e8dc032e54be953d1371bb2e36ff6e86837833ddaf3da0229
+source sha256 test/podcacheunion/union.go: c7e2c18ce0aeec19366189c02acc28e999ee402c8ec62d6c1f379758cd33d1ff
+source sha256 test/podcacheunion/zz_probe_assert_test.go: 99794fed89b3e02919e8aaa0350291d2bb4ea887cfe4bed28d24a1fb93cf5865
+source sha256 test/podcacheunion/zz_probe_reflector_test.go: 9e9352074b1eef41e47236bc06fc57741e26350fcb953c97400f002f157ea12e
+source sha256 test/podcacheunion/zz_probe_transform_timing_test.go: 91c6d465cd129c24eff4a110bbddd60ee12d34f3144301e94e42c2b14c8c5d6a
+source sha256 test/podcacheunion/testdata/memory_sampler_darwin.c: 2508df5049f6fba525ab90d5bff3acd57895ddcc17a4396ac7f30731c5b9577e
+source sha256 test/podcacheunion/testdata/memory_sampler_linux.c: 5aeb4ee387e491aab6f4bd331df39a5b4dbb9eac41ab2fa9d7eae45b2ecb48c6
+source sha256 test/podcacheunion/scripts/transform-campaign.sh: 6e5ff935d3e1fb2389f2d5e57dafb7707187632332d19294f2f2fe061dd5a842

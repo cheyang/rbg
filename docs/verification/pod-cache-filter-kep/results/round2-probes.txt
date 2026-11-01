@@ -1,0 +1,6 @@
+=== reviewer probes (head f8d67fa, envtest 1.31.0, streaming ON, scratch files not committed) ===
+cr-store-only: sync=439ms transformCalls=300 first=434ms (at Replace) streaming-watches=1 lists=0
+pure-clientgo: sync=414ms transformCalls=300 first=410ms (at Replace) streaming-watches=1 lists=0
+direct reflector probe: 'delta FIFO implements TransformingStore=false', 'real FIFO implements TransformingStore=false'
+minimal assertion: *DeltaFIFO and *RealFIFO do NOT implement toolscache.TransformingStore
+root cause: TransformingStore embeds the FULL Store interface (reflector.go:82-85); FIFOs implement only ReflectorStore (reflector.go:59-78)

@@ -1,0 +1,5 @@
+TestAdmissionRuleTable	pass
+TestAdmissionRuleNotExpressibleAsOneSelector	pass
+TestLegacyLabelKeysMatchKEPTable	pass
+TestWorkloadPodTemplatesCarryGroupName	pass
+TestRoleInstancePodsCarryRoleInstanceName	pass
