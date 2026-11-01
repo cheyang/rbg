@@ -1,0 +1,18 @@
+# Round-2 harness bites (head f8d67fa7) — applying each proposed fix flips its contract test green; reverted afterwards, production diff empty.
+
+## RED on head (unfixed)
+--- FAIL: TestKEP284CampaignForcesIsolatedEnvtestCluster (0.00s)
+--- FAIL: TestKEP284PodcacheunionCompiledInCI (0.00s)
+--- FAIL: TestKEP284NodeNameReadPathAuditClaim (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/utils	0.014s
+FAIL
+
+## GREEN with fix 1 (campaign script pins USE_EXISTING_CLUSTER=false) + fix 2 (Makefile gains a podcacheunion target) + fix 3 (README qualifies the nodeName claim)
+ok  	sigs.k8s.io/rbgs/pkg/utils	0.012s
+
+## Fixes reverted
+production diff empty: yes
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/utils	0.014s
+FAIL

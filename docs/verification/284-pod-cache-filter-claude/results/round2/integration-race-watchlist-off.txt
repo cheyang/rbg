@@ -1,0 +1,45 @@
+UNION_ENVTEST: isolated Kubernetes v1.31.0 API server + etcd; no external kubeconfig
+=== RUN   TestMedianRangeUpperMiddleForEvenGroups
+--- PASS: TestMedianRangeUpperMiddleForEvenGroups (0.00s)
+=== RUN   TestAPITransformSyncHeapTimeline
+    transform_diag_test.go:43: opt-in diagnostic
+--- SKIP: TestAPITransformSyncHeapTimeline (0.00s)
+=== RUN   TestTransformProbeChild
+    transform_measure_test.go:103: opt-in transform comparison subprocess
+--- SKIP: TestTransformProbeChild (0.00s)
+=== RUN   TestAPITransformComparison
+    transform_measure_test.go:322: opt-in transform memory comparison
+--- SKIP: TestAPITransformComparison (0.00s)
+=== RUN   TestTransformComparisonSummary
+    transform_measure_test.go:495: set RBG_POD_UNION_TRANSFORM_SUMMARY_DIR to summarize saved runs
+--- SKIP: TestTransformComparisonSummary (0.00s)
+=== RUN   TestFeatureGateSetOverridesProductionImport
+--- PASS: TestFeatureGateSetOverridesProductionImport (0.00s)
+=== RUN   TestAPITransformProductionReadPaths
+W1102 04:35:13.479758 3112502 mutation_detector.go:54] Mutation detector is enabled, this will result in memory leakage.
+--- PASS: TestAPITransformProductionReadPaths (2.14s)
+=== RUN   TestWatchStreamWrapperTransformsEvents
+--- PASS: TestWatchStreamWrapperTransformsEvents (0.00s)
+=== RUN   TestWatchStreamWrapperStopDoesNotLeak
+--- PASS: TestWatchStreamWrapperStopDoesNotLeak (0.00s)
+=== RUN   TestTransformIsIdempotent
+--- PASS: TestTransformIsIdempotent (0.00s)
+=== RUN   TestAPITransformRelist
+W1102 04:35:13.593743 3112502 mutation_detector.go:54] Mutation detector is enabled, this will result in memory leakage.
+--- PASS: TestAPITransformRelist (1.12s)
+=== RUN   TestAPITransformAdmissionAndStubs
+=== RUN   TestAPITransformAdmissionAndStubs/identity
+W1102 04:35:14.733520 3112502 mutation_detector.go:54] Mutation detector is enabled, this will result in memory leakage.
+=== RUN   TestAPITransformAdmissionAndStubs/labels-owners
+W1102 04:35:14.877064 3112502 mutation_detector.go:54] Mutation detector is enabled, this will result in memory leakage.
+=== RUN   TestAPITransformAdmissionAndStubs/labels-owners-stream
+W1102 04:35:15.020785 3112502 mutation_detector.go:54] Mutation detector is enabled, this will result in memory leakage.
+--- PASS: TestAPITransformAdmissionAndStubs (0.43s)
+    --- PASS: TestAPITransformAdmissionAndStubs/identity (0.14s)
+    --- PASS: TestAPITransformAdmissionAndStubs/labels-owners (0.14s)
+    --- PASS: TestAPITransformAdmissionAndStubs/labels-owners-stream (0.14s)
+=== RUN   TestAPITransformTransitionsAndEvents
+W1102 04:35:15.140151 3112502 mutation_detector.go:54] Mutation detector is enabled, this will result in memory leakage.
+--- PASS: TestAPITransformTransitionsAndEvents (0.12s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/podcacheunion	7.079s

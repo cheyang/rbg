@@ -6,18 +6,21 @@
     "cmd/rbgs/cache_options_pod_filter_test.go",
     "pkg/utils/managed_marker_system_label_test.go",
     "pkg/utils/kep284_selector_semantics_test.go",
-    "pkg/reconciler/managed_marker_template_drift_test.go"
+    "pkg/utils/kep284_round2_static_test.go",
+    "pkg/reconciler/managed_marker_template_drift_test.go",
+    "pkg/reconciler/managed_marker_group_name_drift_test.go",
+    "test/podcacheunion/median_range_canary_test.go"
   ],
   "premise": {
     "id": "P0",
-    "claim": "Issue sgl-project/rbg#284: \"By turning on pprof, we could observe details and the reason is that irrelevant Pods consume most of the memory\" \u2014 the rbg operator's informer cache retains every Pod in the cluster because cacheOptions() only filters Service/StatefulSet/Deployment by the group-name label.",
+    "claim": "Issue sgl-project/rbg#284: \"By turning on pprof, we could observe details and the reason is that irrelevant Pods consume most of the memory\" — the rbg operator's informer cache retains every Pod in the cluster because cacheOptions() only filters Service/StatefulSet/Deployment by the group-name label.",
     "reportedComponent": "operator informer cache (cmd/rbgs cacheOptions / controller-runtime cache)",
-    "patchedComponent": "design of the same cache (KEP-284 proposes the Pod admission rule); this PR is the KEP document only, implementation is TBD",
+    "patchedComponent": "design of the same cache (KEP-284 revision 2 proposes a single-informer cache.ByObject Transform stub behind --pod-cache-scope) plus a prototype harness in test/podcacheunion; production flag wiring remains TBD",
     "componentMatch": true,
     "runsAgainst": "base",
     "layer": "unit",
     "verdict": "confirmed",
-    "evidence": "TestCacheOptionsConstrainsPodCache fails on the base code: cacheOptions() has 3 ByObject entries (Service, StatefulSet, Deployment) and none for *corev1.Pod, so the Pod informer is unfiltered \u2014 see results/unit-head.txt",
+    "evidence": "TestCacheOptionsConstrainsPodCache fails on the base code: cacheOptions() has 3 ByObject entries (Service, StatefulSet, Deployment) and none for *corev1.Pod, so the Pod informer is unfiltered — see results/unit-head.txt (round 1) and results/round2/unit-head.txt (round 2 re-run on f8d67fa7: production code unchanged, still no Pod entry)",
     "match": [
       "TestCacheOptionsConstrainsPodCache"
     ]
@@ -25,7 +28,12 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./cmd/rbgs/ ./pkg/utils/ ./pkg/reconciler/ -run 'TestKEP284|TestFilterSystemLabelsIgnoresManagedMarker|TestPodTemplateSpecEqualIgnoresManagedMarker|TestCacheOptionsConstrainsPodCache' -count=1 -json"
+      "cmd": "go test ./cmd/rbgs/ ./pkg/utils/ ./pkg/reconciler/ -run 'TestKEP284|TestFilterSystemLabelsIgnoresManagedMarker|TestPodTemplateSpecEqualIgnoresManagedMarker|TestGroupNameDriftStillDetected|TestCacheOptionsConstrainsPodCache' -count=1 -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "bash docs/verification/284-pod-cache-filter-claude/scripts/run-integration.sh",
+      "note": "Runs the PR's own test/podcacheunion correctness suite (//go:build podcacheunion) against an isolated envtest kube-apiserver 1.31.0, in both WatchListClient configurations, with -race off but the cache mutation detector on; resolves envtest assets from KUBEBUILDER_ASSETS or bin/. Round 2: also carries the median canary."
     }
   },
   "findings": [
@@ -36,7 +44,69 @@
       "match": [
         "TestFilterSystemLabelsIgnoresManagedMarker",
         "TestPodTemplateSpecEqualIgnoresManagedMarker"
-      ]
+      ],
+      "note": "Round 1 major A-F1. Round 2 status: the KEP now specifies the mechanism (marker never written into any workload template + key-scoped FilterSystemLabels exemption as a guard, keps/284-pod-cache-filter/README.md 'Marker and Backfill'), and names these two tests as the regression suite for the implementation PR. The tests stay RED on this head because the PR still changes no production code — that is the documented deferral, not an open design defect. They must go green in the implementation PR."
+    },
+    {
+      "id": "F1-guard",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestGroupNameDriftStillDetected"
+      ],
+      "note": "The guard the KEP itself names ('a test that group-name drift is still detected'). GREEN now and must STAY green when the implementation PR lands the key-scoped exemption; a flip to red means the exemption was implemented as a whole-prefix strip, which the KEP forbids."
+    },
+    {
+      "id": "R2-F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP284CampaignForcesIsolatedEnvtestCluster"
+      ],
+      "note": "Round 2: envtest fixture does not pin UseExistingCluster, so USE_EXISTING_CLUSTER=true in a contributor's environment redirects the campaign to the kubeconfig cluster (installs the RoleInstance CRD — not removed on Stop — creates up to ~5,000 benchmark Pods, and silently drops the intended apiserver feature gates). Fix: export USE_EXISTING_CLUSTER=false in transform-campaign.sh or set UseExistingCluster: ptr.To(false) in TestMain. Verified red/green bite in results/round2/harness-bites.txt."
+    },
+    {
+      "id": "R2-F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP284PodcacheunionCompiledInCI"
+      ],
+      "note": "Round 2: no Makefile target or CI workflow references the podcacheunion build tag, so the KEP's evidence package is never compiled by CI. Fix: a CI step such as `go vet -mod=vendor -tags=podcacheunion ./test/podcacheunion` (compile check suffices; the envtest suite needs assets). Verified red/green bite in results/round2/harness-bites.txt."
+    },
+    {
+      "id": "R2-F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP284NodeNameReadPathAuditClaim"
+      ],
+      "note": "Round 2: KEP README item 4 claims 'No code reads Pods by spec.nodeName' but RecordNodeBindings (pkg/reconciler/roleinstance/sync/node_binding.go:216,239) reads pod.Spec.NodeName on getOwnedPods results (safe only via the ownerReference admission invariant). Fix: qualify the sentence. Verified red/green bite in results/round2/harness-bites.txt."
+    },
+    {
+      "id": "R2-F4",
+      "polarity": "canary",
+      "layer": "integration",
+      "match": [
+        "TestMedianRangeUpperMiddleForEvenGroups"
+      ],
+      "note": "Round 2 (nit): medianRange returns sorted[len/2], the upper-middle value for even-sized groups. Published numbers use three rounds (odd) so they are true medians; only custom/partial campaigns hit the even case. Canary: passes while the behavior is present; invert if medianRange starts averaging."
+    },
+    {
+      "id": "P-readpaths",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestTransformIsIdempotent",
+        "TestAPITransformAdmissionAndStubs",
+        "TestAPITransformTransitionsAndEvents",
+        "TestAPITransformRelist",
+        "TestAPITransformProductionReadPaths",
+        "TestWatchStreamWrapperTransformsEvents",
+        "TestWatchStreamWrapperStopDoesNotLeak",
+        "TestFeatureGateSetOverridesProductionImport"
+      ],
+      "note": "Round 2 evidence layer: the PR's own prototype suite, re-executed by this harness against head f8d67fa7 in both gate configurations. These prove the design-level fixes of round-1 findings A-F5 (owner-index read path keeps label-stripped owned Pods whole — TestAPITransformProductionReadPaths drives the production instanceutil helper), B-F1/B-F2 (no boundary reads exist at all in the transform design; named existence checks stay cached — the squatter stub is found by cached Get with IsControlledBy false), and the admission-rule table incl. ownerReference conditions and managed=false edge."
     },
     {
       "id": "P0-mechanics",
@@ -47,8 +117,8 @@
         "TestKEP284LegacyPodWithManagedFalseStaysAdmitted",
         "TestKEP284DisjointPartitionIsExpressible"
       ],
-      "note": "Guard tests: they PASS on base and head by design (they pin the label-selector semantics the KEP builds on). They are not bug repros; treat FIXED here as \"semantics unchanged\". A flip means the vendored client-go changed selector semantics."
+      "note": "Guard tests: they PASS on base and head by design (they pin the label-selector semantics the KEP builds on). They are not bug repros; treat FIXED here as 'semantics unchanged'. A flip means the vendored client-go changed selector semantics."
     }
   ],
-  "liveNote": "No live layer: the PR is a design document (keps/284-pod-cache-filter/**) and changes no runtime code, so there is nothing to exercise against a cluster in this round. When the implementation PR lands, graft this harness onto it: F1's contract tests must be green (either the implementation extends FilterSystemLabels/objects-meta comparison to ignore rbg.workloads.x-k8s.io/managed, or the KEP stops putting the marker into workload pod templates), and TestCacheOptionsConstrainsPodCache must be green (a Pod filter exists)."
+  "liveNote": "No live layer: the PR ships a design (keps/284-pod-cache-filter/**) plus a tagged prototype (test/podcacheunion) and changes no runtime code, so there is nothing to exercise against a real cluster. When the implementation PR lands, graft this harness onto it: F1's contract tests and TestCacheOptionsConstrainsPodCache must be green, TestGroupNameDriftStillDetected must stay green, and the read-path audit (R2-F3's corrected claim) must be recorded with its regression test."
 }
