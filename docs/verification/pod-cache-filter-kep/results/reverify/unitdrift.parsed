@@ -1,0 +1,4 @@
+TestFilterSystemLabelsIgnoresManagedMarker	fail
+TestGroupNameDriftStillDetected	pass
+TestFIFOsDoNotImplementTransformingStore	pass
+TestPodTemplateSpecEqualIgnoresManagedMarker	fail

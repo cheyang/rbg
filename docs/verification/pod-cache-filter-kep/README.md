@@ -94,3 +94,68 @@ https://github.com/cheyang/rbg.git branch verify/pod-cache-filter-kep-codex,
 read docs/verification/pod-cache-filter-kep/README.md, run the three layer
 commands, then re-verify the KEP-284 claims against the current head of
 sgl-project/rbg PR #530."
+
+---
+
+# Round 2 — incremental, head `f8d67fa` (base moved `d162208e` → `4a0765f7`, PR rebased)
+
+The author replaced the design wholesale: the four-source union + merge layer +
+in-leader backfill is now the **rejected** alternative; the selected design is a
+single informer with a `cache.ByObject` **Transform** stub plus an early
+watch-stream wrapper, behind `--pod-cache-scope=all|filtered` (alpha default
+`all`), with marker backfill moved to an admin CLI (`kubectl rbg migrate
+pod-labels`) run by a Helm pre-upgrade hook. The PR also ships the previously
+local-only prototype as `test/podcacheunion` (build tag `podcacheunion`,
+excluded from ordinary builds and CI).
+
+## Round-2 observed vs expected
+
+| claim / finding | observed | verdict |
+| --- | --- | --- |
+| A-F1 (no-roll guarantee unimplementable) | KEP now specifies: marker never in templates + key-scoped `FilterSystemLabels` exemption + named contract tests + upgrade e2e. Drift contract tests RED by design until the implementation PR (bites-verified: one-line exemption flips them green, reverted) | **fixed** at KEP level; D3 guards the implementation |
+| A-F3 (transform-stub alternative unweighed) | transform design adopted; union + disjoint partition analyzed in Alternatives with rationale | **fixed** |
+| A-F4 (overlap amplification / disjoint partition) | union rejected; disjoint partition rejected with it; maximum-overlap caveat recorded | **fixed** |
+| A-F5 (label-stripped owned Pod lost to owner-index List) | 5th admission condition: any ownerReference into `workloads.x-k8s.io` keeps the Pod whole; KEP names `getOwnedPods`; integration test planned; `TestAPITransformProductionReadPaths` exercises the production owner-index read | **fixed** |
+| A-F6 (perf evidence not reproducible) | harness published, base pinned to public `4a0765f7`; reviewer reproduced: author's `-race` suite passes on Linux amd64 in both gate configs; one-shape smoke campaign reproduces −85.6% retained heap (claimed −86%) and the streaming wrapper peak halving | **fixed** |
+| A-F2 (serial 4-source startup vs 120s timeout) | union gone: one informer; List startup is parity with today, streaming opt-in; sync budget section names the cache sync timeout; target-scale cgroup validation is a beta criterion | **fixed** by redesign |
+| B-F1 (tombstone re-admit GET semantics) | merge layer and boundary GETs are gone | **fixed** (dissolved) |
+| B-F2 (per-create confirmation reads) | no boundary reads; stubs keep names so `getExistingPod` stays cached | **fixed** (dissolved) |
+| A-Q1 (backfill location) | decided: admin CLI + Helm pre-upgrade hook, `check` mode as completion criterion | **fixed** |
+| A-Q2 (no kill switch) | `--pod-cache-scope` flag, alpha default `all` | **fixed** |
+| B-F3 (kep.yaml disable-supported) | cross-referencing comment added; `metrics:` block matches the template | **fixed** |
+| N1 (title / `fixes #XXXX`) | kep.yaml title aligned with README H1; PR body still carries the literal `fixes #XXXX` placeholder (verified via gh at f8d67fa) | **partially open** (nit) |
+| A-T1/A-T2 (test-plan gaps) | drift contract tests and the label-stripped owned-Pod integration case are named in the KEP test plan | **fixed** |
+
+## Round-2 mechanism verification (the load-bearing new claim)
+
+KEP item 6: with streaming lists, the informer transform runs too late to
+shrink the reflector's temporary store, hence the watch-stream wrapper.
+Verified at three levels (results/round2-probes.txt,
+results/round2-author-suite-and-diag.txt):
+
+1. **Source**: `TransformingStore` (vendor client-go v0.34.2 reflector.go:82-85)
+   embeds the **full** `Store` interface; `*DeltaFIFO`/`*RealFIFO` implement
+   only `ReflectorStore` (reflector.go:59-78), so
+   `r.store.(TransformingStore)` fails for informer FIFOs.
+2. **Assertion**: both FIFO types fail the runtime type assertion
+   (`TestFIFOsDoNotImplementTransformingStore`, GREEN — it flips red when a
+   future client-go makes the wrapper obsolete).
+3. **End-to-end**: the author's `TestAPITransformSyncHeapTimeline` reproduced
+   on Linux amd64 — store-only streaming transforms all 1,048 Pods at Replace
+   (peak HeapAlloc 71.3 MiB); the wrapper transforms from 2ms (peak 18.3 MiB).
+   Reviewer probes at the pure client-go and direct-reflector levels confirm
+   the same late-transform behavior with streaming proven active.
+
+## Round-2 harness layout
+
+- `test/kep284/drift_contract_test.go` — D3/D4 (marker exemption + scope guard)
+- `pkg/reconciler/zz_kep284_drift_contract_test.go` — D3's in-package half
+  (`podTemplateSpecEqual` is unexported)
+- `test/kep284/transformingstore_contract_test.go` — D5 mechanism pin
+- `scripts/check-perf-numbers.py` — rewritten for the transform revision; all
+  quoted percentages/ratios recompute from the published tables (round2-static.txt)
+- Round-1 admission/premise contracts (C1/C1i/C3/C4/P0s) still pass unchanged.
+
+Default sweep: `bash docs/verification/pod-cache-filter-kep/scripts/re-verify.sh`
+(unit+integration). Drift suite (red by design until the implementation PR):
+`... re-verify.sh --layers unitdrift`.
