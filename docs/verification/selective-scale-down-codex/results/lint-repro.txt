@@ -1,0 +1,15 @@
+# gocyclo (>30) on the PR head:
+45 reconciler (*RoleInstanceSetReconciler).reconcileSelectiveMembership pkg/reconciler/selective_membership.go:55:1
+
+# goconst occurrences of InvalidCommittedOrdinals in non-test code:
+internal/controller/workloads/roleinstanceset_controller.go:121:		if condition.Type == v1alpha2.RoleInstanceSetConditionFailedScale && (validationErr != nil || condition.Reason == "InvalidCommittedOrdinals") {
+internal/controller/workloads/roleinstanceset_controller.go:122:			if validationErr != nil && condition.Reason == "InvalidCommittedOrdinals" && condition.Status == corev1.ConditionTrue && condition.Message == validationErr.Error() {
+internal/controller/workloads/roleinstanceset_controller.go:131:		r.recorder.Event(set, corev1.EventTypeWarning, "InvalidCommittedOrdinals", validationErr.Error())
+internal/controller/workloads/roleinstanceset_controller.go:134:			Reason: "InvalidCommittedOrdinals", Message: validationErr.Error(), LastTransitionTime: metav1.Now(),
+
+# CI lint job (run 41278923058, job 124766651800) failing lines:
+internal/controller/workloads/roleinstanceset_controller.go:121:117: string InvalidCommittedOrdinals has 3 occurrences, make it a constant (goconst)
+pkg/reconciler/selective_membership.go:55:1: cyclomatic complexity 45 of func reconcileSelectiveMembership is high (> 30) (gocyclo)
+pkg/reconciler/roleinstanceset/statefulmode/selective_membership_test.go:73:2: Consider preallocating instances with capacity 4 (prealloc)
+pkg/reconciler/roleinstanceset/statefulmode/selective_membership_test.go:142:6: prealloc
+test/envtest/testcase/rbg/selective_scale_down_test.go:87:3,113:4: prealloc

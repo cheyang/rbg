@@ -1,0 +1,7 @@
+# F2 canary on unmodified PR head 07ae1194:
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.057s
+
+# harness-bites: with the filter scoped to reason==InvalidCommittedOrdinals (proposed fix), the canary flipped to FAIL:
+    Messages: unrelated FailedScale condition survived: replace semantics changed
+FAIL  sigs.k8s.io/rbgs/internal/controller/workloads
+(production change reverted afterwards; git diff empty)
