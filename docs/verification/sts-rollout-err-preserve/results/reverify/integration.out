@@ -1,0 +1,11 @@
+{"Time":"2026-11-02T05:39:49.630964023+08:00","Action":"start","Package":"sigs.k8s.io/rbgs/pkg/reconciler"}
+{"Time":"2026-11-02T05:39:49.643140167+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestVerifyStatefulSetNotScaledToZeroOnPodListError"}
+{"Time":"2026-11-02T05:39:49.643198899+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestVerifyStatefulSetNotScaledToZeroOnPodListError","Output":"=== RUN   TestVerifyStatefulSetNotScaledToZeroOnPodListError\n","OutputType":"frame"}
+{"Time":"2026-11-02T05:39:51.840734273+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestVerifyStatefulSetNotScaledToZeroOnPodListError","Output":"    sts_rollout_errpreserve_envtest_verify_test.go:123: created sts: replicas=4 partition=0\n"}
+{"Time":"2026-11-02T05:39:51.844628942+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestVerifyStatefulSetNotScaledToZeroOnPodListError","Output":"    sts_rollout_errpreserve_envtest_verify_test.go:134: second reconcile error: pods is forbidden: pods is forbidden\n"}
+{"Time":"2026-11-02T05:39:51.845225283+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestVerifyStatefulSetNotScaledToZeroOnPodListError","Output":"    sts_rollout_errpreserve_envtest_verify_test.go:139: replicas after second reconcile: 5\n"}
+{"Time":"2026-11-02T05:39:51.864286151+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestVerifyStatefulSetNotScaledToZeroOnPodListError","Output":"--- PASS: TestVerifyStatefulSetNotScaledToZeroOnPodListError (2.22s)\n","OutputType":"frame"}
+{"Time":"2026-11-02T05:39:51.864311412+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestVerifyStatefulSetNotScaledToZeroOnPodListError","Elapsed":2.22}
+{"Time":"2026-11-02T05:39:51.864324723+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Output":"PASS\n","OutputType":"frame"}
+{"Time":"2026-11-02T05:39:51.866106486+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Output":"ok  \tsigs.k8s.io/rbgs/pkg/reconciler\t2.235s\n"}
+{"Time":"2026-11-02T05:39:51.866124027+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Elapsed":2.235}

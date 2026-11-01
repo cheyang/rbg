@@ -1,0 +1,2 @@
+TestVerifyRollingUpdateParametersPreservesPodListError	pass
+TestVerifyRollingUpdateParametersPreservesRevisionListError	pass
