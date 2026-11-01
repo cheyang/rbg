@@ -1,0 +1,4 @@
+=== RUN   TestInPlaceUpdatePreservesLifecycleReadinessGate
+--- PASS: TestInPlaceUpdatePreservesLifecycleReadinessGate (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	0.012s

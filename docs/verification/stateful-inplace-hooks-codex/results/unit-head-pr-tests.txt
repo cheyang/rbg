@@ -1,0 +1,49 @@
+=== RUN   TestStatefulInPlaceHookBlocksUntilAllHandlersReleased
+=== RUN   TestStatefulInPlaceHookBlocksUntilAllHandlersReleased/labels
+I1102 02:16:42.784341 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+I1102 02:16:42.784870 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+I1102 02:16:42.785052 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+=== RUN   TestStatefulInPlaceHookBlocksUntilAllHandlersReleased/finalizers
+I1102 02:16:42.786597 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+I1102 02:16:42.786937 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+I1102 02:16:42.787117 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+=== RUN   TestStatefulInPlaceHookBlocksUntilAllHandlersReleased/labels_and_finalizers
+I1102 02:16:42.788435 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+I1102 02:16:42.788764 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+I1102 02:16:42.788925 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+I1102 02:16:42.789061 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+--- PASS: TestStatefulInPlaceHookBlocksUntilAllHandlersReleased (0.05s)
+    --- PASS: TestStatefulInPlaceHookBlocksUntilAllHandlersReleased/labels (0.04s)
+    --- PASS: TestStatefulInPlaceHookBlocksUntilAllHandlersReleased/finalizers (0.00s)
+    --- PASS: TestStatefulInPlaceHookBlocksUntilAllHandlersReleased/labels_and_finalizers (0.00s)
+=== RUN   TestStatefulInPlaceHookCompletesAndRearms
+--- PASS: TestStatefulInPlaceHookCompletesAndRearms (0.00s)
+=== RUN   TestStatefulInPlaceHookPatchFailureDoesNotUpdateOrDelete
+I1102 02:16:42.792317 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+--- PASS: TestStatefulInPlaceHookPatchFailureDoesNotUpdateOrDelete (0.00s)
+=== RUN   TestStatefulInPlaceHookDoesNotBlockUnhookedInstances
+=== RUN   TestStatefulInPlaceHookDoesNotBlockUnhookedInstances/no_hook
+I1102 02:16:42.794038 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+=== RUN   TestStatefulInPlaceHookDoesNotBlockUnhookedInstances/unmatched_hook
+I1102 02:16:42.795391 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+--- PASS: TestStatefulInPlaceHookDoesNotBlockUnhookedInstances (0.00s)
+    --- PASS: TestStatefulInPlaceHookDoesNotBlockUnhookedInstances/no_hook (0.00s)
+    --- PASS: TestStatefulInPlaceHookDoesNotBlockUnhookedInstances/unmatched_hook (0.00s)
+=== RUN   TestStatefulInPlaceHookWaitingUsesExistingBudget
+I1102 02:16:42.797355 2622929 stateful_instance_set_control.go:737] "Progress rolling update" instanceSet="default/inplace-hook" targets=[1,0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1102 02:16:42.797365 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-1" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=true
+I1102 02:16:42.797380 2622929 stateful_instance_set_control.go:773] "Rolling update budget exhausted" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" initialBaseUnavail=1 newlyUnavail=0 effectiveBudget=1
+I1102 02:16:42.797697 2622929 stateful_instance_set_control.go:737] "Progress rolling update" instanceSet="default/inplace-hook" targets=[1,0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1102 02:16:42.797702 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-1" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=true
+I1102 02:16:42.798251 2622929 stateful_instance_set_control.go:773] "Rolling update budget exhausted" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" initialBaseUnavail=1 newlyUnavail=0 effectiveBudget=1
+--- PASS: TestStatefulInPlaceHookWaitingUsesExistingBudget (0.00s)
+=== RUN   TestStatefulInPlaceHookRemovalReleasesOnlyOwnReadinessKey
+--- PASS: TestStatefulInPlaceHookRemovalReleasesOnlyOwnReadinessKey (0.00s)
+=== RUN   TestStatefulInPlaceHookWaitsForPreviousHandshake
+I1102 02:16:42.801982 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+I1102 02:16:42.802076 2622929 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/inplace-hook" instance="default/inplace-hook-0" from="inplace-hook-594cc8f647" to="inplace-hook-c4775b4fd" isSurge=false free=false
+--- PASS: TestStatefulInPlaceHookWaitsForPreviousHandshake (0.00s)
+=== RUN   TestStatefulInPlaceHookWaitsForAllPostUpdateHandlers
+--- PASS: TestStatefulInPlaceHookWaitsForAllPostUpdateHandlers (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.076s

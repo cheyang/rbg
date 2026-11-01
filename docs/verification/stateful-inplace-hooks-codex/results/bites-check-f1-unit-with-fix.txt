@@ -1,0 +1,14 @@
+=== RUN   TestVerifyPR537P0_HookedInstanceMustWaitPreparingUpdate
+I1102 02:18:40.564314 2624423 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/verify-hook" instance="default/verify-hook-0" from="verify-hook-594cc8f647" to="verify-hook-c4775b4fd" isSurge=false free=false
+--- PASS: TestVerifyPR537P0_HookedInstanceMustWaitPreparingUpdate (0.04s)
+=== RUN   TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised
+=== RUN   TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised/hook_still_held
+=== RUN   TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised/hook_released_by_owner
+--- PASS: TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised (0.01s)
+    --- PASS: TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised/hook_still_held (0.00s)
+    --- PASS: TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised/hook_released_by_owner (0.00s)
+=== RUN   TestVerifyPR537F2_LifecycleExpectationsNeverObservedForInstances
+I1102 02:18:40.573450 2624423 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/verify-hook" instance="default/verify-hook-0" from="verify-hook-594cc8f647" to="verify-hook-c4775b4fd" isSurge=false free=false
+--- PASS: TestVerifyPR537F2_LifecycleExpectationsNeverObservedForInstances (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.066s

@@ -1,0 +1,32 @@
+# All non-test callers of the roleinstance/utils ResourceVersionExpectations registry
+pkg/reconciler/roleinstanceset/statelessmode/event_handler.go:163:	utils.ResourceVersionExpectations.Delete(roleInstance)
+pkg/reconciler/roleinstanceset/statelessmode/sync/scale.go:189:			utils.ResourceVersionExpectations.Expect(gotInstance)
+pkg/reconciler/roleinstanceset/statelessmode/sync/scale.go:272:				utils.ResourceVersionExpectations.Expect(gotInstance)
+pkg/reconciler/roleinstanceset/statelessmode/sync/update.go:168:			utils.ResourceVersionExpectations.Expect(gotInstance)
+pkg/reconciler/roleinstanceset/statelessmode/sync/update.go:200:						utils.ResourceVersionExpectations.Expect(gotInstance)
+pkg/reconciler/roleinstanceset/statelessmode/sync/update.go:215:					utils.ResourceVersionExpectations.Expect(gotInstance)
+pkg/reconciler/roleinstanceset/statelessmode/sync/update.go:235:					utils.ResourceVersionExpectations.Expect(&metav1.ObjectMeta{UID: instance.UID, ResourceVersion: res.NewResourceVersion})
+pkg/reconciler/roleinstanceset/statelessmode/sync/update.go:253:		utils.ResourceVersionExpectations.Expect(instance)
+pkg/reconciler/roleinstanceset/statelessmode/reconciler.go:159:	utils.ResourceVersionExpectations.Observe(updateRevision)
+pkg/reconciler/roleinstanceset/statelessmode/reconciler.go:160:	if isSatisfied, unsatisfiedDuration := utils.ResourceVersionExpectations.IsSatisfied(updateRevision); !isSatisfied {
+pkg/reconciler/roleinstanceset/statelessmode/reconciler.go:166:		utils.ResourceVersionExpectations.Delete(updateRevision)
+pkg/reconciler/roleinstanceset/statelessmode/reconciler.go:169:		utils.ResourceVersionExpectations.Observe(instance)
+pkg/reconciler/roleinstanceset/statelessmode/reconciler.go:170:		if isSatisfied, unsatisfiedDuration := utils.ResourceVersionExpectations.IsSatisfied(instance); !isSatisfied {
+pkg/reconciler/roleinstanceset/statelessmode/utils/utils.go:48:	ResourceVersionExpectations = expectations.NewResourceVersionExpectation()
+pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go:1294:				instanceutils.ResourceVersionExpectations.Expect(got)
+pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go:1351:				instanceutils.ResourceVersionExpectations.Expect(got)
+pkg/reconciler/roleinstance/sync/instance_update.go:95:			instanceutil.ResourceVersionExpectations.Expect(&metav1.ObjectMeta{UID: pod.UID, ResourceVersion: res.NewResourceVersion})
+pkg/reconciler/roleinstance/instance_reconciler.go:125:		instanceutil.ResourceVersionExpectations.Observe(pod)
+pkg/reconciler/roleinstance/instance_reconciler.go:126:		if isSatisfied, unsatisfiedDuration := instanceutil.ResourceVersionExpectations.IsSatisfied(pod); !isSatisfied {
+pkg/reconciler/roleinstance/instance_status.go:523:			instanceutils.ResourceVersionExpectations.Expect(gotPod)
+pkg/reconciler/roleinstance/instance_event_handler.go:93:	instanceutil.ResourceVersionExpectations.Delete(pod)
+pkg/reconciler/roleinstance/utils/instance_utils.go:46:	ResourceVersionExpectations = expectations.NewResourceVersionExpectation()
+
+# Observe/IsSatisfied call sites pass pods only:
+	for _, pod := range filteredPods {
+		instanceutil.ResourceVersionExpectations.Observe(pod)
+		if isSatisfied, unsatisfiedDuration := instanceutil.ResourceVersionExpectations.IsSatisfied(pod); !isSatisfied {
+			if unsatisfiedDuration > expectations.ExpectationTimeout {
+	}
+	instanceutil.ResourceVersionExpectations.Delete(pod)
+	controllerRef := metav1.GetControllerOf(pod)

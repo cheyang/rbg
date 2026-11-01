@@ -1,0 +1,104 @@
+Running Suite: Stateful RoleInstanceSet Controller Suite - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful
+======================================================================================================================================================================
+Random Seed: [1m1793557074[0m
+
+Will run [1m1[0m of [1m7[0m specs
+[38;5;14mS[0m[38;5;14mS[0mI1102 02:18:00.295606 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="110.839227ms"
+I1102 02:18:00.298122 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="2.422127ms"
+I1102 02:18:00.300528 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="2.328203ms"
+I1102 02:18:00.303912 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="2.102515ms"
+I1102 02:18:00.306018 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="2.053723ms"
+I1102 02:18:00.308175 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="2.093125ms"
+I1102 02:18:00.311830 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="2.121236ms"
+I1102 02:18:00.392965 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="1.892677ms"
+I1102 02:18:00.407072 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="14.053401ms"
+I1102 02:18:00.408979 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="1.855246ms"
+I1102 02:18:00.411060 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="1.96386ms"
+I1102 02:18:00.645738 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="1.900998ms"
+I1102 02:18:00.647267 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="1.476243ms"
+I1102 02:18:00.648445 2623939 stateful_instance_set_control.go:737] "Progress rolling update" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" targets=[1] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1102 02:18:00.648456 2623939 stateful_instance_set_control.go:917] "Updating instance" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" instance="test-inplace-strand-1793557078178056319/stranded-hook-1" from="stranded-hook-69b6d48754" to="stranded-hook-66d89fc575" isSurge=false free=false
+I1102 02:18:00.653100 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="5.778715ms"
+I1102 02:18:00.653425 2623939 stateful_instance_set_control.go:737] "Progress rolling update" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" targets=[1] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1102 02:18:00.653434 2623939 stateful_instance_set_control.go:917] "Updating instance" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" instance="test-inplace-strand-1793557078178056319/stranded-hook-1" from="stranded-hook-69b6d48754" to="stranded-hook-66d89fc575" isSurge=false free=false
+I1102 02:18:00.655005 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="1.853916ms"
+I1102 02:18:00.850668 2623939 stateful_instance_set_control.go:737] "Progress rolling update" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1102 02:18:00.852034 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="1.621838ms"
+I1102 02:18:00.852353 2623939 stateful_instance_set_control.go:737] "Progress rolling update" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1102 02:18:00.853921 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="1.813345ms"
+I1102 02:18:01.105119 2623939 stateful_instance_set_control.go:737] "Progress rolling update" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1102 02:18:01.106762 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="1.929879ms"
+I1102 02:18:01.107037 2623939 stateful_instance_set_control.go:737] "Progress rolling update" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1102 02:18:01.108627 2623939 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-inplace-strand-1793557078178056319/stranded-hook" elapsedTime="1.821445ms"
+
+[38;5;243m------------------------------[0m
+[38;5;9m• [FAILED] [25.946 seconds][0m
+[0mStateful InPlaceUpdate hook partition stranding (PR537 verify) [38;5;9m[1m[It] releases an admitted PreparingUpdate instance pinned below a raised partition[0m
+[38;5;243m/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go:55[0m
+
+  [38;5;243mTimeline >>[0m
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.CoordinatedPolicy"}
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "source": "kind source: *v1.Pod"}
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleInstanceSet"}
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "source": "kind source: *v1alpha2.RoleInstance"}
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleBasedGroupScalingAdapter"}
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "source": "kind source: *v1alpha2.RoleInstance"}
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1.Service"}
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "source": "kind source: *v1alpha2.RoleInstanceSet"}
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet", "source": "kind source: *v1alpha2.RoleBasedGroupSet"}
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "source": "kind source: *v1alpha2.RoleInstance"}
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter", "source": "kind source: *v1alpha2.RoleBasedGroupScalingAdapter"}
+  2026-11-02T02:17:58+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-11-02T02:17:58+08:00	INFO	Starting Controller	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance"}
+  2026-11-02T02:17:58+08:00	INFO	Starting workers	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "worker count": 1}
+  2026-11-02T02:17:58+08:00	INFO	Starting Controller	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter"}
+  2026-11-02T02:17:58+08:00	INFO	Starting Controller	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet"}
+  2026-11-02T02:17:58+08:00	INFO	Starting Controller	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet"}
+  2026-11-02T02:17:58+08:00	INFO	Starting workers	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "worker count": 1}
+  2026-11-02T02:17:58+08:00	INFO	Starting workers	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet", "worker count": 1}
+  2026-11-02T02:17:58+08:00	INFO	Starting workers	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter", "worker count": 1}
+  2026-11-02T02:17:58+08:00	INFO	Starting Controller	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup"}
+  2026-11-02T02:17:58+08:00	INFO	Starting workers	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "worker count": 1}
+  2026-11-02T02:18:00+08:00	DEBUG	events	create RoleInstance stranded-hook-0 in RoleInstanceSet stranded-hook successful	{"type": "Normal", "object": {"kind":"RoleInstanceSet","namespace":"test-inplace-strand-1793557078178056319","name":"stranded-hook","uid":"36bee3d6-64a0-4930-98f6-334e8ebae764","apiVersion":"workloads.x-k8s.io/v1alpha2","resourceVersion":"230"}, "reason": "SuccessfulCreate"}
+  2026-11-02T02:18:00+08:00	DEBUG	events	create RoleInstance stranded-hook-1 in RoleInstanceSet stranded-hook successful	{"type": "Normal", "object": {"kind":"RoleInstanceSet","namespace":"test-inplace-strand-1793557078178056319","name":"stranded-hook","uid":"36bee3d6-64a0-4930-98f6-334e8ebae764","apiVersion":"workloads.x-k8s.io/v1alpha2","resourceVersion":"230"}, "reason": "SuccessfulCreate"}
+  2026-11-02T02:18:00+08:00	DEBUG	enter workload.onUpdateFunc, test-inplace-strand-1793557078178056319/stranded-hook, type: *v1alpha2.RoleInstanceSet
+  2026-11-02T02:18:00+08:00	DEBUG	events	succeed to create pod stranded-hook-0-worker-0	{"type": "Normal", "object": {"kind":"RoleInstance","namespace":"test-inplace-strand-1793557078178056319","name":"stranded-hook-0","uid":"100da79a-f3fc-4020-a05c-5cc0a45ec1d4","apiVersion":"workloads.x-k8s.io/v1alpha2","resourceVersion":"232"}, "reason": "SuccessfulCreate"}
+  2026-11-02T02:18:00+08:00	DEBUG	events	succeed to create pod stranded-hook-1-worker-0	{"type": "Normal", "object": {"kind":"RoleInstance","namespace":"test-inplace-strand-1793557078178056319","name":"stranded-hook-1","uid":"5c771dcc-a343-4e8b-b969-1aecda8411b1","apiVersion":"workloads.x-k8s.io/v1alpha2","resourceVersion":"234"}, "reason": "SuccessfulCreate"}
+  2026-11-02T02:18:00+08:00	INFO	pod runtime not ready	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"stranded-hook-0","namespace":"test-inplace-strand-1793557078178056319"}, "namespace": "test-inplace-strand-1793557078178056319", "name": "stranded-hook-0", "reconcileID": "52e51892-9870-4302-b0b1-89934c716bde", "pod": {"name":"stranded-hook-0-worker-0","namespace":"test-inplace-strand-1793557078178056319"}}
+  2026-11-02T02:18:00+08:00	INFO	pod runtime not ready	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"stranded-hook-1","namespace":"test-inplace-strand-1793557078178056319"}, "namespace": "test-inplace-strand-1793557078178056319", "name": "stranded-hook-1", "reconcileID": "5de303cf-dfb6-4ce3-9786-a491b7814f59", "pod": {"name":"stranded-hook-1-worker-0","namespace":"test-inplace-strand-1793557078178056319"}}
+  2026-11-02T02:18:00+08:00	INFO	pod runtime not ready	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"stranded-hook-0","namespace":"test-inplace-strand-1793557078178056319"}, "namespace": "test-inplace-strand-1793557078178056319", "name": "stranded-hook-0", "reconcileID": "0b36950f-46ad-4b4b-bfe1-2eed814582b5", "pod": {"name":"stranded-hook-0-worker-0","namespace":"test-inplace-strand-1793557078178056319"}}
+  2026-11-02T02:18:00+08:00	INFO	pod runtime not ready	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"stranded-hook-1","namespace":"test-inplace-strand-1793557078178056319"}, "namespace": "test-inplace-strand-1793557078178056319", "name": "stranded-hook-1", "reconcileID": "fe74712c-d7b7-4884-ac0b-c693af680400", "pod": {"name":"stranded-hook-1-worker-0","namespace":"test-inplace-strand-1793557078178056319"}}
+  2026-11-02T02:18:00+08:00	INFO	pod runtime not ready	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"stranded-hook-0","namespace":"test-inplace-strand-1793557078178056319"}, "namespace": "test-inplace-strand-1793557078178056319", "name": "stranded-hook-0", "reconcileID": "f459a21e-2e7a-434a-aae6-a704333f1c74", "pod": {"name":"stranded-hook-0-worker-0","namespace":"test-inplace-strand-1793557078178056319"}}
+  2026-11-02T02:18:00+08:00	DEBUG	enter workload.onUpdateFunc, test-inplace-strand-1793557078178056319/stranded-hook, type: *v1alpha2.RoleInstanceSet
+  2026-11-02T02:18:00+08:00	INFO	pod runtime not ready	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "RoleInstance": {"name":"stranded-hook-1","namespace":"test-inplace-strand-1793557078178056319"}, "namespace": "test-inplace-strand-1793557078178056319", "name": "stranded-hook-1", "reconcileID": "a6e2dbac-1513-456d-8848-07c9c31f04ab", "pod": {"name":"stranded-hook-1-worker-0","namespace":"test-inplace-strand-1793557078178056319"}}
+  2026-11-02T02:18:00+08:00	DEBUG	enter workload.onUpdateFunc, test-inplace-strand-1793557078178056319/stranded-hook, type: *v1alpha2.RoleInstanceSet
+  2026-11-02T02:18:00+08:00	DEBUG	enter workload.onUpdateFunc, test-inplace-strand-1793557078178056319/stranded-hook, type: *v1alpha2.RoleInstanceSet
+  2026-11-02T02:18:00+08:00	DEBUG	enter workload.onUpdateFunc, test-inplace-strand-1793557078178056319/stranded-hook, type: *v1alpha2.RoleInstanceSet
+  2026-11-02T02:18:00+08:00	DEBUG	enter workload.onUpdateFunc, test-inplace-strand-1793557078178056319/stranded-hook, type: *v1alpha2.RoleInstanceSet
+  2026-11-02T02:18:00+08:00	DEBUG	enter workload.onUpdateFunc, test-inplace-strand-1793557078178056319/stranded-hook, type: *v1alpha2.RoleInstanceSet
+  [38;5;9m[FAILED][0m in [It] - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go:121 [38;5;243m@ 11/02/26 02:18:21.105[0m
+  [38;5;243m<< Timeline[0m
+
+  [38;5;9m[FAILED] Timed out after 20.000s.
+  F1: admitted PreparingUpdate instance stranded below partition
+  Expected
+      <string>: PreparingUpdate
+  not to equal
+      <string>: PreparingUpdate[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go:121[0m [38;5;243m@ 11/02/26 02:18:21.105[0m
+[38;5;243m------------------------------[0m
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+
+[38;5;9m[1mSummarizing 1 Failure:[0m
+  [38;5;9m[FAIL][0m [0mStateful InPlaceUpdate hook partition stranding (PR537 verify) [38;5;9m[1m[It] releases an admitted PreparingUpdate instance pinned below a raised partition[0m
+  [38;5;243m/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go:121[0m
+
+[38;5;9m[1mRan 1 of 7 Specs in 29.388 seconds[0m
+[38;5;9m[1mFAIL![0m -- [38;5;10m[1m0 Passed[0m | [38;5;9m[1m1 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m6 Skipped[0m
+--- FAIL: TestStatefulRoleInstanceSetController (29.39s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/stateful	29.404s
+FAIL

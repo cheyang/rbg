@@ -1,0 +1,39 @@
+{
+  "topic": "stateful-inplace-hooks-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/537",
+  "harnessPaths": [
+    "docs/verification/stateful-inplace-hooks-codex",
+    "pkg/reconciler/roleinstanceset/statefulmode/zz_verify_pr537_hooks_test.go",
+    "test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "The Stateful inPlaceUpdateInstance() path directly invokes the in-place update control; a matching InPlaceUpdate label/finalizer handler does not block the update (issue #534, Task 3).",
+    "reportedComponent": "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go",
+    "patchedComponent": "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "results/unit-base-p0-premise.txt: on base 4a0765f7 the hooked instance is in-place-updated immediately (lifecycle label stays empty, spec replaced); on head 2d648e5d the same contract test passes (PreparingUpdate admission).",
+    "match": ["TestVerifyPR537P0_HookedInstanceMustWaitPreparingUpdate"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/roleinstanceset/statefulmode/ -run 'TestVerifyPR537' -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=${KUBEBUILDER_ASSETS:-$(setup-envtest use 1.31.0 -p path)} go test ./test/envtest/testcase/stateful/ -run TestStatefulRoleInstanceSetController -ginkgo.focus 'partition stranding' -ginkgo.json-report=$GINKGO_REPORT -timeout 20m",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    { "id": "P0", "polarity": "contract", "layer": "unit", "match": ["TestVerifyPR537P0_HookedInstanceMustWaitPreparingUpdate"] },
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised"] },
+    { "id": "F1-envtest", "polarity": "contract", "layer": "integration", "match": ["releases an admitted PreparingUpdate instance pinned below a raised partition"] },
+    { "id": "F2", "polarity": "canary", "layer": "unit", "match": ["TestVerifyPR537F2_LifecycleExpectationsNeverObservedForInstances"] }
+  ],
+  "liveNote": "L3 skipped per debate-pipeline rules (no KUBECONFIG layer). The unit + envtest layers exercise the real stateful and roleinstance controllers against a real API server."
+}

@@ -1,0 +1,27 @@
+=== RUN   TestVerifyPR537P0_HookedInstanceMustWaitPreparingUpdate
+I1102 02:16:41.758018 2622796 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/verify-hook" instance="default/verify-hook-0" from="verify-hook-594cc8f647" to="verify-hook-c4775b4fd" isSurge=false free=false
+--- PASS: TestVerifyPR537P0_HookedInstanceMustWaitPreparingUpdate (0.04s)
+=== RUN   TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised
+=== RUN   TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised/hook_still_held
+I1102 02:16:41.761773 2622796 stateful_instance_set_control.go:737] "Progress rolling update" instanceSet="default/verify-hook" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+    zz_verify_pr537_hooks_test.go:201: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/pkg/reconciler/roleinstanceset/statefulmode/zz_verify_pr537_hooks_test.go:201
+        	Error:      	Should not be: "PreparingUpdate"
+        	Test:       	TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised/hook_still_held
+        	Messages:   	F1: an admitted PreparingUpdate instance pinned below partition must not be stranded
+=== RUN   TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised/hook_released_by_owner
+I1102 02:16:41.763514 2622796 stateful_instance_set_control.go:737] "Progress rolling update" instanceSet="default/verify-hook" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+    zz_verify_pr537_hooks_test.go:201: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/pkg/reconciler/roleinstanceset/statefulmode/zz_verify_pr537_hooks_test.go:201
+        	Error:      	Should not be: "PreparingUpdate"
+        	Test:       	TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised/hook_released_by_owner
+        	Messages:   	F1: an admitted PreparingUpdate instance pinned below partition must not be stranded
+--- FAIL: TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised (0.00s)
+    --- FAIL: TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised/hook_still_held (0.00s)
+    --- FAIL: TestVerifyPR537F1_PreparingUpdateStrandedWhenPartitionRaised/hook_released_by_owner (0.00s)
+=== RUN   TestVerifyPR537F2_LifecycleExpectationsNeverObservedForInstances
+I1102 02:16:41.764511 2622796 stateful_instance_set_control.go:917] "Updating instance" instanceSet="default/verify-hook" instance="default/verify-hook-0" from="verify-hook-594cc8f647" to="verify-hook-c4775b4fd" isSurge=false free=false
+--- PASS: TestVerifyPR537F2_LifecycleExpectationsNeverObservedForInstances (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.062s
+FAIL

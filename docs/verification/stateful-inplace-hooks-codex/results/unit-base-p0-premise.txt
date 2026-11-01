@@ -1,0 +1,20 @@
+=== RUN   TestVerifyPR537P0_HookedInstanceMustWaitPreparingUpdate
+I1102 02:17:00.381572 2623356 stateful_instance_set_control.go:909] "Updating instance" instanceSet="default/verify-hook" instance="default/verify-hook-0" from="verify-hook-594cc8f647" to="verify-hook-c4775b4fd" isSurge=false free=false
+    zz_verify_pr537_hooks_test.go:134: 
+        	Error Trace:	/tmp/rbg-pr537-base/pkg/reconciler/roleinstanceset/statefulmode/zz_verify_pr537_hooks_test.go:134
+        	Error:      	Not equal: 
+        	            	expected: "PreparingUpdate"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-PreparingUpdate
+        	            	+
+        	Test:       	TestVerifyPR537P0_HookedInstanceMustWaitPreparingUpdate
+        	Messages:   	hooked instance must be held in PreparingUpdate before any in-place update
+--- FAIL: TestVerifyPR537P0_HookedInstanceMustWaitPreparingUpdate (0.04s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.057s
+FAIL
