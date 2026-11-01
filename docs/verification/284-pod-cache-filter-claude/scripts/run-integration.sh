@@ -12,7 +12,7 @@
 # without JSON; re-verify then reports HARNESS-UPDATE for this layer.
 set -uo pipefail
 
-REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../.." && pwd)"
+REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../../.." && pwd)"
 cd "$REPO"
 
 ASSETS="${KUBEBUILDER_ASSETS:-}"
