@@ -1,0 +1,5 @@
+TestP0PremiseBaseCanary	fail
+TestP0PremiseContractAfterFix	pass
+TestF1RegretReleaseMustClearLifecycleBlock/AllPodReady	fail
+TestF1RegretReleaseMustClearLifecycleBlock/None	fail
+TestF1RegretReleaseMustClearLifecycleBlock	fail
