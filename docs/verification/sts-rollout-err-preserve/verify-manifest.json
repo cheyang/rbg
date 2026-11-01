@@ -16,7 +16,9 @@
     "layer": "integration",
     "verdict": "confirmed",
     "evidence": "base (4a0765f7): reconcile returned nil and live STS went 5 -> 0 replicas; head (cf4bff4c): error propagated, replicas stayed 5. See results/base-envtest.out and results/base-unit.out.",
-    "match": ["TestVerifyStatefulSetNotScaledToZeroOnPodListError"]
+    "match": [
+      "TestVerifyStatefulSetNotScaledToZeroOnPodListError"
+    ]
   },
   "layers": {
     "unit": {
@@ -25,7 +27,7 @@
     },
     "integration": {
       "kind": "gotest",
-      "cmd": "KUBEBUILDER_ASSETS=\"$([ -x bin/setup-envtest ] && bin/setup-envtest use 1.31.0 --bin-dir bin -p path || setup-envtest use 1.31.0 -p path)\" go test -mod=vendor -tags=envtest_verify ./pkg/reconciler -run '^TestVerifyStatefulSetNotScaledToZeroOnPodListError$' -count=1 -timeout=180s -json"
+      "cmd": "KUBEBUILDER_ASSETS=\"$([ -x bin/setup-envtest ] && bin/setup-envtest use 1.31.0 --bin-dir \\\"$PWD/bin\\\" -p path || setup-envtest use 1.31.0 -p path)\" go test -mod=vendor -tags=envtest_verify ./pkg/reconciler -run '^TestVerifyStatefulSetNotScaledToZeroOnPodListError$' -count=1 -timeout=180s -json"
     }
   },
   "findings": [
@@ -42,7 +44,9 @@
       "id": "B2",
       "polarity": "contract",
       "layer": "integration",
-      "match": ["TestVerifyStatefulSetNotScaledToZeroOnPodListError"]
+      "match": [
+        "TestVerifyStatefulSetNotScaledToZeroOnPodListError"
+      ]
     }
   ],
   "liveNote": "L3 skipped per review instructions (no KUBECONFIG layer). The deleted-pods effect of the zero-replica write needs a native StatefulSet controller, which envtest does not run; the API-server-persisted replicas=0 write is the verified boundary."
