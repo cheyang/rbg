@@ -1,0 +1,7 @@
+=== RUN   TestVerifyStatefulSetNotScaledToZeroOnPodListError
+    sts_rollout_errpreserve_envtest_verify_test.go:123: created sts: replicas=4 partition=0
+    sts_rollout_errpreserve_envtest_verify_test.go:134: second reconcile error: pods is forbidden: pods is forbidden
+    sts_rollout_errpreserve_envtest_verify_test.go:139: replicas after second reconcile: 5
+--- PASS: TestVerifyStatefulSetNotScaledToZeroOnPodListError (2.56s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	2.573s

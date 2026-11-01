@@ -1,0 +1,11 @@
+=== RUN   TestVerifyRollingUpdateParametersPreservesPodListError
+    sts_rollout_errpreserve_unit_verify_test.go:136: BUG #539 reproduced: Pod List error swallowed by defer; rollingUpdateParameters returned (partition=0, replicas=0, err=nil) — caller will apply replicas to the live StatefulSet
+--- FAIL: TestVerifyRollingUpdateParametersPreservesPodListError (0.04s)
+=== RUN   TestVerifyRollingUpdateParametersPreservesRevisionListError
+{"level":"dpanic","ts":"2026-11-02T05:35:43+08:00","msg":"odd number of arguments passed as key-value pairs for logging","env":"verify","ignored key":"test-rbg-test-role","stacktrace":"sigs.k8s.io/rbgs/pkg/reconciler.(*StatefulSetReconciler).getReplicaStates\n\t/tmp/rbg-base-540/pkg/reconciler/sts_reconciler.go:375\nsigs.k8s.io/rbgs/pkg/reconciler.(*StatefulSetReconciler).rollingUpdateParameters\n\t/tmp/rbg-base-540/pkg/reconciler/sts_reconciler.go:286\nsigs.k8s.io/rbgs/pkg/reconciler.TestVerifyRollingUpdateParametersPreservesRevisionListError\n\t/tmp/rbg-base-540/pkg/reconciler/sts_rollout_errpreserve_unit_verify_test.go:177\ntesting.tRunner\n\t/usr/local/go/src/testing/testing.go:2193"}
+{"level":"error","ts":"2026-11-02T05:35:43+08:00","msg":"sts","env":"verify","error":"get sts highest controller revision error","stacktrace":"sigs.k8s.io/rbgs/pkg/reconciler.(*StatefulSetReconciler).getReplicaStates\n\t/tmp/rbg-base-540/pkg/reconciler/sts_reconciler.go:375\nsigs.k8s.io/rbgs/pkg/reconciler.(*StatefulSetReconciler).rollingUpdateParameters\n\t/tmp/rbg-base-540/pkg/reconciler/sts_reconciler.go:286\nsigs.k8s.io/rbgs/pkg/reconciler.TestVerifyRollingUpdateParametersPreservesRevisionListError\n\t/tmp/rbg-base-540/pkg/reconciler/sts_rollout_errpreserve_unit_verify_test.go:177\ntesting.tRunner\n\t/usr/local/go/src/testing/testing.go:2193"}
+    sts_rollout_errpreserve_unit_verify_test.go:179: BUG #539 reproduced: ControllerRevision List error swallowed by defer; rollingUpdateParameters returned (partition=0, replicas=0, err=nil)
+--- FAIL: TestVerifyRollingUpdateParametersPreservesRevisionListError (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.058s
+FAIL

@@ -1,0 +1,10 @@
+=== RUN   TestVerifyStatefulSetNotScaledToZeroOnPodListError
+    sts_rollout_errpreserve_envtest_verify_test.go:123: created sts: replicas=4 partition=0
+    sts_rollout_errpreserve_envtest_verify_test.go:134: second reconcile error: <nil>
+    sts_rollout_errpreserve_envtest_verify_test.go:139: replicas after second reconcile: 0
+    sts_rollout_errpreserve_envtest_verify_test.go:142: BUG #539: Pod List error swallowed; reconcileStatefulSet returned nil
+    sts_rollout_errpreserve_envtest_verify_test.go:145: BUG #539 reproduced: the StatefulSet was scaled to 0 by the failed reconcile
+--- FAIL: TestVerifyStatefulSetNotScaledToZeroOnPodListError (2.22s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	2.237s
+FAIL
