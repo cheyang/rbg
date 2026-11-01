@@ -1,0 +1,26 @@
+re-verify: manifest = docs/verification/284-pod-cache-filter-claude/verify-manifest.json
+re-verify: last-reviewed = f8d67fa701956638658594bccfe34b7947222e36  (review delta = f8d67fa701956638658594bccfe34b7947222e36..f8d67fa701956638658594bccfe34b7947222e36)
+re-verify: fixed-ref=f8d67fa701956638658594bccfe34b7947222e36  harness-from=verify/284-pod-cache-filter-claude
+re-verify: running layer 'unit' (gotest)
+re-verify: running layer 'integration' (gotest)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+F1     contract  unit         STILL-BROKEN   pass=0 fail=2 miss=0
+F1-guard contract  unit         FIXED          pass=1 fail=0 miss=0
+R2-F1  contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+R2-F2  contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+R2-F3  contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+R2-F4  canary    integration  STILL-PRESENT  pass=1 fail=0 miss=0
+P-readpaths contract  integration  FIXED          pass=8 fail=0 miss=0
+P0-mechanics contract  unit         FIXED          pass=3 fail=0 miss=0
+
+Live layer (manual): No live layer: the PR ships a design (keps/284-pod-cache-filter/**) plus a tagged prototype (test/podcacheunion) and changes no runtime code, so there is nothing to exercise against a real cluster. When the implementation PR lands, graft this harness onto it: F1's contract tests and TestCacheOptionsConstrainsPodCache must be green, TestGroupNameDriftStillDetected must stay green, and the read-path audit (R2-F3's corrected claim) must be recorded with its regression test.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/284-pod-cache-filter-claude/results/reverify
+
+Review delta this round: f8d67fa701956638658594bccfe34b7947222e36..f8d67fa701956638658594bccfe34b7947222e36
+After reviewing that delta, advance the marker for the next round:
+  echo f8d67fa701956638658594bccfe34b7947222e36 > docs/verification/284-pod-cache-filter-claude/.last-reviewed && git add docs/verification/284-pod-cache-filter-claude/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.
