@@ -138,7 +138,7 @@ files + this docs tree). It grafts onto whatever the fixed code is.
    ```
 2. Re-run everything with one command:
    ```bash
-   bash docs/verification/selective-scale-down-claude/scripts/re-verify.sh
+   bash docs/verification/selective-scale-down-claude/scripts/re-verify.sh --layers unit,integration,lint
    ```
    (no argument: it fetches the current PR head from the manifest's `pr` URL).
    Expected after the fixes: F1, F3, F4 flip to FIXED; F7 and REG stay green.
@@ -163,6 +163,6 @@ Kickoff prompt for a fresh agent: "You are resuming Reviewer A's verification
 of sgl-project/rbg PR #538. Checkout any ref of that PR, graft branch
 `verify/selective-scale-down-claude` from fork `cheyang/rbg` onto it (paths in
 `docs/verification/selective-scale-down-claude/verify-manifest.json`), run
-`bash docs/verification/selective-scale-down-claude/scripts/re-verify.sh`, and
+`bash docs/verification/selective-scale-down-claude/scripts/re-verify.sh --layers unit,integration,lint`, and
 report per-finding Fixed / Still-broken / Harness-update using the polarity
 table in that directory's README."
