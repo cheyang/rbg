@@ -32,7 +32,7 @@
     },
     "unitdrift": {
       "kind": "gotest",
-      "cmd": "go test ./test/kep284/ -run 'TestFilterSystemLabelsIgnoresManagedMarker|TestGroupNameDriftStillDetected|TestFIFOsDoNotImplementTransformingStore' -count=1 -json && go test ./pkg/reconciler/ -run TestPodTemplateSpecEqualIgnoresManagedMarker -count=1 -json",
+      "cmd": "go test ./test/kep284/ -run 'TestFilterSystemLabelsIgnoresManagedMarker|TestGroupNameDriftStillDetected|TestFIFOsDoNotImplementTransformingStore' -count=1 -json; go test ./pkg/reconciler/ -run TestPodTemplateSpecEqualIgnoresManagedMarker -count=1 -json",
       "note": "Drift contract suite for the IMPLEMENTATION PR. At the docs-only head f8d67fa the two marker-exemption tests are RED by design (the KEP now specifies the key-scoped FilterSystemLabels exemption but implementation is a follow-up PR). Run with --layers unitdrift; excluded from the default unit+integration sweep."
     }
   },
