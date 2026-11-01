@@ -1,0 +1,555 @@
+[
+  {
+    "SuitePath": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful",
+    "SuiteDescription": "Stateful RoleInstanceSet Controller Suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": false,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 7,
+      "SpecsThatWillRun": 1
+    },
+    "StartTime": "2026-11-02T02:21:37.757771184+08:00",
+    "EndTime": "2026-11-02T02:22:07.329704565+08:00",
+    "RunTime": 29571933381,
+    "SuiteConfig": {
+      "RandomSeed": 1793557297,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": [
+        "partition stranding"
+      ],
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/suite_test.go",
+          "LineNumber": 32
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-11-02T02:21:37.757795145+08:00",
+        "EndTime": "2026-11-02T02:21:41.355663884+08:00",
+        "RunTime": 3597868739,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-11-02T02:21:37+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-11-02T02:21:39+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-11-02T02:21:39+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/config/crd/bases\"}\n2026-11-02T02:21:39+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-11-02T02:21:39+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-11-02T02:21:39+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-11-02T02:21:39+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-11-02T02:21:39+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-11-02T02:21:39+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-11-02T02:21:39+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-11-02T02:21:39+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-11-02T02:21:39+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-11-02T02:21:39+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-11-02T02:21:39+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-02T02:21:40+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-02T02:21:41+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/suite_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-11-02T02:21:37.757807376+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testutil/setup.go",
+              "LineNumber": 66
+            },
+            "TimelineLocation": {
+              "Order": 2,
+              "Time": "2026-11-02T02:21:37.757850777+08:00"
+            },
+            "Message": "bootstrapping test environment"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testutil/setup.go",
+              "LineNumber": 98
+            },
+            "TimelineLocation": {
+              "Offset": 4712,
+              "Order": 3,
+              "Time": "2026-11-02T02:21:41.25274872+08:00"
+            },
+            "Message": "setting up controller manager"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/suite_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Offset": 4712,
+              "Order": 5,
+              "Time": "2026-11-02T02:21:41.355662774+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 3597855398,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful RoleInstanceSet rollout recovery"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/rollout_recovery_test.go",
+            "LineNumber": 40
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/rollout_recovery_test.go",
+          "LineNumber": 57
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "replaces a stably unhealthy rollout target through the controller requeue path",
+        "State": "skipped",
+        "StartTime": "2026-11-02T02:21:41.355709446+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful RoleInstanceSet rollout recovery"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/rollout_recovery_test.go",
+            "LineNumber": 40
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/rollout_recovery_test.go",
+          "LineNumber": 134
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "recovers early-rollback surge protection from persisted status",
+        "State": "skipped",
+        "StartTime": "2026-11-02T02:21:41.355758298+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful RoleInstanceSet rollout recovery"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/rollout_recovery_test.go",
+            "LineNumber": 40
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/rollout_recovery_test.go",
+          "LineNumber": 218
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "retains surge through a complete A to B to A rollback when partition decreases",
+        "State": "skipped",
+        "StartTime": "2026-11-02T02:21:41.355762628+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful InPlaceUpdate hook partition stranding (PR537 verify)"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go",
+            "LineNumber": 44
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go",
+          "LineNumber": 55
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "releases an admitted PreparingUpdate instance pinned below a raised partition",
+        "State": "failed",
+        "StartTime": "2026-11-02T02:21:41.355766108+08:00",
+        "EndTime": "2026-11-02T02:22:07.304564819+08:00",
+        "RunTime": 25948798712,
+        "ParallelProcess": 1,
+        "Failure": {
+          "Message": "Timed out after 20.001s.\nF1: admitted PreparingUpdate instance stranded below partition\nExpected\n    \u003cstring\u003e: PreparingUpdate\nnot to equal\n    \u003cstring\u003e: PreparingUpdate",
+          "Location": {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go",
+            "LineNumber": 121,
+            "FullStackTrace": "sigs.k8s.io/rbgs/test/envtest/testcase/stateful.init.func6.3()\n\t/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go:121 +0xc27"
+          },
+          "TimelineLocation": {
+            "Offset": 10645,
+            "Order": 10,
+            "Time": "2026-11-02T02:22:04.285006713+08:00"
+          },
+          "FailureNodeContext": "leaf-node",
+          "FailureNodeType": "It",
+          "FailureNodeLocation": {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go",
+            "LineNumber": 55
+          },
+          "ProgressReport": {
+            "LeafNodeLocation": {},
+            "SpecStartTime": "0001-01-01T00:00:00Z",
+            "CurrentNodeLocation": {},
+            "CurrentNodeStartTime": "0001-01-01T00:00:00Z",
+            "CurrentStepLocation": {},
+            "CurrentStepStartTime": "0001-01-01T00:00:00Z",
+            "TimelineLocation": {
+              "Time": "0001-01-01T00:00:00Z"
+            }
+          }
+        },
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.CoordinatedPolicy\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"source\": \"kind source: *v1.Pod\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstanceSet\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupScalingAdapter\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1.Service\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"source\": \"kind source: *v1alpha2.RoleInstance\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"source\": \"kind source: *v1alpha2.RoleInstanceSet\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupSet\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"source\": \"kind source: *v1alpha2.RoleBasedGroup\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting EventSource\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"source\": \"kind source: *v1alpha2.RoleBasedGroupScalingAdapter\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting Controller\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting workers\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"worker count\": 1}\n2026-11-02T02:21:41+08:00\tINFO\tStarting Controller\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting workers\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\", \"worker count\": 1}\n2026-11-02T02:21:41+08:00\tINFO\tStarting Controller\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting workers\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\", \"worker count\": 1}\n2026-11-02T02:21:41+08:00\tINFO\tStarting Controller\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting workers\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\", \"worker count\": 1}\n2026-11-02T02:21:41+08:00\tINFO\tStarting Controller\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-11-02T02:21:41+08:00\tINFO\tStarting workers\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\", \"worker count\": 1}\n2026-11-02T02:21:43+08:00\tDEBUG\tevents\tcreate RoleInstance stranded-hook-0 in RoleInstanceSet stranded-hook successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-inplace-strand-1793557301355776998\",\"name\":\"stranded-hook\",\"uid\":\"6d098712-1cfc-42bc-b99b-54c1cc78a7e4\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"230\"}, \"reason\": \"SuccessfulCreate\"}\n2026-11-02T02:21:43+08:00\tDEBUG\tevents\tcreate RoleInstance stranded-hook-1 in RoleInstanceSet stranded-hook successful\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstanceSet\",\"namespace\":\"test-inplace-strand-1793557301355776998\",\"name\":\"stranded-hook\",\"uid\":\"6d098712-1cfc-42bc-b99b-54c1cc78a7e4\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"230\"}, \"reason\": \"SuccessfulCreate\"}\n2026-11-02T02:21:43+08:00\tDEBUG\tevents\tsucceed to create pod stranded-hook-0-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-inplace-strand-1793557301355776998\",\"name\":\"stranded-hook-0\",\"uid\":\"d2ae22cb-b841-4c60-b5e4-f0644bfc7c03\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"232\"}, \"reason\": \"SuccessfulCreate\"}\n2026-11-02T02:21:43+08:00\tDEBUG\tenter workload.onUpdateFunc, test-inplace-strand-1793557301355776998/stranded-hook, type: *v1alpha2.RoleInstanceSet\n2026-11-02T02:21:43+08:00\tDEBUG\tevents\tsucceed to create pod stranded-hook-1-worker-0\t{\"type\": \"Normal\", \"object\": {\"kind\":\"RoleInstance\",\"namespace\":\"test-inplace-strand-1793557301355776998\",\"name\":\"stranded-hook-1\",\"uid\":\"c70559e0-ade7-4db1-a1d5-e6130afc31ed\",\"apiVersion\":\"workloads.x-k8s.io/v1alpha2\",\"resourceVersion\":\"234\"}, \"reason\": \"SuccessfulCreate\"}\n2026-11-02T02:21:43+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stranded-hook-0\",\"namespace\":\"test-inplace-strand-1793557301355776998\"}, \"namespace\": \"test-inplace-strand-1793557301355776998\", \"name\": \"stranded-hook-0\", \"reconcileID\": \"ce3bb3ea-2c56-4f28-b68c-165bd52a0d62\", \"pod\": {\"name\":\"stranded-hook-0-worker-0\",\"namespace\":\"test-inplace-strand-1793557301355776998\"}}\n2026-11-02T02:21:43+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stranded-hook-1\",\"namespace\":\"test-inplace-strand-1793557301355776998\"}, \"namespace\": \"test-inplace-strand-1793557301355776998\", \"name\": \"stranded-hook-1\", \"reconcileID\": \"3ef27c8e-8e23-421f-b320-fc5321c20e50\", \"pod\": {\"name\":\"stranded-hook-1-worker-0\",\"namespace\":\"test-inplace-strand-1793557301355776998\"}}\n2026-11-02T02:21:43+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stranded-hook-0\",\"namespace\":\"test-inplace-strand-1793557301355776998\"}, \"namespace\": \"test-inplace-strand-1793557301355776998\", \"name\": \"stranded-hook-0\", \"reconcileID\": \"92028128-c5e8-4e1a-935e-a52cf8f74e3f\", \"pod\": {\"name\":\"stranded-hook-0-worker-0\",\"namespace\":\"test-inplace-strand-1793557301355776998\"}}\n2026-11-02T02:21:43+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stranded-hook-1\",\"namespace\":\"test-inplace-strand-1793557301355776998\"}, \"namespace\": \"test-inplace-strand-1793557301355776998\", \"name\": \"stranded-hook-1\", \"reconcileID\": \"c47ed206-15fc-4d1c-8a70-c21aaeb4fda0\", \"pod\": {\"name\":\"stranded-hook-1-worker-0\",\"namespace\":\"test-inplace-strand-1793557301355776998\"}}\n2026-11-02T02:21:43+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stranded-hook-0\",\"namespace\":\"test-inplace-strand-1793557301355776998\"}, \"namespace\": \"test-inplace-strand-1793557301355776998\", \"name\": \"stranded-hook-0\", \"reconcileID\": \"144d6c5e-b5e9-4202-bd89-db4f1e9e7abd\", \"pod\": {\"name\":\"stranded-hook-0-worker-0\",\"namespace\":\"test-inplace-strand-1793557301355776998\"}}\n2026-11-02T02:21:43+08:00\tDEBUG\tenter workload.onUpdateFunc, test-inplace-strand-1793557301355776998/stranded-hook, type: *v1alpha2.RoleInstanceSet\n2026-11-02T02:21:43+08:00\tINFO\tpod runtime not ready\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\", \"RoleInstance\": {\"name\":\"stranded-hook-1\",\"namespace\":\"test-inplace-strand-1793557301355776998\"}, \"namespace\": \"test-inplace-strand-1793557301355776998\", \"name\": \"stranded-hook-1\", \"reconcileID\": \"b5cc8a63-879d-44f2-b3c3-a36c271b6205\", \"pod\": {\"name\":\"stranded-hook-1-worker-0\",\"namespace\":\"test-inplace-strand-1793557301355776998\"}}\n2026-11-02T02:21:43+08:00\tDEBUG\tenter workload.onUpdateFunc, test-inplace-strand-1793557301355776998/stranded-hook, type: *v1alpha2.RoleInstanceSet\n2026-11-02T02:21:43+08:00\tDEBUG\tenter workload.onUpdateFunc, test-inplace-strand-1793557301355776998/stranded-hook, type: *v1alpha2.RoleInstanceSet\n2026-11-02T02:21:43+08:00\tDEBUG\tenter workload.onUpdateFunc, test-inplace-strand-1793557301355776998/stranded-hook, type: *v1alpha2.RoleInstanceSet\n2026-11-02T02:21:44+08:00\tDEBUG\tenter workload.onUpdateFunc, test-inplace-strand-1793557301355776998/stranded-hook, type: *v1alpha2.RoleInstanceSet\n2026-11-02T02:21:44+08:00\tDEBUG\tenter workload.onUpdateFunc, test-inplace-strand-1793557301355776998/stranded-hook, type: *v1alpha2.RoleInstanceSet\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go",
+              "LineNumber": 49
+            },
+            "TimelineLocation": {
+              "Order": 6,
+              "Time": "2026-11-02T02:21:41.355769948+08:00"
+            },
+            "Message": "Stateful InPlaceUpdate hook partition stranding (PR537 verify)",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go",
+              "LineNumber": 49
+            },
+            "TimelineLocation": {
+              "Offset": 3343,
+              "Order": 8,
+              "Time": "2026-11-02T02:21:41.358800366+08:00"
+            },
+            "Message": "Stateful InPlaceUpdate hook partition stranding (PR537 verify)",
+            "Duration": 3030408,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go",
+              "LineNumber": 55
+            },
+            "TimelineLocation": {
+              "Offset": 3343,
+              "Order": 9,
+              "Time": "2026-11-02T02:21:41.358803356+08:00"
+            },
+            "Message": "releases an admitted PreparingUpdate instance pinned below a raised partition",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go",
+              "LineNumber": 55
+            },
+            "TimelineLocation": {
+              "Offset": 10645,
+              "Order": 11,
+              "Time": "2026-11-02T02:22:04.285013404+08:00"
+            },
+            "Message": "releases an admitted PreparingUpdate instance pinned below a raised partition",
+            "Duration": 22926210038,
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go",
+              "LineNumber": 53
+            },
+            "TimelineLocation": {
+              "Offset": 10645,
+              "Order": 12,
+              "Time": "2026-11-02T02:22:04.285019514+08:00"
+            },
+            "Message": "Stateful InPlaceUpdate hook partition stranding (PR537 verify)",
+            "NodeType": "AfterEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/zz_verify_pr537_partition_stranding_test.go",
+              "LineNumber": 53
+            },
+            "TimelineLocation": {
+              "Offset": 10645,
+              "Order": 14,
+              "Time": "2026-11-02T02:22:07.304560069+08:00"
+            },
+            "Message": "Stateful InPlaceUpdate hook partition stranding (PR537 verify)",
+            "Duration": 3019540565,
+            "NodeType": "AfterEach"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful InPlaceUpdate lifecycle hook",
+          "waits for release, updates in place, and completes the hook lifecycle"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/inplace_hook_test.go",
+            "LineNumber": 35
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/inplace_hook_test.go",
+            "LineNumber": 45
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/inplace_hook_test.go",
+          "LineNumber": 153
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "OrderedReady",
+        "State": "skipped",
+        "StartTime": "2026-11-02T02:22:07.304687404+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful InPlaceUpdate lifecycle hook",
+          "waits for release, updates in place, and completes the hook lifecycle"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/inplace_hook_test.go",
+            "LineNumber": 35
+          },
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/inplace_hook_test.go",
+            "LineNumber": 45
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          [],
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          [],
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/inplace_hook_test.go",
+          "LineNumber": 153
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "Parallel",
+        "State": "skipped",
+        "StartTime": "2026-11-02T02:22:07.304692444+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "Stateful RoleInstance orphan Pod recovery"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/orphan_gc_recovery_test.go",
+            "LineNumber": 36
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/orphan_gc_recovery_test.go",
+          "LineNumber": 53
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "recreates a replacement Pod through the controller retry after orphan GC",
+        "State": "skipped",
+        "StartTime": "2026-11-02T02:22:07.304695554+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/suite_test.go",
+          "LineNumber": 36
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-11-02T02:22:07.304698214+08:00",
+        "EndTime": "2026-11-02T02:22:07.329693054+08:00",
+        "RunTime": 24994850,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-11-02T02:22:07+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-11-02T02:22:07+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-11-02T02:22:07+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-11-02T02:22:07+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-11-02T02:22:07+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-11-02T02:22:07+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-11-02T02:22:07+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-11-02T02:22:07+08:00\tINFO\tShutdown signal received, waiting for all workers to finish\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-11-02T02:22:07+08:00\tINFO\tAll workers finished\t{\"controller\": \"roleinstanceset\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstanceSet\"}\n2026-11-02T02:22:07+08:00\tINFO\tAll workers finished\t{\"controller\": \"rbgset-controller\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupSet\"}\n2026-11-02T02:22:07+08:00\tINFO\tAll workers finished\t{\"controller\": \"workloads-rolebasedgroup\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroup\"}\n2026-11-02T02:22:07+08:00\tINFO\tAll workers finished\t{\"controller\": \"workloads-rolebasedgroup-scalingadapter\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleBasedGroupScalingAdapter\"}\n2026-11-02T02:22:07+08:00\tINFO\tAll workers finished\t{\"controller\": \"roleinstance\", \"controllerGroup\": \"workloads.x-k8s.io\", \"controllerKind\": \"RoleInstance\"}\n2026-11-02T02:22:07+08:00\tINFO\tStopping and waiting for caches\n2026-11-02T02:22:07+08:00\tINFO\tStopping and waiting for webhooks\n2026-11-02T02:22:07+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-11-02T02:22:07+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/suite_test.go",
+              "LineNumber": 36
+            },
+            "TimelineLocation": {
+              "Order": 15,
+              "Time": "2026-11-02T02:22:07.304699124+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testutil/setup.go",
+              "LineNumber": 140
+            },
+            "TimelineLocation": {
+              "Order": 16,
+              "Time": "2026-11-02T02:22:07.304719275+08:00"
+            },
+            "Message": "tearing down the test environment"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-537/work/verify/test/envtest/testcase/stateful/suite_test.go",
+              "LineNumber": 36
+            },
+            "TimelineLocation": {
+              "Offset": 2441,
+              "Order": 18,
+              "Time": "2026-11-02T02:22:07.329690684+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 24991550,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]
