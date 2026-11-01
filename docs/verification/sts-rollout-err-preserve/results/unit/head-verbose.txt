@@ -1,0 +1,17 @@
+=== RUN   TestRollingUpdateParameters_PreservesPodListError
+--- PASS: TestRollingUpdateParameters_PreservesPodListError (0.04s)
+=== RUN   TestRollingUpdateParameters_PreservesControllerRevisionListError
+--- PASS: TestRollingUpdateParameters_PreservesControllerRevisionListError (0.00s)
+=== RUN   TestRollingUpdateParameters_PreservesMissingRevision
+--- PASS: TestRollingUpdateParameters_PreservesMissingRevision (0.00s)
+=== RUN   TestRollingUpdateParameters_PreservesMalformedRoleSizeAnnotation
+--- PASS: TestRollingUpdateParameters_PreservesMalformedRoleSizeAnnotation (0.00s)
+=== RUN   TestRollingUpdateParameters_PropagatesPartitionConversionError
+--- PASS: TestRollingUpdateParameters_PropagatesPartitionConversionError (0.00s)
+=== RUN   TestRollingUpdateParameters_PanicOnShrunkLiveSts_CANARY
+    sts_rollout_error_preserve_test.go:279: canary: reconcile panics as currently coded: runtime error: index out of range [1] with length 1
+--- PASS: TestRollingUpdateParameters_PanicOnShrunkLiveSts_CANARY (0.00s)
+=== RUN   TestReconcileStatefulSet_NoScaleToZeroOnPodListError
+--- PASS: TestReconcileStatefulSet_NoScaleToZeroOnPodListError (0.01s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.071s

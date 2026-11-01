@@ -1,0 +1,4 @@
+=== RUN   TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError
+--- PASS: TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError (2.13s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	2.146s

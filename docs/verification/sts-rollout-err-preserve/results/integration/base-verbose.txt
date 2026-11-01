@@ -1,0 +1,37 @@
+=== RUN   TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError
+    sts_rollout_error_preserve_envtest_test.go:146: 
+        	Error Trace:	/tmp/rbg-verify-base/pkg/reconciler/sts_rollout_error_preserve_envtest_test.go:146
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError
+        	Messages:   	reconcileStatefulSet must return the Pod List failure
+    sts_rollout_error_preserve_envtest_test.go:152: 
+        	Error Trace:	/tmp/rbg-verify-base/pkg/reconciler/sts_rollout_error_preserve_envtest_test.go:152
+        	Error:      	Not equal: 
+        	            	expected: 5
+        	            	actual  : 0
+        	Test:       	TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError
+        	Messages:   	a failed read must not shrink the live StatefulSet; observed replicas=0 (scale-to-zero if 0)
+--- FAIL: TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError (2.18s)
+panic: runtime error: index out of range [0] with length 0 [recovered, repanicked]
+
+goroutine 109 [running]:
+testing.tRunner.func1.2({0x31cd3d8, 0x1761d373cb40})
+	/usr/local/go/src/testing/testing.go:2123 +0x232
+testing.tRunner.func1()
+	/usr/local/go/src/testing/testing.go:2126 +0x329
+panic({0x31cd3d8?, 0x1761d373cb40?})
+	/usr/local/go/src/runtime/panic.go:859 +0x125
+sigs.k8s.io/rbgs/pkg/reconciler.rollingUpdatePartition({0x325d918?, 0x1761d3d16030?}, {0x33ef2e0, 0x0, 0x0?}, 0x0, 0xfffffffd, 0x0)
+	/tmp/rbg-verify-base/pkg/reconciler/sts_reconciler.go:418 +0x318
+sigs.k8s.io/rbgs/pkg/reconciler.(*StatefulSetReconciler).rollingUpdateParameters(0x1761d3d31e80, {0x325d918, 0x1761d3d16030}, 0x1761d3911340, 0x1761d3b2e108, 0x0, 0x0)
+	/tmp/rbg-verify-base/pkg/reconciler/sts_reconciler.go:321 +0x95c
+sigs.k8s.io/rbgs/pkg/reconciler.(*StatefulSetReconciler).reconcileStatefulSet(0x1761d3d31e80, {0x325d918, 0x1761d3d16030}, 0x1761d3a67500, 0x1761d3911340, 0x0, {0x1a5a469, 0x5})
+	/tmp/rbg-verify-base/pkg/reconciler/sts_reconciler.go:147 +0x609
+sigs.k8s.io/rbgs/pkg/reconciler.TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError(0x1761d31c1448)
+	/tmp/rbg-verify-base/pkg/reconciler/sts_rollout_error_preserve_envtest_test.go:172 +0xeea
+testing.tRunner(0x1761d31c1448, 0x3268600)
+	/usr/local/go/src/testing/testing.go:2193 +0xea
+created by testing.(*T).Run in goroutine 1
+	/usr/local/go/src/testing/testing.go:2258 +0x4d4
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	2.194s
+FAIL

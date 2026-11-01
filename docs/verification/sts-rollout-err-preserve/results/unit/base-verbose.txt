@@ -1,0 +1,75 @@
+=== RUN   TestRollingUpdateParameters_PreservesPodListError
+    sts_rollout_error_preserve_test.go:156: 
+        	Error Trace:	/tmp/rbg-verify-base/pkg/reconciler/sts_rollout_error_preserve_test.go:156
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestRollingUpdateParameters_PreservesPodListError
+        	Messages:   	a Pod List failure must surface as an error, not be swallowed by the defer
+    sts_rollout_error_preserve_test.go:158: 
+        	Error Trace:	/tmp/rbg-verify-base/pkg/reconciler/sts_rollout_error_preserve_test.go:158
+        	Error:      	scale-to-zero: rollingUpdateParameters returned nil error
+        	Test:       	TestRollingUpdateParameters_PreservesPodListError
+        	Messages:   	partition=0 replicas=0 — the caller would apply these to the live StatefulSet
+    sts_rollout_error_preserve_test.go:162: 
+        	Error Trace:	/tmp/rbg-verify-base/pkg/reconciler/sts_rollout_error_preserve_test.go:162
+        	Error:      	Should be false
+        	Test:       	TestRollingUpdateParameters_PreservesPodListError
+        	Messages:   	must not return (any, 0, nil): the caller applies replicas=0
+--- FAIL: TestRollingUpdateParameters_PreservesPodListError (0.04s)
+=== RUN   TestRollingUpdateParameters_PreservesControllerRevisionListError
+    sts_rollout_error_preserve_test.go:181: 
+        	Error Trace:	/tmp/rbg-verify-base/pkg/reconciler/sts_rollout_error_preserve_test.go:181
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestRollingUpdateParameters_PreservesControllerRevisionListError
+        	Messages:   	a ControllerRevision List failure must surface as an error
+    sts_rollout_error_preserve_test.go:182: 
+        	Error Trace:	/tmp/rbg-verify-base/pkg/reconciler/sts_rollout_error_preserve_test.go:182
+        	Error:      	Should be false
+        	Test:       	TestRollingUpdateParameters_PreservesControllerRevisionListError
+        	Messages:   	must not return (any, 0, nil): the caller applies replicas=0
+--- FAIL: TestRollingUpdateParameters_PreservesControllerRevisionListError (0.00s)
+=== RUN   TestRollingUpdateParameters_PreservesMissingRevision
+    sts_rollout_error_preserve_test.go:200: 
+        	Error Trace:	/tmp/rbg-verify-base/pkg/reconciler/sts_rollout_error_preserve_test.go:200
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestRollingUpdateParameters_PreservesMissingRevision
+        	Messages:   	a missing ControllerRevision must surface as an error
+    sts_rollout_error_preserve_test.go:201: 
+        	Error Trace:	/tmp/rbg-verify-base/pkg/reconciler/sts_rollout_error_preserve_test.go:201
+        	Error:      	Should be false
+        	Test:       	TestRollingUpdateParameters_PreservesMissingRevision
+        	Messages:   	must not return (any, 0, nil): the caller applies replicas=0
+--- FAIL: TestRollingUpdateParameters_PreservesMissingRevision (0.00s)
+=== RUN   TestRollingUpdateParameters_PreservesMalformedRoleSizeAnnotation
+    sts_rollout_error_preserve_test.go:220: 
+        	Error Trace:	/tmp/rbg-verify-base/pkg/reconciler/sts_rollout_error_preserve_test.go:220
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestRollingUpdateParameters_PreservesMalformedRoleSizeAnnotation
+        	Messages:   	a malformed role-size annotation must surface as an error
+    sts_rollout_error_preserve_test.go:221: 
+        	Error Trace:	/tmp/rbg-verify-base/pkg/reconciler/sts_rollout_error_preserve_test.go:221
+        	Error:      	Should be false
+        	Test:       	TestRollingUpdateParameters_PreservesMalformedRoleSizeAnnotation
+        	Messages:   	must not return (any, 0, nil): the caller applies replicas=0
+--- FAIL: TestRollingUpdateParameters_PreservesMalformedRoleSizeAnnotation (0.00s)
+=== RUN   TestRollingUpdateParameters_PropagatesPartitionConversionError
+--- PASS: TestRollingUpdateParameters_PropagatesPartitionConversionError (0.00s)
+=== RUN   TestRollingUpdateParameters_PanicOnShrunkLiveSts_CANARY
+    sts_rollout_error_preserve_test.go:279: canary: reconcile panics as currently coded: runtime error: index out of range [1] with length 1
+--- PASS: TestRollingUpdateParameters_PanicOnShrunkLiveSts_CANARY (0.00s)
+=== RUN   TestReconcileStatefulSet_NoScaleToZeroOnPodListError
+    sts_rollout_error_preserve_test.go:345: 
+        	Error Trace:	/tmp/rbg-verify-base/pkg/reconciler/sts_rollout_error_preserve_test.go:345
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestReconcileStatefulSet_NoScaleToZeroOnPodListError
+        	Messages:   	reconcileStatefulSet must return the Pod List failure
+    sts_rollout_error_preserve_test.go:351: 
+        	Error Trace:	/tmp/rbg-verify-base/pkg/reconciler/sts_rollout_error_preserve_test.go:351
+        	Error:      	Not equal: 
+        	            	expected: 5
+        	            	actual  : 0
+        	Test:       	TestReconcileStatefulSet_NoScaleToZeroOnPodListError
+        	Messages:   	a failed read must not shrink the live StatefulSet; observed replicas=0 (scale-to-zero if 0)
+--- FAIL: TestReconcileStatefulSet_NoScaleToZeroOnPodListError (0.01s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.078s
+FAIL
