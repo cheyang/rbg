@@ -15,12 +15,14 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "base 4a0765f7 contains no excluded-ordinals/committed-skip handling outside keps/ and doc/ (results/premise-base.txt); the base commit is the KEP-docs-only PR #513. The feature gap named by issue #499 (still OPEN) is real.",
-    "match": ["results/premise-base.txt"]
+    "match": [
+      "results/premise-base.txt"
+    ]
   },
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test -count=1 ./api/workloads/ordinals/... ./api/workloads/v1alpha2/... ./pkg/utils/... ./pkg/discovery/... ./pkg/reconciler/... ./internal/controller/workloads/..."
+      "cmd": "go test -count=1 -json ./api/workloads/ordinals/... ./api/workloads/v1alpha2/... ./pkg/utils/... ./pkg/discovery/... ./pkg/reconciler/... ./internal/controller/workloads/..."
     },
     "integration": {
       "kind": "gotest",
@@ -32,7 +34,9 @@
       "id": "F2",
       "polarity": "canary",
       "layer": "unit",
-      "match": ["TestVerifyF2FailedScaleConditionsReplacedOnInvalidRecord"],
+      "match": [
+        "TestVerifyF2FailedScaleConditionsReplacedOnInvalidRecord"
+      ],
       "note": "Documents current replace semantics: an invalid committed record causes validateCommittedMembership to drop ALL FailedScale conditions (any reason) and install InvalidCommittedOrdinals. If the authors scope the filter to the InvalidCommittedOrdinals reason (the proposed fix), this canary flips red and must be inverted to a contract test."
     }
   ],
