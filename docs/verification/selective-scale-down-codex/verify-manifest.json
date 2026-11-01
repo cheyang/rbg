@@ -1,0 +1,41 @@
+{
+  "topic": "selective-scale-down-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/538",
+  "harnessPaths": [
+    "docs/verification/selective-scale-down-codex",
+    "internal/controller/workloads/selective_membership_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Stateful selective scale-down is needed for node failures, machine relocation, and application migration... RBG supports ordinary stateful scale-down by reducing replicas. Stateless RoleInstanceSet has a specified-delete flow, but Stateful mode does not expose persistent ordinal retirement. (issue #499)",
+    "reportedComponent": "Stateful RoleInstanceSet scaling (RBG role input)",
+    "patchedComponent": "api/workloads ordinals + admission, RBG/RIS controllers, stateful RIS rollout engine, discovery",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "base 4a0765f7 contains no excluded-ordinals/committed-skip handling outside keps/ and doc/ (results/premise-base.txt); the base commit is the KEP-docs-only PR #513. The feature gap named by issue #499 (still OPEN) is real.",
+    "match": ["results/premise-base.txt"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -count=1 ./api/workloads/ordinals/... ./api/workloads/v1alpha2/... ./pkg/utils/... ./pkg/discovery/... ./pkg/reconciler/... ./internal/controller/workloads/..."
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64} go test -count=1 ./test/envtest/testcase/selective_commit/... ./test/envtest/testcase/webhook/... ./test/envtest/testcase/rbg/... -timeout 30m"
+    }
+  },
+  "findings": [
+    {
+      "id": "F2",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestVerifyF2FailedScaleConditionsReplacedOnInvalidRecord"],
+      "note": "Documents current replace semantics: an invalid committed record causes validateCommittedMembership to drop ALL FailedScale conditions (any reason) and install InvalidCommittedOrdinals. If the authors scope the filter to the InvalidCommittedOrdinals reason (the proposed fix), this canary flips red and must be inverted to a contract test."
+    }
+  ],
+  "liveNote": "L3 skipped per debate policy. F1 (CI lint gate red on PR-added code: gocyclo 45>30 on reconcileSelectiveMembership, goconst on InvalidCommittedOrdinals x4, prealloc in two new test files) is evidenced in results/lint-repro.txt and reproduced by 'make lint' / CI job 124766651800; it is a CI gate, not a runtime contract.",
+  "acceptanceNote": "End-to-end behavioral acceptance is carried by the PR's own envtest suites re-run in the integration layer (selective_commit, webhook excluded_ordinals, rbg selective_scale_down) plus the package unit tests under -race; both must stay green on any fix revision."
+}

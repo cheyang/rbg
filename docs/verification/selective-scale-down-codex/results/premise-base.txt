@@ -1,0 +1,2 @@
+# base 4a0765f7: feature absent — no excluded-ordinals handling outside keps/docs
+(empty above = confirmed absent)

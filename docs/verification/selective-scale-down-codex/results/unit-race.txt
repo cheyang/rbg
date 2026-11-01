@@ -1,0 +1,21 @@
+# unit+race layer, head 07ae1194 (run during review)
+ok  	sigs.k8s.io/rbgs/api/workloads/ordinals	3.766s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	2.353s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	1.044s
+ok  	sigs.k8s.io/rbgs/pkg/utils	1.661s
+ok  	sigs.k8s.io/rbgs/pkg/utils/expectations	1.008s
+ok  	sigs.k8s.io/rbgs/pkg/utils/history	1.051s
+ok  	sigs.k8s.io/rbgs/pkg/utils/requeueduration	1.009s
+ok  	sigs.k8s.io/rbgs/pkg/discovery	1.745s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	2.712s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	1.597s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	1.067s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	1.060s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	1.068s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	1.612s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	1.065s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	1.812s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode	1.068s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision	1.073s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/sync	1.504s
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	18.644s
