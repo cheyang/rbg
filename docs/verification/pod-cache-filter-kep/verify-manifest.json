@@ -18,11 +18,11 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./test/kep284/ -run 'TestAdmissionRuleTable|TestAdmissionRuleNotExpressibleAsOneSelector|TestLegacyLabelKeysMatchKEPTable|TestWorkloadPodTemplatesCarryGroupName|TestRoleInstancePodsCarryRoleInstanceName' -count=1"
+      "cmd": "go test ./test/kep284/ -run 'TestAdmissionRuleTable|TestAdmissionRuleNotExpressibleAsOneSelector|TestLegacyLabelKeysMatchKEPTable|TestWorkloadPodTemplatesCarryGroupName|TestRoleInstancePodsCarryRoleInstanceName' -count=1 -json"
     },
     "integration": {
       "kind": "gotest",
-      "cmd": "go test ./test/kep284/ -run TestAdmissionRuleAgainstRealAPIServer -count=1 -v",
+      "cmd": "go test ./test/kep284/ -run TestAdmissionRuleAgainstRealAPIServer -count=1 -v -json",
       "note": "uses bin/k8s/1.31.0-linux-amd64 envtest assets (same apiserver version the KEP validated); skips cleanly when absent"
     },
     "static": {
@@ -36,40 +36,58 @@
       "title": "Admission table expressible and exact (4 selectors, managed=false edge cases)",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestAdmissionRuleTable", "TestAdmissionRuleNotExpressibleAsOneSelector"]
+      "match": [
+        "TestAdmissionRuleTable",
+        "TestAdmissionRuleNotExpressibleAsOneSelector"
+      ]
     },
     {
       "id": "C1i",
       "title": "Serial 4-source union against a real apiserver admits exactly the supported pods",
       "polarity": "contract",
       "layer": "integration",
-      "match": ["TestAdmissionRuleAgainstRealAPIServer"]
+      "match": [
+        "TestAdmissionRuleAgainstRealAPIServer"
+      ]
     },
     {
       "id": "C3",
       "title": "Legacy label keys in code match the KEP admission table",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestLegacyLabelKeysMatchKEPTable"]
+      "match": [
+        "TestLegacyLabelKeysMatchKEPTable"
+      ]
     },
     {
       "id": "C4",
       "title": "All supported creation paths carry >=1 admission label before backfill",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestWorkloadPodTemplatesCarryGroupName", "TestRoleInstancePodsCarryRoleInstanceName"]
+      "match": [
+        "TestWorkloadPodTemplatesCarryGroupName",
+        "TestRoleInstancePodsCarryRoleInstanceName"
+      ]
     },
     {
       "id": "P0s",
       "title": "Premise statics: unfiltered Pod cache, getExistingPod chain, managed label is new, kep.yaml sanity, perf arithmetic",
       "polarity": "contract",
       "layer": "static",
-      "match": ["kep284-static-checks.sh"]
+      "match": [
+        "kep284-static-checks.sh"
+      ]
     }
   ],
   "liveNote": "L3 intentionally skipped (docs-only PR; no KUBECONFIG layer). Memory/RSS re-measurement on the production operator is graduation work owned by the implementation PR.",
   "designGaps": [
-    {"id": "F1", "note": "tombstone re-admission named GET: error semantics unspecified; per-replacement cost unbudgeted"},
-    {"id": "F2", "note": "per-create boundary reads (getExistingPod confirm) missing from scalability accounting"}
+    {
+      "id": "F1",
+      "note": "tombstone re-admission named GET: error semantics unspecified; per-replacement cost unbudgeted"
+    },
+    {
+      "id": "F2",
+      "note": "per-create boundary reads (getExistingPod confirm) missing from scalability accounting"
+    }
   ]
 }
