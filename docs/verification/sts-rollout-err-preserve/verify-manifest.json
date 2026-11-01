@@ -27,7 +27,7 @@
     },
     "integration": {
       "kind": "gotest",
-      "cmd": "KUBEBUILDER_ASSETS=\"$([ -x bin/setup-envtest ] && bin/setup-envtest use 1.31.0 --bin-dir \\\"$PWD/bin\\\" -p path || setup-envtest use 1.31.0 -p path)\" go test -mod=vendor -tags=envtest_verify ./pkg/reconciler -run '^TestVerifyStatefulSetNotScaledToZeroOnPodListError$' -count=1 -timeout=180s -json"
+      "cmd": "KUBEBUILDER_ASSETS=\"$([ -x bin/setup-envtest ] && bin/setup-envtest use 1.31.0 --bin-dir \"$PWD/bin\" -p path || setup-envtest use 1.31.0 -p path)\" go test -mod=vendor -tags=envtest_verify ./pkg/reconciler -run '^TestVerifyStatefulSetNotScaledToZeroOnPodListError$' -count=1 -timeout=180s -json"
     }
   },
   "findings": [
