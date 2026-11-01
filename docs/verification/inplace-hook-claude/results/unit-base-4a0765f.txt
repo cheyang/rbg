@@ -1,0 +1,47 @@
+=== RUN   TestClaudeP0StatefulInPlaceHookMustBlockSpecUpdate
+    inplace_hook_claude_verify_test.go:154: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg-verify-base/pkg/reconciler/roleinstanceset/statefulmode/inplace_hook_claude_verify_test.go:154
+        	Error:      	Should be false
+        	Test:       	TestClaudeP0StatefulInPlaceHookMustBlockSpecUpdate
+        	Messages:   	waiting must not count as a revision transition
+--- FAIL: TestClaudeP0StatefulInPlaceHookMustBlockSpecUpdate (0.05s)
+=== RUN   TestClaudeF1LifecycleExpectationRegisteredOnPodKeyedStore
+    inplace_hook_claude_verify_test.go:182: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg-verify-base/pkg/reconciler/roleinstanceset/statefulmode/inplace_hook_claude_verify_test.go:182
+        	Error:      	Should be false
+        	Test:       	TestClaudeF1LifecycleExpectationRegisteredOnPodKeyedStore
+--- FAIL: TestClaudeF1LifecycleExpectationRegisteredOnPodKeyedStore (0.00s)
+=== RUN   TestClaudeF2PartialRestoreKeepsStatefulHandshakeOpen
+    inplace_hook_claude_verify_test.go:226: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg-verify-base/pkg/reconciler/roleinstanceset/statefulmode/inplace_hook_claude_verify_test.go:226
+        	Error:      	Should be true
+        	Test:       	TestClaudeF2PartialRestoreKeepsStatefulHandshakeOpen
+--- FAIL: TestClaudeF2PartialRestoreKeepsStatefulHandshakeOpen (0.00s)
+=== RUN   TestClaudeF3UnexpectedLifecycleStateErrorsOnUpdatePath
+    inplace_hook_claude_verify_test.go:257: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg-verify-base/pkg/reconciler/roleinstanceset/statefulmode/inplace_hook_claude_verify_test.go:257
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestClaudeF3UnexpectedLifecycleStateErrorsOnUpdatePath
+        	Messages:   	F3: PreparingDelete targets error out instead of being skipped
+--- FAIL: TestClaudeF3UnexpectedLifecycleStateErrorsOnUpdatePath (0.00s)
+=== RUN   TestClaudeF4MarkNotReadySilentNoopWithoutCustomReadyGate
+    inplace_hook_claude_verify_test.go:276: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg-verify-base/pkg/reconciler/roleinstanceset/statefulmode/inplace_hook_claude_verify_test.go:276
+        	Error:      	Should be false
+        	Test:       	TestClaudeF4MarkNotReadySilentNoopWithoutCustomReadyGate
+--- FAIL: TestClaudeF4MarkNotReadySilentNoopWithoutCustomReadyGate (0.00s)
+=== RUN   TestClaudeF5HookDoesNotProtectRecreateFallback
+--- PASS: TestClaudeF5HookDoesNotProtectRecreateFallback (0.00s)
+=== RUN   TestClaudeF5PreparingUpdateThenNonInplaceableDiffDeletes
+    inplace_hook_claude_verify_test.go:329: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg-verify-base/pkg/reconciler/roleinstanceset/statefulmode/inplace_hook_claude_verify_test.go:329
+        	Error:      	Should be false
+        	Test:       	TestClaudeF5PreparingUpdateThenNonInplaceableDiffDeletes
+--- FAIL: TestClaudeF5PreparingUpdateThenNonInplaceableDiffDeletes (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.067s
+=== RUN   TestClaudeF2StatelessPartialRestoreCompletesImmediately
+--- PASS: TestClaudeF2StatelessPartialRestoreCompletesImmediately (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/sync	0.055s
+FAIL

@@ -1,0 +1,3 @@
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/stateful	62.973s
+
+[exited with code 0]

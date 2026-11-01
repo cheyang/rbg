@@ -1,0 +1,44 @@
+{
+  "topic": "inplace-hook-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/537",
+  "reviewer": "claude",
+  "round": "initial",
+  "headSha": "2d648e5d6b2931883a71ec9d2d076367add3229d",
+  "baseSha": "4a0765f78b0930114a4b73a64433ee8f27c34372",
+  "harnessPaths": [
+    "docs/verification/inplace-hook-claude",
+    "pkg/reconciler/roleinstanceset/statefulmode/inplace_hook_claude_verify_test.go",
+    "pkg/reconciler/roleinstanceset/statelessmode/sync/update_claude_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #534 Task 3: \"The Stateful update path invokes the in-place update control without the lifecycle waiting protocol already present in Stateless mode\" — a matching InPlaceUpdate handler does not block a Stateful in-place update.",
+    "reportedComponent": "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go (Stateful in-place update path)",
+    "patchedComponent": "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go (+ shared in-place defaults)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "TestClaudeP0StatefulInPlaceHookMustBlockSpecUpdate FAILS on base 4a0765f (applyTargetUpdate returns true = revision transition performed while the blocking label is present) and PASSES on head 2d648e5 (waits in PreparingUpdate, image unchanged, no deletion). results/unit-base-4a0765f.txt vs results/unit-head.txt"
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/roleinstanceset/statefulmode/ ./pkg/reconciler/roleinstanceset/statelessmode/sync/ -run 'TestClaude' -v"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64 go test ./test/envtest/testcase/stateful/ -timeout 20m -ginkgo.focus 'Stateful InPlaceUpdate lifecycle hook'",
+      "report": "results/envtest-stateful-head.txt"
+    }
+  },
+  "findings": [
+    { "id": "P0", "polarity": "contract", "layer": "unit", "match": ["TestClaudeP0StatefulInPlaceHookMustBlockSpecUpdate"] },
+    { "id": "F1-misdirected-expectation", "polarity": "canary", "layer": "unit", "match": ["TestClaudeF1LifecycleExpectationRegisteredOnPodKeyedStore"] },
+    { "id": "F2-stateful-stateless-completion-divergence", "polarity": "canary", "layer": "unit", "match": ["TestClaudeF2PartialRestoreKeepsStatefulHandshakeOpen", "TestClaudeF2StatelessPartialRestoreCompletesImmediately"] },
+    { "id": "F3-unexpected-state-hard-error", "polarity": "canary", "layer": "unit", "match": ["TestClaudeF3UnexpectedLifecycleStateErrorsOnUpdatePath"] },
+    { "id": "F4-marknotready-task2-dependency", "polarity": "canary", "layer": "unit", "match": ["TestClaudeF4MarkNotReadySilentNoopWithoutCustomReadyGate"] },
+    { "id": "F5-recreate-fallback-bypasses-hook", "polarity": "canary", "layer": "unit", "match": ["TestClaudeF5HookDoesNotProtectRecreateFallback", "TestClaudeF5PreparingUpdateThenNonInplaceableDiffDeletes"] }
+  ],
+  "liveNote": "L3 not run for this round (debate setup runs unit + integration only). The PR's own E2E suites (E2E lifecycle / E2E update / E2E rollout) are green on head 2d648e5 per GitHub statusCheckRollup."
+}

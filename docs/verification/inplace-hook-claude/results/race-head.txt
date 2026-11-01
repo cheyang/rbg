@@ -1,0 +1,7 @@
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/readiness	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod	1.039s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/inplaceupdate	1.512s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/readiness	1.040s
