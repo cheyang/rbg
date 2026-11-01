@@ -1,0 +1,43 @@
+{
+  "topic": "lifecycle-readiness",
+  "pr": "https://github.com/sgl-project/rbg/pull/536",
+  "reviewer": "claude",
+  "headSha": "d9d7c4cff8eb507f4aeb36d1de1e2b683d1be3b9",
+  "baseSha": "4a0765f78b0930114a4b73a64433ee8f27c34372",
+  "harnessPaths": [
+    "docs/verification/lifecycle-readiness",
+    "pkg/inplace/instance/lifecycle/premise_p0_claude_test.go",
+    "pkg/reconciler/roleinstance/lifecycle_regret_claude_test.go",
+    "test/envtest/testcase/stateful/lifecycle_regret_claude_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #534 Task 2: 'The readiness helper returns without applying the custom NotReady condition when the RoleInstance lacks the corresponding readiness gate. getInstanceReadyCondition() does not account for the lifecycle custom readiness gate when recomputing Ready. updatePodsLifeCycle() does not include this custom gate when deciding whether to mark component Pods NotReady. A RoleInstance can therefore remain blocked in PreparingDelete without reliably making its Pods NotReady.'",
+    "reportedComponent": "pkg/inplace/instance/readiness + pkg/reconciler/roleinstance (lifecycle readiness propagation)",
+    "patchedComponent": "same files (pkg/inplace/instance/lifecycle, pkg/inplace/instance/readiness, pkg/reconciler/roleinstance)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "TestP0PremiseBaseCanary PASSES on base 4a0765f7 (no gate injected, no condition written after UpdateRoleInstanceLifecycle(PreparingDelete, markPodNotReady=true)) and FAILS on head d9d7c4cf; see results/unit-base.txt and results/unit-head.txt",
+    "match": ["TestP0PremiseBaseCanary"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/inplace/instance/lifecycle/ ./pkg/reconciler/roleinstance/ -run 'TestP0|TestF1' -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=\"$(setup-envtest use 1.31.0 --bin-dir /tmp/rbg-assets -p path 2>/dev/null)\" go test ./test/envtest/testcase/stateful/ -ginkgo.focus 'lifecycle regret' -timeout 10m -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    { "id": "P0", "polarity": "canary", "layer": "unit", "match": ["TestP0PremiseBaseCanary"] },
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestF1RegretReleaseMustClearLifecycleBlock"] },
+    { "id": "F1", "polarity": "contract", "layer": "integration", "match": ["must unblock the instance and its Pods after PreparingDelete is regretted"] }
+  ],
+  "lintNote": "F2 (CI lint failure) is not a go test; its repro is scripts/check-lint.sh (runs the repo-pinned golangci-lint v2.13.1 on the changed packages). Expected output on the current head: results/lint-head.txt (prealloc in pkg/reconciler/roleinstance/lifecycle_readiness_test.go:45).",
+  "liveNote": "L3 (live cluster) intentionally skipped for this round per the debate setup: unit + envtest layers already decide every claim. If run live, check that a PreparingDelete instance's Pods lose endpoint readiness without being recreated, and that a regretted scale-down recovers."
+}

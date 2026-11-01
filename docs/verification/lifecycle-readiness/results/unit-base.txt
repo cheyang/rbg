@@ -1,0 +1,7 @@
+=== RUN   TestP0PremiseBaseCanary
+--- PASS: TestP0PremiseBaseCanary (0.05s)
+=== RUN   TestP0PremiseContractAfterFix
+--- FAIL: TestP0PremiseContractAfterFix (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	0.059s
+FAIL

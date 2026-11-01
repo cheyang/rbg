@@ -1,0 +1,34 @@
+Harness-bites check for F1 (both layers), run on the PR head d9d7c4cf.
+Production code was modified temporarily, re-run, then reverted with
+`git checkout -- pkg/inplace/instance/lifecycle/lifecycle_utils.go`
+(production diff confirmed empty afterwards; only harness files remained).
+
+Proposed fix applied temporarily to pkg/inplace/instance/lifecycle/lifecycle_utils.go:
+ 1. UpdateRoleInstanceLifecycle: run executeRoleInstanceNotReadyPolicy also when
+    state == Normal && readiness.ContainsReadinessGate(instance)
+    (i.e. clean up on the regret transition even though managePreparingDelete
+    passes markPodNotReady=false).
+ 2. executeRoleInstanceNotReadyPolicy case Normal: remove preparingDeleteHookKey
+    in addition to preparingUpdateHookKey.
+
+Unit layer:
+  $ go test ./pkg/reconciler/roleinstance/ -run 'TestF1' -v
+  --- PASS: TestF1RegretReleaseMustClearLifecycleBlock (0.05s)
+      --- PASS: TestF1RegretReleaseMustClearLifecycleBlock/AllPodReady
+      --- PASS: TestF1RegretReleaseMustClearLifecycleBlock/None
+  (before the fix: FAIL, message still
+   '[{"userAgent":"Lifecycle","key":"preDeleteHook"}]')
+
+Integration layer (envtest, k8s 1.31.0 assets, real RoleInstance controller):
+  $ KUBEBUILDER_ASSETS=... go test ./test/envtest/testcase/stateful/ \
+      -ginkgo.focus 'lifecycle regret' -timeout 10m
+  ok  sigs.k8s.io/rbgs/test/envtest/testcase/stateful 8.923s
+  (before the fix: FAIL — "Timed out after 25.000s. RI Ready=False, want True",
+   see envtest-head.txt)
+
+Also re-run with the fix applied: the PR's own tests plus F1 all pass; the only
+remaining failure is TestP0PremiseBaseCanary, which is the premise bug-canary
+and is EXPECTED to fail on the fixed code (polarity: canary).
+
+Conclusion: both F1 tests bite — they are red for the right reason and flip to
+green under a fix that addresses the traced mechanism.

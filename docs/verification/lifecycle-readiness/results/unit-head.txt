@@ -1,0 +1,54 @@
+=== RUN   TestLifecycleMarkNotReadyInitializesGate
+=== RUN   TestLifecycleMarkNotReadyInitializesGate/PreparingDelete/state
+=== RUN   TestLifecycleMarkNotReadyInitializesGate/PreparingDelete/handler
+=== RUN   TestLifecycleMarkNotReadyInitializesGate/PreparingUpdate/state
+=== RUN   TestLifecycleMarkNotReadyInitializesGate/PreparingUpdate/handler
+--- PASS: TestLifecycleMarkNotReadyInitializesGate (0.05s)
+=== RUN   TestLifecycleMarkNotReadyFalseDoesNotAddGate
+--- PASS: TestLifecycleMarkNotReadyFalseDoesNotAddGate (0.00s)
+=== RUN   TestLifecycleReadinessGateConflictPreservesConcurrentGate
+--- PASS: TestLifecycleReadinessGateConflictPreservesConcurrentGate (0.01s)
+=== RUN   TestLifecycleReadinessGateFailureDoesNotAdvanceState
+=== RUN   TestLifecycleReadinessGateFailureDoesNotAdvanceState/patch_failure
+=== RUN   TestLifecycleReadinessGateFailureDoesNotAdvanceState/replaced_UID
+--- PASS: TestLifecycleReadinessGateFailureDoesNotAdvanceState (0.00s)
+=== RUN   TestLifecycleReadinessReleaseKeepsOtherInstanceBlockers
+--- PASS: TestLifecycleReadinessReleaseKeepsOtherInstanceBlockers (0.00s)
+=== RUN   TestLifecycleReadinessWithUpdateOnlyAdapter
+--- PASS: TestLifecycleReadinessWithUpdateOnlyAdapter (0.00s)
+=== RUN   TestP0PremiseBaseCanary
+--- FAIL: TestP0PremiseBaseCanary (0.00s)
+=== RUN   TestP0PremiseContractAfterFix
+--- PASS: TestP0PremiseContractAfterFix (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	0.084s
+=== RUN   TestFirstNotReadyKeyCreatesFalseCondition
+--- PASS: TestFirstNotReadyKeyCreatesFalseCondition (0.04s)
+=== RUN   TestExistingNotReadyKeyRepairsConditionStatus
+=== RUN   TestExistingNotReadyKeyRepairsConditionStatus/#00
+=== RUN   TestExistingNotReadyKeyRepairsConditionStatus/Unknown
+=== RUN   TestExistingNotReadyKeyRepairsConditionStatus/True
+--- PASS: TestExistingNotReadyKeyRepairsConditionStatus (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/readiness	0.056s
+=== RUN   TestLifecycleCustomReadinessControlsInstanceAndPods
+=== RUN   TestLifecycleCustomReadinessControlsInstanceAndPods/False/AllPodReady
+=== RUN   TestLifecycleCustomReadinessControlsInstanceAndPods/False/None
+=== RUN   TestLifecycleCustomReadinessControlsInstanceAndPods/Unknown/AllPodReady
+=== RUN   TestLifecycleCustomReadinessControlsInstanceAndPods/Unknown/None
+=== RUN   TestLifecycleCustomReadinessControlsInstanceAndPods//AllPodReady
+=== RUN   TestLifecycleCustomReadinessControlsInstanceAndPods//None
+=== RUN   TestLifecycleCustomReadinessControlsInstanceAndPods/True/AllPodReady
+=== RUN   TestLifecycleCustomReadinessControlsInstanceAndPods/True/None
+--- PASS: TestLifecycleCustomReadinessControlsInstanceAndPods (0.05s)
+=== RUN   TestLifecycleReadinessReleasePreservesOtherPodBlockers
+--- PASS: TestLifecycleReadinessReleasePreservesOtherPodBlockers (0.00s)
+=== RUN   TestLifecycleReadinessRejectsStaleStatusCalculation
+--- PASS: TestLifecycleReadinessRejectsStaleStatusCalculation (0.00s)
+=== RUN   TestF1RegretReleaseMustClearLifecycleBlock
+=== RUN   TestF1RegretReleaseMustClearLifecycleBlock/AllPodReady
+=== RUN   TestF1RegretReleaseMustClearLifecycleBlock/None
+--- FAIL: TestF1RegretReleaseMustClearLifecycleBlock (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.071s
+FAIL
