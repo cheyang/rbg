@@ -41,10 +41,21 @@ fi
 DETAIL="$(mktemp)"
 # Scope: the packages the PR touched. The full ./... run matches CI but takes
 # ~5 minutes; this scope reproduces every PR-attributed finding in seconds.
+# Output must stay pure go-test JSON: the re-verify parser runs jq over the
+# whole stream, so lint detail is re-emitted as "output" events.
+emit() { # $1 = Action, rest = prefix for detail lines
+  printf '{"Action":"%s","Test":"%s","Package":"lint"}\n' "$1" "$TEST_NAME"
+  if [ "$1" = "fail" ]; then
+    # escape backslash, quote, and tab (control chars break strict JSON)
+    sed $'s/\\\\/\\\\\\\\/g; s/"/\\\\"/g; s/\t/\\\\t/g' "$DETAIL" | while IFS= read -r line; do
+      [ -n "$line" ] || continue
+      printf '{"Action":"output","Test":"%s","Package":"lint","Output":"%s\\n"}\n' "$TEST_NAME" "$line"
+    done
+  fi
+}
 if "$BIN" run ./internal/... ./pkg/... ./test/envtest/... >"$DETAIL" 2>&1; then
-  echo "{\"Action\":\"pass\",\"Test\":\"${TEST_NAME}\",\"Package\":\"lint\"}"
+  emit pass
 else
-  echo "{\"Action\":\"fail\",\"Test\":\"${TEST_NAME}\",\"Package\":\"lint\"}"
-  sed -n '1,40p' "$DETAIL"
+  emit fail
 fi
 rm -f "$DETAIL"
