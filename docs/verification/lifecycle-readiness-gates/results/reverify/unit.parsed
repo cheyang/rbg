@@ -1,0 +1,6 @@
+TestVerifyP0GatelessInstanceBecomesBlocked	pass
+TestVerifyP0FirstConditionHasFalseStatus	pass
+TestVerifyP0ReadyHonorsCustomGate	pass
+TestVerifyP0PodsHonorCustomGate	pass
+TestVerifyF1StaleSnapshotClearsPodBlock	fail
+TestVerifyF1StaleSnapshotWithStatusWriteIsRejected	pass
