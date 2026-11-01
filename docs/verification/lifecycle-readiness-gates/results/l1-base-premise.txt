@@ -1,0 +1,63 @@
+=== RUN   TestVerifyP0GatelessInstanceBecomesBlocked
+    verify_premise_p0_test.go:51: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-536/base/pkg/inplace/instance/lifecycle/verify_premise_p0_test.go:51
+        	Error:      	Should be true
+        	Test:       	TestVerifyP0GatelessInstanceBecomesBlocked
+        	Messages:   	P0a: the custom readiness gate must be initialized for existing instances
+--- FAIL: TestVerifyP0GatelessInstanceBecomesBlocked (0.05s)
+=== RUN   TestVerifyP0FirstConditionHasFalseStatus
+    verify_premise_p0_test.go:76: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-536/base/pkg/inplace/instance/lifecycle/verify_premise_p0_test.go:76
+        	Error:      	Not equal: 
+        	            	expected: "False"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1.ConditionStatus) (len=5) "False"
+        	            	+(v1.ConditionStatus) ""
+        	            	 
+        	Test:       	TestVerifyP0FirstConditionHasFalseStatus
+        	Messages:   	P0b: the first custom condition must be created with Status=False
+--- FAIL: TestVerifyP0FirstConditionHasFalseStatus (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	0.059s
+=== RUN   TestVerifyP0ReadyHonorsCustomGate
+    verify_premise_p0_test.go:48: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-536/base/pkg/reconciler/roleinstance/verify_premise_p0_test.go:48
+        	Error:      	Not equal: 
+        	            	expected: "False"
+        	            	actual  : "True"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1.ConditionStatus) (len=5) "False"
+        	            	+(v1.ConditionStatus) (len=4) "True"
+        	            	 
+        	Test:       	TestVerifyP0ReadyHonorsCustomGate
+        	Messages:   	P0c: Ready must be False while a declared custom gate is not satisfied
+--- FAIL: TestVerifyP0ReadyHonorsCustomGate (0.00s)
+=== RUN   TestVerifyP0PodsHonorCustomGate
+    verify_premise_p0_test.go:73: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-536/base/pkg/reconciler/roleinstance/verify_premise_p0_test.go:73
+        	Error:      	Not equal: 
+        	            	expected: "False"
+        	            	actual  : "True"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1.ConditionStatus) (len=5) "False"
+        	            	+(v1.ConditionStatus) (len=4) "True"
+        	            	 
+        	Test:       	TestVerifyP0PodsHonorCustomGate
+        	Messages:   	P0d: the Pod gate must be False while the custom gate blocks the instance
+--- FAIL: TestVerifyP0PodsHonorCustomGate (0.04s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.055s
+FAIL

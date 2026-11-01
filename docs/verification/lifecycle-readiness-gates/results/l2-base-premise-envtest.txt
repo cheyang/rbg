@@ -1,0 +1,63 @@
+Running Suite: Stateful RoleInstanceSet Controller Suite - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-536/base/test/envtest/testcase/stateful
+===============================================================================================================================================================
+Random Seed: [1m1793552910[0m
+
+Will run [1m1[0m of [1m8[0m specs
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+[38;5;243m------------------------------[0m
+[38;5;9m• [FAILED] [30.439 seconds][0m
+[0mRoleInstance lifecycle readiness [38;5;243mpropagates a lifecycle block to every component Pod without recreating them [38;5;9m[1m[It] PreDelete / None[0m
+[38;5;243m/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-536/base/test/envtest/testcase/stateful/verify_premise_lifecycle_readiness_test.go:148[0m
+
+  [38;5;243mTimeline >>[0m
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleBasedGroupScalingAdapter"}
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "source": "kind source: *v1.Pod"}
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleInstanceSet"}
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "source": "kind source: *v1alpha2.RoleInstance"}
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet", "source": "kind source: *v1alpha2.RoleBasedGroupSet"}
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter", "source": "kind source: *v1alpha2.RoleBasedGroupScalingAdapter"}
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "source": "kind source: *v1alpha2.RoleInstanceSet"}
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "source": "kind source: *v1alpha2.RoleInstance"}
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.RoleBasedGroup"}
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1.Service"}
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "source": "kind source: *v1alpha2.CoordinatedPolicy"}
+  2026-11-02T01:08:34+08:00	INFO	Starting EventSource	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "source": "kind source: *v1alpha2.RoleInstance"}
+  2026-11-02T01:08:34+08:00	INFO	Starting Controller	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance"}
+  2026-11-02T01:08:34+08:00	INFO	Starting workers	{"controller": "roleinstance", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstance", "worker count": 1}
+  2026-11-02T01:08:34+08:00	INFO	Starting Controller	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet"}
+  2026-11-02T01:08:34+08:00	INFO	Starting workers	{"controller": "roleinstanceset", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleInstanceSet", "worker count": 1}
+  2026-11-02T01:08:34+08:00	INFO	Starting Controller	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter"}
+  2026-11-02T01:08:34+08:00	INFO	Starting workers	{"controller": "workloads-rolebasedgroup-scalingadapter", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupScalingAdapter", "worker count": 1}
+  2026-11-02T01:08:34+08:00	INFO	Starting Controller	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet"}
+  2026-11-02T01:08:34+08:00	INFO	Starting workers	{"controller": "rbgset-controller", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroupSet", "worker count": 1}
+  2026-11-02T01:08:34+08:00	INFO	Starting Controller	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup"}
+  2026-11-02T01:08:34+08:00	INFO	Starting workers	{"controller": "workloads-rolebasedgroup", "controllerGroup": "workloads.x-k8s.io", "controllerKind": "RoleBasedGroup", "worker count": 1}
+  2026-11-02T01:08:36+08:00	DEBUG	events	succeed to create pod readiness-0-worker-0	{"type": "Normal", "object": {"kind":"RoleInstance","namespace":"test-lifecycle-readiness-1793552914353077243","name":"readiness-0","uid":"f7563bcd-d3b8-4c0f-a0c2-ef82dc84815c","apiVersion":"workloads.x-k8s.io/v1alpha2","resourceVersion":"230"}, "reason": "SuccessfulCreate"}
+  2026-11-02T01:08:36+08:00	DEBUG	events	succeed to create pod readiness-0-sidecar-0	{"type": "Normal", "object": {"kind":"RoleInstance","namespace":"test-lifecycle-readiness-1793552914353077243","name":"readiness-0","uid":"f7563bcd-d3b8-4c0f-a0c2-ef82dc84815c","apiVersion":"workloads.x-k8s.io/v1alpha2","resourceVersion":"230"}, "reason": "SuccessfulCreate"}
+  [38;5;9m[FAILED][0m in [It] - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-536/base/test/envtest/testcase/stateful/verify_premise_lifecycle_readiness_test.go:124 [38;5;243m@ 11/02/26 01:09:01.772[0m
+  [38;5;243m<< Timeline[0m
+
+  [38;5;9m[FAILED] Timed out after 25.001s.
+  Expected success, but got an error:
+      <*errors.errorString | 0x235abfcde490>: 
+      RI Ready=True, want False
+      {
+          s: "RI Ready=True, want False",
+      }[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-536/base/test/envtest/testcase/stateful/verify_premise_lifecycle_readiness_test.go:124[0m [38;5;243m@ 11/02/26 01:09:01.772[0m
+[38;5;243m------------------------------[0m
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+
+[38;5;9m[1mSummarizing 1 Failure:[0m
+  [38;5;9m[FAIL][0m [0mRoleInstance lifecycle readiness [38;5;243mpropagates a lifecycle block to every component Pod without recreating them [38;5;9m[1m[It] PreDelete / None[0m
+  [38;5;243m/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-536/base/test/envtest/testcase/stateful/verify_premise_lifecycle_readiness_test.go:124[0m
+
+[38;5;9m[1mRan 1 of 8 Specs in 34.601 seconds[0m
+[38;5;9m[1mFAIL![0m -- [38;5;10m[1m0 Passed[0m | [38;5;9m[1m1 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m7 Skipped[0m
+--- FAIL: TestStatefulRoleInstanceSetController (34.60s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/stateful	34.618s
+FAIL

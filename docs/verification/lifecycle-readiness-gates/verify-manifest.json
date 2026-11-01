@@ -1,0 +1,40 @@
+{
+  "topic": "lifecycle-readiness-gates",
+  "pr": "https://github.com/sgl-project/rbg/pull/536",
+  "harnessPaths": [
+    "docs/verification/lifecycle-readiness-gates",
+    "pkg/inplace/instance/lifecycle/verify_premise_p0_test.go",
+    "pkg/reconciler/roleinstance/verify_premise_p0_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "The readiness helper returns without applying the custom NotReady condition when the RoleInstance lacks the corresponding readiness gate; getInstanceReadyCondition() does not account for the lifecycle custom readiness gate; updatePodsLifeCycle() does not include this custom gate when deciding whether to mark component Pods NotReady (sgl-project/rbg#534, Task 2).",
+    "reportedComponent": "pkg/inplace/instance/readiness, pkg/reconciler/roleinstance/instance_status.go",
+    "patchedComponent": "pkg/inplace/instance/lifecycle, pkg/inplace/instance/readiness, pkg/reconciler/roleinstance/instance_status.go",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit+integration",
+    "verdict": "confirmed",
+    "evidence": "All 4 contract tests RED on base 4a0765f7 (results/l1-base-premise.txt) and GREEN on head (results/l1-head.txt); grafted PR envtest spec on base times out with 'RI Ready=True, want False' (results/l2-base-premise-envtest.txt).",
+    "match": ["TestVerifyP0GatelessInstanceBecomesBlocked", "TestVerifyP0FirstConditionHasFalseStatus", "TestVerifyP0ReadyHonorsCustomGate", "TestVerifyP0PodsHonorCustomGate"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -count=1 ./pkg/inplace/instance/lifecycle/ ./pkg/reconciler/roleinstance/ -run 'TestVerify' -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "go test -count=1 ./pkg/inplace/instance/... ./pkg/reconciler/roleinstance/ -json"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestVerifyF1StaleSnapshotClearsPodBlock"] },
+    { "id": "F1-control", "polarity": "contract", "layer": "unit", "match": ["TestVerifyF1StaleSnapshotWithStatusWriteIsRejected"] },
+    { "id": "P0a", "polarity": "contract", "layer": "unit", "match": ["TestVerifyP0GatelessInstanceBecomesBlocked"] },
+    { "id": "P0b", "polarity": "contract", "layer": "unit", "match": ["TestVerifyP0FirstConditionHasFalseStatus"] },
+    { "id": "P0c", "polarity": "contract", "layer": "unit", "match": ["TestVerifyP0ReadyHonorsCustomGate"] },
+    { "id": "P0d", "polarity": "contract", "layer": "unit", "match": ["TestVerifyP0PodsHonorCustomGate"] }
+  ],
+  "liveNote": "L3 (live cluster) intentionally skipped per debate-round instructions. The PR's own envtest spec (test/envtest/testcase/stateful/lifecycle_readiness_test.go) covers the real-controller contract; CI e2e suites all pass. The PR-attributable failure is the lint gate (prealloc in pkg/reconciler/roleinstance/lifecycle_readiness_test.go:45), reproduced locally with golangci-lint v2.13.1 (results/lint-head.txt)."
+}

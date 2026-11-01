@@ -1,0 +1,5 @@
+pkg/reconciler/roleinstance/lifecycle_readiness_test.go:45:5: Consider preallocating objects with capacity 1 + len(pods) (prealloc)
+				objects := []client.Object{instance}
+				^
+1 issues:
+* prealloc: 1

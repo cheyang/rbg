@@ -1,0 +1,25 @@
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance	1.039s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/clientdapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	1.041s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	1.588s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/readiness	1.502s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/specifieddelete	[no test files]
+--- FAIL: TestVerifyF1StaleSnapshotClearsPodBlock (0.01s)
+    verify_premise_p0_test.go:132: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-536/verify/pkg/reconciler/roleinstance/verify_premise_p0_test.go:132
+        	Error:      	Not equal: 
+        	            	expected: "False"
+        	            	actual  : "True"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1.ConditionStatus) (len=5) "False"
+        	            	+(v1.ConditionStatus) (len=4) "True"
+        	            	 
+        	Test:       	TestVerifyF1StaleSnapshotClearsPodBlock
+        	Messages:   	F1: a reconcile from a stale snapshot must not clear the Pod block while the live instance is blocked
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.689s
+FAIL

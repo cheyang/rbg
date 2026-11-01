@@ -1,0 +1,32 @@
+=== RUN   TestVerifyP0GatelessInstanceBecomesBlocked
+--- PASS: TestVerifyP0GatelessInstanceBecomesBlocked (0.04s)
+=== RUN   TestVerifyP0FirstConditionHasFalseStatus
+--- PASS: TestVerifyP0FirstConditionHasFalseStatus (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	0.057s
+=== RUN   TestVerifyP0ReadyHonorsCustomGate
+--- PASS: TestVerifyP0ReadyHonorsCustomGate (0.00s)
+=== RUN   TestVerifyP0PodsHonorCustomGate
+--- PASS: TestVerifyP0PodsHonorCustomGate (0.04s)
+=== RUN   TestVerifyF1StaleSnapshotClearsPodBlock
+    verify_premise_p0_test.go:132: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-02/pr-536/verify/pkg/reconciler/roleinstance/verify_premise_p0_test.go:132
+        	Error:      	Not equal: 
+        	            	expected: "False"
+        	            	actual  : "True"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1,2 +1,2 @@
+        	            	-(v1.ConditionStatus) (len=5) "False"
+        	            	+(v1.ConditionStatus) (len=4) "True"
+        	            	 
+        	Test:       	TestVerifyF1StaleSnapshotClearsPodBlock
+        	Messages:   	F1: a reconcile from a stale snapshot must not clear the Pod block while the live instance is blocked
+--- FAIL: TestVerifyF1StaleSnapshotClearsPodBlock (0.00s)
+=== RUN   TestVerifyF1StaleSnapshotWithStatusWriteIsRejected
+--- PASS: TestVerifyF1StaleSnapshotWithStatusWriteIsRejected (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.055s
+FAIL
