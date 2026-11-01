@@ -1,0 +1,49 @@
+{
+  "topic": "sts-rollout-err-preserve",
+  "pr": "https://github.com/sgl-project/rbg/pull/540",
+  "harnessPaths": [
+    "docs/verification/sts-rollout-err-preserve",
+    "pkg/reconciler/sts_rollout_errpreserve_unit_verify_test.go",
+    "pkg/reconciler/sts_rollout_errpreserve_envtest_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "A failed Pod List request during reconciliation of a StatefulSet-backed role can cause the controller to silently apply spec.replicas: 0, even though the role still requests four replicas. (issue #539)",
+    "reportedComponent": "pkg/reconciler/sts_reconciler.go rollingUpdateParameters defer (StatefulSetReconciler)",
+    "patchedComponent": "pkg/reconciler/sts_reconciler.go rollingUpdateParameters defer (StatefulSetReconciler)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "integration",
+    "verdict": "confirmed",
+    "evidence": "base (4a0765f7): reconcile returned nil and live STS went 5 -> 0 replicas; head (cf4bff4c): error propagated, replicas stayed 5. See results/base-envtest.out and results/base-unit.out.",
+    "match": ["TestVerifyStatefulSetNotScaledToZeroOnPodListError"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -mod=vendor ./pkg/reconciler -run 'TestVerifyRollingUpdateParametersPreserves' -count=1 -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=\"$([ -x bin/setup-envtest ] && bin/setup-envtest use 1.31.0 --bin-dir bin -p path || setup-envtest use 1.31.0 -p path)\" go test -mod=vendor -tags=envtest_verify ./pkg/reconciler -run '^TestVerifyStatefulSetNotScaledToZeroOnPodListError$' -count=1 -timeout=180s -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "B1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyRollingUpdateParametersPreservesPodListError",
+        "TestVerifyRollingUpdateParametersPreservesRevisionListError"
+      ]
+    },
+    {
+      "id": "B2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["TestVerifyStatefulSetNotScaledToZeroOnPodListError"]
+    }
+  ],
+  "liveNote": "L3 skipped per review instructions (no KUBECONFIG layer). The deleted-pods effect of the zero-replica write needs a native StatefulSet controller, which envtest does not run; the API-server-persisted replicas=0 write is the verified boundary."
+}
