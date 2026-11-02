@@ -5,7 +5,8 @@
   "harnessPaths": [
     "docs/verification/pr-524-compat-gate",
     "test/envtest/testcase/deprecationv1a1outage",
-    "test/envtest/testcase/deprecationv1a1spoof"
+    "test/envtest/testcase/deprecationv1a1spoof",
+    "test/envtest/testcase/deprecationv1a1conversion"
   ],
   "premise": {
     "id": "P0",
@@ -28,7 +29,7 @@
     },
     "integration": {
       "kind": "ginkgo",
-      "cmd": "D=\"${GINKGO_REPORT%/*}\"; KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64}\" ; go test -count=1 ./test/envtest/testcase/deprecationv1a1/... -ginkgo.json-report=\"$D/r-deprecationv1a1.json\" && go test -count=1 ./test/envtest/testcase/deprecationv1a1outage/... -ginkgo.json-report=\"$D/r-outage.json\" && go test -count=1 ./test/envtest/testcase/deprecationv1a1spoof/... -ginkgo.json-report=\"$D/r-spoof.json\"; rc=$?; jq -s 'add' \"$D/r-deprecationv1a1.json\" \"$D/r-outage.json\" \"$D/r-spoof.json\" > \"$GINKGO_REPORT\"; exit $rc"
+      "cmd": "D=\"${GINKGO_REPORT%/*}\"; export KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64}\" ; go test -count=1 ./test/envtest/testcase/deprecationv1a1/... -ginkgo.json-report=\"$D/r-deprecationv1a1.json\" && go test -count=1 ./test/envtest/testcase/deprecationv1a1outage/... -ginkgo.json-report=\"$D/r-outage.json\" && go test -count=1 ./test/envtest/testcase/deprecationv1a1spoof/... -ginkgo.json-report=\"$D/r-spoof.json\" && go test -count=1 ./test/envtest/testcase/deprecationv1a1conversion/... -ginkgo.json-report=\"$D/r-conversion.json\"; rc=$?; jq -s 'add' \"$D/r-deprecationv1a1.json\" \"$D/r-outage.json\" \"$D/r-spoof.json\" \"$D/r-conversion.json\" > \"$GINKGO_REPORT\"; exit $rc"
     }
   },
   "findings": [
@@ -68,7 +69,18 @@
       "match": [
         "grants the exemption to an ordinary writer that knows the parent's name and UID"
       ]
+    },
+    {
+      "id": "C4431130427-CONVERSION",
+      "polarity": "contract",
+      "layer": "integration",
+      "status": "open",
+      "note": "Round 3: advisory C4431130427 claimed the contract suite ran version-only conversion (schemes registered after TestEnv.Start). c875fb31 registers both workload versions before Start. These specs prove the fix: the rolebasedgroups CRD installed by envtest must carry a Webhook conversion strategy, and a v1alpha1 create must be stored through the production v1alpha2 conversion. Bite check: reverting the registration order makes both specs fail (results/bite-conversion-order.txt).",
+      "match": [
+        "enables webhook conversion for the multi-version workload CRDs",
+        "stores a v1alpha1 create through the production v1alpha2 conversion"
+      ]
     }
   ],
-  "liveNote": "L3 not run per round policy (no KUBECONFIG). Unit + integration layers cover the gate decision logic, manifest wiring, warning delivery, and the outage fail-open contract. The e2e layers (compat expectations, upgrade fixtures, #514 pod-failure interaction) are exercised by the PR's CI matrix, which is green on 22acc570."
+  "liveNote": "L3 not run per round policy (no KUBECONFIG). Unit + integration layers cover the gate decision logic, manifest wiring, warning delivery, the outage fail-open contract, and the conversion wiring. The e2e layers (compat expectations, upgrade fixtures) are exercised by the PR's CI matrix, green on c875fb31."
 }
