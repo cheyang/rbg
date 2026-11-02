@@ -91,6 +91,50 @@ becomes whether the new path is correct — covered by POS1/POS2 below.
 
 ## Summary of results
 
+### Round 7 (head `39732268`, base tip `09accf63`, previous head `af9dd84b` — delta = a rebase onto current main plus one test-only commit)
+
+The author **did not address the round-6 blocker**. The PR advanced
+`af9dd84b → 39732268` by rebasing onto current main (`885d655b → 09accf63`,
+pulling in upstream #514, #526, #478, #512, KEP-455 #491, #529, #513, #532,
+#533) and adding `39732268` "test(rbgs): adapt upstream status test to
+rollout completion", which is test-only: it adapts upstream #533's
+`TestUpdateRBGStatusUpdatedReplicas` to the PR's `updateRBGStatus(ctx, rbg,
+observed, rolloutComplete)` signature and pre-seeds the
+`RollingUpdateInProgress=True` condition so the steady-state case still
+skips the status patch. The net author delta on PR-owned files is 4 files /
+~103 lines, of which the only production-code change is the rebase's merge
+resolution in `rolebasedgroup_controller.go` (the role-status loop drops the
+PR's `!reflect.DeepEqual` guard and takes upstream #533's unconditional
+assignment) — **behavior-neutral**, because a whole-status `DeepEqual` skip
+at the end of the function still governs whether an SSA patch is issued, and
+assigning an equal value is a no-op.
+
+| ID | Claim | Layer | Verdict | Evidence |
+|----|-------|-------|---------|----------|
+| C4358788576 (blocker, round 6) | An explicitly empty `roles[].annotations: {}` written declaratively must not wedge the child into a perpetual-outdated rewrite loop: the child minted from the revision must match the revision | 1+2 | **Still broken — RED at head** — `TestVerifyPR474_EmptyRoleAnnotationsMapNoWedge` (envtest, real apiserver; premise checks pass: stored set keeps `map[string]string{}`, stored child is nil) and `TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted` both FAIL on `39732268`, exactly as on `af9dd84b`; `rolesEqual`/`groupSetMatchesRevision` are byte-identical between the two heads. **Harness-bites check done**: applying the proposed fix (nil out empty annotations/labels maps in `rolesEqual`'s deep copies) flips both contracts green and keeps every other carried contract green; fix reverted, production diff empty | results/r7-emptyann-head.log; results/reverify-r7-unit.log |
+| F1 (fixed, round 6) | The PR body describes the shipped API (46/46 doc-match) | doc | **Still fixed** — body unchanged this round; doc-match re-run on the live body against `39732268`: 46/46 PASS | results/doc-match-r7.log |
+| Round-1–6 contracts (P0, POS1–POS5, F2, F8, C10, F11, F13, C11–C17) | Full regression sweep on the rebased tree — this also re-verifies every carried contract against the **new base** (upstream #513/#512/#532 changed `pkg/reconciler` and port-allocator code the PR's label-refresh contract exercises; upstream #533 changed the RBG status path the PR's rollout-completion machinery sits on) | 1+2 | **Green** — 32/32 carried unit contracts PASS (the only unit failures are the two new RED contracts above); envtest `PR #474` 4/4 specs on the grafted head tree; full repo unit sweep on the merged tree; CI 22/22 on `39732268` (incl. E2E rollout, envtest, unit-test) | results/reverify-r7-unit.log; results/reverify-r7-integration.log; results/full-unit-r7.log |
+| F12 (canary) | One-time migration churn for sets minted by intermediate PR commits | 1 | **Still present** (canary PASSes, i.e. churn asserted) — the rebase does not change the revision-name hash input again | results/reverify-r7-unit.log |
+
+Round-7 notes:
+- **Ledger correction carried into the harness**: round 6's final
+  adjudication *withdrew* the round-6 refutation of C4358788576 recorded
+  below (Codex reproduced the wedge on a real apiserver; Claude's own probe
+  re-run confirmed the premises). The refutation test only exercised
+  Go-struct marshaling (`omitempty`), but a declarative unstructured write
+  keeps `annotations: {}` in the stored set — the apiserver never re-marshals
+  stored objects through the Go struct. The round-6 "Refuted" row below is
+  retained for history; the manifest entry is corrected to CONFIRMED and the
+  repro is now a committed contract (`rolebasedgroupset_round7_verify_test.go`),
+  so the next round re-runs it as part of the standard suite.
+- **New harness file**:
+  `internal/controller/workloads/rolebasedgroupset_round7_verify_test.go`
+  (two RED contracts + one non-gating premise canary). Additive only;
+  production code untouched.
+- Open items carried unchanged (their files are untouched by the delta):
+  C4242488120, C4242488140, C4242488155, Q1, Q2, F5, F6, F17, F18,
+  F3-release-note, C4431272968, C4431272984.
+
 ### Round 6 (head `af9dd84b`, delta `4a9043c..af9dd84b` — review-findings commit, #519 live-budget surge, #521 partition admission, metadata-only completion, orphan revision history; branch rebased onto main `8a7bcfcb`, which also pulls in upstream #484–#515)
 
 | ID | Claim | Layer | Verdict | Evidence |
@@ -103,7 +147,7 @@ becomes whether the new path is correct — covered by POS1/POS2 below.
 | C15 (new) | `finalizeRolloutStatus` clears a True rollout barrier with no request outstanding (standalone RBG) once target workloads are live-complete; incomplete roles keep the barrier | 1 | **Confirmed** | results/unit-verify-r6.log |
 | C16 (new) | An unchanged blocked set does not poll on a timer; revision data is byte-stable under an API-server re-encode (GC strategic-merge orphan patches stay valid) | 1 | **Confirmed** | results/unit-verify-r6.log |
 | C17 (new, F16/F17) | The role-hash group-annotation fold is a **label refresh**, not a workload re-roll: a pre-fold hash on an existing Deployment is refreshed with the pod template, replicas and selector unchanged | 1 | **Confirmed — corrects the round-5 ledger** (`TestVerifyPR474_GroupAnnotationFold_LabelOnlyRefresh`, pkg/reconciler). The round-5 "one-time re-roll" framing overstated: the workload spec is untouched, matching the body's new upgrade note | results/unit-verify-r6.log |
-| C4358788576 (open question, round 5) | An explicitly empty `roles[].annotations: {}` could wedge `rolesEqual` in a perpetual-outdated loop | 1 | **Refuted** — `rolesEqual`'s DeepEqual does diverge on empty-map vs nil, but `omitempty` drops an empty map on every serialization, so neither the stored set template nor a written child can retain the divergent state; the normalized JSON comparison is the persisted truth | results/unit-verify-r6.log |
+| C4358788576 (open question, round 5) | An explicitly empty `roles[].annotations: {}` could wedge `rolesEqual` in a perpetual-outdated loop | 1 | **Refuted** — *withdrawn in the round-6 final adjudication and overturned by live evidence in round 7 (see the round-7 table); kept for history* — `rolesEqual`'s DeepEqual does diverge on empty-map vs nil, but `omitempty` drops an empty map on every serialization, so neither the stored set template nor a written child can retain the divergent state; the normalized JSON comparison is the persisted truth | results/unit-verify-r6.log |
 | F12 (canary, rounds 4–5) | One-time migration churn for sets minted by intermediate PR commits | 1 | **Still present** — the canonical-JSON change (`13cbcab4`) changes revision identity again; only unmerged-intermediate-commit test deployments are affected (nit, unchanged) | results/unit-verify-r6.log |
 | Round-1–5 contracts (P0, POS1–POS5, F2, F8, C10, F11, F13) | Full regression sweep on the merged tree — this also re-verifies the contracts against the **rebased base** (upstream #484–#515 landed under the PR) | 1+2 | **Green** — 29/29 unit (19 carried + 10 new); envtest `PR #474` 4/4 specs; author `rbgs_rolling` suite ok (236s); full repo unit sweep 40/40 packages; CI 22/22 on `af9dd84b` | results/unit-verify-r6.log; results/reverify-r6.log; results/author-envtest-r6.log; results/full-unit-r6.log |
 

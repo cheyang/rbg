@@ -1,0 +1,47 @@
+PASS  enum {Recreate, InPlaceUpdate} — types.go
+PASS  kubebuilder default InPlaceUpdate — types.go
+PASS  no Paused field/condition in types — types.go
+PASS  body states: no paused field/condition — body
+PASS  status field CurrentReplicas exists — types.go
+PASS  status field UpdatedReplicas exists — types.go
+PASS  status field UpdatedReadyReplicas exists — types.go
+PASS  status field ExpectedUpdatedReplicas exists — types.go
+PASS  status field CurrentRevision exists — types.go
+PASS  status field UpdateRevision exists — types.go
+PASS  status.observedRolloutRequest (v1alpha2) — rolebasedgroup_types.go v1alpha2
+PASS  status.observedRolloutRequest (v1alpha1) — rolebasedgroup_types.go v1alpha1
+PASS  admission no longer bounds partition by replicas — admission.go
+PASS  body: integer partition may exceed replicas — body
+PASS  controller clamps the effective partition — rolling.go
+PASS  body documents the #521 fix — body
+PASS  maxUnavailable defaults to 1 — rolling.go
+PASS  both-zero fallback to minimum unavailable budget — rolling.go
+PASS  surge groups only under Recreate — rolling.go
+PASS  ControllerRevision named rbgs-<sha256[:24]> — revision.go
+PASS  revision data stored as canonical JSON — revision.go
+PASS  groupset-revision label key — constants
+PASS  DefaultRevisionHistoryLimit is 5 (body: 'currently 5') — revision_utils.go
+PASS  rolling path adopts orphan children — rolling.go
+PASS  orphan ControllerRevisions adopted via owner-ref patch — revision.go
+PASS  owner-reference patches use optimistic locking (body claim) — revision.go
+PASS  pruning uses UID/resourceVersion delete preconditions (body claim) — revision.go
+PASS  live parent UID/deletion check before adoption (body claim) — revision.go
+PASS  creation time is the primary retention ordering (body claim) — revision.go
+PASS  body formula: floor = max(0, replicas - maxUnavailable) — rolling.go
+PASS  body formula: headroom = max(0, readyBase - floor) — rolling.go
+PASS  body formula: surge = min(maxSurge, max(0, servingOutdated - headroom)) — rolling.go
+PASS  body documents live-budget surge sizing (#519) — body
+PASS  outdated children processed in descending ordinal order — rolling.go
+PASS  Recreate uses foreground deletion with preconditions — rolling.go
+PASS  replica-only changes stay in place under either strategy — rolling.go
+PASS  budgeted writes carry the rollout-request token — rolling.go
+PASS  groupSetChildReady requires the request echo — rolling.go
+PASS  groupSetChildReady requires a False rollout condition caught up — rolling.go
+PASS  finalizeRolloutStatus exists (body: completion barrier) — rbgctl.go
+PASS  RBG requeues only while a request is unacknowledged (body claim) — rbgctl.go
+PASS  set requeues only after changing/adopting children (body claim) — rolling.go
+PASS  5-minute incompatible-gang recovery path retained (body claim) — rbgctl.go
+PASS  AddGroupAnnotationsToRoleHashes folds group annotations into role hashes — revision_utils.go
+PASS  body states a label refresh alone does not replace Pods (F16) — body
+PASS  all body-listed test names exist (round-6 body lists none) — grep at rev
+DOC-MATCH: body matches shipped API

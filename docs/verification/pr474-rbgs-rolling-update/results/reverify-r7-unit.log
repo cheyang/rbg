@@ -1,0 +1,197 @@
+=== RUN   TestVerifyPR474_Rolling_CoordinationChangePropagatesToChildren
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+--- PASS: TestVerifyPR474_Rolling_CoordinationChangePropagatesToChildren (0.05s)
+=== RUN   TestVerifyPR474_RevisionHash_IgnoresConversionAnnotations
+--- PASS: TestVerifyPR474_RevisionHash_IgnoresConversionAnnotations (0.00s)
+=== RUN   TestVerifyPR474_Canary_LegacyRevisionLabelRerolledOnce
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+--- PASS: TestVerifyPR474_Canary_LegacyRevisionLabelRerolledOnce (0.00s)
+=== RUN   TestVerifyPR474_Rolling_PreservesChildConversionStash
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+--- PASS: TestVerifyPR474_Rolling_PreservesChildConversionStash (0.01s)
+=== RUN   TestVerifyPR474_Surge_UnreadyHeldBackOrdinalStillWarmsSurge
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"surge-live","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"surge-live","namespace":"default"}}
+--- PASS: TestVerifyPR474_Surge_UnreadyHeldBackOrdinalStillWarmsSurge (0.00s)
+=== RUN   TestVerifyPR474_Rolling_AdoptsOrphanChildrenBeforeBudgetedUpdates
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"adoptkids","namespace":"default"}}
+--- PASS: TestVerifyPR474_Rolling_AdoptsOrphanChildrenBeforeBudgetedUpdates (0.00s)
+=== RUN   TestVerifyPR474_Revisions_AdoptOrphanPredecessorHistory
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"adoptrev","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"adoptrev","namespace":"default"}}
+--- PASS: TestVerifyPR474_Revisions_AdoptOrphanPredecessorHistory (0.01s)
+=== RUN   TestVerifyPR474_Set_IdleReconcileDoesNotPoll
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"idle","namespace":"default"}}
+2026-11-03T00:47:25+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"idle","namespace":"default"}}
+--- PASS: TestVerifyPR474_Set_IdleReconcileDoesNotPoll (0.00s)
+=== RUN   TestVerifyPR474_Finalize_CompletesStandaloneWithoutRequest
+2026-11-03T00:47:25+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:47:25Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:47:25Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":2,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"}],"observedGeneration":2,"roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:47:25+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:47:25Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:47:25Z","message":"All target role workloads are updated and ready","observedGeneration":2,"reason":"AllRolesUpdated","status":"False","type":"RollingUpdateInProgress"}],"observedGeneration":2,"roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+--- PASS: TestVerifyPR474_Finalize_CompletesStandaloneWithoutRequest (0.00s)
+=== RUN   TestVerifyPR474_CanonicalRevisionJSON_MatchesAPIServerReencode
+--- PASS: TestVerifyPR474_CanonicalRevisionJSON_MatchesAPIServerReencode (0.00s)
+=== RUN   TestVerifyPR474_EmptyRoleAnnotations_DroppedBySerialization
+--- PASS: TestVerifyPR474_EmptyRoleAnnotations_DroppedBySerialization (0.00s)
+=== RUN   TestVerifyPR474_EmptyRoleAnnotationsMapNoWedge
+2026-11-03T00:47:25+08:00	DEBUG	controller-runtime.test-env	starting control plane
+2026-11-03T00:47:27+08:00	DEBUG	controller-runtime.test-env	installing CRDs
+2026-11-03T00:47:27+08:00	DEBUG	controller-runtime.test-env	reading CRDs from path	{"path": "/tmp/tmp.SNccLV191L/rbgs-reverify/config/crd/bases"}
+2026-11-03T00:47:27+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_clusterengineruntimeprofiles.yaml"}
+2026-11-03T00:47:27+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_coordinatedpolicies.yaml"}
+2026-11-03T00:47:27+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_instances.yaml"}
+2026-11-03T00:47:27+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_instancesets.yaml"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroups.yaml"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupsets.yaml"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupwarmups.yaml"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_roleinstances.yaml"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_roleinstancesets.yaml"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "clusterengineruntimeprofiles.workloads.x-k8s.io"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "instancesets.workloads.x-k8s.io"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroups.workloads.x-k8s.io"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupscalingadapters.workloads.x-k8s.io"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupsets.workloads.x-k8s.io"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "coordinatedpolicies.workloads.x-k8s.io"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "instances.workloads.x-k8s.io"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupwarmups.workloads.x-k8s.io"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "roleinstances.workloads.x-k8s.io"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "roleinstancesets.workloads.x-k8s.io"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:47:28+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:47:29+08:00	DEBUG	controller-runtime.test-env	installing webhooks
+    rolebasedgroupset_round7_verify_test.go:146: 
+        	Error Trace:	/tmp/tmp.SNccLV191L/rbgs-reverify/internal/controller/workloads/rolebasedgroupset_round7_verify_test.go:146
+        	Error:      	Should be true
+        	Test:       	TestVerifyPR474_EmptyRoleAnnotationsMapNoWedge
+        	Messages:   	C4358788576: the child minted from this revision must match it; rolesEqual must treat an explicitly empty annotations map as equal to an omitted one
+--- FAIL: TestVerifyPR474_EmptyRoleAnnotationsMapNoWedge (6.01s)
+=== RUN   TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted
+    rolebasedgroupset_round7_verify_test.go:167: 
+        	Error Trace:	/tmp/tmp.SNccLV191L/rbgs-reverify/internal/controller/workloads/rolebasedgroupset_round7_verify_test.go:167
+        	Error:      	Should be true
+        	Test:       	TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted
+        	Messages:   	empty annotations map must compare equal to an omitted one (annotations)
+    rolebasedgroupset_round7_verify_test.go:169: 
+        	Error Trace:	/tmp/tmp.SNccLV191L/rbgs-reverify/internal/controller/workloads/rolebasedgroupset_round7_verify_test.go:169
+        	Error:      	Should be true
+        	Test:       	TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted
+        	Messages:   	empty annotations map must compare equal to an omitted one (both directions)
+    rolebasedgroupset_round7_verify_test.go:171: 
+        	Error Trace:	/tmp/tmp.SNccLV191L/rbgs-reverify/internal/controller/workloads/rolebasedgroupset_round7_verify_test.go:171
+        	Error:      	Should be true
+        	Test:       	TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted
+        	Messages:   	empty labels map must compare equal to an omitted one (labels)
+--- FAIL: TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted (0.00s)
+=== RUN   TestVerifyPR474_EmptyMapSerializationPremise
+--- PASS: TestVerifyPR474_EmptyMapSerializationPremise (0.00s)
+=== RUN   TestVerifyPR474_Premise_StaticPathUpdatesAllChildrenAtOnce
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"premise","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Updating existing RoleBasedGroups	{"rbgset": {"name":"premise","namespace":"default"}, "count": 3}
+2026-11-03T00:47:31+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-2"}
+2026-11-03T00:47:31+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-0"}
+2026-11-03T00:47:31+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-1"}
+2026-11-03T00:47:31+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"premise","namespace":"default"}, "replicas": 3, "readyReplicas": 3}
+2026-11-03T00:47:31+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"premise","namespace":"default"}}
+--- PASS: TestVerifyPR474_Premise_StaticPathUpdatesAllChildrenAtOnce (0.00s)
+=== RUN   TestVerifyPR474_Rollout_PacedRecreate
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"paced","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"paced","namespace":"default"}}
+--- PASS: TestVerifyPR474_Rollout_PacedRecreate (0.00s)
+=== RUN   TestVerifyPR474_Rollout_ConvergesUnderBudget
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+--- PASS: TestVerifyPR474_Rollout_ConvergesUnderBudget (0.02s)
+=== RUN   TestVerifyPR474_Rollout_MigrationNoRecreate
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+--- PASS: TestVerifyPR474_Rollout_MigrationNoRecreate (0.00s)
+=== RUN   TestVerifyPR474_StaticPathWipesChildRoleTemplates
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"wipe","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Updating existing RoleBasedGroups	{"rbgset": {"name":"wipe","namespace":"default"}, "count": 1}
+2026-11-03T00:47:31+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"wipe","namespace":"default"}, "name": "wipe-0"}
+2026-11-03T00:47:31+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"wipe","namespace":"default"}, "replicas": 1, "readyReplicas": 1}
+2026-11-03T00:47:31+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"wipe","namespace":"default"}}
+--- PASS: TestVerifyPR474_StaticPathWipesChildRoleTemplates (0.00s)
+=== RUN   TestVerifyPR474_Resolver_PercentZeroBecomesOne
+--- PASS: TestVerifyPR474_Resolver_PercentZeroBecomesOne (0.00s)
+=== RUN   TestVerifyPR474_InPlaceUpdate_PacesSpecUpdates
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-11-03T00:47:31+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+--- PASS: TestVerifyPR474_InPlaceUpdate_PacesSpecUpdates (0.01s)
+=== RUN   TestVerifyPR474_InPlaceUpdate_ResolverLimits
+--- PASS: TestVerifyPR474_InPlaceUpdate_ResolverLimits (0.00s)
+=== RUN   TestVerifyPR474_Resolver_RejectsUnknownType
+--- PASS: TestVerifyPR474_Resolver_RejectsUnknownType (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	6.138s
+=== RUN   TestVerifyPR474_Webhook_ZeroBudgetRejectedSymmetrically
+--- PASS: TestVerifyPR474_Webhook_ZeroBudgetRejectedSymmetrically (0.00s)
+=== RUN   TestVerifyPR474_Webhook_InPlaceUpdateRules
+--- PASS: TestVerifyPR474_Webhook_InPlaceUpdateRules (0.00s)
+=== RUN   TestVerifyPR474_Webhook_PartitionNotBoundedByReplicas
+--- PASS: TestVerifyPR474_Webhook_PartitionNotBoundedByReplicas (0.00s)
+=== RUN   TestVerifyPR474_Webhook_ScaledDownSetStillAcceptsMetadataWrites
+--- PASS: TestVerifyPR474_Webhook_ScaledDownSetStillAcceptsMetadataWrites (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.010s
+=== RUN   TestVerifyPR474_V1alpha1RoundTrip_PreservesRolloutStrategy
+=== RUN   TestVerifyPR474_V1alpha1RoundTrip_PreservesRolloutStrategy/Recreate
+=== RUN   TestVerifyPR474_V1alpha1RoundTrip_PreservesRolloutStrategy/InPlaceUpdate
+--- PASS: TestVerifyPR474_V1alpha1RoundTrip_PreservesRolloutStrategy (0.00s)
+    --- PASS: TestVerifyPR474_V1alpha1RoundTrip_PreservesRolloutStrategy/Recreate (0.00s)
+    --- PASS: TestVerifyPR474_V1alpha1RoundTrip_PreservesRolloutStrategy/InPlaceUpdate (0.00s)
+=== RUN   TestVerifyPR474_V1alpha1RoundTrip_ClearsStaleStash
+--- PASS: TestVerifyPR474_V1alpha1RoundTrip_ClearsStaleStash (0.00s)
+=== RUN   TestVerifyPR474_V1alpha1RoundTrip_GarbageStashFailsClosed
+--- PASS: TestVerifyPR474_V1alpha1RoundTrip_GarbageStashFailsClosed (0.00s)
+=== RUN   TestVerifyPR474_V1alpha1RoundTrip_DroppedStashLosesStrategy
+--- PASS: TestVerifyPR474_V1alpha1RoundTrip_DroppedStashLosesStrategy (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.011s
+=== RUN   TestVerifyPR474_GroupAnnotationFold_LabelOnlyRefresh
+--- PASS: TestVerifyPR474_GroupAnnotationFold_LabelOnlyRefresh (0.05s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.061s
+FAIL

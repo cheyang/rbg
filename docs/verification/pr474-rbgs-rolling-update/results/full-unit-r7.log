@@ -1,0 +1,1015 @@
+?   	sigs.k8s.io/rbgs/api/workloads/constants	[no test files]
+?   	sigs.k8s.io/rbgs/api/workloads/pub/inplace_update	[no test files]
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.032s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.320s
+?   	sigs.k8s.io/rbgs/client-go/applyconfiguration	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/applyconfiguration/internal	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/applyconfiguration/workloads/v1alpha1	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/applyconfiguration/workloads/v1alpha2	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/clientset/versioned	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/clientset/versioned/fake	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/clientset/versioned/scheme	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/clientset/versioned/typed/workloads/v1alpha1	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/clientset/versioned/typed/workloads/v1alpha1/fake	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/clientset/versioned/typed/workloads/v1alpha2	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/clientset/versioned/typed/workloads/v1alpha2/fake	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/informers/externalversions	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/informers/externalversions/internalinterfaces	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/informers/externalversions/workloads	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/informers/externalversions/workloads/v1alpha1	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/informers/externalversions/workloads/v1alpha2	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/listers/workloads/v1alpha1	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/listers/workloads/v1alpha2	[no test files]
+?   	sigs.k8s.io/rbgs/cmd/cli	[no test files]
+?   	sigs.k8s.io/rbgs/cmd/cli/cmd	[no test files]
+ok  	sigs.k8s.io/rbgs/cmd/cli/cmd/rollout	0.030s
+ok  	sigs.k8s.io/rbgs/cmd/cli/cmd/status	0.033s
+ok  	sigs.k8s.io/rbgs/cmd/cli/util	0.027s
+ok  	sigs.k8s.io/rbgs/cmd/rbgs	0.101s
+ok  	sigs.k8s.io/rbgs/hack/gen-helm-rbac	0.005s
+?   	sigs.k8s.io/rbgs/hack/internal	[no test files]
+2026-11-03T00:51:41+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "my-rbg", "namespace": "default"}
+2026-11-03T00:51:41+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"my-rbg","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"my-rbg","uid":""}]},"spec":{"policies":[{"name":"c1","roles":["prefill","decode"]}]}}}
+2026-11-03T00:51:41+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-ru", "namespace": "default"}
+2026-11-03T00:51:41+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-ru","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-ru","uid":""}]},"spec":{"policies":[{"name":"ru-coord","roles":["prefill","decode"],"strategy":{"rollingUpdate":{"maxSkew":"10%","maxUnavailable":"5%","partition":"20%"}}}]}}}
+2026-11-03T00:51:41+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-sc", "namespace": "default"}
+2026-11-03T00:51:41+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-sc","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-sc","uid":""}]},"spec":{"policies":[{"name":"sc-coord","roles":["worker"],"strategy":{"scaling":{"maxSkew":"5%","progression":"OrderScheduled"}}}]}}}
+2026-11-03T00:51:41+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-ready", "namespace": "default"}
+2026-11-03T00:51:41+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-ready","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-ready","uid":""}]},"spec":{"policies":[{"name":"sc-ready","roles":["worker"],"strategy":{"scaling":{}}}]}}}
+2026-11-03T00:51:41+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-multi", "namespace": "default"}
+2026-11-03T00:51:41+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-multi","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-multi","uid":""}]},"spec":{"policies":[{"name":"ru","roles":["a","b"],"strategy":{"rollingUpdate":{"maxSkew":"10%"}}},{"name":"sc","roles":["c"],"strategy":{"scaling":{"maxSkew":"5%"}}}]}}}
+2026-11-03T00:51:41+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-upd", "namespace": "default"}
+2026-11-03T00:51:41+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-upd","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-upd","uid":""}]},"spec":{"policies":[{"name":"c1","roles":["new-role"]}]}}}
+2026-11-03T00:51:41+08:00	DEBUG	applying CoordinatedPolicy from v1alpha1 annotation	{"name": "rbg-nil", "namespace": "default"}
+2026-11-03T00:51:41+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"CoordinatedPolicy","metadata":{"name":"rbg-nil","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"rbg-nil","uid":""}]},"spec":{"policies":[{"name":"c-nil","roles":["role-a"]}]}}}
+2026-11-03T00:51:41+08:00	INFO	Initialized discovery config mode	{"mode": "legacy"}
+2026-11-03T00:51:41+08:00	INFO	Initialized discovery config mode	{"mode": "refine"}
+2026-11-03T00:51:41+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"v1","data":{"config.yaml":"group:\n  name: test-rbg\n  roles:\n  - test-role\n  size: 1\nroles:\n  test-role:\n    instances:\n    - address: test-rbg-test-role-0.s-test-rbg-test-role\n    size: 1\n"},"kind":"ConfigMap","metadata":{"name":"test-rbg","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"controller":true,"kind":"RoleBasedGroup","name":"test-rbg","uid":"rbg-test-uid"}]}}}
+2026-11-03T00:51:41+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"v1","data":{"config.yaml":"group:\n  name: test-rbg\n  roles:\n  - test-role\n  size: 1\nroles:\n  test-role:\n    instances:\n    - address: test-rbg-test-role-0.s-test-rbg-test-role\n    size: 1\n"},"kind":"ConfigMap","metadata":{"name":"test-rbg","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"controller":true,"kind":"RoleBasedGroup","name":"test-rbg","uid":"rbg-test-uid"}]}}}
+2026-11-03T00:51:41+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"v1","data":{"config.yaml":"group:\n  name: test-rbg\n  roles:\n  - test-role\n  size: 1\nroles:\n  test-role:\n    instances:\n    - address: test-rbg-test-role-0.s-test-rbg-test-role\n    size: 1\n"},"kind":"ConfigMap","metadata":{"name":"test-rbg","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"controller":true,"kind":"RoleBasedGroup","name":"test-rbg","uid":"rbg-test-uid"}]}}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"RoleBasedGroup resource not found. Ignoring since object must be deleted","env":"unit-test","name":"non-existent","namespace":"default"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Current revision need to be updated","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Create revision [test-rbg-6876ff576d-1] successfully","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Initialized discovery config mode","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"mode":"refine"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"roleInstanceSet hash not equal, old: , new: 7f54c9ffd5","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"role":"test-role"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.03930426}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Current revision need to be updated","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Create revision [test-rbg-6876ff576d-1] successfully","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Initialized discovery config mode","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"mode":"refine"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"roleInstanceSet hash not equal, old: , new: 7f54c9ffd5","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"role":"test-role"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.019066099}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Current revision need to be updated","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Create revision [test-rbg-f7cbb747c-1] successfully","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Initialized discovery config mode","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"mode":"refine"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"sts not equal, diff: old sts not exist","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"role":"keep"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"sts hash not equal, old: , new: 59568765f4","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"role":"keep"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"delete obj","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"gvk":"apps/v1, Kind=StatefulSet","namespace":"default","obj":"test-rbg-removed"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.029232081}
+2026-11-03T00:51:46+08:00	INFO	delete scalingAdapter	{"scalingAdapter": "test-rbg-test-role"}
+2026-11-03T00:51:46+08:00	INFO	updating scalingAdapter labels	{"scalingAdapter": "test-rbg-engine"}
+2026-11-03T00:51:46+08:00	INFO	Overriding role.Replicas from bound RBGSA	{"role": "leader", "observed": 1, "desired": 10, "adapter": "test-rbg-leader"}
+2026-11-03T00:51:46+08:00	INFO	Overriding role.Replicas from bound RBGSA	{"role": "leader", "observed": "<nil>", "desired": 7, "adapter": "test-rbg-leader"}
+2026-11-03T00:51:46+08:00	INFO	delete scalingAdapter	{"scalingAdapter": "test-rbg-scaling-role2-scaling-adapter"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill", "decode"], "maxSkew": "5%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["router", "worker"], "maxSkew": "10%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill", "decode"], "maxSkew": "5%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill", "worker"], "maxSkew": "10%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill", "decode"], "maxSkew": "5%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["decode", "router"], "maxSkew": "8%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["router", "worker"], "maxSkew": "10%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill", "decode"], "maxSkew": "5%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["decode", "router"], "maxSkew": "10%"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Current revision need to be updated","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Create revision [test-rbg-6876ff576d-1] successfully","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Initialized discovery config mode","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"mode":"refine"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.008221793}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.001756393}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"roleInstanceSet hash not equal, old: , new: 85fc8d5f54","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"role":"test-role"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.007484066}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"roleInstanceSet hash not equal, old: 85fc8d5f54, new: 7f54c9ffd5","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"role":"test-role"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.005537417}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.001732651}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Current revision need to be updated","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Create revision [test-rbg-6876ff576d-1] successfully","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Initialized discovery config mode","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"mode":"refine"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"roleInstanceSet hash not equal, old: , new: 7f54c9ffd5","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"role":"test-role"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.01010222}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Initialized discovery config mode","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"mode":"legacy"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Finished reconciling","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"duration":0.005495666}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["removed", "prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	Processing coordination scaling	{"roles": ["removed", "prefill"], "maxSkew": "50%"}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"test-rbg","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":1,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":1,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"}],"observedGeneration":1,"roleStatuses":[{"name":"prefill","readyReplicas":0,"replicas":0,"updatedReplicas":0},{"name":"decode","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"test-rbg","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":1,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":1,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"}],"observedGeneration":1,"roleStatuses":[{"name":"prefill","readyReplicas":2,"replicas":2,"updatedReplicas":2},{"name":"decode","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"test-rbg","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":1,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":1,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"}],"observedGeneration":1,"roleStatuses":[{"name":"prefill","readyReplicas":2,"replicas":2,"updatedReplicas":0},{"name":"decode","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":2,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"}],"observedGeneration":2,"observedRolloutRequest":"2","roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":2,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Gang scheduling configuration is satisfiable","observedGeneration":2,"reason":"GangConfigured","status":"True","type":"GangConfigured"}],"observedGeneration":2,"observedRolloutRequest":"2","roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	workload status not yet observed, preserving last known status for this role	{"role": "role", "role": "role", "generation": 3, "observedGeneration": 2}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":2,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"}],"observedGeneration":2,"observedRolloutRequest":"2","roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":2,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Gang scheduling configuration is satisfiable","observedGeneration":2,"reason":"GangConfigured","status":"True","type":"GangConfigured"}],"observedGeneration":2,"observedRolloutRequest":"2","roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All target role workloads are updated and ready","observedGeneration":2,"reason":"AllRolesUpdated","status":"False","type":"RollingUpdateInProgress"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"}],"observedGeneration":2,"observedRolloutRequest":"2","roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All target role workloads are updated and ready","observedGeneration":2,"reason":"AllRolesUpdated","status":"False","type":"RollingUpdateInProgress"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"}],"observedGeneration":2,"observedRolloutRequest":"3","roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All target role workloads are updated and ready","observedGeneration":2,"reason":"AllRolesUpdated","status":"False","type":"RollingUpdateInProgress"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Gang scheduling configuration is satisfiable","observedGeneration":2,"reason":"GangConfigured","status":"True","type":"GangConfigured"}],"observedGeneration":2,"observedRolloutRequest":"3","roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":2,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"}],"observedGeneration":2,"observedRolloutRequest":"2","roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	enter workload.onUpdateFunc, default/group-role, type: *v1alpha2.RoleInstanceSet
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All target role workloads are updated and ready","observedGeneration":2,"reason":"AllRolesUpdated","status":"False","type":"RollingUpdateInProgress"}],"observedGeneration":2,"observedRolloutRequest":"3","roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":2,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"}],"observedGeneration":2,"observedRolloutRequest":"3","roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	enter workload.onUpdateFunc, default/group-role, type: *v1alpha2.RoleInstanceSet
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All target role workloads are updated and ready","observedGeneration":2,"reason":"AllRolesUpdated","status":"False","type":"RollingUpdateInProgress"}],"observedGeneration":2,"observedRolloutRequest":"3","roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":2,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"}],"observedGeneration":2,"roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	enter workload.onUpdateFunc, default/group-role, type: *v1alpha2.RoleInstanceSet
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All target role workloads are updated and ready","observedGeneration":2,"reason":"AllRolesUpdated","status":"False","type":"RollingUpdateInProgress"}],"observedGeneration":2,"roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":2,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"}],"observedGeneration":2,"roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1},{"name":"other","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All target role workloads are updated and ready","observedGeneration":2,"reason":"AllRolesUpdated","status":"False","type":"RollingUpdateInProgress"}],"observedGeneration":2,"roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1},{"name":"other","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":2,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"}],"observedGeneration":2,"roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":0}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":2,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"}],"observedGeneration":2,"roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"All roles are ready","observedGeneration":3,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:46Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":3,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"}],"observedGeneration":3,"roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:46+08:00	INFO	enqueue: rbg update event	{"rbg": {"name":"group","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	enqueue: rbg update event	{"rbg": {"name":"group","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	enqueue: rbg update event	{"rbg": {"name":"group","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	enqueue: rbg update event	{"rbg": {"name":"group","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	enqueue: rbg update event	{"rbg": {"name":"group","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start scaling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"desired replicas":3,"current replicas":1}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Scale successfully","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"old replicas":1,"new replicas":3}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Skip to reconcile the scaling adapter which is not managed by RBG-controller","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"rbgScalingAdapterName":"test-adapter"}
+2026-11-03T00:51:46+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroupScalingAdapter","metadata":{"name":"test-adapter","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"kind":"RoleBasedGroup","name":"test-rbg","uid":"rbg-test-uid"}]},"spec":{"scaleTargetRef":{"name":"test-rbg","role":"worker"}}}}
+2026-11-03T00:51:46+08:00	INFO	enqueue: rbg scalingAdapter create event	{"rbg": {"name":"test"}}
+2026-11-03T00:51:46+08:00	INFO	enqueue: rbg scalingAdapter update event	{"rbg": {"name":"test"}}
+2026-11-03T00:51:46+08:00	INFO	enqueue: rbg scalingAdapter delete event	{"rbg": {"name":"test"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"error","ts":"2026-11-03T00:51:46+08:00","msg":"Using server side apply to patch object status","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"error":"simulated patch error","stacktrace":"sigs.k8s.io/rbgs/pkg/utils.PatchObjectApplyConfiguration\n\t/tmp/tmp.0f2osQKDgQ/r7/pkg/utils/utils.go:93\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupScalingAdapterReconciler).patchAdapterStatus\n\t/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupscalingadapter_controller.go:337\nsigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupScalingAdapterReconciler).Reconcile\n\t/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupscalingadapter_controller.go:204\nsigs.k8s.io/rbgs/internal/controller/workloads.TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync.func1\n\t/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupscalingadapter_controller_test.go:640\ntesting.tRunner\n\t/usr/local/go/src/testing/testing.go:2193"}
+{"level":"error","ts":"2026-11-03T00:51:46+08:00","msg":"Failed to update readyReplicas","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"error":"simulated patch error","stacktrace":"sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupScalingAdapterReconciler).Reconcile\n\t/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupscalingadapter_controller.go:212\nsigs.k8s.io/rbgs/internal/controller/workloads.TestRoleBasedGroupScalingAdapterReconciler_ReadyReplicasSync.func1\n\t/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupscalingadapter_controller_test.go:640\ntesting.tRunner\n\t/usr/local/go/src/testing/testing.go:2193"}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start scaling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"desired replicas":5,"current replicas":1}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Scale successfully","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"old replicas":1,"new replicas":5}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start reconciling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"}}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Start scaling","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"desired replicas":5,"current replicas":1}
+{"level":"info","ts":"2026-11-03T00:51:46+08:00","msg":"Scale successfully","env":"unit-test","rbg-scaling-adapter":{"name":"test-adapter","namespace":"default"},"old replicas":1,"new replicas":5}
+{"level":"error","ts":"2026-11-03T00:51:46+08:00","msg":"failed to list scaling adapters for RBG","env":"unit-test","rbg":{"name":"test-rbg","namespace":"default"},"error":"simulated list error","stacktrace":"sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupScalingAdapterReconciler).mapRBGToScalingAdapters\n\t/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupscalingadapter_controller.go:399\nsigs.k8s.io/rbgs/internal/controller/workloads.TestMapRBGToScalingAdapters.func5\n\t/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupscalingadapter_controller_test.go:1022\ntesting.tRunner\n\t/usr/local/go/src/testing/testing.go:2193"}
+2026-11-03T00:51:46+08:00	INFO	Successfully created RoleBasedGroup	{"name": "test-rbgset-0"}
+2026-11-03T00:51:46+08:00	INFO	Successfully created RoleBasedGroup	{"name": "test-rbgset-1"}
+2026-11-03T00:51:46+08:00	INFO	Successfully created RoleBasedGroup	{"name": "test-rbgset-2"}
+2026-11-03T00:51:46+08:00	INFO	Successfully deleted RoleBasedGroup	{"name": "rbg-0"}
+2026-11-03T00:51:46+08:00	INFO	Successfully deleted RoleBasedGroup	{"name": "rbg-2"}
+2026-11-03T00:51:46+08:00	INFO	Successfully deleted RoleBasedGroup	{"name": "rbg-0"}
+2026-11-03T00:51:46+08:00	INFO	Successfully deleted RoleBasedGroup	{"name": "rbg-1"}
+2026-11-03T00:51:46+08:00	INFO	Successfully deleted RoleBasedGroup	{"name": "rbg-2"}
+2026-11-03T00:51:46+08:00	INFO	Successfully updated RoleBasedGroup	{"name": "test-rbgset-0"}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Adopted orphaned RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "rbgName": "test-rbgset-0"}
+2026-11-03T00:51:46+08:00	INFO	Adopted orphaned RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "rbgName": "test-rbgset-1"}
+2026-11-03T00:51:46+08:00	INFO	Adopted orphaned RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "rbgName": "test-rbgset-2"}
+2026-11-03T00:51:46+08:00	INFO	Adopted orphaned RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "rbgName": "test-rbgset-3"}
+2026-11-03T00:51:46+08:00	INFO	Scaling down RoleBasedGroups, 4 -> 2	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "count": 2}
+2026-11-03T00:51:46+08:00	INFO	Successfully deleted RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "name": "test-rbgset-3"}
+2026-11-03T00:51:46+08:00	INFO	Successfully deleted RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "name": "test-rbgset-2"}
+2026-11-03T00:51:46+08:00	INFO	Updating existing RoleBasedGroups	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "count": 2}
+2026-11-03T00:51:46+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "name": "test-rbgset-0"}
+2026-11-03T00:51:46+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "name": "test-rbgset-1"}
+2026-11-03T00:51:46+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "replicas": 2, "readyReplicas": 0}
+2026-11-03T00:51:46+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Adopted orphaned RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "rbgName": "rbg-0"}
+2026-11-03T00:51:46+08:00	INFO	Adopted orphaned RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "rbgName": "rbg-1"}
+2026-11-03T00:51:46+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "replicas": 2, "readyReplicas": 2}
+2026-11-03T00:51:46+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Adopted orphaned RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "rbgName": "rbg-0"}
+2026-11-03T00:51:46+08:00	INFO	Adopted orphaned RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "rbgName": "rbg-1"}
+2026-11-03T00:51:46+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "replicas": 2, "readyReplicas": 1}
+2026-11-03T00:51:46+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Adopted orphaned RoleBasedGroup	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "rbgName": "rbg-0"}
+2026-11-03T00:51:46+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "replicas": 1, "readyReplicas": 0}
+2026-11-03T00:51:46+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"test-rbgset","namespace":"default"}, "replicas": 0, "readyReplicas": 0}
+2026-11-03T00:51:46+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"test-rbgset","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"coord-prop","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:51:46+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"stash-keep","namespace":"default"}}
+2026-11-03T00:51:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"surge-live","namespace":"default"}}
+2026-11-03T00:51:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"surge-live","namespace":"default"}}
+2026-11-03T00:51:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"adoptkids","namespace":"default"}}
+2026-11-03T00:51:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"adoptrev","namespace":"default"}}
+2026-11-03T00:51:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"adoptrev","namespace":"default"}}
+2026-11-03T00:51:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"idle","namespace":"default"}}
+2026-11-03T00:51:47+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"idle","namespace":"default"}}
+2026-11-03T00:51:47+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:47Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:47Z","message":"Waiting for all target role workloads to be updated and ready","observedGeneration":2,"reason":"RolesUpdating","status":"True","type":"RollingUpdateInProgress"}],"observedGeneration":2,"roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:47+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-02T16:51:47Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-02T16:51:47Z","message":"All target role workloads are updated and ready","observedGeneration":2,"reason":"AllRolesUpdated","status":"False","type":"RollingUpdateInProgress"}],"observedGeneration":2,"roleStatuses":[{"name":"role","readyReplicas":1,"replicas":1,"updatedReplicas":1}]}}}
+2026-11-03T00:51:47+08:00	DEBUG	controller-runtime.test-env	starting control plane
+2026-11-03T00:51:49+08:00	DEBUG	controller-runtime.test-env	installing CRDs
+2026-11-03T00:51:49+08:00	DEBUG	controller-runtime.test-env	reading CRDs from path	{"path": "/tmp/tmp.0f2osQKDgQ/r7/config/crd/bases"}
+2026-11-03T00:51:49+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_clusterengineruntimeprofiles.yaml"}
+2026-11-03T00:51:49+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_coordinatedpolicies.yaml"}
+2026-11-03T00:51:49+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_instances.yaml"}
+2026-11-03T00:51:49+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_instancesets.yaml"}
+2026-11-03T00:51:49+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroups.yaml"}
+2026-11-03T00:51:49+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml"}
+2026-11-03T00:51:49+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupsets.yaml"}
+2026-11-03T00:51:49+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupwarmups.yaml"}
+2026-11-03T00:51:49+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_roleinstances.yaml"}
+2026-11-03T00:51:49+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_roleinstancesets.yaml"}
+2026-11-03T00:51:49+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "clusterengineruntimeprofiles.workloads.x-k8s.io"}
+2026-11-03T00:51:49+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroups.workloads.x-k8s.io"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupscalingadapters.workloads.x-k8s.io"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupsets.workloads.x-k8s.io"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupwarmups.workloads.x-k8s.io"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "roleinstancesets.workloads.x-k8s.io"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "coordinatedpolicies.workloads.x-k8s.io"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "instances.workloads.x-k8s.io"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "instancesets.workloads.x-k8s.io"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "roleinstances.workloads.x-k8s.io"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:51:50+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:51:51+08:00	DEBUG	controller-runtime.test-env	installing webhooks
+--- FAIL: TestVerifyPR474_EmptyRoleAnnotationsMapNoWedge (6.77s)
+    rolebasedgroupset_round7_verify_test.go:146: 
+        	Error Trace:	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupset_round7_verify_test.go:146
+        	Error:      	Should be true
+        	Test:       	TestVerifyPR474_EmptyRoleAnnotationsMapNoWedge
+        	Messages:   	C4358788576: the child minted from this revision must match it; rolesEqual must treat an explicitly empty annotations map as equal to an omitted one
+--- FAIL: TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted (0.00s)
+    rolebasedgroupset_round7_verify_test.go:167: 
+        	Error Trace:	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupset_round7_verify_test.go:167
+        	Error:      	Should be true
+        	Test:       	TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted
+        	Messages:   	empty annotations map must compare equal to an omitted one (annotations)
+    rolebasedgroupset_round7_verify_test.go:169: 
+        	Error Trace:	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupset_round7_verify_test.go:169
+        	Error:      	Should be true
+        	Test:       	TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted
+        	Messages:   	empty annotations map must compare equal to an omitted one (both directions)
+    rolebasedgroupset_round7_verify_test.go:171: 
+        	Error Trace:	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupset_round7_verify_test.go:171
+        	Error:      	Should be true
+        	Test:       	TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted
+        	Messages:   	empty labels map must compare equal to an omitted one (labels)
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"demo","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Scaling up RoleBasedGroups, 0 -> 1	{"rbgset": {"name":"demo","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	INFO	Skipping RoleBasedGroup controlled by a different RoleBasedGroupSet	{"rbgset": {"name":"demo","namespace":"default"}, "name": "demo-0", "foreignUID": "old-set-uid"}
+2026-11-03T00:51:54+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"demo","namespace":"default"}, "replicas": 0, "readyReplicas": 0}
+2026-11-03T00:51:54+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"demo","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"demo","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"demo","namespace":"default"}, "replicas": 0, "readyReplicas": 0}
+2026-11-03T00:51:54+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"demo","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"demo","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Adopted orphaned RoleBasedGroup	{"rbgset": {"name":"demo","namespace":"default"}, "rbgName": "demo-0"}
+2026-11-03T00:51:54+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"demo","namespace":"default"}, "replicas": 1, "readyReplicas": 0}
+2026-11-03T00:51:54+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"demo","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"premise","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Updating existing RoleBasedGroups	{"rbgset": {"name":"premise","namespace":"default"}, "count": 3}
+2026-11-03T00:51:54+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-2"}
+2026-11-03T00:51:54+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-0"}
+2026-11-03T00:51:54+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"premise","namespace":"default"}, "name": "premise-1"}
+2026-11-03T00:51:54+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"premise","namespace":"default"}, "replicas": 3, "readyReplicas": 3}
+2026-11-03T00:51:54+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"premise","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"paced","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"paced","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"converge","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"migrate","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"wipe","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Updating existing RoleBasedGroups	{"rbgset": {"name":"wipe","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	INFO	Successfully updated RoleBasedGroup	{"rbgset": {"name":"wipe","namespace":"default"}, "name": "wipe-0"}
+2026-11-03T00:51:54+08:00	INFO	Successfully updated RoleBasedGroupSet status	{"rbgset": {"name":"wipe","namespace":"default"}, "replicas": 1, "readyReplicas": 1}
+2026-11-03T00:51:54+08:00	INFO	Successfully reconciled rbgset	{"rbgset": {"name":"wipe","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"inplace-paced","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Node permanently failed	{"node": "node-1", "failCount": 1, "backoffLimit": 0}
+2026-11-03T00:51:54+08:00	INFO	Node permanently failed	{"node": "node-1", "failCount": 3, "backoffLimit": 2}
+2026-11-03T00:51:54+08:00	INFO	Node permanently failed	{"node": "node-1", "failCount": 2, "backoffLimit": 1}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"retry-attempt","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"retry-attempt","namespace":"default"}, "node": "node-1"}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"warmup": {"name":"retry-attempt","namespace":"default"}, "time": "2026-11-03 00:51:54.143475941 +0800 CST m=+12.691846116"}
+2026-11-03T00:51:54+08:00	INFO	Warmup job running	{"warmup": {"name":"retry-attempt","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"retry-attempt","namespace":"default"}, "phase": "Running", "desired": 1, "active": 1, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"retry-attempt","namespace":"default"}, "duration": "2.227019ms"}
+2026-11-03T00:51:54+08:00	DEBUG	TTL not yet expired, requeueing	{"remaining": "1m29.997603565s", "requeueAfter": "1m29.997603565s"}
+2026-11-03T00:51:54+08:00	INFO	TTL expired, deleting RoleBasedGroupWarmup
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "760ns"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Warmup job paused	{"warmup": {"name":"test","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "1.012446ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	No nodes matched, completing immediately	{"warmup": {"name":"test","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"test","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "1.449241ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"test","namespace":"default"}, "node": "node-1"}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"test","namespace":"default"}, "node": "node-2"}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"warmup": {"name":"test","namespace":"default"}, "time": "2026-11-03 00:51:54.164537991 +0800 CST m=+12.712908166"}
+2026-11-03T00:51:54+08:00	INFO	Warmup job running	{"warmup": {"name":"test","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"test","namespace":"default"}, "phase": "Running", "desired": 2, "active": 2, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "3.233085ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"test","namespace":"default"}, "node": "node-1"}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"warmup": {"name":"test","namespace":"default"}, "time": "2026-11-03 00:51:54.16845241 +0800 CST m=+12.716822585"}
+2026-11-03T00:51:54+08:00	INFO	Warmup job running	{"warmup": {"name":"test","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"test","namespace":"default"}, "phase": "Running", "desired": 3, "active": 1, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "3.145822ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"invalid-image","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"invalid-image","namespace":"default"}, "error": "spec.targetNodes.imagePreload.images[0] must not be empty"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:209
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_InvalidImageFailsWarmup
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:885
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"invalid-image","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"invalid-image","namespace":"default"}, "duration": "1.007975ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"invalid-custom-image","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"invalid-custom-image","namespace":"default"}, "error": "spec.targetNodes.customizedAction.containers[0].image must not be empty"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:209
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_InvalidCustomizedContainerImageFailsWarmup.func1
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:937
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"invalid-custom-image","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"invalid-custom-image","namespace":"default"}, "duration": "973.775µs"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"invalid-custom-image","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"invalid-custom-image","namespace":"default"}, "error": "spec.targetNodes.customizedAction.containers[0].image must not be empty"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:209
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_InvalidCustomizedContainerImageFailsWarmup.func1
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:937
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"invalid-custom-image","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"invalid-custom-image","namespace":"default"}, "duration": "960.954µs"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"create-error","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"create-error","namespace":"default"}, "node": "node-1"}
+2026-11-03T00:51:54+08:00	ERROR	Failed to create warmup Pod	{"warmup": {"name":"create-error","namespace":"default"}, "node": "node-1", "error": "injected pod create failure"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).createPodsForNodes
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:784
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:339
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_PropagatesPodCreateError
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1088
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"create-error","namespace":"default"}, "duration": "68.403µs"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"owner-reference-error","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"owner-reference-error","namespace":"default"}, "node": "node-1"}
+2026-11-03T00:51:54+08:00	ERROR	Failed to set owner reference	{"warmup": {"name":"owner-reference-error","namespace":"default"}, "node": "node-1", "error": "no kind is registered for the type v1alpha2.RoleBasedGroupWarmup in scheme \"/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1106\""}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).createPodsForNodes
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:779
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:339
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_PropagatesOwnerReferenceError
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1108
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"owner-reference-error","namespace":"default"}, "duration": "39.631µs"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"missing-rbg","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"missing-rbg","namespace":"default"}, "name": "does-not-exist", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"does-not-exist\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:456
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:220
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_MissingTargetRBGDoesNotFailImmediately
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1132
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Target not ready, waiting	{"warmup": {"name":"missing-rbg","namespace":"default"}, "reason": "RoleBasedGroupNotFound", "message": "failed to get RoleBasedGroup default/does-not-exist: rolebasedgroups.workloads.x-k8s.io \"does-not-exist\" not found"}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"missing-rbg","namespace":"default"}, "duration": "1.11835ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"invalid-legacy","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"invalid-legacy","namespace":"default"}, "error": "spec.targetNodes.imagePreload.images must contain at least one image"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:209
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_InvalidLegacyActionsFailBeforeNodeDiscovery.func1
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1185
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"invalid-legacy","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"invalid-legacy","namespace":"default"}, "duration": "1.68855ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"invalid-legacy","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"invalid-legacy","namespace":"default"}, "error": "spec.targetNodes.customizedAction.containers must contain at least one container"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:209
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_InvalidLegacyActionsFailBeforeNodeDiscovery.func1
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1185
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"invalid-legacy","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"invalid-legacy","namespace":"default"}, "duration": "2.590852ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"invalid-update","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"invalid-update","namespace":"default"}, "error": "spec.targetNodes.imagePreload.images[0] must not be empty"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:209
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_InvalidSpecCleansUpExistingPods
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1219
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"invalid-update","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"invalid-update","namespace":"default"}, "duration": "1.067858ms"}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"count": 1}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"node": "node-1", "role": "worker"}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"rbg": "target-rbg", "roles": 1, "nodes": 1}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"late-target","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"late-target","namespace":"default"}, "name": "late-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"late-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:456
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:220
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_MissingTargetRBGRecoversWhenCreatedLater
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1334
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Target not ready, waiting	{"warmup": {"name":"late-target","namespace":"default"}, "reason": "RoleBasedGroupNotFound", "message": "failed to get RoleBasedGroup default/late-rbg: rolebasedgroups.workloads.x-k8s.io \"late-rbg\" not found"}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"late-target","namespace":"default"}, "duration": "1.012736ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"late-target","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"late-target","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"late-target","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"late-target","namespace":"default"}, "rbg": "late-rbg", "roles": 1, "nodes": 1}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"late-target","namespace":"default"}, "node": "node-1"}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"warmup": {"name":"late-target","namespace":"default"}, "time": "2026-11-03 00:51:54.205575722 +0800 CST m=+12.753945897"}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"late-target","namespace":"default"}, "phase": "Running", "desired": 1, "active": 1, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"late-target","namespace":"default"}, "duration": "2.325523ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"partial-scheduling","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"partial-scheduling","namespace":"default"}, "count": 2}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"partial-scheduling","namespace":"default"}, "node": "node-0", "role": "worker"}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"partial-scheduling","namespace":"default"}, "rbg": "partial-scheduling-rbg", "roles": 1, "nodes": 1}
+2026-11-03T00:51:54+08:00	INFO	Target not ready, waiting	{"warmup": {"name":"partial-scheduling","namespace":"default"}, "reason": "TargetPodsNotScheduled", "message": "1 selected target RoleBasedGroup Pod(s) are missing or not scheduled yet"}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"partial-scheduling","namespace":"default"}, "duration": "1.11841ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"partial-scheduling","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"partial-scheduling","namespace":"default"}, "count": 2}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"partial-scheduling","namespace":"default"}, "node": "node-0", "role": "worker"}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"partial-scheduling","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"partial-scheduling","namespace":"default"}, "rbg": "partial-scheduling-rbg", "roles": 1, "nodes": 2}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"partial-scheduling","namespace":"default"}, "node": "node-0"}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"partial-scheduling","namespace":"default"}, "node": "node-1"}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"warmup": {"name":"partial-scheduling","namespace":"default"}, "time": "2026-11-03 00:51:54.215496026 +0800 CST m=+12.763866201"}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"partial-scheduling","namespace":"default"}, "phase": "Running", "desired": 2, "active": 2, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"partial-scheduling","namespace":"default"}, "duration": "4.613954ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"unselected-role","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"unselected-role","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"unselected-role","namespace":"default"}, "rbg": "unselected-role-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	No nodes matched, completing immediately	{"warmup": {"name":"unselected-role","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"unselected-role","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"unselected-role","namespace":"default"}, "duration": "1.081808ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"late-target-timeout","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"late-target-timeout","namespace":"default"}, "name": "never-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"never-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:456
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:220
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_MissingTargetRBGFailsAfterGlobalTimeout
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1525
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"late-target-timeout","namespace":"default"}, "reason": "InvalidTarget", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"late-target-timeout","namespace":"default"}, "duration": "1.048378ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"pods-not-created","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"pods-not-created","namespace":"default"}, "count": 0}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"pods-not-created","namespace":"default"}, "rbg": "not-created-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Target not ready, waiting	{"warmup": {"name":"pods-not-created","namespace":"default"}, "reason": "TargetPodsNotScheduled", "message": "1 selected target RoleBasedGroup Pod(s) are missing or not scheduled yet"}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"pods-not-created","namespace":"default"}, "duration": "1.119149ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"pending-timeout","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"pending-timeout","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"pending-timeout","namespace":"default"}, "rbg": "timeout-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"pending-timeout","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"pending-timeout","namespace":"default"}, "duration": "1.075289ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"deleted-mid-run","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"deleted-mid-run","namespace":"default"}, "name": "deleted-mid-run-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"deleted-mid-run-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:456
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:220
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_TargetDeletedMidRunCompletes
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1623
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"deleted-mid-run","namespace":"default"}, "count": 0}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"deleted-mid-run","namespace":"default"}, "rbg": "deleted-mid-run-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"warmup": {"name":"deleted-mid-run","namespace":"default"}, "time": "2026-11-03 00:51:54.231508046 +0800 CST m=+12.779878221"}
+2026-11-03T00:51:54+08:00	INFO	Warmup completed after the target no longer selects any node	{"warmup": {"name":"deleted-mid-run","namespace":"default"}, "succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"deleted-mid-run","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"deleted-mid-run","namespace":"default"}, "duration": "1.089258ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"mid-run-pending","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"mid-run-pending","namespace":"default"}, "count": 2}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"mid-run-pending","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"mid-run-pending","namespace":"default"}, "rbg": "mid-run-rbg", "roles": 1, "nodes": 1}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"warmup": {"name":"mid-run-pending","namespace":"default"}, "time": "2026-11-03 00:51:54.23415431 +0800 CST m=+12.782524485"}
+2026-11-03T00:51:54+08:00	INFO	Warmup job completed	{"warmup": {"name":"mid-run-pending","namespace":"default"}, "succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"mid-run-pending","namespace":"default"}, "phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"mid-run-pending","namespace":"default"}, "duration": "2.24307ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"creation-timeout","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"creation-timeout","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"creation-timeout","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"creation-timeout","namespace":"default"}, "rbg": "creation-timeout-rbg", "roles": 1, "nodes": 1}
+2026-11-03T00:51:54+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"creation-timeout","namespace":"default"}, "timeout": "1m0s", "elapsed": "2m0.238305668s"}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"creation-timeout","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"creation-timeout","namespace":"default"}, "duration": "1.158031ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"short-deadline","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"short-deadline","namespace":"default"}, "name": "short-deadline-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"short-deadline-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:456
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:220
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_TargetWaitRequeueHonorsGlobalTimeout
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1802
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Target not ready, waiting	{"warmup": {"name":"short-deadline","namespace":"default"}, "reason": "RoleBasedGroupNotFound", "message": "failed to get RoleBasedGroup default/short-deadline-rbg: rolebasedgroups.workloads.x-k8s.io \"short-deadline-rbg\" not found"}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"short-deadline","namespace":"default"}, "duration": "1.069488ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"unscheduled","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"unscheduled","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"unscheduled","namespace":"default"}, "rbg": "pending-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Target not ready, waiting	{"warmup": {"name":"unscheduled","namespace":"default"}, "reason": "TargetPodsNotScheduled", "message": "1 selected target RoleBasedGroup Pod(s) are missing or not scheduled yet"}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"unscheduled","namespace":"default"}, "duration": "1.134091ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"unscheduled","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"unscheduled","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"unscheduled","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"unscheduled","namespace":"default"}, "rbg": "pending-rbg", "roles": 1, "nodes": 1}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"unscheduled","namespace":"default"}, "node": "node-1"}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"warmup": {"name":"unscheduled","namespace":"default"}, "time": "2026-11-03 00:51:54.250965649 +0800 CST m=+12.799335824"}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"unscheduled","namespace":"default"}, "phase": "Running", "desired": 1, "active": 1, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"unscheduled","namespace":"default"}, "duration": "2.182218ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"cross-role-surplus","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"cross-role-surplus","namespace":"default"}, "count": 3}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"cross-role-surplus","namespace":"default"}, "node": "node-1", "role": "router"}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"cross-role-surplus","namespace":"default"}, "node": "node-2", "role": "router"}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"cross-role-surplus","namespace":"default"}, "rbg": "cross-role-rbg", "roles": 1, "nodes": 2}
+2026-11-03T00:51:54+08:00	INFO	Target not ready, waiting	{"warmup": {"name":"cross-role-surplus","namespace":"default"}, "reason": "TargetPodsNotScheduled", "message": "1 selected target RoleBasedGroup Pod(s) are missing or not scheduled yet"}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"cross-role-surplus","namespace":"default"}, "duration": "1.984111ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"empty-target","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"empty-target","namespace":"default"}, "count": 0}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"empty-target","namespace":"default"}, "rbg": "empty-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	No nodes matched, completing immediately	{"warmup": {"name":"empty-target","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"empty-target","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"empty-target","namespace":"default"}, "duration": "1.133491ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"gap-empty","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"gap-empty","namespace":"default"}, "error": "spec.targetNodes.customizedAction.containers[0].image must not be empty"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:209
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_InvalidCustomizedContainerGapIsClosed.func1
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1994
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"gap-empty","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"gap-empty","namespace":"default"}, "duration": "1.027006ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"gap-whitespace","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	invalid warmup specification	{"warmup": {"name":"gap-whitespace","namespace":"default"}, "error": "spec.targetNodes.customizedAction.containers[0].image must not be empty"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:209
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_InvalidCustomizedContainerGapIsClosed.func1
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:1994
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"gap-whitespace","namespace":"default"}, "reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"gap-whitespace","namespace":"default"}, "duration": "1.015296ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"deleted-active","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"deleted-active","namespace":"default"}, "name": "deleted-active-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"deleted-active-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:456
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:220
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_TargetDeletedMidRunWithActivePodsStaysRunning
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:2031
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"deleted-active","namespace":"default"}, "count": 0}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"deleted-active","namespace":"default"}, "rbg": "deleted-active-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"warmup": {"name":"deleted-active","namespace":"default"}, "time": "2026-11-03 00:51:54.266319046 +0800 CST m=+12.814689230"}
+2026-11-03T00:51:54+08:00	INFO	No target nodes are observable, waiting	{"warmup": {"name":"deleted-active","namespace":"default"}, "active": 1, "pendingTargetPods": 0}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"deleted-active","namespace":"default"}, "phase": "Running", "desired": 0, "active": 1, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"deleted-active","namespace":"default"}, "duration": "1.109529ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"deleted-active","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"deleted-active","namespace":"default"}, "name": "deleted-active-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"deleted-active-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:456
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:220
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_TargetDeletedMidRunWithActivePodsStaysRunning
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:2060
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"deleted-active","namespace":"default"}, "count": 0}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"deleted-active","namespace":"default"}, "rbg": "deleted-active-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Warmup completed after the target no longer selects any node	{"warmup": {"name":"deleted-active","namespace":"default"}, "succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"deleted-active","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"deleted-active","namespace":"default"}, "duration": "1.076008ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"eviction-gap","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"eviction-gap","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"eviction-gap","namespace":"default"}, "rbg": "eviction-gap-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"warmup": {"name":"eviction-gap","namespace":"default"}, "time": "2026-11-03 00:51:54.271172128 +0800 CST m=+12.819542303"}
+2026-11-03T00:51:54+08:00	INFO	No target nodes are observable, waiting	{"warmup": {"name":"eviction-gap","namespace":"default"}, "active": 1, "pendingTargetPods": 1}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"eviction-gap","namespace":"default"}, "phase": "Running", "desired": 0, "active": 1, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"eviction-gap","namespace":"default"}, "duration": "1.107729ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"gap-failed","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"gap-failed","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"gap-failed","namespace":"default"}, "rbg": "gap-failed-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	No target nodes are observable, waiting	{"warmup": {"name":"gap-failed","namespace":"default"}, "active": 0, "pendingTargetPods": 1}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"gap-failed","namespace":"default"}, "phase": "Running", "desired": 0, "active": 0, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"gap-failed","namespace":"default"}, "duration": "1.1145ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"gap-timeout","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"gap-timeout","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"gap-timeout","namespace":"default"}, "rbg": "gap-timeout-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"gap-timeout","namespace":"default"}, "timeout": "1m0s", "elapsed": "10m0.277433271s"}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"gap-timeout","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 1}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"gap-timeout","namespace":"default"}, "duration": "1.053708ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"gap-replacement","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"gap-replacement","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"gap-replacement","namespace":"default"}, "rbg": "gap-replacement-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	No target nodes are observable, waiting	{"warmup": {"name":"gap-replacement","namespace":"default"}, "active": 0, "pendingTargetPods": 1}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"gap-replacement","namespace":"default"}, "phase": "Running", "desired": 0, "active": 0, "succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"gap-replacement","namespace":"default"}, "duration": "1.055888ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"gap-replacement","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"gap-replacement","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"gap-replacement","namespace":"default"}, "node": "node-2", "role": "worker"}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"gap-replacement","namespace":"default"}, "rbg": "gap-replacement-rbg", "roles": 1, "nodes": 1}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"gap-replacement","namespace":"default"}, "node": "node-2"}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"gap-replacement","namespace":"default"}, "phase": "Running", "desired": 1, "active": 1, "succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"gap-replacement","namespace":"default"}, "duration": "3.391601ms"}
+2026-11-03T00:51:54+08:00	INFO	Warmup completed after the target no longer selects any node	{"succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"unset-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"unset-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "name": "collapsed-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"collapsed-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:456
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:220
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_CollapsedDesiredSetHonorsMaxFailedNodes.func1
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:2321
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"unset-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "count": 0}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"unset-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "rbg": "collapsed-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Warmup completed after the target no longer selects any node	{"warmup": {"name":"unset-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "succeeded": 0, "failed": 1}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"unset-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 0, "failed": 1}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"unset-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "duration": "1.13003ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"failure-within-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"failure-within-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "count": 0}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"failure-within-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "rbg": "collapsed-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Warmup completed after the target no longer selects any node	{"warmup": {"name":"failure-within-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "succeeded": 0, "failed": 1}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"failure-within-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 0, "failed": 1}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"failure-within-maxfailednodes-tolerates-the-failed-attempt","namespace":"default"}, "duration": "1.10814ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"failure-exceeding-maxfailednodes-fails","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"failure-exceeding-maxfailednodes-fails","namespace":"default"}, "name": "collapsed-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"collapsed-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:456
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:220
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_CollapsedDesiredSetHonorsMaxFailedNodes.func1
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:2321
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"failure-exceeding-maxfailednodes-fails","namespace":"default"}, "count": 0}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"failure-exceeding-maxfailednodes-fails","namespace":"default"}, "rbg": "collapsed-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"failure-exceeding-maxfailednodes-fails","namespace":"default"}, "reason": "MaxFailedNodesExceeded", "succeeded": 0, "failed": 1}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"failure-exceeding-maxfailednodes-fails","namespace":"default"}, "duration": "1.152651ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"deleted-success","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"deleted-success","namespace":"default"}, "name": "deleted-success-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"deleted-success-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:456
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:220
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_TargetDeletedAfterSuccessKeepsStartTimeAndReason
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:2367
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"deleted-success","namespace":"default"}, "count": 0}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"deleted-success","namespace":"default"}, "rbg": "deleted-success-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Warmup completed after the target no longer selects any node	{"warmup": {"name":"deleted-success","namespace":"default"}, "succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"deleted-success","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"deleted-success","namespace":"default"}, "duration": "1.13239ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"condition-only","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"condition-only","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"condition-only","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"condition-only","namespace":"default"}, "rbg": "condition-only-rbg", "roles": 1, "nodes": 1}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"warmup": {"name":"condition-only","namespace":"default"}, "time": "2026-11-03 00:51:54.301186517 +0800 CST m=+12.849556692"}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"condition-only","namespace":"default"}, "phase": "Running", "desired": 1, "active": 1, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"condition-only","namespace":"default"}, "duration": "1.096269ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"condition-only","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"condition-only","namespace":"default"}, "count": 2}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"condition-only","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"condition-only","namespace":"default"}, "rbg": "condition-only-rbg", "roles": 1, "nodes": 1}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"condition-only","namespace":"default"}, "phase": "Running", "desired": 1, "active": 1, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"condition-only","namespace":"default"}, "duration": "1.134911ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"terminal-target","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"terminal-target","namespace":"default"}, "count": 2}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"terminal-target","namespace":"default"}, "rbg": "terminal-target-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Target not ready, waiting	{"warmup": {"name":"terminal-target","namespace":"default"}, "reason": "TargetPodsNotScheduled", "message": "1 selected target RoleBasedGroup Pod(s) are missing or not scheduled yet"}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"terminal-target","namespace":"default"}, "duration": "1.061708ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"stale-terminal","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"stale-terminal","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"stale-terminal","namespace":"default"}, "node": "node-2", "role": "worker"}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"stale-terminal","namespace":"default"}, "rbg": "stale-terminal-rbg", "roles": 1, "nodes": 1}
+2026-11-03T00:51:54+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"stale-terminal","namespace":"default"}, "timeout": "1m0s", "elapsed": "10m0.310978046s"}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"stale-terminal","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"stale-terminal","namespace":"default"}, "duration": "1.066978ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"orphan-active","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"orphan-active","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"orphan-active","namespace":"default"}, "node": "node-2", "role": "worker"}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"orphan-active","namespace":"default"}, "rbg": "orphan-active-rbg", "roles": 1, "nodes": 1}
+2026-11-03T00:51:54+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"orphan-active","namespace":"default"}, "timeout": "1m0s", "elapsed": "10m0.313543117s"}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"orphan-active","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"orphan-active","namespace":"default"}, "duration": "2.169167ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"adapter-zero","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"adapter-zero","namespace":"default"}, "count": 0}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"adapter-zero","namespace":"default"}, "rbg": "adapter-zero-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	No nodes matched, completing immediately	{"warmup": {"name":"adapter-zero","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"adapter-zero","namespace":"default"}, "phase": "Completed", "desired": 0, "active": 0, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"adapter-zero","namespace":"default"}, "duration": "1.139351ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"adapter-up","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"adapter-up","namespace":"default"}, "count": 1}
+2026-11-03T00:51:54+08:00	DEBUG	Added warmup actions for node	{"warmup": {"name":"adapter-up","namespace":"default"}, "node": "node-1", "role": "worker"}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"adapter-up","namespace":"default"}, "rbg": "adapter-up-rbg", "roles": 1, "nodes": 1}
+2026-11-03T00:51:54+08:00	INFO	Target not ready, waiting	{"warmup": {"name":"adapter-up","namespace":"default"}, "reason": "TargetPodsNotScheduled", "message": "1 selected target RoleBasedGroup Pod(s) are missing or not scheduled yet"}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"adapter-up","namespace":"default"}, "duration": "1.11202ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"adapter-unbound","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"adapter-unbound","namespace":"default"}, "count": 0}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"adapter-unbound","namespace":"default"}, "rbg": "adapter-unbound-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Target not ready, waiting	{"warmup": {"name":"adapter-unbound","namespace":"default"}, "reason": "TargetPodsNotScheduled", "message": "1 selected target RoleBasedGroup Pod(s) are missing or not scheduled yet"}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"adapter-unbound","namespace":"default"}, "duration": "2.081334ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"deleted-timeout","namespace":"default"}}
+2026-11-03T00:51:54+08:00	ERROR	Failed to get RoleBasedGroup	{"warmup": {"name":"deleted-timeout","namespace":"default"}, "name": "deleted-timeout-rbg", "namespace": "default", "error": "rolebasedgroups.workloads.x-k8s.io \"deleted-timeout-rbg\" not found"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).getTargetRoleBasedGroupState
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:456
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:220
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcile_TargetDeletedMidRunWithActivePodsFailsAfterGlobalTimeout
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller_test.go:2698
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Found Pods for RoleBasedGroup	{"warmup": {"name":"deleted-timeout","namespace":"default"}, "count": 0}
+2026-11-03T00:51:54+08:00	INFO	Processed RoleBasedGroup target	{"warmup": {"name":"deleted-timeout","namespace":"default"}, "rbg": "deleted-timeout-rbg", "roles": 0, "nodes": 0}
+2026-11-03T00:51:54+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"deleted-timeout","namespace":"default"}, "timeout": "1m0s", "elapsed": "10m0.326843601s"}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"deleted-timeout","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"deleted-timeout","namespace":"default"}, "duration": "1.087689ms"}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"time": "2026-11-03 00:51:54.334003976 +0800 CST m=+12.882374161"}
+2026-11-03T00:51:54+08:00	INFO	Warmup job completed	{"succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"phase": "Completed", "desired": 1, "active": 0, "succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"phase": "Running", "desired": 1, "active": 0, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"time": "2026-11-03 00:51:54.342384824 +0800 CST m=+12.890755039"}
+2026-11-03T00:51:54+08:00	INFO	Warmup completed after the target no longer selects any node	{"succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"phase": "Completed", "desired": 0, "active": 0, "succeeded": 1, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"phase": "Running", "desired": 1, "active": 0, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"time": "2026-11-03 00:51:54.353924835 +0800 CST m=+12.902295020"}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"phase": "Running", "desired": 1, "active": 0, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"time": "2026-11-03 00:51:54.356520058 +0800 CST m=+12.904890242"}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"phase": "Running", "desired": 1, "active": 0, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"time": "2026-11-03 00:51:54.359046557 +0800 CST m=+12.907416743"}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"phase": "Running", "desired": 1, "active": 0, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"time": "2026-11-03 00:51:54.373832014 +0800 CST m=+12.922202199"}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"succeeded": 500, "failed": 500}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"phase": "Failed", "desired": 1000, "active": 0, "succeeded": 500, "failed": 500}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"reason": "InvalidWarmupSpec", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"reason": "InvalidTarget", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"reason": "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"test","namespace":"default"}, "node": "node-0000"}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"warmup": {"name":"test","namespace":"default"}, "time": "2026-11-03 00:51:54.424495588 +0800 CST m=+12.972865763"}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"test","namespace":"default"}, "phase": "Running", "desired": 1025, "active": 1, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "10.600488ms"}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"test","namespace":"default"}, "node": "node-1"}
+2026-11-03T00:51:54+08:00	INFO	Setting start time	{"warmup": {"name":"test","namespace":"default"}, "time": "2026-11-03 00:51:54.438681923 +0800 CST m=+12.987052108"}
+2026-11-03T00:51:54+08:00	INFO	Updated status	{"warmup": {"name":"test","namespace":"default"}, "phase": "Running", "desired": 1, "active": 1, "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "2.333093ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"test","namespace":"default"}, "node": "node-1"}
+2026-11-03T00:51:54+08:00	INFO	Creating warmup Pod	{"warmup": {"name":"test","namespace":"default"}, "node": "node-2"}
+2026-11-03T00:51:54+08:00	ERROR	Failed to create warmup Pod	{"warmup": {"name":"test","namespace":"default"}, "node": "node-2", "error": "injected second retry create failure"}
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).createPodsForNodes
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:784
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).reconcileUnfinished
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:339
+sigs.k8s.io/rbgs/internal/controller/workloads.(*RoleBasedGroupWarmupReconciler).Reconcile
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_controller.go:157
+sigs.k8s.io/rbgs/internal/controller/workloads.TestReconcileReportsDisplacedFailureAfterPartialRetryCreation
+	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupwarmup_customized_action_test.go:1434
+testing.tRunner
+	/usr/local/go/src/testing/testing.go:2193
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "2.346504ms"}
+2026-11-03T00:51:54+08:00	INFO	Start reconciling	{"warmup": {"name":"test","namespace":"default"}}
+2026-11-03T00:51:54+08:00	INFO	Global timeout exceeded, failing warmup job	{"warmup": {"name":"test","namespace":"default"}, "timeout": "1s", "elapsed": "2m0.445734214s"}
+2026-11-03T00:51:54+08:00	INFO	Warmup job failed	{"warmup": {"name":"test","namespace":"default"}, "reason": "GlobalTimeoutExceeded", "succeeded": 0, "failed": 0}
+2026-11-03T00:51:54+08:00	INFO	Finished reconciling	{"warmup": {"name":"test","namespace":"default"}, "duration": "1.727472ms"}
+I1103 00:51:54.451618 3556707 roleinstanceset_controller.go:131] "Deleting stale RoleInstance from different pattern" instanceSet="default/test-prefill" instance="default/test-prefill-0" currentPattern="Stateless"
+I1103 00:51:54.451637 3556707 roleinstanceset_controller.go:131] "Deleting stale RoleInstance from different pattern" instanceSet="default/test-prefill" instance="default/test-prefill-1" currentPattern="Stateless"
+I1103 00:51:54.453017 3556707 roleinstanceset_controller.go:131] "Deleting stale RoleInstance from different pattern" instanceSet="default/test-prefill" instance="default/test-prefill-7jj4f" currentPattern="Stateful"
+I1103 00:51:54.453029 3556707 roleinstanceset_controller.go:131] "Deleting stale RoleInstance from different pattern" instanceSet="default/test-prefill" instance="default/test-prefill-jdggk" currentPattern="Stateful"
+I1103 00:51:54.454433 3556707 roleinstanceset_controller.go:131] "Deleting stale RoleInstance from different pattern" instanceSet="default/test-prefill" instance="default/test-prefill-0" currentPattern="Stateless"
+I1103 00:51:54.455602 3556707 roleinstanceset_controller.go:131] "Deleting stale RoleInstance from different pattern" instanceSet="default/test-prefill" instance="default/test-prefill-7jj4f" currentPattern="Stateful"
+2026-11-03T00:51:54+08:00	INFO	Overriding role.Replicas from bound RBGSA	{"role": "worker", "observed": 2, "desired": 9, "adapter": "demo-worker"}
+2026-11-03T00:51:54+08:00	INFO	recreating scalingAdapter not owned by this RBG	{"scalingAdapter": "demo-worker"}
+2026-11-03T00:51:54+08:00	INFO	recreating scalingAdapter not owned by this RBG	{"scalingAdapter": "demo-worker"}
+2026-11-03T00:51:54+08:00	INFO	delete scalingAdapter	{"scalingAdapter": "demo-worker"}
+2026-11-03T00:51:54+08:00	INFO	delete scalingAdapter	{"scalingAdapter": "demo-worker"}
+2026-11-03T00:51:54+08:00	INFO	recreating scalingAdapter not owned by this RBG	{"scalingAdapter": "demo-worker"}
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	13.017s
+ok  	sigs.k8s.io/rbgs/pkg/component-discovery	0.025s
+ok  	sigs.k8s.io/rbgs/pkg/coordination/coordinationscaling	0.024s
+ok  	sigs.k8s.io/rbgs/pkg/dependency	0.094s
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.124s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance	0.024s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/clientdapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	0.029s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/readiness	0.092s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/specifieddelete	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod	0.026s
+?   	sigs.k8s.io/rbgs/pkg/inplace/pod/clientadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/inplaceupdate	0.107s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/readiness	0.027s
+ok  	sigs.k8s.io/rbgs/pkg/port-allocator	0.040s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.284s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.106s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	0.033s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.036s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	0.027s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.111s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	0.032s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.136s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode	0.026s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/core	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision	0.039s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/sync	0.095s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/utils	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/utils/revisionadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/scale	0.022s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler	0.114s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/common	0.093s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/k8s-scheduler-plugin	0.089s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/volcano	0.101s
+ok  	sigs.k8s.io/rbgs/pkg/utils	0.100s
+?   	sigs.k8s.io/rbgs/pkg/utils/client	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/expectations	0.005s
+?   	sigs.k8s.io/rbgs/pkg/utils/fieldindex	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/history	0.030s
+?   	sigs.k8s.io/rbgs/pkg/utils/ratelimiter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/requeueduration	0.007s
+?   	sigs.k8s.io/rbgs/pkg/utils/revisionadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/webhook	0.088s
+?   	sigs.k8s.io/rbgs/pkg/webhook/cert/generator	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/webhook/cert/writer	1.032s
+--- FAIL: TestManagerFlagReflectsToggle (0.10s)
+    deprecated_workload_types_test.go:209: parse rendered doc: error converting YAML to JSON: yaml: mapping values are not allowed in this context
+        WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: /home/ecs-user/.kube/config
+        WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: /home/ecs-user/.kube/config
+--- FAIL: TestClusterRoleGrantsReflectToggle (0.08s)
+    deprecated_workload_types_test.go:232: parse rendered doc: error converting YAML to JSON: yaml: mapping values are not allowed in this context
+        WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: /home/ecs-user/.kube/config
+        WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: /home/ecs-user/.kube/config
+--- FAIL: TestToggleDeltaIsScopedToDeprecatedRBACAndFlag (0.03s)
+    deprecated_workload_types_test.go:247: parse rendered doc: error converting YAML to JSON: yaml: mapping values are not allowed in this context
+        WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: /home/ecs-user/.kube/config
+        WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: /home/ecs-user/.kube/config
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/chart	0.207s

@@ -1,0 +1,67 @@
+=== RUN   TestVerifyPR474_EmptyRoleAnnotationsMapNoWedge
+2026-11-03T00:50:41+08:00	DEBUG	controller-runtime.test-env	starting control plane
+2026-11-03T00:50:43+08:00	DEBUG	controller-runtime.test-env	installing CRDs
+2026-11-03T00:50:43+08:00	DEBUG	controller-runtime.test-env	reading CRDs from path	{"path": "/tmp/tmp.0f2osQKDgQ/r7/config/crd/bases"}
+2026-11-03T00:50:43+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_clusterengineruntimeprofiles.yaml"}
+2026-11-03T00:50:43+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_coordinatedpolicies.yaml"}
+2026-11-03T00:50:43+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_instances.yaml"}
+2026-11-03T00:50:43+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_instancesets.yaml"}
+2026-11-03T00:50:43+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroups.yaml"}
+2026-11-03T00:50:43+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml"}
+2026-11-03T00:50:43+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupsets.yaml"}
+2026-11-03T00:50:43+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupwarmups.yaml"}
+2026-11-03T00:50:43+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_roleinstances.yaml"}
+2026-11-03T00:50:43+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_roleinstancesets.yaml"}
+2026-11-03T00:50:43+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "clusterengineruntimeprofiles.workloads.x-k8s.io"}
+2026-11-03T00:50:43+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "instances.workloads.x-k8s.io"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "instancesets.workloads.x-k8s.io"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupwarmups.workloads.x-k8s.io"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "roleinstancesets.workloads.x-k8s.io"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "coordinatedpolicies.workloads.x-k8s.io"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroups.workloads.x-k8s.io"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupscalingadapters.workloads.x-k8s.io"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupsets.workloads.x-k8s.io"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "roleinstances.workloads.x-k8s.io"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:50:44+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+2026-11-03T00:50:45+08:00	DEBUG	controller-runtime.test-env	installing webhooks
+    rolebasedgroupset_round7_verify_test.go:146: 
+        	Error Trace:	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupset_round7_verify_test.go:146
+        	Error:      	Should be true
+        	Test:       	TestVerifyPR474_EmptyRoleAnnotationsMapNoWedge
+        	Messages:   	C4358788576: the child minted from this revision must match it; rolesEqual must treat an explicitly empty annotations map as equal to an omitted one
+--- FAIL: TestVerifyPR474_EmptyRoleAnnotationsMapNoWedge (6.17s)
+=== RUN   TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted
+    rolebasedgroupset_round7_verify_test.go:167: 
+        	Error Trace:	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupset_round7_verify_test.go:167
+        	Error:      	Should be true
+        	Test:       	TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted
+        	Messages:   	empty annotations map must compare equal to an omitted one (annotations)
+    rolebasedgroupset_round7_verify_test.go:169: 
+        	Error Trace:	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupset_round7_verify_test.go:169
+        	Error:      	Should be true
+        	Test:       	TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted
+        	Messages:   	empty annotations map must compare equal to an omitted one (both directions)
+    rolebasedgroupset_round7_verify_test.go:171: 
+        	Error Trace:	/tmp/tmp.0f2osQKDgQ/r7/internal/controller/workloads/rolebasedgroupset_round7_verify_test.go:171
+        	Error:      	Should be true
+        	Test:       	TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted
+        	Messages:   	empty labels map must compare equal to an omitted one (labels)
+--- FAIL: TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted (0.00s)
+=== RUN   TestVerifyPR474_EmptyMapSerializationPremise
+--- PASS: TestVerifyPR474_EmptyMapSerializationPremise (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	6.189s
+FAIL
