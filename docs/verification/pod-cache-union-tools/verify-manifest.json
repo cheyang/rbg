@@ -1,0 +1,38 @@
+{
+  "topic": "pod-cache-union-tools",
+  "pr": "https://github.com/sgl-project/rbg/pull/545",
+  "harnessPaths": [
+    "docs/verification/pod-cache-union-tools",
+    "test/podcacheunion/verify_reviewer_codex_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Maintainer request on PR #530 (comment 6568640028): open a PR into kep-284-e2e-test adding only test/podcacheunion, with the R2-F1 (isolated control plane) and R2-F4 (even-sized median averaging) fixes.",
+    "reportedComponent": "test/podcacheunion KEP-284 harness",
+    "patchedComponent": "test/podcacheunion (14 new files, nothing else)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "integration",
+    "verdict": "confirmed",
+    "evidence": "R2-F1: isolation suite passes with USE_EXISTING_CLUSTER=true and KUBECONFIG=/nonexistent (results/isolation-use-existing-cluster.txt). R2-F4: TestMedianRange passes. 13/13 code files sha256-identical to PR #530 head d1c331a; only README links differ.",
+    "match": ["TestMedianRange", "TestAPITransformAdmissionAndStubs"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=${KUBEBUILDER_ASSETS:-$PWD/bin/k8s/1.31.0-$(go env GOOS)-$(go env GOARCH)} CGO_ENABLED=1 go test -race -mod=vendor -tags=podcacheunion ./test/podcacheunion -run 'TestVerify' -count=1 -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=${KUBEBUILDER_ASSETS:-$PWD/bin/k8s/1.31.0-$(go env GOOS)-$(go env GOARCH)} CGO_ENABLED=1 USE_EXISTING_CLUSTER=true KUBECONFIG=/nonexistent KUBE_FEATURE_WatchListClient=false RBG_POD_UNION_APISERVER_FEATURE_GATES= KUBE_CACHE_MUTATION_DETECTOR=true go test -race -mod=vendor -tags=podcacheunion ./test/podcacheunion -count=1 -timeout=10m -json"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestVerifyUnionBoundaryResolution"] },
+    { "id": "F2", "polarity": "contract", "layer": "unit", "match": ["TestVerifyAdmissionLabelWiring"] },
+    { "id": "F3", "polarity": "contract", "layer": "unit", "match": ["TestVerifyAdmissionContract"] },
+    { "id": "F4", "polarity": "contract", "layer": "unit", "match": ["TestVerifyTransformMutationContract", "TestVerifyCompareRVBoundaries"] },
+    { "id": "V2", "polarity": "contract", "layer": "integration", "match": ["TestAPITransformAdmissionAndStubs", "TestAPITransformTransitionsAndEvents", "TestAPITransformRelist", "TestAPITransformProductionReadPaths", "TestAPITransformInformerScope", "TestWatchStreamWrapperTransformsEvents", "TestWatchStreamWrapperStopDoesNotLeak", "TestFeatureGateSetOverridesProductionImport"] }
+  ],
+  "liveNote": "L3 skipped per debate setup. Optional full campaign: GOMAXPROCS=4 bash test/podcacheunion/scripts/transform-campaign.sh <new-dir> (needs a C compiler and the envtest assets)."
+}

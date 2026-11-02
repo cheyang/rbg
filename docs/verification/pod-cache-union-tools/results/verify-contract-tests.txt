@@ -1,0 +1,39 @@
+UNION_ENVTEST: isolated Kubernetes v1.31.0 API server + etcd; no external kubeconfig
+=== RUN   TestVerifyAdmissionLabelWiring
+--- PASS: TestVerifyAdmissionLabelWiring (0.00s)
+=== RUN   TestVerifyAdmissionContract
+=== RUN   TestVerifyAdmissionContract/group_label
+=== RUN   TestVerifyAdmissionContract/instance_label
+=== RUN   TestVerifyAdmissionContract/warmup_label
+=== RUN   TestVerifyAdmissionContract/managed_true
+=== RUN   TestVerifyAdmissionContract/managed_false_alone
+=== RUN   TestVerifyAdmissionContract/managed_false_with_legacy_label
+=== RUN   TestVerifyAdmissionContract/empty_label_value_admits
+=== RUN   TestVerifyAdmissionContract/rbg_controller_ref
+=== RUN   TestVerifyAdmissionContract/rbg_non-controller_ref
+=== RUN   TestVerifyAdmissionContract/foreign_controller_only
+=== RUN   TestVerifyAdmissionContract/no_labels_no_owners
+=== RUN   TestVerifyAdmissionContract/unrelated_labels
+=== RUN   TestVerifyAdmissionContract/malformed_owner_apiversion_alone
+--- PASS: TestVerifyAdmissionContract (0.00s)
+    --- PASS: TestVerifyAdmissionContract/group_label (0.00s)
+    --- PASS: TestVerifyAdmissionContract/instance_label (0.00s)
+    --- PASS: TestVerifyAdmissionContract/warmup_label (0.00s)
+    --- PASS: TestVerifyAdmissionContract/managed_true (0.00s)
+    --- PASS: TestVerifyAdmissionContract/managed_false_alone (0.00s)
+    --- PASS: TestVerifyAdmissionContract/managed_false_with_legacy_label (0.00s)
+    --- PASS: TestVerifyAdmissionContract/empty_label_value_admits (0.00s)
+    --- PASS: TestVerifyAdmissionContract/rbg_controller_ref (0.00s)
+    --- PASS: TestVerifyAdmissionContract/rbg_non-controller_ref (0.00s)
+    --- PASS: TestVerifyAdmissionContract/foreign_controller_only (0.00s)
+    --- PASS: TestVerifyAdmissionContract/no_labels_no_owners (0.00s)
+    --- PASS: TestVerifyAdmissionContract/unrelated_labels (0.00s)
+    --- PASS: TestVerifyAdmissionContract/malformed_owner_apiversion_alone (0.00s)
+=== RUN   TestVerifyTransformMutationContract
+--- PASS: TestVerifyTransformMutationContract (0.00s)
+=== RUN   TestVerifyCompareRVBoundaries
+--- PASS: TestVerifyCompareRVBoundaries (0.00s)
+=== RUN   TestVerifyUnionBoundaryResolution
+--- PASS: TestVerifyUnionBoundaryResolution (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/podcacheunion	3.024s

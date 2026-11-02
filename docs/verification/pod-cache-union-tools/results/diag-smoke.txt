@@ -1,0 +1,8 @@
+UNION_ENVTEST: isolated Kubernetes v1.31.0 API server + etcd; no external kubeconfig
+=== RUN   TestAPITransformSyncHeapTimeline
+    transform_diag_test.go:130: full streaming=false: sync 7ms; transform calls 0 (first 0s, last 0s, after sync 0); peak HeapAlloc 10.8 MiB, HeapInuse 13.3 MiB, HeapSys 22.9 MiB above a 4.4 MiB baseline; GCs during sync 1
+    transform_diag_test.go:130: transform-labels-owners streaming=false: sync 7ms; transform calls 48 (first 5ms, last 6ms, after sync 0); peak HeapAlloc 9.5 MiB, HeapInuse 12.1 MiB, HeapSys 22.8 MiB above a 4.4 MiB baseline; GCs during sync 1
+    transform_diag_test.go:130: transform-labels-owners-watch streaming=false: sync 8ms; transform calls 48 (first 6ms, last 6ms, after sync 0); peak HeapAlloc 10.8 MiB, HeapInuse 13.4 MiB, HeapSys 22.8 MiB above a 4.4 MiB baseline; GCs during sync 1
+--- PASS: TestAPITransformSyncHeapTimeline (0.10s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/podcacheunion	2.538s
