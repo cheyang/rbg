@@ -1,0 +1,6 @@
+# make manifests idempotency on c875fb31019bc454ad7af9e99e213e5c06c48a9c (round 3, 2026-11-03)
+cmd: make manifests (controller-gen v0.17.2, downloaded by the Makefile)
+result: exit 0, 0 tracked files modified (git status clean for config/ and deploy/)
+log tail:
+
+/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/bin/kustomize build config/default > deploy/kubectl/manifests.yaml
