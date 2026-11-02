@@ -79,6 +79,56 @@ is empty.
 - **F5 (nit)** — TOC entry missing for `Reason Taxonomy and Aggregation`
   (`###` under Design Details).
 
+
+## Round 2 — revision 6335eac (incremental, 2026-11-03)
+
+The revision (4 commits, README.md only) resolved every round-1 finding and
+answered all three parked questions. The harness was updated additively:
+
+- `TestExampleConsistentWithPriorityRule` (F2) was re-anchored structurally
+  (the fix removed the sentence the old test anchored on — a Harness-update,
+  not a pass); it now locates the priority fence by content and accepts any of
+  the three closings (ChildReadiness absent, Activity ranked above it, or
+  subsumption prose).
+- New contract tests cover the Claude-side consensus findings
+  (F5-collision, F6-casing, F8-event-budget, O1-row-ambiguity) and the
+  question resolutions (Q1: RI gains `Recovering` phase / RIS deliberately has
+  none; Q2: explicit "no Failed phase"; Q3 + Copilot C4431017493: RIS
+  phase-display priority independent of condition reason selection, overlap
+  recorded as an accepted v1alpha2 trade-off).
+- Harness bug fixed: `section()` substring-matched "RoleInstance" to the
+  earlier "RoleInstanceSet" heading; added `sectionExact`.
+
+Bite check at previous head f05e1dd: all 12 finding/guard tests FAIL (red IS
+the reproduction), 5 premise + 2 hygiene tests pass
+(`results/bite-check-previous-head-f05e1dd.json`).
+
+Result at head 6335eac: **17/17 pass** (`results/unit-head-6335eac.txt|.json`);
+markdownlint replay clean, 0 issues (`results/markdownlint-head-6335eac.txt`).
+
+| Ledger ID | Round-1 verdict | Round-2 verdict | Evidence |
+|-----------|-----------------|-----------------|----------|
+| F1-preparing-undefined | Confirmed (minor) | FIXED | `Preparing` dropped from Progressing=True row; `TestRBGCandidateReasonsDefined` green |
+| F2-priority-rule-vs-example | Confirmed (minor) | FIXED | `Activity` ranked above `ChildReadiness` in the fence + subsumption prose; `TestExampleConsistentWithPriorityRule` green |
+| F3-progressing-false-rejection-mapping | Confirmed (minor) | FIXED | `TemplateInvalid`, `DependencyCycle` added to Progressing=False row + prose mapping; test green |
+| F4-ready-terminating-retained-mislabel | Confirmed (minor) | FIXED | Example relabeled `[Retained type; terminating trigger changed]`, prose calls it a behavior change, upgrade table covers it; test green |
+| F5-rolesnotready-collision | Confirmed (minor) | FIXED | Explicit distinct-strings acknowledgment sentence; test green |
+| F6-inplace-reason-casing | Confirmed (minor) | FIXED | Enumeration now spells `InplaceUpdateNotReady`, matching `instance_status.go:307`; test green |
+| F7-toc-missing-reason-taxonomy | Confirmed (nit) | FIXED | TOC gained both new section entries; `TestTOCComplete` green |
+| F8-event-budget-risk | Confirmed (minor) | FIXED | New Risks row names the event-budget/spam-filter hazard; test green |
+| O1-ready-reason-row-ambiguity | Confirmed (nit) | FIXED | Row split into Ready=True / Ready=False; test green |
+| Q1-ris-phase-during-recovery | Open question | ANSWERED in doc | "RIS does not define a Recovering phase … This is intentional"; guard green |
+| Q2-no-failure-phase | Open question | ANSWERED in doc | New "Validation Ownership and Failure Semantics" section: "There is no Failed phase"; guard green |
+| Q3-ris-concurrent-scaling-visibility | Open question | ANSWERED in doc | Overlap = one dominant phase + one reason, recorded as accepted v1alpha2 trade-off; guard green |
+| C4431017493 (Copilot advisory) | Unconfirmed | ADDRESSED in doc | Same RIS paragraph: blockers/pause take precedence over `RollingUpdate` |
+| R-rolloutreplacementstate-phantom | Refuted (round 1) | n/a (doc unchanged there) | retained-field inventory untouched by the delta |
+
+Known harness-infra note: the stock `re-verify.sh` persists raw results into the
+in-repo `results/reverify/` dir *before* its exit trap restores the harness
+ref with `git checkout -f`, so tracked files there are the round-1 committed
+copies. Trust the printed verdict table plus `results/unit-head-6335eac.*`
+(captured separately) over `results/reverify/`.
+
 ## Continuing after the fix
 
 On any machine:
