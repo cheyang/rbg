@@ -223,6 +223,15 @@ LIVE="$(jq -r '.liveNote // empty' "$MANIFEST")"
 # persist raw output into the (restored-after-cleanup) in-repo results dir for inspection
 PERSIST="$(dirname "$MANIFEST_ORIG")/results/reverify"
 mkdir -p "$PERSIST" 2>/dev/null && cp -f "$RESULTS_DIR"/*.out "$RESULTS_DIR"/*.parsed "$RESULTS_DIR"/*.json "$PERSIST"/ 2>/dev/null || true
+# Also persist per-ref copies: files tracked in ORIG_REF are reverted by the
+# restore checkout on exit, which silently rolled same-named results back to an
+# older round. Unique per-ref names are untracked at restore time and survive.
+SHORT_REF="$(git rev-parse --short "$FIXED_REF" 2>/dev/null || echo ref)"
+for f in "$RESULTS_DIR"/*.out "$RESULTS_DIR"/*.parsed; do
+  [ -f "$f" ] || continue
+  base="$(basename "$f")"
+  cp -f "$f" "$PERSIST/${base%.*}-$SHORT_REF.${base##*.}" 2>/dev/null || true
+done
 
 printf '\nReminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its\n'
 printf 'assertion (or promote the new behavior to a contract test). Raw output: %s\n' "$PERSIST"

@@ -296,5 +296,14 @@
     "harnessUpdate": "13cbcab4 replaced the rolling path's 1s poll with event-driven progress (changed||adopted). The sim settle loops keyed off requeue requests and stopped early (G5/F9/G8/R5ACK harness failures, not product regressions); settle now stops at a true world fixpoint (children+set status+sim timers). All re-run contracts pass at head after the fix; frozen-ack budget-hold phase untouched.",
     "differentials": "R6SURGE/R6ADOPT/R6REVADOPT/R6PARTITION RED on 4a9043c; R6FINALIZE RED on 13cbcab4 (wedge) and 4a9043c (poll-dependent); R6REVDATA premise probe: legacy byte form rejected by real apiserver; R6EMPTYANN RED at head (confirmed bug).",
     "authorSuites": "full unit sweep EXIT=0; -race ./internal/controller/workloads EXIT=0; envtest rbgs_rolling 236.7s EXIT=0 at af9dd84b (all with harness grafted)."
+  },
+  "round7": {
+    "head": "397322680c2c9a46df3ddc3670f06b086445b60a",
+    "previousHead": "af9dd84b74b88927b7c3b408c8fb44548eb13ecf",
+    "base": "09accf63747177f12544d8738cab13ea07910a25",
+    "delta": "rebase-only + upstream merges (#533 updateRBGStatus unconditional assign absorbed into the PR's DeepEqual-skip structure; #526 WithName in the migration apply config) + one test-adaptation commit (39732268). All RBGSet rolling/revision/conversion/admission files byte-identical to af9dd84b.",
+    "reverify": "results/reverify/unit-39732268.parsed + integration-39732268.parsed: every carried contract FIXED; F10 canary STILL-PRESENT (expected pin); R6EMPTYANN STILL-BROKEN (C4358788576 reproduced at head: child RV 245->250, rolesEqual nil-vs-{} mismatch, no convergence).",
+    "authorSuites": "local: unit sweep touched pkgs EXIT=0; -race ./internal/controller/workloads EXIT=0. CI 22/22 SUCCESS on 39732268 (incl. envtest + full E2E matrix).",
+    "harnessFix": "re-verify.sh now persists per-ref result copies (*-<shortsha>) because the trap-on-exit restore checkout reverted tracked same-named .parsed files to stale round-4 content; verdicts were computed pre-restore from fresh data and are unaffected."
   }
 }

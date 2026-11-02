@@ -257,3 +257,40 @@ Re-verify (results/r6-reverify-final.log): every carried contract FIXED at head
 (F1, F3, G1-G9, F9, R4FIX, R4M1, R5ACK, R5PGP + all R6 contracts except
 R6EMPTYANN). F10 canary STILL-PRESENT (behavior pin; the body no longer makes the
 contradicted claim — the round-5 body findings F1/F10 are resolved by the rewrite).
+
+## Round 7 — head 39732268 (rebase onto 09accf63; one new test-adaptation commit)
+
+Range-diff `885d655b..af9dd84b` vs `09accf63..39732268`: PR commits 1-2, 4, 6-11
+byte-identical through the rebase; commit 3 absorbed upstream #533's
+`updateRBGStatus` fix (unconditional role-status assignment + the PR's existing
+whole-status DeepEqual SSA skip — observed patch behavior identical to af9dd84b's
+per-entry DeepEqual guard, verified by code read); commit 5 absorbed upstream
+#526's `WithName(c.Name)` in `buildCoordinatedPolicyApplyConfiguration`; new
+commit 39732268 adapts upstream #533's `TestUpdateRBGStatusUpdatedReplicas` to the
+PR's 4-arg `updateRBGStatus` (seeds the Rolling condition; asserts explicit
+updatedReplicas in the SSA payload). Upstream files intersecting the PR diff:
+only rolebasedgroup_controller.go (+test), coordinatedpolicy_migration_controller.go,
+deploy/kubectl/manifests.yaml (bundle verified to carry both sides' changes).
+All RBGSet rolling/revision/conversion/admission files are byte-identical to
+af9dd84b. PR body identical to round 6 except one blank line (AC8 stays green).
+
+Re-verify at 39732268 (results/reverify/unit-39732268.parsed,
+integration-39732268.parsed): every carried contract FIXED — F1, F3, G1-G9
+(unit+integration), F9, R4FIX, R4M1, R5ACK, R5PGP, R6SURGE, R6ADOPT x3,
+R6REVADOPT x2, R6FINALIZE, R6PARTITION, R6REVDATA. F10 canary STILL-PRESENT
+(expected: behavior pin; doc finding stays fixed). **R6EMPTYANN STILL-BROKEN at
+head** — C4358788576 reproduced again on a real apiserver: child resourceVersion
+245→250 across quiescent passes, `rolesEqual` still distinguishes a stored
+explicitly-empty annotations map from the child's nil, rollout never converges.
+
+Author suites at head: unit sweep of the touched packages EXIT=0, `-race
+./internal/controller/workloads` EXIT=0 (round-7 local runs); CI 22/22 SUCCESS on
+39732268 including envtest and the full E2E matrix.
+
+Harness note (round 7): the re-verify persist step wrote results BEFORE the
+trap-on-exit restore checkout, so the tracked same-named `results/reverify/*.parsed`
+were silently reverted to their round-4 committed content while the untracked
+`*.out` files stayed fresh. Fixed additively: stale `.parsed` untracked, `.parsed`
+regenerated from the fresh `.out`, and re-verify.sh now also persists per-ref
+copies (`*-<shortsha>.{out,parsed}`) which the restore cannot revert. Verdicts
+were computed from the fresh in-run parsed data and are unaffected.

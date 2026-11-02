@@ -1,0 +1,23 @@
+# R6EMPTYANN (C4358788576) re-verification at head 39732268 — contract STILL RED
+# source: results/reverify/integration-39732268.out (go test -json, envtest 1.31, real apiserver)
+
+    rolebasedgroupset_envtest_round6_verify_test.go:230:
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-12/pr-474/verify/internal/controller/workloads/rolebasedgroupset_envtest_round6_verify_test.go:230
+        	Error:      	Not equal:
+        	            	expected: "245"
+        	            	actual  : "250"
+
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-245
+        	            	+250
+        	Test:       	TestVerify_R6_EmptyRoleAnnotationsMapNoWedge
+        	Messages:   	no writes at all once the child matches the revision (observed on af9dd84b: one rewrite per pass, rollout-request token climbing)
+    rolebasedgroupset_envtest_round6_verify_test.go:239:
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-12/pr-474/verify/internal/controller/workloads/rolebasedgroupset_envtest_round6_verify_test.go:239
+        	Error:      	Should be true
+        	Test:       	TestVerify_R6_EmptyRoleAnnotationsMapNoWedge
+        	Messages:   	the child must match the update revision; rolesEqual must not distinguish nil from an empty annotations map
+--- FAIL: TestVerify_R6_EmptyRoleAnnotationsMapNoWedge (7.50s)
