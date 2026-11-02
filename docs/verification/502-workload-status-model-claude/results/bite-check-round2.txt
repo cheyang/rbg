@@ -1,0 +1,28 @@
+# Round-2 bite check: proposed one-line fixes applied to scratch copies of the head README
+# (production files untouched — fixes applied under /tmp only)
+
+## Fix A — align :70/:211 to the 'conditions' vocabulary + enumerate RIS activity reasons
+  [C8-rbg-transition-input-consistency] PASS: RBG phase-transition input statements use one vocabulary (phases-only claims: 0, conditions claims: 4)
+  [C9-ris-activity-reasons-complete] PASS: RIS activity reasons from family table: Creating, Recovering, RollingUpdate, ScalingDown, ScalingUp; prose lists: Creating, Recovering, RollingUpdate, ScalingDown, ScalingUp; missing from prose: (none)
+C8-rbg-transition-input-consistency	pass
+C9-ris-activity-reasons-complete	pass
+
+## Fix B — 'lower-level phases and conditions' wording + enumerate RIS activity reasons
+  [C8-rbg-transition-input-consistency] PASS: RBG phase-transition input statements use one vocabulary (phases-only claims: 0, conditions claims: 2)
+  [C9-ris-activity-reasons-complete] PASS: RIS activity reasons from family table: Creating, Recovering, RollingUpdate, ScalingDown, ScalingUp; prose lists: Creating, Recovering, RollingUpdate, ScalingDown, ScalingUp; missing from prose: (none)
+C8-rbg-transition-input-consistency	pass
+C9-ris-activity-reasons-complete	pass
+
+## C1-C6 unchanged by both fixes (fix A shown)
+  [C1-retained-fields-exist] PASS: RIS 'retains' and RI 'Preserve' inventories all exist in the current API
+  [C2-progressing-reasons-defined] PASS: candidate reasons: Creating, ScalingOrUpdating, Recovering; not defined/used elsewhere: (none)
+  [C3-reason-collision-ack] PASS: unacknowledged near-colliding reason pairs: (none)
+  [C4-ri-readiness-reasons-match-code] PASS: KEP: {InplaceUpdateNotReady, PodsNotReady, ReadinessGatesNotReady, Ready} vs code RoleInstanceReady reasons: {InplaceUpdateNotReady, PodsNotReady, ReadinessGatesNotReady, Ready}; diff: (none)
+  [C5-premise-motivation-claims] PASS: KEP motivation claims vs base code: all verified accurate
+  [C6-yaml-examples-parse] PASS: 3/3 YAML example blocks parse; kep.yaml: OK
+C1-retained-fields-exist	pass
+C2-progressing-reasons-defined	pass
+C3-reason-collision-ack	pass
+C4-ri-readiness-reasons-match-code	pass
+C5-premise-motivation-claims	pass
+C6-yaml-examples-parse	pass
