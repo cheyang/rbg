@@ -1,0 +1,3 @@
+ci-coverage: FAIL (a) — no workflow pull_request trigger includes kep-284-e2e-test; PRs to that branch run zero checks
+ci-coverage: FAIL (b) — nothing references the podcacheunion build tag; the tagged package is never compiled by CI
+ci-coverage: RED — F1 reproduced (no CI coverage for this branch/package)

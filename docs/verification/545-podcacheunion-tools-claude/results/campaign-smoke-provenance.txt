@@ -1,0 +1,25 @@
+date: 2026-11-02T19:12:23Z
+base commit: db46c943298ca1693d3f8c717c18cd5684a2cadc
+os: Alibaba Cloud Linux 4.0.5 (OpenAnolis Edition) kernel 6.6.102-7.alnx4.x86_64 x86_64
+cpus: 48; memory bytes: 97752571904
+go: go version go1.27.0 linux/amd64
+GOMAXPROCS=4; GOGC=100; GOMEMLIMIT=off
+apiserver: Kubernetes v1.31.0
+etcd: etcd Version: 3.5.15
+batches: list stream; shapes: 48:1000; rounds: 0; modes: default
+test binary sha256: 59ed604ed332188a604362ece3bcada38d3a91996e99996ed8cab6ddb5cf29cf
+source sha256 go.mod: 11d788042d2b049f342913b407185561662319fe4a85e62716a359b88b26342f
+source sha256 vendor/modules.txt: b9bbec26a65bf0a0e780c3de6fe194990dd3d3be327cd1cb48320bda8d938c02
+source sha256 test/podcacheunion/envtest_test.go: 6bd977c8fe2d0eed77209735806266bb49ee19e301513a13ca3914717b928cde
+source sha256 test/podcacheunion/sampler_test.go: 042da9f7adb22ab9193249e923d0a2b1ffeca4fc3ce66821c39c33cef259422c
+source sha256 test/podcacheunion/transform_diag_test.go: e7340bcaebc3b5a3c282cd23f9d0eaa84d40e92ff55306a8a71f6251fb33bb86
+source sha256 test/podcacheunion/transform.go: 9efcc14d0fd12cafbc42451918ae81206f3b1ea65e67d074a6ef49f08707e51d
+source sha256 test/podcacheunion/transform_measure_test.go: dae53489d071bef220aac23db35753d8c05c29bfc597695db804cd6ef95be9ac
+source sha256 test/podcacheunion/transform_readpath_test.go: 63a0b5c721a2f13606f3a555449be1d1526649ffa2117964f5fdef797164dca0
+source sha256 test/podcacheunion/transform_stream.go: 8cf013b94ed07bf226a6b13570c31b2fdb51b3eac5916a94bc2fabea0e0926a4
+source sha256 test/podcacheunion/transform_stream_test.go: 2891dbfc326f5bd30b1de76e9297a1d0179a83101a6f8aa37169f52c7b15eb24
+source sha256 test/podcacheunion/transform_test.go: da288d9e7d2f66bf66e77d98e934dcd2f8711ab2719eac2924f8c1f6b3349135
+source sha256 test/podcacheunion/union.go: c7e2c18ce0aeec19366189c02acc28e999ee402c8ec62d6c1f379758cd33d1ff
+source sha256 test/podcacheunion/testdata/memory_sampler_darwin.c: 2508df5049f6fba525ab90d5bff3acd57895ddcc17a4396ac7f30731c5b9577e
+source sha256 test/podcacheunion/testdata/memory_sampler_linux.c: 5aeb4ee387e491aab6f4bd331df39a5b4dbb9eac41ab2fa9d7eae45b2ecb48c6
+source sha256 test/podcacheunion/scripts/transform-campaign.sh: 53baab7861a13bbc7a7a002010a433e86d748f990cb90056e09f0f26858e5518

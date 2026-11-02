@@ -1,0 +1,2 @@
+harness-bites (isolation-check): fix reverted (UseExistingCluster pin removed from envtest_test.go) -> script exit 1 (go test fails: envtest escapes to USE_EXISTING_CLUSTER/kubeconfig under hostile env); fix restored -> exit 0 with isolated-control-plane banner. Production diff restored empty.
+

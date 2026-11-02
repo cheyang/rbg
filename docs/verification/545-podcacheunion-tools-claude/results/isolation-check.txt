@@ -1,0 +1,1 @@
+isolation-check: PASS — isolated control plane started under hostile USE_EXISTING_CLUSTER=true/KUBECONFIG

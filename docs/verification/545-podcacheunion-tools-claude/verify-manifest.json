@@ -1,0 +1,138 @@
+{
+  "topic": "545-podcacheunion-tools-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/545",
+  "reviewer": "claude",
+  "headSha": "db46c943298ca1693d3f8c717c18cd5684a2cadc",
+  "baseSha": "09accf63747177f12544d8738cab13ea07910a25",
+  "previousHeadSha": null,
+  "harnessPaths": [
+    "docs/verification/545-podcacheunion-tools-claude"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "PR body: 'Keep the KEP-284 correctness and performance tools reproducible on the dedicated kep-284-e2e-test branch, as requested in the KEP review' — i.e. split test/podcacheunion (with the R2-F1 and R2-F4 fixes) out of PR #530 into the upstream branch kep-284-e2e-test.",
+    "runsAgainst": "n/a",
+    "layer": "process",
+    "verdict": "confirmed",
+    "evidence": "Collaborator cheyang's comment on PR #530 (issues/comments/6568640028, COLLABORATOR): 'Open a PR from your fork into kep-284-e2e-test that adds only test/podcacheunion, with the R2-F1 and R2-F4 fixes. I'll review and squash-merge it.' The PR adds exactly the 14 files under test/podcacheunion; the 13 non-README files are byte-identical to PR #530 head d1c331ae (verified with git diff), and the README differs only in link targets. Tests-only PR, so no base-branch symptom repro is owed.",
+    "match": []
+  },
+  "layers": {
+    "unit": {
+      "kind": "script",
+      "cmd": "bash docs/verification/545-podcacheunion-tools-claude/scripts/isolation-check.sh && go test -mod=vendor -tags=podcacheunion ./test/podcacheunion -run '^TestMedianRange$|^TestWatchStreamWrapper|^TestTransformIsIdempotent' -count=1",
+      "note": "Fast in-package checks; envtest assets resolved from KUBEBUILDER_ASSETS or /tmp/rbg-assets. The full correctness suite is the integration layer."
+    },
+    "integration": {
+      "kind": "script",
+      "cmd": "CGO_ENABLED=1 KUBEBUILDER_ASSETS=<assets> KUBE_FEATURE_WatchListClient={false,true} RBG_POD_UNION_APISERVER_FEATURE_GATES={,WatchList=true} KUBE_CACHE_MUTATION_DETECTOR=true USE_EXISTING_CLUSTER=true KUBECONFIG=/nonexistent/kubeconfig go test -race -mod=vendor -tags=podcacheunion ./test/podcacheunion -count=1 -v -timeout=10m",
+      "note": "Full podcacheunion correctness suite against an isolated envtest v1.31.0 control plane, both WatchListClient gate configurations, race detector + cache mutation detector, deliberately hostile USE_EXISTING_CLUSTER/KUBECONFIG env. Optional perf layer: GOMAXPROCS=4 SHAPES=48:1000 ROUNDS=0 KUBEBUILDER_ASSETS=<assets> bash test/podcacheunion/scripts/transform-campaign.sh <fresh-dir> (verified exit 0 on linux/amd64 Go 1.27)."
+    }
+  },
+  "findings": [
+    {
+      "id": "R2-F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["isolation-check.sh"],
+      "status": "fixed",
+      "origin": "initial-pr",
+      "firstSeenSha": "f8d67fa701956638658594bccfe34b7947222e36",
+      "introducedByPR": true,
+      "evidenceKind": "differential",
+      "evidence": "Carried from PR #530 round 2 (same files, byte-identical). Fix present on PR #545 head: envtest.Environment{UseExistingCluster: ptr.To(false)} (envtest_test.go) plus 'export USE_EXISTING_CLUSTER=false' in scripts/transform-campaign.sh. Vendored envtest (server.go:414-419) honors the explicit pointer over the env var. Verified: full race suite green under USE_EXISTING_CLUSTER=true with ~/.kube/config present and KUBECONFIG=/nonexistent/kubeconfig; 'UNION_ENVTEST: isolated Kubernetes v1.31.0 API server + etcd; no external kubeconfig' (results/unit-race-watchlist-off-v.txt). Harness-bites: reverting the pin makes isolation-check.sh exit 1 (results/harness-bites.txt).",
+      "verification": {"base": "not-run", "previous": "fail", "head": "pass"}
+    },
+    {
+      "id": "R2-F4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestMedianRange"],
+      "status": "fixed",
+      "origin": "initial-pr",
+      "firstSeenSha": "f8d67fa701956638658594bccfe34b7947222e36",
+      "introducedByPR": true,
+      "evidenceKind": "differential",
+      "evidence": "Carried from PR #530 round 2. medianRange now averages the two middle values for even-sized groups (transform_measure_test.go) and TestMedianRange covers 1-4 samples including the even cases. Passes on head (results/unit-race-watchlist-off-v.txt).",
+      "verification": {"base": "not-run", "previous": "fail", "head": "pass"}
+    },
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["ci-coverage-check.sh"],
+      "status": "open",
+      "origin": "preexisting",
+      "firstSeenSha": "f8d67fa701956638658594bccfe34b7947222e36",
+      "introducedByPR": false,
+      "evidenceKind": "code-path",
+      "evidence": "Carried from PR #530 round 2 (R2-F2), strengthened for this PR's target branch: all seven workflows trigger pull_request/push on 'main' only, so PR #545 (base kep-284-e2e-test) runs zero checks (check-runs total 0, statusCheckRollup empty, combined status 'pending'); nothing in .github/workflows, Makefile, or .golangci.yml references the podcacheunion build tag, so the tagged package is never compiled by CI anywhere. The package leans on exact client-go v0.34.2 FIFO/reflector internals, so a dependency bump can silently rot the KEP's evidence base. ci-coverage-check.sh is RED on head, documenting the gap; it goes green when the branch is added to a workflow's PR filter and a 'go vet -tags=podcacheunion ./test/podcacheunion' step exists (4s on this machine).",
+      "verification": {"base": "fail", "previous": "not-run", "head": "fail"}
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [],
+      "status": "open",
+      "origin": "initial-pr",
+      "firstSeenSha": "db46c943298ca1693d3f8c717c18cd5684a2cadc",
+      "introducedByPR": true,
+      "evidenceKind": "code-path",
+      "evidence": "nit: README.md links the KEP and performance docs to the author's fork (QIW9/rbg blob at d1c331ae) rather than an upstream location. Correct today (keps/284-pod-cache-filter is not on kep-284-e2e-test yet and d1c331ae is public), but per the collaborator's plan PR #530 will re-point at the merged upstream commit; fork links 404 if the fork is deleted. Prefer upstream links once PR #530 merges.",
+      "verification": {"base": "not-run", "previous": "not-run", "head": "not-run"}
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [],
+      "status": "open",
+      "origin": "initial-pr",
+      "firstSeenSha": "db46c943298ca1693d3f8c717c18cd5684a2cadc",
+      "introducedByPR": true,
+      "evidenceKind": "code-path",
+      "evidence": "nit/coverage: union.go's comparison machinery (boundary resolution, prune-on-watermarks, feed bridge, sourceStore) has no correctness test in the package; it is exercised only by the opt-in campaign's union-serial mode, which asserts retained counts and serialized initial lists but not delete/selector-exit boundary semantics. Non-blocking: it is the explicitly rejected comparison design, not the selected transform design.",
+      "verification": {"base": "not-run", "previous": "not-run", "head": "not-run"}
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "AC1",
+      "contract": "Fixture stays isolated: under USE_EXISTING_CLUSTER=true + bogus KUBECONFIG, the suite starts its own envtest control plane (isolation-check.sh green).",
+      "status": "passed",
+      "evidence": "results/isolation-check.txt; results/unit-race-watchlist-off-v.txt (UNION_ENVTEST banner, all tests PASS under -race)."
+    },
+    {
+      "id": "AC2",
+      "contract": "Full correctness suite green under -race with the cache mutation detector, in both WatchListClient gate configurations.",
+      "status": "passed",
+      "evidence": "results/unit-race-watchlist-off-v.txt (ok, 7.6s) and results/unit-race-watchlist-on.txt (ok, 15.3s)."
+    },
+    {
+      "id": "AC3",
+      "contract": "Campaign reproducible on a fresh platform: transform-campaign.sh exit 0 for one shape/round across both server batches, with per-mode behavioral assertions (retained whole/stub counts, List/fallback/streaming counts) and provenance.",
+      "status": "passed",
+      "evidence": "results/campaign-smoke.log; results/campaign-smoke-summary.md; results/campaign-smoke-{list,stream}-results.json (linux/amd64, Go 1.27.0; full 47.53 MiB vs transform 6.82/6.96 MiB retained at 48/1000, matching the KEP's arm64 shape)."
+    },
+    {
+      "id": "AC4",
+      "contract": "Even-sized result groups report a true median.",
+      "status": "passed",
+      "evidence": "TestMedianRange green on head (results/unit-race-watchlist-off-v.txt)."
+    },
+    {
+      "id": "AC5",
+      "contract": "Carried gate for the future implementation PR (not this PR): TestFilterSystemLabelsIgnoresManagedMarker and TestPodTemplateSpecEqualIgnoresManagedMarker go green and TestGroupNameDriftStillDetected stays green when production code lands the key-scoped FilterSystemLabels exemption.",
+      "status": "unverified",
+      "changeReason": "Carried from the PR #530 round-2 ledger for continuity; production code is intentionally absent from this test-only split, so these remain red-by-deferral and gate the implementation PR (harness: verify/284-pod-cache-filter-claude).",
+      "evidence": "PR #530 round-2 ledger, 2026-11-02/pr-530/findings-claude.md."
+    }
+  ],
+  "ci": {
+    "status": "no-checks-configured",
+    "attribution": "branch-coverage-gap (F1), not a PR failure",
+    "evidence": "gh api commits/db46c943.../check-runs -> total 0; statusCheckRollup []; all seven workflows' pull_request triggers filter to 'main' only, and this PR targets kep-284-e2e-test."
+  },
+  "liveNote": "L3 (live cluster) deliberately not run per debate policy; the envtest integration layer and the campaign perf layer cover this PR's claims."
+}
