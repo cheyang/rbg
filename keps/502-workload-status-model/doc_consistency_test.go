@@ -72,6 +72,37 @@ func section(doc, headingSubstr string) string {
 	return strings.Join(lines[start:], "\n")
 }
 
+
+// sectionExact returns the markdown under the heading whose text equals
+// headingText exactly (unlike section, which does a substring match and would
+// resolve "RoleInstance" to the earlier "RoleInstanceSet" heading).
+func sectionExact(doc, headingText string) string {
+	lines := strings.Split(doc, "\n")
+	start := -1
+	level := 0
+	headRe := regexp.MustCompile(`^(#{1,6})\s+(.*)$`)
+	for i, l := range lines {
+		m := headRe.FindStringSubmatch(l)
+		if m == nil {
+			continue
+		}
+		if start == -1 {
+			if strings.TrimSpace(m[2]) == headingText {
+				start = i
+				level = len(m[1])
+			}
+			continue
+		}
+		if len(m[1]) <= level {
+			return strings.Join(lines[start:i], "\n")
+		}
+	}
+	if start == -1 {
+		return ""
+	}
+	return strings.Join(lines[start:], "\n")
+}
+
 func structBody(t *testing.T, file, typeName string) string {
 	t.Helper()
 	src := repoFile(t, file)
@@ -654,8 +685,8 @@ func TestReadyTerminatingReasonRowSplit(t *testing.T) {
 // through conditions instead.
 func TestRecoveryPhaseSplitRISvsRI(t *testing.T) {
 	doc := kepDoc(t)
-	risSec := section(doc, "RoleInstanceSet")
-	riSec := section(doc, "RoleInstance")
+	risSec := sectionExact(doc, "RoleInstanceSet")
+	riSec := sectionExact(doc, "RoleInstance")
 	if risSec == "" || riSec == "" {
 		t.Fatal("RIS or RI section not found")
 	}
