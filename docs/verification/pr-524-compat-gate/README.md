@@ -3,6 +3,45 @@
 Reproducible evidence for the findings raised while reviewing
 https://github.com/sgl-project/rbg/pull/524.
 
+## Round 3 (head `c875fb31019bc454ad7af9e99e213e5c06c48a9c`, base `09accf63747177f12544d8738cab13ea07910a25`)
+
+The PR was rebased again (base `a2e797c6` → `09accf63`, bringing #533/#532/#513/#529/
+#491/#512/#478/#526 — warmup controller, port-allocator, reconciler and KEP/docs work;
+**zero changes** under `api/workloads/v1alpha1`, the v1alpha2 admission/validation files,
+`cmd/rbgs`, or `config/webhook`, so every admission contract carries; the whole harness
+was re-run on the new head regardless) plus one new commit, `c875fb31`
+"fix(deprecation): address round-2 review follow-ups", which resolves all seven open
+non-blocking follow-ups:
+
+- F3: exemption docstring softened (unknown-UID bound, plain statement that any writer
+  who can read the parent name+UID can claim it); PR body reworded to match.
+- F4: v1alpha1 e2e fixtures renamed to what they run (`standalone_role.go`,
+  `standalone_role_default.go`, `leader_worker_role.go`, `BuildLeaderWorkerRole`).
+- F7: dead `objectKey` helper + its test deleted.
+- O1: compat hint names both spellings (Helm value and `--enable-deprecated-workload-types`).
+- F8: single exported `ContractNamespace`.
+- M2: the warning spec now covers **all four** warning-only kinds (InstanceSet, Instance,
+  RoleBasedGroupScalingAdapter, ClusterEngineRuntimeProfile) — verified green on head.
+- C4431130427: schemes registered **before** `TestEnv.Start()` — verified by a new
+  contract spec (below) proving the suite now runs the production conversion.
+
+### Round-3 observed vs expected
+
+| ID | Claim | Layer | Verdict | Evidence |
+|----|-------|-------|---------|----------|
+| GATE-V1A1-WIRING | v1alpha1 admission chain end-to-end as shipped (incl. all four warning-only kinds) | 2 | **Fixed (in-repo)** — 7/7 green | `results/reverify-round3.txt`, `results/reverify/` |
+| F2-WARNING-ONLY-OUTAGE | warning-only webhooks cannot block writes | 2 | **Fixed (carried)** — 2/2 green | `results/reverify-round3.txt` |
+| F3-SPOOF-EXEMPTION | exemption claimable by any reader of parent name+UID | 2 | Canary green (expected): behavior unchanged, now **documented** as a known boundary — resolution was doc-level, per the round-2 maintainer-disposition framing | `results/reverify/` |
+| C4431130427-CONVERSION | suite exercises production v1alpha1→v1alpha2 conversion, not version-only | 2 | **Fixed** — 2/2 green; bite: reverting the registration order → `Expected None to equal Webhook` | `results/reverify-round3.txt`, `results/bite-conversion-order.txt` |
+| PR-SUITES | unit + envtest suites green on head (changed base) | 1+2 | 46,546 unit passes / 0 fails; all four envtest packages green; full CI matrix (22 checks) green on `c875fb31` | `results/unit-head-r3.txt`, `results/reverify-round3.txt` |
+
+New harness this round: `test/envtest/testcase/deprecationv1a1conversion` — asserts the
+envtest-installed `rolebasedgroups` CRD carries a Webhook conversion strategy and that a
+v1alpha1 create is stored through the production v1alpha2 conversion. The bite check
+(temporarily restoring the round-2 registration order, then reverting) shows the spec
+fails with `Expected <v1.ConversionStrategyType>: None to equal Webhook`, proving both
+that the round-2 advisory was real and that the fix flips it.
+
 ## Round 2 (head `22acc57039523bf4fc7f28c47c93bd29961930ba`, base `a2e797c6aa5702059b4e3341f3d8837972df130f`)
 
 The PR was rebased (base moved `885d655` → `a2e797c6`, which brings #514 —

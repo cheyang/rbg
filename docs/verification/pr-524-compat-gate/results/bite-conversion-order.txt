@@ -1,0 +1,29 @@
+Running Suite: v1alpha1 contract suite conversion wiring suite - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1conversion
+===========================================================================================================================================================================================
+Random Seed: [1m1793643313[0m
+
+Will run [1m2[0m of [1m2[0m specs
+2026/11/03 02:15:16 http: TLS handshake error from 127.0.0.1:59080: EOF
+[38;5;243m------------------------------[0m
+[38;5;9m• [FAILED] [0.097 seconds][0m
+[0mv1alpha1 contract suite conversion wiring [38;5;9m[1m[It] enables webhook conversion for the multi-version workload CRDs[0m
+[38;5;243m/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1conversion/conversion_test.go:73[0m
+
+  [38;5;9m[FAILED] Expected
+      <v1.ConversionStrategyType>: None
+  to equal
+      <v1.ConversionStrategyType>: Webhook[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1conversion/conversion_test.go:84[0m [38;5;243m@ 11/03/26 02:15:18.997[0m
+[38;5;243m------------------------------[0m
+[38;5;14mS[0m
+
+[38;5;9m[1mSummarizing 1 Failure:[0m
+  [38;5;9m[FAIL][0m [0mv1alpha1 contract suite conversion wiring [38;5;9m[1m[It] enables webhook conversion for the multi-version workload CRDs[0m
+  [38;5;243m/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-10-31/pr-524/wt-verify/test/envtest/testcase/deprecationv1a1conversion/conversion_test.go:84[0m
+
+[38;5;9m[1mRan 1 of 2 Specs in 5.875 seconds[0m
+[38;5;9m[1mFAIL![0m -- [38;5;10m[1m0 Passed[0m | [38;5;9m[1m1 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m1 Skipped[0m
+--- FAIL: TestConversionContract (5.88s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/deprecationv1a1conversion	5.890s
+FAIL

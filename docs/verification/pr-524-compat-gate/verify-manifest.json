@@ -38,7 +38,7 @@
       "polarity": "contract",
       "layer": "integration",
       "status": "fixed-in-repo",
-      "note": "Round 2: the PR itself now ships this coverage in-repo at test/envtest/testcase/deprecationv1a1 (grafted from this harness's round-1 suite). The specs below run from the PR's own tree, not from the grafted harness; re-verify runs them via the integration layer command. Round 3: the author renamed/extended the warning-only-kind spec to cover all four kinds (Instance, InstanceSet, ScalingAdapter, ClusterEngineRuntimeProfile) in c875fb31; match updated accordingly.",
+      "note": "Round 2: coverage landed in-repo at test/envtest/testcase/deprecationv1a1. Round 3 (head c875fb31): 7/7 green via re-verify, including the renamed all-four-warning-only-kinds spec; scheme registration now happens before TestEnv.Start() so the suite exercises the production conversion (see C4431130427-CONVERSION).",
       "match": [
         "returns the on-the-wire deprecation warning for v1alpha1 creates",
         "returns the on-the-wire deprecation warning for v1alpha1 updates",
@@ -54,7 +54,7 @@
       "polarity": "contract",
       "layer": "integration",
       "status": "fixed",
-      "note": "F2: the four warning-only v1alpha1 webhooks must not block writes when unreachable. Fixed on 22acc570 (failurePolicy=ignore in markers + both shipped manifests). Bite check: reverting the manifest to Fail makes the contract spec fail with 'connection refused' (results/bite-outage-policy-fail.txt).",
+      "note": "F2: the four warning-only v1alpha1 webhooks must not block writes when unreachable. Fixed on 22acc570 (failurePolicy=ignore in markers + both shipped manifests; config/webhook byte-identical between heads). Round 3: outage contract 2/2 green on c875fb31 (results/reverify-round3.txt).",
       "match": [
         "admits a v1alpha1 InstanceSet write while the warning-only webhooks are unreachable",
         "rejects the same write when the identical dead endpoint carries failurePolicy=Fail"
@@ -64,8 +64,8 @@
       "id": "F3-SPOOF-EXEMPTION",
       "polarity": "canary",
       "layer": "integration",
-      "status": "open",
-      "note": "F3 canary: pins the current permissive behavior. Still green on 22acc570 \u2014 the exemption is still claimable by any writer that knows the parent's name and UID, and the docstring still overclaims. If the gate is tightened, this spec flips red and must be inverted.",
+      "status": "fixed",
+      "note": "F3 resolution: c875fb31 softens the docstring (bounds the claim to unknown-UID forgeries, states plainly that any writer who can read the parent name+UID can claim the exemption) and the PR body no longer overclaims. The canary still passes because the underlying permissive behavior is unchanged and now documented as a known boundary \u2014 it stays as a regression pin for that documented behavior, not an open defect. Round-2 note (kept): if the gate is later meant as an enforcement boundary, harden to controller identity.",
       "match": [
         "grants the exemption to an ordinary writer that knows the parent's name and UID"
       ]
@@ -74,8 +74,8 @@
       "id": "C4431130427-CONVERSION",
       "polarity": "contract",
       "layer": "integration",
-      "status": "open",
-      "note": "Round 3: advisory C4431130427 claimed the contract suite ran version-only conversion (schemes registered after TestEnv.Start). c875fb31 registers both workload versions before Start. These specs prove the fix: the rolebasedgroups CRD installed by envtest must carry a Webhook conversion strategy, and a v1alpha1 create must be stored through the production v1alpha2 conversion. Bite check: reverting the registration order makes both specs fail (results/bite-conversion-order.txt).",
+      "status": "fixed",
+      "note": "c875fb31 registers both workload API versions before TestEnv.Start(). Verified on head: rolebasedgroups CRD installed by envtest carries strategy Webhook and a v1alpha1 create round-trips through the production v1alpha2 conversion (2/2 green, results/reverify-round3.txt). Bite check: reverting to the round-2 registration order makes the CRD strategy None and the spec fail with \"Expected None to equal Webhook\" (results/bite-conversion-order.txt).",
       "match": [
         "enables webhook conversion for the multi-version workload CRDs",
         "stores a v1alpha1 create through the production v1alpha2 conversion"
