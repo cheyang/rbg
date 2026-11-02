@@ -1,7 +1,7 @@
 {
   "topic": "pr-524-compat-gate",
   "pr": "https://github.com/sgl-project/rbg/pull/524",
-  "round": 2,
+  "round": 3,
   "harnessPaths": [
     "docs/verification/pr-524-compat-gate",
     "test/envtest/testcase/deprecationv1a1outage",
@@ -37,11 +37,11 @@
       "polarity": "contract",
       "layer": "integration",
       "status": "fixed-in-repo",
-      "note": "Round 2: the PR itself now ships this coverage in-repo at test/envtest/testcase/deprecationv1a1 (grafted from this harness's round-1 suite). The specs below run from the PR's own tree, not from the grafted harness; re-verify runs them via the integration layer command.",
+      "note": "Round 2: the PR itself now ships this coverage in-repo at test/envtest/testcase/deprecationv1a1 (grafted from this harness's round-1 suite). The specs below run from the PR's own tree, not from the grafted harness; re-verify runs them via the integration layer command. Round 3: the author renamed/extended the warning-only-kind spec to cover all four kinds (Instance, InstanceSet, ScalingAdapter, ClusterEngineRuntimeProfile) in c875fb31; match updated accordingly.",
       "match": [
         "returns the on-the-wire deprecation warning for v1alpha1 creates",
         "returns the on-the-wire deprecation warning for v1alpha1 updates",
-        "returns the on-the-wire warning for a warning-only kind create",
+        "returns the on-the-wire warning for every warning-only kind",
         "rejects a new deprecated workload use through the v1alpha1 API",
         "rejects a new deprecated workload use in a v1alpha1 set template",
         "does not warn on v1alpha2 writes through Exact match policy",
