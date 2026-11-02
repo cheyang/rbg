@@ -73,7 +73,9 @@ var _ = Describe("v1alpha1 contract suite conversion wiring", Ordered, func() {
 	It("enables webhook conversion for the multi-version workload CRDs", func() {
 		crd := &apiextensionsv1.CustomResourceDefinition{}
 		err := crdClient.Get(
-			testutil.Ctx, "rolebasedgroups.workloads.x-k8s.io", crd,
+			testutil.Ctx,
+			client.ObjectKey{Name: "rolebasedgroups.workloads.x-k8s.io"},
+			crd,
 		)
 		Expect(err).NotTo(HaveOccurred())
 		Expect(crd.Spec.Conversion).NotTo(BeNil(),
