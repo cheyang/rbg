@@ -1,0 +1,37 @@
+re-verify: manifest = docs/verification/pod-cache-filter-kep/verify-manifest.json
+re-verify: resolving PR head via 'git fetch https://github.com/sgl-project/rbg.git pull/530/head' (machine-independent)
+re-verify: current head = d1c331aeb608881bb876627f44857e9df85f332c
+re-verify: last-reviewed = d1c331aeb608881bb876627f44857e9df85f332c  (review delta = d1c331aeb608881bb876627f44857e9df85f332c..d1c331aeb608881bb876627f44857e9df85f332c)
+re-verify: fixed-ref=d1c331aeb608881bb876627f44857e9df85f332c  harness-from=verify/pod-cache-filter-kep-codex
+re-verify: running layer 'unit' (gotest)
+re-verify: running layer 'integration' (gotest)
+re-verify: running layer 'static' (script)
+re-verify: running layer 'unitdrift' (gotest)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+C1     contract  unit         FIXED          pass=2 fail=0 miss=0
+C1i    contract  integration  FIXED          pass=1 fail=0 miss=0
+C3     contract  unit         FIXED          pass=1 fail=0 miss=0
+C4     contract  unit         FIXED          pass=2 fail=0 miss=0
+P0s    contract  static       FIXED          pass=8 fail=0 miss=0
+D3     contract  unitdrift    STILL-BROKEN   pass=0 fail=2 miss=0
+D4     contract  unitdrift    FIXED          pass=1 fail=0 miss=0
+D5     contract  unitdrift    FIXED          pass=1 fail=0 miss=0
+R2-F1  contract  static       FIXED          pass=1 fail=0 miss=0
+R2-F2  contract  static       STILL-BROKEN   pass=0 fail=1 miss=0
+R2-F3  contract  static       FIXED          pass=1 fail=0 miss=0
+R2-F4  contract  static       FIXED          pass=1 fail=0 miss=0
+N2     contract  static       FIXED          pass=1 fail=0 miss=0
+N3     contract  static       FIXED          pass=1 fail=0 miss=0
+R3-scope contract  static       FIXED          pass=1 fail=0 miss=0
+
+Live layer (manual): L3 intentionally skipped (docs-only PR; no KUBECONFIG layer). Memory/RSS re-measurement on the production operator is graduation work owned by the implementation PR.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/pod-cache-filter-kep/results/reverify
+
+Review delta this round: d1c331aeb608881bb876627f44857e9df85f332c..d1c331aeb608881bb876627f44857e9df85f332c
+After reviewing that delta, advance the marker for the next round:
+  echo d1c331aeb608881bb876627f44857e9df85f332c > docs/verification/pod-cache-filter-kep/.last-reviewed && git add docs/verification/pod-cache-filter-kep/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.
