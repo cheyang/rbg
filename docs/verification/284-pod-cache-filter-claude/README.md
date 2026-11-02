@@ -1,16 +1,66 @@
 # KEP-284 (PR #530) — verification harness — Reviewer A (Claude)
 
 PR: https://github.com/sgl-project/rbg/pull/530
+Round 3 head reviewed: `d1c331aeb608881bb876627f44857e9df85f332c` (rebased onto base `09accf63747177f12544d8738cab13ea07910a25`; rebase verified content-identical for all PR paths — `git diff f8d67fa7 e6826cdc -- keps/284-pod-cache-filter test/podcacheunion` is empty; the base delta itself is port-allocator/status work that touches none of this KEP's audited contracts — the six `pod.Spec.NodeName` sites, the four scoped Pod List sites, and `cacheOptions()` are unchanged)
 Round 2 head reviewed: `f8d67fa701956638658594bccfe34b7947222e36` (base `4a0765f78b0930114a4b73a64433ee8f27c34372`, docs-only delta in the base — no Go contracts affected)
 Round 1 head reviewed: `139b91cdad4e917e2b27949cc3d4ca4a340b4280` (base `7894133d5b59d44f2a19dcf6b75c531996285bcf`)
+
+Round 3 reviewed the `f8d67fa7..d1c331ae` delta (one commit, "fix(podcache):
+scope transforms and harden benchmark tests"), re-ran the whole harness on the
+new head, inverted the flipped R2-F4 canary into a contract test, and added the
+round-3 prototype tests (`TestAPITransformInformerScope`, the head's own
+`TestMedianRange`) to the manifest. Rounds 1–2 records are kept below unchanged.
+
+## Premise (P0): CONFIRMED (re-confirmed on the round-3 head)
+
+The PR still changes no production code — `TestCacheOptionsConstrainsPodCache`
+stays red (`results/round3/reverify/unit.out`), issue #284 is still OPEN, and
+the base delta touched none of the audited contracts. The KEP designs against a
+problem that still exists.
+
+## Round-3 observed vs expected
+
+| # | claim / finding | test | polarity | observed on d1c331ae | verdict |
+| --- | --- | --- | --- | --- | --- |
+| P0 | Pod informer cache is unfiltered (premise) | `TestCacheOptionsConstrainsPodCache` | contract | FAIL (production code still unchanged) | premise re-CONFIRMED; deferred by design to the implementation PR |
+| F1 | marker-only template diff must not be drift | `TestFilterSystemLabelsIgnoresManagedMarker`, `TestPodTemplateSpecEqualIgnoresManagedMarker` | contract | FAIL ×2 | unchanged, red-by-design (the documented deferral; gates the implementation PR) |
+| F1-guard | group-name drift must stay detectable | `TestGroupNameDriftStillDetected` | contract | PASS | guard still green |
+| R2-F1 | campaign must not escape to the kubeconfig cluster | `TestKEP284CampaignForcesIsolatedEnvtestCluster` | contract | PASS | **FIXED** — `transform-campaign.sh` now `export USE_EXISTING_CLUSTER=false` AND TestMain pins `UseExistingCluster: ptr.To(false)` (commit d1c331ae) |
+| R2-F2 | the tagged prototype must be compiled by CI | `TestKEP284PodcacheunionCompiledInCI` | contract | FAIL | **STILL-BROKEN** — no workflow/Makefile target references `podcacheunion` on the new head |
+| R2-F3 | nodeName audit claim must match the code | `TestKEP284NodeNameReadPathAuditClaim` | contract | PASS | **FIXED** — README item 4 now names `RecordNodeBindings`/Warmup/RBG reconciliation and why they are safe (none uses a `spec.nodeName` field selector) |
+| R2-F4 | even-group median convention | `TestMedianRangeUpperMiddleForEvenGroups` (inverted canary) + head's `TestMedianRange` | contract | PASS ×2 (both gate configs) | **FIXED** — `medianRange` now averages even groups; the round-2 canary flipped red exactly as designed in the first round-3 run (`results/round3` raw), and is now inverted into a contract pinning the averaged median |
+| P-readpaths | prototype correctness suite incl. round-3 informer scoping | the PR's own suite (9 matched tests), both gate configs, mutation detector on | contract | 9 PASS ×2 configs, 0 fail | all green, including the new `TestAPITransformInformerScope` (diw-zw's scope ask: non-Pod informers take the default constructor; non-Pod transform calls == 0) |
+| P0-mechanics | label-selector semantics guards | 3 guard tests | contract | PASS ×3 | semantics unchanged after the rebase |
+
+N2 (sync-budget sample not derivable) **fixed**: the "1.14 seconds" sentence is
+replaced by "344–807 ms in the published [200/4,800
+runs](performance.md#startup-detail-200-related--4800-unrelated)", and
+344–807 is exactly the min–max of the `transform-labels-owners-stream+wl` Sync
+column across all four published rows (macOS off 361 [344–382], macOS on 748
+[719–807], Linux off 474 [461–679], Linux on 385 [378–508]); the anchor slug
+matches the heading. N3 (GOMEMLIMIT guidance) **fixed**: the Scalability
+section now carries the one-sentence operator guidance. N1 (PR-body `fixes
+#XXXX` + stale round-1 union opening paragraph) **still open** — verified via
+`gh pr view` / the round-3 prepare context.
+
+## How to run (round 3)
+
+```bash
+bash docs/verification/284-pod-cache-filter-claude/scripts/re-verify.sh
+```
+
+Expected on the round-3 head: unit 5 PASS (mechanics ×3, F1-guard, R2-F1, R2-F3)
++ 4 FAIL (P0, F1 ×2, R2-F2); integration 11 PASS ×2 gate configs (incl. the
+inverted median contract, the head's own `TestMedianRange`, and
+`TestAPITransformInformerScope`). See `results/round3/`.
+
+---
 
 Round 2 re-verified the round-1 harness on the new head, reviewed the
 `previousHead..head` delta (the KEP rewritten as the transform-stub design plus a
 2,400-line tagged prototype in `test/podcacheunion/`), and extended the harness
 with round-2 findings and an integration layer that runs the PR's own prototype
 suite. Round 1's record is kept below unchanged.
-
-## Premise (P0): CONFIRMED (re-confirmed on the round-2 head)
 
 Claim (issue #284, quoted): "the reason is that irrelevant `Pods` consume most of
 the memory" — the operator caches all Pods. The revision-2 PR still changes no

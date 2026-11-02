@@ -63,7 +63,7 @@
    "match": [
     "TestKEP284CampaignForcesIsolatedEnvtestCluster"
    ],
-   "note": "Round 3: FIXED by d1c331ae \u2014 transform-campaign.sh now does `export USE_EXISTING_CLUSTER=false` AND TestMain pins `UseExistingCluster: ptr.To(false)`, so the campaign cannot escape to the kubeconfig cluster regardless of the caller's environment. Contract test green (results/round3/reverify/unit.out)."
+   "note": "Round 3: FIXED by d1c331ae \u2014 transform-campaign.sh now does `export USE_EXISTING_CLUSTER=false` AND TestMain pins `UseExistingCluster: ptr.To(false)`, so the campaign cannot escape to the kubeconfig cluster regardless of the caller's environment. Contract test green (results/round3-after-inversion/unit.out)."
   },
   {
    "id": "R2-F2",
@@ -81,7 +81,7 @@
    "match": [
     "TestKEP284NodeNameReadPathAuditClaim"
    ],
-   "note": "Round 3: FIXED by d1c331ae \u2014 README item 4 now reads 'Node-name reads in RecordNodeBindings, Warmup and RBG reconciliation consume Pods from these scoped Lists; none uses a spec.nodeName field selector', naming the audited sites and why they are safe. Contract test green (results/round3/reverify/unit.out)."
+   "note": "Round 3: FIXED by d1c331ae \u2014 README item 4 now reads 'Node-name reads in RecordNodeBindings, Warmup and RBG reconciliation consume Pods from these scoped Lists; none uses a spec.nodeName field selector', naming the audited sites and why they are safe. Contract test green (results/round3-after-inversion/unit.out)."
   },
   {
    "id": "R2-F4",
@@ -91,7 +91,7 @@
     "TestMedianRangeUpperMiddleForEvenGroups",
     "TestMedianRange"
    ],
-   "note": "Round 3: FIXED by d1c331ae \u2014 medianRange now averages the two middle values for even-sized groups. The round-2 bug-canary flipped red exactly as designed (results/round3/reverify/integration.out: TestMedianRangeUpperMiddleForEvenGroups fail=2 in both gate configs) and has been inverted into this contract test. TestMedianRange is the head's own contract (transform_measure_test.go). Both must stay green."
+   "note": "Round 3: FIXED by d1c331ae \u2014 medianRange now averages the two middle values for even-sized groups. The round-2 bug-canary flipped red exactly as designed (results/round3/integration.out: TestMedianRangeUpperMiddleForEvenGroups fail=2 in both gate configs) and has been inverted into a contract test; both it and the head's own TestMedianRange pass in both gate configs (results/round3-after-inversion/). Both must stay green."
   },
   {
    "id": "P-readpaths",
