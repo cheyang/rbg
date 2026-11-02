@@ -5,7 +5,8 @@
     "docs/verification/deprecation-admission-gate-codex",
     "api/workloads/v1alpha1/zz_verify_pr524_test.go",
     "api/workloads/v1alpha2/zz_verify_pr524_test.go",
-    "test/verifycodex"
+    "test/verifycodex",
+    "test/verifycodex/convprobe"
   ],
   "premise": {
     "id": "P0",
@@ -28,7 +29,7 @@
     },
     "integration": {
       "kind": "gotest",
-      "cmd": "bash -c 'if [ ! -x bin/setup-envtest ]; then GOBIN=$(pwd)/bin go install sigs.k8s.io/controller-runtime/tools/setup-envtest@v0.24.1; fi; KUBEBUILDER_ASSETS=$(bin/setup-envtest use 1.31.0 --bin-dir $(pwd)/bin -p path) go test ./test/verifycodex/ -count=1 -timeout 10m -json'"
+      "cmd": "bash -c 'if [ ! -x bin/setup-envtest ]; then GOBIN=$(pwd)/bin go install sigs.k8s.io/controller-runtime/tools/setup-envtest@v0.24.1; fi; KUBEBUILDER_ASSETS=$(bin/setup-envtest use 1.31.0 --bin-dir $(pwd)/bin -p path) go test ./test/verifycodex/ ./test/verifycodex/convprobe/ -count=1 -timeout 10m -json'"
     }
   },
   "findings": [
@@ -101,6 +102,15 @@
       "match": [
         "F6_canary:_forged_owner_reference_with_known_UID_is_admitted"
       ]
+    },
+    {
+      "id": "C4431130427",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestConversionProbe"
+      ],
+      "note": "Round-3: PR-suite conversion engagement probe. Grafts onto the PR's own testutil setup and asserts a v1alpha1 write is stored through the production conversion (role-workload-type annotation present on the v1alpha2 read-back). Red on round-2 head 22acc570 (version-only conversion), green on round-3 head c875fb31 (schemes registered before TestEnv.Start)."
     }
   ],
   "liveNote": "L3 intentionally skipped for this debate round (unit + integration layers only, per instructions). On a live cluster, the upgrade-ordering question (new Fail webhook paths 404 until the new binary serves them) is the thing to watch: apply manifests, then immediately write a v1alpha1 object during the controller rollout."

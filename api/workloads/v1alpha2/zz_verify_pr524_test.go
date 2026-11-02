@@ -63,19 +63,30 @@ func pr524Set(name string, uid types.UID, roles ...RoleSpec) *RoleBasedGroupSet 
 // F4 carried: the compatibility-mode rejection must not advise re-enabling the
 // flag that is already enabled (the flag=true remedy would be a no-op). The
 // flag=false path keeps the re-enable advice as the control.
+// Round 3 (head c875fb31): the O1 follow-up names BOTH flag spellings in the
+// compat hint as a condition ("remain accepted while ..."), so the round-1
+// literal NotContains on the flag spelling was too strict (Harness-update).
+// The contract is sharpened to the intent: no "re-enable" advice in compat
+// mode, both spellings named, and the final-cutoff control keeps the
+// imperative re-enable remedy.
 func TestPR524Contract_CompatRejectionHasNoReenableAdvice(t *testing.T) {
 	err := validateNoNewDeprecatedWorkloadTypes("spec.roles",
 		[]RoleSpec{pr524Role("worker", constants.StatefulSetWorkloadType)}, nil)
 	require.Error(t, err)
-	assert.NotContains(t, err.Error(), "--enable-deprecated-workload-types=true",
+	assert.NotContains(t, err.Error(), "re-enable",
 		"compat-mode rejection must not advise re-enabling the flag already in effect")
 	assert.Contains(t, err.Error(), "RoleInstanceSet", "rejection should point at the migration target")
+	// O1 pin: the compat hint names both spellings (Helm value + controller flag).
+	assert.Contains(t, err.Error(), "controller.deprecatedWorkloadTypes.enabled=true",
+		"O1: compat hint names the Helm value spelling")
+	assert.Contains(t, err.Error(), "--enable-deprecated-workload-types=true",
+		"O1: compat hint names the controller flag spelling")
 
 	strictErr := validateNoDeprecatedWorkloadTypes("spec.roles",
 		[]RoleSpec{pr524Role("worker", constants.StatefulSetWorkloadType)})
 	require.Error(t, strictErr)
-	assert.Contains(t, strictErr.Error(), "enable-deprecated-workload-types",
-		"control: the final-cutoff message keeps the flag advice")
+	assert.Contains(t, strictErr.Error(), "re-enable",
+		"control: the final-cutoff message keeps the re-enable advice")
 }
 
 // F3 carried (unit level): once a role migrated off the deprecated type,
