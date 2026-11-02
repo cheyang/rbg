@@ -1,7 +1,8 @@
 # PR #524 verification — 0.9.0 compatibility admission gate (core gate)
 
 PR: https://github.com/sgl-project/rbg/pull/524
-Reviewed head (round 2): `22acc57039523bf4fc7f28c47c93bd29961930ba` (base `a2e797c6aa5702059b4e3341f3d8837972df130f`)
+Reviewed head (round 3): `c875fb31019bc454ad7af9e99e213e5c06c48a9c` (base `09accf63747177f12544d8738cab13ea07910a25`)
+Round-2 head: `22acc57039523bf4fc7f28c47c93bd29961930ba` (base `a2e797c6aa5702059b4e3341f3d8837972df130f`)
 Round-1 head: `993dcf10c618f0b8f143ce2471d72d820126e260` (base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
 Reviewer: Codex (debate Reviewer B). Production code untouched; this branch adds tests + docs only.
 This PR is the first slice split out of the closed PR #509; findings F1–F4 from
@@ -38,6 +39,29 @@ hunk was dropped unchanged in effect) plus one new commit `22acc570`
 | Copilot advisories C4381195150 / C4381195073 / C4381195209 | code inspection | unconfirmed | all three addressed in 22acc570 (debug.go checks RoleInstanceSet first; compat checker asserts per-component template metadata — component names `leader`/`worker`/`role.Name` cross-checked against pkg/reconciler/roleinstanceset_reconciler.go:442-498; upgrade fixtures pin StatefulSet/LeaderWorkerSet explicitly) | **Fixed (by inspection; e2e layer not run locally)** |
 | Regression sweep | re-verify.sh unit+integration | — | all carried contracts green on 22acc570 (F1-F4 harness, E1-E3); PR unit tests + envtest deprecation/webhook suites green (`results/pr-unit-22acc570.txt`, `results/pr-envtest-22acc570.txt`); `make manifests` byte-idempotent | **No regression** |
 | CI | gh pr checks | success (previous head) | all checks pass on 22acc570 (unit-test, envtest, lint, 12 e2e jobs incl. v1alpha1 + manifest-installation) | **success** |
+
+
+## Round 3 (head c875fb31, 2026-11-03) — re-verification
+
+The head was force-pushed: clean rebase onto `09accf63` (base delta = 8 upstream
+commits incl. #512, #478, #491; only `rolebasedgroupwarmup` API/CRD touched —
+no gate interaction) plus one new commit `c875fb31` ("address round-2 review
+follow-ups"). Range-diff: all 5 round-2 commits unchanged, exactly one added.
+
+| Ledger ID | Harness | Round-2 verdict | Round-3 observed | Verdict |
+|-----------|---------|-----------------|------------------|---------|
+| F3 (exemption forgeable / docstring overclaims) | harness F6 canary + static | open (minor) | docstring softened to the actual threat model (unknown-UID forgeries grant nothing; readable name+UID holders can claim the exemption — stated plainly); code unchanged, canary still green = behavior pinned as documented | **Fixed (docstring disposition; behavior documented, not hardened)** |
+| F4 (stale v1alpha1 e2e names) | static | open (nit) | v1alpha1 fixtures renamed (standalone_role.go, standalone_role_default.go, leader_worker_role.go; BuildLwsRole -> BuildLeaderWorkerRole); no stale references remain in v1alpha1. Residue: the same staleness the PR introduced in the v1alpha2 suites (RunDeployment/StatefulSet/LeaderWorkerSetWorkloadTestCases lost their WithWorkload in round 1) was NOT renamed — filed as new nit F9 | **Fixed for v1alpha1; v1alpha2 residue open (F9)** |
+| F7 (dead objectKey) | static | open (nit) | helper + test + two imports deleted; `git grep objectKey` on head: zero hits | **Fixed** |
+| F8 (duplicated contractNamespace) | static | open (nit) | single exported `testutil.ContractNamespace`; no unexported remnants | **Fixed** |
+| O1 (Helm-only hint spelling) | harness F4 contract | open (nit) | compat hint names both spellings as a condition ("remain accepted while ..."); harness F4 sharpened (round-1 literal NotContains was too strict — Harness-update): no "re-enable" in compat mode, both spellings named, cutoff control keeps re-enable advice. Green on head | **Fixed** |
+| M2 (only InstanceSet warning covered) | PR's own suite | open (nit) | the warning-only spec now loops all four kinds (InstanceSet, Instance, ScalingAdapter, ClusterEngineRuntimeProfile) with a per-kind warning assertion; suite 7/7 green on head (`results/pr-suite-deprecationv1a1-c875fb31.txt` — see round-3 reverify capture). Residue nit: the failure message prints `obj.GetObjectKind().GroupVersionKind().Kind`, empty for literal-built objects (F10) | **Fixed** |
+| C4431130427 (schemes registered after Start) | NEW harness `test/verifycodex/convprobe` | open (nit) | schemes now registered before TestEnv.Start. Differential proof via the conversion-only `role-workload-type` annotation on the v1alpha2 read-back: annotation ABSENT on 22acc570 (`results/convprobe-prev-22acc570.txt` — version-only conversion, advisory was real), PRESENT on c875fb31 (`results/convprobe-head-c875fb31.txt` — production v1alpha1->v1alpha2 translation engaged) | **Fixed (differential)** |
+| C4431130403 (dropped engine-runtime container assertion) | static | open (minor, latent) | unchanged this round; author deferral recorded in PR comment 4439573805 (restore with slice-4 e2e engine-runtime fixtures); no tracking issue; still zero `EngineRuntimes` users in test/e2e/testcase | **Still open (latent; deferral is author-stated, maintainer decision pending)** |
+| F5 / F6 / Q1 (open questions) | static | open | files unchanged in this delta | **Still open** |
+| Regression sweep | re-verify.sh unit+integration | — | all contracts green on c875fb31: F1 (exemption guards incl. replacement child + migrated parent), F2 (deletes ungated), F3 (oldObj trust + reintroduction), F4 (hint), F5 (shipped policy 4xIgnore+2xFail + outage demo), C4431130427 probe; canary F6 still present (expected under the docstring disposition) | **No regression** |
+| manifests | make manifests (controller-gen v0.17.2) | idempotent | byte-idempotent on c875fb31 against the new base | **pass** |
+| CI | gh pr checks 524 | success | all checks pass on c875fb31 (build, unit-test, envtest, lint, copyright, markdown, e2e-matrix-coverage, 12 E2E jobs incl. v1alpha1 + manifest-installation) | **success** |
 
 ## Findings and observed-vs-expected
 
