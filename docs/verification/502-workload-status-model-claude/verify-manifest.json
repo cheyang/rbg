@@ -2,7 +2,7 @@
   "topic": "502-workload-status-model-claude",
   "pr": "https://github.com/sgl-project/rbg/pull/528",
   "reviewer": "claude",
-  "headSha": "f05e1dd83d2691e4157bf1bd3548fe405b2a49d5",
+  "headSha": "6335eac61b7ef71d7479a8b2686829d7e59ce3e1",
   "baseSha": "885d655bd1b4c26e6d14837709eeda675f3ae886",
   "harnessPaths": [
     "docs/verification/502-workload-status-model-claude"
@@ -17,7 +17,9 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "C5 green at head (results/unit-l1-at-head.txt): no json:\"phase\" tag in any of the three v1alpha2 status types; zero writes of RoleBasedGroupProgressing / RoleBasedGroupRollingUpdateInProgress / \"Progressing\" / \"RollingUpdateInProgress\" in internal/ and pkg/ non-test Go; FailedScale/FailedUpdate declared in v1alpha2 RIS and RI condition enums and written by statelessmode/reconciler.go:237,251 and instance_reconciler.go:191,235; RBG Ready computed purely from role.Replicas == rs.Replicas == rs.ReadyReplicas (rolebasedgroup_controller.go:783-793) with no revision check, reasons AllRolesReady/RoleNotReady at :796/:804.",
-    "match": ["C5-premise-motivation-claims"]
+    "match": [
+      "C5-premise-motivation-claims"
+    ]
   },
   "layers": {
     "unit": {
@@ -34,25 +36,56 @@
       "id": "F2-undefined-reason-preparing",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["C2-progressing-reasons-defined"],
+      "match": [
+        "C2-progressing-reasons-defined"
+      ],
       "firstSeenSha": "f05e1dd83d2691e4157bf1bd3548fe405b2a49d5",
-      "note": "keps/502-workload-status-model/README.md:275 lists Preparing as a Progressing=True candidate reason, but it is never defined or used anywhere else in the KEP; the KEP's own rule (README.md:130) requires controller-written reasons to be valid and consistent. Fix: define it or drop it from the row."
+      "note": "keps/502-workload-status-model/README.md:275 lists Preparing as a Progressing=True candidate reason, but it is never defined or used anywhere else in the KEP; the KEP's own rule (README.md:130) requires controller-written reasons to be valid and consistent. Fix: define it or drop it from the row.",
+      "status": "fixed-at-6335eac"
     },
     {
       "id": "F3-reason-collision-role-not-ready",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["C3-reason-collision-ack"],
+      "match": [
+        "C3-reason-collision-ack"
+      ],
       "firstSeenSha": "f05e1dd83d2691e4157bf1bd3548fe405b2a49d5",
-      "note": "The KEP introduces RolesNotReady (ChildReadiness family reason for Progressing, README.md:158,276) alongside the retained RoleNotReady (Ready=False reason, README.md:222,278; matches code rolebasedgroup_controller.go:804). Two machine-readable strings on the same object differing by one letter, never called out. Fix: acknowledge the distinction explicitly or rename the family reason."
+      "note": "The KEP introduces RolesNotReady (ChildReadiness family reason for Progressing, README.md:158,276) alongside the retained RoleNotReady (Ready=False reason, README.md:222,278; matches code rolebasedgroup_controller.go:804). Two machine-readable strings on the same object differing by one letter, never called out. Fix: acknowledge the distinction explicitly or rename the family reason.",
+      "status": "fixed-at-6335eac"
     },
     {
       "id": "F4-inplace-reason-casing",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["C4-ri-readiness-reasons-match-code"],
+      "match": [
+        "C4-ri-readiness-reasons-match-code"
+      ],
       "firstSeenSha": "f05e1dd83d2691e4157bf1bd3548fe405b2a49d5",
-      "note": "README.md:413 lists InPlaceUpdateNotReady as an RI aggregated-readiness candidate reason, but the current controller writes InplaceUpdateNotReady (pkg/reconciler/roleinstance/instance_status.go:298, lowercase p) for the RoleInstanceReady condition whose reasons the KEP marks retained/compatible. Case-sensitive mismatch. Fix: match the code spelling or explicitly mark the reason as renamed."
+      "note": "README.md:413 lists InPlaceUpdateNotReady as an RI aggregated-readiness candidate reason, but the current controller writes InplaceUpdateNotReady (pkg/reconciler/roleinstance/instance_status.go:298, lowercase p) for the RoleInstanceReady condition whose reasons the KEP marks retained/compatible. Case-sensitive mismatch. Fix: match the code spelling or explicitly mark the reason as renamed.",
+      "status": "fixed-at-6335eac"
+    },
+    {
+      "id": "F9-rbg-transition-input-inconsistent",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "C8-rbg-transition-input-consistency"
+      ],
+      "firstSeenSha": "6335eac61b7ef71d7479a8b2686829d7e59ce3e1",
+      "origin": "revision-regression",
+      "note": "Round 2 (delta f05e1dd..6335eac): the revision rewired RBG recovery derivation to 'lower-level conditions' (README.md:463 'RBG derives recovery facts from lower-level conditions, not a RIS `Recovering` phase'; :502 'RBG transitions use lower-level conditions and recovery facts') but left the Goals item (:70 'Define how lower-level phases and recovery facts trigger RBG phase transitions') and the RoleBasedGroup intro (:211 'transitions based on the current target, lower-level phases, and recovery facts') on the old 'phases' vocabulary. C8 passes at f05e1dd and fails at 6335eac (differential). Fix: align :70/:211 to the conditions vocabulary (or 'phases and conditions'); both wordings verified to flip C8 green."
+    },
+    {
+      "id": "F10-ris-activity-reasons-unenumerated",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "C9-ris-activity-reasons-complete"
+      ],
+      "firstSeenSha": "f05e1dd83d2691e4157bf1bd3548fe405b2a49d5",
+      "origin": "preexisting",
+      "note": "Round 2 late discovery on unchanged text (identical at f05e1dd and 6335eac, so pre-existing, not a revision regression): the RIS Progressing prose (README.md:358) says 'Activity reasons may include `ScalingUp`, `ScalingDown`, and `RollingUpdate`' while the activity/child-readiness family table (:159-165) also defines RIS reasons `Creating` (:162) and `Recovering` (:165). Materiality rose in this round because the revision made RIS recovery reporting load-bearing (:345 'RIS propagates recovery through `Progressing` and `Ready` conditions'). Fix: enumerate all five activity reasons in the prose or state the family table is the complete source; verified to flip C9 green."
     }
   ],
   "refutedHypotheses": [
@@ -61,13 +94,18 @@
       "claim": "Reviewer hypothesis during stage 1: 'RIS retains ... rolloutReplacementState' names a field that does not exist in the current API, making the KEP's retained-field inventory factually wrong.",
       "verdict": "refuted",
       "evidence": "C1 green at head AND at base 885d655: api/workloads/v1alpha2/roleinstanceset_types.go:201 declares RolloutReplacementState *RolloutReplacementState json:\"rolloutReplacementState,omitempty\" in RoleInstanceSetStatus. The initial grep that suggested absence ran in a stale checkout at an older commit. All 12 retained fields named at README.md:340-341 and the three preserved RI fields at README.md:415 exist in the current API.",
-      "match": ["C1-retained-fields-exist"]
+      "match": [
+        "C1-retained-fields-exist"
+      ]
     }
   ],
   "acceptanceChecks": {
     "AC-retained-fields": "C1-retained-fields-exist (unit)",
     "AC-doc-tooling": "C6-yaml-examples-parse (unit) + C7-markdownlint (integration)",
-    "AC-reason-consistency": "C2/C3/C4 (unit)"
+    "AC-reason-consistency": "C2/C3/C4 (unit) — green at 6335eac",
+    "AC-transition-input-consistency": "C8 (unit) — red at 6335eac, green at f05e1dd",
+    "AC-ris-reason-enumeration": "C9 (unit) — red at f05e1dd and 6335eac"
   },
-  "liveNote": "L3 skipped (debate setup: unit + integration layers only). This is a docs-only KEP PR; there is no live runtime signal to observe."
+  "liveNote": "L3 skipped (debate setup: unit + integration layers only). Docs-only KEP PR; no live runtime signal.",
+  "previousHeadSha": "f05e1dd83d2691e4157bf1bd3548fe405b2a49d5"
 }

@@ -273,6 +273,97 @@ def check_c6(kep_path, yaml_dir):
             len(blocks), "OK" if num_ok else "FAIL"))
 
 
+# ---------------------------------------------------------------- C8 (N1)
+
+def check_c8(kep_text):
+    """Round-2 contract (revision regression N1): every statement in the KEP
+    that names the *inputs to RBG phase transitions* must use one consistent
+    source vocabulary. The revision at 6335eac rewired recovery derivation to
+    "lower-level conditions" (README lines ~463, ~502: "RBG derives recovery
+    facts from lower-level conditions, not a RIS `Recovering` phase") while
+    leaving the Goals item and the RoleBasedGroup intro saying transitions are
+    "based on ... lower-level phases". A reader of the RBG intro would look for
+    child phase values as transition inputs -- the very thing the revision
+    disclaims. Fail when both phrasings occur.
+    Polarity: contract (fail == inconsistency present).
+    """
+    phase_lines = [(i + 1, l.strip()) for i, l in enumerate(kep_text.splitlines())
+                   if re.search(r"lower-level phases", l)
+                   and not re.search(r"conditions", l)]
+    cond_lines = [(i + 1, l.strip()) for i, l in enumerate(kep_text.splitlines())
+                  if re.search(r"lower-level conditions", l)]
+    problems = []
+    if phase_lines and cond_lines:
+        problems.append(
+            "RBG transition inputs described inconsistently: "
+            "'lower-level phases' (without conditions) at line(s) %s vs "
+            "'lower-level conditions' at line(s) %s"
+            % (",".join(str(n) for n, _ in phase_lines),
+               ",".join(str(n) for n, _ in cond_lines)))
+    elif not phase_lines and not cond_lines:
+        problems.append("no 'lower-level phases/conditions' statement found")
+    emit("C8-rbg-transition-input-consistency", not problems,
+         "; ".join(problems) if problems
+         else "RBG phase-transition input statements use one vocabulary "
+              "(phases-only claims: %d, conditions claims: %d)"
+              % (len(phase_lines), len(cond_lines)))
+
+
+# ---------------------------------------------------------------- C9 (N2)
+
+def check_c9(kep_text):
+    """Round-2 contract (N2, pre-existing nit): the RIS Progressing prose
+    sentence 'Activity reasons may include ...' must enumerate every RIS
+    activity reason defined in the activity/child-readiness family table
+    (rows: Initial creation -> Creating, Update -> RollingUpdate,
+    Instance-count scaling -> ScalingUp/ScalingDown, Recovery -> Recovering).
+    An implementer writing RIS's reason validator needs the complete set in
+    one place; today it is split across prose and two tables.
+    Polarity: contract (fail == enumeration incomplete).
+    """
+    # collect RIS reasons from the activity/child-readiness family table
+    lines = kep_text.splitlines()
+    try:
+        start = next(i for i, l in enumerate(lines)
+                     if "Activity and child-readiness reasons" in l)
+    except StopIteration:
+        emit("C9-ris-activity-reasons-complete", False,
+             "activity/child-readiness family table not found")
+        return
+    activity_rows = ("Initial creation", "Update", "Instance-count scaling",
+                     "Recovery")
+    expected = set()
+    in_table = False
+    for l in lines[start + 1:]:
+        s = l.strip()
+        if not s:
+            if in_table:
+                break
+            continue  # blank line before the table header
+        if not s.startswith("|"):
+            if in_table:
+                break
+            continue  # prose/other content before the table
+        in_table = True
+        cells = [c.strip() for c in s.strip("|").split("|")]
+        if len(cells) >= 3 and cells[0] in activity_rows:
+            for tok in re.findall(r"`([A-Za-z0-9]+)`", cells[2]):
+                expected.add(tok)
+    m = re.search(r"Activity reasons may include (.*?)[.;]", kep_text, re.S)
+    if not m:
+        emit("C9-ris-activity-reasons-complete", False,
+             "'Activity reasons may include ...' sentence not found")
+        return
+    listed = set(re.findall(r"`([A-Za-z0-9]+)`", m.group(1)))
+    missing = sorted(expected - listed)
+    emit("C9-ris-activity-reasons-complete", not missing,
+         "RIS activity reasons from family table: %s; prose lists: %s; "
+         "missing from prose: %s"
+         % (", ".join(sorted(expected)) or "(none)",
+            ", ".join(sorted(listed)) or "(none)",
+            ", ".join(missing) or "(none)"))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default=".")
@@ -294,6 +385,8 @@ def main():
     check_c4(kep_text, repo)
     check_c5(repo)
     check_c6(kep_path, yaml_dir)
+    check_c8(kep_text)
+    check_c9(kep_text)
 
     for cid, ok, detail in RESULTS:
         print("%s\t%s" % (cid, "pass" if ok else "fail"))
