@@ -10,7 +10,8 @@
     "internal/controller/workloads/rolebasedgroupset_convann_verify_test.go",
     "internal/controller/workloads/rolebasedgroupset_round6_verify_test.go",
     "api/workloads/v1alpha2/rolebasedgroupset_round6_verify_test.go",
-    "pkg/reconciler/round6_verify_test.go"
+    "pkg/reconciler/round6_verify_test.go",
+    "internal/controller/workloads/rolebasedgroupset_round7_verify_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -254,11 +255,12 @@
     {
       "id": "C4358788576",
       "polarity": "contract",
-      "layer": "unit",
+      "layer": "integration (envtest, real apiserver) + unit primitive",
       "match": [
-        "TestVerifyPR474_EmptyRoleAnnotations_DroppedBySerialization"
+        "TestVerifyPR474_EmptyRoleAnnotationsMapNoWedge",
+        "TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted"
       ],
-      "note": "round 6: REFUTED. rolesEqual's DeepEqual does diverge on empty-map vs nil, but omitempty drops an empty annotations map on every serialization, so neither the stored set template nor a written child can retain the divergent state \u2014 no perpetual-outdated loop is reachable through the API."
+      "note": "round 6 final adjudication: CONFIRMED (the round-6 refutation was withdrawn after Codex's envtest reproduction and Claude's own probe re-run; the refutation only tested Go-struct marshaling, but a declarative unstructured write keeps annotations:{} in the stored set). round 7: still OPEN at 39732268 \u2014 the PR pushed a rebase + an upstream-test adaptation only; rolesEqual and groupSetMatchesRevision are byte-identical to af9dd84b. Both contracts RED at head (results/reverify-r7-unit.log, results/r7-emptyann-head.log). TestVerifyPR474_EmptyMapSerializationPremise is a non-gating canary documenting the withdrawn refutation's half-truth."
     }
   ],
   "liveNote": "L3 (live layer) was NOT run: the debate pipeline mandates unit + integration only. The author's kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers paced recreate, surge, partition, and InPlaceUpdate UID preservation on a real cluster; make test-e2e is wired to PR CI.",
@@ -307,6 +309,18 @@
       "integration": "results/reverify-r6.log + results/author-envtest-r6.log \u2014 envtest PR #474 specs 4/4 and the full rbgs_rolling suite on the merged tree (rebase re-verification)",
       "docMatch": "results/l1-doc-match-r6.log \u2014 46/46 PASS; F1 fixed",
       "differential": "results/differential-prev-r6.log \u2014 #519 and #521 contracts FAIL on 4a9043c, PASS on af9dd84b"
+    },
+    {
+      "round": 7,
+      "head": "397322680c2c9a46df3ddc3670f06b086445b60a",
+      "base": "09accf63747177f12544d8738cab13ea07910a25",
+      "previousHead": "af9dd84b74b88927b7c3b408c8fb44548eb13ecf",
+      "delta": "rebase onto current main 09accf63 (upstream #533 status, #532 port-allocator, #513 selective scale-down, #512, #478, #514, #526, #529, KEP-455 #491) + one new commit 39732268 \"test(rbgs): adapt upstream status test to rollout completion\" (test-only: adds the RollingUpdateInProgress condition to the upstream TestUpdateRBGStatusUpdatedReplicas fixture and passes the rolloutComplete arg). Net author delta on PR files: 4 files, ~103 lines, of which only the test adaptation is semantic; the updateRBGStatus DeepEqual guard removal is behavior-neutral (a whole-status DeepEqual skip governs patching).",
+      "results": [
+        "results/reverify-r7-unit.log",
+        "results/reverify-r7-integration.log",
+        "results/r7-emptyann-head.log"
+      ]
     }
   ]
 }
