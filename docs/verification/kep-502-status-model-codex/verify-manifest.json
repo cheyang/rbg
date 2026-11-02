@@ -15,7 +15,9 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "TestPremise* pass at reviewed head f05e1dd; PR diff touches only keps/, so head == base 885d655 for every file read. See results/unit-head-f05e1dd.txt and results/issue-502.json.",
-    "match": ["TestPremise"]
+    "match": [
+      "TestPremise"
+    ]
   },
   "layers": {
     "unit": {
@@ -24,12 +26,112 @@
     }
   },
   "findings": [
-    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestRBGCandidateReasonsDefined"] },
-    { "id": "F2", "polarity": "contract", "layer": "unit", "match": ["TestExampleConsistentWithPriorityRule"] },
-    { "id": "F3", "polarity": "contract", "layer": "unit", "match": ["TestProgressingFalseCoversConfigRejection"] },
-    { "id": "F4", "polarity": "contract", "layer": "unit", "match": ["TestReadyTerminatingChangeAcknowledged"] },
-    { "id": "F5", "polarity": "contract", "layer": "unit", "match": ["TestTOCComplete"] },
-    { "id": "G1", "polarity": "contract", "layer": "unit", "match": ["TestKepYAMLWellFormed", "TestYAMLExamplesParse"] }
+    {
+      "id": "F1-preparing-undefined",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestRBGCandidateReasonsDefined"
+      ]
+    },
+    {
+      "id": "F2-priority-rule-vs-example",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestExampleConsistentWithPriorityRule"
+      ]
+    },
+    {
+      "id": "F3-progressing-false-rejection-mapping",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestProgressingFalseCoversConfigRejection"
+      ]
+    },
+    {
+      "id": "F4-ready-terminating-retained-mislabel",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestReadyTerminatingChangeAcknowledged"
+      ]
+    },
+    {
+      "id": "F5-rolesnotready-collision",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestRolesNotReadyDistinctionAcknowledged"
+      ]
+    },
+    {
+      "id": "F6-inplace-reason-casing",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestRIReadinessReasonsMatchCode"
+      ]
+    },
+    {
+      "id": "F7-toc-missing-reason-taxonomy",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestTOCComplete"
+      ]
+    },
+    {
+      "id": "F8-event-budget-risk",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestEventBudgetRiskInRisksTable"
+      ]
+    },
+    {
+      "id": "O1-ready-reason-row-ambiguity",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestReadyTerminatingReasonRowSplit"
+      ]
+    },
+    {
+      "id": "Q1-ris-phase-during-recovery",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestRecoveryPhaseSplitRISvsRI"
+      ]
+    },
+    {
+      "id": "Q2-no-failure-phase",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestNoFailedPhaseStated"
+      ]
+    },
+    {
+      "id": "Q3-ris-concurrent-scaling-visibility",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestRISOverlapPrecedenceStated"
+      ]
+    },
+    {
+      "id": "G1-doc-tooling",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKepYAMLWellFormed",
+        "TestYAMLExamplesParse"
+      ]
+    }
   ],
-  "liveNote": "Docs-only KEP PR: no live layer. Integration replay (markdownlint-cli2 with .github/.markdownlint.json, YAML parsing of kep.yaml and the 3 examples) is recorded in results/markdownlint.txt and embedded as Go guards (TestKepYAMLWellFormed, TestYAMLExamplesParse)."
+  "liveNote": "Docs-only KEP PR: no live layer. Integration replay (markdownlint-cli2 with .github/.markdownlint.json, YAML parsing of kep.yaml and the 3 examples) is recorded in results/markdownlint.txt and embedded as Go guards (TestKepYAMLWellFormed, TestYAMLExamplesParse).",
+  "roundNote": "Round 2 (head 6335eac): revision addressed all round-1 findings; harness updated additively (F2 anchors made structural after the fix removed the old wording; new contract tests cover the Claude-side ledger findings F5/F6/F8/O1 and the Q1/Q2/Q3 resolutions)."
 }

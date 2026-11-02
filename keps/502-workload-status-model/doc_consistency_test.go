@@ -243,29 +243,40 @@ func TestRBGCandidateReasonsDefined(t *testing.T) {
 }
 
 // ---------------------------------------------------------------------------
-// F2: the reporting-priority rule vs the RBG example. The priority list after
-// "highest reporting priority" includes ChildReadiness, and the text says a
-// current blocker outranks an activity reason. The RBG example nevertheless
-// reports reason=ScalingOrUpdating (activity) while a child-readiness fact
-// holds (Ready=False, "decode has 2/3 replicas ready"). As written, an
-// implementer following the priority list would report RolesNotReady.
-// Contract: FAILS now; PASSES when the list drops ChildReadiness, the example
-// changes, or the taxonomy section states how child-readiness ranks vs
-// activity reasons.
+// F2: the reporting-priority rule vs the RBG example. The priority fence lists
+// reason families in reporting order. The RBG example reports
+// reason=ScalingOrUpdating (an activity reason) while a child-readiness fact
+// holds (Ready=False, "decode has 2/3 replicas ready"). The example is only
+// derivable when ChildReadiness cannot outrank activity reasons: either it is
+// absent from the fence, ranked below Activity, or the taxonomy prose states
+// that child readiness is subsumed by an active workflow.
+// Contract: FAILS when ChildReadiness outranks activity reasons while the
+// example reports an activity reason with Ready=False; PASSES otherwise.
+// Anchors are structural (the fence containing ChildReadiness), not the exact
+// wording of the priority sentence, which changed across revisions.
 // ---------------------------------------------------------------------------
 
 func TestExampleConsistentWithPriorityRule(t *testing.T) {
 	doc := kepDoc(t)
-	idx := strings.Index(doc, "highest reporting priority")
-	if idx < 0 {
-		t.Fatal("reporting-priority paragraph not found")
+
+	// Find the priority fence: the ```text block that lists ChildReadiness.
+	priorityHasChildReadiness := false
+	activityAboveChildReadiness := false
+	for _, m := range regexp.MustCompile("(?s)```text(.*?)```").FindAllStringSubmatch(doc, -1) {
+		if !strings.Contains(m[1], "ChildReadiness") ||
+			!(strings.Contains(m[1], "Permission") || strings.Contains(m[1], "Quota")) {
+			continue
+		}
+		priorityHasChildReadiness = true
+		actIdx := strings.Index(m[1], "Activity")
+		crIdx := strings.Index(m[1], "ChildReadiness")
+		if actIdx >= 0 && actIdx < crIdx {
+			activityAboveChildReadiness = true
+		}
 	}
-	rest := doc[idx:]
-	fence := regexp.MustCompile("(?s)```text(.*?)```").FindStringSubmatch(rest)
-	if fence == nil {
-		t.Fatal("priority list fenced block not found")
+	if !priorityHasChildReadiness {
+		t.Fatal("priority list fenced block (containing ChildReadiness) not found")
 	}
-	priorityHasChildReadiness := strings.Contains(fence[1], "ChildReadiness")
 
 	// RBG example: first yaml block inside the RoleBasedGroup section.
 	rbgSec := section(doc, "RoleBasedGroup")
@@ -301,15 +312,16 @@ func TestExampleConsistentWithPriorityRule(t *testing.T) {
 	clarified := false
 	for _, l := range strings.Split(taxonomy, "\n") {
 		ll := strings.ToLower(l)
-		if (strings.Contains(ll, "childreadiness") || strings.Contains(ll, "child readiness") ||
-			strings.Contains(ll, "child readiness")) &&
+		if (strings.Contains(ll, "childreadiness") || strings.Contains(ll, "child readiness")) &&
 			(strings.Contains(ll, "activity") || strings.Contains(ll, "subsum") ||
-				strings.Contains(ll, "outrank") || strings.Contains(ll, "precedence")) {
+				strings.Contains(ll, "outrank") || strings.Contains(ll, "precedence") ||
+				strings.Contains(ll, "active workflow")) {
 			clarified = true
 		}
 	}
 
-	if priorityHasChildReadiness && readyStatus == "False" && activityReasons[progReason] && !clarified {
+	if readyStatus == "False" && activityReasons[progReason] &&
+		!activityAboveChildReadiness && !clarified {
 		t.Errorf("F2: priority rule contradicts the RBG example: ChildReadiness is in the blocker priority list "+
 			"('a current blocker outranks an activity reason'), yet the example reports Progressing reason=%q "+
 			"while a child-readiness fact holds (Ready=%s). Clarify whether child-readiness outranks activity reasons.",
@@ -504,5 +516,193 @@ func TestYAMLExamplesParse(t *testing.T) {
 		if !seen {
 			t.Errorf("no yaml example for kind %s", k)
 		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// F5-collision (round-2 ledger coverage): the KEP introduces `RolesNotReady`
+// (ChildReadiness-family Progressing reason) alongside the retained
+// `RoleNotReady` (Ready=False reason) — two machine-readable strings on the
+// same object differing by one letter. The KEP must acknowledge the
+// distinction explicitly so consumers do not normalize singular/plural.
+// Contract: FAILS when no line names both spellings together.
+// ---------------------------------------------------------------------------
+
+func TestRolesNotReadyDistinctionAcknowledged(t *testing.T) {
+	doc := kepDoc(t)
+	for _, l := range strings.Split(stripFences(doc), "\n") {
+		if strings.Contains(l, "`RolesNotReady`") && strings.Contains(l, "`RoleNotReady`") {
+			return
+		}
+	}
+	t.Error("F5-collision: no line acknowledges the RolesNotReady (Progressing, child-readiness) " +
+		"vs RoleNotReady (Ready=False) near-collision; consumers told to match reasons " +
+		"case/plural-sensitively will trip on the one-letter difference")
+}
+
+// ---------------------------------------------------------------------------
+// F6-casing (round-2 ledger coverage): the KEP's "candidate reasons for
+// aggregated RI readiness" presents itself as the strings the current
+// controller writes for the RoleInstanceReady condition. Every enumerated
+// reason must appear verbatim (case-sensitive) in
+// pkg/reconciler/roleinstance/instance_status.go.
+// Contract: FAILS on any enumerated reason absent from the code.
+// ---------------------------------------------------------------------------
+
+func TestRIReadinessReasonsMatchCode(t *testing.T) {
+	doc := kepDoc(t)
+	var enum string
+	for _, l := range strings.Split(doc, "\n") {
+		if strings.Contains(l, "Candidate reasons for aggregated RI readiness") {
+			enum = l
+			break
+		}
+	}
+	if enum == "" {
+		t.Fatal("RI aggregated-readiness candidate-reasons sentence not found")
+	}
+	// The sentence shares a paragraph line with the operation-specific
+	// Progressing reasons; only tokens after the marker belong to the
+	// readiness enumeration.
+	parts := strings.SplitN(enum, "Candidate reasons for aggregated RI readiness are", 2)
+	// The enumeration is plain text: "Ready, PodsNotReady, InplaceUpdateNotReady,
+	// and ReadinessGatesNotReady." — split on commas/and, trim spaces and periods.
+	tail := strings.TrimSuffix(strings.TrimSpace(parts[1]), ".")
+	tail = strings.Replace(tail, ", and ", ", ", 1)
+	var tokens []string
+	for _, w := range strings.FieldsFunc(tail, func(r rune) bool { return r == ',' || r == ' ' }) {
+		if w = strings.TrimSpace(w); w != "" && w != "and" {
+			tokens = append(tokens, w)
+		}
+	}
+	if len(tokens) == 0 {
+		t.Fatal("RI aggregated-readiness enumeration parsed to zero reasons")
+	}
+	code := repoFile(t, "pkg/reconciler/roleinstance/instance_status.go")
+	var missing []string
+	for _, r := range tokens {
+		if !strings.Contains(code, `"`+r+`"`) {
+			missing = append(missing, r)
+		}
+	}
+	if len(missing) > 0 {
+		t.Errorf("F6-casing: RI readiness candidate reasons not written verbatim by the current "+
+			"controller (pkg/reconciler/roleinstance/instance_status.go): %s", strings.Join(missing, ", "))
+	}
+}
+
+// ---------------------------------------------------------------------------
+// F8-event-budget (round-2 ledger coverage): the design moves individual
+// scale/update failure reporting to Warning Events. The repo's controller code
+// documents the client-go spam-filter hazard (an object's event budget can be
+// drained, silencing other warnings). The Risks and Mitigations table must
+// name the event-budget / spam-filter interaction.
+// Contract: FAILS when the risks section omits it.
+// ---------------------------------------------------------------------------
+
+func TestEventBudgetRiskInRisksTable(t *testing.T) {
+	doc := kepDoc(t)
+	risks := section(doc, "Risks and Mitigations")
+	if risks == "" {
+		t.Fatal("Risks and Mitigations section not found")
+	}
+	low := strings.ToLower(risks)
+	if !strings.Contains(low, "event budget") && !strings.Contains(low, "spam filter") {
+		t.Error("F8-event-budget: Risks and Mitigations table does not mention the Warning-Event " +
+			"event-budget / client-go spam-filter hazard that the controller code documents")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// O1-row-ambiguity (round-2 ledger coverage): the candidate-reasons row for
+// Ready must disambiguate which status the Terminating reason pairs with
+// (terminating implies Ready=False).
+// Contract: FAILS while a combined Ready=True / False row carries Terminating,
+// or when Ready=False lacks Terminating.
+// ---------------------------------------------------------------------------
+
+func TestReadyTerminatingReasonRowSplit(t *testing.T) {
+	rows := candidateReasonsTable(t)
+	for name, reasons := range rows {
+		if strings.Contains(name, "Ready=True") && strings.Contains(name, "False") {
+			for _, r := range reasons {
+				if r == "Terminating" {
+					t.Errorf("O1-row-ambiguity: combined row %q pairs Terminating with an ambiguous status", name)
+				}
+			}
+		}
+	}
+	found := false
+	for _, r := range rows["Ready=False"] {
+		if r == "Terminating" {
+			found = true
+		}
+	}
+	if !found {
+		t.Error("O1-row-ambiguity: Ready=False row does not carry the Terminating reason")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Resolution guards (round 2): regression coverage for design decisions the
+// revision made in response to round-1 questions. Contract tests; they FAIL on
+// the previous head (resolution absent) and PASS on the current head.
+// ---------------------------------------------------------------------------
+
+// TestRecoveryPhaseSplitRISvsRI guards the Q1 resolution: RI gains a
+// `Recovering` phase while RIS deliberately has none and propagates recovery
+// through conditions instead.
+func TestRecoveryPhaseSplitRISvsRI(t *testing.T) {
+	doc := kepDoc(t)
+	risSec := section(doc, "RoleInstanceSet")
+	riSec := section(doc, "RoleInstance")
+	if risSec == "" || riSec == "" {
+		t.Fatal("RIS or RI section not found")
+	}
+	if strings.Contains(risSec, "| `Recovering` |") {
+		t.Error("Q1-guard: RIS phase table gained a Recovering phase; the resolution says RIS " +
+			"must propagate recovery through conditions, not a phase")
+	}
+	if !strings.Contains(riSec, "| `Recovering` |") {
+		t.Error("Q1-guard: RI phase table lacks the Recovering phase the resolution introduces")
+	}
+	if !strings.Contains(risSec, "does not define a `Recovering` phase") {
+		t.Error("Q1-guard: RIS section no longer states that RIS has no Recovering phase")
+	}
+	// The reason family table must still map recovery at every layer.
+	if !regexp.MustCompile(`\|\s*Recovery\s*\|\s*` + "`Recovering`").MatchString(doc) {
+		t.Error("Q1-guard: reason-family table no longer maps the Recovery family to `Recovering`")
+	}
+}
+
+// TestNoFailedPhaseStated guards the Q2 resolution: the KEP states explicitly
+// that there is no Failed phase and that Accepted=False never transitions
+// phase, so implementers do not invent one later.
+func TestNoFailedPhaseStated(t *testing.T) {
+	doc := kepDoc(t)
+	if !strings.Contains(doc, "no `Failed` phase") {
+		t.Error("Q2-guard: KEP no longer states explicitly that there is no Failed phase")
+	}
+	for _, l := range strings.Split(stripFences(doc), "\n") {
+		if strings.HasPrefix(l, "| `Failed`") {
+			t.Errorf("Q2-guard: a phase table row defines a Failed phase: %s", strings.TrimSpace(l))
+		}
+	}
+}
+
+// TestRISOverlapPrecedenceStated guards the Q3 / C4431017493 resolution: when
+// RIS update and scaling overlap, phase display priority is independent of the
+// Progressing reason selection (blockers and pause precedence preserved), and
+// the message-only representation of the concurrent workflow is an explicitly
+// accepted trade-off.
+func TestRISOverlapPrecedenceStated(t *testing.T) {
+	risSec := section(kepDoc(t), "RoleInstanceSet")
+	if !strings.Contains(risSec, "independent of condition reason selection") {
+		t.Error("Q3-guard: RIS overlap text no longer states phase display priority is " +
+			"independent of condition reason selection (blocker/pause precedence)")
+	}
+	if !strings.Contains(risSec, "accepted v1alpha2 trade-off") {
+		t.Error("Q3-guard: RIS overlap text no longer records the message-only concurrent-scaling " +
+			"representation as an accepted trade-off")
 	}
 }
