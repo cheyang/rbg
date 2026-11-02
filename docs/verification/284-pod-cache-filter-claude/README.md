@@ -32,6 +32,13 @@ problem that still exists.
 | P-readpaths | prototype correctness suite incl. round-3 informer scoping | the PR's own suite (9 matched tests), both gate configs, mutation detector on | contract | 9 PASS ×2 configs, 0 fail | all green, including the new `TestAPITransformInformerScope` (diw-zw's scope ask: non-Pod informers take the default constructor; non-Pod transform calls == 0) |
 | P0-mechanics | label-selector semantics guards | 3 guard tests | contract | PASS ×3 | semantics unchanged after the rebase |
 
+Campaign smoke re-run on d1c331ae (A-F6 re-verification): exit 0, both
+batches, provenance pinned to the head commit — full 48.35 vs filtered
+7.64 MiB retained at 48/1000, matching round-2's 47.52/6.82 on the same
+machine (`results/round3/campaign-smoke/`). The campaign also ran with the
+new d1c331ae edits (isolation pin, shared transform instance, median
+averaging), proving the measurement harness still works end-to-end.
+
 N2 (sync-budget sample not derivable) **fixed**: the "1.14 seconds" sentence is
 replaced by "344–807 ms in the published [200/4,800
 runs](performance.md#startup-detail-200-related--4800-unrelated)", and
@@ -61,6 +68,8 @@ Round 2 re-verified the round-1 harness on the new head, reviewed the
 2,400-line tagged prototype in `test/podcacheunion/`), and extended the harness
 with round-2 findings and an integration layer that runs the PR's own prototype
 suite. Round 1's record is kept below unchanged.
+
+## Premise (P0): CONFIRMED (re-confirmed on the round-2 head)
 
 Claim (issue #284, quoted): "the reason is that irrelevant `Pods` consume most of
 the memory" — the operator caches all Pods. The revision-2 PR still changes no
