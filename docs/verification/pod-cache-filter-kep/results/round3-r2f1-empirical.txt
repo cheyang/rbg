@@ -1,0 +1,4 @@
+# R2-F1 empirical: USE_EXISTING_CLUSTER=true + bogus KUBECONFIG, TestAPITransformAdmissionAndStubs at d1c331ae
+# command: USE_EXISTING_CLUSTER=true KUBECONFIG=/nonexistent-kubeconfig go test -mod=vendor -tags=podcacheunion ./test/podcacheunion -count=1 -run TestAPITransformAdmissionAndStubs
+ok  	sigs.k8s.io/rbgs/test/podcacheunion	4.859s
+exit=0 (the fixture ignored the env var and started its isolated control plane; a real-cluster attempt would have failed on the bogus kubeconfig)

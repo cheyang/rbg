@@ -158,6 +158,13 @@ run_layer() {
     fi
     jq -rs '[.[]|select(.Test!=null and (.Action=="pass" or .Action=="fail"))]
             | .[] | "\(.Test)\t\(.Action)"' "$out" 2>/dev/null || echo "__PARSE_ERROR__"
+  elif [ "$kind" = "script" ]; then
+    bash -c "$cmd" >"$out" 2>&1 || true
+    if ! grep -qE '^(PASS|FAIL): ' "$out"; then
+      echo "__BUILD_OR_NO_TESTS__"; return 0
+    fi
+    # script convention: "PASS: <check id>" / "FAIL: <check id>" lines
+    sed -n 's/^PASS: /pass\t/p; s/^FAIL: /fail\t/p' "$out" | awk -F'\t' '{print $2"\t"$1}'
   elif [ "$kind" = "ginkgo" ]; then
     report="$(jq -r --arg l "$layer" '.layers[$l].report // empty' "$MANIFEST")"
     report="$(eval echo "$report")"; [ -n "$report" ] || report="$GINKGO_REPORT"

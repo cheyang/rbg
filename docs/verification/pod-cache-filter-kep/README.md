@@ -1,7 +1,7 @@
 # Verification — KEP-284 Pod Cache Filtering (PR #530)
 
-Reviewer: Codex (Reviewer B) · Round: initial · Reviewed head: `139b91cd`
-Base (merge-base): `d162208e` · Harness: additive only, production code untouched.
+Reviewer: Codex (Reviewer B) · Round: 3 (incremental) · Reviewed head: `d1c331ae`
+Base (merge-base): `09accf63` (moved from `4a0765f7` by the round-3 rebase) · Harness: additive only, production code untouched.
 
 ## Premise verdict (P0): Confirmed
 
@@ -75,6 +75,38 @@ override).
   reads scale with Pod *creation* rate, not just selector exits. The
   rate-limiter sizing should include the create path, or the KEP's own alpha
   alternative ("handle `AlreadyExists` explicitly") should be preferred.
+
+
+## Round-3 observed vs expected (head `d1c331ae`, delta `f8d67fa7..d1c331ae`)
+
+The round-3 revision scopes the `NewInformer` wrapper to `*corev1.Pod` (plus a
+new envtest test `TestAPITransformInformerScope`), pins the isolated envtest
+control plane, qualifies the `spec.nodeName` audit sentence, averages
+even-sized median groups, makes the sync budget derivable, and adds GOMEMLIMIT
+guidance. Re-verify of every carried contract plus new round-3 checks:
+
+| claim | expected | observed | verdict |
+| --- | --- | --- | --- |
+| P0 premise at the rebased tree | cacheOptions still has no Pod entry | PASS (cmd/rbgs/main.go identical across the base move) | Confirmed |
+| C1/C1i/C3/C4 admission + label contracts | green | green at d1c331ae (unit + envtest integration) | Confirmed |
+| D3 marker-exemption drift contracts | red by design (implementation PR's gate) | red at d1c331ae, same failure text | Red-by-design |
+| D4 group-name-drift guard / D5 TransformingStore pin | green | green at d1c331ae | Confirmed |
+| D2 perf-number consistency | green | green against the revised README | Confirmed |
+| R2-F1 cluster escape | fixed | FIXED: `export USE_EXISTING_CLUSTER=false` in transform-campaign.sh AND `UseExistingCluster: ptr.To(false)` in TestMain; empirical: suite green with `USE_EXISTING_CLUSTER=true` + bogus KUBECONFIG (results/round3-r2f1-empirical.txt) | Fixed |
+| R2-F2 / R2-F2-ci no CI compile of tagged package | still open | STILL-OPEN: `git grep podcacheunion -- Makefile .github/` empty at d1c331ae | Open |
+| R2-F3 nodeName audit claim | fixed | FIXED: qualified sentence names RecordNodeBindings; the six sites still all scoped (line 1431→1429 shift from the base move), no field selector anywhere | Fixed |
+| R2-F4 medianRange upper-middle | fixed | FIXED: averages even groups; author's TestMedianRange green; canary polarity inverted to a contract check on my branch | Fixed |
+| N1 PR-body placeholder/stale paragraph | still open | STILL-OPEN: `gh pr view 530` shows literal `fixes #XXXX` and the round-1 union-design opening paragraph | Open |
+| N2 underivable 1.14s sync sample | fixed | FIXED: README quotes the tabulated 344–807 ms envelope with a performance.md anchor (recomputed: min 344 macOS off stream+wl, max 807 macOS on stream+wl); heading slug verified | Fixed |
+| N3 GOMEMLIMIT guidance | fixed | FIXED: soft GOMEMLIMIT below container limit, validate startup/relist peaks | Fixed |
+| R3-scope (new) | wrapper wraps only Pods; others get the default constructor | Confirmed statically (vendored informers.go:65 default IS NewSharedIndexInformer; SetTransform/SetWatchErrorHandler applied after either way) and end-to-end: author's TestAPITransformInformerScope green in watch+relist modes | Confirmed |
+| Author's full tagged suite | green | `go test -mod=vendor -tags=podcacheunion ./test/podcacheunion -count=1 -race` exit 0 in both WatchListClient configurations (results/round3-author-suite-gate{off,on}.txt) | Confirmed |
+
+Harness-bites for the new static checks: all round-3 checks (R2-F1, R2-F3,
+R2-F4, N2, N3, R3-scope) are RED on the previous head `f8d67fa7` and R2-F2 is
+red on both heads (results/round3-static-bites-prevhead.txt). re-verify.sh now
+supports `kind: script` layers (PASS:/FAIL: lines), so the static layer reports
+per-finding verdicts; full sweep: results/reverify/.
 
 ## Continuing after revisions
 

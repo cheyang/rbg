@@ -1,14 +1,14 @@
 {
   "pr": "https://github.com/sgl-project/rbg/pull/530",
   "topic": "pod-cache-filter-kep",
-  "reviewedHead": "f8d67fa701956638658594bccfe34b7947222e36",
-  "base": "4a0765f78b0930114a4b73a64433ee8f27c34372",
+  "reviewedHead": "d1c331aeb608881bb876627f44857e9df85f332c",
+  "base": "09accf63747177f12544d8738cab13ea07910a25",
   "premise": {
     "id": "P0",
     "claim": "The rbgs operator caches ALL Pods today (cacheOptions filters Service/StatefulSet/Deployment but not Pod), so unrelated Pods dominate operator memory (issue #284).",
     "runsAgainst": "base",
     "verdict": "confirmed",
-    "evidence": "scripts/kep284-static-checks.sh P0 checks; issue #284 pprof; code inspection of cmd/rbgs/main.go cacheOptions().",
+    "evidence": "scripts/kep284-static-checks.sh P0 checks (re-run green at round-3 head d1c331ae; cmd/rbgs/main.go unchanged across the base move 4a0765f7->09accf63); issue #284 pprof; code inspection of cmd/rbgs/main.go cacheOptions().",
     "note": "Docs-only PR: premise verified statically; memory mechanism corroborated by issue #284 heap profiles, not re-measured."
   },
   "harnessPaths": [
@@ -81,8 +81,16 @@
       "polarity": "contract",
       "layer": "static",
       "match": [
-        "kep284-static-checks.sh"
-      ]
+        "P0: cacheOptions has no Pod filter",
+        "P0: cacheOptions filters corev1.Service",
+        "P0: cacheOptions filters appsv1.StatefulSet",
+        "P0: cacheOptions filters appsv1.Deployment",
+        "C2:",
+        "C5:",
+        "D1:",
+        "D2:"
+      ],
+      "note": "static layer emits one line per check; re-verify.sh script-kind support added in round 3."
     },
     {
       "id": "D3",
@@ -114,6 +122,76 @@
         "TestFIFOsDoNotImplementTransformingStore"
       ],
       "note": "GREEN at f8d67fa on vendored client-go v0.34.2. TransformingStore embeds the full Store interface; FIFOs implement only ReflectorStore. If this flips red after a client-go upgrade, the KEP's wrapper drawback is obsolete."
+    },
+    {
+      "id": "R2-F1",
+      "title": "Campaign/test fixture pins the isolated envtest control plane (USE_EXISTING_CLUSTER)",
+      "polarity": "contract",
+      "layer": "static",
+      "match": [
+        "R2-F1:"
+      ],
+      "note": "Round-3 head d1c331ae FIXES this: script export + TestMain UseExistingCluster:ptr.To(false). Harness-bites: red on f8d67fa. Also empirically re-run green with USE_EXISTING_CLUSTER=true and a bogus KUBECONFIG."
+    },
+    {
+      "id": "R2-F2",
+      "title": "Nothing in CI/Makefile compiles the podcacheunion-tagged package",
+      "polarity": "contract",
+      "layer": "static",
+      "match": [
+        "R2-F2:"
+      ],
+      "note": "OPEN at d1c331ae: git grep podcacheunion -- Makefile .github/ finds nothing. Cheap fix: one CI compile step."
+    },
+    {
+      "id": "R2-F3",
+      "title": "KEP read-path audit sentence matches the code (spec.nodeName reads named and scoped)",
+      "polarity": "contract",
+      "layer": "static",
+      "match": [
+        "R2-F3:"
+      ],
+      "note": "FIXED at d1c331ae: qualified sentence names RecordNodeBindings; bites-red on f8d67fa."
+    },
+    {
+      "id": "R2-F4",
+      "title": "medianRange averages the two middle values for even-sized groups",
+      "polarity": "contract",
+      "layer": "static",
+      "match": [
+        "R2-F4:"
+      ],
+      "note": "FIXED at d1c331ae (was the upper-middle canary on Reviewer A's branch); author's TestMedianRange green in both gate configs; bites-red on f8d67fa."
+    },
+    {
+      "id": "N2",
+      "title": "Sync-budget quote derivable from performance.md (344-807 ms envelope + anchor)",
+      "polarity": "contract",
+      "layer": "static",
+      "match": [
+        "N2:"
+      ],
+      "note": "FIXED at d1c331ae; envelope recomputed from the startup-detail table (min 344 macOS off stream+wl, max 807 macOS on stream+wl)."
+    },
+    {
+      "id": "N3",
+      "title": "GOMEMLIMIT operator guidance present in the KEP README",
+      "polarity": "contract",
+      "layer": "static",
+      "match": [
+        "N3:"
+      ],
+      "note": "FIXED at d1c331ae: soft GOMEMLIMIT below the container limit, then validate startup/relist peaks."
+    },
+    {
+      "id": "R3-scope",
+      "title": "NewInformer wrapper is Pod-scoped; other types keep the default constructor",
+      "polarity": "contract",
+      "layer": "static",
+      "match": [
+        "R3-scope:"
+      ],
+      "note": "New round-3 contract guarding the revision's scoping change; also covered end-to-end by the author's TestAPITransformInformerScope."
     }
   ],
   "liveNote": "L3 intentionally skipped (docs-only PR; no KUBECONFIG layer). Memory/RSS re-measurement on the production operator is graduation work owned by the implementation PR.",

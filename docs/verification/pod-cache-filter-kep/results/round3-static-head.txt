@@ -1,0 +1,21 @@
+PASS: P0: cacheOptions has no Pod filter (operator caches all Pods today)
+PASS: P0: cacheOptions filters corev1.Service{} by group-name (matches issue #284 description)
+PASS: P0: cacheOptions filters appsv1.StatefulSet{} by group-name (matches issue #284 description)
+PASS: P0: cacheOptions filters appsv1.Deployment{} by group-name (matches issue #284 description)
+PASS: C2: getExistingPod exists and is called from the pod-create path (KEP item 1 target)
+PASS: C5: no existing 'managed' label constant — KEP introduces it as a new marker
+PASS: D1: kep-number 284
+PASS: D1: status provisional
+PASS: D1: see-also issue #284
+PASS: D1: README titled KEP-284
+All KEP-284 (transform revision) numeric claims are internally consistent.
+PASS: D2: performance/README numbers internally consistent
+PASS: R2-F1: campaign pins USE_EXISTING_CLUSTER=false and TestMain pins UseExistingCluster:false
+FAIL: R2-F2: nothing in CI/Makefile compiles test/podcacheunion (tag referenced nowhere)
+PASS: R2-F3: nodeName audit sentence qualified (RecordNodeBindings named, scoped sources)
+PASS: R2-F4: medianRange averages even-sized groups
+PASS: N2: sync budget quotes the tabulated 344-807 ms envelope with a performance.md anchor
+PASS: N3: README carries GOMEMLIMIT guidance for filtered deployments
+PASS: N1-repo: kep.yaml/README titles aligned
+PASS: R3-scope: NewInformer wrapper is Pod-scoped and the default constructor is untouched for other types
+static-head exit=1

@@ -1,0 +1,20 @@
+PASS: P0: cacheOptions has no Pod filter (operator caches all Pods today)
+PASS: P0: cacheOptions filters corev1.Service{} by group-name (matches issue #284 description)
+PASS: P0: cacheOptions filters appsv1.StatefulSet{} by group-name (matches issue #284 description)
+PASS: P0: cacheOptions filters appsv1.Deployment{} by group-name (matches issue #284 description)
+PASS: C2: getExistingPod exists and is called from the pod-create path (KEP item 1 target)
+PASS: C5: no existing 'managed' label constant — KEP introduces it as a new marker
+PASS: D1: kep-number 284
+PASS: D1: status provisional
+PASS: D1: see-also issue #284
+PASS: D1: README titled KEP-284
+All KEP-284 (transform revision) numeric claims are internally consistent.
+PASS: D2: performance/README numbers internally consistent
+FAIL: R2-F1: campaign can escape to the kubeconfig cluster via USE_EXISTING_CLUSTER
+FAIL: R2-F2: nothing in CI/Makefile compiles test/podcacheunion (tag referenced nowhere)
+FAIL: R2-F3: bare 'No code reads Pods by spec.nodeName' claim is present but false
+FAIL: R2-F4: medianRange still reports the upper-middle value for even-sized groups
+FAIL: N2: sync-budget still quotes the underivable 1.14s sample
+FAIL: N3: no GOMEMLIMIT guidance in the KEP README
+PASS: N1-repo: kep.yaml/README titles aligned
+FAIL: R3-scope: wrapper scoping or the vendored default constructor changed
