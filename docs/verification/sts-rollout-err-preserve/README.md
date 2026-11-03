@@ -74,7 +74,12 @@ and was re-proven anyway (below).
 
 - **re-verify.sh (unit + envtest, grafted onto `8e076741`)**: F1–F7 all
   **FIXED**, F8 canary **STILL-PRESENT** (expected — pre-existing panic, not
-  this PR's scope). Raw: `results/reverify/{unit,integration}.{out,parsed}`.
+  this PR's scope). Raw output for this round: `results/round2/reverify-{unit,integration}.{json,parsed}`
+  (re-run manually with the manifest layer commands on a graft of this harness
+  onto `8e076741`; `results/reverify/` still holds the round-1 capture — the
+  script's cleanup trap restores tracked files after its persist copy, so its
+  in-place round-2 copy was clobbered; the printed verdict table is computed
+  before the trap and is unaffected).
 - **Harness-update applied**: the PR now declares its own
   `TestRollingUpdateParameters_PropagatesPartitionConversionError`, colliding
   with this harness's round-1 test of the same name (same package on graft →

@@ -1,0 +1,10 @@
+{"Time":"2026-11-04T03:10:18.649713203+08:00","Action":"start","Package":"sigs.k8s.io/rbgs/pkg/reconciler"}
+{"Time":"2026-11-04T03:10:18.663503633+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError"}
+{"Time":"2026-11-04T03:10:18.663577396+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError","Output":"=== RUN   TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError\n","OutputType":"frame"}
+{"Time":"2026-11-04T03:10:20.645420159+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError","Output":"{\"level\":\"info\",\"ts\":\"2026-11-04T03:10:20+08:00\",\"msg\":\"sts not equal, diff: old sts not exist\",\"env\":\"test\"}\n"}
+{"Time":"2026-11-04T03:10:20.645462871+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError","Output":"{\"level\":\"info\",\"ts\":\"2026-11-04T03:10:20+08:00\",\"msg\":\"sts hash not equal, old: , new: rev-1\",\"env\":\"test\"}\n"}
+{"Time":"2026-11-04T03:10:20.688746142+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError","Output":"--- PASS: TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError (2.03s)\n","OutputType":"frame"}
+{"Time":"2026-11-04T03:10:20.688774193+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestEnvtest_ReconcileStatefulSet_NoScaleToZeroOnPodListError","Elapsed":2.03}
+{"Time":"2026-11-04T03:10:20.688793284+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Output":"PASS\n","OutputType":"frame"}
+{"Time":"2026-11-04T03:10:20.690706442+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Output":"ok  \tsigs.k8s.io/rbgs/pkg/reconciler\t2.041s\n"}
+{"Time":"2026-11-04T03:10:20.690728343+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Elapsed":2.041}
