@@ -106,3 +106,22 @@ it: run scripts/re-verify.sh to graft the harness onto the current PR head, mind
 tests are contract polarity, and report an observed-vs-expected table. Layer 2 needs envtest
 assets (setup-envtest, k8s 1.31.0). No live/cluster layer this round.
 ```
+
+## Round 2 (2026-11-04) — head `8e076741`, base moved `4a0765f7` -> `3612013e`
+
+The PR was rebased (base move pulls in only port-allocator KEP-284/#530-#533 changes;
+`pkg/reconciler` is byte-identical between bases except this PR) and the author **added the
+regression tests** round 1 asked for (`pkg/reconciler/sts_reconciler_test.go`, +182):
+
+| Check | Command / harness | Result |
+|-------|-------------------|--------|
+| Harness re-verify on new head | `scripts/re-verify.sh` (auto-resolved head 8e076741) | B1 FIXED (unit 2/2 pass), B2 FIXED (envtest pass) — `results/reverify/` |
+| Author tests bite (base control) | head's `sts_reconciler_test.go` grafted onto base `3612013e` | 5/5 `PreservesReadErrors` subtests FAIL ("An error is expected but got nil"); `ReadFailureDoesNotScaleToZero` FAILS and captures the `replicas":0` apply patch; `PropagatesPartitionConversionError` PASSes by design — `results/round2-base-author-tests.out` |
+| Author tests green on head | same three tests on `8e076741` | all PASS — `results/round2-head-author-tests.out` |
+| Full regression on head | `go test -mod=vendor ./pkg/... ./internal/... -count=1` | exit 0 — `results/round2-head-full-suite.out` |
+| F2 canary (pre-existing panic) | scratch `require.NotPanics` on head, live STS=1 vs role=4 | still panics — `results/round2-f2-canary-head.txt` |
+| CI on head | `gh pr checks 540` | 22/22 pass (unit-test, envtest, lint, e2e incl. rollout) |
+
+Outcome: blocker F1 (missing regression coverage) is **fixed** by this head — the coverage
+exists in the PR and is proven base-red / head-green. The envtest-level no-write guarantee
+continues to be held independently by B2 above.

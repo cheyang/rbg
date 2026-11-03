@@ -1,0 +1,5 @@
+F2 canary re-run on head 8e076741 (scratch, not committed):
+TestRollingUpdateParameters_PanicOnShrunkLiveSts_CANARY (role.Replicas=4, live STS replicas=1,
+maxUnavailable=1, maxSurge=1) -> require.NotPanics FAILED: rollingUpdateParameters panicked
+(index out of range, same mechanism as round 1). Pre-existing finding still live on head;
+unchanged code path (diff cf4bff4c..8e076741 -- pkg/reconciler/sts_reconciler.go is empty).

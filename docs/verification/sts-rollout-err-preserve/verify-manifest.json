@@ -15,7 +15,7 @@
     "runsAgainst": "base",
     "layer": "integration",
     "verdict": "confirmed",
-    "evidence": "base (4a0765f7): reconcile returned nil and live STS went 5 -> 0 replicas; head (cf4bff4c): error propagated, replicas stayed 5. See results/base-envtest.out and results/base-unit.out.",
+    "evidence": "base (4a0765f7): reconcile returned nil and live STS went 5 -> 0 replicas; head (cf4bff4c): error propagated, replicas stayed 5. See results/base-envtest.out and results/base-unit.out. Round 2: premise re-confirmed on the moved base 3612013e via the PR's own grafted tests (nil error, captured replicas:0 apply patch) \u2014 results/round2-base-author-tests.out.",
     "match": [
       "TestVerifyStatefulSetNotScaledToZeroOnPodListError"
     ]
