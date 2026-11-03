@@ -759,13 +759,17 @@ func TestTransitionInputVocabularyConsistent(t *testing.T) {
 	siteRe := regexp.MustCompile(`(?i)(lower-level .{0,40}trigger RBG phase transitions|` +
 		"RBG adds `status.phase`, with transitions based on|" +
 		`RBG transitions use lower-level|RBG derives recovery facts from lower-level)`)
+	lowerCondRe := regexp.MustCompile(`(?i)lower-level (phases, )?conditions`)
 	var withConditions, withoutConditions []string
 	for i, l := range strings.Split(doc, "\n") {
 		if !siteRe.MatchString(l) {
 			continue
 		}
 		entry := fmt.Sprintf("line %d: %s", i+1, strings.TrimSpace(l))
-		if strings.Contains(strings.ToLower(l), "condition") {
+		// "names lower-level conditions as an input" — the word must appear in
+		// the lower-level input enumeration, not in a trailing clause such as
+		// "and uses Accepted / Progressing / Ready conditions".
+		if lowerCondRe.MatchString(l) {
 			withConditions = append(withConditions, entry)
 		} else {
 			withoutConditions = append(withoutConditions, entry)
