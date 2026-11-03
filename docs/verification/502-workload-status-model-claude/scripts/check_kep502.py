@@ -313,12 +313,16 @@ def check_c8(kep_text):
 
 def check_c9(kep_text):
     """Round-2 contract (N2, pre-existing nit): the RIS Progressing prose
-    sentence 'Activity reasons may include ...' must enumerate every RIS
-    activity reason defined in the activity/child-readiness family table
-    (rows: Initial creation -> Creating, Update -> RollingUpdate,
+    sentence enumerating activity reasons ('Activity reasons may include ...'
+    in rounds 1-2, 'Activity reasons are ...' from f622d642 on) must list
+    every RIS activity reason defined in the activity/child-readiness family
+    table (rows: Initial creation -> Creating, Update -> RollingUpdate,
     Instance-count scaling -> ScalingUp/ScalingDown, Recovery -> Recovering).
     An implementer writing RIS's reason validator needs the complete set in
     one place; today it is split across prose and two tables.
+    Round-3 re-anchor: the fix reworded 'may include' to the definitive
+    'are'; the anchor now accepts both phrasings so the contract keeps
+    testing the enumeration, not the wording.
     Polarity: contract (fail == enumeration incomplete).
     """
     # collect RIS reasons from the activity/child-readiness family table
@@ -349,10 +353,11 @@ def check_c9(kep_text):
         if len(cells) >= 3 and cells[0] in activity_rows:
             for tok in re.findall(r"`([A-Za-z0-9]+)`", cells[2]):
                 expected.add(tok)
-    m = re.search(r"Activity reasons may include (.*?)[.;]", kep_text, re.S)
+    m = re.search(r"Activity reasons (?:may include|are) (.*?)[.;]",
+                  kep_text, re.S)
     if not m:
         emit("C9-ris-activity-reasons-complete", False,
-             "'Activity reasons may include ...' sentence not found")
+             "'Activity reasons may include/are ...' sentence not found")
         return
     listed = set(re.findall(r"`([A-Za-z0-9]+)`", m.group(1)))
     missing = sorted(expected - listed)
