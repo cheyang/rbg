@@ -6,7 +6,8 @@
     "docs/verification/pr-524-compat-gate",
     "test/envtest/testcase/deprecationv1a1outage",
     "test/envtest/testcase/deprecationv1a1spoof",
-    "test/envtest/testcase/deprecationv1a1conversion"
+    "test/envtest/testcase/deprecationv1a1conversion",
+    "test/envtest/testcase/deprecationv1a1typeexact"
   ],
   "premise": {
     "id": "P0",
@@ -29,7 +30,7 @@
     },
     "integration": {
       "kind": "ginkgo",
-      "cmd": "D=\"${GINKGO_REPORT%/*}\"; export KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64}\" ; go test -count=1 ./test/envtest/testcase/deprecationv1a1/... -ginkgo.json-report=\"$D/r-deprecationv1a1.json\" && go test -count=1 ./test/envtest/testcase/deprecationv1a1outage/... -ginkgo.json-report=\"$D/r-outage.json\" && go test -count=1 ./test/envtest/testcase/deprecationv1a1spoof/... -ginkgo.json-report=\"$D/r-spoof.json\" && go test -count=1 ./test/envtest/testcase/deprecationv1a1conversion/... -ginkgo.json-report=\"$D/r-conversion.json\"; rc=$?; jq -s 'add' \"$D/r-deprecationv1a1.json\" \"$D/r-outage.json\" \"$D/r-spoof.json\" \"$D/r-conversion.json\" > \"$GINKGO_REPORT\"; exit $rc"
+      "cmd": "D=\"${GINKGO_REPORT%/*}\"; export KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64}\" ; go test -count=1 ./test/envtest/testcase/deprecationv1a1/... -ginkgo.json-report=\"$D/r-deprecationv1a1.json\" && go test -count=1 ./test/envtest/testcase/deprecationv1a1outage/... -ginkgo.json-report=\"$D/r-outage.json\" && go test -count=1 ./test/envtest/testcase/deprecationv1a1spoof/... -ginkgo.json-report=\"$D/r-spoof.json\" && go test -count=1 ./test/envtest/testcase/deprecationv1a1conversion/... -ginkgo.json-report=\"$D/r-conversion.json\" && go test -count=1 ./test/envtest/testcase/deprecationv1a1typeexact/... -ginkgo.json-report=\"$D/r-typeexact.json\"; rc=$?; jq -s 'add' \"$D/r-deprecationv1a1.json\" \"$D/r-outage.json\" \"$D/r-spoof.json\" \"$D/r-conversion.json\" \"$D/r-typeexact.json\" > \"$GINKGO_REPORT\"; exit $rc"
     }
   },
   "findings": [
@@ -79,6 +80,18 @@
       "match": [
         "enables webhook conversion for the multi-version workload CRDs",
         "stores a v1alpha1 create through the production v1alpha2 conversion"
+      ]
+    },
+    {
+      "id": "TYPE-EXACT-GRANDFATHERING",
+      "polarity": "contract",
+      "layer": "integration",
+      "note": "Round 4 (fb3aa3d9): update-path grandfathering is type-exact in both validators \u2014 a role keeps its own deprecated type; switching between deprecated types is rejected as a new use. Pinned through the real admission chain (production registrations + shipped manifests) on both API versions, with grandfathered objects seeded pre-gate. Bite check: reverting the one-line rule to lenient name-only grandfathering flips both type-switch specs red (results/bite-typeexact-lenient.txt).",
+      "match": [
+        "admits a v1alpha2 update that keeps the role's deprecated workload type",
+        "rejects a v1alpha2 update switching between deprecated workload types",
+        "admits a v1alpha1 update that keeps the role's deprecated workload type",
+        "rejects a v1alpha1 update switching between deprecated workload types"
       ]
     }
   ],

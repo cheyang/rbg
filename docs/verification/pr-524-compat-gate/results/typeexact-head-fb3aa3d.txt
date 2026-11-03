@@ -1,0 +1,4 @@
+go test -count=1 ./test/envtest/testcase/deprecationv1a1typeexact/... on fb3aa3d (grafted harness):
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/deprecationv1a1typeexact	6.157s
+4/4 specs PASS: same-type updates admitted (v1alpha2 + v1alpha1), type-switch
+updates rejected with "new uses are not accepted" (v1alpha2 + v1alpha1).

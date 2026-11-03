@@ -1,0 +1,13 @@
+Bite check for the type-exact grandfathering contract (round 4, head fb3aa3d):
+Reverted fb3aa3d9's one-line type-exact rule back to lenient name-only
+grandfathering in BOTH validators (v1alpha1 deprecation_webhook.go:147
+oldType == workloadType -> isDeprecatedV1alpha1WorkloadType(oldType);
+v1alpha2 rolebasedgroup_validation.go:340 oldType != wt -> !isDeprecatedWorkloadType(oldType)),
+re-ran the harness:
+  Ran 4 of 4 Specs: 2 Passed | 2 Failed
+  FAIL: rejects a v1alpha2 update switching between deprecated workload types
+  FAIL: rejects a v1alpha1 update switching between deprecated workload types
+i.e. under the lenient rule the type-switch updates were admitted, exactly the
+loophole the commit closes; the two same-type specs stayed green. Production
+code restored (git checkout -f), re-run green 4/4. The harness bites on both
+API versions through the real admission chain.
