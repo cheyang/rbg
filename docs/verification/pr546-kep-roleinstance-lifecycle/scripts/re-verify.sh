@@ -11,7 +11,7 @@
 set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
 TOPIC_DIR="$(dirname "$HERE")"
-ROOT="$(cd "$TOPIC_DIR/../../../.." && pwd)"
+ROOT="$(cd "$TOPIC_DIR/../../.." && pwd)"
 MANIFEST="$TOPIC_DIR/verify-manifest.json"
 
 REF="${1:-}"
@@ -71,7 +71,7 @@ if [ "$DOC_STATUS" -eq 0 ]; then
   echo "F-SEEALSO-502: Fixed (see-also targets all resolve)"
 else
   if grep -q 'see-also: FAIL' "$TOPIC_DIR/results/docchecks-rerun.txt"; then
-    echo "F-SEEALTO502/F-SEEALSO-502: Still-broken (dangling see-also reference reproduces)"
+    echo "F-SEEALSO-502: Still-broken (dangling see-also reference reproduces)"
   else
     echo "F-SEEALSO-502: Still-broken or Harness-update (doc checks failed for another reason — see results/docchecks-rerun.txt)"
   fi
