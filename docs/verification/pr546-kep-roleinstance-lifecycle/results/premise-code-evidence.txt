@@ -1,0 +1,41 @@
+== P0 premise code-path evidence (base/PR head, code unchanged by PR #546) ==
+
+1. Issue #527 claims: "RBG's existing RIS lifecycle provides coordination through labels and finalizers for PreDelete / InPlaceUpdate"
+   api/workloads/v1alpha2/roleinstanceset_types.go:
+90:	PreDelete *RoleInstanceSetLifecycleHook `json:"preDelete,omitempty"`
+92:	InPlaceUpdate *RoleInstanceSetLifecycleHook `json:"inPlaceUpdate,omitempty"`
+96:	LabelsHandler     map[string]string `json:"labelsHandler,omitempty"`
+97:	FinalizersHandler []string          `json:"finalizersHandler,omitempty"`
+98:	// MarkNotReady = true means:
+102:	MarkNotReady bool `json:"markPodNotReady,omitempty"`
+
+2. Controller writes markers (labels + finalizers) onto the RI and waits for external removal:
+   pkg/inplace/instance/lifecycle/lifecycle_utils.go (UpdateRoleInstanceLifecycleWithHandler):
+65:	return constants.RoleInstanceLifecycleStateType(instance.Labels[constants.RoleInstanceSetLifecycleStateKey])
+90:		instance.Labels[constants.RoleInstanceSetLifecycleStateKey] = string(state)
+126:			constants.RoleInstanceSetLifecycleStateKey,
+157:		var labelsHandler, finalizersHandler string
+159:			labelsHandler = fmt.Sprintf(`%s,"%s":"%s"`, labelsHandler, k, v)
+162:			finalizersHandler = fmt.Sprintf(`%s,"%s"`, finalizersHandler, v)
+164:		finalizersHandler = fmt.Sprintf(`[%s]`, strings.TrimLeft(finalizersHandler, ","))
+168:			constants.RoleInstanceSetLifecycleStateKey,
+
+3. KEP 'Ready Gating' claim: helper returns immediately when spec.readinessGates lacks RoleInstanceCustomReady:
+   pkg/inplace/instance/readiness/instance_readiness_utils.go (addNotReadyKey):
+36:	if !containsReadinessGate(instance, condType) {
+72:	if !containsReadinessGate(instance, condType) {
+135:	return containsReadinessGate(instance, workloadsv1alpha2.RoleInstanceCustomReady)
+151:func containsReadinessGate(instance *workloadsv1alpha2.RoleInstance, condType workloadsv1alpha2.RoleInstanceConditionType) bool {
+
+4. KEP marker naming: existing sibling field is serialized as markPodNotReady:
+102:	MarkNotReady bool `json:"markPodNotReady,omitempty"`
+
+5. No RoleInstance phase field/label exists today (KEP proposes a new 5-value phase model):
+   grep 'Phase' on RoleInstanceSpec/Status:
+0
+   0 occurrences -> phase model is entirely new
+
+6. kep.yaml see-also target existence:
+keps/30-instanceset
+   /keps/30-instanceset OK
+   /keps/502-workload-status-model MISSING (dangling reference)

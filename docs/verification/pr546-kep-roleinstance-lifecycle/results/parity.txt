@@ -1,0 +1,3 @@
+headings: en=42 zh=42
+code-fences: en=12 zh=12
+table-lines: en=39 zh=39

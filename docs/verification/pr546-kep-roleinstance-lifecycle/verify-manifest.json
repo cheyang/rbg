@@ -1,0 +1,116 @@
+{
+  "topic": "pr546-kep-roleinstance-lifecycle",
+  "pr": "https://github.com/sgl-project/rbg/pull/546",
+  "reviewer": "claude",
+  "round": 1,
+  "harnessPaths": [
+    "docs/verification/pr546-kep-roleinstance-lifecycle",
+    "pkg/inplace/instance/readiness/kep527_claims_test.go",
+    "pkg/inplace/instance/lifecycle/kep527_claims_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "RBG's existing RIS lifecycle provides coordination through labels and finalizers for PreDelete / InPlaceUpdate, but this needs to be extended to support instance-level application actions across RI creation, updates, readiness, and deletion (issue #527); container lifecycle hooks cannot express instance-level coordination.",
+    "reportedComponent": "RoleInstance / RIS lifecycle coordination (labelsHandler + finalizersHandler)",
+    "patchedComponent": "keps/527-roleinstance-lifecycle (design document; no code change in this PR)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "Code-path: existing PreDelete/InPlaceUpdate hooks with labelsHandler/finalizersHandler verified in api/workloads/v1alpha2/roleinstanceset_types.go and pkg/inplace/instance/lifecycle/lifecycle_utils.go; pinned by TestKep527ExistingCoordinationModel; see results/premise-code-evidence.txt",
+    "match": ["TestKep527ExistingCoordinationModel", "TestKep527ReadinessGatePrerequisite"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/inplace/instance/readiness/ ./pkg/inplace/instance/lifecycle/ -run 'TestKep527' -v"
+    },
+    "docs": {
+      "kind": "script",
+      "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_kep_docs.sh"
+    }
+  },
+  "findings": [
+    {
+      "id": "F-SEEALSO-502",
+      "polarity": "contract",
+      "layer": "docs",
+      "status": "open",
+      "match": ["see-also: (check_kep_docs.sh section 4)"]
+    },
+    {
+      "id": "F-PREDELETE-LIVENESS",
+      "polarity": "contract",
+      "layer": "manual",
+      "status": "open",
+      "match": [],
+      "note": "Design-level: kubelet/GC termination semantics cannot be exercised in L1/L2; needs a live cluster (see liveNote)."
+    },
+    {
+      "id": "F-ESCAPE-HATCH",
+      "polarity": "contract",
+      "layer": "manual",
+      "status": "open",
+      "match": [],
+      "note": "Design-level; no runnable layer."
+    },
+    {
+      "id": "F-SCOPE-PRECREATE",
+      "polarity": "contract",
+      "layer": "manual",
+      "status": "open",
+      "match": [],
+      "note": "Design-level scope question vs issue #527; no runnable layer."
+    },
+    {
+      "id": "F-PHASE-STORAGE",
+      "polarity": "contract",
+      "layer": "manual",
+      "status": "open",
+      "match": [],
+      "note": "Design-level; no runnable layer."
+    },
+    {
+      "id": "F-OLDNEW-ISOLATION",
+      "polarity": "contract",
+      "layer": "manual",
+      "status": "open",
+      "match": [],
+      "note": "Design-level; no runnable layer."
+    },
+    {
+      "id": "F-KEPYAML-NOISE",
+      "polarity": "contract",
+      "layer": "docs",
+      "status": "open",
+      "match": [],
+      "note": "Manual text review; no automated check."
+    },
+    {
+      "id": "F-MARKNOTREADY-NAME",
+      "polarity": "contract",
+      "layer": "docs",
+      "status": "open",
+      "match": [],
+      "note": "Manual text review; no automated check."
+    },
+    {
+      "id": "F-CUSTOMREADY-STATUS-EMPTY",
+      "polarity": "canary",
+      "layer": "unit",
+      "status": "open",
+      "origin": "preexisting",
+      "introducedByPR": false,
+      "match": ["TestKep527CanaryCustomReadyFirstWriteOmitsStatus"]
+    },
+    {
+      "id": "P0",
+      "polarity": "contract",
+      "layer": "unit",
+      "status": "passed",
+      "match": ["TestKep527ExistingCoordinationModel", "TestKep527ReadinessGatePrerequisite"]
+    }
+  ],
+  "gatingFindings": ["F-SEEALSO-502"],
+  "liveNote": "L3 (not run this round, per round policy: unit+integration only): to decide F-PREDELETE-LIVENESS, run a live cluster: enable a preDelete hook, delete the RI (not the Pods), and observe whether member-Pod containers receive SIGTERM while the preDelete marker is still set — kubelet starts graceful termination on deletionTimestamp regardless of the Pod's finalizer; GC deletes dependents once the owner has a deletionTimestamp. Expected signal if the design gap is real: container termination begins during the preDelete wait, bounded by terminationGracePeriodSeconds."
+}
