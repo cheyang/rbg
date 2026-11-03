@@ -1,0 +1,59 @@
+=== RUN   TestRollingUpdateParameters_PreservesReadErrors
+=== RUN   TestRollingUpdateParameters_PreservesReadErrors/pod_list_failure
+    sts_reconciler_test.go:999: 
+        	Error Trace:	/tmp/pr540-base/pkg/reconciler/sts_reconciler_test.go:999
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestRollingUpdateParameters_PreservesReadErrors/pod_list_failure
+        	Messages:   	error was swallowed; caller would apply replicas=0
+=== RUN   TestRollingUpdateParameters_PreservesReadErrors/controllerrevision_list_failure
+    sts_reconciler_test.go:999: 
+        	Error Trace:	/tmp/pr540-base/pkg/reconciler/sts_reconciler_test.go:999
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestRollingUpdateParameters_PreservesReadErrors/controllerrevision_list_failure
+        	Messages:   	error was swallowed; caller would apply replicas=0
+=== RUN   TestRollingUpdateParameters_PreservesReadErrors/missing_controllerrevision
+    sts_reconciler_test.go:999: 
+        	Error Trace:	/tmp/pr540-base/pkg/reconciler/sts_reconciler_test.go:999
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestRollingUpdateParameters_PreservesReadErrors/missing_controllerrevision
+        	Messages:   	error was swallowed; caller would apply replicas=0
+=== RUN   TestRollingUpdateParameters_PreservesReadErrors/malformed_role-size_annotation
+    sts_reconciler_test.go:999: 
+        	Error Trace:	/tmp/pr540-base/pkg/reconciler/sts_reconciler_test.go:999
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestRollingUpdateParameters_PreservesReadErrors/malformed_role-size_annotation
+        	Messages:   	error was swallowed; caller would apply replicas=0
+=== RUN   TestRollingUpdateParameters_PreservesReadErrors/missing_role-size_annotation
+    sts_reconciler_test.go:999: 
+        	Error Trace:	/tmp/pr540-base/pkg/reconciler/sts_reconciler_test.go:999
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestRollingUpdateParameters_PreservesReadErrors/missing_role-size_annotation
+        	Messages:   	error was swallowed; caller would apply replicas=0
+--- FAIL: TestRollingUpdateParameters_PreservesReadErrors (0.05s)
+    --- FAIL: TestRollingUpdateParameters_PreservesReadErrors/pod_list_failure (0.04s)
+    --- FAIL: TestRollingUpdateParameters_PreservesReadErrors/controllerrevision_list_failure (0.00s)
+    --- FAIL: TestRollingUpdateParameters_PreservesReadErrors/missing_controllerrevision (0.00s)
+    --- FAIL: TestRollingUpdateParameters_PreservesReadErrors/malformed_role-size_annotation (0.00s)
+    --- FAIL: TestRollingUpdateParameters_PreservesReadErrors/missing_role-size_annotation (0.00s)
+=== RUN   TestReconcileStatefulSet_ReadFailureDoesNotScaleToZero
+    sts_reconciler_test.go:1070: 
+        	Error Trace:	/tmp/pr540-base/pkg/reconciler/sts_reconciler_test.go:1070
+        	Error:      	Should be true
+        	Test:       	TestReconcileStatefulSet_ReadFailureDoesNotScaleToZero
+        	Messages:   	expected the Pod List error to propagate, got <nil>
+    sts_reconciler_test.go:1071: 
+        	Error Trace:	/tmp/pr540-base/pkg/reconciler/sts_reconciler_test.go:1071
+        	Error:      	Should be empty, but was [{"apiVersion":"apps/v1","kind":"StatefulSet","metadata":{"annotations":{"rbg.workloads.x-k8s.io/role-size":"4"},"labels":{"rbg.workloads.x-k8s.io/group-name":"test-rbg","rbg.workloads.x-k8s.io/group-uid":"6bc54a85beabe0c39e8fc92afe50660142a0f54d","rbg.workloads.x-k8s.io/role-name":"test-role","rbg.workloads.x-k8s.io/role-revision-test-role":"rev-1"},"name":"test-rbg-test-role","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"controller":true,"kind":"RoleBasedGroup","name":"test-rbg","uid":"rbg-test-uid"}]},"spec":{"minReadySeconds":0,"podManagementPolicy":"Parallel","replicas":0,"selector":{"matchLabels":{"rbg.workloads.x-k8s.io/group-name":"test-rbg","rbg.workloads.x-k8s.io/group-uid":"6bc54a85beabe0c39e8fc92afe50660142a0f54d","rbg.workloads.x-k8s.io/role-name":"test-role"}},"serviceName":"s-test-rbg-test-role","template":{"metadata":{"labels":{"rbg.workloads.x-k8s.io/group-name":"test-rbg","rbg.workloads.x-k8s.io/group-uid":"6bc54a85beabe0c39e8fc92afe50660142a0f54d","rbg.workloads.x-k8s.io/role-name":"test-role"}},"spec":{"containers":[{"env":[{"name":"RBG_COMPONENT_INDEX","valueFrom":{"fieldRef":{"fieldPath":"metadata.labels['rbg.workloads.x-k8s.io/component-id']"}}},{"name":"RBG_COMPONENT_NAME","valueFrom":{"fieldRef":{"fieldPath":"metadata.labels['rbg.workloads.x-k8s.io/component-name']"}}},{"name":"RBG_GROUP_NAME","value":"test-rbg"},{"name":"RBG_ROLE_INDEX","valueFrom":{"fieldRef":{"fieldPath":"metadata.labels['rbg.workloads.x-k8s.io/role-instance-index']"}}},{"name":"RBG_ROLE_INSTANCE_NAME","valueFrom":{"fieldRef":{"fieldPath":"metadata.labels['rbg.workloads.x-k8s.io/role-instance-name']"}}},{"name":"RBG_ROLE_NAME","value":"test-role"}],"image":"registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest","imagePullPolicy":"IfNotPresent","name":"nginx","resources":{},"volumeMounts":[{"mountPath":"/etc/rbg","name":"rbg-cluster-config","readOnly":true}]}],"volumes":[{"configMap":{"items":[{"key":"config.yaml","path":"config.yaml"}],"name":"test-rbg"},"name":"rbg-cluster-config"}]}},"updateStrategy":{"rollingUpdate":{"maxUnavailable":1,"partition":0},"type":"RollingUpdate"}}}]
+        	Test:       	TestReconcileStatefulSet_ReadFailureDoesNotScaleToZero
+        	Messages:   	StatefulSet must not be written when a rollout read fails
+    sts_reconciler_test.go:1075: 
+        	Error Trace:	/tmp/pr540-base/pkg/reconciler/sts_reconciler_test.go:1075
+        	Error:      	Not equal: 
+        	            	expected: 5
+        	            	actual  : 0
+        	Test:       	TestReconcileStatefulSet_ReadFailureDoesNotScaleToZero
+        	Messages:   	live replicas must be unchanged
+--- FAIL: TestReconcileStatefulSet_ReadFailureDoesNotScaleToZero (0.01s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.075s
+FAIL

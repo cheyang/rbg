@@ -61,6 +61,45 @@ Observed on head `cf4bff4c` (fixed) vs base `4a0765f` (buggy):
 | F7 | Same contract against a real API server (envtest) | 2 | FAIL (replicas 5→0 stored) | PASS | **Confirmed fixed** |
 | F8 | Pre-existing: `rollingUpdatePartition` panics when live STS replicas < role replicas − maxUnavailable − ready (canary) | 1 | PASS (panics) | PASS (panics) | **Pre-existing, not addressed by this PR** |
 
+## Round 2 — head `8e076741`, base moved `4a0765f` → `3612013e`
+
+The PR was force-pushed with the round-1 blocker addressed: the production hunk
+in `pkg/reconciler/sts_reconciler.go` is **byte-identical** to round-1 head
+`cf4bff4c`; the delta is 182 lines of regression tests in
+`pkg/reconciler/sts_reconciler_test.go` (`git diff cf4bff4c..8e076741` —
+production code unchanged). The merge-base also advanced by 3 commits
+(port-allocator / KEP-284 / status-update); `pkg/reconciler` is untouched
+between the old and new base, so every base-layer conclusion carries over —
+and was re-proven anyway (below).
+
+- **re-verify.sh (unit + envtest, grafted onto `8e076741`)**: F1–F7 all
+  **FIXED**, F8 canary **STILL-PRESENT** (expected — pre-existing panic, not
+  this PR's scope). Raw: `results/reverify/{unit,integration}.{out,parsed}`.
+- **Harness-update applied**: the PR now declares its own
+  `TestRollingUpdateParameters_PropagatesPartitionConversionError`, colliding
+  with this harness's round-1 test of the same name (same package on graft →
+  duplicate declaration). Renamed the harness copy to
+  `TestRollingUpdateParameters_PropagatesPartitionConversionErr_HARNESS` and
+  updated the manifest match; same contract.
+- **The PR's own tests bite**: grafted `pkg/reconciler/sts_reconciler_test.go`
+  from `8e076741` onto the **new** base `3612013e` —
+  `TestRollingUpdateParameters_PreservesReadErrors` FAILS on all five read
+  failure cases (`error was swallowed; caller would apply replicas=0`) and
+  `TestReconcileStatefulSet_ReadFailureDoesNotScaleToZero` FAILS (error not
+  Forbidden / `writes` non-empty / replicas 5→0). On head all pass. This is
+  both the round-1 F1 acceptance (coverage landed) and a differential
+  re-confirmation of the premise on the new base. Artifacts:
+  `results/round2/pr-tests-on-{head,newbase-3612013}.txt`.
+- **No regressions**: `go test -mod=vendor ./pkg/... ./internal/...` all `ok`
+  on `8e076741`; GitHub statusCheckRollup 22/22 SUCCESS on the head
+  (re-queried 2026-11-04).
+
+Round-1 F1 (missing regression coverage) is closed as **fixed**; the ledger's
+only remaining open items are pre-existing/non-gating (F2 panic canary, F4
+logger.Error kv) and the stale PR description (body section Ⅲ still says
+"N/A" and the test checklist box is unchecked although 182 lines of tests
+landed).
+
 ## Per-finding detail
 
 ### P0 / F6 / F7 — scale-to-zero on swallowed read error (the PR's target)

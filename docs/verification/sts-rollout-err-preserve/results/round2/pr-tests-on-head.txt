@@ -1,0 +1,18 @@
+=== RUN   TestRollingUpdateParameters_PreservesReadErrors
+=== RUN   TestRollingUpdateParameters_PreservesReadErrors/pod_list_failure
+=== RUN   TestRollingUpdateParameters_PreservesReadErrors/controllerrevision_list_failure
+=== RUN   TestRollingUpdateParameters_PreservesReadErrors/missing_controllerrevision
+=== RUN   TestRollingUpdateParameters_PreservesReadErrors/malformed_role-size_annotation
+=== RUN   TestRollingUpdateParameters_PreservesReadErrors/missing_role-size_annotation
+--- PASS: TestRollingUpdateParameters_PreservesReadErrors (0.05s)
+    --- PASS: TestRollingUpdateParameters_PreservesReadErrors/pod_list_failure (0.04s)
+    --- PASS: TestRollingUpdateParameters_PreservesReadErrors/controllerrevision_list_failure (0.00s)
+    --- PASS: TestRollingUpdateParameters_PreservesReadErrors/missing_controllerrevision (0.00s)
+    --- PASS: TestRollingUpdateParameters_PreservesReadErrors/malformed_role-size_annotation (0.00s)
+    --- PASS: TestRollingUpdateParameters_PreservesReadErrors/missing_role-size_annotation (0.00s)
+=== RUN   TestRollingUpdateParameters_PropagatesPartitionConversionError
+--- PASS: TestRollingUpdateParameters_PropagatesPartitionConversionError (0.00s)
+=== RUN   TestReconcileStatefulSet_ReadFailureDoesNotScaleToZero
+--- PASS: TestReconcileStatefulSet_ReadFailureDoesNotScaleToZero (0.01s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.074s
