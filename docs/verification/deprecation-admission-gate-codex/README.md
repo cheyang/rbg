@@ -1,7 +1,8 @@
 # PR #524 verification — 0.9.0 compatibility admission gate (core gate)
 
 PR: https://github.com/sgl-project/rbg/pull/524
-Reviewed head (round 3): `c875fb31019bc454ad7af9e99e213e5c06c48a9c` (base `09accf63747177f12544d8738cab13ea07910a25`)
+Reviewed head (round 4): `fb3aa3d9a1506b6aefab6754d0d8039522bcc3bf` (base `3612013e6f779401831f5947dc124cc4313faddb`)
+Round-3 head: `c875fb31019bc454ad7af9e99e213e5c06c48a9c` (base `09accf63747177f12544d8738cab13ea07910a25`)
 Round-2 head: `22acc57039523bf4fc7f28c47c93bd29961930ba` (base `a2e797c6aa5702059b4e3341f3d8837972df130f`)
 Round-1 head: `993dcf10c618f0b8f143ce2471d72d820126e260` (base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
 Reviewer: Codex (debate Reviewer B). Production code untouched; this branch adds tests + docs only.
@@ -62,6 +63,30 @@ follow-ups"). Range-diff: all 5 round-2 commits unchanged, exactly one added.
 | Regression sweep | re-verify.sh unit+integration | — | all contracts green on c875fb31: F1 (exemption guards incl. replacement child + migrated parent), F2 (deletes ungated), F3 (oldObj trust + reintroduction), F4 (hint), F5 (shipped policy 4xIgnore+2xFail + outage demo), C4431130427 probe; canary F6 still present (expected under the docstring disposition) | **No regression** |
 | manifests | make manifests (controller-gen v0.17.2) | idempotent | byte-idempotent on c875fb31 against the new base | **pass** |
 | CI | gh pr checks 524 | success | all checks pass on c875fb31 (build, unit-test, envtest, lint, copyright, markdown, e2e-matrix-coverage, 12 E2E jobs incl. v1alpha1 + manifest-installation) | **success** |
+
+## Round 4 (head fb3aa3d9, 2026-11-04) — re-verification + type-exact settlement
+
+The head was rebased onto `3612013e` (base delta = exactly one upstream commit,
+KEP-284 docs under `keps/` only — zero code interaction with the gate).
+Range-diff: round-3 commits 1–6 patch-identical; review surface is two new
+commits: `05ad5782` (restore runtime assertions + finish fixture renames +
+self-describing kind in the four-kind spec) and `fb3aa3d9` (update-path
+grandfathering becomes type-exact — the round-4 published review's [MUST]).
+
+| Ledger ID | Harness | Round-3 verdict | Round-4 observed | Verdict |
+|-----------|---------|-----------------|------------------|---------|
+| F11 (update-path grandfathering keyed on role name only — cross-type switch admitted) | NEW harness contracts (unit: PR parity tests; integration: `type-exact:` subtests in `TestCompatibilityGate`) | raised by the published round-4 review on 05ad5782 | fb3aa3d9 keys both validators on name AND type, matching the create-path replacement-child exemption. Differential: on c875fb31 both cross-type switches (v1alpha1 RBG, v1alpha2 set template) were ADMITTED (`results/typeexact-prev-c875fb31.txt`, `got: <nil>`); on fb3aa3d9 both are rejected with "new uses are not accepted" while same-type controls stay admitted | **Fixed (type-exact adopted; differentially proven)** |
+| C4431130403 (dropped engine-runtime container assertion) | static + E2E v1alpha1 CI | open (minor, live per round-3 adjudication) | `expectEngineRuntimeContainer` restored in roleinstanceset_compat_expect.go: standalone roles check the role-named component (default injectors include `sidecar`, pod_reconciler.go:95-97); leader-worker roles check the `leader` component — the only one the reconciler wires the sidecar injector into (roleinstanceset_reconciler.go:407 vs 425-426). E2E v1alpha1 job green on fb3aa3d9 (10m15s) exercises it via the leader-worker engine-runtime spec | **Fixed** |
+| F9 (stale v1alpha2 e2e names) | static | open (nit) | v1alpha2 suites renamed (standalone_role.go, standalone_role_stateful.go, leader_worker_role.go; callers updated in e2e_test.go); `git grep` finds zero stale references | **Fixed** |
+| F10 (empty kind in failure message) | static | open (nit) | the four-kind table tracks `kind` explicitly; the failure message interpolates it | **Fixed** |
+| F5 / F6 / Q1 (open questions) | static | open | files untouched in this delta (`rolebasedgroupset_controller.go`, `deploy/helm`, `config/webhook` absent from 05ad5782+fb3aa3d9) | **Still open** |
+| F12 (README flag table stale) | static | new this round | README.md:91-94 says `true` (default) = "Unchanged... all workload types are supported" — false once this slice lands (compat mode rejects new deprecated uses). Docs-slice (F6/AC13) territory | **Open (nit)** |
+| Regression sweep | re-verify.sh unit+integration on fb3aa3d9 | — | all carried contracts green: F1 (exemption guards), F2 (deletes ungated), F3 (oldObj trust + reintroduction), F4 (hint), F5 (shipped policy 4xIgnore+2xFail + outage), C4431130427 (conversion probe), F11 (type-exact, both layers); F6 canary still present (expected — pins documented behavior) (`results/reverify-round4-console.log`) | **No regression** |
+| Unit sweep | go test ./api/workloads/v1alpha1 ./api/workloads/v1alpha2 ./cmd/rbgs ./internal/controller/workloads | pass | all four packages ok on fb3aa3d9 (`results/unit-head-r4.txt`) | **pass** |
+| PR envtest suites | deprecation + deprecationv1a1 + webhook | pass | all three ok on fb3aa3d9 (`results/pr-envtest-head-r4.txt`) | **pass** |
+| manifests | make manifests (controller-gen v0.17.2) | idempotent | byte-idempotent on fb3aa3d9 against the new base (`results/manifests-idempotent-r4.txt`) | **pass** |
+| CI | gh pr checks 524 | success | all 22 checks pass on fb3aa3d9 incl. envtest (runs the contract suite) and every E2E job | **success** |
+
 
 ## Findings and observed-vs-expected
 

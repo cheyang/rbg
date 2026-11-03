@@ -1,0 +1,29 @@
+re-verify: manifest = docs/verification/deprecation-admission-gate-codex/verify-manifest.json
+re-verify: last-reviewed = c875fb31019bc454ad7af9e99e213e5c06c48a9c  (review delta = c875fb31019bc454ad7af9e99e213e5c06c48a9c..fb3aa3d9a1506b6aefab6754d0d8039522bcc3bf)
+re-verify: fixed-ref=fb3aa3d9a1506b6aefab6754d0d8039522bcc3bf  harness-from=verify/deprecation-admission-gate-codex
+re-verify: running layer 'unit' (gotest)
+re-verify: running layer 'integration' (gotest)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+F1     contract  unit         FIXED          pass=1 fail=0 miss=0
+F1     contract  integration  FIXED          pass=3 fail=0 miss=0
+F2     contract  integration  FIXED          pass=1 fail=0 miss=0
+F3     contract  unit         FIXED          pass=2 fail=0 miss=0
+F3     contract  integration  FIXED          pass=2 fail=0 miss=0
+F4     contract  unit         FIXED          pass=1 fail=0 miss=0
+F5     contract  integration  FIXED          pass=2 fail=0 miss=0
+F6     canary    integration  STILL-PRESENT  pass=1 fail=0 miss=0
+C4431130427 contract  integration  FIXED          pass=1 fail=0 miss=0
+F11    contract  unit         FIXED          pass=2 fail=0 miss=0
+F11    contract  integration  FIXED          pass=2 fail=0 miss=0
+
+Live layer (manual): L3 intentionally skipped for this debate round (unit + integration layers only, per instructions). On a live cluster, the upgrade-ordering question (new Fail webhook paths 404 until the new binary serves them) is the thing to watch: apply manifests, then immediately write a v1alpha1 object during the controller rollout.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/deprecation-admission-gate-codex/results/reverify
+
+Review delta this round: c875fb31019bc454ad7af9e99e213e5c06c48a9c..fb3aa3d9a1506b6aefab6754d0d8039522bcc3bf
+After reviewing that delta, advance the marker for the next round:
+  echo fb3aa3d9a1506b6aefab6754d0d8039522bcc3bf > docs/verification/deprecation-admission-gate-codex/.last-reviewed && git add docs/verification/deprecation-admission-gate-codex/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.
