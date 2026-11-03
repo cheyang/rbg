@@ -68,7 +68,7 @@ OUT="$RUNTIME_DIR/unit.out"
 bash -c "$CMD" >"$OUT" 2>&1 || true
 
 PERSIST="$(dirname "$MANIFEST_ORIG")/results/reverify"
-mkdir -p "$PERSIST" 2>/dev/null && cp -f "$OUT" "$PERSIST/unit.out" 2>/dev/null || true
+mkdir -p "$PERSIST" 2>/dev/null && cp -f "$OUT" "$PERSIST/unit.tsv" 2>/dev/null || true
 
 lookup() { # $1 = match substring -> pass|fail|skip|missing
   local hit; hit="$(awk -F'\t' -v m="$1" 'index($1,m){print $2}' "$OUT" | tail -1)"

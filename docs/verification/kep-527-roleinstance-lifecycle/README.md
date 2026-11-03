@@ -28,7 +28,7 @@ The claimed problem (issue #527: container hooks cannot express instance-level c
 | Codebase-truth claims (10) | group 1 | pass | pass ×10 | KEP accurate |
 | Hygiene (3) | group 3 | pass | pass ×3 | clean |
 
-Raw output: `results/check-kep527-head-6e8419ab.tsv`, `results/reverify/unit.out`.
+Raw output: `results/check-kep527-head-6e8419ab.tsv`, `results/reverify/unit.tsv`.
 
 Harness-bites proof: the finding checks were re-run with simulated fix text applied (segment comment removed, authors filled, see-also pointed at an existing KEP, cascade-prevention / phase-storage / mutual-exclusion / preDelete-gate sentences added); all 7 flipped fail → pass, then the production files were reverted byte-identical (`git status` clean for `keps/`).
 
