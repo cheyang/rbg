@@ -1,0 +1,4 @@
+markdownlint-cli2 v0.24.0 (markdownlint v0.42.0)
+Finding: /home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/keps/527-roleinstance-lifecycle/README.md /home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/keps/527-roleinstance-lifecycle/README.zh-CN.md
+Linting: 2 files
+Summary: 0 issues in 0 files
