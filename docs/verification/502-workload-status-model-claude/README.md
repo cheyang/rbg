@@ -1,12 +1,41 @@
 # Verification — KEP-502 workload status model (PR #528) — Reviewer A (Claude)
 
 - PR: https://github.com/sgl-project/rbg/pull/528
-- Round 2 reviewed head: `6335eac61b7ef71d7479a8b2686829d7e59ce3e1` (round 1: `f05e1dd83d2691e4157bf1bd3548fe405b2a49d5`; base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
+- Round 3 reviewed head: `f622d642ac10326f66554b590e0513734aa9249a` (round 2: `6335eac61b7ef71d7479a8b2686829d7e59ce3e1`; round 1: `f05e1dd83d2691e4157bf1bd3548fe405b2a49d5`; base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
 - Harness branch: `verify/502-workload-status-model-claude` (pushed to the reviewer's fork `cheyang/rbg`)
 - This is a **docs-only PR** (adds `keps/502-workload-status-model/{README.md,kep.yaml}`); the code
   under review is a design document, so the harness checks the *document's* contract: its factual
   claims about the current API, and the internal consistency of its machine-readable reason taxonomy.
 - Live layer (L3): skipped — debate setup runs unit + integration only, and a KEP has no runtime.
+
+## Round 3 (delta `6335eac..f622d64`) — re-verify verdict: all findings fixed
+
+The author pushed one docs commit, `f622d64 "docs: align transition inputs and RIS reasons"`
+(3 changed lines), addressing exactly the two open round-2 items:
+
+| Finding | Check | At 6335eac | At f622d64 | Verdict |
+| --- | --- | --- | --- | --- |
+| F9 RBG transition-input vocabulary (ledger F9, revision regression) | C8 | fail | **pass** | **FIXED** — Goals (:70) and RBG intro (:211) now say "lower-level phases, conditions, and recovery facts", aligning with :463/:502 |
+| F10 RIS activity reasons unenumerated (ledger F10, pre-existing nit) | C9 | fail | **pass** | **FIXED** — :358 now definitively enumerates `Creating`, `ScalingUp`, `ScalingDown`, `RollingUpdate`, `Recovering`, exactly the family table's RIS column |
+| F2/F3/F4 (round 1) | C2/C3/C4 | pass | pass | stay fixed (no regression in the delta) |
+| P0 motivation / retained fields / YAML+lint | C5/C1/C6/C7 | pass | pass | still accurate |
+
+Harness note (recorded as such, not as a defect): the first re-verify run at `f622d64` reported
+F10 `STILL-BROKEN` only because C9 anchored on the literal phrase "Activity reasons may include",
+which the fix reworded to the definitive "Activity reasons are". C9 was re-anchored to accept both
+phrasings (`scripts/check_kep502.py` commit "round-3 harness"), then re-proven to bite:
+**fail at 6335eac** (missing `Creating`, `Recovering`), **pass at f622d64**
+(`results/bite-check-round3.txt`). The fix is differential-confirmed, not assumed.
+
+CI at `f622d64`: all checks SUCCESS or SKIPPED (docs-only diff; e2e groups skip), PR OPEN and
+MERGEABLE — same standing caveat as rounds 1-2: `keps/**` is outside the docs-check workflow's
+lint scope, so CI greenness is weak evidence; the substantive gates are the harness replays.
+
+Raw output: `results/reverify/` (re-verify.sh at f622d642), `results/bite-check-round3.txt`.
+
+Open items after round 3: **none** on this harness. Every tracked finding
+(F2/F3/F4 from round 1, F9/F10 from round 2) is fixed at `f622d64`; the refuted
+round-1 hypothesis (F1 phantom `rolloutReplacementState`) stays refuted (C1 green).
 
 ## Round 2 (delta `f05e1dd..6335eac`) — re-verify verdict
 
@@ -123,7 +152,8 @@ integration layer (emits `not-run` → `HARNESS-UPDATE` if unavailable).
 
 - All checks are **contract** tests: on fixed KEP text they go green. There are no canaries.
 - After the author amends the KEP, `re-verify.sh` (no argument) fetches the current PR head and
-  reports F2/F3/F4 (round 1, fixed at 6335eac) and F9/F10 (round 2, still open) per check.
+  reports F2/F3/F4 (round 1, fixed at 6335eac), F9 (round 2, fixed at f622d64), and F10
+  (round 2, fixed at f622d64 after the C9 re-anchor) per check.
 - C1 guards the retained-field inventory (both the "RIS retains ..." and the
   "Preserve restartCount ..." sentences) against future edits naming nonexistent fields.
 - C5 guards the motivation's factual claims; if a future controller starts writing RBG
@@ -139,5 +169,7 @@ integration layer (emits `not-run` → `HARNESS-UPDATE` if unavailable).
 > Read `docs/verification/502-workload-status-model-claude/verify-manifest.json` and this README.
 > Run `bash docs/verification/502-workload-status-model-claude/scripts/re-verify.sh` (no args) to
 > test the current PR head; report the F2/F3/F4/F9/F10 verdicts and review the `last-reviewed..head`
-> delta it prints. Round-1 findings (F2/F3/F4) were fixed at 6335eac; F9/F10 were open there.
+> delta it prints. Round-1 findings (F2/F3/F4) were fixed at 6335eac; F9/F10 were fixed at
+> f622d64 (C9 was re-anchored in round 3 — if a future fix rewords the RIS activity-reason
+> sentence again, expect a Harness-update, adjust the C9 anchor, and re-prove it bites).
 > All checks are contract-polarity (green = fixed). Do not touch production files.

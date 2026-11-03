@@ -2,7 +2,7 @@
   "topic": "502-workload-status-model-claude",
   "pr": "https://github.com/sgl-project/rbg/pull/528",
   "reviewer": "claude",
-  "headSha": "6335eac61b7ef71d7479a8b2686829d7e59ce3e1",
+  "headSha": "f622d642ac10326f66554b590e0513734aa9249a",
   "baseSha": "885d655bd1b4c26e6d14837709eeda675f3ae886",
   "harnessPaths": [
     "docs/verification/502-workload-status-model-claude"
@@ -74,7 +74,8 @@
       ],
       "firstSeenSha": "6335eac61b7ef71d7479a8b2686829d7e59ce3e1",
       "origin": "revision-regression",
-      "note": "Round 2 (delta f05e1dd..6335eac): the revision rewired RBG recovery derivation to 'lower-level conditions' (README.md:463 'RBG derives recovery facts from lower-level conditions, not a RIS `Recovering` phase'; :502 'RBG transitions use lower-level conditions and recovery facts') but left the Goals item (:70 'Define how lower-level phases and recovery facts trigger RBG phase transitions') and the RoleBasedGroup intro (:211 'transitions based on the current target, lower-level phases, and recovery facts') on the old 'phases' vocabulary. C8 passes at f05e1dd and fails at 6335eac (differential). Fix: align :70/:211 to the conditions vocabulary (or 'phases and conditions'); both wordings verified to flip C8 green."
+      "note": "Round 2 (delta f05e1dd..6335eac): the revision rewired RBG recovery derivation to 'lower-level conditions' (README.md:463 'RBG derives recovery facts from lower-level conditions, not a RIS `Recovering` phase'; :502 'RBG transitions use lower-level conditions and recovery facts') but left the Goals item (:70 'Define how lower-level phases and recovery facts trigger RBG phase transitions') and the RoleBasedGroup intro (:211 'transitions based on the current target, lower-level phases, and recovery facts') on the old 'phases' vocabulary. C8 passes at f05e1dd and fails at 6335eac (differential). Fix: align :70/:211 to the conditions vocabulary (or 'phases and conditions'); both wordings verified to flip C8 green. Round 3: Goals (:70) and RBG intro (:211) now read 'lower-level phases, conditions, and recovery facts'; C8 red at 6335eac, green at f622d64 (results/reverify, results/bite-check-round3.txt).",
+      "status": "fixed-at-f622d642"
     },
     {
       "id": "F10-ris-activity-reasons-unenumerated",
@@ -85,7 +86,8 @@
       ],
       "firstSeenSha": "f05e1dd83d2691e4157bf1bd3548fe405b2a49d5",
       "origin": "preexisting",
-      "note": "Round 2 late discovery on unchanged text (identical at f05e1dd and 6335eac, so pre-existing, not a revision regression): the RIS Progressing prose (README.md:358) says 'Activity reasons may include `ScalingUp`, `ScalingDown`, and `RollingUpdate`' while the activity/child-readiness family table (:159-165) also defines RIS reasons `Creating` (:162) and `Recovering` (:165). Materiality rose in this round because the revision made RIS recovery reporting load-bearing (:345 'RIS propagates recovery through `Progressing` and `Ready` conditions'). Fix: enumerate all five activity reasons in the prose or state the family table is the complete source; verified to flip C9 green."
+      "note": "Round 2 late discovery on unchanged text (identical at f05e1dd and 6335eac, so pre-existing, not a revision regression): the RIS Progressing prose (README.md:358) says 'Activity reasons may include `ScalingUp`, `ScalingDown`, and `RollingUpdate`' while the activity/child-readiness family table (:159-165) also defines RIS reasons `Creating` (:162) and `Recovering` (:165). Materiality rose in this round because the revision made RIS recovery reporting load-bearing (:345 'RIS propagates recovery through `Progressing` and `Ready` conditions'). Fix: enumerate all five activity reasons in the prose or state the family table is the complete source; verified to flip C9 green. Round 3: prose now reads 'Activity reasons are Creating, ScalingUp, ScalingDown, RollingUpdate, and Recovering' \u2014 the complete family-table set. C9 initially reported STILL-BROKEN only because its anchor phrase 'may include' was reworded to 'are'; C9 re-anchored (accepts both) and re-proven: red at 6335eac, green at f622d64 (results/bite-check-round3.txt).",
+      "status": "fixed-at-f622d642"
     }
   ],
   "refutedHypotheses": [
@@ -102,10 +104,10 @@
   "acceptanceChecks": {
     "AC-retained-fields": "C1-retained-fields-exist (unit)",
     "AC-doc-tooling": "C6-yaml-examples-parse (unit) + C7-markdownlint (integration)",
-    "AC-reason-consistency": "C2/C3/C4 (unit) — green at 6335eac",
-    "AC-transition-input-consistency": "C8 (unit) — red at 6335eac, green at f05e1dd",
-    "AC-ris-reason-enumeration": "C9 (unit) — red at f05e1dd and 6335eac"
+    "AC-reason-consistency": "C2/C3/C4 (unit) \u2014 green at 6335eac",
+    "AC-transition-input-consistency": "C8 (unit) \u2014 green at f622d64 (red at 6335eac)",
+    "AC-ris-reason-enumeration": "C9 (unit) \u2014 green at f622d64 (red at 6335eac; C9 re-anchored round 3)"
   },
   "liveNote": "L3 skipped (debate setup: unit + integration layers only). Docs-only KEP PR; no live runtime signal.",
-  "previousHeadSha": "f05e1dd83d2691e4157bf1bd3548fe405b2a49d5"
+  "previousHeadSha": "6335eac61b7ef71d7479a8b2686829d7e59ce3e1"
 }
