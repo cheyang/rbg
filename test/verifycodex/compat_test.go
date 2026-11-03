@@ -254,6 +254,50 @@ func TestCompatibilityGate(t *testing.T) {
 		}
 	})
 
+	// R4-TYPE-EXACT (round-4 policy, settled by fb3aa3d9): the update-path
+	// grandfathering exemption is keyed on role name AND workload type. An
+	// existing role keeps its own deprecated type; switching between deprecated
+	// types provisions a new deprecated workload and is rejected as a new use.
+	// Polarity: CONTRACT on the new semantics — red on c875fb31 (name-only),
+	// green on fb3aa3d9 (type-exact).
+	t.Run("type-exact: cross-type switch on legacy v1alpha1 object is rejected", func(t *testing.T) {
+		cur := &workloadsv1alpha1.RoleBasedGroup{}
+		if err := k8sClient.Get(testCtx, types.NamespacedName{Name: "legacy-rbg", Namespace: gateNamespace}, cur); err != nil {
+			t.Fatalf("get: %v", err)
+		}
+		cur.Spec.Roles[0].Workload = workloadsv1alpha1.WorkloadSpec{
+			APIVersion: "apps/v1", Kind: "Deployment",
+		}
+		err := k8sClient.Update(testCtx, cur)
+		if err == nil || !strings.Contains(err.Error(), "new uses are not accepted") {
+			t.Fatalf("StatefulSet->Deployment switch must be a rejected new use, got: %v", err)
+		}
+	})
+
+	t.Run("type-exact: v1alpha2 set template switch rejected, same-type update admitted", func(t *testing.T) {
+		cur := &workloadsv1alpha2.RoleBasedGroupSet{}
+		if err := k8sClient.Get(testCtx, types.NamespacedName{Name: "legacy-set", Namespace: gateNamespace}, cur); err != nil {
+			t.Fatalf("get set: %v", err)
+		}
+		// Same-type control: touching the template while keeping the role's own
+		// deprecated type stays grandfathered.
+		cur.Spec.GroupTemplate.Spec.Roles[0].Replicas = ptr.To(int32(2))
+		if err := k8sClient.Update(testCtx, cur); err != nil {
+			t.Fatalf("same-type grandfathered template update rejected: %v", err)
+		}
+		// Cross-type switch: StatefulSet -> Deployment on the same role name is a
+		// new use and must be rejected.
+		sw := &workloadsv1alpha2.RoleBasedGroupSet{}
+		if err := k8sClient.Get(testCtx, types.NamespacedName{Name: "legacy-set", Namespace: gateNamespace}, sw); err != nil {
+			t.Fatalf("re-get set: %v", err)
+		}
+		sw.Spec.GroupTemplate.Spec.Roles[0].Annotations[constants.RoleWorkloadTypeAnnotationKey] = constants.DeploymentWorkloadType
+		err := k8sClient.Update(testCtx, sw)
+		if err == nil || !strings.Contains(err.Error(), "new uses are not accepted") {
+			t.Fatalf("template StatefulSet->Deployment switch must be a rejected new use, got: %v", err)
+		}
+	})
+
 	// New v1alpha1 create relying on the StatefulSet schema default is rejected.
 	t.Run("new v1alpha1 create with defaulted workload is rejected", func(t *testing.T) {
 		err := k8sClient.Create(testCtx, v1alpha1RBG("new-legacy-rbg"))

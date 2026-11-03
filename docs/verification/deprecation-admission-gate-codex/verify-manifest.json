@@ -25,7 +25,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./api/workloads/v1alpha1/ ./api/workloads/v1alpha2/ -run 'TestPR524' -json"
+      "cmd": "go test ./api/workloads/v1alpha1/ ./api/workloads/v1alpha2/ -run 'TestPR524|TestRoleBasedGroupValidator_ValidateUpdate_TypeExactGrandfathering|TestDeprecatedWorkloadValidatorValidateUpdateTrustsAdmissionOldObject' -json"
     },
     "integration": {
       "kind": "gotest",
@@ -111,6 +111,26 @@
         "TestConversionProbe"
       ],
       "note": "Round-3: PR-suite conversion engagement probe. Grafts onto the PR's own testutil setup and asserts a v1alpha1 write is stored through the production conversion (role-workload-type annotation present on the v1alpha2 read-back). Red on round-2 head 22acc570 (version-only conversion), green on round-3 head c875fb31 (schemes registered before TestEnv.Start)."
+    },
+    {
+      "id": "F11",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestRoleBasedGroupValidator_ValidateUpdate_TypeExactGrandfathering",
+        "switching_between_deprecated_types_is_a_new_use"
+      ],
+      "note": "Round-4: published-review [MUST] settled by fb3aa3d9 \u2014 update-path grandfathering is now keyed on role name AND workload type in both validators. Pins the PR's own unit tests so the two validators cannot silently diverge."
+    },
+    {
+      "id": "F11",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "type-exact:_cross-type_switch_on_legacy_v1alpha1_object_is_rejected",
+        "type-exact:_v1alpha2_set_template_switch_rejected,_same-type_update_admitted"
+      ],
+      "note": "Round-4: type-exact semantics through the real admission/conversion chain (envtest). Differentially red on previous head c875fb31 (name-only rule admitted both cross-type switches: results/typeexact-prev-c875fb31.txt), green on fb3aa3d9."
     }
   ],
   "liveNote": "L3 intentionally skipped for this debate round (unit + integration layers only, per instructions). On a live cluster, the upgrade-ordering question (new Fail webhook paths 404 until the new binary serves them) is the thing to watch: apply manifests, then immediately write a v1alpha1 object during the controller rollout."

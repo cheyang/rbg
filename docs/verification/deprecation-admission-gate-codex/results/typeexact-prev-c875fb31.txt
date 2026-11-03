@@ -1,0 +1,12 @@
+2026/11/04 01:27:56 http: TLS handshake error from 127.0.0.1:56756: EOF
+=== RUN   TestCompatibilityGate
+=== RUN   TestCompatibilityGate/type-exact:_cross-type_switch_on_legacy_v1alpha1_object_is_rejected
+    compat_test.go:273: StatefulSet->Deployment switch must be a rejected new use, got: <nil>
+=== RUN   TestCompatibilityGate/type-exact:_v1alpha2_set_template_switch_rejected,_same-type_update_admitted
+    compat_test.go:297: template StatefulSet->Deployment switch must be a rejected new use, got: <nil>
+--- FAIL: TestCompatibilityGate (2.19s)
+    --- FAIL: TestCompatibilityGate/type-exact:_cross-type_switch_on_legacy_v1alpha1_object_is_rejected (0.01s)
+    --- FAIL: TestCompatibilityGate/type-exact:_v1alpha2_set_template_switch_rejected,_same-type_update_admitted (0.01s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/verifycodex	7.086s
+FAIL
