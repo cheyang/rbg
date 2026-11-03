@@ -130,8 +130,24 @@
         "TestKepYAMLWellFormed",
         "TestYAMLExamplesParse"
       ]
+    },
+    {
+      "id": "F9-rbg-transition-input-inconsistent",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestTransitionInputVocabularyConsistent"
+      ]
+    },
+    {
+      "id": "F10-ris-activity-reasons-unenumerated",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestRISActivityReasonsEnumerated"
+      ]
     }
   ],
   "liveNote": "Docs-only KEP PR: no live layer. Integration replay (markdownlint-cli2 with .github/.markdownlint.json, YAML parsing of kep.yaml and the 3 examples) is recorded in results/markdownlint.txt and embedded as Go guards (TestKepYAMLWellFormed, TestYAMLExamplesParse).",
-  "roundNote": "Round 2 (head 6335eac): revision addressed all round-1 findings; harness updated additively (F2 anchors made structural after the fix removed the old wording; new contract tests cover the Claude-side ledger findings F5/F6/F8/O1 and the Q1/Q2/Q3 resolutions)."
+  "roundNote": "Round 3 (head f622d642): 3-line delta fixes the two open round-2 items \u2014 F9 (Goals :70 and RBG intro :211 now name lower-level conditions alongside phases) and F10 (RIS activity reasons enumerated: Creating, ScalingUp, ScalingDown, RollingUpdate, Recovering). Harness extended additively with contract tests for F9/F10 (previously covered only by the Claude harness C8/C9)."
 }

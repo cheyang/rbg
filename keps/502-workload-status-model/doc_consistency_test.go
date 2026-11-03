@@ -10,9 +10,11 @@
 package kep502doc
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
 	"testing"
 
@@ -71,7 +73,6 @@ func section(doc, headingSubstr string) string {
 	}
 	return strings.Join(lines[start:], "\n")
 }
-
 
 // sectionExact returns the markdown under the heading whose text equals
 // headingText exactly (unlike section, which does a substring match and would
@@ -735,5 +736,144 @@ func TestRISOverlapPrecedenceStated(t *testing.T) {
 	if !strings.Contains(risSec, "accepted v1alpha2 trade-off") {
 		t.Error("Q3-guard: RIS overlap text no longer records the message-only concurrent-scaling " +
 			"representation as an accepted trade-off")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// F9 (round-2 revision regression, fixed in round 3): every statement that
+// describes the inputs to RBG phase transitions must use ONE consistent
+// vocabulary. The 6335eac revision rewired recovery derivation to lower-level
+// conditions (:463, :502) while the Goals item and the RoleBasedGroup intro
+// still said "lower-level phases" only — a reader of the RBG section would
+// look for child phase values as the recovery trigger the authoritative
+// statements disclaim. Contract: across all transition-input statements, the
+// boolean "names lower-level conditions as an input" is uniform. This passes
+// at f05e1dd (uniform "phases"), fails at 6335eac (mixed), and passes again
+// once the stragglers name conditions too.
+// ---------------------------------------------------------------------------
+
+func TestTransitionInputVocabularyConsistent(t *testing.T) {
+	doc := stripFences(kepDoc(t))
+	// Transition-input statements: lines that say what RBG phase transitions
+	// are based on / triggered by / derived from.
+	siteRe := regexp.MustCompile(`(?i)(lower-level .{0,40}trigger RBG phase transitions|` +
+		"RBG adds `status.phase`, with transitions based on|" +
+		`RBG transitions use lower-level|RBG derives recovery facts from lower-level)`)
+	var withConditions, withoutConditions []string
+	for i, l := range strings.Split(doc, "\n") {
+		if !siteRe.MatchString(l) {
+			continue
+		}
+		entry := fmt.Sprintf("line %d: %s", i+1, strings.TrimSpace(l))
+		if strings.Contains(strings.ToLower(l), "condition") {
+			withConditions = append(withConditions, entry)
+		} else {
+			withoutConditions = append(withoutConditions, entry)
+		}
+	}
+	if len(withConditions)+len(withoutConditions) < 3 {
+		t.Fatalf("F9-guard anchor drift: found only %d RBG transition-input statements (want >= 3)",
+			len(withConditions)+len(withoutConditions))
+	}
+	if len(withConditions) > 0 && len(withoutConditions) > 0 {
+		t.Errorf("F9: inconsistent RBG transition-input vocabulary — %d statement(s) name "+
+			"lower-level conditions, %d do not:\n  with conditions:\n    %s\n  without:\n    %s",
+			len(withConditions), len(withoutConditions),
+			strings.Join(withConditions, "\n    "), strings.Join(withoutConditions, "\n    "))
+	}
+}
+
+// ---------------------------------------------------------------------------
+// F10 (round-2 late discovery on unchanged text, fixed in round 3): the RIS
+// Progressing prose must enumerate the complete RIS activity-reason
+// vocabulary, not a subset. The source of truth is the "Activity and
+// child-readiness reasons" family table: the RIS column of the Initial
+// creation / Update / Instance-count scaling / Recovery rows (child readiness
+// is named separately in the same sentence). The prose must list exactly that
+// set — red at f05e1dd and 6335eac ("may include ScalingUp, ScalingDown,
+// RollingUpdate" — missing Creating, Recovering), green once enumerated.
+// ---------------------------------------------------------------------------
+
+func TestRISActivityReasonsEnumerated(t *testing.T) {
+	doc := kepDoc(t)
+
+	// Derive the expected RIS activity reasons from the family table.
+	activityFacts := map[string]bool{
+		"Initial creation":       true,
+		"Update":                 true,
+		"Instance-count scaling": true,
+		"Recovery":               true,
+	}
+	expected := map[string]bool{}
+	inTable := false
+	for _, l := range strings.Split(doc, "\n") {
+		if strings.HasPrefix(l, "| Fact |") {
+			inTable = true
+			continue
+		}
+		if inTable && !strings.HasPrefix(l, "|") {
+			break
+		}
+		if !inTable || strings.HasPrefix(l, "| ---") {
+			continue
+		}
+		cells := strings.Split(l, "|")
+		if len(cells) < 5 {
+			continue
+		}
+		fact := strings.TrimSpace(cells[1])
+		if !activityFacts[fact] {
+			continue
+		}
+		for _, tok := range backtickTokens(cells[3]) {
+			expected[tok] = true
+		}
+	}
+	if len(expected) == 0 {
+		t.Fatal("F10-guard anchor drift: activity/child-readiness family table not found or empty")
+	}
+
+	// Find the RIS "Activity reasons ..." sentence and extract the enumeration
+	// clause (everything before the first ';').
+	risSec := sectionExact(doc, "RoleInstanceSet")
+	if risSec == "" {
+		t.Fatal("RoleInstanceSet section not found")
+	}
+	enumerated := map[string]bool{}
+	foundSentence := false
+	for _, l := range strings.Split(risSec, "\n") {
+		idx := strings.Index(l, "Activity reasons")
+		if idx == -1 {
+			continue
+		}
+		foundSentence = true
+		clause := l[idx:]
+		if semi := strings.Index(clause, ";"); semi != -1 {
+			clause = clause[:semi]
+		}
+		for _, tok := range backtickTokens(clause) {
+			enumerated[tok] = true
+		}
+	}
+	if !foundSentence {
+		t.Fatal("F10-guard anchor drift: RIS 'Activity reasons' sentence not found")
+	}
+
+	var missing, extra []string
+	for tok := range expected {
+		if !enumerated[tok] {
+			missing = append(missing, tok)
+		}
+	}
+	for tok := range enumerated {
+		if !expected[tok] {
+			extra = append(extra, tok)
+		}
+	}
+	sort.Strings(missing)
+	sort.Strings(extra)
+	if len(missing) > 0 || len(extra) > 0 {
+		t.Errorf("F10: RIS activity-reason prose does not match the family table — "+
+			"missing from prose: %v; enumerated but not an RIS activity reason: %v", missing, extra)
 	}
 }
