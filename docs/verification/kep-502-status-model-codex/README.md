@@ -129,6 +129,51 @@ ref with `git checkout -f`, so tracked files there are the round-1 committed
 copies. Trust the printed verdict table plus `results/unit-head-6335eac.*`
 (captured separately) over `results/reverify/`.
 
+
+## Round 3 — revision f622d642 (incremental, 2026-11-04)
+
+Delta: one commit, 3 changed lines in `keps/502-workload-status-model/README.md`
+(`kep.yaml` untouched), targeting exactly the two open round-2 items:
+
+- F9 fix: Goals item 2 (:70) and the RoleBasedGroup intro (:211) now read
+  "lower-level phases, conditions, and recovery facts" — both stragglers name
+  conditions, matching the authoritative statements (:463, :502).
+- F10 fix: the RIS Progressing prose (:358) now enumerates "Activity reasons
+  are `Creating`, `ScalingUp`, `ScalingDown`, `RollingUpdate`, and
+  `Recovering`" — exactly the RIS activity-reason set derivable from the
+  activity/child-readiness family table.
+
+Harness extended additively with the two contracts the Claude harness carried
+in round 2 (C8/C9), so both findings are now double-harnessed:
+
+- `TestTransitionInputVocabularyConsistent` (F9): uniformity of the
+  transition-input vocabulary across all RBG transition-input statements.
+  Polarity/provenance matrix: PASS at f05e1dd (uniform "phases"), FAIL at
+  6335eac (mixed), PASS at f622d642 — matching the recorded
+  revision-regression attribution. (First version of this guard counted any
+  "condition" substring and false-failed at f05e1dd on the trailing "uses
+  Accepted / Progressing / Ready conditions" clause; fixed to detect
+  `lower-level (phases, )?conditions` within the input enumeration.)
+- `TestRISActivityReasonsEnumerated` (F10): the prose enumeration must equal
+  the RIS activity-reason set derived from the family table. FAIL at f05e1dd
+  and 6335eac (missing Creating, Recovering), PASS at f622d642 — matching the
+  recorded pre-existing/late-discovery attribution.
+
+Result at head f622d642: **21/21 pass** (`results/unit-head-f622d642.json`,
+`results/reverify-head-f622d642.txt` — re-verify.sh exit 0, all 15 findings
+FIXED); markdownlint replay clean (`results/markdownlint-head-f622d642.txt`).
+Raw per-ref runs: `results/unit-previous-head-6335eac.json` (both new tests
+red — the bite check), `results/unit-r1head-f05e1dd-round3.json` (F9 green /
+F10 red — the provenance check). `results/reverify/unit.out|.parsed` were
+manually refreshed to the f622d642 run this round (the stock script's
+restore-on-exit still clobbers tracked copies — see the round-2 infra note).
+
+| Ledger ID | Round-2 verdict | Round-3 verdict | Evidence |
+|-----------|-----------------|-----------------|----------|
+| F9-rbg-transition-input-inconsistent | OPEN (minor, revision regression) | FIXED | `TestTransitionInputVocabularyConsistent` pass@f05e1dd / fail@6335eac / pass@f622d642 |
+| F10-ris-activity-reasons-unenumerated | OPEN (nit, pre-existing) | FIXED | `TestRISActivityReasonsEnumerated` fail@f05e1dd / fail@6335eac / pass@f622d642 |
+| all other ledger items | FIXED/ANSWERED at 6335eac | still FIXED (no regression) | full suite 21/21 green at f622d642 |
+
 ## Continuing after the fix
 
 On any machine:

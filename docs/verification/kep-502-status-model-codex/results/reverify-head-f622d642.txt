@@ -1,0 +1,32 @@
+re-verify: manifest = docs/verification/kep-502-status-model-codex/verify-manifest.json
+re-verify: last-reviewed = 6335eac61b7ef71d7479a8b2686829d7e59ce3e1  (review delta = 6335eac61b7ef71d7479a8b2686829d7e59ce3e1..f622d642ac10326f66554b590e0513734aa9249a)
+re-verify: fixed-ref=f622d642ac10326f66554b590e0513734aa9249a  harness-from=verify/kep-502-status-model-codex
+re-verify: running layer 'unit' (gotest)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+F1-preparing-undefined contract  unit         FIXED          pass=1 fail=0 miss=0
+F2-priority-rule-vs-example contract  unit         FIXED          pass=1 fail=0 miss=0
+F3-progressing-false-rejection-mapping contract  unit         FIXED          pass=1 fail=0 miss=0
+F4-ready-terminating-retained-mislabel contract  unit         FIXED          pass=1 fail=0 miss=0
+F5-rolesnotready-collision contract  unit         FIXED          pass=1 fail=0 miss=0
+F6-inplace-reason-casing contract  unit         FIXED          pass=1 fail=0 miss=0
+F7-toc-missing-reason-taxonomy contract  unit         FIXED          pass=1 fail=0 miss=0
+F8-event-budget-risk contract  unit         FIXED          pass=1 fail=0 miss=0
+O1-ready-reason-row-ambiguity contract  unit         FIXED          pass=1 fail=0 miss=0
+Q1-ris-phase-during-recovery contract  unit         FIXED          pass=1 fail=0 miss=0
+Q2-no-failure-phase contract  unit         FIXED          pass=1 fail=0 miss=0
+Q3-ris-concurrent-scaling-visibility contract  unit         FIXED          pass=1 fail=0 miss=0
+G1-doc-tooling contract  unit         FIXED          pass=2 fail=0 miss=0
+F9-rbg-transition-input-inconsistent contract  unit         FIXED          pass=1 fail=0 miss=0
+F10-ris-activity-reasons-unenumerated contract  unit         FIXED          pass=1 fail=0 miss=0
+
+Live layer (manual): Docs-only KEP PR: no live layer. Integration replay (markdownlint-cli2 with .github/.markdownlint.json, YAML parsing of kep.yaml and the 3 examples) is recorded in results/markdownlint.txt and embedded as Go guards (TestKepYAMLWellFormed, TestYAMLExamplesParse).
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/kep-502-status-model-codex/results/reverify
+
+Review delta this round: 6335eac61b7ef71d7479a8b2686829d7e59ce3e1..f622d642ac10326f66554b590e0513734aa9249a
+After reviewing that delta, advance the marker for the next round:
+  echo f622d642ac10326f66554b590e0513734aa9249a > docs/verification/kep-502-status-model-codex/.last-reviewed && git add docs/verification/kep-502-status-model-codex/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: all findings fixed.
