@@ -221,12 +221,17 @@ func TestRollingUpdateParameters_PreservesMalformedRoleSizeAnnotation(t *testing
 	assert.False(t, retErr == nil && retReplicas == 0, "must not return (any, 0, nil): the caller applies replicas=0")
 }
 
-// TestRollingUpdateParameters_PropagatesPartitionConversionError guards the
+// TestRollingUpdateParameters_PropagatesPartitionConversionErr_HARNESS guards the
 // defer's separate partitionErr branch: a partition value that cannot be
 // converted must propagate even when the main calculation succeeded.
 // This path behaved the same before and after PR #540; the test keeps it from
 // regressing while the defer is edited.
-func TestRollingUpdateParameters_PropagatesPartitionConversionError(t *testing.T) {
+// Round 2: renamed with an _HARNESS suffix — PR #540's own test file now
+// declares TestRollingUpdateParameters_PropagatesPartitionConversionError
+// (round-1 F5 ask, landed in head 8e076741), and both files live in this
+// package when the harness is grafted onto the PR head, so the duplicate
+// declaration broke compilation. Same contract, new name.
+func TestRollingUpdateParameters_PropagatesPartitionConversionErr_HARNESS(t *testing.T) {
 	scheme := buildScheme()
 	rbg, role, sts := midRolloutFixtures()
 	rbg.Spec.Roles[0].RolloutStrategy.RollingUpdate.Partition = ptr.To(intstr.FromString("bogus"))

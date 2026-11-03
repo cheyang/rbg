@@ -60,7 +60,7 @@
       "id": "F5",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestRollingUpdateParameters_PropagatesPartitionConversionError"]
+      "match": ["TestRollingUpdateParameters_PropagatesPartitionConversionErr_HARNESS"]
     },
     {
       "id": "F6",
