@@ -1,0 +1,3 @@
+go test ./api/workloads/v1alpha1 ./api/workloads/v1alpha2 ./cmd/rbgs ./internal/controller/workloads on fb3aa3d:
+ok api/workloads/v1alpha1, ok api/workloads/v1alpha2, ok cmd/rbgs, ok internal/controller/workloads
+46,595 tests pass / 0 fail (go test -json count), up from 46,546 on c875fb31 (author's type-exact parity tests added).

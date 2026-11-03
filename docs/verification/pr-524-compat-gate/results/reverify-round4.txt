@@ -1,0 +1,23 @@
+re-verify: manifest = docs/verification/pr-524-compat-gate/verify-manifest.json
+re-verify: last-reviewed = c875fb31019bc454ad7af9e99e213e5c06c48a9c  (review delta = c875fb31019bc454ad7af9e99e213e5c06c48a9c..fb3aa3d9a1506b6aefab6754d0d8039522bcc3bf)
+re-verify: fixed-ref=fb3aa3d9a1506b6aefab6754d0d8039522bcc3bf  harness-from=verify/pr-524-compat-gate-claude
+re-verify: running layer 'unit' (gotest)
+re-verify: running layer 'integration' (ginkgo)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+GATE-V1A1-WIRING contract  integration  FIXED          pass=7 fail=0 miss=0
+F2-WARNING-ONLY-OUTAGE contract  integration  FIXED          pass=2 fail=0 miss=0
+F3-SPOOF-EXEMPTION canary    integration  STILL-PRESENT  pass=1 fail=0 miss=0
+C4431130427-CONVERSION contract  integration  FIXED          pass=2 fail=0 miss=0
+TYPE-EXACT-GRANDFATHERING contract  integration  FIXED          pass=4 fail=0 miss=0
+
+Live layer (manual): L3 not run per round policy (no KUBECONFIG). Unit + integration layers cover the gate decision logic, manifest wiring, warning delivery, the outage fail-open contract, and the conversion wiring. The e2e layers (compat expectations, upgrade fixtures) are exercised by the PR's CI matrix, green on c875fb31.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/pr-524-compat-gate/results/reverify
+
+Review delta this round: c875fb31019bc454ad7af9e99e213e5c06c48a9c..fb3aa3d9a1506b6aefab6754d0d8039522bcc3bf
+After reviewing that delta, advance the marker for the next round:
+  echo fb3aa3d9a1506b6aefab6754d0d8039522bcc3bf > docs/verification/pr-524-compat-gate/.last-reviewed && git add docs/verification/pr-524-compat-gate/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.

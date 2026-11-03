@@ -1,0 +1,5 @@
+make manifests on fb3aa3d9 (2026-11-04, controller-gen via Makefile LOCALBIN):
+exits 0; git status after the run: empty (zero tracked files modified for
+config/ and deploy/). Shipped policy split unchanged (4xIgnore + 2xFail,
+CREATE;UPDATE only): config/webhook/manifests.yaml is byte-identical between
+c875fb31 and fb3aa3d (verified: git diff c875fb31 fb3aa3d -- config/ deploy/ is empty).

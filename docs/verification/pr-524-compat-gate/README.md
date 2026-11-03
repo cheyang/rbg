@@ -3,6 +3,47 @@
 Reproducible evidence for the findings raised while reviewing
 https://github.com/sgl-project/rbg/pull/524.
 
+## Round 4 (head `fb3aa3d9a1506b6aefab6754d0d8039522bcc3bf`, base `3612013e6f779401831f5947dc124cc4313faddb`)
+
+The PR was rebased once more (base `09accf63` → `3612013`, which is exactly one
+commit — #530, KEP-284 docs only; zero overlap with any admission/gate surface) and
+carries all six round-3 commits byte-identical (range-diff `=`), so the review surface
+is exactly two new commits:
+
+1. `05ad5782` "restore runtime assertions and finish fixture renames" — fixes the three
+   round-3 open items: **C4431130403** (engine-runtime injected-container assertion
+   restored in the RoleInstanceSet compat checker; standalone roles check the
+   role-named component, leader-worker roles the leader component — matching the
+   reconciler's injection targets, which I verified at
+   `pkg/reconciler/roleinstanceset_reconciler.go:407` (leader-only sidecar for LWP) and
+   `pod_reconciler.go:96-97` (default injectors incl. sidecar for standalone)), **F9**
+   (v1alpha2 e2e suites renamed to what they run; `git grep` on head finds zero stale
+   names), **F10** (kind string tracked in the four-kind warning spec table).
+2. `fb3aa3d9` "make update-path grandfathering type-exact" — a semantics tightening,
+   not a fix of a filed finding: update-path grandfathering now keys on role name AND
+   workload type in both validators (previously name-only, which let a role switch
+   StatefulSet → Deployment/LeaderWorkerSet during the compat window). The author
+   inverted their own pinned v1alpha1 subtest and added a v1alpha2 parity test.
+
+New harness this round: `test/envtest/testcase/deprecationv1a1typeexact` — pins the
+type-exact rule through the **real admission chain** (production webhook registrations
++ shipped `config/webhook/manifests.yaml`, grandfathered objects seeded pre-gate) on
+both API versions, so the two validators cannot diverge silently. Bite check: reverting
+the one-line rule to lenient name-only grandfathering in both validators flips exactly
+the two type-switch specs red (`results/bite-typeexact-lenient.txt`); production code
+restored, re-run green 4/4.
+
+### Round-4 observed vs expected
+
+| ID | Claim | Layer | Verdict | Evidence |
+|----|-------|-------|---------|----------|
+| GATE-V1A1-WIRING | v1alpha1 admission chain end-to-end as shipped (incl. all four warning-only kinds, kind-tagged failure messages) | 2 | **Carried** — 7/7 green | `results/reverify-round4.txt` |
+| F2-WARNING-ONLY-OUTAGE | warning-only webhooks cannot block writes | 2 | **Carried** — 2/2 green (manifests byte-identical between heads) | `results/reverify-round4.txt` |
+| F3-SPOOF-EXEMPTION | exemption claimable by any reader of parent name+UID | 2 | Canary green (expected): documented design boundary | `results/reverify-round4.txt` |
+| C4431130427-CONVERSION | suite exercises production conversion | 2 | **Carried** — 2/2 green | `results/reverify-round4.txt` |
+| TYPE-EXACT-GRANDFATHERING | update-path grandfathering is type-exact on BOTH validators, through the real chain | 2 | **Fixed (new commit)** — 4/4 green; bite-checked | `results/reverify-round4.txt`, `results/bite-typeexact-lenient.txt` |
+| PR-SUITES | unit + envtest + CI green on head (changed base) | 1+2 | 46,595 unit passes / 0 fails; all five envtest packages green; 22/22 CI checks green on `fb3aa3d` (incl. E2E v1alpha1, which exercises the restored engine-runtime assertion live) | `results/unit-head-r4.txt`, `results/reverify-round4.txt`, `results/manifests-idempotent-r4.txt` |
+
 ## Round 3 (head `c875fb31019bc454ad7af9e99e213e5c06c48a9c`, base `09accf63747177f12544d8738cab13ea07910a25`)
 
 The PR was rebased again (base `a2e797c6` → `09accf63`, bringing #533/#532/#513/#529/
