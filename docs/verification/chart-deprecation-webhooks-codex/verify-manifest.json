@@ -12,7 +12,7 @@
     "claim": "The Helm chart shipped the pre-gate webhook configuration, so Helm installs had no v1alpha1 deprecation warning plane (and no Exact-match v1alpha1 enforcement entries) even though #524 merged the handlers and the kubectl-rendered config/webhook/manifests.yaml.",
     "runsAgainst": "base",
     "verdict": "confirmed",
-    "evidence": "results/premise-base-chart.out — base chart render: v1alpha1 InstanceSet write admitted with NO deprecation warning; v1alpha1 RBG new deprecated use still rejected via the Equivalent-matching v1alpha2 gate but with NO warning. Reproduce: bash scripts/run-premise-base.sh"
+    "evidence": "results/premise-base-chart.out \u2014 base chart render: v1alpha1 InstanceSet write admitted with NO deprecation warning; v1alpha1 RBG new deprecated use still rejected via the Equivalent-matching v1alpha2 gate but with NO warning. Reproduce: bash scripts/run-premise-base.sh"
   },
   "layers": {
     "unit": {
@@ -21,7 +21,7 @@
     },
     "integration": {
       "kind": "gotest",
-      "cmd": "KUBEBUILDER_ASSETS=\"$([ -x ./bin/setup-envtest ] && ./bin/setup-envtest use 1.31.0 --bin-dir ./bin -p path 2>/dev/null || echo ./bin/k8s/1.31.0-linux-amd64)\" go test ./test/envtest/testcase/deprecationv1a1helm/ -count=1 -json"
+      "cmd": "KUBEBUILDER_ASSETS=\"$([ -x \"$PWD/bin/setup-envtest\" ] && \"$PWD/bin/setup-envtest\" use 1.31.0 --bin-dir \"$PWD/bin\" -p path 2>/dev/null || echo \"$PWD/bin/k8s/1.31.0-linux-amd64\")\" go test ./test/envtest/testcase/deprecationv1a1helm/ -count=1 -json"
     }
   },
   "findings": [
@@ -29,14 +29,18 @@
       "id": "A-PARITY",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestChartDeprecationWebhooksMatchShippedConfig"],
+      "match": [
+        "TestChartDeprecationWebhooksMatchShippedConfig"
+      ],
       "note": "The rendered chart's six v1alpha1 deprecation webhook entries match config/webhook/manifests.yaml (name/path/rules/failurePolicy/matchPolicy/sideEffects/admissionReviewVersions). Also covers the PR's F12-adjacent toggle tests already in test/chart."
     },
     {
       "id": "A-GATE",
       "polarity": "contract",
       "layer": "integration",
-      "match": ["TestV1alpha1DeprecationHelmContract"],
+      "match": [
+        "TestV1alpha1DeprecationHelmContract"
+      ],
       "notes": "envtest installs the CHART-RENDERED webhook configurations against production handlers: new-use rejection (explicit and schema-defaulted), type-exact grandfathering of a seeded pre-gate object, per-kind on-the-wire warnings for all four warning-only paths, Exact match policy (no v1alpha2 warnings), ungated deletes."
     }
   ],
