@@ -1,0 +1,54 @@
+{
+  "topic": "kep-531-profile-injection",
+  "pr": "https://github.com/sgl-project/rbg/pull/548",
+  "harnessPaths": [
+    "docs/verification/kep-531-profile-injection",
+    "pkg/discovery/sidecar_builder_kep531_verify_test.go",
+    "pkg/reconciler/pod_reconciler_kep531_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #531: \"engineRuntimes[].injectContainers is accepted by the API but never consumed\" (no volumeMounts/env reach the named containers); \"LeaderWorkerPattern workers receive no profile injection at all\"; \"CustomComponentsPattern injects the full profile into every component with no per-component scoping\"; \"spec.updateStrategy: RollingUpdate is declared in the CRD but unimplemented\".",
+    "reportedComponent": "pkg/discovery/sidecar_builder.go + pkg/reconciler (engine-runtime injection)",
+    "patchedComponent": "keps/531-engine-runtime-profile-injection/ (design document only; implementation in follow-up PRs)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "TestKEP531_Verify_InjectContainersIsInert (no volumeMounts/env delivered to injectContainers targets), TestKEP531_Verify_WorkerChainSkipsSidecarInjection (worker injector chain omits sidecar stage); CCP broadcast verified in code (roleinstanceset_reconciler.go:318-320, default injector set per component); updateStrategy has no consumer in pkg/ (grep). results/unit-l1.txt",
+    "match": [
+      "TestKEP531_Verify_InjectContainersIsInert",
+      "TestKEP531_Verify_WorkerChainSkipsSidecarInjection"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/discovery/ ./pkg/reconciler/ -run 'TestKEP531_Verify' -v"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP531_Verify_LegacyMergeAppendsPerReferenceWithoutConflictCheck",
+        "TestKEP531_Verify_LegacyMergeAppendsToRoleDeclaredContainer"
+      ],
+      "note": "Contract tests for the KEP's byte-for-byte compatibility guarantee. On main (and on this docs-only PR head) they pass: the legacy containers merge appends env once per reference with NO duplicate-name check. If the KEP implementation makes the 'shared env-name conflict check spanning all three passes' (README Compatibility item 3) reject this output, these tests go red — proof of the compatibility break. See results/harness-bites-check.txt for the demonstrated flip."
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestKEP531_Verify_LegacyOverrideForInitContainerIsSilentNoOp",
+        "TestKEP531_Verify_OverrideSkippedForContainerNotInThisReferenceProfile",
+        "TestKEP531_Verify_AppendIfMissingPodLevelDelivery"
+      ],
+      "note": "Contract tests pinning the main behaviors the KEP claims are 'preserved verbatim': init-container legacy override is a silent no-op; an override naming another reference's container is skipped; append-if-missing pod-level delivery. They pin the accuracy of the KEP's factual claims about main; deviations after implementation are regressions of the documented compatibility surface."
+    }
+  ],
+  "liveNote": "L3 not applicable: docs-only PR; no runtime behavior change to observe on a cluster. The KEP's own Test Plan specifies the envtest/e2e matrix for the follow-up implementation PRs — this harness is the regression suite those PRs must keep green."
+}

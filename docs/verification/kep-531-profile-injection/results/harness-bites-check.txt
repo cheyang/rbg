@@ -1,0 +1,32 @@
+Harness-bites check (review-finding-verifier Step 4) — 2026-11-05
+=================================================================
+
+Perturbation applied temporarily to pkg/discovery/sidecar_builder.go
+(production code, then REVERTED — production diff verified empty):
+
+  In the legacy `containers` env override loop, add the duplicate-env-name
+  refusal that a literal reading of KEP-531 Compatibility item 3 ("the shared
+  env-name conflict check spanning all three passes") would implement:
+
+    existing := map[string]struct{}{}  // names already on target container
+    ... return fmt.Errorf("legacy merge: duplicate env name %s", e.Name)
+
+Expected: exactly the two tests encoding main's legacy-merge output go red
+(the byte-for-byte compatibility contract), everything else stays green.
+
+Observed (go test ./pkg/discovery/ -run 'TestKEP531_Verify'):
+
+  --- FAIL: TestKEP531_Verify_LegacyMergeAppendsPerReferenceWithoutConflictCheck
+  --- FAIL: TestKEP531_Verify_LegacyMergeAppendsToRoleDeclaredContainer
+  FAIL    sigs.k8s.io/rbgs/pkg/discovery
+
+  All other TestKEP531_Verify_* tests: still PASS.
+
+Conclusion: the harness bites. If the KEP implementation subjects the legacy
+merge output to the shared env-name conflict check, these tests prove the
+break of the byte-for-byte guarantee for pre-existing objects (two duplicate
+references sharing a legacy override env name; role template env + legacy
+override of the same name). This is finding F1's failure scenario.
+
+Production code restored: `git status -- pkg/discovery/sidecar_builder.go`
+empty; full suite green again (results/unit-l1.txt).

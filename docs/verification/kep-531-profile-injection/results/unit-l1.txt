@@ -1,0 +1,16 @@
+=== RUN   TestKEP531_Verify_InjectContainersIsInert
+--- PASS: TestKEP531_Verify_InjectContainersIsInert (0.04s)
+=== RUN   TestKEP531_Verify_LegacyMergeAppendsPerReferenceWithoutConflictCheck
+--- PASS: TestKEP531_Verify_LegacyMergeAppendsPerReferenceWithoutConflictCheck (0.00s)
+=== RUN   TestKEP531_Verify_LegacyMergeAppendsToRoleDeclaredContainer
+--- PASS: TestKEP531_Verify_LegacyMergeAppendsToRoleDeclaredContainer (0.00s)
+=== RUN   TestKEP531_Verify_LegacyOverrideForInitContainerIsSilentNoOp
+--- PASS: TestKEP531_Verify_LegacyOverrideForInitContainerIsSilentNoOp (0.00s)
+=== RUN   TestKEP531_Verify_OverrideSkippedForContainerNotInThisReferenceProfile
+--- PASS: TestKEP531_Verify_OverrideSkippedForContainerNotInThisReferenceProfile (0.00s)
+=== RUN   TestKEP531_Verify_AppendIfMissingPodLevelDelivery
+--- PASS: TestKEP531_Verify_AppendIfMissingPodLevelDelivery (0.00s)
+ok  	sigs.k8s.io/rbgs/pkg/discovery	(cached)
+=== RUN   TestKEP531_Verify_WorkerChainSkipsSidecarInjection
+--- PASS: TestKEP531_Verify_WorkerChainSkipsSidecarInjection (0.05s)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	(cached)
