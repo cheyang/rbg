@@ -1063,3 +1063,46 @@ func TestRISActivityTieBreakStated(t *testing.T) {
 		"precedence added at da818779 is explicitly RBG-scoped and :349 covers only " +
 		"update-vs-scaling)")
 }
+
+// ---------------------------------------------------------------------------
+// F12 (round-4 discovery on the new precedence text, minor; Copilot
+// C4471100373 independently verified): the within-Activity precedence operates
+// on "Activity facts", and the KEP's aggregation model (:169) derives parent
+// reasons from lower-level facts — so a replacement RIS reporting `Creating`
+// (new UID, :213) during an RBG recovery presents a Creating fact that
+// outranks Recovering, and the new Test Plan bullet (:495) would then codify
+// reporting `Creating` for a group whose own semantics (:213) call the same
+// situation recovery. Green once the KEP states how replacement-child creation
+// maps at the parent level (e.g. reported under `Recovering` during RBG
+// recovery) or scopes RBG `Creating` to the group's initial creation.
+// Red at da818779 = the mapping is unstated.
+// ---------------------------------------------------------------------------
+
+func TestRBGReplacementCreationMapsToRecovery(t *testing.T) {
+	doc := stripFences(kepDoc(t))
+	// Pattern A: replacement / new-UID child creation is explicitly reported
+	// under the recovery reason at RBG / parent level.
+	recMap := regexp.MustCompile("`Recovering`")
+	repl := regexp.MustCompile(`(?i)new UID|replacement|recreat`)
+	rbg := regexp.MustCompile(`(?i)RBG|parent`)
+	// Pattern B: RBG `Creating` is explicitly scoped to initial creation /
+	// pre-first-steady-state (so it cannot be asserted during recovery).
+	creatingScoped := regexp.MustCompile("(?i)`Creating`.*(first steady state|initial creation).*(only|unless|reserved|scope)|" +
+		"(only|unless|reserved|scope).*`Creating`.*(first steady state|initial creation)")
+	for _, l := range strings.Split(doc, "\n") {
+		if recMap.MatchString(l) && repl.MatchString(l) && rbg.MatchString(l) {
+			t.Logf("F12: replacement->recovery mapping found: %s", strings.TrimSpace(l))
+			return
+		}
+		if creatingScoped.MatchString(l) {
+			t.Logf("F12: Creating scoped to initial creation: %s", strings.TrimSpace(l))
+			return
+		}
+	}
+	t.Errorf("F12: the within-Activity precedence (:184-192) can report `Creating` for an " +
+		"RBG that is mid-recovery — a replacement RIS (new UID, :213) reports Creating, and " +
+		"Creating outranks Recovering, while :213 classifies the same situation as the RBG " +
+		"entering recovery; the Test Plan bullet (:495) would codify the mislabel. State the " +
+		"replacement-child -> parent-reason mapping, or scope RBG `Creating` to the group's " +
+		"initial creation")
+}

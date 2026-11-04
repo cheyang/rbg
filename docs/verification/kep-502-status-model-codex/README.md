@@ -216,6 +216,7 @@ New finding this round:
 | finding | severity | status | evidence |
 | --- | --- | --- | --- |
 | C4457744212-activity-family-tie-break | nit (Copilot advisory) | FIXED at da818779 | TestRBGActivityPrecedenceDefined fail@f622d642 / pass@da818779 |
+| F12-rbg-replacement-creation-reason-mapping | minor | OPEN | TestRBGReplacementCreationMapsToRecovery red at f622d642 and da818779: a replacement RIS (new UID) reports Creating; under the :169 aggregation model the new precedence (Creating > Recovering) then reports Creating for a group :213 classifies as entering recovery, and the :495 Test Plan bullet would codify it. Independently confirms Copilot C4471100373. Fix: state the replacement-child -> parent-reason mapping, or scope RBG Creating to the group's initial creation. |
 | F11-ris-activity-tie-break-unstated | nit | OPEN | TestRISActivityTieBreakStated red at da818779 (and at f622d642 — gap pre-exists the delta): RIS Progressing reason selection is underdetermined when RI recovery overlaps an active RIS update/scaling workflow. README.md:349 resolves update-vs-scaling only; the new precedence at :184 is explicitly RBG-scoped; :358 "RIS Progressing follows RBG rules for progress" does not state whether the Activity precedence is inherited (and ScalingOrUpdating would need mapping to the concrete RIS workflow reason). One sentence — e.g. "RIS applies the RBG Activity precedence with the concrete workflow reason in place of ScalingOrUpdating" — closes it. |
 
 ## Continuing after the fix

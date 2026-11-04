@@ -162,8 +162,16 @@
       "match": [
         "TestRISActivityTieBreakStated"
       ]
+    },
+    {
+      "id": "F12-rbg-replacement-creation-reason-mapping",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestRBGReplacementCreationMapsToRecovery"
+      ]
     }
   ],
   "liveNote": "Docs-only KEP PR: no live layer. Integration replay (markdownlint-cli2 with .github/.markdownlint.json, YAML parsing of kep.yaml and the 3 examples) is recorded in results/markdownlint.txt and embedded as Go guards (TestKepYAMLWellFormed, TestYAMLExamplesParse).",
-  "roundNote": "Round 4 (head da818779): single docs commit adds the RBG within-Activity precedence (Creating > Recovering > ScalingOrUpdating) fixing the round-3 Copilot advisory C4457744212 — guard TestRBGActivityPrecedenceDefined red at f622d642, green at da818779 (family-table-derived exhaustiveness + reviewed order + Test Plan concurrency bullet). New nit F11: the RIS layer has no tie-break when recovery overlaps an active update/scaling workflow (:349 covers update-vs-scaling only; the new precedence is explicitly RBG-scoped) — probe TestRISActivityTieBreakStated red at da818779, expected to stay red until the KEP states the RIS handling. All 15 prior guards green at head."
+  "roundNote": "Round 4 (head da818779): single docs commit adds the RBG within-Activity precedence (Creating > Recovering > ScalingOrUpdating) fixing the round-3 Copilot advisory C4457744212 — guard TestRBGActivityPrecedenceDefined red at f622d642, green at da818779 (family-table-derived exhaustiveness + reviewed order + Test Plan concurrency bullet). New nit F11: the RIS layer has no tie-break when recovery overlaps an active update/scaling workflow (:349 covers update-vs-scaling only; the new precedence is explicitly RBG-scoped) — probe TestRISActivityTieBreakStated red at da818779, expected to stay red until the KEP states the RIS handling. All 15 prior guards green at head. F12 added after Copilot C4471100373 was independently verified: the new precedence can report Creating for a mid-recovery RBG when a replacement RIS (new UID) reports Creating; probe TestRBGReplacementCreationMapsToRecovery red at f622d642 and da818779."
 }
