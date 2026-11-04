@@ -1,0 +1,74 @@
+{
+  "pr": "https://github.com/sgl-project/rbg/pull/549",
+  "topic": "clientgo-apply-schema",
+  "reviewer": "claude",
+  "headSha": "b719f3c86e327c53558b5309ab7bbe917d194ba4",
+  "baseSha": "98d3c4be8c4c018ddbeb516b66a4eba4981c225c",
+  "premise": {
+    "id": "P0",
+    "claim": "On the base branch, fake.NewClientset() (the field-managed fake) rejects every Create/Update/Patch/Apply of an RBG object with \"no type found matching: io.k8s.sigs.rbgs.api.workloads.v1alpha2.RoleBasedGroup\", while seeding and Get work.",
+    "runsAgainst": "base",
+    "verdict": "confirmed",
+    "test": "docs/verification/clientgo-apply-schema/results/premise-base.txt",
+    "layer": "unit"
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "claim": "The OpenAPI schema embedded in client-go/applyconfiguration/internal/internal.go is derived from the Go API types, but kube-apiserver builds its server-side-apply schema from the CRDs in config/crd/bases, which declare x-kubernetes-preserve-unknown-fields on the component/instance pod-template subtrees (and the template patches). Under the server schema those subtrees are tracked with deduced semantics (maps per key, lists as a whole); under the embedded schema they are fully typed (containers keyed by name). The generated Extract<Kind> helpers interpret server-recorded managed fields with the embedded schema, so they drop the schemaless subtree content, and an extract -> modify -> apply cycle deletes those fields from the live object.",
+      "tests": [
+        {
+          "name": "TestServerParityFieldSets",
+          "polarity": "contract",
+          "layer": "unit"
+        },
+        {
+          "name": "TestServerParityRoleInstanceContainers",
+          "polarity": "contract",
+          "layer": "unit"
+        },
+        {
+          "name": "TestExtractRoleInstanceKeepsComponentTemplates",
+          "polarity": "contract",
+          "layer": "integration"
+        },
+        {
+          "name": "TestExtractControlEmbeddedRecordingKeepsTemplates",
+          "polarity": "control",
+          "layer": "integration"
+        }
+      ],
+      "status": "open",
+      "origin": "initial-pr",
+      "evidence": "docs/verification/clientgo-apply-schema/results/harness-head.txt"
+    },
+    {
+      "id": "F2",
+      "claim": "v1alpha1 InstanceSpec.Components: the CRD declares no x-kubernetes-list-type, so the API server tracks the list atomically (replaced as a whole), but the embedded schema emits a merge-by-name associative list from the +patchStrategy=merge/+patchMergeKey=name comment markers added by this PR. The generated ExtractInstance drops the components the manager applied, and the field-managed fake clientset merges components by name where the API server replaces the list.",
+      "tests": [
+        {
+          "name": "TestServerParityV1alpha1ComponentsAtomicity",
+          "polarity": "contract",
+          "layer": "unit"
+        },
+        {
+          "name": "TestExtractInstanceV1alpha1KeepsComponents",
+          "polarity": "contract",
+          "layer": "integration"
+        }
+      ],
+      "status": "open",
+      "origin": "initial-pr",
+      "evidence": "docs/verification/clientgo-apply-schema/results/harness-head.txt"
+    },
+    {
+      "id": "F3",
+      "claim": "The PR description describes a different revision than the head commit b719f3c8: it claims tests in internal/clientgo (8 tests, parity with kube-apiserver), that pkg/generated/openapi and the +k8s:openapi-gen markers are gone, that the schema is built from config/crd/bases via BuildOpenAPIV3/MergeSpecsV3, that internal.go is ~57.6k lines, and that vendor/ adds the apiextensions-apiserver builder. None of that is present at the head: pkg/generated/openapi is added (23k lines), internal.go is 4.3k lines, and the only tests are in pkg/generated/openapi. The body itself documents that this first-revision approach loses data (\"The first revision of this PR had exactly this problem\").",
+      "tests": [],
+      "status": "open",
+      "origin": "initial-pr",
+      "evidence": "git diff 98d3c4be..b719f3c8 --stat and the PR body"
+    }
+  ],
+  "liveNote": "L3 (live cluster) was intentionally skipped per the review round policy; the L1/L2 layers use the same field-management code the API server runs (k8s.io/apimachinery/pkg/util/managedfields), and the hand-rolled CRD model construction was cross-validated against k8s.io/apiextensions-apiserver builder.BuildOpenAPIV3 + MergeSpecsV3 in docs/verification/clientgo-apply-schema/crosscheck (results/real-apiserver-crosscheck.txt)."
+}

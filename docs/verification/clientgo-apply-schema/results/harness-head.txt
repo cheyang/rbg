@@ -1,0 +1,364 @@
+=== RUN   TestExtractRoleInstanceKeepsComponentTemplates
+    extract_test.go:148: extract dropped the component pod template: extracted spec = {"components":[{"name":"prefill","size":1,"template":{"spec":{}}}]}
+    extract_test.go:173: extract -> modify -> apply DELETED the live container (user-visible data loss): containers now = []
+--- FAIL: TestExtractRoleInstanceKeepsComponentTemplates (0.27s)
+=== RUN   TestExtractControlEmbeddedRecordingKeepsTemplates
+--- PASS: TestExtractControlEmbeddedRecordingKeepsTemplates (0.00s)
+=== RUN   TestExtractInstanceV1alpha1KeepsComponents
+    extract_test.go:386: extract dropped v1alpha1 spec.components: extracted spec = {}
+--- FAIL: TestExtractInstanceV1alpha1KeepsComponents (0.00s)
+=== RUN   TestServerParityFieldSets
+=== RUN   TestServerParityFieldSets/ClusterEngineRuntimeProfile/v1alpha1
+=== RUN   TestServerParityFieldSets/ClusterEngineRuntimeProfile/v1alpha2
+=== RUN   TestServerParityFieldSets/CoordinatedPolicy/v1alpha2
+=== RUN   TestServerParityFieldSets/Instance/v1alpha1
+    parity_test.go:99: field sets diverge between kube-apiserver's CRD schema and the embedded Go-derived schema (-server +embedded):
+          []string{
+          	".apiVersion",
+          	".kind",
+          	".metadata",
+        - 	".spec.components",
+        + 	`.spec.components[name="v"]`,
+        + 	`.spec.components[name="v"].name`,
+        + 	`.spec.components[name="v"].serviceName`,
+        + 	`.spec.components[name="v"].size`,
+        + 	`.spec.components[name="v"].template.spec.containers[name="c0"]`,
+        + 	`.spec.components[name="v"].template.spec.containers[name="c0"].image`,
+        + 	`.spec.components[name="v"].template.spec.containers[name="c0"].name`,
+          	".spec.podGroupPolicy.kubeScheduling.scheduleTimeoutSeconds",
+          	".spec.podGroupPolicy.volcanoScheduling.priorityClassName",
+          	... // 11 identical elements
+          }
+=== RUN   TestServerParityFieldSets/InstanceSet/v1alpha1
+    parity_test.go:94: embedded converter rejects an object that is valid per the CRD: .spec.instanceTemplate.spec: field not declared in schema
+=== RUN   TestServerParityFieldSets/RoleBasedGroup/v1alpha1
+    parity_test.go:99: field sets diverge between kube-apiserver's CRD schema and the embedded Go-derived schema (-server +embedded):
+          []string{
+          	... // 15 identical elements
+          	`.spec.roleTemplates[name="v"].name`,
+          	`.spec.roleTemplates[name="v"].template.metadata.annotations.k0`,
+          	strings.Join({
+          		`.spec.roleTemplates[name="v"].template.metadata.finalizers`,
+        + 		`[="v"]`,
+          	}, ""),
+          	`.spec.roleTemplates[name="v"].template.metadata.labels.k0`,
+          	`.spec.roleTemplates[name="v"].template.metadata.name`,
+          	... // 508 identical elements
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].ci`...,
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].ci`...,
+          	strings.Join({
+          		`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].co`,
+          		"nfigMap",
+        + 		".defaultMode",
+          	}, ""),
+        + 	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].configMap.items`,
+        + 	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].configMap.name`,
+        + 	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].configMap.optional`,
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].cs`...,
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].cs`...,
+          	... // 6 identical elements
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].em`...,
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].ep`...,
+          	strings.Join({
+          		`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].ep`,
+          		"hemeral.volumeClaimTemplate.metadata.finalizers",
+        + 		`[="v"]`,
+          	}, ""),
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].ep`...,
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].ep`...,
+          	... // 105 identical elements
+          	`.spec.roles[name="v"].components[name="v"].serviceName`,
+          	`.spec.roles[name="v"].components[name="v"].size`,
+          	strings.Join({
+          		`.spec.roles[name="v"].components[name="v"].template.spec`,
+        + 		`.containers[name="c0"]`,
+          	}, ""),
+          	strings.Join({
+          		`.spec.roles[name="v"].components[name="v"].template.spec.contain`,
+          		"ers",
+        + 		`[name="c0"].image`,
+          	}, ""),
+        + 	`.spec.roles[name="v"].components[name="v"].template.spec.containers[name="c0"].name`,
+          	`.spec.roles[name="v"].dependencies`,
+          	`.spec.roles[name="v"].engineRuntimes`,
+          	`.spec.roles[name="v"].labels.k0`,
+          	strings.Join({
+          		`.spec.roles[name="v"].leaderWorkerSet.patchLeaderTemplate`,
+        - 		".spec",
+          	}, ""),
+          	strings.Join({
+          		`.spec.roles[name="v"].leaderWorkerSet.patch`,
+        - 		"LeaderTemplate.spec.containers",
+        + 		"WorkerTemplate",
+          	}, ""),
+        - 	`.spec.roles[name="v"].leaderWorkerSet.patchWorkerTemplate.spec`,
+        - 	`.spec.roles[name="v"].leaderWorkerSet.patchWorkerTemplate.spec.containers`,
+          	`.spec.roles[name="v"].leaderWorkerSet.size`,
+          	`.spec.roles[name="v"].minReadySeconds`,
+          	... // 11 identical elements
+          	`.spec.roles[name="v"].servicePorts`,
+          	`.spec.roles[name="v"].template.metadata.annotations.k0`,
+          	strings.Join({
+          		`.spec.roles[name="v"].template.metadata.finalizers`,
+        + 		`[="v"]`,
+          	}, ""),
+          	`.spec.roles[name="v"].template.metadata.labels.k0`,
+          	`.spec.roles[name="v"].template.metadata.name`,
+          	... // 508 identical elements
+          	`.spec.roles[name="v"].template.spec.volumes[name="v"].cinder.sec`...,
+          	`.spec.roles[name="v"].template.spec.volumes[name="v"].cinder.vol`...,
+        + 	`.spec.roles[name="v"].template.spec.volumes[name="v"].configMap.defaultMode`,
+        + 	`.spec.roles[name="v"].template.spec.volumes[name="v"].configMap.items`,
+        + 	`.spec.roles[name="v"].template.spec.volumes[name="v"].configMap.name`,
+          	strings.Join({
+          		`.spec.roles[name="v"].template.spec.volumes[name="v"].configMap`,
+        + 		".optional",
+          	}, ""),
+          	... // 125 identical, 1 removed, and 2 modified elements
+          }
+=== RUN   TestServerParityFieldSets/RoleBasedGroup/v1alpha2
+    parity_test.go:99: field sets diverge between kube-apiserver's CRD schema and the embedded Go-derived schema (-server +embedded):
+          []string{
+          	... // 4 identical elements
+          	`.spec.roleTemplates[name="v"].name`,
+          	`.spec.roleTemplates[name="v"].template.metadata.annotations.k0`,
+          	strings.Join({
+          		`.spec.roleTemplates[name="v"].template.metadata.finalizers`,
+        + 		`[="v"]`,
+          	}, ""),
+          	`.spec.roleTemplates[name="v"].template.metadata.labels.k0`,
+          	`.spec.roleTemplates[name="v"].template.metadata.name`,
+          	... // 508 identical elements
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].ci`...,
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].ci`...,
+          	strings.Join({
+          		`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].co`,
+          		"nfigMap",
+        + 		".defaultMode",
+          	}, ""),
+        + 	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].configMap.items`,
+        + 	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].configMap.name`,
+        + 	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].configMap.optional`,
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].cs`...,
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].cs`...,
+          	... // 6 identical elements
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].em`...,
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].ep`...,
+          	strings.Join({
+          		`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].ep`,
+          		"hemeral.volumeClaimTemplate.metadata.finalizers",
+        + 		`[="v"]`,
+          	}, ""),
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].ep`...,
+          	`.spec.roleTemplates[name="v"].template.spec.volumes[name="v"].ep`...,
+          	... // 107 identical elements
+          	`.spec.roles[name="v"].customComponentsPattern.components[name="v`...,
+          	`.spec.roles[name="v"].customComponentsPattern.components[name="v`...,
+          	strings.Join({
+          		`.spec.roles[name="v"].customComponentsPattern.components[name="v`,
+          		`"].template.spec`,
+        + 		`.containers[name="c0"]`,
+          	}, ""),
+          	strings.Join({
+          		`.spec.roles[name="v"].customComponentsPattern.components[name="v`,
+          		`"].template.spec.containers`,
+        + 		`[name="c0"].image`,
+          	}, ""),
+        + 	`.spec.roles[name="v"].customComponentsPattern.components[name="v"].template.spec.containers[name="c0"].name`,
+          	`.spec.roles[name="v"].customComponentsPattern.restartPolicy`,
+          	`.spec.roles[name="v"].customComponentsPattern.restartPolicyConfi`...,
+          	... // 3 identical elements
+          	`.spec.roles[name="v"].engineRuntimes`,
+          	`.spec.roles[name="v"].labels.k0`,
+          	strings.Join({
+          		`.spec.roles[name="v"].leaderWorkerPattern.leaderTemplatePatch`,
+        - 		".spec",
+          	}, ""),
+        - 	`.spec.roles[name="v"].leaderWorkerPattern.leaderTemplatePatch.spec.containers`,
+          	`.spec.roles[name="v"].leaderWorkerPattern.restartPolicy`,
+          	`.spec.roles[name="v"].leaderWorkerPattern.restartPolicyConfig.ba`...,
+          	... // 3 identical elements
+          	`.spec.roles[name="v"].leaderWorkerPattern.size`,
+          	`.spec.roles[name="v"].leaderWorkerPattern.template.metadata.anno`...,
+          	strings.Join({
+          		`.spec.roles[name="v"].leaderWorkerPattern.template.metadata.fina`,
+          		"lizers",
+        + 		`[="v"]`,
+          	}, ""),
+          	`.spec.roles[name="v"].leaderWorkerPattern.template.metadata.labe`...,
+          	`.spec.roles[name="v"].leaderWorkerPattern.template.metadata.name`,
+          	... // 508 identical elements
+          	`.spec.roles[name="v"].leaderWorkerPattern.template.spec.volumes[`...,
+          	`.spec.roles[name="v"].leaderWorkerPattern.template.spec.volumes[`...,
+          	strings.Join({
+          		`.spec.roles[name="v"].leaderWorkerPattern.template.spec.volumes[`,
+          		`name="v"].configMap`,
+        + 		".defaultMode",
+          	}, ""),
+        + 	`.spec.roles[name="v"].leaderWorkerPattern.template.spec.volumes[name="v"].configMap.items`,
+        + 	`.spec.roles[name="v"].leaderWorkerPattern.template.spec.volumes[name="v"].configMap.name`,
+        + 	`.spec.roles[name="v"].leaderWorkerPattern.template.spec.volumes[name="v"].configMap.optional`,
+          	... // 756 identical, 5 removed, 3 inserted, and 5 modified elements
+          }
+=== RUN   TestServerParityFieldSets/RoleBasedGroupScalingAdapter/v1alpha1
+=== RUN   TestServerParityFieldSets/RoleBasedGroupScalingAdapter/v1alpha2
+=== RUN   TestServerParityFieldSets/RoleBasedGroupSet/v1alpha1
+    parity_test.go:99: field sets diverge between kube-apiserver's CRD schema and the embedded Go-derived schema (-server +embedded):
+          []string{
+          	... // 16 identical elements
+          	`.spec.template.roleTemplates[name="v"].name`,
+          	`.spec.template.roleTemplates[name="v"].template.metadata.annotat`...,
+          	strings.Join({
+          		`.spec.template.roleTemplates[name="v"].template.metadata.finaliz`,
+          		"ers",
+        + 		`[="v"]`,
+          	}, ""),
+          	`.spec.template.roleTemplates[name="v"].template.metadata.labels.k0`,
+          	`.spec.template.roleTemplates[name="v"].template.metadata.name`,
+          	... // 508 identical elements
+          	`.spec.template.roleTemplates[name="v"].template.spec.volumes[nam`...,
+          	`.spec.template.roleTemplates[name="v"].template.spec.volumes[nam`...,
+          	strings.Join({
+          		`.spec.template.roleTemplates[name="v"].template.spec.volumes[nam`,
+          		`e="v"].configMap`,
+        + 		".defaultMode",
+          	}, ""),
+        + 	`.spec.template.roleTemplates[name="v"].template.spec.volumes[name="v"].configMap.items`,
+        + 	`.spec.template.roleTemplates[name="v"].template.spec.volumes[name="v"].configMap.name`,
+        + 	`.spec.template.roleTemplates[name="v"].template.spec.volumes[name="v"].configMap.optional`,
+          	`.spec.template.roleTemplates[name="v"].template.spec.volumes[nam`...,
+          	`.spec.template.roleTemplates[name="v"].template.spec.volumes[nam`...,
+          	... // 6 identical elements
+          	`.spec.template.roleTemplates[name="v"].template.spec.volumes[nam`...,
+          	`.spec.template.roleTemplates[name="v"].template.spec.volumes[nam`...,
+        - 	`.spec.template.roleTemplates[name="v"].template.spec.volumes[name="v"].ephemeral.volumeClaimTemplate.metadata.finalizers`,
+          	`.spec.template.roleTemplates[name="v"].template.spec.volumes[nam`...,
+          	`.spec.template.roleTemplates[name="v"].template.spec.volumes[nam`...,
+          	... // 101 identical elements
+          	`.spec.template.roles[name="v"].components[name="v"].serviceName`,
+          	`.spec.template.roles[name="v"].components[name="v"].size`,
+          	strings.Join({
+          		`.spec.template.roles[name="v"].components[name="v"].template.spe`,
+          		"c",
+        + 		`.containers[name="c0"]`,
+          	}, ""),
+          	strings.Join({
+          		`.spec.template.roles[name="v"].components[name="v"].template.spe`,
+          		"c.containers",
+        + 		`[name="c0"].image`,
+          	}, ""),
+        + 	`.spec.template.roles[name="v"].components[name="v"].template.spec.containers[name="c0"].name`,
+          	`.spec.template.roles[name="v"].dependencies`,
+          	`.spec.template.roles[name="v"].engineRuntimes`,
+          	`.spec.template.roles[name="v"].labels.k0`,
+          	strings.Join({
+          		`.spec.template.roles[name="v"].leaderWorkerSet.patchLeaderTempla`,
+          		"te",
+        - 		".spec",
+          	}, ""),
+          	strings.Join({
+          		`.spec.template.roles[name="v"].leaderWorkerSet.patch`,
+        - 		"LeaderTemplate.spec.containers",
+        + 		"WorkerTemplate",
+          	}, ""),
+        - 	`.spec.template.roles[name="v"].leaderWorkerSet.patchWorkerTemplate.spec`,
+        - 	`.spec.template.roles[name="v"].leaderWorkerSet.patchWorkerTemplate.spec.containers`,
+          	`.spec.template.roles[name="v"].leaderWorkerSet.size`,
+          	`.spec.template.roles[name="v"].minReadySeconds`,
+          	... // 11 identical elements
+          	`.spec.template.roles[name="v"].servicePorts`,
+          	`.spec.template.roles[name="v"].template.metadata.annotations.k0`,
+          	strings.Join({
+          		`.spec.template.roles[name="v"].template.metadata.finalizers`,
+        + 		`[="v"]`,
+          	}, ""),
+          	`.spec.template.roles[name="v"].template.metadata.labels.k0`,
+          	`.spec.template.roles[name="v"].template.metadata.name`,
+          	... // 508 identical elements
+          	`.spec.template.roles[name="v"].template.spec.volumes[name="v"].c`...,
+          	`.spec.template.roles[name="v"].template.spec.volumes[name="v"].c`...,
+        + 	`.spec.template.roles[name="v"].template.spec.volumes[name="v"].configMap.defaultMode`,
+        + 	`.spec.template.roles[name="v"].template.spec.volumes[name="v"].configMap.items`,
+        + 	`.spec.template.roles[name="v"].template.spec.volumes[name="v"].configMap.name`,
+          	strings.Join({
+          		`.spec.template.roles[name="v"].template.spec.volumes[name="v"].c`,
+          		"onfigMap",
+        + 		".optional",
+          	}, ""),
+          	... // 122 identical, 2 removed, and 1 modified elements
+          }
+=== RUN   TestServerParityFieldSets/RoleBasedGroupSet/v1alpha2
+    parity_test.go:87: server converter failed on generated object: errors:
+          .spec.groupTemplate.spec.roles[name="v"].leaderWorkerPattern.template.spec.containers[name="v"].ports[containerPort="v0",protocol="v1"].containerPort: expected numeric (int or float), got string
+          .spec.groupTemplate.spec.roles[name="v"].leaderWorkerPattern.template.spec.ephemeralContainers[name="v"].ports[containerPort="v0",protocol="v1"].containerPort: expected numeric (int or float), got string
+          .spec.groupTemplate.spec.roles[name="v"].leaderWorkerPattern.template.spec.initContainers[name="v"].ports[containerPort="v0",protocol="v1"].containerPort: expected numeric (int or float), got string
+          .spec.groupTemplate.spec.roles[name="v"].standalonePattern.template.spec.ephemeralContainers[name="v"].ports[containerPort="v0",protocol="v1"].containerPort: expected numeric (int or float), got string
+          .spec.groupTemplate.spec.roles[name="v"].standalonePattern.template.spec.initContainers[name="v"].ports[containerPort="v0",protocol="v1"].containerPort: expected numeric (int or float), got string
+          .spec.groupTemplate.spec.roles[name="v"].standalonePattern.template.spec.containers[name="v"].ports[containerPort="v0",protocol="v1"].containerPort: expected numeric (int or float), got string
+=== RUN   TestServerParityFieldSets/RoleBasedGroupWarmup/v1alpha2
+    parity_test.go:75: no apply configuration for workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupWarmup
+=== RUN   TestServerParityFieldSets/RoleInstance/v1alpha2
+    parity_test.go:99: field sets diverge between kube-apiserver's CRD schema and the embedded Go-derived schema (-server +embedded):
+          []string{
+          	... // 7 identical elements
+          	`.spec.components[name="v"].serviceName`,
+          	`.spec.components[name="v"].size`,
+          	strings.Join({
+          		`.spec.components[name="v"].template.spec`,
+        + 		`.containers[name="c0"]`,
+          	}, ""),
+          	strings.Join({
+          		`.spec.components[name="v"].template.spec.containers`,
+        + 		`[name="c0"].image`,
+          	}, ""),
+        + 	`.spec.components[name="v"].template.spec.containers[name="c0"].name`,
+          	".spec.readinessGates",
+          	".spec.readyPolicy",
+          	... // 17 identical elements
+          }
+=== RUN   TestServerParityFieldSets/RoleInstanceSet/v1alpha2
+    parity_test.go:94: embedded converter rejects an object that is valid per the CRD: .spec.roleInstanceTemplate.spec: field not declared in schema
+--- FAIL: TestServerParityFieldSets (0.03s)
+    --- PASS: TestServerParityFieldSets/ClusterEngineRuntimeProfile/v1alpha1 (0.00s)
+    --- PASS: TestServerParityFieldSets/ClusterEngineRuntimeProfile/v1alpha2 (0.00s)
+    --- PASS: TestServerParityFieldSets/CoordinatedPolicy/v1alpha2 (0.00s)
+    --- FAIL: TestServerParityFieldSets/Instance/v1alpha1 (0.00s)
+    --- FAIL: TestServerParityFieldSets/InstanceSet/v1alpha1 (0.00s)
+    --- FAIL: TestServerParityFieldSets/RoleBasedGroup/v1alpha1 (0.01s)
+    --- FAIL: TestServerParityFieldSets/RoleBasedGroup/v1alpha2 (0.01s)
+    --- PASS: TestServerParityFieldSets/RoleBasedGroupScalingAdapter/v1alpha1 (0.00s)
+    --- PASS: TestServerParityFieldSets/RoleBasedGroupScalingAdapter/v1alpha2 (0.00s)
+    --- FAIL: TestServerParityFieldSets/RoleBasedGroupSet/v1alpha1 (0.01s)
+    --- FAIL: TestServerParityFieldSets/RoleBasedGroupSet/v1alpha2 (0.00s)
+    --- SKIP: TestServerParityFieldSets/RoleBasedGroupWarmup/v1alpha2 (0.00s)
+    --- FAIL: TestServerParityFieldSets/RoleInstance/v1alpha2 (0.00s)
+    --- FAIL: TestServerParityFieldSets/RoleInstanceSet/v1alpha2 (0.00s)
+=== RUN   TestServerParityRoleInstanceContainers
+    parity_test.go:167: field sets diverge for spec.components[0].template (-server +embedded):
+          []string{
+          	... // 3 identical elements
+          	`.spec.components[name="prefill"].name`,
+          	`.spec.components[name="prefill"].size`,
+          	strings.Join({
+          		`.spec.components[name="prefill"].template.spec`,
+        + 		`.containers[name="c0"]`,
+          	}, ""),
+          	strings.Join({
+          		`.spec.components[name="prefill"].template.spec.containers`,
+        + 		`[name="c0"].image`,
+          	}, ""),
+        + 	`.spec.components[name="prefill"].template.spec.containers[name="c0"].name`,
+          }
+--- FAIL: TestServerParityRoleInstanceContainers (0.00s)
+=== RUN   TestServerParityV1alpha1ComponentsAtomicity
+    parity_test.go:205: embedded schema diverges from the server on v1alpha1 spec.components (-server +embedded):
+          []string{
+        - 	".spec.components",
+        + 	`.spec.components[name="c0"]`,
+        + 	`.spec.components[name="c0"].name`,
+        + 	`.spec.components[name="c0"].size`,
+          }
+--- FAIL: TestServerParityV1alpha1ComponentsAtomicity (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/verifyschema	0.317s
+FAIL

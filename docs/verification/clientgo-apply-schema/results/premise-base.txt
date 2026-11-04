@@ -1,0 +1,5 @@
+=== RUN   TestPremise_FakeClientsetRejectsRBGWrites
+    premise_base_test.go:34: Update error on base: failed to convert new object (default/seeded; workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup) to smd typed: schema error: no type found matching: io.k8s.sigs.rbgs.api.workloads.v1alpha2.RoleBasedGroup
+--- PASS: TestPremise_FakeClientsetRejectsRBGWrites (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal	0.010s

@@ -1,0 +1,12 @@
+=== RUN   TestGetOpenAPIDefinitionsCoversClientsetKinds
+--- PASS: TestGetOpenAPIDefinitionsCoversClientsetKinds (0.00s)
+=== RUN   TestTypeConverterHandlesClientsetKinds
+--- PASS: TestTypeConverterHandlesClientsetKinds (0.01s)
+=== RUN   TestFakeClientsetWritesRoleBasedGroups
+--- PASS: TestFakeClientsetWritesRoleBasedGroups (0.00s)
+=== RUN   TestFakeClientsetApplyAndExtract
+--- PASS: TestFakeClientsetApplyAndExtract (0.00s)
+=== RUN   TestFakeClientsetMergesRoleInstanceComponents
+--- PASS: TestFakeClientsetMergesRoleInstanceComponents (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/generated/openapi	0.029s

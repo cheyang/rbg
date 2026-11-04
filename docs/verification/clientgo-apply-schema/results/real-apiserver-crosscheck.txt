@@ -1,0 +1,41 @@
+=== REAL kube-apiserver (BuildOpenAPIV3+MergeSpecsV3) field set for RoleInstance ===
+.apiVersion
+.kind
+.metadata.name
+.spec.components[name="prefill"]
+.spec.components[name="prefill"].name
+.spec.components[name="prefill"].size
+.spec.components[name="prefill"].template.spec
+.spec.components[name="prefill"].template.spec.containers
+=== REAL model names (RBG kinds) ===
+GVK-indexed model "io.k8s.api.autoscaling.v1.Scale" -> [map[group:autoscaling kind:Scale version:v1]]
+GVK-indexed model "io.k8s.apimachinery.pkg.apis.meta.v1.DeleteOptions" -> [map[group: kind:DeleteOptions version:v1] map[group:admissionregistration.k8s.io kind:DeleteOptions version:v1] map[group:admissionregistration.k8s.io kind:DeleteOptions version:v1alpha1] map[group:admissionregistration.k8s.io kind:DeleteOptions version:v1beta1] map[group:apps kind:DeleteOptions version:v1] map[group:apps kind:DeleteOptions version:v1beta1] map[group:apps kind:DeleteOptions version:v1beta2] map[group:authentication.k8s.io kind:DeleteOptions version:v1] map[group:authentication.k8s.io kind:DeleteOptions version:v1alpha1] map[group:authentication.k8s.io kind:DeleteOptions version:v1beta1] map[group:authorization.k8s.io kind:DeleteOptions version:v1] map[group:authorization.k8s.io kind:DeleteOptions version:v1beta1] map[group:autoscaling kind:DeleteOptions version:v1] map[group:autoscaling kind:DeleteOptions version:v2] map[group:autoscaling kind:DeleteOptions version:v2beta1] map[group:autoscaling kind:DeleteOptions version:v2beta2] map[group:batch kind:DeleteOptions version:v1] map[group:batch kind:DeleteOptions version:v1beta1] map[group:certificates.k8s.io kind:DeleteOptions version:v1] map[group:certificates.k8s.io kind:DeleteOptions version:v1alpha1] map[group:certificates.k8s.io kind:DeleteOptions version:v1beta1] map[group:coordination.k8s.io kind:DeleteOptions version:v1] map[group:coordination.k8s.io kind:DeleteOptions version:v1alpha2] map[group:coordination.k8s.io kind:DeleteOptions version:v1beta1] map[group:discovery.k8s.io kind:DeleteOptions version:v1] map[group:discovery.k8s.io kind:DeleteOptions version:v1beta1] map[group:events.k8s.io kind:DeleteOptions version:v1] map[group:events.k8s.io kind:DeleteOptions version:v1beta1] map[group:extensions kind:DeleteOptions version:v1beta1] map[group:flowcontrol.apiserver.k8s.io kind:DeleteOptions version:v1] map[group:flowcontrol.apiserver.k8s.io kind:DeleteOptions version:v1beta1] map[group:flowcontrol.apiserver.k8s.io kind:DeleteOptions version:v1beta2] map[group:flowcontrol.apiserver.k8s.io kind:DeleteOptions version:v1beta3] map[group:internal.apiserver.k8s.io kind:DeleteOptions version:v1alpha1] map[group:networking.k8s.io kind:DeleteOptions version:v1] map[group:networking.k8s.io kind:DeleteOptions version:v1beta1] map[group:node.k8s.io kind:DeleteOptions version:v1] map[group:node.k8s.io kind:DeleteOptions version:v1alpha1] map[group:node.k8s.io kind:DeleteOptions version:v1beta1] map[group:policy kind:DeleteOptions version:v1] map[group:policy kind:DeleteOptions version:v1beta1] map[group:rbac.authorization.k8s.io kind:DeleteOptions version:v1] map[group:rbac.authorization.k8s.io kind:DeleteOptions version:v1alpha1] map[group:rbac.authorization.k8s.io kind:DeleteOptions version:v1beta1] map[group:resource.k8s.io kind:DeleteOptions version:v1] map[group:resource.k8s.io kind:DeleteOptions version:v1alpha3] map[group:resource.k8s.io kind:DeleteOptions version:v1beta1] map[group:resource.k8s.io kind:DeleteOptions version:v1beta2] map[group:scheduling.k8s.io kind:DeleteOptions version:v1] map[group:scheduling.k8s.io kind:DeleteOptions version:v1alpha1] map[group:scheduling.k8s.io kind:DeleteOptions version:v1beta1] map[group:storage.k8s.io kind:DeleteOptions version:v1] map[group:storage.k8s.io kind:DeleteOptions version:v1alpha1] map[group:storage.k8s.io kind:DeleteOptions version:v1beta1] map[group:storagemigration.k8s.io kind:DeleteOptions version:v1alpha1]]
+GVK-indexed model "io.k8s.apimachinery.pkg.apis.meta.v1.Status" -> [map[group: kind:Status version:v1]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha1.ClusterEngineRuntimeProfile" -> [map[group:workloads.x-k8s.io kind:ClusterEngineRuntimeProfile version:v1alpha1]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha1.ClusterEngineRuntimeProfileList" -> [map[group:workloads.x-k8s.io kind:ClusterEngineRuntimeProfileList version:v1alpha1]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha1.Instance" -> [map[group:workloads.x-k8s.io kind:Instance version:v1alpha1]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha1.InstanceList" -> [map[group:workloads.x-k8s.io kind:InstanceList version:v1alpha1]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha1.InstanceSet" -> [map[group:workloads.x-k8s.io kind:InstanceSet version:v1alpha1]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha1.InstanceSetList" -> [map[group:workloads.x-k8s.io kind:InstanceSetList version:v1alpha1]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha1.RoleBasedGroup" -> [map[group:workloads.x-k8s.io kind:RoleBasedGroup version:v1alpha1]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha1.RoleBasedGroupList" -> [map[group:workloads.x-k8s.io kind:RoleBasedGroupList version:v1alpha1]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha1.RoleBasedGroupScalingAdapter" -> [map[group:workloads.x-k8s.io kind:RoleBasedGroupScalingAdapter version:v1alpha1]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha1.RoleBasedGroupScalingAdapterList" -> [map[group:workloads.x-k8s.io kind:RoleBasedGroupScalingAdapterList version:v1alpha1]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha1.RoleBasedGroupSet" -> [map[group:workloads.x-k8s.io kind:RoleBasedGroupSet version:v1alpha1]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha1.RoleBasedGroupSetList" -> [map[group:workloads.x-k8s.io kind:RoleBasedGroupSetList version:v1alpha1]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.ClusterEngineRuntimeProfile" -> [map[group:workloads.x-k8s.io kind:ClusterEngineRuntimeProfile version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.ClusterEngineRuntimeProfileList" -> [map[group:workloads.x-k8s.io kind:ClusterEngineRuntimeProfileList version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.CoordinatedPolicy" -> [map[group:workloads.x-k8s.io kind:CoordinatedPolicy version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.CoordinatedPolicyList" -> [map[group:workloads.x-k8s.io kind:CoordinatedPolicyList version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.RoleBasedGroup" -> [map[group:workloads.x-k8s.io kind:RoleBasedGroup version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.RoleBasedGroupList" -> [map[group:workloads.x-k8s.io kind:RoleBasedGroupList version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.RoleBasedGroupScalingAdapter" -> [map[group:workloads.x-k8s.io kind:RoleBasedGroupScalingAdapter version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.RoleBasedGroupScalingAdapterList" -> [map[group:workloads.x-k8s.io kind:RoleBasedGroupScalingAdapterList version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.RoleBasedGroupSet" -> [map[group:workloads.x-k8s.io kind:RoleBasedGroupSet version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.RoleBasedGroupSetList" -> [map[group:workloads.x-k8s.io kind:RoleBasedGroupSetList version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.RoleBasedGroupWarmup" -> [map[group:workloads.x-k8s.io kind:RoleBasedGroupWarmup version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.RoleBasedGroupWarmupList" -> [map[group:workloads.x-k8s.io kind:RoleBasedGroupWarmupList version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.RoleInstance" -> [map[group:workloads.x-k8s.io kind:RoleInstance version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.RoleInstanceList" -> [map[group:workloads.x-k8s.io kind:RoleInstanceList version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.RoleInstanceSet" -> [map[group:workloads.x-k8s.io kind:RoleInstanceSet version:v1alpha2]]
+GVK-indexed model "io.x-k8s.workloads.v1alpha2.RoleInstanceSetList" -> [map[group:workloads.x-k8s.io kind:RoleInstanceSetList version:v1alpha2]]
