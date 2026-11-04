@@ -1,7 +1,10 @@
 {
   "topic": "kep-527-roleinstance-lifecycle",
   "pr": "https://github.com/sgl-project/rbg/pull/546",
-  "prHeadFetch": { "remote": "origin", "ref": "pull/546/head" },
+  "prHeadFetch": {
+    "remote": "origin",
+    "ref": "pull/546/head"
+  },
   "harnessPaths": [
     "docs/verification/kep-527-roleinstance-lifecycle"
   ],
@@ -15,7 +18,11 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "Issue #527 is OPEN and matches the KEP's component and motivation. Codebase-truth checks 1-10 all pass on the PR head: the existing RIS lifecycle (preDelete/inPlaceUpdate, executor-registration labelsHandler/finalizersHandler), RoleInstanceCustomReady + readiness-gate early return, RI readinessGates, RI-owned Pods via controllerRef, no RI finalizer, no RI phase field, admission webhook infra, and the workloads.x-k8s.io/v1alpha2 group all exist/behave as the KEP describes. Scope divergence vs the issue (4 hooks proposed vs 5 requested; preCreate/postDelete dropped, preRecover added) is disclosed in the KEP's Drawbacks; PR only 'Refs #527' so no auto-close. See results/check-kep527-head-6e8419ab.tsv.",
-    "match": ["CheckCustomReadyConditionExists", "CheckRISLifecycleCoexists", "CheckExecutorRegistrationModel"]
+    "match": [
+      "CheckCustomReadyConditionExists",
+      "CheckRISLifecycleCoexists",
+      "CheckExecutorRegistrationModel"
+    ]
   },
   "layers": {
     "unit": {
@@ -24,12 +31,76 @@
     }
   },
   "findings": [
-    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["CheckDeletionCascadeSpecified"] },
-    { "id": "F2", "polarity": "contract", "layer": "unit", "match": ["CheckPhaseStorageSpecified"] },
-    { "id": "F3", "polarity": "contract", "layer": "unit", "match": ["CheckOldNewCoexistenceRule"] },
-    { "id": "F4", "polarity": "contract", "layer": "unit", "match": ["CheckKepYamlNoSegmentComment", "CheckKepYamlAuthorsSet", "CheckSeeAlsoDirsExist"] },
-    { "id": "F5", "polarity": "contract", "layer": "unit", "match": ["CheckPreDeleteGateLifetime"] }
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckDeletionCascadeSpecified"
+      ]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckPhaseStorageSpecified"
+      ]
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckOldNewCoexistenceRule"
+      ]
+    },
+    {
+      "id": "F4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckKepYamlNoSegmentComment",
+        "CheckKepYamlAuthorsSet",
+        "CheckSeeAlsoDirsExist"
+      ]
+    },
+    {
+      "id": "F5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckPreDeleteGateLifetime"
+      ]
+    },
+    {
+      "id": "F6",
+      "ledgerId": "F-SCOPE-PRECREATE",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckPreCreateRationaleStated"
+      ]
+    },
+    {
+      "id": "F7",
+      "ledgerId": "F-ZH-RIS-RI-PARITY",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckEnZhCoexistenceScopeParity"
+      ]
+    },
+    {
+      "id": "F8",
+      "ledgerId": "F-INFLIGHT-ADMISSION-MUST",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckInflightAdmissionMust"
+      ]
+    }
   ],
   "liveNote": "Docs-only PR: no live layer. Design-level findings F1-F3 are verified by codebase inspection and their checks are text proxies that confirm the KEP ADDRESSES the topic; design correctness of the added text still requires human review.",
-  "_codex_note": "All checks use contract polarity: pass = intended state. On head 6e8419ab, the 10 codebase-truth claims pass and the 7 finding checks fail (reproducing the open findings). The stock skill re-verify.sh supports only gotest/ginkgo; scripts/re-verify.sh here is a shell-kind adaptation with the same fetch/graft/verdict contract."
+  "_codex_note": "All checks use contract polarity: pass = intended state. Round 2 (head 71dd5e87): F1/F2/F3/F5 fixed by the revision; F4 partial (see-also still dangles in-repo, mitigated by README's 'KEP-502, currently proposed in PR #528'); F6-F8 added this round (F6 = preCreate/postDelete scope rationale still absent; F7/F8 = new nits found in the revision). The stock skill re-verify.sh supports only gotest/ginkgo; scripts/re-verify.sh here is a shell-kind adaptation with the same fetch/graft/verdict contract."
 }

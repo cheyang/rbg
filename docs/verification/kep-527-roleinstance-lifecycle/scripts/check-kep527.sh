@@ -129,6 +129,25 @@ if [ -f "$KEP_EN" ] && sed -n '/### Ready Gating/,/### Hook Executor Service/p' 
     | grep -qiE 'preDelete.*(gate|NotReady).*(until|remain|lift|delet)|gate.*preDelete.*(until|remain|lift)'; then
   ok CheckPreDeleteGateLifetime; else bad CheckPreDeleteGateLifetime; fi
 
+
+# F6 (F-SCOPE-PRECREATE). The KEP must state the rationale for dropping preCreate
+#     (and postDelete) versus issue #527's five-hook scope, in Motivation/Non-Goals
+#     (not only an unjustified Drawbacks admission).
+if [ -f "$KEP_EN" ] && sed -n '/^## Motivation/,/^## Proposal/p' "$KEP_EN" \
+    | grep -qiE 'pre-?create'; then
+  ok CheckPreCreateRationaleStated; else bad CheckPreCreateRationaleStated; fi
+
+# F7 (F-ZH-RIS-RI-PARITY, nit). The zh-CN coexistence sentence must scope the
+#     mutual-exclusion rule to the RIS, matching the English text ("same RIS").
+if [ -f "$KEP_ZH" ] && ! grep -q '在同一 RI 上同时生效' "$KEP_ZH"; then
+  ok CheckEnZhCoexistenceScopeParity; else bad CheckEnZhCoexistenceScopeParity; fi
+
+# F8 (F-INFLIGHT-ADMISSION-MUST, nit). The in-flight lifecycle-change admission
+#     rule must use normative "must" like the sibling admission rules and the
+#     test plan, not "should".
+if [ -f "$KEP_EN" ] && grep -q 'Admission must reject lifecycle changes' "$KEP_EN"; then
+  ok CheckInflightAdmissionMust; else bad CheckInflightAdmissionMust; fi
+
 # --- group 3: document hygiene (regression guards for future revisions) ---
 
 # H1. markdownlint clean on both docs (the PR's own verification claim).
