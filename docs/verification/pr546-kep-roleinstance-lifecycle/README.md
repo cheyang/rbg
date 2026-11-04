@@ -4,16 +4,18 @@ Reproducible evidence for the findings raised while reviewing
 [PR #546](https://github.com/sgl-project/rbg/pull/546) (KEP-527: RoleInstance
 Lifecycle Hooks — a **documentation-only** PR: `keps/527-roleinstance-lifecycle/{README.md,README.zh-CN.md,kep.yaml}`).
 
-Harness branch: `verify/pr546-kep-roleinstance-lifecycle-claude`, based on the
-reviewed PR head `6e8419ab`. **Production code is untouched** — the diff
-contains only additive test files and this harness.
+Harness branch: `verify/pr546-kep-roleinstance-lifecycle-claude`, rebased on the
+reviewed PR head `71dd5e87` (round 1 reviewed `6e8419ab`). **Production code is
+touched only by the PR itself** — the branch adds only test files and this harness
+on top of the PR head.
 
-Layers run against the code under review (PR head `6e8419ab`):
+Layers run against the code under review (PR head `71dd5e87`):
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
 | 1. Unit (Go) | pins the KEP's factual claims about *existing* code (premise + Ready-Gating prerequisite) | `go test ./pkg/inplace/instance/readiness/ ./pkg/inplace/instance/lifecycle/ -run 'TestKep527' -v` |
 | 2. Docs | markdownlint (CI config + default), whitespace, kep.yaml see-also resolution, en/zh parity | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_kep_docs.sh` |
+| 2b. Round-2 contracts | pins every round-1 finding the head claims fixed (required/forbidden text, both languages) | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh <repo-root>` |
 | 3. Live | **not run this round** (round policy: unit + integration only) | see `verify-manifest.json` `liveNote` |
 
 > Test polarity: contract tests (assert intended behavior) FAIL on buggy code /
@@ -41,6 +43,52 @@ Note on scope: issue #527's expected-capabilities table lists **five** hooks
 proposes **four** (`preUpdate`, `preRecover`, `postReady`, `preDelete`),
 dropping `preCreate`/`postDelete` without an explicit rationale and adding
 `preRecover`. See finding F-SCOPE-PRECREATE.
+
+## Round 2 (head 71dd5e87) — delta reviewed: 589e43cb, a08526d8, 71dd5e87
+
+The author revised the KEP in response to the round-1 debate. The full harness
+(`re-verify.sh`) was re-run on the new head: premise pins green, markdownlint
+(repo + default config) clean, whitespace clean, en/zh structural parity green,
+`F-SEEALSO-502` still reproducing (dangling `/keps/502-workload-status-model`),
+and the pre-existing `F-CUSTOMREADY-STATUS-EMPTY` canary still green (bug present,
+non-gating).
+
+Round-1 findings vs the new head:
+
+- **FIXED** `F-OLDNEW-ISOLATION` (the round-1 major): the KEP now scopes the
+  "sole user-facing definition point" to the new four-hook protocol, states the
+  Alpha admission mutual-exclusion rule between the new Role-level lifecycle and
+  a legacy user-configured RIS lifecycle, deprecates `inPlaceUpdate`, and requires
+  `finalizersHandler` to be empty on the new path (mirrored in zh).
+- **FIXED** `F-PREDELETE-LIVENESS`: the barrier is redesigned around a reserved RI
+  finalizer with the invariant stated correctly — an owner with a
+  `deletionTimestamp` but *without* the foreground finalizer is classified
+  **solid** by the K8s garbage collector, so background GC does not collect the
+  member Pods (re-verified against `kubernetes/kubernetes@release-1.32`
+  `garbagecollector.go` `classifyReferences` / `attemptToDeleteItem`).
+  Foreground cascading deletion is now rejected by admission at every affected
+  ancestor; direct Pod deletion stays scoped to Recovery.
+- **FIXED** `F-CREATING-REPLACE-FINALIZER` (dissolved: no per-Pod finalizers),
+  `F-PHASE-STORAGE` (phases persisted in `RoleInstance.status.phase` per
+  KEP-502, with a pre-implementable blocker), `F-PREDELETE-GATE-LIFETIME`,
+  `F-ESCAPE-HATCH` (break-glass procedure), `F-DEAD-ENGINE-PREUPDATE`,
+  `F-INFLIGHT-CONFIG-ADMISSION` (admission rejects in-flight lifecycle edits),
+  `F-KEPYAML-NOISE`, `F-MARKNOTREADY-NAME` (`markPodNotReady`), `F-READYBLOCK-NAME`
+  (`ready-notify`), `F-LIFECYCLE-STATE-PREFIX` (fully qualified key required).
+- **STILL OPEN** `F-SEEALSO-502` (dangling see-also, now more load-bearing since
+  the KEP hard-references KEP-502 for the phase model) and `F-SCOPE-PRECREATE`
+  (no preCreate/postDelete exclusion rationale in Non-Goals).
+- **NEW (round 2)** `F-NS-TEARDOWN-BYPASS` (namespace deletion deletes member
+  Pods directly, outside the enumerated supported/rejected paths), 
+  `F-PROPAGATED-VS-LEGACY` (no mechanism given for admission to distinguish
+  propagated from user-configured `RIS.spec.lifecycle`), and
+  `F-FINALIZER-BOOTSTRAP-RACE` (enable-on-existing finalizer bootstrap race).
+  All questions-level, doc design gaps.
+
+Harness-bites (differential) evidence for the fixed findings:
+`results/round2-contracts.txt` (head `71dd5e87`: 43/43 contract assertions PASS)
+vs `results/round2-contracts-prevhead.txt` (previous reviewed head `6e8419ab`:
+40 FAIL / 3 PASS). The pins were red before the round-2 delta and green after.
 
 ## Summary of results
 
