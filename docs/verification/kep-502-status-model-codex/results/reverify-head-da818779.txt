@@ -24,6 +24,7 @@ F9-rbg-transition-input-inconsistent contract  unit         FIXED          pass=
 F10-ris-activity-reasons-unenumerated contract  unit         FIXED          pass=1 fail=0 miss=0
 C4457744212-activity-family-tie-break contract  unit         FIXED          pass=1 fail=0 miss=0
 F11-ris-activity-tie-break-unstated contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+F12-rbg-replacement-creation-reason-mapping contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
 
 Live layer (manual): Docs-only KEP PR: no live layer. Integration replay (markdownlint-cli2 with .github/.markdownlint.json, YAML parsing of kep.yaml and the 3 examples) is recorded in results/markdownlint.txt and embedded as Go guards (TestKepYAMLWellFormed, TestYAMLExamplesParse).
 
