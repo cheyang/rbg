@@ -25,18 +25,21 @@
     "unit": {
       "kind": "gotest",
       "cmd": "go test ./pkg/discovery/ ./pkg/reconciler/ -run 'TestKEP531_Verify' -v"
+    },
+    "doc": {
+      "kind": "script",
+      "cmd": "bash docs/verification/kep-531-profile-injection/scripts/check_f1_doc_contract.sh"
     }
   },
   "findings": [
     {
       "id": "F1",
       "polarity": "contract",
-      "layer": "unit",
+      "layer": "doc",
       "match": [
-        "TestKEP531_Verify_LegacyMergeAppendsPerReferenceWithoutConflictCheck",
-        "TestKEP531_Verify_LegacyMergeAppendsToRoleDeclaredContainer"
+        "F1-CONTRACT"
       ],
-      "note": "Contract tests for the KEP's byte-for-byte compatibility guarantee. On main (and on this docs-only PR head) they pass: the legacy containers merge appends env once per reference with NO duplicate-name check. If the KEP implementation makes the 'shared env-name conflict check spanning all three passes' (README Compatibility item 3) reject this output, these tests go red — proof of the compatibility break. See results/harness-bites-check.txt for the demonstrated flip."
+      "note": "Doc-layer contract test for the docs-only PR: FAILS on the head README (contradictory conflict-check scope statements present \u2014 results/f1-doc-contract.txt), PASSES once the author aligns them (rewording simulated in the bites check). The unit-layer contract tests TestKEP531_Verify_LegacyMergeAppendsPerReferenceWithoutConflictCheck / ...AppendsToRoleDeclaredContainer pin main's unchecked legacy append as the byte-for-byte baseline the implementation must preserve (results/harness-bites-check.txt)."
     },
     {
       "id": "F3",
@@ -50,5 +53,5 @@
       "note": "Contract tests pinning the main behaviors the KEP claims are 'preserved verbatim': init-container legacy override is a silent no-op; an override naming another reference's container is skipped; append-if-missing pod-level delivery. They pin the accuracy of the KEP's factual claims about main; deviations after implementation are regressions of the documented compatibility surface."
     }
   ],
-  "liveNote": "L3 not applicable: docs-only PR; no runtime behavior change to observe on a cluster. The KEP's own Test Plan specifies the envtest/e2e matrix for the follow-up implementation PRs — this harness is the regression suite those PRs must keep green."
+  "liveNote": "L3 not applicable: docs-only PR; no runtime behavior change to observe on a cluster. The KEP's own Test Plan specifies the envtest/e2e matrix for the follow-up implementation PRs \u2014 this harness is the regression suite those PRs must keep green."
 }

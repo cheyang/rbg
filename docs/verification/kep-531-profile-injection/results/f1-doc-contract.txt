@@ -1,0 +1,9 @@
+F1-CONTRACT: FAIL — contradiction present on head:
+  - 'check spans both passes' (profile+role passes only): 2 occurrence(s)
+  - 'spanning all three passes' (legacy merge included):   1 occurrence(s)
+  These cannot all describe the same check; one reading breaks the
+  byte-for-byte guarantee (see results/harness-bites-check.txt).
+
+Harness-bites (doc contract): with the contradictory phrases reworded in a
+temporary copy of the README (simulated fix), the script PASSES (exit 0);
+README restored afterwards (git status clean; script FAILs again on head).
