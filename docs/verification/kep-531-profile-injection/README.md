@@ -10,6 +10,7 @@ Layers run against the **code under review** (`12693d02`, PR head):
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
 | 1. Unit | `SidecarBuilder`/`PodReconciler` injection behavior that the KEP documents and pins compatibility against | `go test ./pkg/discovery/ ./pkg/reconciler/ -run 'TestKEP531_Verify' -v` |
+| 1b. Doc | F1 contract: the KEP README specifies ONE consistent env-name-conflict-check scope | `bash docs/verification/kep-531-profile-injection/scripts/check_f1_doc_contract.sh` (FAILS on head — the defect is in the document itself) |
 | 2. Integration | — (skipped: docs-only PR, no runtime change) | — |
 | 3. Live | — (not applicable) | — |
 
@@ -199,10 +200,13 @@ and this docs tree), so it grafts onto whatever the implemented code is.
 2. Prereqs: Layer 1 = Go toolchain + vendored deps only.
 3. Re-run: `bash docs/verification/kep-531-profile-injection/scripts/re-verify.sh`
    (no sha — resolves the current PR head from `manifest.pr`).
-4. Read results via the polarity table: **all tests are contract tests** —
+4. Read results via the polarity table: the **Go tests are contract tests** —
    the KEP implementation must keep them GREEN. Any red = compatibility
    break (F1's failure scenario) or a regression of a documented
-   preserved-verbatim behavior (F3's surface).
+   preserved-verbatim behavior (F3's surface). The **doc-layer F1 check is
+   inverted**: it FAILS while the head README still carries the contradictory
+   conflict-check statements, and goes green once the author aligns them
+   (bites check in results/f1-doc-contract.txt).
 5. Harness-bites: already demonstrated (see
    `results/harness-bites-check.txt`); re-run only if the tests are edited.
 
