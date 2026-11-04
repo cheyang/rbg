@@ -960,7 +960,10 @@ func TestRBGActivityPrecedenceDefined(t *testing.T) {
 			continue
 		}
 		if open {
-			for _, tok := range backtickTokens(l) {
+			// Precedence fences list one bare reason per line (no backticks),
+			// matching the cross-family list's style.
+			tok := strings.TrimSpace(strings.ReplaceAll(strings.TrimSpace(l), "`", ""))
+			if tok != "" {
 				listed = append(listed, tok)
 			}
 		}
