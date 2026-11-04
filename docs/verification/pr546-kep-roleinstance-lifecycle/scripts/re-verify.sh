@@ -47,6 +47,13 @@ bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check
 DOC_STATUS="${PIPESTATUS[0]}"
 
 echo
+echo "== Round-2 contracts (fixed-findings regression pins; red = regression) =="
+CHECK_ROUND2_OUT="$TOPIC_DIR/results" \
+  bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh" "$WORKTREE" \
+  2>&1 | tee "$TOPIC_DIR/results/round2-contracts-rerun.txt" | grep -E '^(FAIL|OPEN|ROUND2)'
+R2_STATUS="${PIPESTATUS[0]}"
+
+echo
 echo "== Incremental review delta =="
 LAST_REVIEWED=""
 [ -f "$TOPIC_DIR/.last-reviewed" ] && LAST_REVIEWED="$(cat "$TOPIC_DIR/.last-reviewed")"
@@ -85,12 +92,22 @@ else
   echo "F-CUSTOMREADY-STATUS-EMPTY: Harness-update (test missing or did not run)"
 fi
 
-for f in F-PREDELETE-LIVENESS F-ESCAPE-HATCH F-SCOPE-PRECREATE F-PHASE-STORAGE F-OLDNEW-ISOLATION F-KEPYAML-NOISE F-MARKNOTREADY-NAME; do
-  echo "$f: Manual-review (design-level finding; no automated check — see docs/verification/pr546-kep-roleinstance-lifecycle/README.md)"
-done
+# Round-2 fixed findings: verdicts come from the round-2 contract pins.
+if [ "$R2_STATUS" -eq 0 ]; then
+  for f in F-OLDNEW-ISOLATION F-PREDELETE-LIVENESS F-CREATING-REPLACE-FINALIZER \
+           F-PHASE-STORAGE F-PREDELETE-GATE-LIFETIME F-ESCAPE-HATCH \
+           F-DEAD-ENGINE-PREUPDATE F-INFLIGHT-CONFIG-ADMISSION \
+           F-KEPYAML-NOISE F-MARKNOTREADY-NAME F-READYBLOCK-NAME F-LIFECYCLE-STATE-PREFIX; do
+    echo "$f: Fixed (round-2 contract pin green on this ref)"
+  done
+else
+  echo "Round-2 fixed findings: one or more REGRESSED (see results/round2-contracts-rerun.txt / round2-contracts.txt)"
+fi
+
+echo "F-SCOPE-PRECREATE: Manual-review (preCreate/postDelete exclusion rationale still absent from Non-Goals — question open)"
 
 echo
-if [ "$DOC_STATUS" -eq 0 ] && [ "$premise_ok" -eq 1 ] && [ "$GO_STATUS" -eq 0 ]; then
+if [ "$DOC_STATUS" -eq 0 ] && [ "$premise_ok" -eq 1 ] && [ "$GO_STATUS" -eq 0 ] && [ "$R2_STATUS" -eq 0 ]; then
   echo "RESULT: all machine-checkable gating findings fixed"
   exit 0
 else

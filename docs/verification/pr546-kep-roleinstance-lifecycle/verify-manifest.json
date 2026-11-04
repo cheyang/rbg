@@ -2,11 +2,12 @@
   "topic": "pr546-kep-roleinstance-lifecycle",
   "pr": "https://github.com/sgl-project/rbg/pull/546",
   "reviewer": "claude",
-  "round": 1,
+  "round": 2,
   "harnessPaths": [
     "docs/verification/pr546-kep-roleinstance-lifecycle",
     "pkg/inplace/instance/readiness/kep527_claims_test.go",
-    "pkg/inplace/instance/lifecycle/kep527_claims_test.go"
+    "pkg/inplace/instance/lifecycle/kep527_claims_test.go",
+    "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh"
   ],
   "premise": {
     "id": "P0",
@@ -18,7 +19,10 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "Code-path: existing PreDelete/InPlaceUpdate hooks with labelsHandler/finalizersHandler verified in api/workloads/v1alpha2/roleinstanceset_types.go and pkg/inplace/instance/lifecycle/lifecycle_utils.go; pinned by TestKep527ExistingCoordinationModel; see results/premise-code-evidence.txt",
-    "match": ["TestKep527ExistingCoordinationModel", "TestKep527ReadinessGatePrerequisite"]
+    "match": [
+      "TestKep527ExistingCoordinationModel",
+      "TestKep527ReadinessGatePrerequisite"
+    ]
   },
   "layers": {
     "unit": {
@@ -28,31 +32,183 @@
     "docs": {
       "kind": "script",
       "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_kep_docs.sh"
+    },
+    "round2-contracts": {
+      "kind": "script",
+      "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh <repo-root-of-ref>"
     }
   },
   "findings": [
+    {
+      "id": "P0",
+      "polarity": "contract",
+      "layer": "unit",
+      "status": "passed",
+      "match": [
+        "TestKep527ExistingCoordinationModel",
+        "TestKep527ReadinessGatePrerequisite"
+      ],
+      "note": "Re-verified on head 71dd5e87 (round 2): contract pins green (results/gotest-rerun.txt)."
+    },
     {
       "id": "F-SEEALSO-502",
       "polarity": "contract",
       "layer": "docs",
       "status": "open",
-      "match": ["see-also: (check_kep_docs.sh section 4)"]
+      "match": [
+        "see-also: (check_kep_docs.sh section 4)"
+      ],
+      "note": "Still open on head 71dd5e87: see-also lists /keps/502-workload-status-model, which does not exist in the repo (issue #502 open; KEP now proposed in PR #528). More load-bearing now that the KEP hard-references KEP-502 for the phase model. Gating for the doc contract check."
     },
     {
       "id": "F-PREDELETE-LIVENESS",
       "polarity": "contract",
       "layer": "manual",
-      "status": "open",
-      "match": [],
-      "note": "Design-level: kubelet/GC termination semantics cannot be exercised in L1/L2; needs a live cluster (see liveNote)."
+      "status": "fixed",
+      "match": [
+        "check_round2_contracts.sh (round-2 contract pin)"
+      ],
+      "note": "Round-2 delta redesigns the barrier: reserved RI finalizer (no per-Pod finalizers), background-GC invariant stated (owner with deletionTimestamp but without the foreground finalizer is classified solid by the GC, so dependents are not collected — re-verified against kubernetes/kubernetes@release-1.32 garbagecollector.go classifyReferences/attemptToDeleteItem), foreground cascading deletion rejected by admission at every affected ancestor, direct Pod deletion scoped to Recovery. Mirrored in zh.",
+      "fixedIn": "71dd5e87ca8704e2447caf574db72c06007d77ef"
+    },
+    {
+      "id": "F-CREATING-REPLACE-FINALIZER",
+      "polarity": "contract",
+      "layer": "docs",
+      "status": "fixed",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "fixedIn": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+      "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
+      "match": [
+        "check_round2_contracts.sh (round-2 contract pin)"
+      ],
+      "note": "Dissolved by the round-2 redesign: no per-Pod finalizers exist anymore, so the creating-phase replacement release rule is moot ('No member Pod requires a lifecycle finalizer', mirrored in zh)."
+    },
+    {
+      "id": "F-PHASE-STORAGE",
+      "polarity": "contract",
+      "layer": "manual",
+      "status": "fixed",
+      "match": [
+        "check_round2_contracts.sh (round-2 contract pin)"
+      ],
+      "note": "Round-2 delta adds the phase model paragraph: phases persisted in RoleInstance.status.phase per KEP-502 (PR #528), executor observes status.phase + lifecycle labels, and pre-implementable item 1 requires acceptance of the KEP-502 schema. Mirrored in zh.",
+      "fixedIn": "71dd5e87ca8704e2447caf574db72c06007d77ef"
+    },
+    {
+      "id": "F-OLDNEW-ISOLATION",
+      "polarity": "contract",
+      "layer": "manual",
+      "status": "fixed",
+      "match": [
+        "check_round2_contracts.sh (round-2 contract pin)"
+      ],
+      "note": "Round-2 delta states the coexistence rule: 'sole user-facing definition point' scoped to the new four-hook protocol; Alpha admission rejects a Role/RIS combination with both the new Role-level lifecycle and a legacy user-configured RIS lifecycle non-empty; inPlaceUpdate deprecated; finalizersHandler deprecated + must-be-empty on the new path; legacy standalone path rejects the three new hooks. Mirrored in README.zh-CN.md. Contract pin green on head, red on 6e8419ab.",
+      "fixedIn": "71dd5e87ca8704e2447caf574db72c06007d77ef"
+    },
+    {
+      "id": "F-KEPYAML-NOISE",
+      "polarity": "contract",
+      "layer": "docs",
+      "status": "fixed",
+      "match": [
+        "check_round2_contracts.sh (round-2 contract pin)"
+      ],
+      "note": "Stray 'Segment is data-driven' comment removed; authors: diw-zw; disable-supported now 'false'. Residue nit kept in the round-2 findings doc (boolean vs documented hook-disablement procedure).",
+      "fixedIn": "71dd5e87ca8704e2447caf574db72c06007d77ef"
+    },
+    {
+      "id": "F-MARKNOTREADY-NAME",
+      "polarity": "contract",
+      "layer": "docs",
+      "status": "fixed",
+      "match": [
+        "check_round2_contracts.sh (round-2 contract pin)"
+      ],
+      "note": "Field renamed to markPodNotReady across both READMEs, matching the existing sibling wire name.",
+      "fixedIn": "71dd5e87ca8704e2447caf574db72c06007d77ef"
+    },
+    {
+      "id": "F-READYBLOCK-NAME",
+      "polarity": "contract",
+      "layer": "docs",
+      "status": "fixed",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "fixedIn": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+      "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
+      "match": [
+        "check_round2_contracts.sh (round-2 contract pin)"
+      ],
+      "note": "Marker renamed to ready-notify in examples and diagrams, both languages; 'ready-block' forbidden by the pin."
+    },
+    {
+      "id": "F-LIFECYCLE-STATE-PREFIX",
+      "polarity": "contract",
+      "layer": "docs",
+      "status": "fixed",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "fixedIn": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+      "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
+      "match": [
+        "check_round2_contracts.sh (round-2 contract pin)"
+      ],
+      "note": "Conceptual-name paragraph added: implementation must use a fully qualified rbg.workloads.x-k8s.io/ key and must not reuse rbg.workloads.x-k8s.io/role-instance-lifecycle-state; admission rejects marker keys colliding with the controller state key. Mirrored in zh."
+    },
+    {
+      "id": "F-PREDELETE-GATE-LIFETIME",
+      "polarity": "contract",
+      "layer": "docs",
+      "status": "fixed",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "fixedIn": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+      "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
+      "match": [
+        "check_round2_contracts.sh (round-2 contract pin)"
+      ],
+      "note": "Explicit bullet ('remains until the RI object is deleted') + unit-test-plan entry added, both languages."
     },
     {
       "id": "F-ESCAPE-HATCH",
       "polarity": "contract",
       "layer": "manual",
-      "status": "open",
-      "match": [],
-      "note": "Design-level; no runnable layer."
+      "status": "fixed",
+      "match": [
+        "check_round2_contracts.sh (round-2 contract pin)"
+      ],
+      "note": "Round-2 delta defines the supported emergency procedure: explicit operator break-glass — stop new operations, verify the executor can no longer run and its action is no longer required, record the decision, remove only the exact blocking marker key; do not touch phase, gate, reserved finalizer, or Pods. Mirrored in zh (break-glass).",
+      "fixedIn": "71dd5e87ca8704e2447caf574db72c06007d77ef"
+    },
+    {
+      "id": "F-DEAD-ENGINE-PREUPDATE",
+      "polarity": "contract",
+      "layer": "docs",
+      "status": "fixed",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "fixedIn": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+      "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
+      "match": [
+        "check_round2_contracts.sh (round-2 contract pin)"
+      ],
+      "note": "Question resolved: added paragraph on Update interrupting dead-engine Recovery ('must not assume that a live engine is available'); mirrored in zh."
+    },
+    {
+      "id": "F-INFLIGHT-CONFIG-ADMISSION",
+      "polarity": "contract",
+      "layer": "docs",
+      "status": "fixed",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "fixedIn": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+      "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
+      "match": [
+        "check_round2_contracts.sh (round-2 contract pin)"
+      ],
+      "note": "Question resolved: admission rejects lifecycle mutation while lifecycle-state is non-empty, plus a race fallback and a test-plan entry; phrased 'should' rather than 'must', but the rule is stated. Mirrored in zh."
     },
     {
       "id": "F-SCOPE-PRECREATE",
@@ -60,39 +216,7 @@
       "layer": "manual",
       "status": "open",
       "match": [],
-      "note": "Design-level scope question vs issue #527; no runnable layer."
-    },
-    {
-      "id": "F-PHASE-STORAGE",
-      "polarity": "contract",
-      "layer": "manual",
-      "status": "open",
-      "match": [],
-      "note": "Design-level; no runnable layer."
-    },
-    {
-      "id": "F-OLDNEW-ISOLATION",
-      "polarity": "contract",
-      "layer": "manual",
-      "status": "open",
-      "match": [],
-      "note": "Design-level; no runnable layer."
-    },
-    {
-      "id": "F-KEPYAML-NOISE",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "open",
-      "match": [],
-      "note": "Manual text review; no automated check."
-    },
-    {
-      "id": "F-MARKNOTREADY-NAME",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "open",
-      "match": [],
-      "note": "Manual text review; no automated check."
+      "note": "Still open: preCreate/postDelete exclusion rationale still absent from Non-Goals/Motivation; 'preCreate' appears nowhere in the README. Manual review."
     },
     {
       "id": "F-CUSTOMREADY-STATUS-EMPTY",
@@ -101,16 +225,48 @@
       "status": "open",
       "origin": "preexisting",
       "introducedByPR": false,
-      "match": ["TestKep527CanaryCustomReadyFirstWriteOmitsStatus"]
+      "match": [
+        "TestKep527CanaryCustomReadyFirstWriteOmitsStatus"
+      ]
     },
     {
-      "id": "P0",
+      "id": "F-NS-TEARDOWN-BYPASS",
       "polarity": "contract",
-      "layer": "unit",
-      "status": "passed",
-      "match": ["TestKep527ExistingCoordinationModel", "TestKep527ReadinessGatePrerequisite"]
+      "layer": "manual",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+      "match": [],
+      "note": "Question: namespace deletion deletes member Pods directly (the namespace controller deletes every object in the namespace), bypassing the reserved-finalizer barrier; neither the supported-paths list nor the admission rejections cover namespace teardown, and the reserved finalizer can stall namespace termination while the executor waits on a dead engine. Design-level; no runnable layer (L1/L2 only this round)."
+    },
+    {
+      "id": "F-PROPAGATED-VS-LEGACY",
+      "polarity": "contract",
+      "layer": "manual",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+      "match": [],
+      "note": "Question: the mutual-exclusion rule requires admission to distinguish RBG-propagated RIS.spec.lifecycle from a legacy user-configured value on the SAME field/type; the mechanism (ownerRef check, RBG-managed annotation, or rejecting user mutations of spec.lifecycle on RBG-owned RISes) is not specified, and 'must not be independently edited' is stated without enforcement. Design-level."
+    },
+    {
+      "id": "F-FINALIZER-BOOTSTRAP-RACE",
+      "polarity": "contract",
+      "layer": "manual",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+      "match": [],
+      "note": "Question: enable-preDelete-on-existing-RI window — a user DELETE arriving before the controller adds the reserved finalizer removes the RI immediately (no finalizer at delete time) and member Pods are then background-GC'd with preDelete never running. Creation path is safe (the controller creates the RI); only the enable-on-existing path is documented, without noting the race. Design-level."
     }
   ],
-  "gatingFindings": ["F-SEEALSO-502"],
-  "liveNote": "L3 (not run this round, per round policy: unit+integration only): to decide F-PREDELETE-LIVENESS, run a live cluster: enable a preDelete hook, delete the RI (not the Pods), and observe whether member-Pod containers receive SIGTERM while the preDelete marker is still set — kubelet starts graceful termination on deletionTimestamp regardless of the Pod's finalizer; GC deletes dependents once the owner has a deletionTimestamp. Expected signal if the design gap is real: container termination begins during the preDelete wait, bounded by terminationGracePeriodSeconds."
+  "gatingFindings": [
+    "F-SEEALSO-502"
+  ],
+  "liveNote": "L3 (not run this round, per round policy: unit+integration only): the deletion-design claims are pinned textually and re-verified against upstream GC source; a live cluster would still be the final authority for F-NS-TEARDOWN-BYPASS (namespace teardown with preDelete enabled: do member Pods die before marker release? does the namespace stall?) and for foreground-rejection enforcement once a webhook exists.",
+  "headSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+  "previousHeadSha": "6e8419abef232541fe4b0df7bf6d609972902887"
 }
