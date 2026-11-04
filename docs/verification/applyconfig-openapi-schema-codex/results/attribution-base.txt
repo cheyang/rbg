@@ -1,0 +1,5 @@
+=== RUN   TestFakeRejectsDivergentAtomicListApply
+    attribution_test.go:53: first apply failed (expected on the merge-base, where the fake has no schema): failed to create manager for existing fields: failed to convert new object (/; workloads.x-k8s.io/v1alpha1, Kind=Instance) to smd typed: schema error: no type found matching: io.k8s.sigs.rbgs.api.workloads.v1alpha1.Instance
+--- PASS: TestFakeRejectsDivergentAtomicListApply (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/verification/pr549/attribution	0.013s

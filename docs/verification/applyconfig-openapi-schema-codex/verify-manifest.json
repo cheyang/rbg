@@ -51,7 +51,8 @@
         "TestFakeMatchesServerInstanceComponents",
         "TestFieldSetParityControlKind",
         "TestExtractWithServerSchemaKeepsTemplate",
-        "TestFakeMatchesServerRoleInstanceComponents"
+        "TestFakeMatchesServerRoleInstanceComponents",
+        "TestFakeRejectsDivergentAtomicListApply"
       ]
     }
   ],

@@ -40,7 +40,7 @@
         .spec.components[name="prefill"].template.spec.containers[name="app"]
         .spec.components[name="prefill"].template.spec.containers[name="app"].image
         .spec.components[name="prefill"].template.spec.containers[name="app"].name
---- FAIL: TestFieldSetParityRoleInstance (0.02s)
+--- FAIL: TestFieldSetParityRoleInstance (0.01s)
 === RUN   TestFieldSetParityInstance
     parity_test.go:166: field sets diverge between API server (CRD schema) and generated client schema
         --- server ---
@@ -85,7 +85,7 @@
         .spec.roles[name="prefill"].replicas
         .spec.roles[name="prefill"].standalonePattern.templateRef.name
         .spec.roles[name="prefill"].standalonePattern.templateRef.patch
---- FAIL: TestFieldSetParityRoleBasedGroup (0.11s)
+--- FAIL: TestFieldSetParityRoleBasedGroup (0.10s)
 === RUN   TestFieldSetParityControlKind
 --- PASS: TestFieldSetParityControlKind (0.02s)
 === RUN   TestFieldSetParitySchemalessSubtrees
@@ -143,15 +143,15 @@
     --- FAIL: TestFieldSetParitySchemalessSubtrees/RoleBasedGroupSet_v1alpha2 (0.11s)
     --- FAIL: TestFieldSetParitySchemalessSubtrees/RoleBasedGroup_v1alpha1 (0.11s)
 === RUN   TestExtractRoleInstanceKeepsServerManagedTemplate
-    parity_test.go:359: extracted component "prefill" lost its pod template containers: template=&{ObjectMetaApplyConfiguration:0x2c420f428900 Spec:0x2c420d2d1a00}
-    parity_test.go:359: extracted component "decode" lost its pod template containers: template=&{ObjectMetaApplyConfiguration:<nil> Spec:0x2c420d2d1c00}
+    parity_test.go:359: extracted component "prefill" lost its pod template containers: template=&{ObjectMetaApplyConfiguration:0x17d3675a4990 Spec:0x17d36675b800}
+    parity_test.go:359: extracted component "decode" lost its pod template containers: template=&{ObjectMetaApplyConfiguration:<nil> Spec:0x17d36675e200}
 --- FAIL: TestExtractRoleInstanceKeepsServerManagedTemplate (0.00s)
 === RUN   TestExtractModifyApplyDropsServerManagedTemplate
     parity_test.go:409: DATA LOSS: component "prefill" template containers after extract->modify->apply: found=false value=[]
     parity_test.go:409: DATA LOSS: component "decode" template containers after extract->modify->apply: found=false value=[]
 --- FAIL: TestExtractModifyApplyDropsServerManagedTemplate (0.00s)
 === RUN   TestExtractWithServerSchemaKeepsTemplate
---- PASS: TestExtractWithServerSchemaKeepsTemplate (0.01s)
+--- PASS: TestExtractWithServerSchemaKeepsTemplate (0.00s)
 === RUN   TestFakeMatchesServerInstanceComponents
     parity_test.go:472: server (CRD schema) rejected the second apply as expected: Apply failed with 1 conflict: conflict with "manager-a": .spec.components
     parity_test.go:493: fake diverges from API server: server rejected the second apply with a conflict, fake merged silently (components now [prefill decode])
@@ -159,5 +159,5 @@
 === RUN   TestFakeMatchesServerRoleInstanceComponents
 --- PASS: TestFakeMatchesServerRoleInstanceComponents (0.00s)
 FAIL
-FAIL	sigs.k8s.io/rbgs/verification/pr549/parity	0.402s
+FAIL	sigs.k8s.io/rbgs/verification/pr549/parity	0.404s
 FAIL

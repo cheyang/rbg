@@ -8,6 +8,7 @@ Layers run against the **code under review** (`b719f3c86e327c53558b5309ab7bbe917
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
 | 1. Unit | P0 premise: `fake.NewClientset()` writes of RBG objects | `GOFLAGS=-mod=mod go test -count=1 ./verification/pr549/premise/` |
+| 1. Unit | F1 attribution contract (base-compilable) | `GOFLAGS=-mod=mod go test -count=1 ./verification/pr549/attribution/` |
 | 1. Unit | F1: schema parity with kube-apiserver's CRD-derived converter; extract from server-recorded managed fields; fake-vs-server apply conflict semantics | `GOFLAGS=-mod=mod go test -count=1 ./verification/pr549/parity/` |
 
 All claims are deterministic schema-semantics properties, so no envtest/live layer is
@@ -89,6 +90,10 @@ Observed at head (`results/parity-head.txt`):
   the same manager) leaves the live object with `template.spec.containers` **absent** for
   both components: SSA prunes the owned fields the mangled extraction omitted. This is the
   on-cluster data loss, reproduced with kube-apiserver's own field-manager semantics.
+- `TestFakeRejectsDivergentAtomicListApply` (attribution contract, compiles at base and
+  head): **PASS at base** (`results/attribution-base.txt`: the fake errors loudly with
+  "no type found matching"), **FAIL at head** (`results/attribution-head.txt`: silent
+  merge) — the base-pass/head-fail pair that attributes F1 to this PR.
 - `TestFakeMatchesServerInstanceComponents`: **FAIL** — the server rejects a second
   manager's apply of a different v1alpha1 components list with
   `conflict with "manager-a": .spec.components`; `fake.NewClientset()` silently merges

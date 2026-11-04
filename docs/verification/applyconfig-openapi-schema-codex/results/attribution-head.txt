@@ -1,0 +1,6 @@
+=== RUN   TestFakeRejectsDivergentAtomicListApply
+    attribution_test.go:57: fake silently merged a divergent atomic components list (server behavior: conflict)
+--- FAIL: TestFakeRejectsDivergentAtomicListApply (0.01s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/verification/pr549/attribution	0.024s
+FAIL
