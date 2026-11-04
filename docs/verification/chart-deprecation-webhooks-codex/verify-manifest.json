@@ -17,7 +17,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "KC=\"$$(mktemp)\" && printf 'apiVersion: v1\\nkind: Config\\n' > \"$$KC\" && chmod 600 \"$$KC\" && KUBECONFIG=\"$$KC\" go test ./test/chart/ -count=1 -json; rc=$$?; rm -f \"$$KC\"; exit $$rc"
+      "cmd": "KC=\"$(mktemp)\"; printf 'apiVersion: v1\\nkind: Config\\n' > \"$KC\"; chmod 600 \"$KC\"; KUBECONFIG=\"$KC\" go test ./test/chart/ -count=1 -json; rc=$?; rm -f \"$KC\"; exit $rc"
     },
     "integration": {
       "kind": "gotest",
