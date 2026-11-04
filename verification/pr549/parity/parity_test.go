@@ -43,6 +43,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/util/managedfields"
 	"k8s.io/apimachinery/pkg/util/managedfields/managedfieldstest"
+	"k8s.io/utils/ptr"
 
 	workloadsv1alpha2 "sigs.k8s.io/rbgs/api/workloads/v1alpha2"
 	"sigs.k8s.io/rbgs/client-go/applyconfiguration"
@@ -356,6 +357,57 @@ func TestExtractRoleInstanceKeepsServerManagedTemplate(t *testing.T) {
 	for _, c := range extracted.Spec.Components {
 		if c.Template == nil || c.Template.Spec == nil || len(c.Template.Spec.Containers) != 1 {
 			t.Errorf("extracted component %q lost its pod template containers: template=%+v", *c.Name, c.Template)
+		}
+	}
+}
+
+// TestExtractModifyApplyDropsServerManagedTemplate demonstrates the
+// user-facing consequence of F1 end to end: an extract -> modify -> apply
+// round trip against server-recorded managed fields deletes the pod template
+// containers from the live object, because the extracted configuration no
+// longer contains them and SSA prunes owned fields that are omitted from a
+// new apply.
+func TestExtractModifyApplyDropsServerManagedTemplate(t *testing.T) {
+	serverTC := serverTypeConverter(t, "workloads.x-k8s.io_roleinstances.yaml", roleInstanceGVK)
+	fm := managedfieldstest.NewTestFieldManager(serverTC, roleInstanceGVK)
+	if err := fm.Apply(roleInstanceObject(), "applier", false); err != nil {
+		t.Fatalf("server-side apply failed: %v", err)
+	}
+	live := fm.Live().(*unstructured.Unstructured).DeepCopy()
+	live.SetManagedFields(fm.ManagedFields())
+
+	data, err := json.Marshal(live)
+	if err != nil {
+		t.Fatalf("marshal live object: %v", err)
+	}
+	typedObj := &workloadsv1alpha2.RoleInstance{}
+	if err := json.Unmarshal(data, typedObj); err != nil {
+		t.Fatalf("unmarshal live object: %v", err)
+	}
+
+	extracted, err := applyv1alpha2.ExtractRoleInstance(typedObj, "applier")
+	if err != nil {
+		t.Fatalf("ExtractRoleInstance: %v", err)
+	}
+	// modify: bump a scalar the manager owns, as a real extract/modify/apply
+	// client would.
+	extracted.Spec.Components[0].Size = ptr.To[int32](5)
+
+	reapplied := toUnstructured(t, extracted)
+	if err := fm.Apply(reapplied, "applier", false); err != nil {
+		t.Fatalf("re-apply of extracted config failed: %v", err)
+	}
+	final := fm.Live().(*unstructured.Unstructured)
+	components, _, _ := unstructured.NestedSlice(final.Object, "spec", "components")
+	if len(components) != 2 {
+		t.Fatalf("components lost after extract/apply round trip: %v", components)
+	}
+	for _, c := range components {
+		comp := c.(map[string]interface{})
+		containers, found, _ := unstructured.NestedSlice(comp, "template", "spec", "containers")
+		if !found || len(containers) != 1 {
+			t.Errorf("DATA LOSS: component %q template containers after extract->modify->apply: found=%v value=%v",
+				comp["name"], found, containers)
 		}
 	}
 }

@@ -84,6 +84,11 @@ Observed at head (`results/parity-head.txt`):
   Control `TestExtractWithServerSchemaKeepsTemplate` (same managed fields, CRD-derived
   parseable type): **PASS** — containers survive, so the harness and the fix direction are
   sound.
+- `TestExtractModifyApplyDropsServerManagedTemplate`: **FAIL** — the full round trip
+  (server apply -> generated `ExtractRoleInstance` -> bump an owned scalar -> re-apply as
+  the same manager) leaves the live object with `template.spec.containers` **absent** for
+  both components: SSA prunes the owned fields the mangled extraction omitted. This is the
+  on-cluster data loss, reproduced with kube-apiserver's own field-manager semantics.
 - `TestFakeMatchesServerInstanceComponents`: **FAIL** — the server rejects a second
   manager's apply of a different v1alpha1 components list with
   `conflict with "manager-a": .spec.components`; `fake.NewClientset()` silently merges

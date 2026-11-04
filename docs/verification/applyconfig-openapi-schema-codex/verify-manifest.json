@@ -18,7 +18,9 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "At base 98d3c4be the contract test fails with exactly the claimed 'no type found matching' error; at head b719f3c8 it passes. results/premise-base.txt, results/premise-head.txt",
-    "match": ["TestFakeClientsetWritesRoleBasedGroups"]
+    "match": [
+      "TestFakeClientsetWritesRoleBasedGroups"
+    ]
   },
   "layers": {
     "unit": {
@@ -31,7 +33,9 @@
       "id": "P0",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestFakeClientsetWritesRoleBasedGroups"]
+      "match": [
+        "TestFakeClientsetWritesRoleBasedGroups"
+      ]
     },
     {
       "id": "F1",
@@ -43,6 +47,7 @@
         "TestFieldSetParityRoleBasedGroup",
         "TestFieldSetParitySchemalessSubtrees",
         "TestExtractRoleInstanceKeepsServerManagedTemplate",
+        "TestExtractModifyApplyDropsServerManagedTemplate",
         "TestFakeMatchesServerInstanceComponents",
         "TestFieldSetParityControlKind",
         "TestExtractWithServerSchemaKeepsTemplate",
