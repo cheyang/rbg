@@ -881,3 +881,182 @@ func TestRISActivityReasonsEnumerated(t *testing.T) {
 			"missing from prose: %v; enumerated but not an RIS activity reason: %v", missing, extra)
 	}
 }
+
+// ---------------------------------------------------------------------------
+// C4457744212 (round-3 Copilot advisory, fixed in round 4 at da818779): the
+// reporting-priority list resolved ties BETWEEN reason families but not WITHIN
+// the Activity family across heterogeneous role facts (one role Recovering
+// while another updates). The fix must declare a deterministic within-Activity
+// precedence for RBG covering exactly the family table's RBG activity reasons
+// (Creating, Recovering, ScalingOrUpdating), in the reviewed order
+// Creating > Recovering > ScalingOrUpdating, and the Test Plan must cover the
+// concurrent-activity scenarios. Red at f622d642, green at da818779.
+// ---------------------------------------------------------------------------
+
+func TestRBGActivityPrecedenceDefined(t *testing.T) {
+	doc := kepDoc(t)
+
+	// Derive the RBG activity reasons from the "Activity and child-readiness
+	// reasons" family table (RBG column), excluding the child-readiness row.
+	activityFacts := map[string]bool{
+		"Initial creation":       true,
+		"Update":                 true,
+		"Instance-count scaling": true,
+		"Recovery":               true,
+	}
+	expected := map[string]bool{}
+	inTable := false
+	for _, l := range strings.Split(doc, "\n") {
+		if strings.HasPrefix(l, "| Fact |") {
+			inTable = true
+			continue
+		}
+		if inTable && !strings.HasPrefix(l, "|") {
+			break
+		}
+		if !inTable || strings.HasPrefix(l, "| ---") {
+			continue
+		}
+		cells := strings.Split(l, "|")
+		if len(cells) < 6 {
+			continue
+		}
+		if !activityFacts[strings.TrimSpace(cells[1])] {
+			continue
+		}
+		for _, tok := range backtickTokens(cells[4]) {
+			expected[tok] = true
+		}
+	}
+	if len(expected) == 0 {
+		t.Fatal("C4457744212-guard anchor drift: activity family table RBG column not found or empty")
+	}
+
+	// Locate the within-Activity precedence declaration: the phrase
+	// "Within the Activity family" followed by a fenced precedence list.
+	lines := strings.Split(doc, "\n")
+	declIdx := -1
+	for i, l := range lines {
+		if strings.Contains(l, "Within the Activity family") {
+			declIdx = i
+			break
+		}
+	}
+	if declIdx == -1 {
+		t.Errorf("C4457744212: no within-Activity precedence declaration found — " +
+			"the reporting-priority list still resolves ties between families only, " +
+			"leaving concurrent heterogeneous activities (e.g. one role Recovering, " +
+			"another updating) without a deterministic RBG reason")
+		return
+	}
+	var listed []string
+	open := false
+	for _, l := range lines[declIdx+1:] {
+		if strings.HasPrefix(strings.TrimSpace(l), "```") {
+			if open {
+				break
+			}
+			open = true
+			continue
+		}
+		if open {
+			for _, tok := range backtickTokens(l) {
+				listed = append(listed, tok)
+			}
+		}
+	}
+	if len(listed) == 0 {
+		t.Errorf("C4457744212: within-Activity precedence declaration has no fenced reason list")
+		return
+	}
+	// Exhaustive and duplicate-free: exactly the family table's RBG activity reasons.
+	seen := map[string]int{}
+	for _, tok := range listed {
+		seen[tok]++
+	}
+	var missing, extra, dup []string
+	for tok := range expected {
+		if seen[tok] == 0 {
+			missing = append(missing, tok)
+		}
+	}
+	for tok, n := range seen {
+		if !expected[tok] {
+			extra = append(extra, tok)
+		}
+		if n > 1 {
+			dup = append(dup, tok)
+		}
+	}
+	sort.Strings(missing)
+	sort.Strings(extra)
+	sort.Strings(dup)
+	if len(missing) > 0 || len(extra) > 0 || len(dup) > 0 {
+		t.Errorf("C4457744212: within-Activity precedence list does not match the family table — "+
+			"missing: %v; not an RBG activity reason: %v; listed twice: %v", missing, extra, dup)
+	}
+	// Reviewed order: Creating > Recovering > ScalingOrUpdating.
+	want := []string{"Creating", "Recovering", "ScalingOrUpdating"}
+	if strings.Join(listed, ",") != strings.Join(want, ",") {
+		t.Errorf("C4457744212: within-Activity precedence order = %v, reviewed semantics require %v", listed, want)
+	}
+
+	// The Test Plan must cover the concurrent-activity scenarios.
+	tp := section(doc, "Test Plan")
+	if tp == "" {
+		t.Fatal("C4457744212-guard anchor drift: Test Plan section not found")
+	}
+	covered := false
+	for _, l := range strings.Split(tp, "\n") {
+		if strings.Contains(l, "`Recovering`") && strings.Contains(l, "`Creating`") &&
+			strings.Contains(l, "`ScalingOrUpdating`") {
+			covered = true
+			break
+		}
+	}
+	if !covered {
+		t.Errorf("C4457744212: Test Plan has no concurrent-activity scenario bullet " +
+			"(Recovering vs updating, Creating vs updating/recovering, ScalingOrUpdating)")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// F11 (round-4 discovery, nit): the RIS Progressing reason selection has no
+// tie-break when recovery overlaps an active update or scaling workflow. The
+// RBG layer gained a within-Activity precedence at da818779, and :349 resolves
+// RIS update-vs-scaling, but nothing states whether a RIS reports Recovering
+// or RollingUpdate/ScalingUp/ScalingDown when both facts are present (the
+// "RIS Progressing follows RBG rules for progress" sentence does not name the
+// Activity precedence). Green once the KEP states the RIS within-Activity tie
+// handling (explicit precedence, a yield rule, or explicit inheritance of the
+// RBG Activity precedence). Red at da818779 = the open gap.
+// ---------------------------------------------------------------------------
+
+func TestRISActivityTieBreakStated(t *testing.T) {
+	doc := kepDoc(t)
+	ris := sectionExact(doc, "RoleInstanceSet")
+	if ris == "" {
+		t.Fatal("F11-guard anchor drift: RoleInstanceSet section not found")
+	}
+	if !strings.Contains(ris, "`Recovering`") {
+		t.Fatal("F11-guard anchor drift: RIS section no longer mentions Recovering activity")
+	}
+	precRe := regexp.MustCompile(`(?i)precedence|outranks|higher-priority|takes priority|yields to`)
+	for _, l := range strings.Split(ris, "\n") {
+		if strings.Contains(l, "`Recovering`") && precRe.MatchString(l) {
+			t.Logf("F11: RIS tie-break statement found: %s", strings.TrimSpace(l))
+			return
+		}
+		// Explicit inheritance of the Activity precedence also closes the gap.
+		if strings.Contains(l, "Activity") && precRe.MatchString(l) &&
+			(strings.Contains(l, "RIS") || strings.Contains(l, "follows")) {
+			t.Logf("F11: RIS inherits Activity precedence: %s", strings.TrimSpace(l))
+			return
+		}
+	}
+	t.Errorf("F11: RIS Progressing reason selection is underdetermined when recovery " +
+		"overlaps an active update or scaling workflow — no statement in the RoleInstanceSet " +
+		"section ties `Recovering` against update / scaling reasons (the RBG within-Activity " +
+		"precedence added at da818779 is explicitly RBG-scoped and :349 covers only " +
+		"update-vs-scaling)")
+}
