@@ -1,0 +1,6 @@
+=== RUN   TestFakeClientsetWritesRoleBasedGroups
+    premise_test.go:50: Create via fake.NewClientset failed: failed to convert new object (/created; workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup) to smd typed: schema error: no type found matching: io.k8s.sigs.rbgs.api.workloads.v1alpha2.RoleBasedGroup
+--- FAIL: TestFakeClientsetWritesRoleBasedGroups (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/verification/pr549/premise	0.009s
+FAIL

@@ -1,0 +1,54 @@
+{
+  "topic": "applyconfig-openapi-schema-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/549",
+  "reviewer": "codex",
+  "headSha": "b719f3c86e327c53558b5309ab7bbe917d194ba4",
+  "baseSha": "98d3c4be8c4c018ddbeb516b66a4eba4981c225c",
+  "harnessPaths": [
+    "docs/verification/applyconfig-openapi-schema-codex",
+    "verification/pr549"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "fake.NewClientset() rejects every Create, Update, Patch, and Apply of an RBG object with: failed to convert new object ... schema error: no type found matching: io.k8s.sigs.rbgs.api.workloads.v1alpha2.RoleBasedGroup",
+    "reportedComponent": "client-go generated apply configurations / fake clientset (client-go/applyconfiguration/internal embedded schema)",
+    "patchedComponent": "client-go/applyconfiguration + hack/update-codegen.sh + pkg/generated/openapi",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "At base 98d3c4be the contract test fails with exactly the claimed 'no type found matching' error; at head b719f3c8 it passes. results/premise-base.txt, results/premise-head.txt",
+    "match": ["TestFakeClientsetWritesRoleBasedGroups"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "GOFLAGS=-mod=mod go test -count=1 ./verification/pr549/... -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "P0",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestFakeClientsetWritesRoleBasedGroups"]
+    },
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestFieldSetParityRoleInstance",
+        "TestFieldSetParityInstance",
+        "TestFieldSetParityRoleBasedGroup",
+        "TestFieldSetParitySchemalessSubtrees",
+        "TestExtractRoleInstanceKeepsServerManagedTemplate",
+        "TestFakeMatchesServerInstanceComponents",
+        "TestFieldSetParityControlKind",
+        "TestExtractWithServerSchemaKeepsTemplate",
+        "TestFakeMatchesServerRoleInstanceComponents"
+      ]
+    }
+  ],
+  "liveNote": "No live layer: all claims are deterministic schema-semantics properties decided by unit tests against kube-apiserver's CRD-schema construction (apiextensions-apiserver builder) and smd managed fields."
+}

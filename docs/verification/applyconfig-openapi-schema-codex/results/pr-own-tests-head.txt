@@ -1,0 +1,1 @@
+ok  	sigs.k8s.io/rbgs/pkg/generated/openapi	0.027s

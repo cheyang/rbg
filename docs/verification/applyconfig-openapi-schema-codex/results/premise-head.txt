@@ -1,0 +1,4 @@
+=== RUN   TestFakeClientsetWritesRoleBasedGroups
+--- PASS: TestFakeClientsetWritesRoleBasedGroups (0.01s)
+PASS
+ok  	sigs.k8s.io/rbgs/verification/pr549/premise	0.024s

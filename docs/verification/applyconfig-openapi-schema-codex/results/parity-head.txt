@@ -1,0 +1,159 @@
+=== RUN   TestFieldSetParityRoleInstance
+    parity_test.go:155: field sets diverge between API server (CRD schema) and generated client schema
+        --- server ---
+        .apiVersion
+        .kind
+        .metadata.name
+        .metadata.namespace
+        .spec.components[name="decode"]
+        .spec.components[name="prefill"]
+        .spec.components[name="decode"].name
+        .spec.components[name="decode"].serviceName
+        .spec.components[name="decode"].size
+        .spec.components[name="decode"].template.spec
+        .spec.components[name="decode"].template.spec.containers
+        .spec.components[name="prefill"].name
+        .spec.components[name="prefill"].serviceName
+        .spec.components[name="prefill"].size
+        .spec.components[name="prefill"].template.metadata
+        .spec.components[name="prefill"].template.spec
+        .spec.components[name="prefill"].template.metadata.labels
+        .spec.components[name="prefill"].template.metadata.labels.app
+        .spec.components[name="prefill"].template.spec.containers
+        --- client ---
+        .apiVersion
+        .kind
+        .metadata.name
+        .metadata.namespace
+        .spec.components[name="decode"]
+        .spec.components[name="prefill"]
+        .spec.components[name="decode"].name
+        .spec.components[name="decode"].serviceName
+        .spec.components[name="decode"].size
+        .spec.components[name="decode"].template.spec.containers[name="worker"]
+        .spec.components[name="decode"].template.spec.containers[name="worker"].image
+        .spec.components[name="decode"].template.spec.containers[name="worker"].name
+        .spec.components[name="prefill"].name
+        .spec.components[name="prefill"].serviceName
+        .spec.components[name="prefill"].size
+        .spec.components[name="prefill"].template.metadata.labels.app
+        .spec.components[name="prefill"].template.spec.containers[name="app"]
+        .spec.components[name="prefill"].template.spec.containers[name="app"].image
+        .spec.components[name="prefill"].template.spec.containers[name="app"].name
+--- FAIL: TestFieldSetParityRoleInstance (0.01s)
+=== RUN   TestFieldSetParityInstance
+    parity_test.go:165: field sets diverge between API server (CRD schema) and generated client schema
+        --- server ---
+        .apiVersion
+        .kind
+        .metadata.name
+        .metadata.namespace
+        .spec.components
+        --- client ---
+        .apiVersion
+        .kind
+        .metadata.name
+        .metadata.namespace
+        .spec.components[name="prefill"]
+        .spec.components[name="prefill"].name
+        .spec.components[name="prefill"].serviceName
+        .spec.components[name="prefill"].size
+        .spec.components[name="prefill"].template.spec.containers[name="app"]
+        .spec.components[name="prefill"].template.spec.containers[name="app"].image
+        .spec.components[name="prefill"].template.spec.containers[name="app"].name
+--- FAIL: TestFieldSetParityInstance (0.00s)
+=== RUN   TestFieldSetParityRoleBasedGroup
+    parity_test.go:199: field sets diverge between API server (CRD schema) and generated client schema
+        --- server ---
+        .apiVersion
+        .kind
+        .metadata.name
+        .metadata.namespace
+        .spec.roles[name="prefill"]
+        .spec.roles[name="prefill"].name
+        .spec.roles[name="prefill"].replicas
+        .spec.roles[name="prefill"].standalonePattern.templateRef.name
+        .spec.roles[name="prefill"].standalonePattern.templateRef.patch.spec
+        .spec.roles[name="prefill"].standalonePattern.templateRef.patch.spec.containers
+        --- client ---
+        .apiVersion
+        .kind
+        .metadata.name
+        .metadata.namespace
+        .spec.roles[name="prefill"]
+        .spec.roles[name="prefill"].name
+        .spec.roles[name="prefill"].replicas
+        .spec.roles[name="prefill"].standalonePattern.templateRef.name
+        .spec.roles[name="prefill"].standalonePattern.templateRef.patch
+--- FAIL: TestFieldSetParityRoleBasedGroup (0.09s)
+=== RUN   TestFieldSetParityControlKind
+--- PASS: TestFieldSetParityControlKind (0.02s)
+=== RUN   TestFieldSetParitySchemalessSubtrees
+=== RUN   TestFieldSetParitySchemalessSubtrees/InstanceSet_v1alpha1
+    parity_test.go:314: client ObjectToTyped(workloads.x-k8s.io/v1alpha1, Kind=InstanceSet): .spec.instanceTemplate.spec: field not declared in schema
+=== RUN   TestFieldSetParitySchemalessSubtrees/RoleInstanceSet_v1alpha2
+    parity_test.go:314: client ObjectToTyped(workloads.x-k8s.io/v1alpha2, Kind=RoleInstanceSet): .spec.roleInstanceTemplate.spec: field not declared in schema
+=== RUN   TestFieldSetParitySchemalessSubtrees/RoleBasedGroupSet_v1alpha2
+    parity_test.go:316: field sets diverge between API server (CRD schema) and generated client schema
+        --- server ---
+        .apiVersion
+        .kind
+        .metadata.name
+        .metadata.namespace
+        .spec.groupTemplate.spec.roles[name="prefill"]
+        .spec.groupTemplate.spec.roles[name="prefill"].name
+        .spec.groupTemplate.spec.roles[name="prefill"].replicas
+        .spec.groupTemplate.spec.roles[name="prefill"].standalonePattern.templateRef.name
+        .spec.groupTemplate.spec.roles[name="prefill"].standalonePattern.templateRef.patch.spec
+        .spec.groupTemplate.spec.roles[name="prefill"].standalonePattern.templateRef.patch.spec.containers
+        --- client ---
+        .apiVersion
+        .kind
+        .metadata.name
+        .metadata.namespace
+        .spec.groupTemplate.spec.roles[name="prefill"]
+        .spec.groupTemplate.spec.roles[name="prefill"].name
+        .spec.groupTemplate.spec.roles[name="prefill"].replicas
+        .spec.groupTemplate.spec.roles[name="prefill"].standalonePattern.templateRef.name
+        .spec.groupTemplate.spec.roles[name="prefill"].standalonePattern.templateRef.patch
+=== RUN   TestFieldSetParitySchemalessSubtrees/RoleBasedGroup_v1alpha1
+    parity_test.go:316: field sets diverge between API server (CRD schema) and generated client schema
+        --- server ---
+        .apiVersion
+        .kind
+        .metadata.name
+        .metadata.namespace
+        .spec.roles[name="prefill"]
+        .spec.roles[name="prefill"].name
+        .spec.roles[name="prefill"].replicas
+        .spec.roles[name="prefill"].templatePatch.spec
+        .spec.roles[name="prefill"].templatePatch.spec.containers
+        --- client ---
+        .apiVersion
+        .kind
+        .metadata.name
+        .metadata.namespace
+        .spec.roles[name="prefill"]
+        .spec.roles[name="prefill"].name
+        .spec.roles[name="prefill"].replicas
+        .spec.roles[name="prefill"].templatePatch
+--- FAIL: TestFieldSetParitySchemalessSubtrees (0.23s)
+    --- FAIL: TestFieldSetParitySchemalessSubtrees/InstanceSet_v1alpha1 (0.00s)
+    --- FAIL: TestFieldSetParitySchemalessSubtrees/RoleInstanceSet_v1alpha2 (0.00s)
+    --- FAIL: TestFieldSetParitySchemalessSubtrees/RoleBasedGroupSet_v1alpha2 (0.12s)
+    --- FAIL: TestFieldSetParitySchemalessSubtrees/RoleBasedGroup_v1alpha1 (0.11s)
+=== RUN   TestExtractRoleInstanceKeepsServerManagedTemplate
+    parity_test.go:358: extracted component "prefill" lost its pod template containers: template=&{ObjectMetaApplyConfiguration:0x3b5e4b42990 Spec:0x3b5e3bdda00}
+    parity_test.go:358: extracted component "decode" lost its pod template containers: template=&{ObjectMetaApplyConfiguration:<nil> Spec:0x3b5e3c1c600}
+--- FAIL: TestExtractRoleInstanceKeepsServerManagedTemplate (0.00s)
+=== RUN   TestExtractWithServerSchemaKeepsTemplate
+--- PASS: TestExtractWithServerSchemaKeepsTemplate (0.00s)
+=== RUN   TestFakeMatchesServerInstanceComponents
+    parity_test.go:420: server (CRD schema) rejected the second apply as expected: Apply failed with 1 conflict: conflict with "manager-a": .spec.components
+    parity_test.go:441: fake diverges from API server: server rejected the second apply with a conflict, fake merged silently (components now [prefill decode])
+--- FAIL: TestFakeMatchesServerInstanceComponents (0.00s)
+=== RUN   TestFakeMatchesServerRoleInstanceComponents
+--- PASS: TestFakeMatchesServerRoleInstanceComponents (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/verification/pr549/parity	0.392s
+FAIL
