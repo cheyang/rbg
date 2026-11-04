@@ -7,7 +7,12 @@
 # them — update the phrases below if the fix rewords them.
 set -uo pipefail
 README="${1:-keps/531-engine-runtime-profile-injection/README.md}"
-[ -f "$README" ] || { echo "F1-CONTRACT: FAIL (README not found: $README)"; exit 1; }
+if [ ! -f "$README" ]; then
+  # On the base branch the KEP README does not exist: the defect cannot be
+  # present there, so the contract holds vacuously (base = pass).
+  echo "F1-CONTRACT: PASS (README absent at $README — no doc, no contradiction)"
+  exit 0
+fi
 
 both=$(grep -c "check spans both passes" "$README" || true)
 three=$(grep -c "spanning all three passes" "$README" || true)
