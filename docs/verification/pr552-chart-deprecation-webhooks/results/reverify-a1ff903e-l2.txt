@@ -1,0 +1,253 @@
+=== RUN   TestChartDeprecationContract
+Running Suite: Chart Deprecation Contract Suite - /tmp/pr552-chart-deprecation-webhooks-VUlpo9/test/envtest/testcase/deprecationchart
+=====================================================================================================================================
+Random Seed: [1m1793824438[0m
+
+Will run [1m5[0m of [1m5[0m specs
+[38;5;243m------------------------------[0m
+[0m[1m[BeforeSuite] [0m
+[38;5;243m/tmp/pr552-chart-deprecation-webhooks-VUlpo9/test/envtest/testcase/deprecationchart/suite_test.go:40[0m
+  [1mSTEP:[0m bootstrapping the chart contract test environment [38;5;243m@ 11/05/26 04:33:58.069[0m
+  2026-11-05T04:33:58+08:00	DEBUG	controller-runtime.test-env	starting control plane
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRDs
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	reading CRDs from path	{"path": "/tmp/pr552-chart-deprecation-webhooks-VUlpo9/config/crd/bases"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_clusterengineruntimeprofiles.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_coordinatedpolicies.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_instances.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_instancesets.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroups.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupsets.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupwarmups.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_roleinstances.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_roleinstancesets.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "instancesets.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupsets.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "roleinstances.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "instances.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroups.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupscalingadapters.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupwarmups.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "roleinstancesets.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "clusterengineruntimeprofiles.workloads.x-k8s.io"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "coordinatedpolicies.workloads.x-k8s.io"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	installing webhooks
+  [1mSTEP:[0m registering the webhook handlers the serving binary would register [38;5;243m@ 11/05/26 04:34:01.85[0m
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a mutating webhook	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup", "path": "/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a validating webhook	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup", "path": "/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/convert"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Conversion webhook enabled	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a mutating webhook	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet", "path": "/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a validating webhook	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet", "path": "/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Conversion webhook enabled	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a validating webhook	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=CoordinatedPolicy", "path": "/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a mutating webhook	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleInstanceSet", "path": "/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a validating webhook	{"GVK": "workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroup", "path": "/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Conversion webhook enabled	{"GVK": "workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroup"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a validating webhook	{"GVK": "workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupSet", "path": "/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Conversion webhook enabled	{"GVK": "workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupSet"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a validating webhook	{"GVK": "workloads.x-k8s.io/v1alpha1, Kind=InstanceSet", "path": "/validate-workloads-x-k8s-io-v1alpha1-instanceset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/validate-workloads-x-k8s-io-v1alpha1-instanceset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a validating webhook	{"GVK": "workloads.x-k8s.io/v1alpha1, Kind=Instance", "path": "/validate-workloads-x-k8s-io-v1alpha1-instance"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/validate-workloads-x-k8s-io-v1alpha1-instance"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a validating webhook	{"GVK": "workloads.x-k8s.io/v1alpha1, Kind=RoleBasedGroupScalingAdapter", "path": "/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupscalingadapter"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupscalingadapter"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a validating webhook	{"GVK": "workloads.x-k8s.io/v1alpha1, Kind=ClusterEngineRuntimeProfile", "path": "/validate-workloads-x-k8s-io-v1alpha1-clusterengineruntimeprofile"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/validate-workloads-x-k8s-io-v1alpha1-clusterengineruntimeprofile"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Starting webhook server
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.certwatcher	Updated current TLS certificate	{"cert": "/tmp/envtest-serving-certs-340449260/tls.crt", "key": "/tmp/envtest-serving-certs-340449260/tls.key"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Serving webhook server	{"host": "127.0.0.1", "port": 45539}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.certwatcher	Starting certificate poll+watcher	{"cert": "/tmp/envtest-serving-certs-340449260/tls.crt", "key": "/tmp/envtest-serving-certs-340449260/tls.key", "interval": "10s"}
+2026/11/05 04:34:01 http: TLS handshake error from 127.0.0.1:39666: EOF
+  [1mSTEP:[0m seeding pre-gate state before the chart webhooks are installed [38;5;243m@ 11/05/26 04:34:01.954[0m
+  [1mSTEP:[0m installing the chart-rendered webhook configurations [38;5;243m@ 11/05/26 04:34:04.039[0m
+[38;5;10m[BeforeSuite] PASSED [6.004 seconds][0m
+[38;5;243m------------------------------[0m
+[0mchart-rendered deprecation gate [0m[1mwarns on a v1alpha1 write through the chart-rendered webhooks[0m
+[38;5;243m/tmp/pr552-chart-deprecation-webhooks-VUlpo9/test/envtest/testcase/deprecationchart/contract_test.go:76[0m
+[38;5;10m• [0.005 seconds][0m
+[38;5;243m------------------------------[0m
+[0mchart-rendered deprecation gate [0m[1mrejects a new deprecated workload use through the chart-rendered webhooks[0m
+[38;5;243m/tmp/pr552-chart-deprecation-webhooks-VUlpo9/test/envtest/testcase/deprecationchart/contract_test.go:83[0m
+[38;5;10m• [0.003 seconds][0m
+[38;5;243m------------------------------[0m
+[0mchart-rendered deprecation gate [0m[1mkeeps an existing deprecated use writable (type-exact exemption)[0m
+[38;5;243m/tmp/pr552-chart-deprecation-webhooks-VUlpo9/test/envtest/testcase/deprecationchart/contract_test.go:94[0m
+[38;5;10m• [0.007 seconds][0m
+[38;5;243m------------------------------[0m
+[0mchart-rendered deprecation gate [0m[1mrejects switching between deprecated workload types[0m
+[38;5;243m/tmp/pr552-chart-deprecation-webhooks-VUlpo9/test/envtest/testcase/deprecationchart/contract_test.go:105[0m
+[38;5;10m• [0.006 seconds][0m
+[38;5;243m------------------------------[0m
+[0mchart-rendered deprecation gate [0m[1mrejects a deprecated type in a new set template role[0m
+[38;5;243m/tmp/pr552-chart-deprecation-webhooks-VUlpo9/test/envtest/testcase/deprecationchart/contract_test.go:122[0m
+[38;5;10m• [0.074 seconds][0m
+[38;5;243m------------------------------[0m
+[0m[1m[AfterSuite] [0m
+[38;5;243m/tmp/pr552-chart-deprecation-webhooks-VUlpo9/test/envtest/testcase/deprecationchart/suite_test.go:44[0m
+  [1mSTEP:[0m tearing down the test environment [38;5;243m@ 11/05/26 04:34:04.166[0m
+  2026-11-05T04:34:04+08:00	INFO	Stopping and waiting for non leader election runnables
+  2026-11-05T04:34:04+08:00	INFO	Stopping and waiting for leader election runnables
+  2026-11-05T04:34:04+08:00	INFO	Stopping and waiting for caches
+  2026-11-05T04:34:04+08:00	INFO	Stopping and waiting for warmup runnables
+  2026-11-05T04:34:04+08:00	INFO	Stopping and waiting for webhooks
+  2026-11-05T04:34:04+08:00	ERROR	controller-runtime.certwatcher	error re-watching file	{"cert": "/tmp/envtest-serving-certs-340449260/tls.crt", "key": "/tmp/envtest-serving-certs-340449260/tls.key", "error": "no such file or directory"}
+  sigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent
+  	/tmp/pr552-chart-deprecation-webhooks-VUlpo9/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:235
+  sigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch
+  	/tmp/pr552-chart-deprecation-webhooks-VUlpo9/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159
+  2026-11-05T04:34:04+08:00	INFO	controller-runtime.webhook	Shutting down webhook server with timeout of 1 minute
+  2026-11-05T04:34:04+08:00	DEBUG	controller-runtime.certwatcher	certificate event	{"cert": "/tmp/envtest-serving-certs-340449260/tls.crt", "key": "/tmp/envtest-serving-certs-340449260/tls.key", "event": "CHMOD         \"/tmp/envtest-serving-certs-340449260/tls.key\""}
+  2026-11-05T04:34:04+08:00	ERROR	controller-runtime.certwatcher	error re-reading certificate	{"cert": "/tmp/envtest-serving-certs-340449260/tls.crt", "key": "/tmp/envtest-serving-certs-340449260/tls.key", "error": "open /tmp/envtest-serving-certs-340449260/tls.crt: no such file or directory"}
+  sigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent
+  	/tmp/pr552-chart-deprecation-webhooks-VUlpo9/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:243
+  sigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch
+  	/tmp/pr552-chart-deprecation-webhooks-VUlpo9/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159
+  2026-11-05T04:34:04+08:00	INFO	Stopping and waiting for HTTP servers
+  2026-11-05T04:34:04+08:00	INFO	Wait completed, proceeding to shutdown the manager
+[38;5;10m[AfterSuite] PASSED [0.025 seconds][0m
+[38;5;243m------------------------------[0m
+
+[38;5;10m[1mRan 5 of 5 Specs in 6.123 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m5 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- PASS: TestChartDeprecationContract (6.12s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/deprecationchart	6.137s
+=== RUN   TestChartLegacyBinaryContract
+Running Suite: Chart Deprecation Legacy Binary Suite - /tmp/pr552-chart-deprecation-webhooks-VUlpo9/test/envtest/testcase/deprecationchartlegacy
+================================================================================================================================================
+Random Seed: [1m1793824438[0m
+
+Will run [1m3[0m of [1m3[0m specs
+[38;5;243m------------------------------[0m
+[0m[1m[BeforeSuite] [0m
+[38;5;243m/tmp/pr552-chart-deprecation-webhooks-VUlpo9/test/envtest/testcase/deprecationchartlegacy/suite_test.go:42[0m
+  [1mSTEP:[0m bootstrapping the chart contract test environment [38;5;243m@ 11/05/26 04:33:58.07[0m
+  2026-11-05T04:33:58+08:00	DEBUG	controller-runtime.test-env	starting control plane
+  2026-11-05T04:33:59+08:00	DEBUG	controller-runtime.test-env	installing CRDs
+  2026-11-05T04:33:59+08:00	DEBUG	controller-runtime.test-env	reading CRDs from path	{"path": "/tmp/pr552-chart-deprecation-webhooks-VUlpo9/config/crd/bases"}
+  2026-11-05T04:33:59+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_clusterengineruntimeprofiles.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_coordinatedpolicies.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_instances.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_instancesets.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroups.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupsets.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_rolebasedgroupwarmups.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_roleinstances.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	read CRDs from file	{"file": "workloads.x-k8s.io_roleinstancesets.yaml"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupsets.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupwarmups.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "roleinstancesets.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "clusterengineruntimeprofiles.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroupscalingadapters.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "roleinstances.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "coordinatedpolicies.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "instances.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "instancesets.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	installing CRD	{"crd": "rolebasedgroups.workloads.x-k8s.io"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha1"}
+  2026-11-05T04:34:00+08:00	DEBUG	controller-runtime.test-env	adding API in waitlist	{"GV": "workloads.x-k8s.io/v1alpha2"}
+  2026-11-05T04:34:01+08:00	DEBUG	controller-runtime.test-env	installing webhooks
+  [1mSTEP:[0m registering the webhook handlers the serving binary would register [38;5;243m@ 11/05/26 04:34:01.492[0m
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a mutating webhook	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup", "path": "/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a validating webhook	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup", "path": "/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/convert"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Conversion webhook enabled	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a mutating webhook	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet", "path": "/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a validating webhook	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet", "path": "/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Conversion webhook enabled	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a validating webhook	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=CoordinatedPolicy", "path": "/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.builder	Registering a mutating webhook	{"GVK": "workloads.x-k8s.io/v1alpha2, Kind=RoleInstanceSet", "path": "/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Registering webhook	{"path": "/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Starting webhook server
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.certwatcher	Updated current TLS certificate	{"cert": "/tmp/envtest-serving-certs-3386748235/tls.crt", "key": "/tmp/envtest-serving-certs-3386748235/tls.key"}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.webhook	Serving webhook server	{"host": "127.0.0.1", "port": 39517}
+  2026-11-05T04:34:01+08:00	INFO	controller-runtime.certwatcher	Starting certificate poll+watcher	{"cert": "/tmp/envtest-serving-certs-3386748235/tls.crt", "key": "/tmp/envtest-serving-certs-3386748235/tls.key", "interval": "10s"}
+2026/11/05 04:34:01 http: TLS handshake error from 127.0.0.1:37464: EOF
+  [1mSTEP:[0m installing the chart-rendered webhook configurations [38;5;243m@ 11/05/26 04:34:01.596[0m
+[38;5;10m[BeforeSuite] PASSED [3.557 seconds][0m
+[38;5;243m------------------------------[0m
+[0mchart webhooks against a pre-gate binary [0m[1mfail-closes v1alpha1 RoleBasedGroup creates through the Fail-policy webhook[0m
+[38;5;243m/tmp/pr552-chart-deprecation-webhooks-VUlpo9/test/envtest/testcase/deprecationchartlegacy/contract_test.go:41[0m
+  [1mSTEP:[0m observed admission error: Internal error occurred: failed calling webhook "vrolebasedgroup-v1alpha1-deprecation.kb.io": failed to call webhook: the server could not find the requested resource [38;5;243m@ 11/05/26 04:34:03.707[0m
+[38;5;10m• [2.081 seconds][0m
+[38;5;243m------------------------------[0m
+[0mchart webhooks against a pre-gate binary [0m[1mfail-closes v1alpha1 RoleBasedGroupSet creates through the Fail-policy webhook[0m
+[38;5;243m/tmp/pr552-chart-deprecation-webhooks-VUlpo9/test/envtest/testcase/deprecationchartlegacy/contract_test.go:55[0m
+  [1mSTEP:[0m observed admission error: Internal error occurred: failed calling webhook "vrolebasedgroupset-v1alpha1-deprecation.kb.io": failed to call webhook: the server could not find the requested resource [38;5;243m@ 11/05/26 04:34:03.786[0m
+[38;5;10m• [0.078 seconds][0m
+[38;5;243m------------------------------[0m
+[0mchart webhooks against a pre-gate binary [0m[1mabsorbs the unreachable warning-only endpoints (failurePolicy=Ignore)[0m
+[38;5;243m/tmp/pr552-chart-deprecation-webhooks-VUlpo9/test/envtest/testcase/deprecationchartlegacy/contract_test.go:63[0m
+[38;5;10m• [0.004 seconds][0m
+[38;5;243m------------------------------[0m
+[0m[1m[AfterSuite] [0m
+[38;5;243m/tmp/pr552-chart-deprecation-webhooks-VUlpo9/test/envtest/testcase/deprecationchartlegacy/suite_test.go:46[0m
+  [1mSTEP:[0m tearing down the test environment [38;5;243m@ 11/05/26 04:34:03.79[0m
+  2026-11-05T04:34:03+08:00	INFO	Stopping and waiting for non leader election runnables
+  2026-11-05T04:34:03+08:00	INFO	Stopping and waiting for leader election runnables
+  2026-11-05T04:34:03+08:00	INFO	Stopping and waiting for caches
+  2026-11-05T04:34:03+08:00	INFO	Stopping and waiting for warmup runnables
+  2026-11-05T04:34:03+08:00	INFO	Stopping and waiting for webhooks
+  2026-11-05T04:34:03+08:00	ERROR	controller-runtime.certwatcher	error re-watching file	{"cert": "/tmp/envtest-serving-certs-3386748235/tls.crt", "key": "/tmp/envtest-serving-certs-3386748235/tls.key", "error": "no such file or directory"}
+  sigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent
+  	/tmp/pr552-chart-deprecation-webhooks-VUlpo9/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:235
+  sigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch
+  	/tmp/pr552-chart-deprecation-webhooks-VUlpo9/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159
+  2026-11-05T04:34:03+08:00	INFO	controller-runtime.webhook	Shutting down webhook server with timeout of 1 minute
+  2026-11-05T04:34:03+08:00	DEBUG	controller-runtime.certwatcher	certificate event	{"cert": "/tmp/envtest-serving-certs-3386748235/tls.crt", "key": "/tmp/envtest-serving-certs-3386748235/tls.key", "event": "CHMOD         \"/tmp/envtest-serving-certs-3386748235/tls.key\""}
+  2026-11-05T04:34:03+08:00	ERROR	controller-runtime.certwatcher	error re-reading certificate	{"cert": "/tmp/envtest-serving-certs-3386748235/tls.crt", "key": "/tmp/envtest-serving-certs-3386748235/tls.key", "error": "open /tmp/envtest-serving-certs-3386748235/tls.crt: no such file or directory"}
+  sigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent
+  	/tmp/pr552-chart-deprecation-webhooks-VUlpo9/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:243
+  sigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch
+  	/tmp/pr552-chart-deprecation-webhooks-VUlpo9/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159
+  2026-11-05T04:34:03+08:00	INFO	Stopping and waiting for HTTP servers
+  2026-11-05T04:34:03+08:00	INFO	Wait completed, proceeding to shutdown the manager
+[38;5;10m[AfterSuite] PASSED [0.024 seconds][0m
+[38;5;243m------------------------------[0m
+
+[38;5;10m[1mRan 3 of 3 Specs in 5.744 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m3 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- PASS: TestChartLegacyBinaryContract (5.74s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/deprecationchartlegacy	5.759s

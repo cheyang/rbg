@@ -1,0 +1,10 @@
+chart webhooks against a pre-gate binary fail-closes v1alpha1 RoleBasedGroup creates through the Fail-policy webhook
+/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-05/pr-552/wt-head/test/envtest/testcase/deprecationchartlegacy/contract_test.go:41
+  STEP: observed admission error: Internal error occurred: failed calling webhook "vrolebasedgroup-v1alpha1-deprecation.kb.io": failed to call webhook: the server could not find the requested resource @ 11/05/26 04:31:14.938
+• [2.076 seconds]
+------------------------------
+chart webhooks against a pre-gate binary fail-closes v1alpha1 RoleBasedGroupSet creates through the Fail-policy webhook
+/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-05/pr-552/wt-head/test/envtest/testcase/deprecationchartlegacy/contract_test.go:55
+  STEP: observed admission error: Internal error occurred: failed calling webhook "vrolebasedgroupset-v1alpha1-deprecation.kb.io": failed to call webhook: the server could not find the requested resource @ 11/05/26 04:31:15.024
+• [0.086 seconds]
+------------------------------

@@ -1,0 +1,19 @@
+== P0 premise: chart vs shipped manifests on the BASE branch (73e05db4, post-#524, pre-#552) ==
+v1alpha1-deprecation entries in base chart template: 0
+v1alpha1-deprecation entries in base shipped config/webhook/manifests.yaml: 6
+
+== PR head (a1ff903e) ==
+v1alpha1-deprecation entries in chart template: 6
+
+Conclusion: on base, a Helm install rendered NO deprecation webhooks while the kubectl-rendered
+manifests carried all six — the intermediate state this PR closes exists. Premise CONFIRMED.
+
+== Image-tag ancestry (F1) ==
+chart default controller image tag (head, values.yaml):     tag: "v0.9.0-d88b3186"
+d88b3186 is ancestor of #524 merge 73e05db4 (i.e. the image predates the gate): YES
+webhook path markers present at d88b3186: 0 (none — the image does not register any of the six paths)
+webhook path markers present at 73e05db4: 73e05db4:api/workloads/v1alpha1/deprecation_webhook.go:6
+
+== Chart.yaml version (F5) ==
+version: 0.9.0-alpha.2
+appVersion: "0.9.0-d88b3186"
