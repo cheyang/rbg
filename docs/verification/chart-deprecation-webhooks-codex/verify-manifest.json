@@ -1,0 +1,44 @@
+{
+  "pr": "https://github.com/sgl-project/rbg/pull/552",
+  "headSha": "a1ff903e3aab5fa7749b9a7ea67457db9972e8b6",
+  "baseSha": "73e05db4213950a5dd1f230279e9344a4ffe8435",
+  "harnessPaths": [
+    "test/envtest/testcase/deprecationv1a1helm",
+    "test/chart/webhook_manifests_test.go",
+    "docs/verification/chart-deprecation-webhooks-codex"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "The Helm chart shipped the pre-gate webhook configuration, so Helm installs had no v1alpha1 deprecation warning plane (and no Exact-match v1alpha1 enforcement entries) even though #524 merged the handlers and the kubectl-rendered config/webhook/manifests.yaml.",
+    "runsAgainst": "base",
+    "verdict": "confirmed",
+    "evidence": "results/premise-base-chart.out — base chart render: v1alpha1 InstanceSet write admitted with NO deprecation warning; v1alpha1 RBG new deprecated use still rejected via the Equivalent-matching v1alpha2 gate but with NO warning. Reproduce: bash scripts/run-premise-base.sh"
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/chart/ -count=1 -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=\"$([ -x ./bin/setup-envtest ] && ./bin/setup-envtest use 1.31.0 --bin-dir ./bin -p path 2>/dev/null || echo ./bin/k8s/1.31.0-linux-amd64)\" go test ./test/envtest/testcase/deprecationv1a1helm/ -count=1 -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "A-PARITY",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestChartDeprecationWebhooksMatchShippedConfig"],
+      "note": "The rendered chart's six v1alpha1 deprecation webhook entries match config/webhook/manifests.yaml (name/path/rules/failurePolicy/matchPolicy/sideEffects/admissionReviewVersions). Also covers the PR's F12-adjacent toggle tests already in test/chart."
+    },
+    {
+      "id": "A-GATE",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["TestV1alpha1DeprecationHelmContract"],
+      "notes": "envtest installs the CHART-RENDERED webhook configurations against production handlers: new-use rejection (explicit and schema-defaulted), type-exact grandfathering of a seeded pre-gate object, per-kind on-the-wire warnings for all four warning-only paths, Exact match policy (no v1alpha2 warnings), ungated deletes."
+    }
+  ],
+  "liveNote": "L3 (skipped in this debate round): on a real cluster, helm upgrade from the pre-#552 chart to the head chart and observe (a) the transient fail-closed window for v1alpha1 RBG/RBGSet writes while old pods still serve the webhook service, (b) warnings on v1alpha1 writes once the new controller is ready."
+}
