@@ -1,0 +1,4 @@
+=== RUN   TestRBGActivityPrecedenceDefined
+--- PASS: TestRBGActivityPrecedenceDefined (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/keps/502-workload-status-model	0.002s

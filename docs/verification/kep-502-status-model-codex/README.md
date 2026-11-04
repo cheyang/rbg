@@ -174,6 +174,50 @@ restore-on-exit still clobbers tracked copies — see the round-2 infra note).
 | F10-ris-activity-reasons-unenumerated | OPEN (nit, pre-existing) | FIXED | `TestRISActivityReasonsEnumerated` fail@f05e1dd / fail@6335eac / pass@f622d642 |
 | all other ledger items | FIXED/ANSWERED at 6335eac | still FIXED (no regression) | full suite 21/21 green at f622d642 |
 
+## Round 4 — revision da818779 (incremental, 2026-11-05)
+
+Delta: one docs-only commit (`docs: define RBG activity reason precedence`, +11
+lines in `keps/502-workload-status-model/README.md`). It is the targeted fix
+for the one item round 3 left open — the Copilot advisory C4457744212
+(within-Activity tie across heterogeneous role facts).
+
+What changed:
+
+1. A within-Activity precedence declaration after the cross-family rule
+   (README.md:184-192): `Creating` > `Recovering` > `ScalingOrUpdating`, with
+   per-step rationale, plus "RBG uses the highest-precedence activity reason
+   and describes all activities in message".
+2. A Test Plan bullet (README.md:495) covering the concurrent scenarios:
+   Recovering+updating → `Recovering`; Creating+updating/recovering →
+   `Creating`; update/scaling only → `ScalingOrUpdating`; message describes
+   every concurrent activity.
+
+Verified:
+
+- `TestRBGActivityPrecedenceDefined` (new contract guard): **red at f622d642**
+  ("no within-Activity precedence declaration found"), **green at da818779**.
+  The guard derives the expected reason set from the family table's RBG
+  activity column (Creating, ScalingOrUpdating, Recovering), so it checks
+  exhaustiveness, not just presence; it also pins the reviewed order and the
+  Test Plan concurrency bullet. Evidence: results/bite-check-c4457744212-prev-f622d642.txt,
+  results/unit-head-da818779-c4457744212.txt.
+- Full suite at da818779: 22/23 green; the one red is the intentional F11
+  probe below (results/unit-head-da818779.txt).
+- markdownlint-cli2 with .github/.markdownlint.json: 0 issues
+  (results/markdownlint-head-da818779.txt).
+- No consistency conflicts found: the precedence list covers exactly the
+  family table's RBG activity reasons; the cross-family rule (external
+  blockers > Activity > ChildReadiness) is untouched; the candidate-reasons
+  table, the RBG example, and :296 ("Each condition has one reason ...
+  ScalingOrUpdating") all remain consistent.
+
+New finding this round:
+
+| finding | severity | status | evidence |
+| --- | --- | --- | --- |
+| C4457744212-activity-family-tie-break | nit (Copilot advisory) | FIXED at da818779 | TestRBGActivityPrecedenceDefined fail@f622d642 / pass@da818779 |
+| F11-ris-activity-tie-break-unstated | nit | OPEN | TestRISActivityTieBreakStated red at da818779 (and at f622d642 — gap pre-exists the delta): RIS Progressing reason selection is underdetermined when RI recovery overlaps an active RIS update/scaling workflow. README.md:349 resolves update-vs-scaling only; the new precedence at :184 is explicitly RBG-scoped; :358 "RIS Progressing follows RBG rules for progress" does not state whether the Activity precedence is inherited (and ScalingOrUpdating would need mapping to the concrete RIS workflow reason). One sentence — e.g. "RIS applies the RBG Activity precedence with the concrete workflow reason in place of ScalingOrUpdating" — closes it. |
+
 ## Continuing after the fix
 
 On any machine:

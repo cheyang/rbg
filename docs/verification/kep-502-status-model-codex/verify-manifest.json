@@ -146,8 +146,24 @@
       "match": [
         "TestRISActivityReasonsEnumerated"
       ]
+    },
+    {
+      "id": "C4457744212-activity-family-tie-break",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestRBGActivityPrecedenceDefined"
+      ]
+    },
+    {
+      "id": "F11-ris-activity-tie-break-unstated",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestRISActivityTieBreakStated"
+      ]
     }
   ],
   "liveNote": "Docs-only KEP PR: no live layer. Integration replay (markdownlint-cli2 with .github/.markdownlint.json, YAML parsing of kep.yaml and the 3 examples) is recorded in results/markdownlint.txt and embedded as Go guards (TestKepYAMLWellFormed, TestYAMLExamplesParse).",
-  "roundNote": "Round 3 (head f622d642): 3-line delta fixes the two open round-2 items \u2014 F9 (Goals :70 and RBG intro :211 now name lower-level conditions alongside phases) and F10 (RIS activity reasons enumerated: Creating, ScalingUp, ScalingDown, RollingUpdate, Recovering). Harness extended additively with contract tests for F9/F10 (previously covered only by the Claude harness C8/C9)."
+  "roundNote": "Round 4 (head da818779): single docs commit adds the RBG within-Activity precedence (Creating > Recovering > ScalingOrUpdating) fixing the round-3 Copilot advisory C4457744212 — guard TestRBGActivityPrecedenceDefined red at f622d642, green at da818779 (family-table-derived exhaustiveness + reviewed order + Test Plan concurrency bullet). New nit F11: the RIS layer has no tie-break when recovery overlaps an active update/scaling workflow (:349 covers update-vs-scaling only; the new precedence is explicitly RBG-scoped) — probe TestRISActivityTieBreakStated red at da818779, expected to stay red until the KEP states the RIS handling. All 15 prior guards green at head."
 }

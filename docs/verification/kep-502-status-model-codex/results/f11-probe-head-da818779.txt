@@ -1,0 +1,6 @@
+=== RUN   TestRISActivityTieBreakStated
+    doc_consistency_test.go:1060: F11: RIS Progressing reason selection is underdetermined when recovery overlaps an active update or scaling workflow — no statement in the RoleInstanceSet section ties `Recovering` against update / scaling reasons (the RBG within-Activity precedence added at da818779 is explicitly RBG-scoped and :349 covers only update-vs-scaling)
+--- FAIL: TestRISActivityTieBreakStated (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/keps/502-workload-status-model	0.002s
+FAIL

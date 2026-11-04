@@ -1,0 +1,6 @@
+=== RUN   TestRBGActivityPrecedenceDefined
+    doc_consistency_test.go:946: C4457744212: no within-Activity precedence declaration found — the reporting-priority list still resolves ties between families only, leaving concurrent heterogeneous activities (e.g. one role Recovering, another updating) without a deterministic RBG reason
+--- FAIL: TestRBGActivityPrecedenceDefined (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/keps/502-workload-status-model	0.002s
+FAIL
