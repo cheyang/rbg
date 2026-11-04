@@ -1,0 +1,31 @@
+Round 4 bite-check — C10-rbg-activity-precedence (new contract check, added this round)
+=======================================================================================
+Guarded contract: the round-4 delta's within-Activity precedence for RBG
+(README.md:184-192 + test-plan bullet :495), i.e. the fix for Copilot advisory
+C4457744212 (the only open item after round 3).
+
+Command per ref:  git show <ref>:keps/502-workload-status-model/README.md > /tmp/kep-<ref>.md
+                   python3 -I docs/verification/502-workload-status-model-claude/scripts/check_kep502.py --kep /tmp/kep-<ref>.md
+
+Ref-matrix (contract polarity: fail == precedence absent/incomplete):
+  da818779 (head, round 4)   C10-rbg-activity-precedence  pass    <-- fix landed
+  f622d642 (prev, round 3)   C10-rbg-activity-precedence  fail    (statement absent)
+  6335eac  (round 2)         C10-rbg-activity-precedence  fail    (statement absent)
+  f05e1dd  (round 1)         C10-rbg-activity-precedence  fail    (statement absent)
+
+The fail at all three prior refs confirms the round-3 attribution: the gap existed
+since round 1, was first observed by Reviewer C in round 3 (late discovery on
+PR-introduced text, NOT a revision regression of the f622d642 delta).
+
+Mutation tests on a temp copy of the head blob (proving the check exercises the
+contract, not just the presence of a string):
+  M1 fenced precedence block removed                      fail
+  M2 list order swapped (Recovering > Creating > ...)     fail  (rationale-vs-list contradiction)
+  M3 test-plan concurrent-combinations bullet removed     fail  (coverage clause)
+  M4 incomplete list (ScalingOrUpdating dropped)          fail  (set-vs-family-table clause)
+  CTRL unmodified head blob                               pass
+
+Full harness at head (unit layer, 10 checks): C1 pass, C2 pass, C3 pass, C4 pass,
+C5 pass, C6 pass, C8 pass, C9 pass, C10 pass. Integration layer: C7-markdownlint pass.
+re-verify.sh da818779 (after C10 + manifest update): 6/6 findings FIXED, exit 0.
+Raw output: results/reverify-round4/.

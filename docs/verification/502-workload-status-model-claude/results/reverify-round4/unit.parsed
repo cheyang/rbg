@@ -1,0 +1,6 @@
+C1-retained-fields-exist	pass
+C2-progressing-reasons-defined	fail
+C3-reason-collision-ack	fail
+C4-ri-readiness-reasons-match-code	fail
+C5-premise-motivation-claims	pass
+C6-yaml-examples-parse	pass
