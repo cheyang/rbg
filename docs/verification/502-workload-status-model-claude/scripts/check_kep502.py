@@ -309,6 +309,134 @@ def check_c8(kep_text):
               % (len(phase_lines), len(cond_lines)))
 
 
+# ---------------------------------------------------------------- C10 (C4457744212)
+
+
+def check_c10(kep_text):
+    """Round-4 contract (Copilot advisory C4457744212, fixed at da818779):
+    the reporting-priority list resolves *between* reason families, so when
+    heterogeneous Activity facts coexist (one role Creating, another
+    Recovering, another updating), the choice of RBG Progressing=True reason
+    inside the Activity family was underdetermined. The round-4 delta adds a
+    deterministic within-Activity precedence. This check guards it:
+
+      1. a "Within the Activity family, RBG uses this deterministic
+         precedence:" statement with a fenced list of exactly the RBG
+         activity reasons from the activity/child-readiness family table
+         (Creating, Recovering, ScalingOrUpdating), no duplicates;
+      2. the one-dominant-reason rule: the highest-precedence activity reason
+         is used and all activities are described in message;
+      3. the rationale's pairwise orderings ("Creating outranks recovery",
+         "Recovering outranks ordinary target changes") agree with the list
+         order (a contradiction between prose and list fails);
+      4. the unit-test plan covers the concurrent heterogeneous combinations
+         (Recovering-over-update and Creating-over-update/recovery), not only
+         the homogeneous scaling+update case.
+
+    Polarity: contract (fail == precedence unstated, incomplete, or
+    inconsistent with its own rationale / test plan).
+    """
+    problems = []
+    lines = kep_text.splitlines()
+
+    # (1) the fenced precedence list
+    m = re.search(r"Within the Activity family, RBG uses this deterministic "
+                  r"precedence:\s*```\s*text\s*\n(.*?)```",
+                  kep_text, re.S)
+    if m is None:
+        problems.append("'Within the Activity family ... precedence' fenced "
+                        "list not found")
+        order = []
+    else:
+        order = [l.strip() for l in m.group(1).splitlines() if l.strip()]
+
+    # expected set: RBG activity reasons from the family table (RBG column,
+    # activity rows; child readiness is a different family)
+    expected = set()
+    try:
+        start = next(i for i, l in enumerate(lines)
+                     if "Activity and child-readiness reasons" in l)
+    except StopIteration:
+        expected = None
+    if expected is None:
+        problems.append("activity/child-readiness family table not found")
+    else:
+        activity_rows = ("Initial creation", "Update",
+                         "Instance-count scaling", "Recovery")
+        in_table = False
+        for l in lines[start + 1:]:
+            s = l.strip()
+            if not s:
+                if in_table:
+                    break
+                continue
+            if not s.startswith("|"):
+                if in_table:
+                    break
+                continue
+            in_table = True
+            cells = [c.strip() for c in s.strip("|").split("|")]
+            if len(cells) >= 4 and cells[0] in activity_rows:
+                for tok in re.findall(r"`([A-Za-z0-9]+)`", cells[3]):
+                    expected.add(tok)
+        if not expected:
+            problems.append("no RBG activity reasons parsed from the family "
+                            "table")
+        else:
+            if set(order) != expected:
+                problems.append(
+                    "precedence list [%s] is not exactly the family-table RBG "
+                    "activity reasons [%s]"
+                    % (", ".join(order) or "(none)",
+                       ", ".join(sorted(expected))))
+            elif len(order) != len(expected):
+                problems.append("precedence list has duplicates: %s"
+                                % ", ".join(order))
+
+    # (2) one-dominant-reason + message rule
+    if not re.search(r"When multiple Activity facts are present, RBG uses "
+                     r"the highest-precedence activity reason", kep_text):
+        problems.append("'highest-precedence activity reason' rule not "
+                        "stated")
+    if not re.search(r"describes (?:all|every) (?:concurrent )?activit",
+                     kep_text) and not re.search(
+            r"describes all activities in message", kep_text):
+        problems.append("all-activities-in-message clause not stated")
+
+    # (3) rationale pairwise orderings vs list order
+    if len(order) == len(set(order)) and len(order) >= 3:
+        idx = {t: i for i, t in enumerate(order)}
+        pairs = []
+        if re.search(r"`Creating` outranks recovery", kep_text):
+            pairs.append(("Creating", "Recovering"))
+        if re.search(r"`Recovering` outranks ordinary target changes",
+                     kep_text):
+            pairs.append(("Recovering", "ScalingOrUpdating"))
+        for hi, lo in pairs:
+            if idx.get(hi, 99) > idx.get(lo, -1):
+                problems.append(
+                    "rationale says %s outranks %s but list order is %s"
+                    % (hi, lo, " > ".join(order)))
+
+    # (4) test-plan coverage of the heterogeneous combinations
+    covered = (
+        re.search(r"one role is `Recovering` and another is updating",
+                  kep_text)
+        and re.search(r"one role is `Creating` and another is (?:updating or "
+                      r"recovering|updating|recovering)", kep_text))
+    if not covered:
+        problems.append("unit-test plan does not cover the concurrent "
+                        "heterogeneous activity combinations "
+                        "(Recovering-over-update, Creating-over-update)")
+
+    emit("C10-rbg-activity-precedence", not problems,
+         "; ".join(problems) if problems
+         else "within-Activity precedence stated as [%s]; one-dominant-reason "
+              "and message rules present; rationale orderings agree; "
+              "concurrent combinations covered in the test plan"
+              % " > ".join(order) or "(none)")
+
+
 # ---------------------------------------------------------------- C9 (N2)
 
 def check_c9(kep_text):
@@ -392,6 +520,7 @@ def main():
     check_c6(kep_path, yaml_dir)
     check_c8(kep_text)
     check_c9(kep_text)
+    check_c10(kep_text)
 
     for cid, ok, detail in RESULTS:
         print("%s\t%s" % (cid, "pass" if ok else "fail"))

@@ -1,12 +1,62 @@
 # Verification — KEP-502 workload status model (PR #528) — Reviewer A (Claude)
 
 - PR: https://github.com/sgl-project/rbg/pull/528
-- Round 3 reviewed head: `f622d642ac10326f66554b590e0513734aa9249a` (round 2: `6335eac61b7ef71d7479a8b2686829d7e59ce3e1`; round 1: `f05e1dd83d2691e4157bf1bd3548fe405b2a49d5`; base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
+- Round 4 reviewed head: `da818779ef984be98467d4ad65d0818bb17aa0e6` (round 3: `f622d642ac10326f66554b590e0513734aa9249a`; round 2: `6335eac61b7ef71d7479a8b2686829d7e59ce3e1`; round 1: `f05e1dd83d2691e4157bf1bd3548fe405b2a49d5`; base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
 - Harness branch: `verify/502-workload-status-model-claude` (pushed to the reviewer's fork `cheyang/rbg`)
 - This is a **docs-only PR** (adds `keps/502-workload-status-model/{README.md,kep.yaml}`); the code
   under review is a design document, so the harness checks the *document's* contract: its factual
   claims about the current API, and the internal consistency of its machine-readable reason taxonomy.
 - Live layer (L3): skipped — debate setup runs unit + integration only, and a KEP has no runtime.
+
+## Round 4 (delta `f622d64..da81877`) — re-verify verdict: all findings fixed
+
+The author pushed one docs commit, `da81877 "docs: define RBG activity reason precedence"`
+(+11 lines, README only), addressing exactly the one open round-3 item — the Copilot-only
+advisory C4457744212 (within-Activity tie across heterogeneous role facts), which round 3
+recommended resolving by "one sentence of within-Activity precedence … plus contract-test
+coverage for the concurrent creation/recovery/update combinations". The delta does both:
+
+- README.md:184-192 — new fenced precedence `Creating > Recovering > ScalingOrUpdating` inside
+  the Activity family, with the one-dominant-reason + all-activities-in-message rule and a
+  rationale sentence per ranking.
+- README.md:495 — new unit-test-plan bullet covering the concurrent heterogeneous combinations
+  (Recovering-over-update, Creating-over-update/recovery, only-update/scaling).
+
+New check **C10-rbg-activity-precedence** (contract) guards the new text: it asserts (a) the
+fenced list is exactly the family-table RBG activity reasons with no duplicates, (b) the
+highest-precedence-reason and message rules are stated, (c) the rationale's pairwise orderings
+("Creating outranks recovery", "Recovering outranks ordinary target changes") agree with the list
+order, and (d) the test plan covers the concurrent combinations. Bite check
+(`results/bite-check-round4.txt`): **fail at f05e1dd, 6335eac, and f622d64** (statement absent —
+confirming the round-3 attribution that the gap existed since round 1 and was a late discovery,
+not a revision regression), **pass at da81877**.
+
+| Finding | Check | At f622d64 (prev) | At da81877 (head) | Verdict |
+| --- | --- | --- | --- | --- |
+| C4457744212 within-Activity tie (Copilot round-3 advisory, nit) | **C10 (new)** | fail | **pass** | **FIXED** — deterministic precedence + rationale + test-plan coverage |
+| F9 RBG transition-input vocabulary (round-3 fix) | C8 | pass | pass | stays fixed |
+| F10 RIS activity reasons (round-3 fix) | C9 | pass | pass | stays fixed |
+| F2/F3/F4 (round-1) | C2/C3/C4 | pass | pass | stay fixed |
+| P0 motivation / retained fields / YAML+lint | C5/C1/C6/C7 | pass | pass | still accurate |
+
+`re-verify.sh` at `da81877` (after C10 was added and the manifest updated): all six manifest
+findings FIXED, exit 0 (`results/reverify-round4/`).
+
+CI at `da81877`: all checks SUCCESS or SKIPPED (docs-only diff; e2e groups skip), PR OPEN and
+MERGEABLE — same standing caveat: `keps/**` is outside the docs-check workflow's lint scope, so
+CI greenness is weak evidence; the substantive gates are the harness replays.
+
+One new **question** (nit, non-gating, filed this round): the RIS-layer analog of the fixed
+advisory. The new precedence is explicitly RBG-scoped ("Within the Activity family, RBG uses
+this deterministic precedence"); at the RIS layer, when RI-recovery facts coexist with an active
+RIS workflow, the `Progressing` reason selection between `Recovering` and the workflow reason
+(`RollingUpdate` / `ScalingUp` / `ScalingDown`) is still unstated — :349's rule covers
+blocker-over-update and update-over-scaling, and :368's "RIS Progressing follows RBG rules for
+progress, pauses, and insufficient observations" does not list activity precedence. The new RBG
+rule also creates a visible cross-layer asymmetry worth one clarifying sentence: at RBG,
+`Recovering` outranks `ScalingOrUpdating` (repair work outranks ordinary target changes), while
+a literal reading of :349 at RIS keeps `RollingUpdate` for "an active update without a
+higher-priority blocker" even when recovery facts are present. See Q4 in the round-4 findings.
 
 ## Round 3 (delta `6335eac..f622d64`) — re-verify verdict: all findings fixed
 

@@ -2,7 +2,7 @@
   "topic": "502-workload-status-model-claude",
   "pr": "https://github.com/sgl-project/rbg/pull/528",
   "reviewer": "claude",
-  "headSha": "f622d642ac10326f66554b590e0513734aa9249a",
+  "headSha": "da818779ef984be98467d4ad65d0818bb17aa0e6",
   "baseSha": "885d655bd1b4c26e6d14837709eeda675f3ae886",
   "harnessPaths": [
     "docs/verification/502-workload-status-model-claude"
@@ -88,6 +88,17 @@
       "origin": "preexisting",
       "note": "Round 2 late discovery on unchanged text (identical at f05e1dd and 6335eac, so pre-existing, not a revision regression): the RIS Progressing prose (README.md:358) says 'Activity reasons may include `ScalingUp`, `ScalingDown`, and `RollingUpdate`' while the activity/child-readiness family table (:159-165) also defines RIS reasons `Creating` (:162) and `Recovering` (:165). Materiality rose in this round because the revision made RIS recovery reporting load-bearing (:345 'RIS propagates recovery through `Progressing` and `Ready` conditions'). Fix: enumerate all five activity reasons in the prose or state the family table is the complete source; verified to flip C9 green. Round 3: prose now reads 'Activity reasons are Creating, ScalingUp, ScalingDown, RollingUpdate, and Recovering' \u2014 the complete family-table set. C9 initially reported STILL-BROKEN only because its anchor phrase 'may include' was reworded to 'are'; C9 re-anchored (accepts both) and re-proven: red at 6335eac, green at f622d64 (results/bite-check-round3.txt).",
       "status": "fixed-at-f622d642"
+    },
+    {
+      "id": "C4457744212-activity-family-tie-break",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "C10-rbg-activity-precedence"
+      ],
+      "firstSeenSha": "f622d642ac10326f66554b590e0513734aa9249a",
+      "note": "Copilot round-3 advisory (nit, never gating): the reporting-priority list resolves between reason families, so heterogeneous Activity facts (one role Creating, another Recovering, another updating) left the RBG Progressing=True reason underdetermined. Round-4 delta (da818779) adds the within-Activity precedence Creating > Recovering > ScalingOrUpdating with rationale, the one-dominant-reason + all-activities-in-message rule, and test-plan coverage of the concurrent combinations. C10 red at f05e1dd/6335eac/f622d642, green at da818779.",
+      "status": "fixed-at-da818779"
     }
   ],
   "refutedHypotheses": [
@@ -109,5 +120,5 @@
     "AC-ris-reason-enumeration": "C9 (unit) \u2014 green at f622d64 (red at 6335eac; C9 re-anchored round 3)"
   },
   "liveNote": "L3 skipped (debate setup: unit + integration layers only). Docs-only KEP PR; no live runtime signal.",
-  "previousHeadSha": "6335eac61b7ef71d7479a8b2686829d7e59ce3e1"
+  "previousHeadSha": "f622d642ac10326f66554b590e0513734aa9249a"
 }
