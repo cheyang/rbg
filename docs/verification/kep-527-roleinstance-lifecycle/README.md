@@ -1,6 +1,6 @@
 # Verification harness — KEP-527 RoleInstance Lifecycle Hooks (PR #546)
 
-Reviewer: Codex (Reviewer B). Round: initial. Reviewed head: `6e8419abef232541fe4b0df7bf6d609972902887`, base: `3612013e6f779401831f5947dc124cc4313faddb` (merge-base `09accf63`).
+Reviewer: Codex (Reviewer B). Round: incremental #2. Reviewed head: `71dd5e87ca8704e2447caf574db72c06007d77ef`, base: `3612013e6f779401831f5947dc124cc4313faddb` (merge-base `09accf63`). Previous round head: `6e8419abef232541fe4b0df7bf6d609972902887`.
 
 ## What kind of PR this is
 
@@ -31,6 +31,29 @@ The claimed problem (issue #527: container hooks cannot express instance-level c
 Raw output: `results/check-kep527-head-6e8419ab.tsv`, `results/reverify/unit.tsv`.
 
 Harness-bites proof: the finding checks were re-run with simulated fix text applied (segment comment removed, authors filled, see-also pointed at an existing KEP, cascade-prevention / phase-storage / mutual-exclusion / preDelete-gate sentences added); all 7 flipped fail → pass, then the production files were reverted byte-identical (`git status` clean for `keps/`).
+
+
+## Observed vs expected (head 71dd5e87 — round 2, incremental)
+
+| Finding | Check | Expected (fixed state) | Observed on head | Verdict |
+| --- | --- | --- | --- | --- |
+| F1 preDelete vs GC cascade (F-PREDELETE-LIVENESS + F-CREATING-REPLACE-FINALIZER) | CheckDeletionCascadeSpecified | pass | pass | FIXED — design switched to reserved RI finalizer + controller-ordered Pod deletion; GC invariant stated; foreground cascade admission-rejected; per-Pod finalizers dropped (creating-phase release moot) |
+| F2 phase persistence (F-PHASE-STORAGE) | CheckPhaseStorageSpecified | pass | pass | FIXED — pinned to KEP-502 `RoleInstance.status.phase` (five values; verified PR #528 defines exactly those); pre-implementable blocker #1 updated |
+| F3 old/new coexistence (F-OLDNEW-ISOLATION) | CheckOldNewCoexistenceRule | pass | pass | FIXED — admission-enforced mutual exclusion stated; "sole definition point" scoped to the new protocol |
+| F4 kep.yaml defects (F-KEPYAML-NOISE + F-SEEALSO-502) | CheckKepYaml{NoSegmentComment,AuthorsSet}, CheckSeeAlsoDirsExist | pass ×3 | pass ×2, fail ×1 | PARTIAL — Segment comment removed, authors=diw-zw, disable-supported: false; see-also `/keps/502-workload-status-model` still dangles in-repo (mitigated: README now says "KEP-502, currently proposed in PR #528", and PR #528 is OPEN adding exactly that directory) |
+| F5 preDelete gate lifetime (F-PREDELETE-GATE-LIFETIME) | CheckPreDeleteGateLifetime | pass | pass | FIXED — "remains until the RI object is deleted; not restored after the delete marker is released" |
+| F6 scope rationale (F-SCOPE-PRECREATE) | CheckPreCreateRationaleStated | pass | fail | STILL OPEN — zero preCreate rationale in Motivation/Non-Goals; Drawbacks admits the gap without justification |
+| F7 zh/en RIS-scope parity (F-ZH-RIS-RI-PARITY, new nit) | CheckEnZhCoexistenceScopeParity | pass | fail | reproduced — zh-CN :546 says "同一 RI" where en :747 says "same RIS" |
+| F8 in-flight admission strength (F-INFLIGHT-ADMISSION-MUST, new nit) | CheckInflightAdmissionMust | pass | fail | reproduced — README.md:362 "Admission should reject" vs "must" in sibling rules and the test plan |
+| Codebase-truth claims (10) | group 1 | pass | pass ×10 | KEP accurate on head |
+| Hygiene (3) | group 3 | pass | pass ×3 | clean |
+
+Raw output: `results/reverify/unit-71dd5e87.tsv` (round 2), `results/check-kep527-head-6e8419ab.tsv` (round 1).
+
+Round-2 harness-bites: the three new checks (F6–F8) were re-run on head `71dd5e87` with simulated fix text (preCreate rationale bullet in Non-Goals; zh "同一 RIS"; "Admission must reject"); all three flipped fail → pass, then the KEP files were reverted byte-identical (`git status` clean for `keps/`).
+
+Round-2 questions with no runnable layer (reasoning only, no check): Q-propagate-legacy-routing (how the legacy RIS reconciler, which activates on `Spec.Lifecycle != nil` — pkg/reconciler/roleinstanceset/statelessmode/sync/scale.go:169,264, update.go:146-221 — is kept from acting on RBG-propagated new-protocol config in the same field), Q-finalizer-timing (reserved RI finalizer must be established before any deletionTimestamp since the API server forbids adding finalizers afterwards; creation-time addition is only implied by the sequence diagram).
+
 
 ## How to run
 
