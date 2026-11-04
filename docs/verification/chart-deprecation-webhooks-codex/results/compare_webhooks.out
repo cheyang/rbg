@@ -1,0 +1,10 @@
+shipped config deprecation webhooks: 6
+MATCH: vclusterengineruntimeprofile-v1alpha1-deprecation.kb.io
+MATCH: vinstance-v1alpha1-deprecation.kb.io
+MATCH: vinstanceset-v1alpha1-deprecation.kb.io
+MATCH: vrolebasedgroup-v1alpha1-deprecation.kb.io
+MATCH: vrolebasedgroupscalingadapter-v1alpha1-deprecation.kb.io
+MATCH: vrolebasedgroupset-v1alpha1-deprecation.kb.io
+v1alpha2 vrolebasedgroup.kb.io: MATCH
+v1alpha2 vrolebasedgroupset.kb.io: MATCH
+v1alpha2 vcoordinatedpolicy.kb.io: MATCH

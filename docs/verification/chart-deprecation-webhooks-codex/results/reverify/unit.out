@@ -1,0 +1,20 @@
+{"Time":"2026-11-05T04:43:57.290860441+08:00","Action":"start","Package":"sigs.k8s.io/rbgs/test/chart"}
+{"Time":"2026-11-05T04:43:57.293325288+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestManagerFlagReflectsToggle"}
+{"Time":"2026-11-05T04:43:57.29336775+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestManagerFlagReflectsToggle","Output":"=== RUN   TestManagerFlagReflectsToggle\n","OutputType":"frame"}
+{"Time":"2026-11-05T04:43:57.38209455+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestManagerFlagReflectsToggle","Output":"--- PASS: TestManagerFlagReflectsToggle (0.09s)\n","OutputType":"frame"}
+{"Time":"2026-11-05T04:43:57.3821252+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestManagerFlagReflectsToggle","Elapsed":0.09}
+{"Time":"2026-11-05T04:43:57.382135581+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestClusterRoleGrantsReflectToggle"}
+{"Time":"2026-11-05T04:43:57.382137251+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestClusterRoleGrantsReflectToggle","Output":"=== RUN   TestClusterRoleGrantsReflectToggle\n","OutputType":"frame"}
+{"Time":"2026-11-05T04:43:57.469051126+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestClusterRoleGrantsReflectToggle","Output":"--- PASS: TestClusterRoleGrantsReflectToggle (0.09s)\n","OutputType":"frame"}
+{"Time":"2026-11-05T04:43:57.469078237+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestClusterRoleGrantsReflectToggle","Elapsed":0.09}
+{"Time":"2026-11-05T04:43:57.469083757+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestToggleDeltaIsScopedToDeprecatedRBACAndFlag"}
+{"Time":"2026-11-05T04:43:57.469085557+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestToggleDeltaIsScopedToDeprecatedRBACAndFlag","Output":"=== RUN   TestToggleDeltaIsScopedToDeprecatedRBACAndFlag\n","OutputType":"frame"}
+{"Time":"2026-11-05T04:43:57.527396244+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestToggleDeltaIsScopedToDeprecatedRBACAndFlag","Output":"--- PASS: TestToggleDeltaIsScopedToDeprecatedRBACAndFlag (0.06s)\n","OutputType":"frame"}
+{"Time":"2026-11-05T04:43:57.527414114+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestToggleDeltaIsScopedToDeprecatedRBACAndFlag","Elapsed":0.06}
+{"Time":"2026-11-05T04:43:57.527420214+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartDeprecationWebhooksMatchShippedConfig"}
+{"Time":"2026-11-05T04:43:57.527421834+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartDeprecationWebhooksMatchShippedConfig","Output":"=== RUN   TestChartDeprecationWebhooksMatchShippedConfig\n","OutputType":"frame"}
+{"Time":"2026-11-05T04:43:57.557880089+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartDeprecationWebhooksMatchShippedConfig","Output":"--- PASS: TestChartDeprecationWebhooksMatchShippedConfig (0.03s)\n","OutputType":"frame"}
+{"Time":"2026-11-05T04:43:57.55789233+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartDeprecationWebhooksMatchShippedConfig","Elapsed":0.03}
+{"Time":"2026-11-05T04:43:57.5578966+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Output":"PASS\n","OutputType":"frame"}
+{"Time":"2026-11-05T04:43:57.558872805+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Output":"ok  \tsigs.k8s.io/rbgs/test/chart\t0.268s\n"}
+{"Time":"2026-11-05T04:43:57.558888895+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Elapsed":0.268}

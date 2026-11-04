@@ -1,0 +1,12 @@
+=== RUN   TestChartDeprecationWebhooksMatchShippedConfig
+    webhook_manifests_test.go:128: chart is missing deprecation webhook "vclusterengineruntimeprofile-v1alpha1-deprecation.kb.io"
+    webhook_manifests_test.go:128: chart is missing deprecation webhook "vrolebasedgroup-v1alpha1-deprecation.kb.io"
+    webhook_manifests_test.go:128: chart is missing deprecation webhook "vrolebasedgroupscalingadapter-v1alpha1-deprecation.kb.io"
+    webhook_manifests_test.go:128: chart is missing deprecation webhook "vrolebasedgroupset-v1alpha1-deprecation.kb.io"
+    webhook_manifests_test.go:128: chart is missing deprecation webhook "vinstance-v1alpha1-deprecation.kb.io"
+    webhook_manifests_test.go:128: chart is missing deprecation webhook "vinstanceset-v1alpha1-deprecation.kb.io"
+--- FAIL: TestChartDeprecationWebhooksMatchShippedConfig (0.03s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/chart	0.033s
+FAIL
+exit=1

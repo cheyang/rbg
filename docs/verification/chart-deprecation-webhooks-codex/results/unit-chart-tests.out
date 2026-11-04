@@ -1,0 +1,11 @@
+=== RUN   TestManagerFlagReflectsToggle
+--- PASS: TestManagerFlagReflectsToggle (0.09s)
+=== RUN   TestClusterRoleGrantsReflectToggle
+--- PASS: TestClusterRoleGrantsReflectToggle (0.08s)
+=== RUN   TestToggleDeltaIsScopedToDeprecatedRBACAndFlag
+--- PASS: TestToggleDeltaIsScopedToDeprecatedRBACAndFlag (0.05s)
+=== RUN   TestChartDeprecationWebhooksMatchShippedConfig
+--- PASS: TestChartDeprecationWebhooksMatchShippedConfig (0.03s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/chart	0.258s
+exit=0
