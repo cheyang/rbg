@@ -1,0 +1,15 @@
+Harness-bites check (review-finding-verifier step 4), 2026-11-05, against PR #548 head 12693d02.
+Production code was never modified. Four representative assertions were temporarily
+INVERTED in the additive test files, the suites re-run, and each inverted test failed
+as expected; files were then restored byte-identical and the suites re-ran green.
+
+inversion 1 (C2): expect override Image to leak ("override-image")
+  -> --- FAIL: TestKEP531_LegacyOverrideMergesEnvArgsOnly          [bites: reads injected container]
+inversion 2 (C6): expect one legacy env append across duplicate references
+  -> --- FAIL: TestKEP531_DuplicateReferencesDedupPodLevelLegacyAppendsTwice  [bites: counts per-reference appends]
+inversion 3 (S1): expect RIS worker injector chain to include sidecarInjector
+  -> --- FAIL: TestKEP531_S1_WorkerTemplatesSkipSidecarInjection   [bites: reads reconciler source]
+inversion 4 (S3): expect maxItems present in rolebasedgroups CRD
+  -> --- FAIL: TestKEP531_S3_NoMaxItemsCapsExistOnMain             [bites: reads CRD source]
+
+Restored run: ok sigs.k8s.io/rbgs/pkg/discovery, ok sigs.k8s.io/rbgs/pkg/reconciler.

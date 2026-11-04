@@ -1,0 +1,57 @@
+{
+  "topic": "kep-531-profile-injection-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/548",
+  "harnessPaths": [
+    "docs/verification/kep-531-profile-injection-codex",
+    "pkg/discovery/kep531_premise_verify_test.go",
+    "pkg/reconciler/kep531_structure_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "KEP-531's description of main's renderer is accurate: leaderWorkerPattern injects profiles into the leader template only; customComponentsPattern injects into every declared component; injectContainers is inert; the legacy containers merge is env/args-only and no-ops for init containers; env injectors run after the sidecar stage, dedupe last-wins, and cover profile-injected containers.",
+    "reportedComponent": "pkg/discovery/sidecar_builder.go, pkg/reconciler/{pod_reconciler,roleinstanceset_reconciler,lws_reconciler}.go",
+    "patchedComponent": "keps/531-engine-runtime-profile-injection/ (docs only)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "16/16 harness tests pass on the PR head tree (code identical to base); see results/unit-discovery.json and results/unit-structure.json. One KEP sentence is contradicted: Compatibility #6's 'matching the v1alpha2 cap' — no MaxItems exists on either API version (S3).",
+    "match": ["TestKEP531_"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/discovery/ -run 'TestKEP531_' -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/ -run 'TestKEP531_' -json"
+    }
+  },
+  "findings": [
+    { "id": "C-legacy-env-args-only", "polarity": "contract", "layer": "unit", "match": ["TestKEP531_LegacyOverrideMergesEnvArgsOnly"] },
+    { "id": "C-legacy-init-noop", "polarity": "contract", "layer": "unit", "match": ["TestKEP531_LegacyOverrideInitContainerIsNoop"] },
+    { "id": "C-legacy-unknown-skip", "polarity": "contract", "layer": "unit", "match": ["TestKEP531_LegacyOverrideUnknownContainerSkipped"] },
+    { "id": "C-append-if-missing-role-wins", "polarity": "contract", "layer": "unit", "match": ["TestKEP531_AppendIfMissingRoleWins"] },
+    { "id": "C-duplicate-references", "polarity": "contract", "layer": "unit", "match": ["TestKEP531_DuplicateReferencesDedupPodLevelLegacyAppendsTwice"] },
+    { "id": "C-cross-profile-collision", "polarity": "contract", "layer": "unit", "match": ["TestKEP531_CrossProfileCollisionFirstReferenceWins"] },
+    { "id": "C-env-stage-coverage", "polarity": "contract", "layer": "unit", "match": ["TestKEP531_InjectEnvCoversProfileInjectedContainer"] },
+    { "id": "C-mergeenvvars-order", "polarity": "contract", "layer": "unit", "match": ["TestKEP531_MergeEnvVarsLastWinsAndReorders"] },
+    { "id": "C-leader-only-default", "polarity": "contract", "layer": "integration", "match": ["TestKEP531_S1_WorkerTemplatesSkipSidecarInjection"] },
+    { "id": "C-injectcontainers-inert", "polarity": "contract", "layer": "integration", "match": ["TestKEP531_S2_InjectContainersInert"] },
+    { "id": "C-no-maxitems-caps", "polarity": "contract", "layer": "integration", "match": ["TestKEP531_S3_NoMaxItemsCapsExistOnMain"] },
+    { "id": "C-component-names-unconstrained", "polarity": "contract", "layer": "integration", "match": ["TestKEP531_S4_CustomComponentNamesUnconstrained"] },
+    { "id": "C-cerp-cluster-scoped", "polarity": "contract", "layer": "integration", "match": ["TestKEP531_S5_CERPClusterScoped"] },
+    { "id": "C-no-profile-watch", "polarity": "contract", "layer": "integration", "match": ["TestKEP531_S6_ProfileEditsDoNotPropagate"] },
+    { "id": "C-templateref-lws", "polarity": "contract", "layer": "integration", "match": ["TestKEP531_S7_TemplateRefProhibitedForLWS"] },
+    { "id": "C-mountpath-uniqueness", "polarity": "contract", "layer": "integration", "match": ["TestKEP531_S8_ApiserverRejectsDuplicateMountPath"] }
+  ],
+  "_docFindings": {
+    "_note": "The debate findings F1..Fn are defects in the KEP TEXT. re-verify.sh judges the code-fact claims above; a KEP text revision does not change test outcomes — doc fixes are judged by re-reading keps/531-engine-runtime-profile-injection/README.md at the new head. The structural tests (S*) flip red if the underlying code changes, signalling that the KEP text must be re-checked rather than that it was fixed.",
+    "F1": { "evidence": ["TestKEP531_S3_NoMaxItemsCapsExistOnMain"], "summary": "KEP Compatibility #6 claims v1alpha2 already caps roles at MaxItems=16; no cap exists on either version, and the planned tightening breaks stored-object updates in both versions, not just v1alpha1." },
+    "F2": { "evidence": ["TestKEP531_S6_ProfileEditsDoNotPropagate"], "summary": "kep.yaml claims the KEP answers issue #531's inventory 'point by point' including unconsumed updateStrategy; the README never mentions updateStrategy or profile-change propagation." },
+    "F3": { "evidence": ["TestKEP531_S4_CustomComponentNamesUnconstrained"], "summary": "component field DNS-label pattern vs unconstrained InstanceComponent.Name." },
+    "F4": { "evidence": ["TestKEP531_S8_ApiserverRejectsDuplicateMountPath"], "summary": "KEP cites kubelet last-wins for duplicate mountPath; apiserver actually rejects with 'must be unique'." }
+  },
+  "liveNote": "No live layer: this PR is docs-only; there is no runtime change to observe. The e2e scenarios belong to the follow-up implementation PRs (see the KEP Test Plan)."
+}

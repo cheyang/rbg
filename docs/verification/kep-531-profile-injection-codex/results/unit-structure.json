@@ -1,0 +1,36 @@
+{"Time":"2026-11-05T01:07:31.832355973+08:00","Action":"start","Package":"sigs.k8s.io/rbgs/pkg/reconciler"}
+{"Time":"2026-11-05T01:07:31.845070026+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S1_WorkerTemplatesSkipSidecarInjection"}
+{"Time":"2026-11-05T01:07:31.845133319+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S1_WorkerTemplatesSkipSidecarInjection","Output":"=== RUN   TestKEP531_S1_WorkerTemplatesSkipSidecarInjection\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.8451573+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S1_WorkerTemplatesSkipSidecarInjection","Output":"--- PASS: TestKEP531_S1_WorkerTemplatesSkipSidecarInjection (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.84516211+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S1_WorkerTemplatesSkipSidecarInjection","Elapsed":0}
+{"Time":"2026-11-05T01:07:31.84516868+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S2_InjectContainersInert"}
+{"Time":"2026-11-05T01:07:31.84517128+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S2_InjectContainersInert","Output":"=== RUN   TestKEP531_S2_InjectContainersInert\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.847151431+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S2_InjectContainersInert","Output":"--- PASS: TestKEP531_S2_InjectContainersInert (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.847165291+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S2_InjectContainersInert","Elapsed":0}
+{"Time":"2026-11-05T01:07:31.847169441+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S3_NoMaxItemsCapsExistOnMain"}
+{"Time":"2026-11-05T01:07:31.847171031+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S3_NoMaxItemsCapsExistOnMain","Output":"=== RUN   TestKEP531_S3_NoMaxItemsCapsExistOnMain\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.848572091+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S3_NoMaxItemsCapsExistOnMain","Output":"--- PASS: TestKEP531_S3_NoMaxItemsCapsExistOnMain (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.848577591+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S3_NoMaxItemsCapsExistOnMain","Elapsed":0}
+{"Time":"2026-11-05T01:07:31.848583751+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S4_CustomComponentNamesUnconstrained"}
+{"Time":"2026-11-05T01:07:31.848585262+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S4_CustomComponentNamesUnconstrained","Output":"=== RUN   TestKEP531_S4_CustomComponentNamesUnconstrained\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.848634203+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S4_CustomComponentNamesUnconstrained","Output":"--- PASS: TestKEP531_S4_CustomComponentNamesUnconstrained (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.848636443+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S4_CustomComponentNamesUnconstrained","Elapsed":0}
+{"Time":"2026-11-05T01:07:31.848638024+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S5_CERPClusterScoped"}
+{"Time":"2026-11-05T01:07:31.848640664+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S5_CERPClusterScoped","Output":"=== RUN   TestKEP531_S5_CERPClusterScoped\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.848659404+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S5_CERPClusterScoped","Output":"--- PASS: TestKEP531_S5_CERPClusterScoped (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.848661484+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S5_CERPClusterScoped","Elapsed":0}
+{"Time":"2026-11-05T01:07:31.848671835+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S6_ProfileEditsDoNotPropagate"}
+{"Time":"2026-11-05T01:07:31.848673425+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S6_ProfileEditsDoNotPropagate","Output":"=== RUN   TestKEP531_S6_ProfileEditsDoNotPropagate\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.849973171+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S6_ProfileEditsDoNotPropagate","Output":"--- PASS: TestKEP531_S6_ProfileEditsDoNotPropagate (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.849976071+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S6_ProfileEditsDoNotPropagate","Elapsed":0}
+{"Time":"2026-11-05T01:07:31.849977861+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S7_TemplateRefProhibitedForLWS"}
+{"Time":"2026-11-05T01:07:31.849979201+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S7_TemplateRefProhibitedForLWS","Output":"=== RUN   TestKEP531_S7_TemplateRefProhibitedForLWS\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.850000242+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S7_TemplateRefProhibitedForLWS","Output":"--- PASS: TestKEP531_S7_TemplateRefProhibitedForLWS (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.850001882+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S7_TemplateRefProhibitedForLWS","Elapsed":0}
+{"Time":"2026-11-05T01:07:31.850003552+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S8_ApiserverRejectsDuplicateMountPath"}
+{"Time":"2026-11-05T01:07:31.850004852+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S8_ApiserverRejectsDuplicateMountPath","Output":"=== RUN   TestKEP531_S8_ApiserverRejectsDuplicateMountPath\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.850473559+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S8_ApiserverRejectsDuplicateMountPath","Output":"--- PASS: TestKEP531_S8_ApiserverRejectsDuplicateMountPath (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.850479769+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestKEP531_S8_ApiserverRejectsDuplicateMountPath","Elapsed":0}
+{"Time":"2026-11-05T01:07:31.85050597+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Output":"PASS\n","OutputType":"frame"}
+{"Time":"2026-11-05T01:07:31.851882719+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Output":"ok  \tsigs.k8s.io/rbgs/pkg/reconciler\t0.019s\n"}
+{"Time":"2026-11-05T01:07:31.856889627+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Elapsed":0.025}
