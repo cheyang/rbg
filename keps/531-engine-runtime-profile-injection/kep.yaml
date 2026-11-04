@@ -1,0 +1,31 @@
+title: Engine Runtime Profile Injection
+kep-number: 531
+authors:
+  - "@vicoooo26"
+status: provisional
+creation-date: 2026-10-26
+reviewers:
+  - "@diw-zw"
+  - "@cheyang"
+approvers:
+  - "@diw-zw"
+  - "@cheyang"
+
+see-also:
+  # The originating feature request: a defect inventory of the
+  # existing injection (inert injectContainers, unreachable
+  # leaderWorker worker template, unscoped customComponents broadcast,
+  # unconsumed updateStrategy) that this KEP answers point by point.
+  - "https://github.com/sgl-project/rbg/issues/531"
+  - "https://github.com/sgl-project/inference-kit"
+  # An earlier revision of this KEP designed a MutatingAdmissionWebhook,
+  # implemented on feat/inferencekit-webhook-injection but never merged;
+  # this revision replaces it with render-time profile merge. Since the
+  # webhook revision never landed on main, no replaces pointer is recorded.
+
+stage: alpha
+
+latest-milestone: "v0.9.0"
+
+milestone:
+  alpha: "v0.9.0"
