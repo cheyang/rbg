@@ -15,7 +15,7 @@
     "runsAgainst": "base",
     "layer": "unit",
     "verdict": "confirmed",
-    "evidence": "TestKEP531_Verify_InjectContainersIsInert (no volumeMounts/env delivered to injectContainers targets), TestKEP531_Verify_WorkerChainSkipsSidecarInjection (worker injector chain omits sidecar stage); CCP broadcast verified in code (roleinstanceset_reconciler.go:318-320, default injector set per component); updateStrategy has no consumer in pkg/ (grep). results/unit-l1.txt",
+    "evidence": "TestKEP531_Verify_InjectContainersIsInert (no volumeMounts/env delivered to injectContainers targets), TestKEP531_Verify_WorkerChainSkipsSidecarInjection (worker injector chain omits sidecar stage); CCP broadcast verified in code (roleinstanceset_reconciler.go:318-320, default injector set per component); updateStrategy has no consumer in pkg/ (grep; still true on base 73e05db4). results/unit-l1.txt (round 1), results/reverify/unit.out (round 2)",
     "match": [
       "TestKEP531_Verify_InjectContainersIsInert",
       "TestKEP531_Verify_WorkerChainSkipsSidecarInjection"
@@ -24,22 +24,126 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/discovery/ ./pkg/reconciler/ -run 'TestKEP531_Verify' -v"
+      "cmd": "go test ./pkg/discovery/ ./pkg/reconciler/ -run 'TestKEP531_Verify' -json"
     },
     "doc": {
-      "kind": "script",
-      "cmd": "bash docs/verification/kep-531-profile-injection/scripts/check_f1_doc_contract.sh"
+      "kind": "gotest",
+      "cmd": "bash docs/verification/kep-531-profile-injection/scripts/check_doc_contracts.sh --json",
+      "note": "Doc-text contract checks emitted in gotest -json shape so re-verify.sh parses this layer natively. CONTRACT checks pin the fixed state of round-1 findings (fail = regression); CANARY checks pin the still-defective wording of open nit/minor findings (flip to fail = the author fixed it; then invert the check)."
     }
   },
   "findings": [
     {
-      "id": "F1",
+      "id": "F-ENV-CONFLICT",
       "polarity": "contract",
       "layer": "doc",
-      "match": [
-        "F1-CONTRACT"
-      ],
-      "note": "Doc-layer contract test for the docs-only PR: FAILS on the head README (contradictory conflict-check scope statements present \u2014 results/f1-doc-contract.txt), PASSES once the author aligns them (rewording simulated in the bites check). The unit-layer contract tests TestKEP531_Verify_LegacyMergeAppendsPerReferenceWithoutConflictCheck / ...AppendsToRoleDeclaredContainer pin main's unchecked legacy append as the byte-for-byte baseline the implementation must preserve (results/harness-bites-check.txt)."
+      "match": ["F-ENV-CONFLICT-CONTRACT"],
+      "note": "Round-1 blocker, FIXED in the round-2 rewrite (head 7a9827bc): the doc now states ONE positional env rule set with ownership-drawn boundaries, and the legacy merge's own appends stay unchecked exactly as on main ('legacy-only duplicates never error'). Contract fails if a legacy-merge-spanning conflict check returns or the fixed-state wording is removed. Unit-layer contract tests TestKEP531_Verify_LegacyMergeAppendsPerReferenceWithoutConflictCheck / ...AppendsToRoleDeclaredContainer still pin main's unchecked legacy append as the byte-for-byte baseline."
+    },
+    {
+      "id": "F-COVERAGE-UPDATESTRATEGY",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": ["F-COVERAGE-UPDATESTRATEGY-CONTRACT"],
+      "note": "Round-1 major, FIXED: updateStrategy dispositioned in Non-Goals + Motivation ('Published but inert') + a dedicated Profile Mutability section ('a profile change ... lands through whatever update path exists, today only deliberate workload updates'); the overclaiming kep.yaml see-see comment was removed with the see-also block."
+    },
+    {
+      "id": "F-CAPS-MAXITEMS",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": ["F-CAPS-MAXITEMS-CONTRACT"],
+      "note": "Round-1 major, FIXED by design change: the doc now states the published lists (roles, engineRuntimes) carry NO new caps, that neither has maxItems on main, and that capping published lists would reject stored objects (the D3 tightening argument)."
+    },
+    {
+      "id": "F-COMPONENT-VOCAB",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": ["F-COMPONENT-VOCAB-CONTRACT"],
+      "note": "Round-1 minor, FIXED: component deliberately carries no pattern/length bound beyond MinLength=1, mirroring the unmarked source vocabulary (RoleSpec.Name, InstanceComponent.Name); Test Plan covers a mixed-case role name resolving via the render gate."
+    },
+    {
+      "id": "F-ENABLEMENT-ROLLBACK",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": ["F-ENABLEMENT-ROLLBACK-CONTRACT"],
+      "note": "Round-1 minor (Reviewer C), FIXED: Feature Enablement and Rollback + Upgrade / Downgrade Strategy sections present, with envtest upgrade/downgrade drills in the Test Plan."
+    },
+    {
+      "id": "F-CONVERSION-ROUNDTRIP",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": ["F-CONVERSION-ROUNDTRIP-CONTRACT"],
+      "note": "Round-1 missingTests, FIXED: Version Serving and Conversion section states round-trip losslessness through both Hub conversions is pinned by envtest; graduation criteria list v1alpha1<->v1alpha2 round-trip conversion."
+    },
+    {
+      "id": "F-UNKNOWN-TARGET-PROSE",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": ["F-UNKNOWN-TARGET-PROSE-CONTRACT"],
+      "note": "Round-1 nit, FIXED: Role-Side Patches states the fail-closed rule ('anything else — a name injected only by a different reference or profile — is a render error')."
+    },
+    {
+      "id": "F-COPILOT-SECRET-CHANNEL",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": ["F-COPILOT-SECRET-CHANNEL-CONTRACT"],
+      "note": "Round-1 nit (Reviewer C), FIXED: D9 now scopes the one-way guarantee to the profile's own spec and documents the retained role->profile channels ('main's legacy channels already carry this class of flow')."
+    },
+    {
+      "id": "F-COPILOT-VOLUMEMOUNT-EQUALITY",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": ["F-COPILOT-VOLUMEMOUNT-EQUALITY-CONTRACT"],
+      "note": "Round-1 nit (Reviewer C), FIXED: volumeMount no-op requires full semantic equality (readOnly, subPath, subPathExpr, mountPropagationMode, recursiveReadOnly), partial match is a render error — also pinned in the Test Plan."
+    },
+    {
+      "id": "F-INFERENCE-KIT-404",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": ["F-INFERENCE-KIT-404-CONTRACT"],
+      "note": "Round-1 nit, FIXED: the 404 see-also link was removed with the kep.yaml see-see block (kep.yaml is 19 lines, no links)."
+    },
+    {
+      "id": "F-MOUNTPATH-MECHANISM",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": ["F-MOUNTPATH-MECHANISM-CANARY"],
+      "note": "OPEN nit. 'the kubelet resolves overlapping mount paths last-wins' (:786-789) still cites the wrong mechanism for a duplicate mountPath, now in the SAME paragraph as the correct apiserver 'must be unique' citation (:781-783) — an internal contradiction in miniature. Vendored k8s validation.go rejects duplicate mount paths at pod creation."
+    },
+    {
+      "id": "F-PODSECURITY-STAGE",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": ["F-PODSECURITY-STAGE-CANARY"],
+      "note": "OPEN nit. Risk table (:1198) still says PodSecurity 'fails at workload creation, not render' while the doc itself states 'Render success is not workload creation' (:1203) and 'gates capability additions only when the rendered pod is created' (:817)."
+    },
+    {
+      "id": "F-ENV-VAR-DIRECTION",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": ["F-ENV-VAR-DIRECTION-CANARY"],
+      "note": "OPEN nit. 'a profile-added env entry cannot use $(VAR) to reference a role-added entry' (:935) still overgeneralizes: role-side /env/0 head inserts land ahead of profile-appended entries (the doc's own Test Plan covers the positional case), so the 'impossible' direction resolves."
+    },
+    {
+      "id": "F-INJECTOR-COUNT-WORDING",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": ["F-INJECTOR-COUNT-WORDING-CANARY"],
+      "note": "OPEN nit. 'a four-injector pass' (:973) still describes only the RIS-LWP leader shape; per-template injector sets vary 2-4 (worker chains omit the sidecar stage; LWS has no rbg-side LWP env stage)."
+    },
+    {
+      "id": "F-STAGE3-CHECK-TIMING",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": ["F-STAGE3-CHECK-TIMING-CANARY"],
+      "note": "NEW round-2 minor. Application Order (:917) says each stage-3 pass resolves its role-owned checks 'against the role template and the pod-level content of earlier references only', contradicting the phased order the same section and the Render Pipeline specify (all pod-level content lands in stages 1-2 before any stage-3 pass; entry names are 'resolvable only once that container's own injection (stages 1-2) has landed')."
+    },
+    {
+      "id": "F-PROFILE-EVOLUTION-TEST",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": ["F-PROFILE-EVOLUTION-TEST-CANARY"],
+      "note": "OPEN round-1 minor. The Test Plan still has no case for a profile adding containerPatches while a consenting reference exists (when/how the change lands, what signal). The semantics are now documented in Profile Mutability; the matrix the implementation PR copies should pin them. Flips when an evolution case appears in the Test Plan."
     },
     {
       "id": "F3",
@@ -50,8 +154,8 @@
         "TestKEP531_Verify_OverrideSkippedForContainerNotInThisReferenceProfile",
         "TestKEP531_Verify_AppendIfMissingPodLevelDelivery"
       ],
-      "note": "Contract tests pinning the main behaviors the KEP claims are 'preserved verbatim': init-container legacy override is a silent no-op; an override naming another reference's container is skipped; append-if-missing pod-level delivery. They pin the accuracy of the KEP's factual claims about main; deviations after implementation are regressions of the documented compatibility surface."
+      "note": "Contract tests pinning the main behaviors the KEP claims are 'preserved verbatim': init-container legacy override is a silent no-op; an override naming another reference's container is skipped; append-if-missing pod-level delivery. Production code is unchanged by this docs-only PR (verified: diff 3612013e..7a9827bc touches only keps/)."
     }
   ],
-  "liveNote": "L3 not applicable: docs-only PR; no runtime behavior change to observe on a cluster. The KEP's own Test Plan specifies the envtest/e2e matrix for the follow-up implementation PRs \u2014 this harness is the regression suite those PRs must keep green."
+  "liveNote": "L3 not applicable: docs-only PR; no runtime behavior change to observe on a cluster. The KEP's own Test Plan specifies the envtest/e2e matrix for the follow-up implementation PRs — this harness is the regression suite those PRs must keep green."
 }

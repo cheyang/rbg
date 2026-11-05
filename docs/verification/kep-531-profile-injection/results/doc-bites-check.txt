@@ -1,0 +1,16 @@
+Doc-layer harness-bites check (round 2) — each check must flip on its targeted mutation.
+Mutation = a sed edit of a COPY of the head README (real files); production diff untouched (doc-only PR).
+
+1) F-ENV-CONFLICT-CONTRACT (contract), fixed-state phrase 'duplicates never error' removed:
+F-ENV-CONFLICT-CONTRACT                    fail contradictory conflict-check scope statements present (or fixed-state wording removed)
+2) F-COVERAGE-UPDATESTRATEGY-CONTRACT (contract), '### Profile Mutability' heading removed:
+F-COVERAGE-UPDATESTRATEGY-CONTRACT         fail updateStrategy disposition missing
+3) F-INJECTOR-COUNT-WORDING-CANARY (canary), defective 'four-injector pass' removed:
+F-INJECTOR-COUNT-WORDING-CANARY            fail FIXED? injector-count wording qualified — invert into a contract
+4) F-PROFILE-EVOLUTION-TEST-CANARY (canary), evolution case added to the Test Plan:
+F-PROFILE-EVOLUTION-TEST-CANARY            fail FIXED? Test Plan now covers consented profile evolution — invert into a contract
+5) unmutated control: all 16 checks pass (see results/doc-contracts-r2.txt).
+
+Verdict: contracts go red when their fixed-state wording is removed (1,2); canaries
+flip to red when the defective wording is removed or the missing test is added (3,4)
+— the checks bite in both directions.
