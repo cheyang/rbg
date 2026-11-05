@@ -1,0 +1,23 @@
+--- FAIL: TestVerifyPR553RollingUpdateParametersScalesBackUp (0.04s)
+    --- FAIL: TestVerifyPR553RollingUpdateParametersScalesBackUp/live_1_of_4,_partition_2 (0.04s)
+panic: runtime error: index out of range [1] with length 1 [recovered, repanicked]
+
+goroutine 76 [running]:
+testing.tRunner.func1.2({0x2fd6510, 0x1465fe1f8168})
+	/usr/local/go/src/testing/testing.go:2123 +0x232
+testing.tRunner.func1()
+	/usr/local/go/src/testing/testing.go:2126 +0x329
+panic({0x2fd6510?, 0x1465fe1f8168?})
+	/usr/local/go/src/runtime/panic.go:859 +0x125
+sigs.k8s.io/rbgs/pkg/reconciler.rollingUpdatePartition({0x305f530?, 0x31e3760?}, {0x1465ff6746b0, 0x1, 0x0?}, 0x1, 0xfffffffe, 0x2)
+	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-06/pr-553/work/base/pkg/reconciler/sts_reconciler.go:421 +0x318
+sigs.k8s.io/rbgs/pkg/reconciler.(*StatefulSetReconciler).rollingUpdateParameters(0x1465fda6be00, {0x305f530, 0x31e3760}, 0x1465fde9a160, 0x1465fe144108, 0x0, 0x0)
+	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-06/pr-553/work/base/pkg/reconciler/sts_reconciler.go:324 +0x95c
+sigs.k8s.io/rbgs/pkg/reconciler.TestVerifyPR553RollingUpdateParametersScalesBackUp.func1(0x1465fdce2d88)
+	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-06/pr-553/work/base/pkg/reconciler/verify_pr553_sts_scaleup_test.go:91 +0x626
+testing.tRunner(0x1465fdce2d88, 0x1465fe1482a0)
+	/usr/local/go/src/testing/testing.go:2193 +0xea
+created by testing.(*T).Run in goroutine 75
+	/usr/local/go/src/testing/testing.go:2258 +0x4d4
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.060s
+FAIL

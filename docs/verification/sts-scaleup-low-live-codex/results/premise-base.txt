@@ -1,0 +1,4 @@
+=== RUN   TestRollingUpdatePartitionPanicsWhenLiveReplicasFarBelowDesired
+--- PASS: TestRollingUpdatePartitionPanicsWhenLiveReplicasFarBelowDesired (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.014s
