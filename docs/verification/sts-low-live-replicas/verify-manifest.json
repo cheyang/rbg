@@ -1,0 +1,56 @@
+{
+  "topic": "sts-low-live-replicas",
+  "pr": "https://github.com/sgl-project/rbg/pull/553",
+  "harnessPaths": [
+    "docs/verification/sts-low-live-replicas",
+    "pkg/reconciler/low_live_replicas_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "rollingUpdatePartition panics (index out of range) when a live StatefulSet has far fewer replicas than the role still requests; controller-runtime recovers the panic so the reconcile makes no progress and the workload stays at the reduced size (issue #547)",
+    "reportedComponent": "pkg/reconciler/sts_reconciler.go — StatefulSetReconciler.rollingUpdateParameters case 6 -> rollingUpdatePartition",
+    "patchedComponent": "pkg/reconciler/sts_reconciler.go — rollingUpdateParameters (new scale-up early return) + rollingUpdatePartition (index clamp)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "integration",
+    "verdict": "confirmed",
+    "evidence": "Harness contract tests panic on base 98d3c4be at sts_reconciler.go:421 (index out of range [1] with length 1) at all three levels incl. full reconcileStatefulSet; see results/base-verify-tests.txt",
+    "match": [
+      "TestVerify_L2_ReconcileStatefulSet_LiveBelowDesired_ScalesUp"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -mod=vendor ./pkg/reconciler -run 'TestVerify_L1' -count=1 -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "go test -mod=vendor ./pkg/reconciler -run 'TestVerify_L2' -count=1 -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired"]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestVerify_L2_RollingUpdateParameters_LiveBelowDesired_NoPanic",
+        "TestVerify_L2_ReconcileStatefulSet_LiveBelowDesired_ScalesUp"
+      ]
+    },
+    {
+      "id": "NEG1",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["TestVerify_L2_NegativeControl_NormalCase6Unchanged"]
+    }
+  ],
+  "liveNote": "L3 (live cluster) intentionally not run this round per pipeline instructions; the fake-client reconcile-level test covers the user-visible contract (STS scaled back to role.Replicas, no panic)."
+}

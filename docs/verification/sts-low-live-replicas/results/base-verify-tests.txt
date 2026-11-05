@@ -1,0 +1,77 @@
+=== TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired ===
+=== RUN   TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired
+--- FAIL: TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired (0.00s)
+panic: runtime error: index out of range [1] with length 1 [recovered, repanicked]
+
+goroutine 117 [running]:
+testing.tRunner.func1.2({0x2fc0ac0, 0x37b99bd340d8})
+	/usr/local/go/src/testing/testing.go:2123 +0x232
+testing.tRunner.func1()
+	/usr/local/go/src/testing/testing.go:2126 +0x329
+panic({0x2fc0ac0?, 0x37b99bd340d8?})
+	/usr/local/go/src/runtime/panic.go:859 +0x125
+sigs.k8s.io/rbgs/pkg/reconciler.rollingUpdatePartition({0x3049ae0?, 0x31cd7e0?}, {0x37b99bd9475e, 0x1, 0x0?}, 0x1, 0xfffffffe, 0x0)
+	/tmp/base-553/pkg/reconciler/sts_reconciler.go:421 +0x318
+sigs.k8s.io/rbgs/pkg/reconciler.TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired(0x37b99b8c6908)
+	/tmp/base-553/pkg/reconciler/low_live_replicas_verify_test.go:58 +0x4c
+testing.tRunner(0x37b99b8c6908, 0x30537a8)
+	/usr/local/go/src/testing/testing.go:2193 +0xea
+created by testing.(*T).Run in goroutine 1
+	/usr/local/go/src/testing/testing.go:2258 +0x4d4
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.014s
+FAIL
+=== TestVerify_L2_RollingUpdateParameters_LiveBelowDesired_NoPanic ===
+=== RUN   TestVerify_L2_RollingUpdateParameters_LiveBelowDesired_NoPanic
+--- FAIL: TestVerify_L2_RollingUpdateParameters_LiveBelowDesired_NoPanic (0.04s)
+panic: runtime error: index out of range [1] with length 1 [recovered, repanicked]
+
+goroutine 133 [running]:
+testing.tRunner.func1.2({0x2fc0ac0, 0x2b2501963f68})
+	/usr/local/go/src/testing/testing.go:2123 +0x232
+testing.tRunner.func1()
+	/usr/local/go/src/testing/testing.go:2126 +0x329
+panic({0x2fc0ac0?, 0x2b2501963f68?})
+	/usr/local/go/src/runtime/panic.go:859 +0x125
+sigs.k8s.io/rbgs/pkg/reconciler.rollingUpdatePartition({0x3049ae0?, 0x31cd7e0?}, {0x2b2500f20020, 0x1, 0x0?}, 0x1, 0xfffffffe, 0x2)
+	/tmp/base-553/pkg/reconciler/sts_reconciler.go:421 +0x318
+sigs.k8s.io/rbgs/pkg/reconciler.(*StatefulSetReconciler).rollingUpdateParameters(0x2b250054be30, {0x3049ae0, 0x31cd7e0}, 0x2b250066a370, 0x2b2500bd2588, 0x0, 0x0)
+	/tmp/base-553/pkg/reconciler/sts_reconciler.go:324 +0x95c
+sigs.k8s.io/rbgs/pkg/reconciler.TestVerify_L2_RollingUpdateParameters_LiveBelowDesired_NoPanic(0x2b2500785448)
+	/tmp/base-553/pkg/reconciler/low_live_replicas_verify_test.go:97 +0x616
+testing.tRunner(0x2b2500785448, 0x30537c0)
+	/usr/local/go/src/testing/testing.go:2193 +0xea
+created by testing.(*T).Run in goroutine 1
+	/usr/local/go/src/testing/testing.go:2258 +0x4d4
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.059s
+FAIL
+=== TestVerify_L2_ReconcileStatefulSet_LiveBelowDesired_ScalesUp ===
+=== RUN   TestVerify_L2_ReconcileStatefulSet_LiveBelowDesired_ScalesUp
+--- FAIL: TestVerify_L2_ReconcileStatefulSet_LiveBelowDesired_ScalesUp (0.05s)
+panic: runtime error: index out of range [1] with length 1 [recovered, repanicked]
+
+goroutine 198 [running]:
+testing.tRunner.func1.2({0x2fc0ac0, 0x1215e6d05f50})
+	/usr/local/go/src/testing/testing.go:2123 +0x232
+testing.tRunner.func1()
+	/usr/local/go/src/testing/testing.go:2126 +0x329
+panic({0x2fc0ac0?, 0x1215e6d05f50?})
+	/usr/local/go/src/runtime/panic.go:859 +0x125
+sigs.k8s.io/rbgs/pkg/reconciler.rollingUpdatePartition({0x3049ae0?, 0x31cd7e0?}, {0x1215e6904f10, 0x1, 0x0?}, 0x1, 0xfffffffe, 0x2)
+	/tmp/base-553/pkg/reconciler/sts_reconciler.go:421 +0x318
+sigs.k8s.io/rbgs/pkg/reconciler.(*StatefulSetReconciler).rollingUpdateParameters(0x1215e6cdf860, {0x3049ae0, 0x31cd7e0}, 0x1215e58c6160, 0x1215e5a7b188, 0x0, 0x0)
+	/tmp/base-553/pkg/reconciler/sts_reconciler.go:324 +0x95c
+sigs.k8s.io/rbgs/pkg/reconciler.(*StatefulSetReconciler).reconcileStatefulSet(0x1215e6cdf860, {0x3049ae0, 0x31cd7e0}, 0x1215e58d2900, 0x1215e58c6160, 0x0, {0x1949329, 0x5})
+	/tmp/base-553/pkg/reconciler/sts_reconciler.go:147 +0x609
+sigs.k8s.io/rbgs/pkg/reconciler.TestVerify_L2_ReconcileStatefulSet_LiveBelowDesired_ScalesUp(0x1215e57226c8)
+	/tmp/base-553/pkg/reconciler/low_live_replicas_verify_test.go:137 +0x594
+testing.tRunner(0x1215e57226c8, 0x30537b8)
+	/usr/local/go/src/testing/testing.go:2193 +0xea
+created by testing.(*T).Run in goroutine 1
+	/usr/local/go/src/testing/testing.go:2258 +0x4d4
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.063s
+FAIL
+=== TestVerify_L2_NegativeControl_NormalCase6Unchanged ===
+=== RUN   TestVerify_L2_NegativeControl_NormalCase6Unchanged
+--- PASS: TestVerify_L2_NegativeControl_NormalCase6Unchanged (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.057s

@@ -1,0 +1,2 @@
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.246s
+build ok
