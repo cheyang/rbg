@@ -1,16 +1,16 @@
-F-ENV-CONFLICT-CONTRACT                    pass one positional env rule set; legacy merge unchecked as on main
-F-COVERAGE-UPDATESTRATEGY-CONTRACT         pass updateStrategy dispositioned (Non-Goals + Profile Mutability)
-F-CAPS-MAXITEMS-CONTRACT                   pass published lists carry no new caps; absence on main stated
-F-COMPONENT-VOCAB-CONTRACT                 pass component validation mirrors the unmarked source vocabulary
-F-ENABLEMENT-ROLLBACK-CONTRACT             pass Feature Enablement and Rollback + Upgrade/Downgrade sections present
-F-CONVERSION-ROUNDTRIP-CONTRACT            pass conversion round-trip coverage in the Test Plan
-F-UNKNOWN-TARGET-PROSE-CONTRACT            pass unknown targetContainers name is a stated render error
-F-COPILOT-SECRET-CHANNEL-CONTRACT          pass D9 documents the retained role→profile channels
-F-COPILOT-VOLUMEMOUNT-EQUALITY-CONTRACT    pass volumeMount no-op requires full semantic equality
-F-INFERENCE-KIT-404-CONTRACT               pass no dead inference-kit see-also link
-F-MOUNTPATH-MECHANISM-CANARY               pass defective kubelet-last-wins citation present (apiserver rejects dup mountPaths)
-F-PODSECURITY-STAGE-CANARY                 pass defective 'workload creation' stage claim present
-F-ENV-VAR-DIRECTION-CANARY                 pass unqualified $(VAR) direction claim present
-F-INJECTOR-COUNT-WORDING-CANARY            pass 'four-injector pass' overgeneralization present
-F-STAGE3-CHECK-TIMING-CANARY               pass contradictory stage-3 check-timing clause present
-F-PROFILE-EVOLUTION-TEST-CANARY            pass Test Plan still lacks a consented profile-evolution case
+{"Test":"F-ENV-CONFLICT-CONTRACT","Action":"pass"}
+{"Test":"F-COVERAGE-UPDATESTRATEGY-CONTRACT","Action":"pass"}
+{"Test":"F-CAPS-MAXITEMS-CONTRACT","Action":"pass"}
+{"Test":"F-COMPONENT-VOCAB-CONTRACT","Action":"pass"}
+{"Test":"F-ENABLEMENT-ROLLBACK-CONTRACT","Action":"pass"}
+{"Test":"F-CONVERSION-ROUNDTRIP-CONTRACT","Action":"pass"}
+{"Test":"F-UNKNOWN-TARGET-PROSE-CONTRACT","Action":"pass"}
+{"Test":"F-COPILOT-SECRET-CHANNEL-CONTRACT","Action":"pass"}
+{"Test":"F-COPILOT-VOLUMEMOUNT-EQUALITY-CONTRACT","Action":"pass"}
+{"Test":"F-INFERENCE-KIT-404-CONTRACT","Action":"pass"}
+{"Test":"F-MOUNTPATH-MECHANISM-CANARY","Action":"pass"}
+{"Test":"F-PODSECURITY-STAGE-CANARY","Action":"pass"}
+{"Test":"F-ENV-VAR-DIRECTION-CANARY","Action":"pass"}
+{"Test":"F-INJECTOR-COUNT-WORDING-CANARY","Action":"pass"}
+{"Test":"F-STAGE3-CHECK-TIMING-CANARY","Action":"pass"}
+{"Test":"F-PROFILE-EVOLUTION-TEST-CANARY","Action":"pass"}

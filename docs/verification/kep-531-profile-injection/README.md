@@ -3,21 +3,23 @@
 Reproducible evidence for the findings raised while reviewing
 [PR #548](https://github.com/sgl-project/rbg/pull/548) (KEP-531: Engine Runtime
 Profile Injection — **documentation-only**; production code is identical to
-base `3612013e`).
+base `3612013e`/`73e05db4`).
 
-Layers run against the **code under review** (`12693d02`, PR head):
+**Round 2** (frozen head `7a9827bc`; the PR was force-pushed with a fully
+rewritten document). Layers run against the code under review:
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
-| 1. Unit | `SidecarBuilder`/`PodReconciler` injection behavior that the KEP documents and pins compatibility against | `go test ./pkg/discovery/ ./pkg/reconciler/ -run 'TestKEP531_Verify' -v` |
-| 1b. Doc | F1 contract: the KEP README specifies ONE consistent env-name-conflict-check scope | `bash docs/verification/kep-531-profile-injection/scripts/check_f1_doc_contract.sh` (FAILS on head — the defect is in the document itself) |
+| 1. Unit | `SidecarBuilder`/`PodReconciler` injection behavior that the KEP documents and pins compatibility against | `go test ./pkg/discovery/ ./pkg/reconciler/ -run 'TestKEP531_Verify' -json` |
+| 1b. Doc | 16 doc-text checks: 10 CONTRACT (fixed state of round-1 findings; fail = regression) + 6 CANARY (open wording defects; flip = fixed) | `bash docs/verification/kep-531-profile-injection/scripts/check_doc_contracts.sh [--json]` |
 | 2. Integration | — (skipped: docs-only PR, no runtime change) | — |
 | 3. Live | — (not applicable) | — |
 
-> Test polarity: all harness tests are **contract** tests for the KEP's
-> byte-for-byte compatibility guarantee — they pass on main and MUST still
-> pass after the KEP implementation lands. A red result then is positive
-> evidence of a compatibility break.
+> Test polarity: the **unit** tests and the doc **CONTRACT** checks pass on
+> the current head and MUST keep passing after the KEP implementation lands —
+> a red result is a compatibility break or a doc regression. The doc **CANARY**
+> checks pass *while the defective wording is present* and flip to fail when
+> the author fixes it (then invert the check into a contract).
 
 ## Problem premise (P0)
 
@@ -53,19 +55,62 @@ Premise evidence (base `3612013e`):
   `ClusterEngineRuntimeProfileSpec.UpdateStrategy` in `pkg/` (grep). The KEP
   does not address it anywhere — see finding F2.
 
-## Summary of results
+## Summary of results — round 2 (head `7a9827bc`)
 
-| ID | Claim | Layer | Verdict | Evidence |
+Run: `bash scripts/re-verify.sh 7a9827bc --layers unit,doc`
+(raw output `results/reverify/`, doc table `results/doc-contracts-r2.txt`).
+
+| ID (ledger) | Claim | Layer | Verdict | Evidence |
 |----|-------|-------|---------|----------|
-| P0 | issue #531 gaps 1–4 exist on base | 1 | **Confirmed** | `results/unit-l1.txt` + code refs |
-| F1 | KEP's env-name conflict check scope is self-contradictory; one reading breaks the byte-for-byte guarantee | 1 | **Confirmed** (textual contradiction; main's unchecked legacy append reproduced; break demonstrated in bites check) | `results/harness-bites-check.txt` |
-| F2 | kep.yaml/Motivation claim point-by-point coverage of #531 incl. "unconsumed updateStrategy"; KEP never mentions it | — | **Confirmed** (grep: zero `updateStrategy` occurrences in `keps/531-engine-runtime-profile-injection/`) | text |
-| F3 | KEP's factual claims about main's renderer are accurate (leader-only default, legacy merge semantics, init no-op, override skip, append-if-missing) | 1 | **Confirmed** — all claims verified | `results/unit-l1.txt` |
-| F4 | "roles=16 / engineRuntimes=16" caps stated in present tense but absent from main | — | **Confirmed** (no MaxItems on either API version or generated CRD) | text |
-| F5 | `component` DNS-label pattern stricter than the component-name vocabulary it addresses | — | **Confirmed** (`InstanceComponent.Name` is an unvalidated string in types and CRD) | text |
-| F6 | Test Plan lacks conversion round-trip coverage for the new fields | — | **Confirmed** (RBG v1alpha1/v1alpha2 both served, field-by-field conversion exists) | text |
+| P0 | issue #531 gaps 1–4 exist on base | unit | Confirmed (round 1; re-run green) | `results/reverify/unit.out` |
+| F-ENV-CONFLICT | round-1 blocker: env-name conflict check specified 3–4 inconsistent ways | doc | **FIXED** — one positional rule set; "legacy-only duplicates never error" | contract check pass |
+| F-COVERAGE-UPDATESTRATEGY | round-1 major: updateStrategy claimed as answered, never addressed | doc | **FIXED** — Non-Goals + Profile Mutability section; kep.yaml see-also removed | contract check pass |
+| F-CAPS-MAXITEMS | round-1 major: invented caps on published lists | doc | **FIXED** — "published lists carry **no new caps**; neither has `maxItems` on main" | contract check pass |
+| F-COMPONENT-VOCAB | round-1 minor: component pattern stricter than source vocabulary | doc | **FIXED** — no pattern/length bound beyond `MinLength=1` | contract check pass |
+| F-ENABLEMENT-ROLLBACK | round-1 minor: missing Feature Enablement and Rollback section | doc | **FIXED** — section + Upgrade/Downgrade Strategy + drills | contract check pass |
+| F-CONVERSION-ROUNDTRIP | round-1 minor: Test Plan lacked conversion round-trip | doc | **FIXED** — "pinned by envtest", in graduation criteria | contract check pass |
+| F-UNKNOWN-TARGET-PROSE | round-1 nit: unknown-target semantics unstated | doc | **FIXED** — fail-closed render error stated | contract check pass |
+| F-COPILOT-SECRET-CHANNEL | round-1 nit: D9 scope on retained channels | doc | **FIXED** — D9 documents main's retained channels | contract check pass |
+| F-COPILOT-VOLUMEMOUNT-EQUALITY | round-1 nit: equality ignored subPath/readOnly | doc | **FIXED** — full semantic equality + partial match = error | contract check pass |
+| F-INFERENCE-KIT-404 | round-1 nit: dead see-also link | doc | **FIXED** — see-also block removed from kep.yaml | contract check pass |
+| F-MOUNTPATH-MECHANISM | nit (open): "kubelet last-wins" citation beside the correct apiserver one | doc | **STILL-PRESENT** (canary) | canary check pass |
+| F-PODSECURITY-STAGE | nit (open): risk table "fails at workload creation" | doc | **STILL-PRESENT** (canary) | canary check pass |
+| F-ENV-VAR-DIRECTION | nit (open): absolute `$(VAR)` "cannot" claim | doc | **STILL-PRESENT** (canary) | canary check pass |
+| F-INJECTOR-COUNT-WORDING | nit (open): "four-injector pass" overgeneralization | doc | **STILL-PRESENT** (canary) | canary check pass |
+| F-STAGE3-CHECK-TIMING | **new minor (round 2)**: stage-3 check-timing clause contradicts the phased order | doc | **PRESENT** (canary) | canary check pass |
+| F-PROFILE-EVOLUTION-TEST | minor (open): Test Plan lacks consented profile-evolution case | doc | **STILL-PRESENT** (canary) | canary check pass |
+| F3 | KEP's factual claims about main's renderer are accurate | unit | **Confirmed** — 7/7 contract tests green on head | `results/reverify/unit.out` |
 
-## Per-finding detail
+Factual spot-checks against base `73e05db4` this round (all accurate):
+`convertEngineRuntimes{V1alpha1ToV2,V2ToV1alpha1}` helpers exist
+(`api/workloads/v1alpha1/rolebasedgroup_conversion.go:289,470`); the RBG
+validating webhook exists
+(`api/workloads/v1alpha2/rolebasedgroup_admission.go`, `failurePolicy: Fail`,
+and it does read objects — `ValidateScalingAdapterReplicas` at :202); CERP CRD
+serves v1alpha1 (deprecated) + v1alpha2 (storage) with no conversion strategy
+(None) and no `containerPatches`; standalonePattern renders
+`WithName(role.Name)` and KEP-173 defines it as "1 component named after the
+role"; `mergeEnvVars`→`dedupeEnvVarsPreserveLast` exist
+(`pkg/discovery/injector.go:173-226`); the controller's config volume is
+`rbg-cluster-config` (stateful roles only, injector.go:65); the apiserver
+performs no capability-name validation (vendored
+k8s core validation carries only the Windows-pod and
+`allowPrivilegeEscalation=false`+`CAP_SYS_ADMIN` rules — validation.go:4806,8093);
+duplicate mountPaths are apiserver-rejected ("must be unique",
+validation.go:3046); kubernetes#119569 is real; Kubernetes >= 1.28 is the
+repo's supported floor; and — checked against upstream sources — **both
+containerd (`internal/cri/opts/spec_opts.go` `WithProcessArgs`) and CRI-O
+(`internal/factory/container/container.go` `SpecSetProcessArgs`) ignore the
+image ENTRYPOINT *and* CMD when the container sets `command`**, confirming the
+KEP's `/args`-creation rule and its entrypoint-merge citation.
+
+Round-1 history (head `12693d02`): see `results/unit-l1.txt`,
+`results/f1-doc-contract.txt`, `results/harness-bites-check.txt`, and the
+round-1 findings below. The round-1 doc check grepped phrases that the rewrite
+removed, so it passed vacuously — the Harness-update that motivated
+`check_doc_contracts.sh`.
+
+## Per-finding detail (round 1 — historical)
 
 ### F1 [blocker] — the env-name conflict check's scope is specified three inconsistent ways
 
@@ -199,16 +244,18 @@ and this docs tree), so it grafts onto whatever the implemented code is.
    ```
 2. Prereqs: Layer 1 = Go toolchain + vendored deps only.
 3. Re-run: `bash docs/verification/kep-531-profile-injection/scripts/re-verify.sh`
-   (no sha — resolves the current PR head from `manifest.pr`).
+   (no sha — resolves the current PR head from `manifest.pr`;
+   `--layers unit,doc` runs both).
 4. Read results via the polarity table: the **Go tests are contract tests** —
    the KEP implementation must keep them GREEN. Any red = compatibility
-   break (F1's failure scenario) or a regression of a documented
-   preserved-verbatim behavior (F3's surface). The **doc-layer F1 check is
-   inverted**: it FAILS while the head README still carries the contradictory
-   conflict-check statements, and goes green once the author aligns them
-   (bites check in results/f1-doc-contract.txt).
-5. Harness-bites: already demonstrated (see
-   `results/harness-bites-check.txt`); re-run only if the tests are edited.
+   break (F-ENV-CONFLICT's failure scenario) or a regression of a documented
+   preserved-verbatim behavior (F3's surface). The **doc CONTRACT checks**
+   likewise must stay GREEN (a red = the fixed wording regressed). The **doc
+   CANARY checks** pass while the open wording defects are present; a flip to
+   red means the author fixed one — invert that check into a contract then.
+5. Harness-bites: demonstrated in both directions
+   (`results/doc-bites-check.txt`, `results/harness-bites-check.txt`);
+   re-run only if the checks are edited.
 
 ### Kickoff prompt for a fresh agent
 ```text
