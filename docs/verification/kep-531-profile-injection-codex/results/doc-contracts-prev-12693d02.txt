@@ -1,0 +1,14 @@
+FAIL  DOC-CONSISTENCY              single-scope env-duplicate rule; legacy merge unchecked; dup-reference byte-for-byte case in Test Plan
+FAIL  DOC-ISSUE-COVERAGE           updateStrategy/profile-lifecycle dispositioned; kep.yaml overclaim gone
+FAIL  DOC-CAPS                     no false pre-existing-cap claims; published lists documented uncapped
+FAIL  DOC-MAIN-ACCURACY            mechanism-citation slips fixed (mountPath / PodSecurity stage / injector counts / $(VAR) direction)
+FAIL  DOC-COMPONENT-VOCAB          component field documented as unvalidated (mirrors unmarked source vocabulary)
+FAIL  DOC-CONVERSION               v1alpha1<->v1alpha2 round-trip pinned (Version Serving + Graduation)
+FAIL  DOC-ENABLEMENT               Feature Enablement and Rollback section present (KEP template, alpha)
+PASS  DOC-UNKNOWN-TARGET           unknown targetContainers name stated as render error in the resolution prose
+FAIL  DOC-VMOUNT-EQUALITY          volumeMount no-op requires full-field semantic equality
+FAIL  DOC-NO-404-LINK              kep.yaml carries no dead see-also link
+FAIL  DOC-STAGE3-LEGACY            stage-3 ownership-check visibility includes the reference's own legacy-merge env names
+PASS  DOC-PROPAGATION-TRIGGER      profile-change propagation trigger stated accurately (any reconcile, not only deliberate updates)
+----
+pass=2 fail=10
