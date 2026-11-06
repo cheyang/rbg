@@ -6,6 +6,12 @@
 # are green. Canary polarity is honored: a canary counts as "fixed" only when
 # it FLIPS to fail (its assertion of the wrong behavior no longer holds).
 #
+# Round 3 (head fb6c2b36): the legacy-RIS-protocol removal pivot rewrites the
+# wording the round-2 pins matched, so round-2 pins are kept for reference but
+# no longer gate; the round-3 pins are the gating contract set. A round-2 pin
+# failing with the round-3 pin passing means "superseded wording, substance
+# preserved" — see check_round3_contracts.sh for the replacement anchors.
+#
 # Usage: bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/re-verify.sh [<ref>]
 #   <ref> defaults to the current PR head fetched from manifest.pr
 set -u
@@ -47,11 +53,17 @@ bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check
 DOC_STATUS="${PIPESTATUS[0]}"
 
 echo
-echo "== Round-2 contracts (fixed-findings regression pins; red = regression) =="
+echo "== Round-3 contracts (gating; fixed-findings regression pins, red = regression) =="
+CHECK_ROUND3_OUT="$TOPIC_DIR/results" \
+  bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh" "$WORKTREE" \
+  2>&1 | tee "$TOPIC_DIR/results/round3-contracts-rerun.txt" | grep -E '^(FAIL|OPEN|ROUND3)'
+R3_STATUS="${PIPESTATUS[0]}"
+
+echo
+echo "== Round-2 contracts (reference only since the round-3 removal pivot; NOT gating) =="
 CHECK_ROUND2_OUT="$TOPIC_DIR/results" \
   bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh" "$WORKTREE" \
-  2>&1 | tee "$TOPIC_DIR/results/round2-contracts-rerun.txt" | grep -E '^(FAIL|OPEN|ROUND2)'
-R2_STATUS="${PIPESTATUS[0]}"
+  2>&1 | tee "$TOPIC_DIR/results/round2-contracts-rerun.txt" | grep -E '^(FAIL|OPEN|ROUND2)' | head -12
 
 echo
 echo "== Incremental review delta =="
@@ -92,23 +104,27 @@ else
   echo "F-CUSTOMREADY-STATUS-EMPTY: Harness-update (test missing or did not run)"
 fi
 
-# Round-2 fixed findings: verdicts come from the round-2 contract pins.
-if [ "$R2_STATUS" -eq 0 ]; then
-  for f in F-OLDNEW-ISOLATION F-PREDELETE-LIVENESS F-CREATING-REPLACE-FINALIZER \
-           F-PHASE-STORAGE F-PREDELETE-GATE-LIFETIME F-ESCAPE-HATCH \
-           F-DEAD-ENGINE-PREUPDATE F-INFLIGHT-CONFIG-ADMISSION \
-           F-KEPYAML-NOISE F-MARKNOTREADY-NAME F-READYBLOCK-NAME F-LIFECYCLE-STATE-PREFIX; do
-    echo "$f: Fixed (round-2 contract pin green on this ref)"
+# Round-3 fixed findings: verdicts come from the round-3 contract pins.
+if [ "$R3_STATUS" -eq 0 ]; then
+  for f in F-SCOPE-PRECREATE F-PROPAGATED-VS-LEGACY F-FINALIZER-BOOTSTRAP-RACE \
+           F-NS-TEARDOWN-BYPASS F-RBGSET-FOREGROUND-BOUNDARY \
+           F-INFLIGHT-ADMISSION-MUST F-DISABLE-SUPPORTED-CONTRADICTION \
+           F-NOPOSTREADY-CLEANUP-CLARIFICATION F-WIRE-NAMES \
+           CARRY-PREDELETE-LIVENESS CARRY-GATE-LIFETIME CARRY-ESCAPE-HATCH \
+           CARRY-DEAD-ENGINE CARRY-PHASE-STORAGE CARRY-NOPODFINALIZERS \
+           CARRY-KEPYAML-NOISE; do
+    echo "$f: Fixed (round-3 contract pin green on this ref)"
   done
 else
-  echo "Round-2 fixed findings: one or more REGRESSED (see results/round2-contracts-rerun.txt / round2-contracts.txt)"
+  echo "Round-3 fixed findings: one or more REGRESSED (see results/round3-contracts-rerun.txt)"
 fi
-
-echo "F-SCOPE-PRECREATE: Manual-review (preCreate/postDelete exclusion rationale still absent from Non-Goals — question open)"
+echo "F-LEGACY-REMOVAL-COMPAT: Manual-review (design question — removal vs issue #527 compatibility; gate-off behavior of removed fields)"
+echo "F-PROPAGATED-SNAPSHOT-EDIT: Manual-review (nit residue — no stated rule for user edits of the controller-written template snapshot)"
 
 echo
-if [ "$DOC_STATUS" -eq 0 ] && [ "$premise_ok" -eq 1 ] && [ "$GO_STATUS" -eq 0 ] && [ "$R2_STATUS" -eq 0 ]; then
-  echo "RESULT: all machine-checkable gating findings fixed"
+if [ "$premise_ok" -eq 1 ] && [ "$GO_STATUS" -eq 0 ] && [ "$R3_STATUS" -eq 0 ] \
+   && ! grep -q 'see-also: FAIL' "$TOPIC_DIR/results/docchecks-rerun.txt"; then
+  echo "RESULT: all machine-checkable gating findings fixed (F-SEEALSO-502 aside)"
   exit 0
 else
   echo "RESULT: gating findings remain open"
