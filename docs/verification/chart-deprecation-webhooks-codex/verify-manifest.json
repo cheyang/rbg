@@ -1,10 +1,11 @@
 {
   "pr": "https://github.com/sgl-project/rbg/pull/552",
-  "headSha": "a1ff903e3aab5fa7749b9a7ea67457db9972e8b6",
+  "headSha": "1a4f7ab00cbb0be6021cca2690bacfef9a0e0278",
   "baseSha": "73e05db4213950a5dd1f230279e9344a4ffe8435",
   "harnessPaths": [
     "test/envtest/testcase/deprecationv1a1helm",
     "test/chart/webhook_manifests_test.go",
+    "api/workloads/v1alpha1/deprecation_webhook_merged_verify_test.go",
     "docs/verification/chart-deprecation-webhooks-codex"
   ],
   "premise": {
@@ -12,16 +13,20 @@
     "claim": "The Helm chart shipped the pre-gate webhook configuration, so Helm installs had no v1alpha1 deprecation warning plane (and no Exact-match v1alpha1 enforcement entries) even though #524 merged the handlers and the kubectl-rendered config/webhook/manifests.yaml.",
     "runsAgainst": "base",
     "verdict": "confirmed",
-    "evidence": "results/premise-base-chart.out \u2014 base chart render: v1alpha1 InstanceSet write admitted with NO deprecation warning; v1alpha1 RBG new deprecated use still rejected via the Equivalent-matching v1alpha2 gate but with NO warning. Reproduce: bash scripts/run-premise-base.sh"
+    "evidence": "results/premise-base-chart.out (round 1) and results/reverify-round2-premise.out (round 2, RBGS_HELM_SUITE_MODE=premise against the base chart): v1alpha1 InstanceSet write admitted with NO deprecation warning; v1alpha1 RBG new deprecated use rejected via the Equivalent-matching v1alpha2 gate with NO warning. Reproduce: bash scripts/run-premise-base.sh"
   },
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "KC=\"$(mktemp)\"; printf 'apiVersion: v1\\nkind: Config\\n' > \"$KC\"; chmod 600 \"$KC\"; KUBECONFIG=\"$KC\" go test ./test/chart/ -count=1 -json; rc=$?; rm -f \"$KC\"; exit $rc"
+      "cmd": "KC=\"$(mktemp)\"; printf 'apiVersion: v1\\nkind: Config\\n' > \"$KC\"; chmod 600 \"$KC\"; KUBECONFIG=\"$KC\" go test ./test/chart/ ./api/workloads/v1alpha1/ -count=1 -json; rc=$?; rm -f \"$KC\"; exit $rc"
     },
     "integration": {
       "kind": "gotest",
       "cmd": "KUBEBUILDER_ASSETS=\"$([ -x \"$PWD/bin/setup-envtest\" ] && \"$PWD/bin/setup-envtest\" use 1.31.0 --bin-dir \"$PWD/bin\" -p path 2>/dev/null || echo \"$PWD/bin/k8s/1.31.0-linux-amd64\")\" go test ./test/envtest/testcase/deprecationv1a1helm/ -count=1 -json"
+    },
+    "tracker": {
+      "kind": "script",
+      "cmd": "bash docs/verification/chart-deprecation-webhooks-codex/scripts/check-default-image-paths.sh"
     }
   },
   "findings": [
@@ -32,7 +37,16 @@
       "match": [
         "TestChartDeprecationWebhooksMatchShippedConfig"
       ],
-      "note": "The rendered chart's six v1alpha1 deprecation webhook entries match config/webhook/manifests.yaml (name/path/rules/failurePolicy/matchPolicy/sideEffects/admissionReviewVersions). Also covers the PR's F12-adjacent toggle tests already in test/chart."
+      "note": "The rendered chart's v1alpha1 deprecation webhook entries match config/webhook/manifests.yaml (name/path/rules/failurePolicy/matchPolicy/sideEffects/admissionReviewVersions). Round 2: the surface is now exactly three entries (two Fail enforcement + one merged Ignore warning entry covering the four warning-only kinds in a single rule); the test also pins the retired per-kind names as absent. Bites on base (base chart ships none) and on the round-1 six-entry shape."
+    },
+    {
+      "id": "A-HANDLER",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestV1alpha1WarningHandler"
+      ],
+      "note": "Round 2 (new): the merged v1alpha1WarningHandler allows every request and returns the shared v1alpha1DeprecationWarning without decoding the object; the text still names the 0.10.0 removal. api/workloads/v1alpha1/deprecation_webhook_merged_verify_test.go."
     },
     {
       "id": "A-GATE",
@@ -41,7 +55,25 @@
       "match": [
         "TestV1alpha1DeprecationHelmContract"
       ],
-      "notes": "envtest installs the CHART-RENDERED webhook configurations against production handlers: new-use rejection (explicit and schema-defaulted), type-exact grandfathering of a seeded pre-gate object, per-kind on-the-wire warnings for all four warning-only paths, Exact match policy (no v1alpha2 warnings), ungated deletes."
+      "note": "envtest installs the CHART-RENDERED webhook configurations against production handlers: new-use rejection (explicit and schema-defaulted), type-exact grandfathering of a seeded pre-gate object, per-kind on-the-wire warnings for all four warning-only kinds through the merged endpoint, Exact match policy (no v1alpha2 warnings), ungated deletes. Round 2: registration mirrors cmd/rbgs via SetupV1alpha1WarningWebhook."
+    },
+    {
+      "id": "A-INVENTORY",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestV1alpha1DeprecationHelmContract"
+      ],
+      "note": "Round 2 (new): the chart README's documented inventory command (kubectl get rbg,rbgs -A -o json | jq ...) is executed verbatim against envtest with a seeded deprecated RBG, a seeded deprecated RBGSet, and a modern RoleInstanceSet control. Asserts discovery preferredVersion == v1alpha2 (the version assumption behind the documented jq paths) and that both deprecated objects and only they are listed. Same ginkgo test binary as A-GATE (specs live in docs_inventory_test.go)."
+    },
+    {
+      "id": "A-IMAGE",
+      "polarity": "contract",
+      "layer": "tracker",
+      "match": [
+        "tracker"
+      ],
+      "note": "F1 tracker: every v1alpha1 deprecation path the chart renders must be registered by the binary at the default image pin (values.yaml controller.image.tag -> commit). RED while the pin predates the gate (round 2: pin v0.9.0-d88b3186 serves neither the two Fail paths nor the merged Ignore path). GREEN on base (vacuous: base chart ships no v1alpha1 deprecation entries)."
     }
   ],
   "liveNote": "L3 (skipped in this debate round): on a real cluster, helm upgrade from the pre-#552 chart to the head chart and observe (a) the transient fail-closed window for v1alpha1 RBG/RBGSet writes while old pods still serve the webhook service, (b) warnings on v1alpha1 writes once the new controller is ready."

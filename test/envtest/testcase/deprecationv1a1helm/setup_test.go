@@ -59,6 +59,13 @@ const (
 	// seededRBGName is the pre-gate object used to prove type-exact
 	// grandfathering through the chart-rendered gate.
 	seededRBGName = "legacy-seed"
+	// seededRBGSetName is a pre-gate RoleBasedGroupSet with a deprecated
+	// workload type, seeded so the chart README's inventory command can be
+	// exercised against a live object of each parent kind.
+	seededRBGSetName = "legacy-seed-set"
+	// seededModernName is a pre-gate RoleBasedGroup already on RoleInstanceSet:
+	// the inventory command must NOT list it.
+	seededModernName = "modern-seed"
 )
 
 func suiteMode() string {
@@ -129,10 +136,9 @@ func setupHelmChartContractEnv() {
 
 	Expect((&workloadsv1alpha1.RoleBasedGroup{}).SetupDeprecationWebhookWithManager(testutil.TestMgr, true)).To(Succeed())
 	Expect((&workloadsv1alpha1.RoleBasedGroupSet{}).SetupDeprecationWebhookWithManager(testutil.TestMgr, true)).To(Succeed())
-	Expect((&workloadsv1alpha1.InstanceSet{}).SetupDeprecationWebhookWithManager(testutil.TestMgr)).To(Succeed())
-	Expect((&workloadsv1alpha1.Instance{}).SetupDeprecationWebhookWithManager(testutil.TestMgr)).To(Succeed())
-	Expect((&workloadsv1alpha1.RoleBasedGroupScalingAdapter{}).SetupDeprecationWebhookWithManager(testutil.TestMgr)).To(Succeed())
-	Expect((&workloadsv1alpha1.ClusterEngineRuntimeProfile{}).SetupDeprecationWebhookWithManager(testutil.TestMgr)).To(Succeed())
+	// Round 2 (head 1a4f7ab0): the four per-kind warning-only endpoints were
+	// merged into a single endpoint registered exactly as cmd/rbgs does.
+	Expect(workloadsv1alpha1.SetupV1alpha1WarningWebhook(testutil.TestMgr)).To(Succeed())
 
 	go func() {
 		defer GinkgoRecover()
@@ -157,6 +163,18 @@ func setupHelmChartContractEnv() {
 	seed.Spec.Roles[0].Workload = workloadsv1alpha1.WorkloadSpec{APIVersion: "apps/v1", Kind: "StatefulSet"}
 	Expect(testutil.K8sClient.Create(testutil.Ctx, seed)).To(Succeed(),
 		"the pre-gate seed must be admitted before any webhook configuration is installed")
+
+	By("seeding a pre-gate v1alpha1 RoleBasedGroupSet with a deprecated workload type")
+	seedSet := wrappersv1.BuildBasicRoleBasedGroupSet(seededRBGSetName, helmContractNamespace).Obj()
+	seedSet.Spec.Template.Roles[0].Workload = workloadsv1alpha1.WorkloadSpec{APIVersion: "apps/v1", Kind: "StatefulSet"}
+	Expect(testutil.K8sClient.Create(testutil.Ctx, seedSet)).To(Succeed(),
+		"the pre-gate RoleBasedGroupSet seed must be admitted before any webhook configuration is installed")
+
+	By("seeding a pre-gate v1alpha1 RoleBasedGroup on RoleInstanceSet (inventory negative control)")
+	seedModern := buildV1alpha1RBG(seededModernName)
+	seedModern.Spec.Roles[0].Workload = workloadsv1alpha1.WorkloadSpec{APIVersion: "workloads.x-k8s.io/v1alpha2", Kind: "RoleInstanceSet"}
+	Expect(testutil.K8sClient.Create(testutil.Ctx, seedModern)).To(Succeed(),
+		"the modern seed must be admitted before any webhook configuration is installed")
 
 	By("rendering the Helm chart and installing its webhook configurations")
 	installChartWebhookConfigurations()
