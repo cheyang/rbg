@@ -1,0 +1,87 @@
+# Round-5 bite-check matrix (claude harness)
+# refs: head=0b7285b7, prev=da818779, fixA/B/C = proposed one-sentence fixes applied to the head blob
+
+=== head (0b7285b7) ===
+C1-retained-fields-exist	pass
+C2-progressing-reasons-defined	pass
+C3-reason-collision-ack	pass
+C4-ri-readiness-reasons-match-code	pass
+C5-premise-motivation-claims	pass
+C6-yaml-examples-parse	pass
+C8-rbg-transition-input-consistency	pass
+C9-ris-activity-reasons-complete	pass
+C10-rbg-activity-precedence	fail
+C11-round5-code-claims	pass
+C12-ris-activity-precedence	pass
+C13-replacement-mapping-stated	pass
+C14-phase-scope-consistency	pass
+C15-precheck-write-consistency	fail
+C16-replacement-discriminator	fail
+
+=== prev (da818779) ===
+C1-retained-fields-exist	pass
+C2-progressing-reasons-defined	pass
+C3-reason-collision-ack	pass
+C4-ri-readiness-reasons-match-code	pass
+C5-premise-motivation-claims	pass
+C6-yaml-examples-parse	pass
+C8-rbg-transition-input-consistency	pass
+C9-ris-activity-reasons-complete	pass
+C10-rbg-activity-precedence	pass
+C11-round5-code-claims	fail
+C12-ris-activity-precedence	fail
+C13-replacement-mapping-stated	fail
+C14-phase-scope-consistency	fail
+C15-precheck-write-consistency	pass
+C16-replacement-discriminator	fail
+
+=== fixA (proposed fix applied to head blob) ===
+C1-retained-fields-exist	pass
+C2-progressing-reasons-defined	pass
+C3-reason-collision-ack	pass
+C4-ri-readiness-reasons-match-code	pass
+C5-premise-motivation-claims	pass
+C6-yaml-examples-parse	pass
+C8-rbg-transition-input-consistency	pass
+C9-ris-activity-reasons-complete	pass
+C10-rbg-activity-precedence	fail
+C11-round5-code-claims	pass
+C12-ris-activity-precedence	pass
+C13-replacement-mapping-stated	pass
+C14-phase-scope-consistency	pass
+C15-precheck-write-consistency	pass
+C16-replacement-discriminator	fail
+
+=== fixB (proposed fix applied to head blob) ===
+C1-retained-fields-exist	pass
+C2-progressing-reasons-defined	pass
+C3-reason-collision-ack	pass
+C4-ri-readiness-reasons-match-code	pass
+C5-premise-motivation-claims	pass
+C6-yaml-examples-parse	pass
+C8-rbg-transition-input-consistency	pass
+C9-ris-activity-reasons-complete	pass
+C10-rbg-activity-precedence	fail
+C11-round5-code-claims	pass
+C12-ris-activity-precedence	pass
+C13-replacement-mapping-stated	pass
+C14-phase-scope-consistency	pass
+C15-precheck-write-consistency	fail
+C16-replacement-discriminator	pass
+
+=== fixC (proposed fix applied to head blob) ===
+C1-retained-fields-exist	pass
+C2-progressing-reasons-defined	pass
+C3-reason-collision-ack	pass
+C4-ri-readiness-reasons-match-code	pass
+C5-premise-motivation-claims	pass
+C6-yaml-examples-parse	pass
+C8-rbg-transition-input-consistency	pass
+C9-ris-activity-reasons-complete	pass
+C10-rbg-activity-precedence	pass
+C11-round5-code-claims	pass
+C12-ris-activity-precedence	pass
+C13-replacement-mapping-stated	pass
+C14-phase-scope-consistency	pass
+C15-precheck-write-consistency	fail
+C16-replacement-discriminator	fail

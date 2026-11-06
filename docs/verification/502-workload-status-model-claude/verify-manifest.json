@@ -2,7 +2,7 @@
   "topic": "502-workload-status-model-claude",
   "pr": "https://github.com/sgl-project/rbg/pull/528",
   "reviewer": "claude",
-  "headSha": "da818779ef984be98467d4ad65d0818bb17aa0e6",
+  "headSha": "0b7285b7c2ad23f139f0edb8549a316129e9b4a2",
   "baseSha": "885d655bd1b4c26e6d14837709eeda675f3ae886",
   "harnessPaths": [
     "docs/verification/502-workload-status-model-claude"
@@ -86,7 +86,7 @@
       ],
       "firstSeenSha": "f05e1dd83d2691e4157bf1bd3548fe405b2a49d5",
       "origin": "preexisting",
-      "note": "Round 2 late discovery on unchanged text (identical at f05e1dd and 6335eac, so pre-existing, not a revision regression): the RIS Progressing prose (README.md:358) says 'Activity reasons may include `ScalingUp`, `ScalingDown`, and `RollingUpdate`' while the activity/child-readiness family table (:159-165) also defines RIS reasons `Creating` (:162) and `Recovering` (:165). Materiality rose in this round because the revision made RIS recovery reporting load-bearing (:345 'RIS propagates recovery through `Progressing` and `Ready` conditions'). Fix: enumerate all five activity reasons in the prose or state the family table is the complete source; verified to flip C9 green. Round 3: prose now reads 'Activity reasons are Creating, ScalingUp, ScalingDown, RollingUpdate, and Recovering' \u2014 the complete family-table set. C9 initially reported STILL-BROKEN only because its anchor phrase 'may include' was reworded to 'are'; C9 re-anchored (accepts both) and re-proven: red at 6335eac, green at f622d64 (results/bite-check-round3.txt).",
+      "note": "Round 2 late discovery on unchanged text (identical at f05e1dd and 6335eac, so pre-existing, not a revision regression): the RIS Progressing prose (README.md:358) says 'Activity reasons may include `ScalingUp`, `ScalingDown`, and `RollingUpdate`' while the activity/child-readiness family table (:159-165) also defines RIS reasons `Creating` (:162) and `Recovering` (:165). Materiality rose in this round because the revision made RIS recovery reporting load-bearing (:345 'RIS propagates recovery through `Progressing` and `Ready` conditions'). Fix: enumerate all five activity reasons in the prose or state the family table is the complete source; verified to flip C9 green. Round 3: prose now reads 'Activity reasons are Creating, ScalingUp, ScalingDown, RollingUpdate, and Recovering' — the complete family-table set. C9 initially reported STILL-BROKEN only because its anchor phrase 'may include' was reworded to 'are'; C9 re-anchored (accepts both) and re-proven: red at 6335eac, green at f622d64 (results/bite-check-round3.txt).",
       "status": "fixed-at-f622d642"
     },
     {
@@ -97,8 +97,66 @@
         "C10-rbg-activity-precedence"
       ],
       "firstSeenSha": "f622d642ac10326f66554b590e0513734aa9249a",
-      "note": "Copilot round-3 advisory (nit, never gating): the reporting-priority list resolves between reason families, so heterogeneous Activity facts (one role Creating, another Recovering, another updating) left the RBG Progressing=True reason underdetermined. Round-4 delta (da818779) adds the within-Activity precedence Creating > Recovering > ScalingOrUpdating with rationale, the one-dominant-reason + all-activities-in-message rule, and test-plan coverage of the concurrent combinations. C10 red at f05e1dd/6335eac/f622d642, green at da818779.",
-      "status": "fixed-at-da818779"
+      "note": "Copilot round-3 advisory (nit, never gating): the reporting-priority list resolves between reason families, so heterogeneous Activity facts (one role Creating, another Recovering, another updating) left the RBG Progressing=True reason underdetermined. Round-4 delta (da818779) adds the within-Activity precedence Creating > Recovering > ScalingOrUpdating with rationale, the one-dominant-reason + all-activities-in-message rule, and test-plan coverage of the concurrent combinations. C10 red at f05e1dd/6335eac/f622d642, green at da818779. Round 5: the fenced precedence, one-dominant-reason rule, and rationale are intact at 0b7285b7, but the redesign dropped the unit-test bullet covering the concurrent heterogeneous combinations (Creating-over-updating/recovering); C10 part 4 goes red. Tracked as F13-concurrent-activity-coverage-regression (this manifest) rather than reopening this finding.",
+      "status": "fixed-at-0b7285b7 (design content; test-coverage component regressed, tracked as F13)"
+    },
+    {
+      "id": "F11-ris-activity-tie-break-unstated",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "C12-ris-activity-precedence"
+      ],
+      "firstSeenSha": "da818779ef984be98467d4ad65d0818bb17aa0e6",
+      "note": "Round-4 consensus open item (Codex F11 = Claude Q4). Round 5 fixes it: RIS Activity precedence for Progressing is stated (Creating, Recovering, RollingUpdate, ScalingUp/ScalingDown; recovery outranks active update and scaling, update outranks scaling) plus the retained recovery-overlap test bullet. C12 red at da818779 (and all earlier heads), green at 0b7285b7.",
+      "status": "fixed-at-0b7285b7"
+    },
+    {
+      "id": "F12-rbg-replacement-creation-reason-mapping",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "C13-replacement-mapping-stated"
+      ],
+      "firstSeenSha": "da818779ef984be98467d4ad65d0818bb17aa0e6",
+      "note": "Round-4 consensus open item (three-source: Codex F12, Claude cross-critique, Copilot C4471100373). Round 5 e09cb647 scoped Creating to initial creation; 0b7285b7 restated the mapping definitionally at BOTH layers: Creating when a required child/RI does not yet exist and is being created; Recovering when an established child/RI is being repaired or replaced. A mid-recovery group is therefore not reported as Creating under the stated definitions, and the round-4 :495 bullet that prescribed the misfire is gone. C13 green at head; residual derivation ambiguity (absent-replacement-child matches both clauses; no statement of how 'established' is derived, esp. post-restart) tracked as F14 (nit).",
+      "status": "fixed-at-0b7285b7"
+    },
+    {
+      "id": "F13-concurrent-activity-coverage-regression",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "C10-rbg-activity-precedence"
+      ],
+      "firstSeenSha": "0b7285b7c2ad23f139f0edb8549a316129e9b4a2",
+      "origin": "revision-regression",
+      "note": "Round-5 revision regression (C10: pass@da818779 -> fail@0b7285b7, same valid contract check): the redesign (0b7285b7) dropped the unit-test bullet covering the concurrent heterogeneous Activity combinations. da818779 had 'During the RBG's initial creation, one role Creating with another updating or recovering uses Creating'; head retains only 'When one role is Recovering and another is updating, RBG uses Recovering. When only update or scaling work remains...'. The precedence design content itself (fenced list, one-dominant rule) is intact; only the test-plan coverage regressed. Mutation fixC (restoring the bullet) flips C10 green. Nit, non-gating.",
+      "status": "open"
+    },
+    {
+      "id": "F14-replacement-discriminator-unstated",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "C16-replacement-discriminator"
+      ],
+      "firstSeenSha": "0b7285b7c2ad23f139f0edb8549a316129e9b4a2",
+      "origin": "initial-pr",
+      "note": "Round-5 late discovery on new text (the F12 fix as landed): the establishment-based mapping leaves the discriminator implicit. For an absent child being replaced, BOTH clauses apply ('a required child object does not yet exist and is being created' AND 'an established child is being ... replaced'); the KEP never states how the controller derives 'established' from persisted facts, and the restart rule says Progressing.reason is recomputed 'from current facts'. e09cb647 had an explicit lifecycle-stage rule ('after the RBG has entered Running, replacement maps to Recovering') which 0b7285b7 replaced with the terser establishment wording, together with removing the controller-restart test bullet that pinned the outcome. One sentence (e.g. 'an established child is one previously observed, determined from persisted roleStatuses') closes it; mutation fixB flips C16 green. Nit, non-gating.",
+      "status": "open"
+    },
+    {
+      "id": "F15-precheck-write-contradiction",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "C15-precheck-write-consistency"
+      ],
+      "firstSeenSha": "0b7285b7c2ad23f139f0edb8549a316129e9b4a2",
+      "origin": "revision-regression",
+      "note": "Round-5 new content introduces a normative contradiction (C15: vacuous-pass@da818779 -> fail@0b7285b7; the clause did not exist before): the common rule (README.md:140) and the unit-test bullet (:510) say the parent writes status.observedGeneration=N together with Progressing=True 'including preCheck failures', while the Accepted semantics (:233) require Progressing=False with the matching incompatibility reason when Accepted=False. Both are normative ('must', 'the parent writes'); no sequencing statement reconciles them. An implementer reconciling a new generation whose preflight fails must guess. Fix: scope the Progressing=True companion to the dispatch case and state that a confirmed incompatibility writes Progressing=False with the matching reason (mutation fixA flips C15 green). Minor, non-blocking.",
+      "status": "open"
     }
   ],
   "refutedHypotheses": [
@@ -113,12 +171,16 @@
     }
   ],
   "acceptanceChecks": {
-    "AC-retained-fields": "C1-retained-fields-exist (unit)",
+    "AC-retained-fields": "C1-retained-fields-exist (unit; round-5 re-anchor accepts both inventory phrasings)",
     "AC-doc-tooling": "C6-yaml-examples-parse (unit) + C7-markdownlint (integration)",
-    "AC-reason-consistency": "C2/C3/C4 (unit) \u2014 green at 6335eac",
-    "AC-transition-input-consistency": "C8 (unit) \u2014 green at f622d64 (red at 6335eac)",
-    "AC-ris-reason-enumeration": "C9 (unit) \u2014 green at f622d64 (red at 6335eac; C9 re-anchored round 3)"
+    "AC-reason-consistency": "C2/C3/C4 (unit)",
+    "AC-transition-input-consistency": "C8 (unit)",
+    "AC-ris-reason-enumeration": "C9 (unit)",
+    "AC-rbg-activity-precedence": "C10 (unit) — FAILED at 0b7285b7: test-plan coverage clause regressed (F13)",
+    "AC-premise-factual-round5": "C5 (motivation claims) + C11-round5-code-claims (new design-detail code claims: RI condition rebuild timestamps, stateless/stateful ready counting, lifecycle-state label values, CoordinatedPolicy stepwise partition)",
+    "AC-phase-scope": "C14-phase-scope-consistency (round-5 redesign: RBG/RIS add no status.phase, RI keeps it)",
+    "AC-activity-tie-coverage-all-layers": "C12 (F11) + C13 (F12) — both green at head; residual discriminator gap tracked as F14 (C16, red)"
   },
   "liveNote": "L3 skipped (debate setup: unit + integration layers only). Docs-only KEP PR; no live runtime signal.",
-  "previousHeadSha": "f622d642ac10326f66554b590e0513734aa9249a"
+  "previousHeadSha": "da818779ef984be98467d4ad65d0818bb17aa0e6"
 }
