@@ -1,0 +1,8 @@
+{"Time":"2026-11-07T05:35:47.440911171+08:00","Action":"start","Package":"sigs.k8s.io/rbgs/test/chart"}
+{"Time":"2026-11-07T05:35:47.443460941+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestVersionBumpReferencesConsistent"}
+{"Time":"2026-11-07T05:35:47.443502343+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestVersionBumpReferencesConsistent","Output":"=== RUN   TestVersionBumpReferencesConsistent\n","OutputType":"frame"}
+{"Time":"2026-11-07T05:35:47.592371214+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestVersionBumpReferencesConsistent","Output":"--- PASS: TestVersionBumpReferencesConsistent (0.15s)\n","OutputType":"frame"}
+{"Time":"2026-11-07T05:35:47.592388965+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestVersionBumpReferencesConsistent","Elapsed":0.15}
+{"Time":"2026-11-07T05:35:47.592399895+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Output":"PASS\n","OutputType":"frame"}
+{"Time":"2026-11-07T05:35:47.592990276+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Output":"ok  \tsigs.k8s.io/rbgs/test/chart\t0.152s\n"}
+{"Time":"2026-11-07T05:35:47.593249546+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Elapsed":0.152}

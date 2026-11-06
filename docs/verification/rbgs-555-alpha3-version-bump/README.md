@@ -36,8 +36,8 @@ Layers run against the **code under review** (PR head `679f7909`, base `73e05db4
 | ID | Claim | Layer | Verdict | Evidence |
 |----|-------|-------|---------|----------|
 | P0 | release artifacts for v0.9.0-73e05db4 exist and match main @ 73e05db4 | network | Confirmed | `results/release-artifacts.txt` (exit 0) |
-| VB-CONSISTENCY | all five version reference sites agree with Chart.yaml appVersion | 1 | Confirmed (green) | `results/unit-head.out` |
-| VB-RENDER | rendered chart carries exactly the new tags (controller, crd-upgrade hook, version ConfigMap) | 2 | Confirmed (green) | `results/integration-head.out` |
+| VB-CONSISTENCY | all five version reference sites agree with Chart.yaml appVersion | 1 | Confirmed (green) | `results/unit-head.txt` |
+| VB-RENDER | rendered chart carries exactly the new tags (controller, crd-upgrade hook, version ConfigMap) | 2 | Confirmed (green) | `results/integration-head.txt` |
 | DRIFT | `deploy/kubectl/manifests.yaml` regenerates byte-identically via kustomize v5.5.0 | build | Confirmed | `results/manifest-drift.txt` (99290 lines, 0 diff) |
 | F1 (pre-existing) | chart test package breaks when helm prints a stderr warning | script | Confirmed on base too | `results/f1-repro.txt` |
 
