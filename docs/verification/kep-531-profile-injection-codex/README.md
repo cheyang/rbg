@@ -1,6 +1,6 @@
 # Verification — PR #548 (KEP-531: Engine Runtime Profile Injection)
 
-Reviewer: Codex (debate Reviewer B). Head reviewed: `12693d0264fc8c4d4b8f700c50db1c0440b709d7`
+Reviewer: Codex (debate Reviewer B). Latest head reviewed: `d84004a29c80b7e284a0e9662dd5d4c3b23a2da9` (round 3; round-1 head `12693d02`, round-2 head `7a9827bc`)
 (base `3612013e6f779401831f5947dc124cc4313faddb`). The PR is **docs-only** (one KEP),
 so the harness pins the KEP's *premises about main's renderer* — the compatibility
 surface the follow-up implementation PRs must preserve — instead of exercising new code.
@@ -121,6 +121,63 @@ DOC-PROPAGATION-TRIGGER on prev: the inaccurate sentence did not exist yet (vacu
   events, and controller restarts (RBGPredicate CreateFunc admits the initial list).
   Compatibility #2's "one warning event per consent-less reference is emitted" has
   the same unstated trigger (no CERP watch — `TestKEP531_S6_ProfileEditsDoNotPropagate`).
+
+## Round 3 — head d84004a2 (single commit "condense 531 README and address review rounds 2-3"; base unchanged at 73e05db4)
+
+The README was condensed and restructured (1591 -> 1338 lines; kep.yaml untouched).
+Biggest design change: **profiles are now immutable while referenced** (CERP
+validating webhook warn->reject, in-use finalizer, new controller CERP watch, alpha
+escape-hatch flag `--disable-profile-immutability`), and `updateStrategy` is
+deprecated in both served versions. This subsumes round-2's F-PROPAGATION-TRIGGER
+and Q-CERP-V1ALPHA1-NONE-CONVERSION (a v1alpha1 mirror of `containerPatches` was
+added) and the missing-test F-PROFILE-EVOLUTION-TEST (immutability test battery).
+
+### Code-fact harness
+
+`scripts/re-verify.sh` on d84004a2: **16/16 contract tests FIXED** (all green — the
+PR is docs-only so main's renderer is unchanged) plus one new pin:
+`TestKEP531_S9_RISTemplateSchemalessSoSSACannotRejectDuplicateEnv` — the RIS CRD's
+`spec.roleInstanceTemplate` is `x-kubernetes-preserve-unknown-fields: true`
+(config/crd/bases/workloads.x-k8s.io_roleinstancesets.yaml:146-149 at 73e05db4), so
+SSA has no map-keyed `env` on the one apply path carrying the new fields.
+
+### Doc-text contracts (`scripts/check-doc-contracts.sh`)
+
+String-drift updates (harness-update, substance re-verified by full re-read):
+DOC-CONSISTENCY ('legacy-only duplicates never error'), DOC-ISSUE-COVERAGE
+('Profile Mutability'), DOC-COMPONENT-VOCAB ('lack of a pattern ... is deliberate').
+DOC-PROPAGATION-TRIGGER strengthened (pins the immutability redesign). Three checks
+added. Raw outputs: `results/doc-contracts-r3-{73e05db4,7a9827bc,d84004a2}.txt`.
+
+| check | finding | prev 7a9827bc | head d84004a2 |
+|---|---|---|---|
+| DOC-CONSISTENCY | F-ENV-CONFLICT (r1 blocker) | PASS | PASS — stays fixed |
+| DOC-ISSUE-COVERAGE | F-COVERAGE-UPDATESTRATEGY (r1 major) | PASS | PASS — stays fixed |
+| DOC-CAPS | F-CAPS-MAXITEMS (r1 major) | PASS | PASS — stays fixed |
+| DOC-MAIN-ACCURACY | 4 mechanism-citation nits | FAIL | FAIL — 3 remain; $(VAR) direction fixed |
+| DOC-COMPONENT-VOCAB | F-COMPONENT-VOCAB | PASS | PASS |
+| DOC-CONVERSION | F-CONVERSION-ROUNDTRIP | PASS | PASS |
+| DOC-ENABLEMENT | F-ENABLEMENT-ROLLBACK | PASS | PASS |
+| DOC-UNKNOWN-TARGET | F-UNKNOWN-TARGET-PROSE | PASS | PASS |
+| DOC-VMOUNT-EQUALITY | F-COPILOT-VOLUMEMOUNT-EQUALITY | PASS | PASS |
+| DOC-NO-404-LINK | F-INFERENCE-KIT-404 | PASS | PASS |
+| DOC-STAGE3-LEGACY | **F-STAGE3-LEGACY-VISIBILITY (r2 major)** | FAIL | **FAIL — still open** (sentence retained verbatim ~:745-747; new normalization clause :647-655 is ambiguous for exactly this shape) |
+| DOC-PROPAGATION-TRIGGER | F-PROPAGATION-TRIGGER (r2 minor) | FAIL | **PASS — fixed by redesign** (immutable-while-referenced) |
+| DOC-SSA-ENV-KEYED | **F-SSA-DUPLICATE-ENV-PREMISE (r3 minor, NEW)** | PASS (claim absent) | **FAIL — new false claim** (:652-654 "SSA ... env keyed by name, rejects duplicates" vs schemaless template, S9) |
+| DOC-FLAG-FINALIZER | **F-FLAG-FINALIZER-TRANSITION (r3 minor, NEW)** | PASS (flag absent) | **FAIL** — flag "neither adds nor honors" the finalizer; existing finalizers never removed -> stranded |
+| DOC-DELETE-RACE | **F-DELETE-FINALIZER-RACE (r3 nit, NEW)** | PASS (no race claim) | **FAIL** — "One race exists and is accepted" omits the delete-vs-finalizer-add window |
+
+Still-open carried nits re-verified in the head text: F-MOUNTPATH-MECHANISM
+(:665 'kubelet resolves overlapping mount paths last-wins'), F-PODSECURITY-STAGE
+(:1011 'fails at workload creation'), F-INJECTOR-COUNT-WORDING (:771 'four-injector
+pass'), F-KEPYAML-SEEALSO-REMOVED (kep.yaml unchanged), F-GRADUATION-EVENT-INVENTORY
+(shadowing event still unnamed in the Graduation list). Fixed this round:
+F-ENV-VAR-DIRECTION (absolute claim removed), C-COPILOT-GHOST-COMPONENT (plan-time
+vocabulary check + story 7 + Test Plan), C-COPILOT-SH-C-ARGS ($0 hazard documented +
+test), C-COPILOT-ENV-PRECEDENCE-FLIP (author precedence "whatever index").
+C-COPILOT-SSA-MAP-LIST: the disputed premise is now verified FALSE by S9 — and the
+KEP newly asserts it (tracked as F-SSA-DUPLICATE-ENV-PREMISE).
+
 
 ## Continuing after KEP revisions / implementation PRs
 

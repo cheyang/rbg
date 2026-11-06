@@ -158,6 +158,14 @@
       "match": [
         "TestKEP531_S8_ApiserverRejectsDuplicateMountPath"
       ]
+    },
+    {
+      "id": "C-ris-template-schemaless",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestKEP531_S9_RISTemplateSchemalessSoSSACannotRejectDuplicateEnv"
+      ]
     }
   ],
   "_docFindings": {
@@ -239,6 +247,37 @@
         "TestKEP531_S6_ProfileEditsDoNotPropagate"
       ],
       "summary": "OPEN (minor, new in r2): 'today only deliberate workload updates' inaccurate \u2014 every RBG reconcile re-renders and applies (RIS unconditional SSA; LWS drift-compared); triggers include controller restarts and owned-child events."
+    },
+    "round3": {
+      "head": "d84004a29c80b7e284a0e9662dd5d4c3b23a2da9",
+      "script": "scripts/check-doc-contracts.sh",
+      "fixed": [
+        "F-PROPAGATION-TRIGGER (by redesign: immutable-while-referenced)",
+        "F-PROFILE-EVOLUTION-TEST (immutability battery incl. webhook bypass + migration)",
+        "Q-CERP-V1ALPHA1-NONE-CONVERSION (v1alpha1 mirror + round-trip envtest)",
+        "F-ENV-VAR-DIRECTION",
+        "C-COPILOT-GHOST-COMPONENT",
+        "C-COPILOT-SH-C-ARGS",
+        "C-COPILOT-ENV-PRECEDENCE-FLIP"
+      ],
+      "refutedPremise": [
+        "C-COPILOT-SSA-MAP-LIST \u2014 premise verified false (S9); KEP now asserts it, tracked as F-SSA-DUPLICATE-ENV-PREMISE"
+      ],
+      "stillOpen": [
+        "F-STAGE3-LEGACY-VISIBILITY (major)",
+        "F-MOUNTPATH-MECHANISM",
+        "F-PODSECURITY-STAGE",
+        "F-INJECTOR-COUNT-WORDING",
+        "F-KEPYAML-SEEALSO-REMOVED",
+        "F-GRADUATION-EVENT-INVENTORY",
+        "F-STALE-PR-BODY"
+      ],
+      "new": [
+        "F-SSA-DUPLICATE-ENV-PREMISE (minor)",
+        "F-FLAG-FINALIZER-TRANSITION (minor)",
+        "F-DELETE-FINALIZER-RACE (nit)"
+      ],
+      "harnessUpdates": "DOC-CONSISTENCY/DOC-ISSUE-COVERAGE/DOC-COMPONENT-VOCAB restringed for the d84004a2 condensation; DOC-PROPAGATION-TRIGGER strengthened; DOC-DELETE-RACE tightened after a false-pass (bite check)"
     }
   },
   "liveNote": "No live layer: this PR is docs-only; there is no runtime change to observe. The e2e scenarios belong to the follow-up implementation PRs (see the KEP Test Plan)."

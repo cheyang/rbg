@@ -27,10 +27,13 @@ package reconciler
 // text — see docs/verification/kep-531-profile-injection-codex/README.md).
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"sigs.k8s.io/yaml"
 )
 
 func readRepoFile(t *testing.T, rel string) string {
@@ -178,5 +181,45 @@ func TestKEP531_S8_ApiserverRejectsDuplicateMountPath(t *testing.T) {
 	v := readRepoFile(t, filepath.Join("vendor", "k8s.io", "kubernetes", "pkg", "apis", "core", "validation", "validation.go"))
 	if !strings.Contains(v, `idxPath.Child("mountPath"), mnt.MountPath, "must be unique"`) {
 		t.Error("apiserver mountPath uniqueness validation not found — re-check the KEP's 'kubelet last-wins' claim")
+	}
+}
+
+// S9: REALITY CHECK (contradicts a KEP mechanism citation introduced at head
+// d84004a2) — Patch Grammar's "rendered template is duplicate-free" bullet
+// claims "the RoleInstanceSet reconciler — the one apply path that carries the
+// new fields — applies workloads via server-side apply, whose `env` list is
+// keyed by name and rejects duplicates". The applied object is a
+// RoleInstanceSet CR whose spec.roleInstanceTemplate is schemaless
+// (x-kubernetes-preserve-unknown-fields: true): inside that subtree no list is
+// map-keyed, so SSA has no associative-list semantics for `env` there and
+// never rejects duplicate entries. The duplicate-free guarantee therefore
+// rests entirely on the controller-side normalization rule, not on the
+// apiserver. This test pins the CRD fact so the citation stays checkable.
+func TestKEP531_S9_RISTemplateSchemalessSoSSACannotRejectDuplicateEnv(t *testing.T) {
+	crd := readRepoFile(t, filepath.Join("config", "crd", "bases", "workloads.x-k8s.io_roleinstancesets.yaml"))
+	j, err := yaml.YAMLToJSON([]byte(crd))
+	if err != nil {
+		t.Fatalf("parse RIS CRD: %v", err)
+	}
+	var doc map[string]interface{}
+	if err := json.Unmarshal(j, &doc); err != nil {
+		t.Fatalf("unmarshal RIS CRD: %v", err)
+	}
+	// locate spec.roleInstanceTemplate under the (single) served version schema
+	versions, _ := doc["spec"].(map[string]interface{})["versions"].([]interface{})
+	if len(versions) == 0 {
+		t.Fatal("RIS CRD has no versions")
+	}
+	props := versions[0].(map[string]interface{})["schema"].(map[string]interface{})["openAPIV3Schema"].(map[string]interface{})["properties"].(map[string]interface{})
+	tmpl, ok := props["spec"].(map[string]interface{})["properties"].(map[string]interface{})["roleInstanceTemplate"].(map[string]interface{})
+	if !ok {
+		t.Fatal("spec.roleInstanceTemplate not found in RIS CRD")
+	}
+	if tmpl["x-kubernetes-preserve-unknown-fields"] != true {
+		t.Error("roleInstanceTemplate is no longer schemaless — the KEP's SSA env-keying claim may need re-checking")
+	}
+	// belt-and-braces: no map-keyed env list anywhere in the RIS schema
+	if strings.Contains(crd, "x-kubernetes-list-map-keys") {
+		t.Error("RIS CRD gained a map-keyed list — re-check the SSA duplicate-env claim")
 	}
 }
