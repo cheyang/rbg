@@ -170,8 +170,32 @@
       "match": [
         "TestRBGReplacementCreationMapsToRecovery"
       ]
+    },
+    {
+      "id": "F13-test-plan-creating-branch-dropped",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestRBGActivityPrecedenceCoverage"
+      ]
+    },
+    {
+      "id": "F14-consuming-table-config-compat-dead-branch",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestConsumingTableAttentionRowConsistency"
+      ]
+    },
+    {
+      "id": "F15-minready-timestamp-scope-stateful-too",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestReadyTimestampMigrationScope"
+      ]
     }
   ],
   "liveNote": "Docs-only KEP PR: no live layer. Integration replay (markdownlint-cli2 with .github/.markdownlint.json, YAML parsing of kep.yaml and the 3 examples) is recorded in results/markdownlint.txt and embedded as Go guards (TestKepYAMLWellFormed, TestYAMLExamplesParse).",
-  "roundNote": "Round 4 (head da818779): single docs commit adds the RBG within-Activity precedence (Creating > Recovering > ScalingOrUpdating) fixing the round-3 Copilot advisory C4457744212 — guard TestRBGActivityPrecedenceDefined red at f622d642, green at da818779 (family-table-derived exhaustiveness + reviewed order + Test Plan concurrency bullet). New nit F11: the RIS layer has no tie-break when recovery overlaps an active update/scaling workflow (:349 covers update-vs-scaling only; the new precedence is explicitly RBG-scoped) — probe TestRISActivityTieBreakStated red at da818779, expected to stay red until the KEP states the RIS handling. All 15 prior guards green at head. F12 added after Copilot C4471100373 was independently verified: the new precedence can report Creating for a mid-recovery RBG when a replacement RIS (new UID) reports Creating; probe TestRBGReplacementCreationMapsToRecovery red at f622d642 and da818779."
+  "roundNote": "Round 5 (head 0b7285b7): major design pivot \u2014 RBG and RIS no longer add status.phase (workflow reported via Progressing.reason + existing counters; RIS also drops its new Ready condition); only RI keeps an optional phase and gains an explicit allowed-edge table. Re-anchored pivot-affected guards additively (O1 row split, Q1 recovery split, Q3 overlap precedence, F9 input vocabulary, G1 example phase polarity) \u2014 all accept both the pre-pivot and post-pivot resolutions and keep their historical polarity (red where the finding was open, green where fixed). F11 FIXED: RIS activity precedence stated (:347) plus Test Plan bullet (:511) \u2014 guard green at head. F12 still OPEN (minor): the :199 definitions scope Recovering to 'established child repaired or replaced' but the family table's Initial creation -> Creating row (:169) is unconditional and parents aggregate child reason families mechanically (:133, :176), so a replacement RIS's Creating still maps to RBG Creating, which outranks Recovering (:191-197) \u2014 probe red, fix simulation flips it green. New findings: F13 [minor, revision regression] the delta dropped the Creating-branch concurrent-activity bullet from the Test Plan while the precedence still ranks Creating first (guard green at da818779, red at head); F14 [nit] the new Consuming-the-Status 'need attention' row lists configuration-compatibility families under Progressing=True, but those reasons only ever accompany Progressing=False (:213 vs candidate table); F15 [nit] the new RI transition-timestamps migration row attributes the minReadySeconds lastTransitionTime dependency to stateless only, but stateful isInstanceAvailable reads the same timestamp (stateful_instance_set_helper.go). All fix simulations flip the respective guard green (results/bite-check-round5.txt). New premise guards green at head and at base: stateless/stateful readiness difference, RI condition timestamp rebuild, minReadySeconds timestamp use in both modes, lifecycle label contract, RBG Ready never Unknown."
 }

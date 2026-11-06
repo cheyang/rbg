@@ -540,8 +540,22 @@ func TestYAMLExamplesParse(t *testing.T) {
 			continue
 		}
 		want[obj.Kind] = true
-		if obj.Status.Phase == "" {
-			t.Errorf("yaml example %d (%s): status.phase empty", i, obj.Kind)
+		// Round-5 re-anchor (0b7285b7): the pivot removed status.phase from RBG
+		// and RIS; only RI keeps the optional phase field. The examples must
+		// reflect exactly that split. (Pre-pivot heads carried phase on all
+		// three; this guard is red there by construction — contract change per
+		// the AC-doc-tooling changeReason, not a regression catch.)
+		switch obj.Kind {
+		case "RoleInstance":
+			if obj.Status.Phase == "" {
+				t.Errorf("yaml example %d (RoleInstance): status.phase empty — "+
+					"RI is the one layer that keeps phase", i)
+			}
+		default:
+			if obj.Status.Phase != "" {
+				t.Errorf("yaml example %d (%s): status.phase present (%q) — post-pivot only "+
+					"RI adds phase", i, obj.Kind, obj.Status.Phase)
+			}
 		}
 	}
 	for k, seen := range want {
@@ -654,24 +668,32 @@ func TestEventBudgetRiskInRisksTable(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestReadyTerminatingReasonRowSplit(t *testing.T) {
+	// Round-5 re-anchor (0b7285b7): the design REMOVED the Ready=False
+	// (reason=Terminating) trigger ("A deletionTimestamp does not by itself
+	// rewrite Ready"), so the original combined-row ambiguity cannot recur via
+	// Terminating. The durable contract: Ready=True and Ready=False remain
+	// separate candidate rows, and Terminating never pairs with Ready=True.
+	// Green at f622d642/da818779 (split rows with Terminating under False) and
+	// at 0b7285b7 (split rows, Terminating gone); red at f05e1dd (combined row).
 	rows := candidateReasonsTable(t)
 	for name, reasons := range rows {
 		if strings.Contains(name, "Ready=True") && strings.Contains(name, "False") {
+			t.Errorf("O1-row-ambiguity: combined Ready=True/False row %q reappeared; "+
+				"rows must stay split so each reason pairs with one status", name)
+		}
+		if strings.Contains(name, "Ready=True") && !strings.Contains(name, "False") {
 			for _, r := range reasons {
 				if r == "Terminating" {
-					t.Errorf("O1-row-ambiguity: combined row %q pairs Terminating with an ambiguous status", name)
+					t.Errorf("O1-row-ambiguity: Ready=True row carries Terminating")
 				}
 			}
 		}
 	}
-	found := false
-	for _, r := range rows["Ready=False"] {
-		if r == "Terminating" {
-			found = true
-		}
+	if _, ok := rows["Ready=True"]; !ok {
+		t.Error("O1-row-ambiguity: Ready=True candidate row missing")
 	}
-	if !found {
-		t.Error("O1-row-ambiguity: Ready=False row does not carry the Terminating reason")
+	if _, ok := rows["Ready=False"]; !ok {
+		t.Error("O1-row-ambiguity: Ready=False candidate row missing")
 	}
 }
 
@@ -684,6 +706,16 @@ func TestReadyTerminatingReasonRowSplit(t *testing.T) {
 // TestRecoveryPhaseSplitRISvsRI guards the Q1 resolution: RI gains a
 // `Recovering` phase while RIS deliberately has none and propagates recovery
 // through conditions instead.
+// TestRecoveryPhaseSplitRISvsRI guards the Q1 resolution: RI gains a
+// `Recovering` phase while RIS deliberately has none and propagates recovery
+// through conditions instead.
+// Round-5 re-anchor (0b7285b7): the pivot removed RIS phase entirely, which
+// subsumes the original resolution — RIS now reports recovery via
+// `Progressing` (reason=Recovering) and counters. The guard accepts either
+// form of the resolution: the pre-pivot statement ("does not define a
+// `Recovering` phase" + propagates recovery through conditions) or the
+// post-pivot form (RIS adds no status.phase AND RIS `Progressing` activity
+// reasons include `Recovering`).
 func TestRecoveryPhaseSplitRISvsRI(t *testing.T) {
 	doc := kepDoc(t)
 	risSec := sectionExact(doc, "RoleInstanceSet")
@@ -698,8 +730,13 @@ func TestRecoveryPhaseSplitRISvsRI(t *testing.T) {
 	if !strings.Contains(riSec, "| `Recovering` |") {
 		t.Error("Q1-guard: RI phase table lacks the Recovering phase the resolution introduces")
 	}
-	if !strings.Contains(risSec, "does not define a `Recovering` phase") {
-		t.Error("Q1-guard: RIS section no longer states that RIS has no Recovering phase")
+	prePivot := strings.Contains(risSec, "does not define a `Recovering` phase")
+	postPivot := strings.Contains(risSec, "does not add `status.phase`") &&
+		strings.Contains(risSec, "`Recovering`")
+	if !prePivot && !postPivot {
+		t.Error("Q1-guard: RIS section states neither that RIS has no Recovering phase " +
+			"(pre-pivot form) nor that RIS adds no status.phase while reporting recovery via " +
+			"Progressing (post-pivot form)")
 	}
 	// The reason family table must still map recovery at every layer.
 	if !regexp.MustCompile(`\|\s*Recovery\s*\|\s*` + "`Recovering`").MatchString(doc) {
@@ -727,11 +764,31 @@ func TestNoFailedPhaseStated(t *testing.T) {
 // Progressing reason selection (blockers and pause precedence preserved), and
 // the message-only representation of the concurrent workflow is an explicitly
 // accepted trade-off.
+// TestRISOverlapPrecedenceStated guards the Q3 / C4431017493 resolution: when
+// RIS update and scaling overlap, reason/display selection is deterministic
+// (update outranks scaling), blocker/pause precedence is preserved, and the
+// message-only representation of the concurrent workflow is an explicitly
+// accepted trade-off.
+// Round-5 re-anchor (0b7285b7): the pivot removed the RIS phase, so the old
+// "phase display priority is independent of condition reason selection"
+// formulation is gone; the same guarantees now live in the RIS Activity
+// precedence sentence ("an active update outranks scaling") plus the
+// "Progressing follows RBG rules for progress, pauses, blockers" inheritance.
+// Green when either the pre-pivot or post-pivot anchors hold.
 func TestRISOverlapPrecedenceStated(t *testing.T) {
 	risSec := section(kepDoc(t), "RoleInstanceSet")
-	if !strings.Contains(risSec, "independent of condition reason selection") {
-		t.Error("Q3-guard: RIS overlap text no longer states phase display priority is " +
-			"independent of condition reason selection (blocker/pause precedence)")
+	updateOverScaling := strings.Contains(risSec, "independent of condition reason selection") ||
+		strings.Contains(risSec, "outranks scaling")
+	if !updateOverScaling {
+		t.Error("Q3-guard: RIS overlap text no longer states update-outranks-scaling " +
+			"determinism (pre-pivot: display priority independent of reason selection; " +
+			"post-pivot: an active update outranks scaling)")
+	}
+	blockerPause := strings.Contains(risSec, "independent of condition reason selection") ||
+		(strings.Contains(risSec, "follows RBG rules") && strings.Contains(risSec, "blockers"))
+	if !blockerPause {
+		t.Error("Q3-guard: RIS overlap text no longer preserves blocker/pause precedence " +
+			"over activity reasons (directly or via inheritance of the RBG rules)")
 	}
 	if !strings.Contains(risSec, "accepted v1alpha2 trade-off") {
 		t.Error("Q3-guard: RIS overlap text no longer records the message-only concurrent-scaling " +
@@ -754,11 +811,23 @@ func TestRISOverlapPrecedenceStated(t *testing.T) {
 
 func TestTransitionInputVocabularyConsistent(t *testing.T) {
 	doc := stripFences(kepDoc(t))
-	// Transition-input statements: lines that say what RBG phase transitions
-	// are based on / triggered by / derived from.
-	siteRe := regexp.MustCompile(`(?i)(lower-level .{0,40}trigger RBG phase transitions|` +
-		"RBG adds `status.phase`, with transitions based on|" +
-		`RBG transitions use lower-level|RBG derives recovery facts from lower-level)`)
+	// Transition/aggregation-input statements: lines that say what RBG (or the
+	// RBG/RIS pair) derives progress, recovery, or transitions from, at the
+	// lower level. Round-5 re-anchor (0b7285b7): the pivot removed RBG/RIS
+	// phases, so the phrasing shifted from "transitions based on lower-level
+	// phases/conditions" to "aggregate lower-level conditions and recovery
+	// facts". The guard keeps its original semantics — uniformity, not a
+	// specific vocabulary: every input-enumerating statement must agree on
+	// whether lower-level conditions are an input (green at f05e1dd: uniform
+	// "phases"; red at 6335eac: mixed; green at f622d642+: uniform
+	// "conditions").
+	// A site must put the input-relationship word next to "lower-level" — a
+	// bare "transition" elsewhere in the line (e.g. "would need its own
+	// transition, initialization, and rollback rules", :283) is meta-discussion
+	// about the removed phase, not an input statement.
+	siteRe := regexp.MustCompile(`(?i)(lower-level.{0,60}(trigger|based on|aggregat|deriv))|` +
+		`((trigger|based on|aggregat|deriv)[^.]{0,40}lower-level)|` +
+		`(transitions? use lower-level)`)
 	lowerCondRe := regexp.MustCompile(`(?i)lower-level (phases, )?conditions`)
 	var withConditions, withoutConditions []string
 	for i, l := range strings.Split(doc, "\n") {
@@ -766,6 +835,9 @@ func TestTransitionInputVocabularyConsistent(t *testing.T) {
 			continue
 		}
 		entry := fmt.Sprintf("line %d: %s", i+1, strings.TrimSpace(l))
+		if len(entry) > 160 {
+			entry = entry[:160] + "..."
+		}
 		// "names lower-level conditions as an input" — the word must appear in
 		// the lower-level input enumeration, not in a trailing clause such as
 		// "and uses Accepted / Progressing / Ready conditions".
@@ -1003,23 +1075,47 @@ func TestRBGActivityPrecedenceDefined(t *testing.T) {
 	if strings.Join(listed, ",") != strings.Join(want, ",") {
 		t.Errorf("C4457744212: within-Activity precedence order = %v, reviewed semantics require %v", listed, want)
 	}
+}
 
-	// The Test Plan must cover the concurrent-activity scenarios.
+func TestRBGActivityPrecedenceCoverage(t *testing.T) {
+	doc := kepDoc(t)
+	// The Test Plan must cover each branch of the precedence with a
+	// concurrent-activity scenario. Round-5 re-anchor (0b7285b7): the delta
+	// rewrote the bullets and DROPPED the Creating branch (previously "when one
+	// role is Creating and another is updating or recovering, RBG uses
+	// Creating") while the precedence rule still ranks Creating first — the
+	// per-branch check below keeps every branch of the declared order covered.
 	tp := section(doc, "Test Plan")
 	if tp == "" {
 		t.Fatal("C4457744212-guard anchor drift: Test Plan section not found")
 	}
-	covered := false
+	branchCovered := map[string]bool{"Creating": false, "Recovering": false, "ScalingOrUpdating": false}
 	for _, l := range strings.Split(tp, "\n") {
-		if strings.Contains(l, "`Recovering`") && strings.Contains(l, "`Creating`") &&
-			strings.Contains(l, "`ScalingOrUpdating`") {
-			covered = true
-			break
+		// A concurrency bullet names the winning reason together with another
+		// concurrent activity ("another", "overlap", "concurrent", "while").
+		concurrency := strings.Contains(l, "another") || strings.Contains(l, "overlap") ||
+			strings.Contains(l, "concurrent") || strings.Contains(l, "while")
+		if !concurrency {
+			continue
+		}
+		for br := range branchCovered {
+			if strings.Contains(l, "`"+br+"`") {
+				branchCovered[br] = true
+			}
 		}
 	}
-	if !covered {
-		t.Errorf("C4457744212: Test Plan has no concurrent-activity scenario bullet " +
-			"(Recovering vs updating, Creating vs updating/recovering, ScalingOrUpdating)")
+	var uncovered []string
+	for br, ok := range branchCovered {
+		if !ok {
+			uncovered = append(uncovered, br)
+		}
+	}
+	sort.Strings(uncovered)
+	if len(uncovered) > 0 {
+		t.Errorf("C4457744212: Test Plan has no concurrent-activity scenario for precedence "+
+			"branch(es) %v — every branch of the declared order (Creating > Recovering > "+
+			"ScalingOrUpdating) needs a scenario, e.g. one role Creating while another updates",
+			uncovered)
 	}
 }
 
@@ -1044,24 +1140,42 @@ func TestRISActivityTieBreakStated(t *testing.T) {
 	if !strings.Contains(ris, "`Recovering`") {
 		t.Fatal("F11-guard anchor drift: RIS section no longer mentions Recovering activity")
 	}
+	stated := false
 	precRe := regexp.MustCompile(`(?i)precedence|outranks|higher-priority|takes priority|yields to`)
 	for _, l := range strings.Split(ris, "\n") {
 		if strings.Contains(l, "`Recovering`") && precRe.MatchString(l) {
 			t.Logf("F11: RIS tie-break statement found: %s", strings.TrimSpace(l))
-			return
+			stated = true
+			break
 		}
 		// Explicit inheritance of the Activity precedence also closes the gap.
 		if strings.Contains(l, "Activity") && precRe.MatchString(l) &&
 			(strings.Contains(l, "RIS") || strings.Contains(l, "follows")) {
 			t.Logf("F11: RIS inherits Activity precedence: %s", strings.TrimSpace(l))
-			return
+			stated = true
+			break
 		}
 	}
-	t.Errorf("F11: RIS Progressing reason selection is underdetermined when recovery " +
-		"overlaps an active update or scaling workflow — no statement in the RoleInstanceSet " +
-		"section ties `Recovering` against update / scaling reasons (the RBG within-Activity " +
-		"precedence added at da818779 is explicitly RBG-scoped and :349 covers only " +
-		"update-vs-scaling)")
+	if !stated {
+		t.Errorf("F11: RIS Progressing reason selection is underdetermined when recovery " +
+			"overlaps an active update or scaling workflow — no statement in the RoleInstanceSet " +
+			"section ties `Recovering` against update / scaling reasons")
+	}
+	// Round-5 strengthening: the stated tie-break must also be exercised by the
+	// Test Plan (the round-5 fix added exactly such a bullet).
+	tp := section(doc, "Test Plan")
+	covered := false
+	for _, l := range strings.Split(tp, "\n") {
+		if strings.Contains(l, "`Recovering`") && strings.Contains(l, "RIS") &&
+			(strings.Contains(l, "overlap") || strings.Contains(l, "update or scaling") ||
+				strings.Contains(l, "update/scaling")) {
+			covered = true
+			break
+		}
+	}
+	if !covered {
+		t.Errorf("F11: Test Plan has no RIS recovery-overlaps-workflow scenario bullet")
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -1080,29 +1194,282 @@ func TestRISActivityTieBreakStated(t *testing.T) {
 
 func TestRBGReplacementCreationMapsToRecovery(t *testing.T) {
 	doc := stripFences(kepDoc(t))
-	// Pattern A: replacement / new-UID child creation is explicitly reported
-	// under the recovery reason at RBG / parent level.
+	// Pattern A: an explicit mapping statement — a line that ties a replacement
+	// / new-UID / recreated child to the parent reporting the `Recovering`
+	// reason. (The :199 definitional sentence "Recovering is used when an
+	// established child is being repaired or replaced" is NOT such a mapping:
+	// it defines when RBG uses Recovering, but does not say how a replacement
+	// child's own Creating report maps at the parent, and the family table's
+	// Initial creation -> Creating row (:169) remains unconditional.)
 	recMap := regexp.MustCompile("`Recovering`")
 	repl := regexp.MustCompile(`(?i)new UID|replacement|recreat`)
 	rbg := regexp.MustCompile(`(?i)RBG|parent`)
-	// Pattern B: RBG `Creating` is explicitly scoped to initial creation /
-	// pre-first-steady-state (so it cannot be asserted during recovery).
-	creatingScoped := regexp.MustCompile("(?i)`Creating`.*(first steady state|initial creation).*(only|unless|reserved|scope)|" +
-		"(only|unless|reserved|scope).*`Creating`.*(first steady state|initial creation)")
+	// Pattern B: RBG `Creating` is explicitly scoped to the group's own initial
+	// creation (so it cannot be asserted during recovery). Any order of the
+	// scoping keyword and the scope phrase is accepted.
 	for _, l := range strings.Split(doc, "\n") {
 		if recMap.MatchString(l) && repl.MatchString(l) && rbg.MatchString(l) {
 			t.Logf("F12: replacement->recovery mapping found: %s", strings.TrimSpace(l))
 			return
 		}
-		if creatingScoped.MatchString(l) {
+		hasCreating := strings.Contains(l, "`Creating`")
+		hasScopePhrase := strings.Contains(l, "first steady state") || strings.Contains(l, "initial creation")
+		hasScopeKw := strings.Contains(l, "only") || strings.Contains(l, "unless") ||
+			strings.Contains(l, "reserved") || strings.Contains(l, "scope")
+		if hasCreating && hasScopePhrase && hasScopeKw {
 			t.Logf("F12: Creating scoped to initial creation: %s", strings.TrimSpace(l))
 			return
 		}
 	}
-	t.Errorf("F12: the within-Activity precedence (:184-192) can report `Creating` for an " +
-		"RBG that is mid-recovery — a replacement RIS (new UID, :213) reports Creating, and " +
-		"Creating outranks Recovering, while :213 classifies the same situation as the RBG " +
-		"entering recovery; the Test Plan bullet (:495) would codify the mislabel. State the " +
-		"replacement-child -> parent-reason mapping, or scope RBG `Creating` to the group's " +
-		"initial creation")
+	t.Errorf("F12: the within-Activity precedence (:191-197) can still report `Creating` for an " +
+		"RBG that is mid-recovery. A replacement RIS reports Creating (RIS-level definition :347; " +
+		"family table Initial creation -> Creating :169 is unconditional) and parents aggregate " +
+		"child facts through the reason-family mapping (:175-179), while Creating outranks " +
+		"Recovering (:191-197). The :199 definitions scope RBG `Creating` to 'a required child " +
+		"object does not yet exist' and `Recovering` to 'an established child is being repaired " +
+		"or replaced', but nothing states whether the family mapping or the situational " +
+		"definition governs a replacement child. State the replacement-child -> parent-reason " +
+		"mapping (replacement child reported under `Recovering`), or scope RBG `Creating` to " +
+		"the group's initial creation")
+}
+
+// ---------------------------------------------------------------------------
+// Round-5 additions (head 0b7285b7): the pivot dropped RBG/RIS status.phase,
+// added the Consuming-the-Status decision table, the blocker-classification
+// paragraph, the RIS activity precedence, the RI phase edge table, and new
+// factual claims about current code (stateless/stateful readiness difference,
+// RI condition timestamp rebuilds, lifecycle label). Premise guards PASS on
+// the reviewed head and pin the KEP's claims about main; F14/F15 are CONTRACT
+// findings tests that FAIL on the reviewed head (a red result IS the
+// reproduction).
+// ---------------------------------------------------------------------------
+
+// funcBody returns the source of the function whose declaration contains
+// declSubstr, from declSubstr up to the next top-level "func " (or EOF).
+func funcBody(src, declSubstr string) string {
+	i := strings.Index(src, declSubstr)
+	if i == -1 {
+		return ""
+	}
+	rest := src[i:]
+	if j := strings.Index(rest[1:], "\nfunc "); j != -1 {
+		return rest[:j+1]
+	}
+	return rest
+}
+
+// P0 (round-5 extension): the KEP claims the two RIS modes count RI readiness
+// differently — stateless requires RoleInstanceReady plus every
+// spec.readinessGates condition, stateful checks only RoleInstanceReady.
+// PASS = claim holds in code.
+func TestPremiseRISReadinessModeDifference(t *testing.T) {
+	stateless := repoFile(t, "pkg/reconciler/roleinstanceset/statelessmode/utils/utils.go")
+	sl := funcBody(stateless, "func IsRunningAndReady(")
+	if sl == "" {
+		t.Fatal("stateless IsRunningAndReady not found")
+	}
+	if !strings.Contains(sl, "RoleInstanceReady") || !strings.Contains(sl, "Spec.ReadinessGates") {
+		t.Errorf("P0-mode-diff: stateless IsRunningAndReady no longer checks RoleInstanceReady " +
+			"plus every spec.readinessGates condition")
+	}
+	stateful := repoFile(t, "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_utils.go")
+	sf := funcBody(stateful, "func isHealthy(")
+	if sf == "" {
+		t.Fatal("stateful isHealthy not found")
+	}
+	if !strings.Contains(sf, "RoleInstanceReady") {
+		t.Errorf("P0-mode-diff: stateful isHealthy no longer checks RoleInstanceReady")
+	}
+	if strings.Contains(sf, "ReadinessGates") {
+		t.Errorf("P0-mode-diff: stateful isHealthy now also checks readiness gates — " +
+			"the KEP's documented stateless/stateful difference is stale")
+	}
+}
+
+// P0 (round-5 extension): the KEP claims the RI controller rebuilds
+// RoleInstanceReady / RoleInstanceAllPodsReady with the current time and
+// replaces the condition list, resetting lastTransitionTime on every write.
+// PASS = claim holds in code.
+func TestPremiseRIConditionTimestampsRebuilt(t *testing.T) {
+	src := repoFile(t, "pkg/reconciler/roleinstance/instance_status.go")
+	for _, fn := range []string{"func getInstanceReadyCondition(", "func (r *realStatusUpdater) getAllReadyCondition("} {
+		body := funcBody(src, fn)
+		if body == "" {
+			t.Fatalf("%s not found", fn)
+		}
+		if !strings.Contains(body, "LastTransitionTime: metav1.NewTime(time.Now())") {
+			t.Errorf("P0-timestamps: %s no longer stamps LastTransitionTime with the current time", fn)
+		}
+	}
+	set := funcBody(src, "func (r *realStatusUpdater) setInstanceConditions(")
+	if set == "" {
+		t.Fatal("setInstanceConditions not found")
+	}
+	if !strings.Contains(set, "newStatus.Conditions = conditions") {
+		t.Errorf("P0-timestamps: setInstanceConditions no longer replaces the condition list")
+	}
+	// The rebuilt readiness conditions must not carry the persisted timestamp
+	// forward: neither constructor references the previously persisted value.
+	for _, fn := range []string{"func getInstanceReadyCondition(", "func (r *realStatusUpdater) getAllReadyCondition("} {
+		body := funcBody(src, fn)
+		if strings.Contains(body, "instance.Status.Conditions") {
+			t.Errorf("P0-timestamps: %s now preserves the persisted LastTransitionTime — "+
+				"the KEP's migration-row claim about timestamp resets is stale", fn)
+		}
+	}
+}
+
+// P0 (round-5 extension; code premise for F15): BOTH RIS modes derive
+// minReadySeconds availability from RoleInstanceReady.lastTransitionTime.
+// PASS = both modes read the timestamp.
+func TestPremiseMinReadySecondsTimestampBothModes(t *testing.T) {
+	stateless := repoFile(t, "pkg/reconciler/roleinstanceset/statelessmode/utils/utils.go")
+	sl := funcBody(stateless, "func IsRunningAndAvailable(")
+	if sl == "" || !strings.Contains(sl, "RoleInstanceReady") || !strings.Contains(sl, "LastTransitionTime") {
+		t.Errorf("P0-minready: stateless IsRunningAndAvailable no longer reads " +
+			"RoleInstanceReady.lastTransitionTime")
+	}
+	stateful := repoFile(t, "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_helper.go")
+	sf := funcBody(stateful, "func isInstanceAvailable(")
+	if sf == "" || !strings.Contains(sf, "RoleInstanceReady") || !strings.Contains(sf, "LastTransitionTime") {
+		t.Errorf("P0-minready: stateful isInstanceAvailable no longer reads " +
+			"RoleInstanceReady.lastTransitionTime — re-evaluate F15 (the KEP attributes this to " +
+			"stateless only; if stateful stops using it, the KEP sentence becomes accurate)")
+	}
+}
+
+// P0 (round-5 extension): the KEP names the reserved lifecycle-state label
+// rbg.workloads.x-k8s.io/role-instance-lifecycle-state with values Normal,
+// PreparingUpdate, Updating, Updated, PreparingDelete. PASS = all exist.
+func TestPremiseLifecycleLabelContract(t *testing.T) {
+	ann := repoFile(t, "api/workloads/constants/annotation.go")
+	if !strings.Contains(ann, `"role-instance-lifecycle-state"`) {
+		t.Errorf("P0-lifecycle-label: role-instance-lifecycle-state key not found")
+	}
+	c := repoFile(t, "api/workloads/constants/constants.go")
+	if !strings.Contains(c, `RBGPrefix      = "rbg.workloads.x-k8s.io/"`) &&
+		!strings.Contains(c, `RBGPrefix = "rbg.workloads.x-k8s.io/"`) {
+		t.Errorf("P0-lifecycle-label: RBGPrefix is no longer rbg.workloads.x-k8s.io/ — " +
+			"the KEP's spelled-out label is stale")
+	}
+	for _, v := range []string{`"Normal"`, `"PreparingUpdate"`, `"Updating"`, `"Updated"`, `"PreparingDelete"`} {
+		if !strings.Contains(c, v) {
+			t.Errorf("P0-lifecycle-label: lifecycle value %s no longer defined", v)
+		}
+	}
+}
+
+// P0 (round-5 extension): the KEP claims RBG Ready "retains current behavior
+// and is never set to Unknown". PASS = the RBG controller writes Ready only as
+// True/False (no ConditionUnknown path).
+func TestPremiseRBGReadyNeverUnknown(t *testing.T) {
+	ctrl := repoFile(t, "internal/controller/workloads/rolebasedgroup_controller.go")
+	if !strings.Contains(ctrl, "RoleBasedGroupReady") {
+		t.Fatal("RBG Ready condition write not found — re-evaluate the claim")
+	}
+	if strings.Contains(ctrl, "ConditionUnknown") {
+		t.Errorf("P0-ready-unknown: the RBG controller now has a ConditionUnknown path — " +
+			"the KEP's 'retains current behavior, never Unknown' claim is stale")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// F14 (round 5, nit): the new "Consuming the Status" decision table tells
+// consumers that "needs attention" = Accepted=False OR Progressing=True with a
+// reason in the blocker OR "configuration-compatibility" families. But the
+// candidate-reasons table maps every configuration-incompatibility reason
+// (InvalidSpec, TemplateInvalid, DependencyCycle, IncompatibleGangConfig,
+// SchedulerUnsupported) to Progressing=False, and :234 confirms
+// "When Accepted=False, Progressing=False uses the matching incompatibility
+// reason" — so the Progressing=True disjunct can never fire for those
+// families. A consumer codifying this table (the doc points Flux CEL / Argo
+// Lua at it) gets a dead branch and may conclude Progressing=False reasons
+// never need attention. Contract: FAILS while the row lists
+// configuration-compatibility under Progressing=True and no Progressing=True
+// candidate row carries a config-incompatibility reason.
+// ---------------------------------------------------------------------------
+
+func TestConsumingTableAttentionRowConsistency(t *testing.T) {
+	doc := kepDoc(t)
+	cs := section(doc, "Consuming the Status")
+	if cs == "" {
+		t.Fatal("F14-guard anchor drift: Consuming the Status section not found")
+	}
+	var attention string
+	for _, l := range strings.Split(cs, "\n") {
+		if strings.Contains(l, "need attention") {
+			attention = l
+			break
+		}
+	}
+	if attention == "" {
+		t.Fatal("F14-guard anchor drift: 'need attention' row not found")
+	}
+	rowListsConfigUnderTrue := strings.Contains(attention, "`Progressing=True`") &&
+		strings.Contains(attention, "configuration-compatibility")
+	if !rowListsConfigUnderTrue {
+		return // row reworded; nothing to check
+	}
+	// Do any Progressing=True candidate rows carry a config-incompatibility
+	// reason? If so the row is fine.
+	rows := candidateReasonsTable(t)
+	configReasons := rows["Accepted=False"]
+	trueReasons := map[string]bool{}
+	for _, rn := range []string{"Progressing=True", "Progressing=True, waiting"} {
+		for _, r := range rows[rn] {
+			trueReasons[r] = true
+		}
+	}
+	for _, r := range configReasons {
+		if trueReasons[r] {
+			return // config reasons can accompany Progressing=True; row is accurate
+		}
+	}
+	t.Errorf("F14: the 'need attention' row lists configuration-compatibility families under "+
+		"`Progressing=True`, but every configuration-incompatibility reason (%s) maps to "+
+		"Progressing=False (candidate table and the Accepted=False -> Progressing=False mapping) — "+
+		"the disjunct is dead and points consumers away from the Progressing=False row",
+		strings.Join(configReasons, ", "))
+}
+
+// ---------------------------------------------------------------------------
+// F15 (round 5, nit): the new "RI transition timestamps" migration row says
+// "stateless RIS uses these timestamps for minReadySeconds" — but the stateful
+// mode's isInstanceAvailable ALSO derives availability from
+// RoleInstanceReady.lastTransitionTime (stateful_instance_set_helper.go),
+// feeding status.availableReplicas. The row under-scopes the behavior change;
+// migration regression tests must cover minReadySeconds in BOTH modes.
+// Contract: FAILS while the row names stateless without stateful (and code
+// still shows both modes reading the timestamp).
+// ---------------------------------------------------------------------------
+
+func TestReadyTimestampMigrationScope(t *testing.T) {
+	// Code premise first: both modes must still read the timestamp.
+	stateful := repoFile(t, "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_helper.go")
+	sf := funcBody(stateful, "func isInstanceAvailable(")
+	statefulUses := sf != "" && strings.Contains(sf, "RoleInstanceReady") &&
+		strings.Contains(sf, "LastTransitionTime")
+	if !statefulUses {
+		t.Skip("stateful mode no longer reads RoleInstanceReady.lastTransitionTime — " +
+			"the KEP's stateless-only scoping is accurate; finding moot")
+	}
+	doc := kepDoc(t)
+	var row string
+	for _, l := range strings.Split(doc, "\n") {
+		if strings.Contains(l, "RI transition timestamps") ||
+			strings.Contains(l, "every status write resets `lastTransitionTime`") {
+			row = l
+			break
+		}
+	}
+	if row == "" {
+		t.Fatal("F15-guard anchor drift: RI transition-timestamps migration row not found")
+	}
+	low := strings.ToLower(row)
+	if strings.Contains(low, "stateless") && !strings.Contains(low, "stateful") {
+		t.Errorf("F15: the migration row attributes the minReadySeconds dependency on " +
+			"RoleInstanceReady.lastTransitionTime to stateless mode only, but stateful " +
+			"isInstanceAvailable reads the same timestamp — scope the behavior change and the " +
+			"regression tests to both modes")
+	}
 }

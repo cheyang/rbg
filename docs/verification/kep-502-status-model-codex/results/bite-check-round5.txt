@@ -1,0 +1,11 @@
+Bite check, head 0b7285b7, UNFIXED doc (red = reproduction):
+  {'TestRBGActivityPrecedenceCoverage': 'FAIL', 'TestRBGReplacementCreationMapsToRecovery': 'FAIL', 'TestConsumingTableAttentionRowConsistency': 'FAIL', 'TestReadyTimestampMigrationScope': 'FAIL'}
+after F14 fix (drop "or configuration-compatibility" from the Progressing=True disjunct):
+  {'TestConsumingTableAttentionRowConsistency': 'PASS'}
+after F15 fix (scope the timestamp dependency to both modes):
+  {'TestReadyTimestampMigrationScope': 'PASS'}
+after F12 fix (explicit replacement -> Recovering mapping sentence):
+  {'TestRBGReplacementCreationMapsToRecovery': 'PASS'}
+after F13 fix (restore the Creating-branch concurrency bullet):
+  {'TestRBGActivityPrecedenceDefined': 'PASS', 'TestRBGActivityPrecedenceCoverage': 'PASS'}
+reverted; README.md restored to head state (git status clean for the doc)

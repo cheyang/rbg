@@ -219,6 +219,80 @@ New finding this round:
 | F12-rbg-replacement-creation-reason-mapping | minor | OPEN | TestRBGReplacementCreationMapsToRecovery red at f622d642 and da818779: a replacement RIS (new UID) reports Creating; under the :169 aggregation model the new precedence (Creating > Recovering) then reports Creating for a group :213 classifies as entering recovery, and the :495 Test Plan bullet would codify it. Independently confirms Copilot C4471100373. Fix: state the replacement-child -> parent-reason mapping, or scope RBG Creating to the group's initial creation. |
 | F11-ris-activity-tie-break-unstated | nit | OPEN | TestRISActivityTieBreakStated red at da818779 (and at f622d642 — gap pre-exists the delta): RIS Progressing reason selection is underdetermined when RI recovery overlaps an active RIS update/scaling workflow. README.md:349 resolves update-vs-scaling only; the new precedence at :184 is explicitly RBG-scoped; :358 "RIS Progressing follows RBG rules for progress" does not state whether the Activity precedence is inherited (and ScalingOrUpdating would need mapping to the concrete RIS workflow reason). One sentence — e.g. "RIS applies the RBG Activity precedence with the concrete workflow reason in place of ScalingOrUpdating" — closes it. |
 
+## Round 5 — revision 0b7285b7 (incremental, 2026-11-07)
+
+Delta: two docs-only commits (`e09cb647` "docs: scope creation and define RIS
+activity precedence", `0b7285b7` "docs: clarify status contract and RI phase
+transitions"; +155/-137 in `keps/502-workload-status-model/README.md`). This is
+a **design pivot**, not a polish revision:
+
+1. RBG and RIS no longer add `status.phase`; workflow is reported through
+   `Progressing.reason` plus existing counters (:251, :283, :330-344). RIS also
+   drops its proposed new `Ready` condition. Only RI keeps an optional phase
+   and gains an explicit allowed-edge table (:420-436).
+2. The RBG `Ready=False(reason=Terminating)` trigger (F4's subject) is removed:
+   "A deletionTimestamp does not by itself rewrite Ready" (:299), and Ready is
+   never Unknown after the first observation (:140, :291) — matching the
+   current controller (no `ConditionUnknown` path in
+   internal/controller/workloads/rolebasedgroup_controller.go).
+3. `Accepted` is redefined as a compatibility gate with explicit
+   True/False/Unknown semantics (:221-234); the section is renamed
+   "Validation Ownership and Accepted Semantics".
+4. New sections/rules: Consuming the Status decision table (:205-217),
+   deterministic blocker classification with 403 disambiguation and the
+   unclassifiable-error rule (:158-160), parent observedGeneration dispatch
+   rule (:141), condition-only-writes rule (:142), RIS activity precedence
+   (:347-349, the F11 fix), RIS stateless/stateful readiness-mode difference
+   (:361), RI transition-timestamps migration row (:564).
+
+Harness handling (all re-anchors additive; production diff still empty):
+
+- `TestYAMLExamplesParse` (G1): polarity flipped per kind — RBG/RIS examples
+  must now carry NO `status.phase`, RI must carry one. Red at all pre-pivot
+  heads by construction (contract change, recorded on AC-doc-tooling).
+- `TestReadyTerminatingReasonRowSplit` (O1): re-anchored — the Terminating
+  reason is gone from Ready rows; the durable contract is split rows and no
+  Terminating under Ready=True. Green at 6335eac..head.
+- `TestRecoveryPhaseSplitRISvsRI` (Q1): accepts either the pre-pivot ("RIS
+  does not define a Recovering phase") or post-pivot ("RIS does not add
+  status.phase" + recovery via Progressing) resolution. Green at 6335eac..head.
+- `TestRISOverlapPrecedenceStated` (Q3): accepts the old display-priority
+  formulation or the new "an active update outranks scaling" + RBG-rules
+  inheritance. Green at 6335eac..head.
+- `TestTransitionInputVocabularyConsistent` (F9): site regex broadened to the
+  post-pivot aggregation phrasing with proximity anchoring (excludes the
+  meta-discussion at :283); uniformity semantics unchanged. Matrix: PASS
+  f05e1dd / FAIL 6335eac / PASS f622d642 / PASS da818779 / PASS 0b7285b7.
+- `TestRISActivityTieBreakStated` (F11): strengthened with the Test Plan
+  coverage check. **FIXED at 0b7285b7** — :347 states the RIS precedence
+  (Creating > Recovering > RollingUpdate > ScalingUp/Down, "Recovery outranks
+  active update and scaling") and :511 adds the recovery-overlap bullet.
+- New premise guards (green at head and at base 885d655): stateless/stateful
+  RI-readiness difference (`IsRunningAndReady` checks RoleInstanceReady +
+  every spec.readinessGates + components; stateful `isHealthy` checks only
+  RoleInstanceReady), RI condition timestamp rebuild
+  (`instance_status.go:248,311` stamp `metav1.Now()`, `setInstanceConditions`
+  replaces the list), minReadySeconds reads RoleInstanceReady.lastTransitionTime
+  in BOTH modes, lifecycle label `rbg.workloads.x-k8s.io/role-instance-lifecycle-state`
+  + its five values exist, RBG Ready has no Unknown path.
+
+Findings at head:
+
+| finding | severity | status | evidence |
+| --- | --- | --- | --- |
+| F11-ris-activity-tie-break-unstated | nit | FIXED at 0b7285b7 | guard fail@da818779 / pass@0b7285b7 (:347 + :511) |
+| F12-rbg-replacement-creation-reason-mapping | minor | OPEN (narrowed, not closed) | `TestRBGReplacementCreationMapsToRecovery` red at 0b7285b7. The :199 definitions scope `Recovering` to "an established child is being repaired or replaced", but the family-table row (:169) maps Initial creation -> `Creating` unconditionally, parents are told to aggregate child reason families mechanically (:133, :176), a replacement RIS does report Creating (:347), and Creating outranks Recovering (:191-197) — the collision is unresolved. Fix simulation (one mapping sentence) flips the probe green (results/bite-check-round5.txt). |
+| F13-test-plan-creating-branch-dropped | minor (revision regression) | OPEN | `TestRBGActivityPrecedenceCoverage` pass@da818779 / fail@0b7285b7: the delta dropped the "one role `Creating` while another updates/recovers" bullet while the precedence still ranks Creating first; the Creating branch now has no concurrent-activity coverage. Fix simulation (restore one bullet) flips green. |
+| F14-consuming-table-config-compat-dead-branch | nit | OPEN | `TestConsumingTableAttentionRowConsistency` red at 0b7285b7: the "need attention" row (:213) lists configuration-compatibility families under `Progressing=True`, but every config-incompatibility reason maps to `Progressing=False` (candidate table + :234). Dead disjunct in the table consumers are told to codify. Fix simulation flips green. |
+| F15-minready-timestamp-scope-stateful-too | nit | OPEN | `TestReadyTimestampMigrationScope` red at 0b7285b7: the migration row (:564) says "stateless RIS uses these timestamps for minReadySeconds", but stateful `isInstanceAvailable` (stateful_instance_set_helper.go:240-256) reads the same `RoleInstanceReady.lastTransitionTime` (feeds `status.availableReplicas`). Scope the behavior change to both modes. Fix simulation flips green. |
+
+All other ledger findings stay FIXED at head; the suite is
+28/32 green with the four intentional reds above (F12, F13, F14, F15)
+— results/unit-head-0b7285b7.txt; re-verify.sh summary in
+results/reverify-head-0b7285b7.txt; markdownlint replay 0 issues
+(results/markdownlint-head-0b7285b7.txt); polarity matrix across
+f05e1dd/6335eac/f622d642/da818779/0b7285b7 in results/polarity-round5.txt.
+
 ## Continuing after the fix
 
 On any machine:
