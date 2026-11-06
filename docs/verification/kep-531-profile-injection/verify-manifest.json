@@ -4,6 +4,7 @@
   "harnessPaths": [
     "docs/verification/kep-531-profile-injection",
     "pkg/discovery/sidecar_builder_kep531_verify_test.go",
+    "pkg/discovery/injector_kep531_verify_test.go",
     "pkg/reconciler/pod_reconciler_kep531_verify_test.go"
   ],
   "premise": {
