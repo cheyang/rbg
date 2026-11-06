@@ -5,17 +5,18 @@ Reproducible evidence for the findings raised while reviewing
 Lifecycle Hooks — a **documentation-only** PR: `keps/527-roleinstance-lifecycle/{README.md,README.zh-CN.md,kep.yaml}`).
 
 Harness branch: `verify/pr546-kep-roleinstance-lifecycle-claude`, rebased on the
-reviewed PR head `71dd5e87` (round 1 reviewed `6e8419ab`). **Production code is
-touched only by the PR itself** — the branch adds only test files and this harness
-on top of the PR head.
+reviewed PR head `fb6c2b36` (round 1 reviewed `6e8419ab`, round 2 `71dd5e87`).
+**Production code is touched only by the PR itself** — the branch adds only test
+files and this harness on top of the PR head.
 
-Layers run against the code under review (PR head `71dd5e87`):
+Layers run against the code under review (PR head `fb6c2b36`):
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
 | 1. Unit (Go) | pins the KEP's factual claims about *existing* code (premise + Ready-Gating prerequisite) | `go test ./pkg/inplace/instance/readiness/ ./pkg/inplace/instance/lifecycle/ -run 'TestKep527' -v` |
 | 2. Docs | markdownlint (CI config + default), whitespace, kep.yaml see-also resolution, en/zh parity | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_kep_docs.sh` |
-| 2b. Round-2 contracts | pins every round-1 finding the head claims fixed (required/forbidden text, both languages) | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh <repo-root>` |
+| 2b. Round-3 contracts (**gating**) | pins every round-2 open finding the head claims fixed + substance carry-pins for the round-2 fixes the removal pivot rewrote (required/forbidden text, both languages) | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh <repo-root>` |
+| 2c. Round-2 contracts (reference) | round-2 wording pins — fail on head **by design** (the round-3 removal pivot deleted the coexistence sentences they matched); kept for history, not gating | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh <repo-root>` |
 | 3. Live | **not run this round** (round policy: unit + integration only) | see `verify-manifest.json` `liveNote` |
 
 > Test polarity: contract tests (assert intended behavior) FAIL on buggy code /
@@ -43,6 +44,69 @@ Note on scope: issue #527's expected-capabilities table lists **five** hooks
 proposes **four** (`preUpdate`, `preRecover`, `postReady`, `preDelete`),
 dropping `preCreate`/`postDelete` without an explicit rationale and adding
 `preRecover`. See finding F-SCOPE-PRECREATE.
+
+## Round 3 (head fb6c2b36) — delta reviewed: f627bcc2, c4dd645d, fb6c2b36
+
+The author responded to the round-2 debate with a **design pivot**: the legacy
+`RoleInstanceSetSpec.lifecycle` protocol is **replaced/removed** (admission
+rejects any use of the field) instead of coexisting with mutual exclusion, and a
+normative **Wire Names and Constants** section is added
+(`rbg.workloads.x-k8s.io/role-instance-hook-state`, the preDelete finalizer
+`rbg.workloads.x-k8s.io/role-instance-pre-delete`, feature gate
+`RoleInstanceLifecycleHooks`, KEP-502 phase values, Go constant names). Because
+the pivot rewrote the wording the round-2 pins matched, those pins fail on head
+**by design** — the round-3 contract set re-pins the substance under the new
+wording plus carry-pins proving the round-2 fixes survived the rewrite.
+
+Round-2 open findings vs the new head:
+
+- **FIXED** `F-SCOPE-PRECREATE`: Non-Goals now states the preCreate/postDelete
+  exclusion rationale (EN+ZH) — preCreate has no established workload/executor
+  before Pod creation; postDelete concerns external cleanup after the instance
+  is gone and needs a separate protocol.
+- **FIXED** `F-PROPAGATED-VS-LEGACY` (by redesign): the legacy field is rejected
+  outright and the new entry points (`RoleBasedGroup.spec.roles[].lifecycle`,
+  `RoleInstanceSet.spec.roleInstanceTemplate.lifecycle` →
+  `RoleInstance.spec.lifecycle`) are distinct field paths, so no dual-protocol
+  routing is possible. Residue nit: `F-PROPAGATED-SNAPSHOT-EDIT`.
+- **FIXED** `F-FINALIZER-BOOTSTRAP-RACE`: new RIs are created with the reserved
+  finalizer; enablement on an existing stable RI adds it *before* exposing the
+  config; enablement is rejected/deferred once a `deletionTimestamp` exists
+  (EN+ZH + test plan).
+- **FIXED** `F-NS-TEARDOWN-BYPASS`: namespace teardown is scoped out of the
+  live-engine guarantee with a break-glass pointer (EN+ZH + test plan).
+- **FIXED** `F-RBGSET-FOREGROUND-BOUNDARY`: RBGSet is in the foreground-delete
+  admission boundary in both sections (EN+ZH + test plan).
+- **FIXED** `F-INFLIGHT-ADMISSION-MUST` (should→must, EN+ZH),
+  `F-DISABLE-SUPPORTED-CONTRADICTION` (gate named, `disable-supported: true`,
+  semantics clarified), `F-NOPOSTREADY-CLEANUP-CLARIFICATION` (alt/else branches
+  in both diagrams + prose + test plan for the omitted-postReady completion
+  path), `F-ZH-RIS-RI-PARITY` (dissolved — the 同一 RI sentence is gone).
+- **STILL OPEN** `F-SEEALSO-502`: `/keps/502-workload-status-model` still does
+  not exist in the repo at head or on `origin/main`; PR #528 (KEP-502) is still
+  OPEN at round-3 time, so the dangle persists (auto-resolves when #528 merges).
+- **CARRIED FIXED (survived the rewrite)**: `F-PREDELETE-LIVENESS`,
+  `F-PREDELETE-GATE-LIFETIME`, `F-ESCAPE-HATCH`, `F-DEAD-ENGINE-PREUPDATE`,
+  `F-PHASE-STORAGE`, `F-KEPYAML-NOISE`, `F-MARKNOTREADY-NAME`,
+  `F-READYBLOCK-NAME`, `F-LIFECYCLE-STATE-PREFIX` (strengthened to the exact
+  key), `F-CREATING-REPLACE-FINALIZER` (moot), `F-OLDNEW-ISOLATION`
+  (superseded/strengthened by removal), `F-INFLIGHT-CONFIG-ADMISSION` (now
+  "must").
+- **NEW (round 3)** `F-LEGACY-REMOVAL-COMPAT` (question: removal vs issue #527's
+  "remain compatible with existing lifecycle mechanisms" + whether rejection of
+  the removed fields applies when the feature gate is off — "the new controller
+  neither writes nor interprets them" reads as unconditional, which would break
+  existing `inPlaceUpdate` behavior on controller upgrade independent of the
+  gate), `F-PROPAGATED-SNAPSHOT-EDIT` (nit: no stated rule for user edits of the
+  controller-written template snapshot), `F-ZH-ENGLISH-TERMS` (nit:
+  untranslated "source of truth"/"desired snapshot" in zh).
+
+Harness-bites (differential) evidence for the round-3 fixes:
+`results/round3-contracts-fb6c2b36.txt` (head: 67 PASS / 0 FAIL, exit 0) vs
+`results/round3-contracts-71dd5e87.txt` (previous head: 51 FAIL / 16 PASS) and
+`results/round3-contracts-09accf63.txt` (base: 58 FAIL / 9 PASS). A synthetic
+bites check (removing the preCreate rationale from a scratch copy of the head)
+flips the corresponding pin red and exits 1; the copy was restored.
 
 ## Round 2 (head 71dd5e87) — delta reviewed: 589e43cb, a08526d8, 71dd5e87
 
@@ -171,9 +235,12 @@ The harness is on branch `verify/pr546-kep-roleinstance-lifecycle-claude`
    | `TestKep527CanaryCustomReadyFirstWriteOmitsStatus` (canary) | PASS (bug present) | **FLIPS to FAIL** — invert it and promote to a contract test |
    | `check_kep_docs.sh` see-also (contract) | **FAIL** (dangling ref) | PASS once the reference is fixed |
 
-4. Manual-review findings (F-PREDELETE-LIVENESS, F-ESCAPE-HATCH,
-   F-SCOPE-PRECREATE, F-PHASE-STORAGE, F-OLDNEW-ISOLATION) have no automated
+4. Manual-review findings (`F-LEGACY-REMOVAL-COMPAT`,
+   `F-PROPAGATED-SNAPSHOT-EDIT`, `F-ZH-ENGLISH-TERMS`) have no automated
    check — re-read the KEP sections listed in the findings document each round.
+   The former manual findings (F-SCOPE-PRECREATE, F-PROPAGATED-VS-LEGACY,
+   F-FINALIZER-BOOTSTRAP-RACE, F-NS-TEARDOWN-BYPASS,
+   F-RBGSET-FOREGROUND-BOUNDARY) gained round-3 contract pins.
 5. Cross-machine notes: `npx` (markdownlint) needs network; without it the doc
    script marks lint NOT-RUN. Go tests need the repo toolchain (go1.27).
    Machine-local state does not travel; everything durable is on this branch.

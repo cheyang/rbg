@@ -1,10 +1,10 @@
 === RUN   TestKep527ReadinessGatePrerequisite
---- PASS: TestKep527ReadinessGatePrerequisite (0.04s)
+--- PASS: TestKep527ReadinessGatePrerequisite (0.05s)
 === RUN   TestKep527CanaryCustomReadyFirstWriteOmitsStatus
 --- PASS: TestKep527CanaryCustomReadyFirstWriteOmitsStatus (0.00s)
 PASS
-ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/readiness	0.055s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/readiness	0.059s
 === RUN   TestKep527ExistingCoordinationModel
 --- PASS: TestKep527ExistingCoordinationModel (0.05s)
 PASS
-ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	0.054s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	0.057s
