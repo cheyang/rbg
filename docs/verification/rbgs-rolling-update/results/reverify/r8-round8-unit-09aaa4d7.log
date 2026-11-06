@@ -1,0 +1,215 @@
+=== RUN   TestVerify_R8_RolesEqualEmptyCollections
+--- PASS: TestVerify_R8_RolesEqualEmptyCollections (0.00s)
+=== RUN   TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 2
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=0 maxSurge=2 servingOutdated=1 readyBase=0: body formula says 1, code created 2
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 2
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=0 maxSurge=2 servingOutdated=1 readyBase=1: body formula says 1, code created 2
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 2
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=0 maxSurge=2 servingOutdated=1 readyBase=2: body formula says 1, code created 2
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 2
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=0 maxSurge=2 servingOutdated=1 readyBase=3: body formula says 1, code created 2
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=0 maxSurge=3 servingOutdated=1 readyBase=0: body formula says 1, code created 3
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=0 maxSurge=3 servingOutdated=1 readyBase=1: body formula says 1, code created 3
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=0 maxSurge=3 servingOutdated=1 readyBase=2: body formula says 1, code created 3
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 2
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=0 maxSurge=3 servingOutdated=1 readyBase=3: body formula says 1, code created 2
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 2
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=0 maxSurge=3 servingOutdated=2 readyBase=0: body formula says 2, code created 3
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 2
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=0 maxSurge=3 servingOutdated=2 readyBase=1: body formula says 2, code created 3
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 2
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=0 maxSurge=3 servingOutdated=2 readyBase=2: body formula says 2, code created 3
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 2
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=0 maxSurge=3 servingOutdated=2 readyBase=3: body formula says 2, code created 3
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 2
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=1 maxSurge=2 servingOutdated=1 readyBase=0: body formula says 1, code created 2
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 2
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=1 maxSurge=2 servingOutdated=1 readyBase=1: body formula says 1, code created 2
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 2
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=1 maxSurge=2 servingOutdated=1 readyBase=2: body formula says 1, code created 2
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=1 maxSurge=3 servingOutdated=1 readyBase=0: body formula says 1, code created 3
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=1 maxSurge=3 servingOutdated=1 readyBase=1: body formula says 1, code created 3
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 2
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=1 maxSurge=3 servingOutdated=1 readyBase=2: body formula says 1, code created 2
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 2
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=1 maxSurge=3 servingOutdated=2 readyBase=0: body formula says 2, code created 3
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 2
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=1 maxSurge=3 servingOutdated=2 readyBase=1: body formula says 2, code created 3
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 2
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=1 maxSurge=3 servingOutdated=2 readyBase=2: body formula says 2, code created 3
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 2
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=2 maxSurge=2 servingOutdated=1 readyBase=0: body formula says 1, code created 2
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 2
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=2 maxSurge=2 servingOutdated=1 readyBase=1: body formula says 1, code created 2
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=2 maxSurge=3 servingOutdated=1 readyBase=0: body formula says 1, code created 3
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 1
+        	            	actual  : 2
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=2 maxSurge=3 servingOutdated=1 readyBase=1: body formula says 1, code created 2
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 2
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=2 maxSurge=3 servingOutdated=2 readyBase=0: body formula says 2, code created 3
+    rolebasedgroupset_round8_verify_test.go:124: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:124
+        	Error:      	Not equal: 
+        	            	expected: 2
+        	            	actual  : 3
+        	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+        	Messages:   	maxUnavailable=2 maxSurge=3 servingOutdated=2 readyBase=1: body formula says 2, code created 3
+--- FAIL: TestVerify_R8_SurgeMatchesBodyDocumentedFormula (0.17s)
+=== RUN   TestVerify_R8_NeedsUpdateRoleTemplatesEmptyMap
+    rolebasedgroupset_round8_verify_test.go:167: 
+        	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:167
+        	Error:      	Should be false
+        	Test:       	TestVerify_R8_NeedsUpdateRoleTemplatesEmptyMap
+        	Messages:   	an empty-vs-omitted roleTemplates collection must not mark the child outdated
+--- FAIL: TestVerify_R8_NeedsUpdateRoleTemplatesEmptyMap (0.00s)
+=== RUN   TestVerify_R8_SurgeCoversFloorDeficit
+=== RUN   TestVerify_R8_SurgeCoversFloorDeficit/failure_below_partition_still_surges
+=== RUN   TestVerify_R8_SurgeCoversFloorDeficit/deficit_below_floor_is_covered
+=== RUN   TestVerify_R8_SurgeCoversFloorDeficit/deficit_bounded_by_maxSurge
+=== RUN   TestVerify_R8_SurgeCoversFloorDeficit/no_serving_work_no_surge
+=== RUN   TestVerify_R8_SurgeCoversFloorDeficit/headroom_absorbs_batch
+--- PASS: TestVerify_R8_SurgeCoversFloorDeficit (0.00s)
+    --- PASS: TestVerify_R8_SurgeCoversFloorDeficit/failure_below_partition_still_surges (0.00s)
+    --- PASS: TestVerify_R8_SurgeCoversFloorDeficit/deficit_below_floor_is_covered (0.00s)
+    --- PASS: TestVerify_R8_SurgeCoversFloorDeficit/deficit_bounded_by_maxSurge (0.00s)
+    --- PASS: TestVerify_R8_SurgeCoversFloorDeficit/no_serving_work_no_surge (0.00s)
+    --- PASS: TestVerify_R8_SurgeCoversFloorDeficit/headroom_absorbs_batch (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.191s
+FAIL

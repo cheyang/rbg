@@ -1,0 +1,24 @@
+=== RUN   TestVerify_R8_RolesEqualEmptyCollections
+    rolebasedgroupset_round8_verify_test.go:68: 
+        	Error Trace:	/tmp/r8-graft-prev/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:68
+        	Error:      	Should be true
+        	Test:       	TestVerify_R8_RolesEqualEmptyCollections
+        	Messages:   	rolesEqual must treat explicit empty maps as equal to omitted ones
+    rolebasedgroupset_round8_verify_test.go:70: 
+        	Error Trace:	/tmp/r8-graft-prev/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:70
+        	Error:      	Should be true
+        	Test:       	TestVerify_R8_RolesEqualEmptyCollections
+        	Messages:   	rolesEqual must be symmetric for empty vs omitted maps
+--- FAIL: TestVerify_R8_RolesEqualEmptyCollections (0.00s)
+=== RUN   TestVerify_R8_SurgeMatchesBodyDocumentedFormula
+--- PASS: TestVerify_R8_SurgeMatchesBodyDocumentedFormula (0.29s)
+=== RUN   TestVerify_R8_NeedsUpdateRoleTemplatesEmptyMap
+    rolebasedgroupset_round8_verify_test.go:167: 
+        	Error Trace:	/tmp/r8-graft-prev/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:167
+        	Error:      	Should be false
+        	Test:       	TestVerify_R8_NeedsUpdateRoleTemplatesEmptyMap
+        	Messages:   	an empty-vs-omitted roleTemplates collection must not mark the child outdated
+--- FAIL: TestVerify_R8_NeedsUpdateRoleTemplatesEmptyMap (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.311s
+FAIL

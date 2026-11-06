@@ -13,7 +13,8 @@
     "internal/controller/workloads/rolebasedgroupset_round5_verify_test.go",
     "internal/controller/workloads/rolebasedgroupset_round6_verify_test.go",
     "internal/controller/workloads/rolebasedgroupset_envtest_round6_verify_test.go",
-    "api/workloads/v1alpha2/rolebasedgroupset_admission_round6_verify_test.go"
+    "api/workloads/v1alpha2/rolebasedgroupset_admission_round6_verify_test.go",
+    "internal/controller/workloads/rolebasedgroupset_round8_verify_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -263,6 +264,42 @@
         "TestVerify_R6_EmptyRoleAnnotationsMapNoWedge"
       ],
       "note": "C4358788576 CONFIRMED on af9dd84b: roles[].annotations:{} stored via raw patch, child omits it (omitempty), rolesEqual DeepEqual mismatch -> child perpetually outdated, rewritten every pass (rollout-request token 3->4), rollout never completes. CONTRACT RED at head = bug present; must flip GREEN when rolesEqual normalizes empty maps."
+    },
+    {
+      "id": "C4358788576-unit-guard",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R8_RolesEqualEmptyCollections"
+      ],
+      "note": "Round-8 primitive guard for the round-7 blocker (empty roles[] collections). RED at 39732268, GREEN at 09aaa4d7 via 94981f04 (apiequality.Semantic)."
+    },
+    {
+      "id": "R8SURGEDOC",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R8_SurgeMatchesBodyDocumentedFormula"
+      ],
+      "note": "AC8 regression: body documents min(maxSurge, max(0, servingOutdated-headroom)); 90858736 ships min(maxSurge, max(0, servingOutdated+floor-readyBase)). PASS at 39732268, RED at 09aaa4d7 (27 grid cells). Bites-checked: reverting the formula turns it green."
+    },
+    {
+      "id": "R8SURGEFLOOR",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R8_SurgeCoversFloorDeficit"
+      ],
+      "note": "Pins the shipped #519 behavior (surge covers the availability-floor deficit) independent of the doc dispute. GREEN at 09aaa4d7."
+    },
+    {
+      "id": "R8TPLCHURN",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify_R8_NeedsUpdateRoleTemplatesEmptyMap"
+      ],
+      "note": "Pre-existing (present at base 73e05db4): needsUpdate compares RoleTemplates with reflect.DeepEqual, so an explicit empty collection churns the static path. RED at 39732268 and 09aaa4d7. Bites-checked: apiequality.Semantic swap turns it green."
     }
   ],
   "liveNote": "L3 skipped per debate setup (no KUBECONFIG layer). The repo's own kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers the live path and is green in CI run 37802453289.",

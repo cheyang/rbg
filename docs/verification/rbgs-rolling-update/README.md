@@ -294,3 +294,40 @@ were silently reverted to their round-4 committed content while the untracked
 regenerated from the fresh `.out`, and re-verify.sh now also persists per-ref
 copies (`*-<shortsha>.{out,parsed}`) which the restore cannot revert. Verdicts
 were computed from the fresh in-run parsed data and are unaffected.
+
+## Round 8 — head 09aaa4d7 (merge of main @73e05db4 + 3 fix commits + 1 test commit)
+
+Delta `39732268..09aaa4d7`: merge of main (#524 deprecation admission gate, #530
+KEP-284 pod-cache docs, #540 sts error preservation; webhook markers consolidated
+into `rolebasedgroup_webhook.go`, RBGSet v1alpha1 deprecation wired in
+`cmd/rbgs/main.go`), plus PR-side:
+- `94981f04` rolesEqual -> `apiequality.Semantic.DeepEqual` (the C4358788576 fix)
+- `3981d38a` watch ownerless RBGs by set label (terminating-orphan wake, C4445152303)
+- `90858736` surge sizing covers the availability-floor deficit (#519, C4445152984)
+- `09aaa4d7` e2e metadata-only case moved off deprecated Deployment (required by #524)
+
+Re-verify at 09aaa4d7 (results/reverify/unit-09aaa4d7.parsed,
+integration-09aaa4d7.parsed): every carried contract FIXED, including
+**R6EMPTYANN — the round-7 blocker C4358788576 is fixed** (envtest on a real
+apiserver: stored set keeps `annotations: {}`, the matcher now accepts the
+nil-map child; unit primitive guard `TestVerify_R8_RolesEqualEmptyCollections`
+RED at 39732268 -> GREEN at head). F10 canary STILL-PRESENT (behavior pin, as
+designed). CI 22/22 SUCCESS on 09aaa4d7.
+
+New round-8 probes (results/reverify/r8-round8-unit-{39732268,09aaa4d7}.log):
+- R8SURGEDOC **RED at head, PASS at 39732268** (revision regression of AC8): the
+  body documents `min(maxSurge, max(0, servingOutdated - headroom))`;
+  90858736 ships `min(maxSurge, max(0, servingOutdated + floor - readyBase))` —
+  they disagree in 27/90 grid cells, exactly when readyBase < floor and
+  servingOutdated > 0 (the deficit case the commit exists to fix; the author's
+  own new test case `failure below the floor...` expects 2 where the body
+  formula yields 1). Bites-checked: restoring the old formula turns it green.
+- R8SURGEFLOOR GREEN at head: pins the shipped deficit-covering behavior so the
+  doc mismatch cannot be "fixed" by reverting the code.
+- R8TPLCHURN **RED at 39732268 and head** (pre-existing; the code exists at base
+  73e05db4): `needsUpdate` still compares `RoleTemplates` with
+  `reflect.DeepEqual`, so an explicitly-empty collection inside a role template
+  (dropped by apiserver JSON storage) marks the child perpetually outdated on the
+  static path — same defect class as C4358788576, one comparison away, churn only
+  (no rollout wedge). Bites-checked: swapping to apiequality.Semantic turns it
+  green.
