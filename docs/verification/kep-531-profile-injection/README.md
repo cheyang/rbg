@@ -12,7 +12,7 @@ Layers run against the code under review:
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
 | 1. Unit | `SidecarBuilder`/`PodReconciler` injection behavior that the KEP documents and pins compatibility against | `go test ./pkg/discovery/ ./pkg/reconciler/ -run 'TestKEP531_Verify' -json` |
-| 1b. Doc | 16 doc-text checks: 10 CONTRACT (fixed state of round-1 findings; fail = regression) + 6 CANARY (open wording defects; flip = fixed) | `bash docs/verification/kep-531-profile-injection/scripts/check_doc_contracts.sh [--json]` |
+| 1b. Doc | 18 doc-text checks (round 3): 11 CONTRACT (fixed state of prior findings; fail = regression) + 7 CANARY (open wording defects; flip = fixed) | `bash docs/verification/kep-531-profile-injection/scripts/check_doc_contracts.sh [--json]` |
 | 2. Integration | — (skipped: docs-only PR, no runtime change) | — |
 | 3. Live | — (not applicable) | — |
 
