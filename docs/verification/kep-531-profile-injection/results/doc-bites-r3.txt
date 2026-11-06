@@ -1,0 +1,44 @@
+# Round-3 doc-bites check (head d84004a2) — each check must react to its mutation.
+
+== bite1: remove 'legacy-only duplicates never error'
+  F-ENV-CONFLICT-CONTRACT: REACTED (fail)
+
+== bite2: re-add contradictory 'spanning all three passes'
+  F-ENV-CONFLICT-CONTRACT: REACTED (fail)
+
+== bite3: remove the no-new-caps statement
+  F-CAPS-MAXITEMS-CONTRACT: REACTED (fail)
+
+== bite4: remove the rollout Non-Goal
+  F-COVERAGE-UPDATESTRATEGY-CONTRACT: REACTED (fail)
+
+== bite5: remove the component no-pattern sentence
+  F-COMPONENT-VOCAB-CONTRACT: REACTED (fail)
+
+== bite6: remove the positional $(VAR) rule
+  F-ENV-VAR-DIRECTION-CONTRACT: REACTED (fail)
+
+== bite7: correct the SSA premise (canary flip)
+  F-SSA-ENV-PREMISE-CANARY: REACTED (fail)
+
+== bite8: fix the stage-3 visibility clause (canary flip)
+  F-STAGE3-CHECK-TIMING-CANARY: REACTED (fail)
+
+== bite9: correct the mountPath mechanism (canary flip)
+  F-MOUNTPATH-MECHANISM-CANARY: REACTED (fail)
+
+== bite10: add shadowing event to Graduation (canary flip)
+  F-GRADUATION-EVENT-INVENTORY-CANARY: REACTED (fail)
+
+== bite11: fix the PodSecurity stage (canary flip)
+  F-PODSECURITY-STAGE-CANARY: REACTED (fail)
+
+== bite12: qualify the injector count (canary flip)
+  F-INJECTOR-COUNT-WORDING-CANARY: REACTED (fail)
+
+== bite13: add the disable-flag landing case (canary flip)
+  F-PROFILE-EVOLUTION-TEST-CANARY: REACTED (fail)
+
+
+RESULT: ALL BITES REACTED
+

@@ -37,113 +37,145 @@
       "id": "F-ENV-CONFLICT",
       "polarity": "contract",
       "layer": "doc",
-      "match": ["F-ENV-CONFLICT-CONTRACT"],
-      "note": "Round-1 blocker, FIXED in the round-2 rewrite (head 7a9827bc): the doc now states ONE positional env rule set with ownership-drawn boundaries, and the legacy merge's own appends stay unchecked exactly as on main ('legacy-only duplicates never error'). Contract fails if a legacy-merge-spanning conflict check returns or the fixed-state wording is removed. Unit-layer contract tests TestKEP531_Verify_LegacyMergeAppendsPerReferenceWithoutConflictCheck / ...AppendsToRoleDeclaredContainer still pin main's unchecked legacy append as the byte-for-byte baseline."
+      "match": [
+        "F-ENV-CONFLICT-CONTRACT"
+      ],
+      "note": "Round-1 blocker, FIXED at 7a9827bc, stays fixed at d84004a2: the condense reworded the fixed-state sentences ('is a render error', 'remains per-reference additive, exactly as on main'); phrases re-pinned this round, substance unchanged (one positional env rule set; legacy merge unchecked as on main; 'legacy-only duplicates never error' present)."
     },
     {
       "id": "F-COVERAGE-UPDATESTRATEGY",
       "polarity": "contract",
       "layer": "doc",
-      "match": ["F-COVERAGE-UPDATESTRATEGY-CONTRACT"],
-      "note": "Round-1 major, FIXED: updateStrategy dispositioned in Non-Goals + Motivation ('Published but inert') + a dedicated Profile Mutability section ('a profile change ... lands through whatever update path exists, today only deliberate workload updates'); the overclaiming kep.yaml see-see comment was removed with the see-also block."
+      "match": [
+        "F-COVERAGE-UPDATESTRATEGY-CONTRACT"
+      ],
+      "note": "Round-1 major, FIXED; round-3 evolved the disposition by design change: profiles are immutable while referenced, updateStrategy is deprecated in both served versions and removed at the next boundary, rollout machinery is a Non-Goal. Phrases re-pinned to the new wording."
     },
     {
       "id": "F-CAPS-MAXITEMS",
       "polarity": "contract",
       "layer": "doc",
-      "match": ["F-CAPS-MAXITEMS-CONTRACT"],
-      "note": "Round-1 major, FIXED by design change: the doc now states the published lists (roles, engineRuntimes) carry NO new caps, that neither has maxItems on main, and that capping published lists would reject stored objects (the D3 tightening argument)."
+      "match": [
+        "F-CAPS-MAXITEMS-CONTRACT"
+      ],
+      "note": "Round-1 major, FIXED; stays fixed at d84004a2: 'no new caps' + stored-object rationale present, no roles=16/engineRuntimes=16. The explicit 'neither has maxItems on main' attribution was condensed away but no false cap claim exists."
     },
     {
       "id": "F-COMPONENT-VOCAB",
       "polarity": "contract",
       "layer": "doc",
-      "match": ["F-COMPONENT-VOCAB-CONTRACT"],
-      "note": "Round-1 minor, FIXED: component deliberately carries no pattern/length bound beyond MinLength=1, mirroring the unmarked source vocabulary (RoleSpec.Name, InstanceComponent.Name); Test Plan covers a mixed-case role name resolving via the render gate."
+      "match": [
+        "F-COMPONENT-VOCAB-CONTRACT"
+      ],
+      "note": "Round-1 minor, FIXED; stays fixed at d84004a2 ('The lack of a pattern on `component` is deliberate', MinLength=1, vocabulary check at plan time). Phrase re-pinned."
     },
     {
       "id": "F-ENABLEMENT-ROLLBACK",
       "polarity": "contract",
       "layer": "doc",
-      "match": ["F-ENABLEMENT-ROLLBACK-CONTRACT"],
+      "match": [
+        "F-ENABLEMENT-ROLLBACK-CONTRACT"
+      ],
       "note": "Round-1 minor (Reviewer C), FIXED: Feature Enablement and Rollback + Upgrade / Downgrade Strategy sections present, with envtest upgrade/downgrade drills in the Test Plan."
     },
     {
       "id": "F-CONVERSION-ROUNDTRIP",
       "polarity": "contract",
       "layer": "doc",
-      "match": ["F-CONVERSION-ROUNDTRIP-CONTRACT"],
-      "note": "Round-1 missingTests, FIXED: Version Serving and Conversion section states round-trip losslessness through both Hub conversions is pinned by envtest; graduation criteria list v1alpha1<->v1alpha2 round-trip conversion."
+      "match": [
+        "F-CONVERSION-ROUNDTRIP-CONTRACT"
+      ],
+      "note": "Round-1 missingTests item, FIXED; round 3 extends it: the CERP v1alpha1 mirror plus the v1alpha2 -> v1alpha1 update -> v1alpha2 round trip keeping containerPatches is now pinned by envtest — this also answers round-2's Q-CERP-V1ALPHA1-NONE-CONVERSION (resolved)."
     },
     {
       "id": "F-UNKNOWN-TARGET-PROSE",
       "polarity": "contract",
       "layer": "doc",
-      "match": ["F-UNKNOWN-TARGET-PROSE-CONTRACT"],
+      "match": [
+        "F-UNKNOWN-TARGET-PROSE-CONTRACT"
+      ],
       "note": "Round-1 nit, FIXED: Role-Side Patches states the fail-closed rule ('anything else — a name injected only by a different reference or profile — is a render error')."
     },
     {
       "id": "F-COPILOT-SECRET-CHANNEL",
       "polarity": "contract",
       "layer": "doc",
-      "match": ["F-COPILOT-SECRET-CHANNEL-CONTRACT"],
-      "note": "Round-1 nit (Reviewer C), FIXED: D9 now scopes the one-way guarantee to the profile's own spec and documents the retained role->profile channels ('main's legacy channels already carry this class of flow')."
+      "match": [
+        "F-COPILOT-SECRET-CHANNEL-CONTRACT"
+      ],
+      "note": "Round-1 nit, FIXED; stays fixed at d84004a2: Consent and Trust states 'is the role author's decision, not a blocked channel'; risk-table row scopes the same. Phrase re-pinned."
     },
     {
       "id": "F-COPILOT-VOLUMEMOUNT-EQUALITY",
       "polarity": "contract",
       "layer": "doc",
-      "match": ["F-COPILOT-VOLUMEMOUNT-EQUALITY-CONTRACT"],
-      "note": "Round-1 nit (Reviewer C), FIXED: volumeMount no-op requires full semantic equality (readOnly, subPath, subPathExpr, mountPropagationMode, recursiveReadOnly), partial match is a render error — also pinned in the Test Plan."
+      "match": [
+        "F-COPILOT-VOLUMEMOUNT-EQUALITY-CONTRACT"
+      ],
+      "note": "Round-1 nit, FIXED; stays fixed at d84004a2: 'full semantic equality of the unmarshalled structs — an absent field and an explicit zero value counting as equal; a partial match ... is a render error'. The enumerated field list was condensed into this wording."
     },
     {
       "id": "F-INFERENCE-KIT-404",
       "polarity": "contract",
       "layer": "doc",
-      "match": ["F-INFERENCE-KIT-404-CONTRACT"],
+      "match": [
+        "F-INFERENCE-KIT-404-CONTRACT"
+      ],
       "note": "Round-1 nit, FIXED: the 404 see-also link was removed with the kep.yaml see-see block (kep.yaml is 19 lines, no links)."
     },
     {
       "id": "F-MOUNTPATH-MECHANISM",
       "polarity": "canary",
       "layer": "doc",
-      "match": ["F-MOUNTPATH-MECHANISM-CANARY"],
+      "match": [
+        "F-MOUNTPATH-MECHANISM-CANARY"
+      ],
       "note": "OPEN nit. 'the kubelet resolves overlapping mount paths last-wins' (:786-789) still cites the wrong mechanism for a duplicate mountPath, now in the SAME paragraph as the correct apiserver 'must be unique' citation (:781-783) — an internal contradiction in miniature. Vendored k8s validation.go rejects duplicate mount paths at pod creation."
     },
     {
       "id": "F-PODSECURITY-STAGE",
       "polarity": "canary",
       "layer": "doc",
-      "match": ["F-PODSECURITY-STAGE-CANARY"],
+      "match": [
+        "F-PODSECURITY-STAGE-CANARY"
+      ],
       "note": "OPEN nit. Risk table (:1198) still says PodSecurity 'fails at workload creation, not render' while the doc itself states 'Render success is not workload creation' (:1203) and 'gates capability additions only when the rendered pod is created' (:817)."
     },
     {
       "id": "F-ENV-VAR-DIRECTION",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "doc",
-      "match": ["F-ENV-VAR-DIRECTION-CANARY"],
-      "note": "OPEN nit. 'a profile-added env entry cannot use $(VAR) to reference a role-added entry' (:935) still overgeneralizes: role-side /env/0 head inserts land ahead of profile-appended entries (the doc's own Test Plan covers the positional case), so the 'impossible' direction resolves."
+      "match": [
+        "F-ENV-VAR-DIRECTION-CONTRACT"
+      ],
+      "note": "Round-1 nit, FIXED at d84004a2: the absolute 'a profile-added env entry cannot use' claim is gone; the doc now states the positional rule ('$(VAR) references ... resolve against earlier entries only'). Canary flipped this round and was inverted into the contract per polarity policy."
     },
     {
       "id": "F-INJECTOR-COUNT-WORDING",
       "polarity": "canary",
       "layer": "doc",
-      "match": ["F-INJECTOR-COUNT-WORDING-CANARY"],
+      "match": [
+        "F-INJECTOR-COUNT-WORDING-CANARY"
+      ],
       "note": "OPEN nit. 'a four-injector pass' (:973) still describes only the RIS-LWP leader shape; per-template injector sets vary 2-4 (worker chains omit the sidecar stage; LWS has no rbg-side LWP env stage)."
     },
     {
       "id": "F-STAGE3-CHECK-TIMING",
       "polarity": "canary",
       "layer": "doc",
-      "match": ["F-STAGE3-CHECK-TIMING-CANARY"],
-      "note": "NEW round-2 minor. Application Order (:917) says each stage-3 pass resolves its role-owned checks 'against the role template and the pod-level content of earlier references only', contradicting the phased order the same section and the Render Pipeline specify (all pod-level content lands in stages 1-2 before any stage-3 pass; entry names are 'resolvable only once that container's own injection (stages 1-2) has landed')."
+      "match": [
+        "F-STAGE3-CHECK-TIMING-CANARY"
+      ],
+      "note": "Ledger ID F-STAGE3-LEGACY-VISIBILITY (round-2 consensus major). Round 3 (d84004a2): the publisher-wins OUTCOME is closed twice over — profile-side containerPatches now fire at role-declared entries only (Per-Dimension Gates / Compatibility #3), and the new final env normalization keeps a role-authored entry over any profile-authored entry of the same name — so Compatibility #3's 'keeps its exact outcome' now holds in every constructible shape. The CLAUSE itself survives verbatim: role-owned checks resolve against 'the role template and the pod-level content of earlier references only', omitting the referencing role's own legacy containers[].env names, so the stated render error ('profile-side - append onto a role-owned name') cannot fire when the role-owned name arrives via the legacy merge — silently admitted, outcome rescued by normalization. Downgraded major -> minor (spec-fidelity residual). Canary passes while the clause is present."
     },
     {
       "id": "F-PROFILE-EVOLUTION-TEST",
       "polarity": "canary",
       "layer": "doc",
-      "match": ["F-PROFILE-EVOLUTION-TEST-CANARY"],
-      "note": "OPEN round-1 minor. The Test Plan still has no case for a profile adding containerPatches while a consenting reference exists (when/how the change lands, what signal). The semantics are now documented in Profile Mutability; the matrix the implementation PR copies should pin them. Flips when an evolution case appears in the Test Plan."
+      "match": [
+        "F-PROFILE-EVOLUTION-TEST-CANARY"
+      ],
+      "note": "Rounds 1-2 minor, still open but reframed by the immutability redesign: the default path cannot evolve a referenced profile, and the revision workflow IS tested ('v2 profile published, one of two referencing roles migrated'). Residual: with --disable-profile-immutability set, an edited profile's landing semantics (next render of any reconcile trigger) are neither stated nor tested; the planned case covers only the watch-event signal."
     },
     {
       "id": "F3",
@@ -155,6 +187,24 @@
         "TestKEP531_Verify_AppendIfMissingPodLevelDelivery"
       ],
       "note": "Contract tests pinning the main behaviors the KEP claims are 'preserved verbatim': init-container legacy override is a silent no-op; an override naming another reference's container is skipped; append-if-missing pod-level delivery. Production code is unchanged by this docs-only PR (verified: diff 3612013e..7a9827bc touches only keps/)."
+    },
+    {
+      "id": "F-SSA-ENV-PREMISE",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": [
+        "F-SSA-ENV-PREMISE-CANARY"
+      ],
+      "note": "Round-3 NEW minor, introduced at d84004a2: the Patch Grammar justifies the final env normalization with 'server-side apply, whose env list is keyed by name and rejects duplicates'. False for the served RIS CRD: roleInstanceTemplate is x-kubernetes-preserve-unknown-fields: true and no list in the CRD is map-keyed (config/crd/bases/workloads.x-k8s.io_roleinstancesets.yaml at base 73e05db4), so SSA applies env atomically and never rejects duplicate names — corroborated by main itself, which renders duplicate env names via the legacy merge and never dedupes init-container env (InjectEnv scans containers only). The same paragraph also says 'the role template's own duplicates, if any, pass through untouched', contradicting the rejection claim it sits beside. This is the round-2 disputed Reviewer-C advisory C-COPILOT-SSA-MAP-LIST, whose premise Claude rebutted, now asserted by the document itself. Code premise pinned by TestKEP531_Verify_RISTemplateEnvIsNotMapKeyed (unit layer, green = premise true)."
+    },
+    {
+      "id": "F-GRADUATION-EVENT-INVENTORY",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": [
+        "F-GRADUATION-EVENT-INVENTORY-CANARY"
+      ],
+      "note": "Round-2 nit, still open at d84004a2: the render-time positional-shadowing event is promised (Non-Goals 'a render-time event when that happens', Render Pipeline) and tested (Test Plan 'the render-time shadowing event') but remains unnamed and absent from the Graduation checklist's warning-events item (UnaimedContainerPatch / EngineRuntimeRenderFailed / EngineRuntimeNameCollision / capability form-hazard only)."
     }
   ],
   "liveNote": "L3 not applicable: docs-only PR; no runtime behavior change to observe on a cluster. The KEP's own Test Plan specifies the envtest/e2e matrix for the follow-up implementation PRs — this harness is the regression suite those PRs must keep green."
