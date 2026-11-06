@@ -1,0 +1,18 @@
+F-ENV-CONFLICT-CONTRACT                    pass one positional env rule set; legacy merge unchecked as on main
+F-COVERAGE-UPDATESTRATEGY-CONTRACT         pass updateStrategy dispositioned (Non-Goals + deprecation + Profile Mutability)
+F-CAPS-MAXITEMS-CONTRACT                   pass published lists carry no new caps; stored-object rationale stated
+F-COMPONENT-VOCAB-CONTRACT                 pass component validation mirrors the unmarked source vocabulary
+F-ENABLEMENT-ROLLBACK-CONTRACT             pass Feature Enablement and Rollback + Upgrade/Downgrade sections present
+F-CONVERSION-ROUNDTRIP-CONTRACT            pass conversion round-trip coverage in the Test Plan (incl. CERP mirror)
+F-UNKNOWN-TARGET-PROSE-CONTRACT            pass unknown targetContainers name is a stated render error
+F-COPILOT-SECRET-CHANNEL-CONTRACT          pass role→profile channels documented as a role-authored decision
+F-COPILOT-VOLUMEMOUNT-EQUALITY-CONTRACT    pass volumeMount no-op requires full semantic equality
+F-INFERENCE-KIT-404-CONTRACT               pass no dead inference-kit see-also link
+F-MOUNTPATH-MECHANISM-CANARY               pass defective kubelet-last-wins citation present, apiserver citation absent
+F-PODSECURITY-STAGE-CANARY                 pass defective 'workload creation' stage claim present
+F-ENV-VAR-DIRECTION-CONTRACT               pass $(VAR) direction stated positionally
+F-INJECTOR-COUNT-WORDING-CANARY            pass 'four-injector pass' overgeneralization present
+F-STAGE3-CHECK-TIMING-CANARY               pass stage-3 check-visibility clause still omits own-reference legacy env
+F-PROFILE-EVOLUTION-TEST-CANARY            pass Test Plan still lacks the disable-flag landing-semantics case
+F-SSA-ENV-PREMISE-CANARY                   pass false SSA duplicate-rejection premise present
+F-GRADUATION-EVENT-INVENTORY-CANARY        pass shadowing event still missing from the Graduation checklist

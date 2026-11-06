@@ -5,8 +5,9 @@ Reproducible evidence for the findings raised while reviewing
 Profile Injection — **documentation-only**; production code is identical to
 base `3612013e`/`73e05db4`).
 
-**Round 2** (frozen head `7a9827bc`; the PR was force-pushed with a fully
-rewritten document). Layers run against the code under review:
+**Round 3** (frozen head `d84004a2`; the PR was force-pushed with a condensed
+document). Round 2 reviewed `7a9827bc`; round 1 reviewed `12693d02`.
+Layers run against the code under review:
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
@@ -54,6 +55,80 @@ Premise evidence (base `3612013e`):
 - Gap 4 (updateStrategy unconsumed): no consumer of
   `ClusterEngineRuntimeProfileSpec.UpdateStrategy` in `pkg/` (grep). The KEP
   does not address it anywhere — see finding F2.
+
+## Summary of results — round 3 (head `d84004a2`)
+
+The PR was force-pushed again: one commit, "docs(kep): condense 531 README and
+address review rounds 2-3" (README only; kep.yaml unchanged), 1096 insertions /
+1349 deletions. The condense reworded most round-2 fixed-state sentences
+(all 7 affected contracts re-pinned to the new wording — see
+`results/doc-bites-r3.txt` for the bite check on the new phrases) and
+redesigned two areas:
+
+1. **Firing rules narrowed** — profile-side `containerPatches` now fire at
+   **role-declared** `targetContainers` entries only (a profile-declared entry
+   fires just its own `extraPatches`). This closes the round-2
+   F-STAGE3-LEGACY-VISIBILITY publisher-wins geometry at the firing level.
+2. **A final env normalization** after stage 4 keeps the rendered template
+   duplicate-free, with author precedence ("the role-authored entry winning
+   over any profile-authored entry of the same name") — which closes the same
+   geometry at the outcome level. Its stated *justification* is false, though:
+   see F-SSA-ENV-PREMISE below.
+3. **Profile Mutability redesigned** — profiles are immutable while
+   referenced (CERP webhook alpha-warning→beta-reject, in-use finalizer,
+   controller CERP watch, `--disable-profile-immutability` escape hatch);
+   `updateStrategy` deprecated. This closes round-2's F-PROPAGATION-TRIGGER
+   by design change (its misstated sentence is gone) and answers round-2's
+   Q-CERP-V1ALPHA1-NONE-CONVERSION (`containerPatches` mirrored into the
+   v1alpha1 CERP schema, round trip pinned by envtest).
+
+Run: `bash scripts/re-verify.sh --layers unit,doc` (raw output
+`results/reverify/`, doc table `results/doc-contracts-r3.txt`, bites
+`results/doc-bites-r3.txt`).
+
+| ID (ledger) | Claim | Layer | Verdict | Evidence |
+|----|-------|-------|---------|----------|
+| P0 | issue #531 gaps 1–4 exist on base | unit | Confirmed (round 1; re-run green) | `results/reverify/unit.out` |
+| F-ENV-CONFLICT | round-1 blocker (fixed r2) | doc | **STAYS FIXED** — one positional rule set, re-pinned wording | contract pass |
+| F-COVERAGE-UPDATESTRATEGY | round-1 major (fixed r2) | doc | **STAYS FIXED** — now via deprecation + immutability Non-Goal | contract pass |
+| F-CAPS-MAXITEMS | round-1 major (fixed r2) | doc | **STAYS FIXED** — "no new caps" + stored-object rationale | contract pass |
+| F-COMPONENT-VOCAB | round-1 minor (fixed r2) | doc | **STAYS FIXED** — "The lack of a pattern … is deliberate" | contract pass |
+| F-ENABLEMENT-ROLLBACK | round-1 minor (fixed r2) | doc | **STAYS FIXED** — both sections present | contract pass |
+| F-CONVERSION-ROUNDTRIP | round-1 item (fixed r2) | doc | **STAYS FIXED** — plus the CERP v1alpha1 mirror round trip | contract pass |
+| F-UNKNOWN-TARGET-PROSE | round-1 nit (fixed r2) | doc | **STAYS FIXED** | contract pass |
+| F-COPILOT-SECRET-CHANNEL | round-1 nit (fixed r2) | doc | **STAYS FIXED** — re-pinned phrase | contract pass |
+| F-COPILOT-VOLUMEMOUNT-EQUALITY | round-1 nit (fixed r2) | doc | **STAYS FIXED** — re-pinned phrase | contract pass |
+| F-INFERENCE-KIT-404 | round-1 nit (fixed r2) | doc | **STAYS FIXED** (kep.yaml unchanged) | contract pass |
+| F-ENV-VAR-DIRECTION | round-1 nit | doc | **FIXED at d84004a2** — absolute "cannot" claim gone; positional rule stated; canary inverted into a contract | contract pass |
+| F-PROPAGATION-TRIGGER | round-2 minor | — | **FIXED by design change** (immutability); residual nit `:1194` "deliberate workload update or re-render" | reasoning + code (see findings) |
+| Q-CERP-V1ALPHA1-NONE-CONVERSION | round-2 question | — | **RESOLVED** — v1alpha1 mirror + envtest round trip (`README:954-970`) | doc read |
+| F-STAGE3-LEGACY-VISIBILITY | round-2 consensus **major** | doc | **DOWNGRADED to minor residual** — outcome closed by firing-rule narrowing + author-precedence normalization; the clause itself ("earlier references only", own legacy env omitted) survives verbatim | canary pass + code-path analysis |
+| F-SSA-ENV-PREMISE | **NEW minor (round 3)** | doc/unit | **CONFIRMED** — "SSA … keyed by name and rejects duplicates" is false: `roleInstanceTemplate` is `x-kubernetes-preserve-unknown-fields: true`, no map-keyed list in the CRD; contradicted by the same paragraph's "role template's own duplicates pass through" | canary pass + `TestKEP531_Verify_RISTTemplateEnvIsNotMapKeyed` |
+| F-MOUNTPATH-MECHANISM | nit (open) | doc | **STILL-PRESENT, worse** — the correct apiserver "must be unique" citation was dropped in the condense; only the wrong kubelet one remains | canary pass |
+| F-PODSECURITY-STAGE | nit (open) | doc | **STILL-PRESENT** ("fails at workload creation", `:1011`) | canary pass |
+| F-INJECTOR-COUNT-WORDING | nit (open) | doc | **STILL-PRESENT** ("four-injector pass", `:771` + mermaid) | canary pass |
+| F-KEPYAML-SEEALSO-REMOVED | nit (open) | — | **STILL-OPEN** — kep.yaml unchanged (19 lines, no links) | `git diff 7a9827bc..d84004a2 -- kep.yaml` empty |
+| F-GRADUATION-EVENT-INVENTORY | nit (open) | doc | **STILL-PRESENT** — shadowing event unnamed, absent from Graduation checklist | canary pass |
+| F-PROFILE-EVOLUTION-TEST | minor (open, reframed) | doc | **STILL-OPEN** — no disable-flag landing-semantics case | canary pass |
+| F-STALE-PR-BODY | minor (open) | — | **STILL-OPEN, worse** — body still describes `patchContainers`/five-root symmetric grammar and cites D6/D9/D10, which the condensed doc no longer defines | PR body read (pr-snapshot) |
+| F3 | KEP's factual claims about main's renderer are accurate | unit | **Confirmed** — 9/9 harness tests green on head (incl. 2 new pins) | `results/reverify/unit.out` |
+
+Round-3 code spot-checks against base `73e05db4` (all accurate unless listed
+above): the legacy override still appends env unconditionally
+(`pkg/discovery/sidecar_builder.go:146-160`); `roleInstanceTemplate` is
+opaque in the served RIS CRD
+(`config/crd/bases/workloads.x-k8s.io_roleinstancesets.yaml`, no
+`x-kubernetes-list-type: map` anywhere in the file); every injector set
+includes the common-env injector (RIS leader 4 / RIS worker 3 / LWS worker 2
+— `roleinstanceset_reconciler.go:407,426`, `lws_reconciler.go:282`), and
+`mergeEnvVars` dedupes the whole existing container env list last-wins
+(`pkg/discovery/injector.go:183-216`) — so main's rendered *containers* are
+already duplicate-free before apply, while init-container env is never
+deduped (`InjectEnv` scans `containers` only, injector.go:135-141);
+`deepCopyRoles` exists (`internal/controller/workloads/rolebasedgroupset_controller.go:438,470`);
+`StandalonePattern` is inline in `RoleSpec`
+(`api/workloads/v1alpha2/rolebasedgroup_types.go:348`), so the CEL rule's
+`self.standalonePattern` access is expressible.
 
 ## Summary of results — round 2 (head `7a9827bc`)
 
