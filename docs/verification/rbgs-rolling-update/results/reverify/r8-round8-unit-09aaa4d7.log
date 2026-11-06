@@ -190,7 +190,7 @@
         	            	actual  : 3
         	Test:       	TestVerify_R8_SurgeMatchesBodyDocumentedFormula
         	Messages:   	maxUnavailable=2 maxSurge=3 servingOutdated=2 readyBase=1: body formula says 2, code created 3
---- FAIL: TestVerify_R8_SurgeMatchesBodyDocumentedFormula (0.17s)
+--- FAIL: TestVerify_R8_SurgeMatchesBodyDocumentedFormula (0.16s)
 === RUN   TestVerify_R8_NeedsUpdateRoleTemplatesEmptyMap
     rolebasedgroupset_round8_verify_test.go:167: 
         	Error Trace:	/tmp/r8-graft/internal/controller/workloads/rolebasedgroupset_round8_verify_test.go:167
@@ -211,5 +211,5 @@
     --- PASS: TestVerify_R8_SurgeCoversFloorDeficit/no_serving_work_no_surge (0.00s)
     --- PASS: TestVerify_R8_SurgeCoversFloorDeficit/headroom_absorbs_batch (0.00s)
 FAIL
-FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.191s
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.179s
 FAIL
