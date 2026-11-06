@@ -1,12 +1,83 @@
 # Verification — KEP-502 workload status model (PR #528) — Reviewer A (Claude)
 
 - PR: https://github.com/sgl-project/rbg/pull/528
-- Round 4 reviewed head: `da818779ef984be98467d4ad65d0818bb17aa0e6` (round 3: `f622d642ac10326f66554b590e0513734aa9249a`; round 2: `6335eac61b7ef71d7479a8b2686829d7e59ce3e1`; round 1: `f05e1dd83d2691e4157bf1bd3548fe405b2a49d5`; base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
+- Round 5 reviewed head: `0b7285b7c2ad23f139f0edb8549a316129e9b4a2` (round 4: `da818779ef984be98467d4ad65d0818bb17aa0e6`; round 3: `f622d642ac10326f66554b590e0513734aa9249a`; round 2: `6335eac61b7ef71d7479a8b2686829d7e59ce3e1`; round 1: `f05e1dd83d2691e4157bf1bd3548fe405b2a49d5`; base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
 - Harness branch: `verify/502-workload-status-model-claude` (pushed to the reviewer's fork `cheyang/rbg`)
 - This is a **docs-only PR** (adds `keps/502-workload-status-model/{README.md,kep.yaml}`); the code
   under review is a design document, so the harness checks the *document's* contract: its factual
   claims about the current API, and the internal consistency of its machine-readable reason taxonomy.
 - Live layer (L3): skipped — debate setup runs unit + integration only, and a KEP has no runtime.
+
+## Round 5 (delta `da81877..0b7285b`) — redesign; both round-4 open items fixed, three new open items (nit/nit/minor)
+
+The author pushed two docs commits:
+`e09cb64 "docs: scope creation and define RIS activity precedence"` (+8/−3 — exactly the F11/F12
+fixes round 4 asked for) and then `0b7285b "docs: clarify status contract and RI phase
+transitions"` (+154/−141 — a **fundamental redesign**): RBG and RIS **no longer add
+`status.phase`** (workflow is reported through `Progressing.reason` + existing counters; RI keeps
+its optional phase as the only lifecycle anchor), RIS drops its proposed `Ready` condition, the
+`Terminating` reasons leave the RBG reason tables (a deletionTimestamp no longer rewrites Ready —
+the round-2 F4 behavior change is withdrawn, matching current controller behavior), and new
+content lands: a "Consuming the Status" decision table, blocker-classification rules, an
+observedGeneration-dispatch rule, an RI phase-edge table, and four new factual claims about
+current code.
+
+Round-4 open items (both fixed, differentially):
+
+| Finding | Check | At da81877 (prev) | At 0b7285b (head) | Verdict |
+| --- | --- | --- | --- | --- |
+| F11 RIS activity tie-break (nit) | **C12 (new)** | fail | **pass** | **FIXED** — RIS precedence stated (Creating, Recovering, RollingUpdate, ScalingUp/ScalingDown; recovery outranks update/scaling) + recovery-overlap test bullet |
+| F12 replacement-child → parent reason (minor) | **C13 (new)** | fail | **pass** | **FIXED definitionally** — "Creating … when a required child does not yet exist"; "Recovering … when an established child is being repaired or replaced", at both RBG and RIS layers; the :495 bullet that prescribed the misfire is gone. Residual derivation ambiguity tracked as F14 |
+
+New content verified against the repo (all accurate): the RI controller does rebuild
+`RoleInstanceReady`/`RoleInstanceAllPodsReady` with `time.Now()` and replaces the condition list
+(`instance_status.go` `setInstanceConditions`); stateless RIS counts an RI ready via
+`RoleInstanceReady` + every `spec.readinessGates` (`statelessmode/utils/utils.go`) while stateful
+`isHealthy` checks only `RoleInstanceReady`; the lifecycle-state label
+`rbg.workloads.x-k8s.io/role-instance-lifecycle-state` exists with exactly the five documented
+values; CoordinatedPolicy does lower partitions stepwise (`stepPartition` in
+`rolebasedgroup_controller.go`). Guarded by **C11** (red at prev, green at head).
+
+The redesign itself is internally consistent: TOC complete and matching all headings; no leftover
+statement claims RBG/RIS add a phase (**C14**, red at prev, green at head); the retained-field
+inventory was reworded but carries the same 12 fields (C1 re-anchored, green); markdownlint 0
+issues; C2/C3/C4/C5/C6/C8/C9 all green.
+
+Three new open items (all non-gating):
+
+1. **F15 [minor], README.md:140 / :510 — normative contradiction in the new
+   observedGeneration-dispatch rule.** Both the common rule and the unit-test bullet say the
+   parent writes `status.observedGeneration=N` *together with `Progressing=True`* "including
+   preCheck failures", while the Accepted semantics (:233) require `Progressing=False` with the
+   matching incompatibility reason when `Accepted=False`. Nothing reconciles the two.
+   Repro: **C15** (fail at head; vacuous pass at prev since the clause is new; fixA flips it green).
+2. **F13 [nit, revision regression], README.md:500 — the redesign dropped the unit-test bullet
+   covering the concurrent heterogeneous Activity combinations** (the Creating-over-updating/
+   recovering clause of the round-4 C4457744212 fix). The precedence design content is intact
+   (guarded by **C17**, split from C10); the full round-4 contract C10 goes
+   pass@da81877 → fail@0b7285b; fixC (restoring the bullet) flips it green.
+3. **F14 [nit], README.md:199/:347 — the "established" discriminator for Creating vs Recovering
+   is not operationalized.** For an absent child being replaced, both clauses apply; the KEP
+   never states how the controller derives "established" from persisted facts, and the restart
+   rule says `Progressing.reason` is recomputed "from current facts" (e09cb64's explicit
+   lifecycle-stage rule and its controller-restart test bullet were both removed by 0b7285b).
+   Repro: **C16** (fail at head; fixB flips it green).
+
+Bite matrix for the round-5 checks: `results/bite-check-round5.txt` (head / prev / fixA / fixB /
+fixC). Re-verify at head: `results/reverify-head-0b7285b.txt` — 8 findings FIXED, F13/F14/F15
+STILL-BROKEN (open, non-gating), exit ≠ 0 as expected while the three open items stand.
+
+CI at `0b7285b`: 9 SUCCESS / 6 SKIPPED (docs-only diff; e2e groups skip), PR OPEN and MERGEABLE —
+same standing caveat: `keps/**` is outside the docs-check workflow's lint scope, so CI greenness
+is weak evidence; the substantive gates are the harness replays.
+
+Two new **questions** (nit, non-gating): Q5 — the "Consuming the Status" decision table answers
+"Is the change done?" with `Progressing=False, reason=Converged`, but `Converged` is defined only
+in the RBG and RIS Progressing=False rows; the RI reason list has no `Converged` (RI completion
+is phase=Running), and the table does not state its kind scope. Q6 — after the removal of the
+`Terminating` reasons, RBG/RIS `Progressing` semantics during deletion are unspecified (the
+current controller early-returns, i.e. Progressing goes stale; confirm that is the intended
+contract).
 
 ## Round 4 (delta `f622d64..da81877`) — re-verify verdict: all findings fixed
 
