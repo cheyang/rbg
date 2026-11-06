@@ -1,0 +1,3 @@
+rolebasedgroup/rbgs-controller:v0.9.0-73e05db4 -> HTTP 200
+rolebasedgroup/rbgs-upgrade-crd:v0.9.0-73e05db4 -> HTTP 200
+both images exist

@@ -1,0 +1,32 @@
+{
+  "topic": "release-bump-0.9.0-alpha.3-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/555",
+  "harnessPaths": [
+    "docs/verification/release-bump-0.9.0-alpha.3-codex",
+    "test/release"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Release-manifest bump for the 0.9.0-alpha.3 cut, based on main @ 73e05db4. Only version strings change; no functional/template edits.",
+    "reportedComponent": "release artifacts: deploy/helm/rbgs chart, config/manager kustomize overlay, deploy/kubectl/manifests.yaml",
+    "patchedComponent": "same (4 files, 6 version-string lines)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "On base 73e05db4 the four release files still pin the previous cut (chart 0.9.0-alpha.2, tag v0.9.0-d88b3186, 5 occurrences); the PR updates exactly those and nothing else, and the new tag v0.9.0-73e05db4 matches the merge-base commit short SHA. See results/p0-base-state.txt.",
+    "match": ["TestReleasePinsAreConsistent"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "[ -x bin/kustomize ] || make kustomize >/dev/null 2>&1; go test ./test/release/ -count=1 -json"
+    }
+  },
+  "findings": [
+    { "id": "A1", "polarity": "contract", "layer": "unit", "match": ["TestReleasePinsAreConsistent"] },
+    { "id": "A2", "polarity": "contract", "layer": "unit", "match": ["TestKubectlManifestsInSyncWithKustomize"] },
+    { "id": "A3", "polarity": "contract", "layer": "unit", "match": ["TestHelmChartRendersPinnedVersions"] }
+  ],
+  "liveNote": "A4 (published image existence/content) is not re-run by re-verify.sh: it was proven by CI release-test logs on 2026-11-06 (kind pulled rolebasedgroup/rbgs-controller:v0.9.0-73e05db4 and rbgs-upgrade-crd:v0.9.0-73e05db4; the controller banner reported git commit 73e05db4213950a5dd1f230279e9344a4ffe8435). scripts/check-image-exists.sh re-checks the registry on demand (network). If the PR is re-cut at a newer SHA, update the expected tag there or pass NEW_TAG=<tag>."
+}

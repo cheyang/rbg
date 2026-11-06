@@ -1,0 +1,11 @@
+=== RUN   TestReleasePinsAreConsistent
+    version_pins_test.go:136: consistent release pins: chart=0.9.0-alpha.3 appVersion=0.9.0-73e05db4 tag=v0.9.0-73e05db4
+--- PASS: TestReleasePinsAreConsistent (0.14s)
+=== RUN   TestKubectlManifestsInSyncWithKustomize
+    version_pins_test.go:169: deploy/kubectl/manifests.yaml in sync with kustomize build (7027755 bytes)
+--- PASS: TestKubectlManifestsInSyncWithKustomize (1.11s)
+=== RUN   TestHelmChartRendersPinnedVersions
+    version_pins_test.go:201: helm template renders pinned images (v0.9.0-73e05db4, v0.9.0-73e05db4) and version ConfigMap (0.9.0-alpha.3 / 0.9.0-73e05db4)
+--- PASS: TestHelmChartRendersPinnedVersions (0.31s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/release	1.564s

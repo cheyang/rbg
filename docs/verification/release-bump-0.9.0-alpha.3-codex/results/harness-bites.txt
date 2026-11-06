@@ -1,0 +1,10 @@
+Harness-bites check (verifier step 4): with config/manager/kustomization.yaml newTag
+temporarily reverted to the previous cut (v0.9.0-d88b3186), i.e. simulating an
+INCOMPLETE bump, both contract tests went red:
+
+--- FAIL: TestReleasePinsAreConsistent (0.14s)
+    version_pins_test.go:109: config/manager/kustomization.yaml newTag "v0.9.0-d88b3186" != values.yaml controller tag "v0.9.0-73e05db4" (release skew)
+--- FAIL: TestKubectlManifestsInSyncWithKustomize (1.11s)
+    version_pins_test.go:167: deploy/kubectl/manifests.yaml is stale: `kustomize build config/default` output differs ...
+
+The skew was then reverted; production diff is empty again.

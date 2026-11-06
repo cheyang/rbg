@@ -1,0 +1,34 @@
+CI on PR head 679f7909 (2026-11-06): all checks green EXCEPT "Release Test / e2e-test-helm"
+(run 42213206716). Failure attribution: INFRASTRUCTURE, not the PR.
+
+Failed step: pulling an unrelated e2e FIXTURE image before the helm assertions ran:
+
+  Pulling image: registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest
+  Error response from daemon: failed to resolve reference
+  "registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest": failed to authorize:
+  failed to fetch anonymous token: Get "https://dockerauth.cn-hangzhou.aliyuncs.com/...":
+  read tcp ...: read: connection reset by peer
+  ##[error]Process completed with exit code 1.
+
+In the same job the PR's OWN images pulled and ran fine (evidence the new tag is real):
+
+  Normal  Pulled  pod/rbgs-crds-upgrade-090-73e05db4-fqs66  Successfully pulled image
+    "rolebasedgroup/rbgs-upgrade-crd:v0.9.0-73e05db4" in 935ms
+  Normal  Pulled  pod/rbgs-controller-manager-...-jxc4h    Successfully pulled image
+    "rolebasedgroup/rbgs-controller:v0.9.0-73e05db4" in 825ms
+  controller log: "RoleBasedGroup Controller Version: v0.9.0-73e05db4, git commit:
+    73e05db4213950a5dd1f230279e9344a4ffe8435, build date: 2026-11-06T10:34:38+0000"
+  controller pod Ready: True; leader election succeeded.
+
+Sibling release jobs passed: "Release Test / e2e-test-manifest" SUCCESS,
+"Release Test / e2e-test-upgrade" SUCCESS (v0.7.0 and v0.8.0 -> PR chart, 19-20 specs each).
+
+The other fixture image in the same step
+(registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0) was never reached;
+the failing registry is an external Alibaba Cloud mirror, unreachable from the runner
+at that moment (connection reset). The same workflow step with the same fixture images
+passes in the regular E2E Test workflow on this head, so this is a transient
+registry/network flake, not a chart or version defect.
+
+Required action: re-run "Release Test / e2e-test-helm" (e.g. another /release-test
+comment) for a green required-check signal before merge. No code change needed.
