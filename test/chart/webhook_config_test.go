@@ -16,7 +16,7 @@ limitations under the License.
 
 // Webhook-configuration assertions for the rbgs Helm chart.
 //
-// PR #552 ports the six v1alpha1 deprecation webhooks from the shipped
+// PR #552 ports the v1alpha1 deprecation webhooks from the shipped
 // config/webhook/manifests.yaml (landed by #524) into the chart-rendered
 // ValidatingWebhookConfiguration. The tests here pin that port:
 //
@@ -26,8 +26,10 @@ limitations under the License.
 //     nothing in the repo notices when `make manifests` regenerates the shipped
 //     file (e.g. the 0.10.0 v1alpha1 removal) and the chart silently drifts
 //     back into the intermediate state #552 exists to close.
-//   - TestChartV1alpha1DeprecationWebhookFields: the six deprecation entries
-//     with the exact enforcing/warning failurePolicy split the PR documents.
+//   - TestChartV1alpha1DeprecationWebhookFields: the deprecation entries
+//     with the exact enforcing/warning failurePolicy split the PR documents
+//     (two Fail entries + one merged warning entry since head 1a4f7ab0,
+//     which folded the four warning-only kinds into one endpoint).
 //   - TestChartDefaultImageServesRenderedWebhookPaths: the chart's default
 //     controller image must be built from a commit that registers every webhook
 //     path the chart renders (contract test — RED on head is the F1
@@ -49,18 +51,31 @@ import (
 )
 
 // v1alpha1DeprecationWebhooks is the exact set of v1alpha1 deprecation webhook
-// entries PR #552 adds, with the failurePolicy each entry must carry. Keep in
-// sync with the kubebuilder markers in api/workloads/v1alpha1/deprecation_webhook.go.
+// entries PR #552 renders, with the failurePolicy each entry must carry. Since
+// head 1a4f7ab0 the four warning-only kinds share ONE merged endpoint. Keep in
+// sync with the kubebuilder markers in
+// api/workloads/v1alpha1/deprecation_webhook.go.
 var v1alpha1DeprecationWebhooks = map[string]string{
-	"vclusterengineruntimeprofile-v1alpha1-deprecation.kb.io":          "Ignore",
-	"vinstance-v1alpha1-deprecation.kb.io":                            "Ignore",
-	"vinstanceset-v1alpha1-deprecation.kb.io":                         "Ignore",
-	"vrolebasedgroup-v1alpha1-deprecation.kb.io":                      "Fail",
-	"vrolebasedgroupscalingadapter-v1alpha1-deprecation.kb.io":        "Ignore",
-	"vrolebasedgroupset-v1alpha1-deprecation.kb.io":                   "Fail",
+	"vrolebasedgroup-v1alpha1-deprecation.kb.io":    "Fail",
+	"vrolebasedgroupset-v1alpha1-deprecation.kb.io": "Fail",
+	"vv1alpha1-warning-deprecation.kb.io":           "Ignore",
 }
 
-var deprecationPathPrefix = "/validate-workloads-x-k8s-io-v1alpha1-"
+// v1alpha1DeprecationPaths pins each deprecation entry's service path against
+// the path the Go code actually registers (marker + Register call in
+// deprecation_webhook.go). A mismatch means the API server calls an endpoint
+// the webhook server does not serve.
+var v1alpha1DeprecationPaths = map[string]string{
+	"vrolebasedgroup-v1alpha1-deprecation.kb.io":    "/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup",
+	"vrolebasedgroupset-v1alpha1-deprecation.kb.io": "/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset",
+	"vv1alpha1-warning-deprecation.kb.io":           "/validate-workloads-v1alpha1-deprecation",
+}
+
+// v1alpha1WarningResources are the four kinds the merged warning endpoint
+// covers, in the order the marker lists them.
+var v1alpha1WarningResources = []string{
+	"instancesets", "instances", "rolebasedgroupscalingadapters", "clusterengineruntimeprofiles",
+}
 
 // webhookSpec is the comparable projection of a webhook entry. Service
 // name/namespace and caBundle are deliberately excluded: they legitimately
@@ -228,9 +243,10 @@ func TestChartWebhookConfigurationsMatchShippedManifests(t *testing.T) {
 	}
 }
 
-// TestChartV1alpha1DeprecationWebhookFields pins the six deprecation entries
+// TestChartV1alpha1DeprecationWebhookFields pins the deprecation entries
 // and their failurePolicy split: Fail on the two enforcing RBG/RBGSet
-// endpoints, Ignore on the four warning-only endpoints.
+// endpoints, Ignore on the merged warning endpoint covering the four
+// warning-only kinds.
 func TestChartV1alpha1DeprecationWebhookFields(t *testing.T) {
 	vwc, _ := chartWebhookConfigurations(t)
 
@@ -257,8 +273,8 @@ func TestChartV1alpha1DeprecationWebhookFields(t *testing.T) {
 		if wh.ClientConfig.Service == nil || wh.ClientConfig.Service.Path == nil {
 			t.Fatalf("deprecation webhook %q has no service path", name)
 		}
-		if path := *wh.ClientConfig.Service.Path; !strings.HasPrefix(path, deprecationPathPrefix) {
-			t.Errorf("deprecation webhook %q path = %q, want prefix %q", name, path, deprecationPathPrefix)
+		if path := *wh.ClientConfig.Service.Path; path != v1alpha1DeprecationPaths[name] {
+			t.Errorf("deprecation webhook %q path = %q, want %q", name, path, v1alpha1DeprecationPaths[name])
 		}
 		if len(wh.Rules) != 1 {
 			t.Fatalf("deprecation webhook %q has %d rules, want 1", name, len(wh.Rules))
@@ -269,6 +285,17 @@ func TestChartV1alpha1DeprecationWebhookFields(t *testing.T) {
 		}
 		if len(rule.APIVersions) != 1 || rule.APIVersions[0] != "v1alpha1" {
 			t.Errorf("deprecation webhook %q apiVersions = %v, want [v1alpha1]", name, rule.APIVersions)
+		}
+		if wantPolicy == "Ignore" {
+			// The merged warning endpoint must cover exactly the four
+			// warning-only kinds.
+			if len(rule.Resources) != len(v1alpha1WarningResources) {
+				t.Errorf("merged warning webhook %q covers %d resources %v, want %v", name, len(rule.Resources), rule.Resources, v1alpha1WarningResources)
+			} else if !reflect.DeepEqual([]string(rule.Resources), v1alpha1WarningResources) {
+				t.Errorf("merged warning webhook %q resources = %v, want %v", name, rule.Resources, v1alpha1WarningResources)
+			}
+		} else if len(rule.Resources) != 1 {
+			t.Errorf("enforcing webhook %q covers %d resources %v, want exactly its own kind", name, len(rule.Resources), rule.Resources)
 		}
 	}
 

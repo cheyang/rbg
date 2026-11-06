@@ -10,15 +10,17 @@
   ],
   "premise": {
     "id": "P0",
-    "claim": "With this PR, a Helm install upgraded beyond the gate slice gets the same admission behavior as the kubectl-rendered manifests — previously the chart shipped the pre-gate webhook configuration.",
+    "claim": "With this PR, a Helm install upgraded beyond the gate slice gets the same admission behavior as the kubectl-rendered manifests \u2014 previously the chart shipped the pre-gate webhook configuration.",
     "reportedComponent": "deploy/helm/rbgs (Helm chart webhook rendering)",
     "patchedComponent": "deploy/helm/rbgs/templates/webhook/manifests.yaml + chart docs",
     "componentMatch": true,
     "runsAgainst": "base",
     "layer": "unit",
     "verdict": "confirmed",
-    "evidence": "base 73e05db4: 0 v1alpha1-deprecation entries in the chart template vs 6 in config/webhook/manifests.yaml — results/premise-and-static-evidence.txt",
-    "match": ["results/premise-and-static-evidence.txt"]
+    "evidence": "base 73e05db4: 0 v1alpha1-deprecation entries in the chart template vs 6 in config/webhook/manifests.yaml \u2014 results/premise-and-static-evidence.txt",
+    "match": [
+      "results/premise-and-static-evidence.txt"
+    ]
   },
   "layers": {
     "unit": {
@@ -36,11 +38,17 @@
       "id": "F1",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestChartDefaultImageServesRenderedWebhookPaths"],
+      "match": [
+        "TestChartDefaultImageServesRenderedWebhookPaths"
+      ],
       "note": "RED on head is the reproduction: the chart default image v0.9.0-d88b3186 registers none of the six v1alpha1 deprecation paths the chart renders. Flips GREEN when the default image tag is bumped to a post-#524 commit (verified with tag v0.9.0-a1ff903e).",
       "witness": {
         "layer": "integration",
-        "match": ["fail-closes v1alpha1 RoleBasedGroup creates", "fail-closes v1alpha1 RoleBasedGroupSet creates", "absorbs the unreachable warning-only endpoints"],
+        "match": [
+          "fail-closes v1alpha1 RoleBasedGroup creates",
+          "fail-closes v1alpha1 RoleBasedGroupSet creates",
+          "absorbs the unreachable warning-only endpoints"
+        ],
         "note": "Mechanism witness (canary-like, stays green by design): pre-#524 handler set + chart-rendered webhook configs => API server rejects v1alpha1 RBG/RBGSet writes with 'failed calling webhook ... the server could not find the requested resource'; Ignore-policy kinds still succeed."
       }
     },
@@ -48,7 +56,10 @@
       "id": "F2",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestChartWebhookConfigurationsMatchShippedManifests", "TestChartV1alpha1DeprecationWebhookFields"],
+      "match": [
+        "TestChartWebhookConfigurationsMatchShippedManifests",
+        "TestChartV1alpha1DeprecationWebhookFields"
+      ],
       "note": "The guard the PR is missing: chart webhook specs must equal config/webhook/manifests.yaml. Passes on head (parity holds); bites when the template drifts. These are uplift candidates for the author's fix."
     },
     {
@@ -85,5 +96,26 @@
       ]
     }
   },
-  "liveNote": "L3 (live) not run for this round: the claims are decided at unit + envtest layers. A live check, if ever wanted: helm install the chart from source with default images into a kind cluster and confirm v1alpha1 RBG writes fail with the admission error in results/f1-admission-errors.txt until a post-#524 image is pinned."
+  "liveNote": "L3 (live) not run for this round: the claims are decided at unit + envtest layers. A live check, if ever wanted: helm install the chart from source with default images into a kind cluster and confirm v1alpha1 RBG writes fail with the admission error in results/f1-admission-errors.txt until a post-#524 image is pinned.",
+  "reviewedHeads": {
+    "round1": "a1ff903e3aab5fa7749b9a7ea67457db9972e8b6",
+    "round2": "1a4f7ab00cbb0be6021cca2690bacfef9a0e0278"
+  },
+  "round2": {
+    "delta": "a1ff903e..1a4f7ab0",
+    "commits": [
+      "02f0e06e docs(chart): describe the deprecated-workload toggle by installation type",
+      "1a4f7ab0 refactor(deprecation): merge the four warning-only webhooks into one endpoint"
+    ],
+    "harnessUpdate": "test/chart/webhook_config_test.go updated from the six-entry model to the merged three-entry model (v1alpha1DeprecationWebhooks, v1alpha1DeprecationPaths, v1alpha1WarningResources); path assertions are now exact per entry.",
+    "outcomes": {
+      "F1": "Still-broken: L1 tracker RED (image commit d88b3186 registers none of the 3 deprecation paths; 3 of 9 rendered paths unserved incl. both Fail entries), L2 legacy witness 3/3 reproducing the admission denial. values.yaml pin / Chart.yaml appVersion+version unchanged.",
+      "F2": "Parity holds at head (updated guard PASS; make manifests idempotent with zero diff); the committed-guard gap in the PR is unchanged -> open.",
+      "F3": "Fixed: README.md and README-zh_CN.md contradictory paragraphs/blockquotes replaced with installation-type guidance; the new schema-default (apps/v1 StatefulSet) claims verified against config/crd/bases (default: {apiVersion: apps/v1, kind: StatefulSet}).",
+      "F4": "Fixed: chart README migration-guide references now point at tracking issue sgl-project/rbg#454 (OPEN) instead of a nonexistent guide.",
+      "F5": "Unchanged: Chart.yaml still version 0.9.0-alpha.2, appVersion 0.9.0-d88b3186 despite further template changes in the delta.",
+      "F6": "Deferred to slice 3 (unchanged); the new Upgrading section still does not mention the fail-closed rollout window."
+    },
+    "newObservation": "N2: DeprecationWarningValidator is production-dead after the merge-endpoint refactor (only its own unit test references it); v1alpha1WarningHandler has no direct unit test (covered via envtest). deprecationv1a1/contract_test.go:56 comment stale."
+  }
 }

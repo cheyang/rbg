@@ -1,0 +1,26 @@
+=== RUN   TestManagerFlagReflectsToggle
+--- PASS: TestManagerFlagReflectsToggle (0.20s)
+=== RUN   TestClusterRoleGrantsReflectToggle
+--- PASS: TestClusterRoleGrantsReflectToggle (0.08s)
+=== RUN   TestToggleDeltaIsScopedToDeprecatedRBACAndFlag
+--- PASS: TestToggleDeltaIsScopedToDeprecatedRBACAndFlag (0.06s)
+=== RUN   TestChartWebhookConfigurationsMatchShippedManifests
+--- PASS: TestChartWebhookConfigurationsMatchShippedManifests (0.03s)
+=== RUN   TestChartV1alpha1DeprecationWebhookFields
+--- PASS: TestChartV1alpha1DeprecationWebhookFields (0.03s)
+=== RUN   TestChartDefaultImageServesRenderedWebhookPaths
+    webhook_config_test.go:386: chart default image "v0.9.0-d88b3186" (commit d88b3186) does not register 3 of the 9 webhook paths the chart renders:
+        /validate-workloads-v1alpha1-deprecation
+            
+        /validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup
+            
+        /validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset
+            
+        A chart install with default values will fail-close every write matched by a failurePolicy=Fail entry above
+        (v1alpha1 RoleBasedGroup/RoleBasedGroupSet create+update are rejected with a webhook call error).
+--- FAIL: TestChartDefaultImageServesRenderedWebhookPaths (0.07s)
+=== RUN   TestChartNamespaceTemplatedIntoWebhookService
+--- PASS: TestChartNamespaceTemplatedIntoWebhookService (0.03s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/chart	0.501s
+FAIL

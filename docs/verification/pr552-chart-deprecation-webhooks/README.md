@@ -1,14 +1,44 @@
 # Verification — PR #552: ship the 0.9.0 deprecation webhooks in the Helm chart
 
 - PR: https://github.com/sgl-project/rbg/pull/552
-- Reviewed head: `a1ff903e3aab5fa7749b9a7ea67457db9972e8b6` (base `73e05db4213950a5dd1f230279e9344a4ffe8435`, the #524 merge)
+- Reviewed heads: round 1 `a1ff903e` → round 2 `1a4f7ab00cbb0be6021cca2690bacfef9a0e0278`
+  (base `73e05db4213950a5dd1f230279e9344a4ffe8435`, the #524 merge)
 - Reviewer: Reviewer A (Claude). Harness branch: `verify/pr552-chart-deprecation-webhooks-claude`
 - Layers run: L1 (unit, `helm template` + go test) and L2 (integration, envtest). No live layer was run.
 
-## Premise (P0) — CONFIRMED
+## Round 2 (head `1a4f7ab0`) — delta `a1ff903e..1a4f7ab0`
+
+The author pushed two commits: `02f0e06e` (docs: toggle by installation type) and `1a4f7ab0`
+(refactor: merge the four warning-only webhooks into one endpoint
+`/validate-workloads-v1alpha1-deprecation` + marker listing the four resources). Consequences for
+this harness:
+
+- **Harness-update applied**: the six-entry model (four Ignore + two Fail) became three entries
+  (two Fail + one merged Ignore). `v1alpha1DeprecationWebhooks`/`v1alpha1DeprecationPaths`/
+  `v1alpha1WarningResources` in `test/chart/webhook_config_test.go` were updated accordingly; the
+  path assertions are now exact per-entry (marker path == rendered path == registered path).
+- `make manifests` at head is **idempotent** (zero diff) — controller-gen consumes the merged
+  marker and regenerates both `config/webhook/manifests.yaml` and `deploy/kubectl/manifests.yaml`
+  exactly as committed.
+- The PR's own `test/envtest/testcase/deprecationv1a1` suite (shipped manifests + head handlers)
+  passes 8/8 at head, including "returns the on-the-wire warning for every warning-only kind"
+  through the merged endpoint.
+- Per-finding outcomes at `1a4f7ab0`: **F1 still broken** (L1 tracker RED: the default image
+  registers 3 of the 9 rendered paths unserved — both `Fail` entries and the merged warning
+  path; L2 legacy witness 3/3 still reproduces the admission denial), **F2 parity holds**
+  (updated guard PASS, bites on injected path drift) but the *committed*-guard gap in the PR is
+  unchanged, **F3 fixed** (README EN+zh paragraphs rewritten; new schema-default claims verified
+  against the CRD), **F4 fixed** (guide references now point at tracking issue
+  sgl-project/rbg#454, which is OPEN), **F5 unchanged** (Chart.yaml still `0.9.0-alpha.2` /
+  appVersion `0.9.0-d88b3186`).
+- New round-2 observation (nit): `DeprecationWarningValidator` is now production-dead — no
+  production code path wires it (the merged handler replaces it); only its own unit test
+  references it, and `deprecationv1a1/contract_test.go:56` still describes the old wiring.
+
+## Premise (P0) — CONFIRMED (round 1, base unchanged)
 
 The PR claims to close the chart↔manifests intermediate state left by #524: the kubectl-rendered
-`config/webhook/manifests.yaml` ships the six v1alpha1 deprecation webhooks, while the Helm chart
+`config/webhook/manifests.yaml` ships the v1alpha1 deprecation webhooks, while the Helm chart
 still rendered the pre-gate webhook configuration, so a Helm install got no admission gate.
 
 Differential evidence on the **base** branch (`73e05db4`):
@@ -17,16 +47,18 @@ Differential evidence on the **base** branch (`73e05db4`):
 - v1alpha1-deprecation entries in `config/webhook/manifests.yaml`: **6**
 
 See `results/premise-and-static-evidence.txt`. The gap is real, and the PR closes it: the chart at
-head renders all six entries, byte-parity with the shipped manifests (verified below).
+head renders the deprecation entries (six at `a1ff903e`, three after the round-2 merge), in
+parity with the shipped manifests (verified below).
 
 ## Observed vs expected
 
-| ID | Finding | Layer / test | Polarity | Observed on head | Verdict |
+| ID | Finding | Layer / test | Polarity | Observed on head `1a4f7ab0` | Verdict |
 | --- | --- | --- | --- | --- | --- |
 | P0 | Premise: chart lacks the gate webhooks on base | `results/premise-and-static-evidence.txt` | differential | base: 0 entries vs shipped 6 | **Confirmed** |
-| F1 | Chart default image `v0.9.0-d88b3186` predates #524 and registers none of the six v1alpha1 webhook paths the chart now renders | L1 `TestChartDefaultImageServesRenderedWebhookPaths`; L2 `deprecationchartlegacy` suite | contract (L1, RED = reproduction); mechanism witness (L2) | L1 RED: image commit `d88b3186` registers 0/6 paths. L2: v1alpha1 RBG/RBGSet create rejected with `failed calling webhook "vrolebasedgroup-v1alpha1-deprecation.kb.io": ... the server could not find the requested resource`; InstanceSet create succeeds (Ignore absorbs it) | **Confirmed** (major) |
-| F2 | Nothing in the repo guards chart↔shipped-manifest webhook parity (the PR's core claim) | L1 `TestChartWebhookConfigurationsMatchShippedManifests` + `TestChartV1alpha1DeprecationWebhookFields` | contract | PASS on head (parity holds today); bites when the template drifts (checked by corrupting one failurePolicy) | **Confirmed** (the guard is missing, not the parity) |
-| — | Chart-rendered webhooks behave like the shipped manifests | L2 `deprecationchart` suite, 5 specs | contract | 5/5 PASS: warning on v1alpha1 write, new-use rejection, type-exact grandfathering, deprecated-type switch rejection, set-template rejection | **Confirmed** (PR's functional claim holds) |
+| F1 | Chart default image `v0.9.0-d88b3186` predates #524 and registers none of the v1alpha1 webhook paths the chart renders (both `Fail` entries + the merged warning path) | L1 `TestChartDefaultImageServesRenderedWebhookPaths`; L2 `deprecationchartlegacy` suite | contract (L1, RED = reproduction); mechanism witness (L2) | L1 RED: image commit `d88b3186` registers 0/3 deprecation paths (3 of 9 rendered paths unserved — `results/reverify-1a4f7ab0-l1.txt`). L2: v1alpha1 RBG/RBGSet create rejected with `failed calling webhook "vrolebasedgroup-v1alpha1-deprecation.kb.io": ... the server could not find the requested resource`; InstanceSet create succeeds (Ignore absorbs it) | **Still broken** (blocker) |
+| F2 | Nothing in the repo guards chart↔shipped-manifest webhook parity (the PR's core claim) | L1 `TestChartWebhookConfigurationsMatchShippedManifests` + `TestChartV1alpha1DeprecationWebhookFields` | contract | PASS on head (parity holds after the merge-endpoint refactor; `make manifests` idempotent, zero diff); bites on injected path drift (round-2 bites check) | **Gap unchanged** — parity holds, the committed guard is still missing (major) |
+| — | Chart-rendered webhooks behave like the shipped manifests | L2 `deprecationchart` suite, 5 specs | contract | 5/5 PASS: warning on v1alpha1 write, new-use rejection, type-exact grandfathering, deprecated-type switch rejection, set-template rejection | **Confirmed** (PR's functional claim holds through the merged endpoint) |
+| — | Merged warning endpoint serves all four warning-only kinds (shipped-manifest path) | L2 PR suite `deprecationv1a1` (not harness — head's own tests) | contract | 8/8 PASS at head, incl. "returns the on-the-wire warning for every warning-only kind" | **Confirmed** |
 
 ## How to run
 
@@ -50,6 +82,10 @@ Or run everything at once: `bash docs/verification/pr552-chart-deprecation-webho
 - Parity tests: temporarily flipped `vinstance` entry's `failurePolicy: Ignore` → `Fail` in the
   chart template → both parity tests went RED; reverted → GREEN. (Use `go test -count=1`: go's
   test cache does not key on chart files read via exec.)
+- Round 2 (after the Harness-update): injected path drift (`/validate-workloads-v1alpha1-deprecation`
+  → `/validate-workloads-v1alpha1-drift`) into the chart template → both
+  `TestChartV1alpha1DeprecationWebhookFields` and `TestChartWebhookConfigurationsMatchShippedManifests`
+  went RED; reverted → GREEN.
 - F1 contract test: RED on head (the reproduction); temporarily set
   `controller.image.tag: "v0.9.0-a1ff903e"` (a post-#524 commit) → GREEN; reverted → RED.
   The test therefore flips exactly when the default image is bumped past the gate.
