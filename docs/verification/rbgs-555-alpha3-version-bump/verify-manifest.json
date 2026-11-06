@@ -1,0 +1,36 @@
+{
+  "topic": "rbgs-555-alpha3-version-bump",
+  "pr": "https://github.com/sgl-project/rbg/pull/555",
+  "harnessPaths": [
+    "docs/verification/rbgs-555-alpha3-version-bump",
+    "test/chart/version_bump_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Release-manifest bump for the 0.9.0-alpha.3 cut: \"Update the default controller and CRD-upgrade image tags to v0.9.0-73e05db4 in values.yaml, the kustomize manager image, and the generated deploy/kubectl/manifests.yaml\" — i.e. the v0.9.0-73e05db4 images exist and correspond to main @ 73e05db4.",
+    "reportedComponent": "Helm chart + kustomize + generated kubectl manifests (release plumbing)",
+    "patchedComponent": "config/manager/kustomization.yaml, deploy/helm/rbgs/{Chart,values}.yaml, deploy/kubectl/manifests.yaml",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "Docker Hub hosts rolebasedgroup/{rbgs-controller,rbgs-upgrade-crd}:v0.9.0-73e05db4 multi-arch (amd64+arm64, pushed 2026-11-06T10:52/10:56Z, before the PR); the controller image's manager binary embeds Version=v0.9.0-73e05db4 and GitCommit=73e05db4213950a5dd1f230279e9344a4ffe8435; the upgrader image's /rbgs/crds are byte-identical to config/crd/bases @ 73e05db4 — see results/release-artifacts.txt",
+    "match": ["check-release-artifacts.sh"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/chart/ -run 'TestVersionBumpReferencesConsistent' -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "go test ./test/chart/ -run 'TestRenderedChartMatchesChartVersions' -json"
+    }
+  },
+  "findings": [
+    { "id": "VB-CONSISTENCY", "polarity": "contract", "layer": "unit", "match": ["TestVersionBumpReferencesConsistent"] },
+    { "id": "VB-RENDER", "polarity": "contract", "layer": "integration", "match": ["TestRenderedChartMatchesChartVersions"] }
+  ],
+  "notes": "F1 (pre-existing, NOT introduced by this PR): test/chart renderChart() uses cmd.CombinedOutput(), so a helm stderr warning (e.g. group/world-readable KUBECONFIG) corrupts the parsed YAML stream and fails the whole chart package. Repro: scripts/repro-f1-chart-test-stderr-pollution.sh (deterministic; results/f1-repro.txt). Reproduced identically on base 73e05db4, so it is parked as non-blocking and deliberately excluded from this manifest's re-verify exit gate. Additional non-gating checks: scripts/check-manifest-drift.sh (kustomize regeneration parity, results/manifest-drift.txt) and scripts/check-release-artifacts.sh (published-image provenance, results/release-artifacts.txt).",
+  "liveNote": "L3 (live cluster) intentionally skipped for this review round per instructions; the /release-test e2e-test-helm CI job (chart default images, no build) already exercised the published images: helm install 'rbgs (0.9.0-73e05db4)' succeeded, pre-install CRD-upgrade hook ran, controller became ready, all CRDs verified — run 42213206716."
+}

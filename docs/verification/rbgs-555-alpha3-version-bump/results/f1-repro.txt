@@ -1,0 +1,11 @@
+== leg 1: KUBECONFIG world-readable (0644) -> pre-existing tests fail ==
+        WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: /tmp/tmp.Psl7b7yPuO
+        WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: /tmp/tmp.Psl7b7yPuO
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/chart	0.027s
+FAIL
+
+== leg 2: KUBECONFIG 0600 -> same tests pass ==
+ok  	sigs.k8s.io/rbgs/test/chart	0.085s
+
+F1 REPRODUCED: helm stderr warning pollutes CombinedOutput and breaks the chart tests.

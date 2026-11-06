@@ -1,0 +1,12 @@
+== 1. tag existence ==
+  rbgs-controller:v0.9.0-73e05db4 -> HTTP 200
+   platforms: amd64/linux, arm64/linux
+  rbgs-upgrade-crd:v0.9.0-73e05db4 -> HTTP 200
+   platforms: amd64/linux, arm64/linux
+== 2. controller binary embeds the release commit ==
+  embedded Version=v0.9.0-73e05db4: OK
+  embedded GitCommit=73e05db4213950a5dd1f230279e9344a4ffe8435: OK
+== 3. crd-upgrader image CRDs match config/crd/bases @ 73e05db4 ==
+  CRDs in image identical to config/crd/bases @ 73e05db4: OK (10 files)
+  ensure-crds-up-to-date.sh identical @ 73e05db4: OK
+exit=0 (0 = all release-artifact contracts hold)

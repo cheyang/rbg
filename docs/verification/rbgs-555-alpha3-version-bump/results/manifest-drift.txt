@@ -1,0 +1,2 @@
+kustomize not found; installing sigs.k8s.io/kustomize/kustomize/v5@v5.5.0 to a temp dir
+OK: deploy/kubectl/manifests.yaml is byte-identical to kustomize build config/default (99290 lines)
