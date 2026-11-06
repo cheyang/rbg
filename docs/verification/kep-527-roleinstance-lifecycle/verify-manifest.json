@@ -99,8 +99,89 @@
       "match": [
         "CheckInflightAdmissionMust"
       ]
+    },
+    {
+      "id": "F9",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckLegacyRemovalStated"
+      ],
+      "summary": "F-PROPAGATED-VS-LEGACY (round-3 form): legacy RIS lifecycle protocol removal + admission rejection + distinct new fields stated"
+    },
+    {
+      "id": "F10",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckFinalizerEstablishmentOrdering"
+      ],
+      "summary": "F-FINALIZER-BOOTSTRAP-RACE: finalizer established before effective preDelete exposure; deletionTimestamp enablement rejected/deferred"
+    },
+    {
+      "id": "F11",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckNamespaceTeardownScoped"
+      ],
+      "summary": "F-NS-TEARDOWN-BYPASS: namespace teardown scoped outside the live-engine guarantee (EN+zh)"
+    },
+    {
+      "id": "F12",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckRBGSetForegroundBoundary"
+      ],
+      "summary": "F-RBGSET-FOREGROUND-BOUNDARY: foreground-delete admission boundary includes RBGSet (EN+zh)"
+    },
+    {
+      "id": "F13",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckPostReadyOmittedPath"
+      ],
+      "summary": "F-NOPOSTREADY-CLEANUP-CLARIFICATION: postReady-omitted completion path stated"
+    },
+    {
+      "id": "F14",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckDisableSupportedClarified"
+      ],
+      "summary": "F-DISABLE-SUPPORTED-CONTRADICTION: disable-supported true + feature-gate rollback clarification"
+    },
+    {
+      "id": "F15",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckWireConstantsPinned"
+      ],
+      "summary": "Round-3 wire names pinned and consistent (hook-state key, finalizer, feature gate) across README and kep.yaml"
+    },
+    {
+      "id": "F16",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckKepYamlFeatureGateShape"
+      ],
+      "summary": "NEW NIT F-KEPYAML-GATE-SHAPE: feature-gates entry must use the repo template's object form (- name:). Open at head (bare string)."
+    },
+    {
+      "id": "F17",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckInterruptConditionalityClear"
+      ],
+      "summary": "NEW NIT F-INTERRUPT-WHEN-DEAD-AMBIGUITY: 'Update may interrupt Recovery when the previous engine is dead' misreads as conditional interrupt. Open (sentence present since 71dd5e87)."
     }
   ],
   "liveNote": "Docs-only PR: no live layer. Design-level findings F1-F3 are verified by codebase inspection and their checks are text proxies that confirm the KEP ADDRESSES the topic; design correctness of the added text still requires human review.",
-  "_codex_note": "All checks use contract polarity: pass = intended state. Round 2 (head 71dd5e87): F1/F2/F3/F5 fixed by the revision; F4 partial (see-also still dangles in-repo, mitigated by README's 'KEP-502, currently proposed in PR #528'); F6-F8 added this round (F6 = preCreate/postDelete scope rationale still absent; F7/F8 = new nits found in the revision). The stock skill re-verify.sh supports only gotest/ginkgo; scripts/re-verify.sh here is a shell-kind adaptation with the same fetch/graft/verdict contract."
+  "_codex_note": "All checks use contract polarity: pass = intended state. Round 2 (head 71dd5e87): F1/F2/F3/F5 fixed by the revision; F4 partial; F6-F8 added. Round 3 (head fb6c2b36): revision replaced mutual-exclusion with wholesale removal of the legacy RIS lifecycle protocol (CheckOldNewCoexistenceRule broadened as a Harness-update to accept removal language), pinned wire names/constants, added preCreate rationale, finalizer-establishment ordering, namespace-teardown scoping, RBGSet foreground boundary, postReady-omitted path, disable-supported clarification (F9-F15 all pass at head). New nits F16 (kep.yaml feature-gates bare-string vs template object form; fail at head) and F17 (interrupt-when-dead conditionality ambiguity, sentence present since 71dd5e87; fail at previous and head). F4 residual: CheckSeeAlsoDirsExist still fails (dangling /keps/502-workload-status-model; PR #528 open). The stock skill re-verify.sh supports only gotest/ginkgo; scripts/re-verify.sh here is a shell-kind adaptation with the same fetch/graft/verdict contract."
 }

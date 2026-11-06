@@ -1,6 +1,6 @@
 # Verification harness — KEP-527 RoleInstance Lifecycle Hooks (PR #546)
 
-Reviewer: Codex (Reviewer B). Round: incremental #2. Reviewed head: `71dd5e87ca8704e2447caf574db72c06007d77ef`, base: `3612013e6f779401831f5947dc124cc4313faddb` (merge-base `09accf63`). Previous round head: `6e8419abef232541fe4b0df7bf6d609972902887`.
+Reviewer: Codex (Reviewer B). Round: incremental #3. Reviewed head: `fb6c2b3605fff9fab5ea0606529791f28c671d69`, base: `3612013e6f779401831f5947dc124cc4313faddb` (merge-base `09accf63`). Previous round heads: `6e8419ab` (round 1), `71dd5e87ca8704e2447caf574db72c06007d77ef` (round 2).
 
 ## What kind of PR this is
 
@@ -54,6 +54,34 @@ Round-2 harness-bites: the three new checks (F6–F8) were re-run on head `71dd5
 
 Round-2 questions with no runnable layer (reasoning only, no check): Q-propagate-legacy-routing (how the legacy RIS reconciler, which activates on `Spec.Lifecycle != nil` — pkg/reconciler/roleinstanceset/statelessmode/sync/scale.go:169,264, update.go:146-221 — is kept from acting on RBG-propagated new-protocol config in the same field), Q-finalizer-timing (reserved RI finalizer must be established before any deletionTimestamp since the API server forbids adding finalizers afterwards; creation-time addition is only implied by the sequence diagram).
 
+
+## Observed vs expected (head fb6c2b36 — round 3, incremental)
+
+Delta `71dd5e87..fb6c2b36` (docs-only, +441/-318): the revision **replaces the mutual-exclusion design with wholesale removal of the legacy RIS lifecycle protocol** (`docs: replace legacy RIS lifecycle protocol`), pins normative wire names/constants (`role-instance-hook-state` label, `role-instance-pre-delete` finalizer, `RoleInstanceLifecycleHooks` feature gate, KEP-502 PascalCase phase values), moves the RIS-side config to `spec.roleInstanceTemplate.lifecycle` + `RoleInstance.spec.lifecycle`, and answers every open round-2 question.
+
+| Finding | Check | previous 71dd5e87 | head fb6c2b36 | Verdict |
+| --- | --- | --- | --- | --- |
+| F1/F2/F5 (deletion invariant, phase storage, gate lifetime) | CheckDeletionCascadeSpecified / CheckPhaseStorageSpecified / CheckPreDeleteGateLifetime | pass | pass | still FIXED (regression guard) |
+| F3 old/new coexistence (F-OLDNEW-ISOLATION) | CheckOldNewCoexistenceRule | pass | pass | still FIXED — Harness-update: contract broadened to accept removal language; the redesign eliminates coexistence rather than ruling it |
+| F4 kep.yaml defects | CheckKepYaml{NoSegmentComment,AuthorsSet} / CheckSeeAlsoDirsExist | pass/pass/fail | pass/pass/fail | PARTIAL — see-also `/keps/502-workload-status-model` still dangles (PR #528 still OPEN) |
+| F6 scope rationale (F-SCOPE-PRECREATE) | CheckPreCreateRationaleStated | fail | pass | FIXED — Non-Goals now states the preCreate/postDelete rationale (EN+zh) |
+| F7 zh/en scope parity (F-ZH-RIS-RI-PARITY) | CheckEnZhCoexistenceScopeParity | fail | pass | FIXED — section rewritten |
+| F8 in-flight admission must (F-INFLIGHT-ADMISSION-MUST) | CheckInflightAdmissionMust | fail | pass | FIXED — "Admission must reject" |
+| F9 propagated-vs-legacy (F-PROPAGATED-VS-LEGACY) | CheckLegacyRemovalStated | fail | pass | FIXED by redesign — removal + admission rejection + distinct fields (`roleInstanceTemplate.lifecycle`, `RoleInstance.spec.lifecycle`) dissolve the same-field ambiguity and the legacy-routing question |
+| F10 finalizer bootstrap race (F-FINALIZER-BOOTSTRAP-RACE) | CheckFinalizerEstablishmentOrdering | fail | pass | FIXED — finalizer added before effective config exposure; deletionTimestamp enablement rejected/deferred; new RIs created with the finalizer |
+| F11 namespace teardown (F-NS-TEARDOWN-BYPASS) | CheckNamespaceTeardownScoped | fail | pass | FIXED — scoped outside the live-engine guarantee, break-glass pointer (EN+zh) |
+| F12 RBGSet foreground boundary (F-RBGSET-FOREGROUND-BOUNDARY) | CheckRBGSetForegroundBoundary | fail | pass | FIXED — RBGSet added to the admission boundary (EN+zh) |
+| F13 postReady-omitted path (F-NOPOSTREADY-CLEANUP-CLARIFICATION) | CheckPostReadyOmittedPath | fail | pass | FIXED — explicit completion path + alt/else diagrams + test-plan entry |
+| F14 disable-supported (F-DISABLE-SUPPORTED-CONTRADICTION) | CheckDisableSupportedClarified | fail | pass | FIXED — `disable-supported: true`, gate named, PRR clarification sentence |
+| F15 wire constants pinned (new AC) | CheckWireConstantsPinned | fail | pass | PASS — hook-state key, finalizer, feature gate consistent across README table and kep.yaml |
+| F16 kep.yaml gate shape (NEW nit F-KEPYAML-GATE-SHAPE) | CheckKepYamlFeatureGateShape | pass | fail | OPEN — `feature-gates: [RoleInstanceLifecycleHooks]` bare string vs repo template's object form (`- name:` / `components:`); introduced this round |
+| F17 interrupt conditionality (NEW nit F-INTERRUPT-WHEN-DEAD-AMBIGUITY) | CheckInterruptConditionalityClear | fail | fail | OPEN — "Update may interrupt Recovery when the previous engine is dead" reads as a conditional interrupt; sentence present since 71dd5e87, unflagged in round 2 |
+| Codebase-truth claims (10) | group 1 | pass ×10 | pass ×10 | KEP accurate on head |
+| Hygiene (3) | group 3 | pass ×3 | pass ×3 | clean (markdownlint both configs, section parity 29/29, whitespace) |
+
+Raw output: `results/reverify/unit-fb6c2b36.tsv` (head), `results/reverify/unit-71dd5e87-round3-bites.tsv` (updated harness re-run on the previous head — the fail→pass flips are the round-3 bites evidence).
+
+Round-3 reasoning-only finding (no runnable layer, docs design gap): F-LEGACY-REMOVAL-TRANSITION — the removal redesign leaves three transition points unstated: (a) whether legacy-field rejection is conditioned on the `RoleInstanceLifecycleHooks` gate (gate-off behavior for existing users after controller upgrade), (b) what enforces "migration required before the feature is enabled" when the gate flips on with unmigrated objects, (c) drain/cleanup of legacy runtime state (legacy hook finalizers from `finalizersHandler`, old `role-instance-lifecycle-state` labels) at migration — a controller that "neither writes nor interprets them" never removes a leftover legacy finalizer, wedging RI deletion. Pre-implementable blocker #1 names "the migration procedure" but none of these specifics.
 
 ## How to run
 

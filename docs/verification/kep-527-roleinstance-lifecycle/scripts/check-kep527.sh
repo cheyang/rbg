@@ -118,9 +118,12 @@ if [ -f "$KEP_EN" ] && grep -qiE 'phase (is )?(stored|persisted|recorded) (in|as
   ok CheckPhaseStorageSpecified; else bad CheckPhaseStorageSpecified; fi
 
 # F3. The KEP must state a concrete coexistence rule (deprecation, mutual
-#     exclusion, or precedence) between the existing RIS spec.lifecycle and the
-#     proposed Role-level lifecycle.
-if [ -f "$KEP_EN" ] && grep -qiE 'mutual(ly)? exclusive|mutual exclusion|deprecat|takes precedence|must not (both|be combined)|coexist' "$KEP_EN"; then
+#     exclusion, precedence, or removal of the legacy protocol) between the
+#     existing RIS spec.lifecycle and the proposed Role-level lifecycle.
+#     Harness-update (round 3): the design switched from mutual exclusion to
+#     wholesale removal of the legacy protocol; removal language now satisfies
+#     the contract (nothing remains to coexist with).
+if [ -f "$KEP_EN" ] && grep -qiE 'mutual(ly)? exclusive|mutual exclusion|deprecat|takes precedence|must not (both|be combined)|coexist|protocol is removed|replaces and removes' "$KEP_EN"; then
   ok CheckOldNewCoexistenceRule; else bad CheckOldNewCoexistenceRule; fi
 
 # F5. Ready Gating must define the lifetime of a preDelete NotReady gate, not only
@@ -147,6 +150,75 @@ if [ -f "$KEP_ZH" ] && ! grep -q '在同一 RI 上同时生效' "$KEP_ZH"; then
 #     test plan, not "should".
 if [ -f "$KEP_EN" ] && grep -q 'Admission must reject lifecycle changes' "$KEP_EN"; then
   ok CheckInflightAdmissionMust; else bad CheckInflightAdmissionMust; fi
+
+# --- group 2b: round-3 checks (delta 71dd5e87..fb6c2b36) ---
+
+# F9 (F-PROPAGATED-VS-LEGACY, round-3 form). The redesign resolves the
+#     propagated-vs-user-configured ambiguity by removal: the legacy RIS
+#     lifecycle protocol must be stated as removed with admission rejection, and
+#     the new config must live on distinct fields (Role/RIS-template/RI spec).
+if [ -f "$KEP_EN" ] && grep -q 'protocol is removed' "$KEP_EN" \
+  && grep -q 'Admission rejects' "$KEP_EN" \
+  && grep -q 'roleInstanceTemplate.lifecycle' "$KEP_EN" \
+  && grep -q 'RoleInstance.spec.lifecycle' "$KEP_EN"; then
+  ok CheckLegacyRemovalStated; else bad CheckLegacyRemovalStated; fi
+
+# F10 (F-FINALIZER-BOOTSTRAP-RACE). The reserved finalizer must be established
+#     before the effective preDelete config is exposed, and enablement on an RI
+#     that already has a deletionTimestamp must be rejected or deferred.
+if [ -f "$KEP_EN" ] && grep -q 'adds the finalizer before exposing the effective' "$KEP_EN" \
+  && grep -q 'already has a deletionTimestamp' "$KEP_EN"; then
+  ok CheckFinalizerEstablishmentOrdering; else bad CheckFinalizerEstablishmentOrdering; fi
+
+# F11 (F-NS-TEARDOWN-BYPASS). Namespace teardown must be explicitly scoped out
+#     of the live-engine guarantee (EN and zh).
+if [ -f "$KEP_EN" ] && grep -q 'Namespace teardown is outside the live-engine guarantee' "$KEP_EN" \
+  && grep -q 'namespace 删除不在存活引擎保证范围' "$KEP_ZH"; then
+  ok CheckNamespaceTeardownScoped; else bad CheckNamespaceTeardownScoped; fi
+
+# F12 (F-RBGSET-FOREGROUND-BOUNDARY). The foreground-delete admission boundary
+#     must include RBGSet (EN and zh).
+if [ -f "$KEP_EN" ] && grep -q 'for RBGSet, RBG, RIS, or RI deletion' "$KEP_EN" \
+  && grep -q 'RBGSet、RBG、RIS 或 RI foreground 删除请求' "$KEP_ZH"; then
+  ok CheckRBGSetForegroundBoundary; else bad CheckRBGSetForegroundBoundary; fi
+
+# F13 (F-NOPOSTREADY-CLEANUP-CLARIFICATION). The postReady-omitted completion
+#     path must be stated explicitly.
+if [ -f "$KEP_EN" ] && grep -q 'If `postReady` is omitted' "$KEP_EN" \
+  && grep -q 'clear `hook-state` without' "$KEP_EN"; then
+  ok CheckPostReadyOmittedPath; else bad CheckPostReadyOmittedPath; fi
+
+# F14 (F-DISABLE-SUPPORTED-CONTRADICTION). disable-supported must be consistent
+#     with the named feature gate and the clarification sentence must exist.
+if [ -f "$KEP_YAML" ] && grep -q 'disable-supported: true' "$KEP_YAML" \
+  && grep -q 'disable-supported` metadata field describes feature-gate rollback' "$KEP_EN"; then
+  ok CheckDisableSupportedClarified; else bad CheckDisableSupportedClarified; fi
+
+# F15 (wire constants, new in round 3). The normative wire names must be pinned
+#     and consistent between the README table and kep.yaml.
+if [ -f "$KEP_EN" ] && grep -q 'rbg.workloads.x-k8s.io/role-instance-hook-state' "$KEP_EN" \
+  && grep -q 'rbg.workloads.x-k8s.io/role-instance-pre-delete' "$KEP_EN" \
+  && grep -q 'RoleInstanceLifecycleHooks' "$KEP_EN" \
+  && grep -q 'RoleInstanceLifecycleHooks' "$KEP_YAML"; then
+  ok CheckWireConstantsPinned; else bad CheckWireConstantsPinned; fi
+
+# F16 (F-KEPYAML-GATE-SHAPE, new nit). kep.yaml feature-gates entries must use
+#     the repo template's object form (- name: ...), as keps/NNNN-kep-template
+#     shows; an empty list is conformant. Fails while the nit is open.
+if [ -f "$KEP_YAML" ]; then
+  entries=$(sed -n '/^feature-gates:/,/^[a-z]/p' "$KEP_YAML" | grep -c '^  - ' || true)
+  named=$(sed -n '/^feature-gates:/,/^[a-z]/p' "$KEP_YAML" | grep -c '^  - name:' || true)
+  if [ "$entries" = "$named" ]; then
+    ok CheckKepYamlFeatureGateShape; else bad CheckKepYamlFeatureGateShape; fi
+else
+  bad CheckKepYamlFeatureGateShape
+fi
+
+# F17 (F-INTERRUPT-WHEN-DEAD-AMBIGUITY, new nit). The interrupt rule must not be
+#     worded as conditional on a dead engine (the operation table is
+#     unconditional). Fails while the ambiguous sentence stands.
+if [ -f "$KEP_EN" ] && ! grep -q 'may interrupt Recovery when the previous engine is dead' "$KEP_EN"; then
+  ok CheckInterruptConditionalityClear; else bad CheckInterruptConditionalityClear; fi
 
 # --- group 3: document hygiene (regression guards for future revisions) ---
 
