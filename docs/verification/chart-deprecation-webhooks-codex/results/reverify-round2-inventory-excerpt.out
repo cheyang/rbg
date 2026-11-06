@@ -1,0 +1,10 @@
+  discovery preferredVersion: workloads.x-k8s.io/v1alpha2 (versions: [{workloads.x-k8s.io/v1alpha2 v1alpha2} {workloads.x-k8s.io/v1alpha1 v1alpha1}])
+• [0.001 seconds]
+------------------------------
+chart README deprecated-role inventory command lists every seeded deprecated role and not the modern control
+/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/test/envtest/testcase/deprecationv1a1helm/docs_inventory_test.go:111
+  inventory output:
+  RoleBasedGroup deprecation-v1a1-helm-contract/legacy-seed role=worker apps/v1/StatefulSet
+  RoleBasedGroupSet deprecation-v1a1-helm-contract/legacy-seed-set role=test-role apps/v1/StatefulSet
+Ran 10 of 12 Specs in 5.993 seconds
+SUCCESS! -- 10 Passed | 0 Failed | 0 Pending | 2 Skipped

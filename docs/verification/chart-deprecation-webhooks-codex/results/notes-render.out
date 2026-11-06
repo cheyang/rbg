@@ -1,0 +1,91 @@
+== install/toggle-default(true) ==
+
+rbgs (0.9.0-d88b3186) installed in namespace "rbgs-system".
+
+Check the controller:
+  kubectl -n rbgs-system get deploy rbgs-controller-manager
+  kubectl -n rbgs-system get pods -l control-plane=rbgs-controller
+NOTE: compatibility for existing deprecated workload types is ENABLED
+(controller.deprecatedWorkloadTypes.enabled=true).
+Existing roles keep their own deprecated workload type and continue to reconcile,
+while new uses — including switching between deprecated types — are rejected.
+v1alpha1 writes return a deprecation warning.
+For a new installation, prefer controller.deprecatedWorkloadTypes.enabled=false.
+
+NOTE: chart v0.8.0 introduced a BREAKING CHANGE: values were regrouped under
+`global`, `controller`, and `crdUpgrade`. Old top-level keys (e.g. `image.*`,
+`replicaCount`, `schedulerName`, `portAllocator.*`) are SILENTLY IGNORED by Helm.
+See the migration table in the chart README.md.
+
+== install/toggle-false ==
+
+rbgs (0.9.0-d88b3186) installed in namespace "rbgs-system".
+
+Check the controller:
+  kubectl -n rbgs-system get deploy rbgs-controller-manager
+  kubectl -n rbgs-system get pods -l control-plane=rbgs-controller
+NOTE: the deprecated workload types are DISABLED
+(controller.deprecatedWorkloadTypes.enabled=false).
+Only RoleInstanceSet is accepted; no RBAC or watches exist for Deployment,
+StatefulSet, or LeaderWorkerSet. If this cluster was upgraded and still has roles
+on those types, set controller.deprecatedWorkloadTypes.enabled=true, migrate
+them, then switch back.
+WARNING: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet,
+so a new v1alpha1 object is rejected even if it never sets `workload`. To keep using
+v1alpha1, every role must set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and
+workload.kind=RoleInstanceSet; submitting the object as v1alpha2 does this by default.
+
+NOTE: chart v0.8.0 introduced a BREAKING CHANGE: values were regrouped under
+`global`, `controller`, and `crdUpgrade`. Old top-level keys (e.g. `image.*`,
+`replicaCount`, `schedulerName`, `portAllocator.*`) are SILENTLY IGNORED by Helm.
+See the migration table in the chart README.md.
+
+== upgrade/toggle-default(true) ==
+
+rbgs upgraded to 0.9.0-d88b3186 in namespace "rbgs-system".
+
+Verify your effective values after upgrading:
+  helm -n rbgs-system get values rbgs
+
+Check the controller:
+  kubectl -n rbgs-system get deploy rbgs-controller-manager
+  kubectl -n rbgs-system get pods -l control-plane=rbgs-controller
+NOTE: compatibility for existing deprecated workload types is ENABLED
+(controller.deprecatedWorkloadTypes.enabled=true).
+Existing roles keep their own deprecated workload type and continue to reconcile,
+while new uses — including switching between deprecated types — are rejected.
+v1alpha1 writes return a deprecation warning.
+Take the deprecated-role inventory (see the chart README) and switch to
+controller.deprecatedWorkloadTypes.enabled=false once it is empty.
+
+NOTE: chart v0.8.0 introduced a BREAKING CHANGE: values were regrouped under
+`global`, `controller`, and `crdUpgrade`. Old top-level keys (e.g. `image.*`,
+`replicaCount`, `schedulerName`, `portAllocator.*`) are SILENTLY IGNORED by Helm.
+See the migration table in the chart README.md.
+
+== upgrade/toggle-false ==
+
+rbgs upgraded to 0.9.0-d88b3186 in namespace "rbgs-system".
+
+Verify your effective values after upgrading:
+  helm -n rbgs-system get values rbgs
+
+Check the controller:
+  kubectl -n rbgs-system get deploy rbgs-controller-manager
+  kubectl -n rbgs-system get pods -l control-plane=rbgs-controller
+NOTE: the deprecated workload types are DISABLED
+(controller.deprecatedWorkloadTypes.enabled=false).
+Only RoleInstanceSet is accepted; no RBAC or watches exist for Deployment,
+StatefulSet, or LeaderWorkerSet. If this cluster was upgraded and still has roles
+on those types, set controller.deprecatedWorkloadTypes.enabled=true, migrate
+them, then switch back.
+WARNING: the v1alpha1 schema defaults spec.roles[].workload to apps/v1 StatefulSet,
+so a new v1alpha1 object is rejected even if it never sets `workload`. To keep using
+v1alpha1, every role must set workload.apiVersion=workloads.x-k8s.io/v1alpha2 and
+workload.kind=RoleInstanceSet; submitting the object as v1alpha2 does this by default.
+
+NOTE: chart v0.8.0 introduced a BREAKING CHANGE: values were regrouped under
+`global`, `controller`, and `crdUpgrade`. Old top-level keys (e.g. `image.*`,
+`replicaCount`, `schedulerName`, `portAllocator.*`) are SILENTLY IGNORED by Helm.
+See the migration table in the chart README.md.
+

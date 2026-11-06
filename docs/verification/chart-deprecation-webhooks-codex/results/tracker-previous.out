@@ -1,0 +1,13 @@
+default image pin: v0.9.0-d88b3186 (commit d88b318640aa4592bbf75d18b18613c761b49e47)
+NAME                                                 PATH                                                 POLICY  SERVED-BY-PIN
+vclusterengineruntimeprofile-v1alpha1-deprecation.kb.io /validate-workloads-x-k8s-io-v1alpha1-clusterengineruntimeprofile Ignore  NO
+  note: vclusterengineruntimeprofile-v1alpha1-deprecation.kb.io unserved by the pin -> fail-open, warnings silently missing
+vinstance-v1alpha1-deprecation.kb.io                 /validate-workloads-x-k8s-io-v1alpha1-instance       Ignore  NO
+  note: vinstance-v1alpha1-deprecation.kb.io unserved by the pin -> fail-open, warnings silently missing
+vinstanceset-v1alpha1-deprecation.kb.io              /validate-workloads-x-k8s-io-v1alpha1-instanceset    Ignore  NO
+  note: vinstanceset-v1alpha1-deprecation.kb.io unserved by the pin -> fail-open, warnings silently missing
+vrolebasedgroup-v1alpha1-deprecation.kb.io           /validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup Fail    NO
+vrolebasedgroupscalingadapter-v1alpha1-deprecation.kb.io /validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupscalingadapter Ignore  NO
+  note: vrolebasedgroupscalingadapter-v1alpha1-deprecation.kb.io unserved by the pin -> fail-open, warnings silently missing
+vrolebasedgroupset-v1alpha1-deprecation.kb.io        /validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset Fail    NO
+RESULT: RED - at least one Fail-policy path is not served by the pinned image

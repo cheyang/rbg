@@ -1,5 +1,6 @@
+WARNING: Kubernetes configuration file is group-readable. This is insecure. Location: /home/ecs-user/.kube/config
+WARNING: Kubernetes configuration file is world-readable. This is insecure. Location: /home/ecs-user/.kube/config
 ==> Linting deploy/helm/rbgs
 [INFO] Chart.yaml: icon is recommended
 
 1 chart(s) linted, 0 chart(s) failed
-exit=0

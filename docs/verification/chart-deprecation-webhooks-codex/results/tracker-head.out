@@ -1,0 +1,7 @@
+default image pin: v0.9.0-d88b3186 (commit d88b318640aa4592bbf75d18b18613c761b49e47)
+NAME                                                 PATH                                                 POLICY  SERVED-BY-PIN
+vv1alpha1-warning-deprecation.kb.io                  /validate-workloads-v1alpha1-deprecation             Ignore  NO
+  note: vv1alpha1-warning-deprecation.kb.io unserved by the pin -> fail-open, warnings silently missing
+vrolebasedgroup-v1alpha1-deprecation.kb.io           /validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup Fail    NO
+vrolebasedgroupset-v1alpha1-deprecation.kb.io        /validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset Fail    NO
+RESULT: RED - at least one Fail-policy path is not served by the pinned image
