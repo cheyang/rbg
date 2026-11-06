@@ -94,11 +94,11 @@
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "C10-rbg-activity-precedence"
+        "C17-rbg-precedence-declared"
       ],
       "firstSeenSha": "f622d642ac10326f66554b590e0513734aa9249a",
-      "note": "Copilot round-3 advisory (nit, never gating): the reporting-priority list resolves between reason families, so heterogeneous Activity facts (one role Creating, another Recovering, another updating) left the RBG Progressing=True reason underdetermined. Round-4 delta (da818779) adds the within-Activity precedence Creating > Recovering > ScalingOrUpdating with rationale, the one-dominant-reason + all-activities-in-message rule, and test-plan coverage of the concurrent combinations. C10 red at f05e1dd/6335eac/f622d642, green at da818779. Round 5: the fenced precedence, one-dominant-reason rule, and rationale are intact at 0b7285b7, but the redesign dropped the unit-test bullet covering the concurrent heterogeneous combinations (Creating-over-updating/recovering); C10 part 4 goes red. Tracked as F13-concurrent-activity-coverage-regression (this manifest) rather than reopening this finding.",
-      "status": "fixed-at-0b7285b7 (design content; test-coverage component regressed, tracked as F13)"
+      "note": "Copilot round-3 advisory (nit, never gating): the reporting-priority list resolves between reason families, so heterogeneous Activity facts (one role Creating, another Recovering, another updating) left the RBG Progressing=True reason underdetermined. Round-4 delta (da818779) adds the within-Activity precedence Creating > Recovering > ScalingOrUpdating with rationale, the one-dominant-reason + all-activities-in-message rule, and test-plan coverage of the concurrent combinations. C10 red at f05e1dd/6335eac/f622d642, green at da818779. Round 5: the fenced precedence, one-dominant-reason rule, and rationale are intact at 0b7285b7, but the redesign dropped the unit-test bullet covering the concurrent heterogeneous combinations (Creating-over-updating/recovering); C10 part 4 goes red. Tracked as F13-concurrent-activity-coverage-regression (this manifest) rather than reopening this finding. Round 5: match split — C17 guards the design content (fenced list, one-dominant rule, rationale; green at head), while C10 retains the full round-4 contract including the test-plan coverage clause, which the redesign regressed (tracked as F13-concurrent-activity-coverage-regression).",
+      "status": "fixed-at-da818779 (design content intact at head; test-coverage clause regressed, tracked as F13)"
     },
     {
       "id": "F11-ris-activity-tie-break-unstated",

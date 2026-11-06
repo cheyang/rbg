@@ -767,6 +767,84 @@ def check_c16(kep_text):
          else "establishment discriminator operationalized")
 
 
+def check_c17(kep_text):
+    """C4457744212 design-content guard (split from C10 in round 5): the
+    within-Activity precedence DESIGN CONTENT only — fenced list over exactly
+    the family-table RBG activity reasons, the one-dominant-reason + message
+    rules, rationale not contradicting the list order. The test-plan
+    coverage clause lives in C10 (tracked as F13 after the round-5 delta
+    dropped the Creating-combination bullet), so this check isolates the
+    design content that the round-4 fix delivered and that must not regress.
+    Polarity: contract (fail == precedence design content missing or
+    self-contradictory).
+    """
+    problems = []
+    lines = kep_text.splitlines()
+    m = re.search(r"Within the Activity family, RBG uses this deterministic "
+                  r"precedence:\s*```\s*text\s*\n(.*?)```", kep_text, re.S)
+    if m is None:
+        problems.append("'Within the Activity family ... precedence' fenced "
+                        "list not found")
+        order = []
+    else:
+        order = [l.strip() for l in m.group(1).splitlines() if l.strip()]
+    expected = set()
+    try:
+        start = next(i for i, l in enumerate(lines)
+                     if "Activity and child-readiness reasons" in l)
+    except StopIteration:
+        expected = None
+    if expected is None:
+        problems.append("activity/child-readiness family table not found")
+    else:
+        activity_rows = ("Initial creation", "Update",
+                         "Instance-count scaling", "Recovery")
+        in_table = False
+        for l in lines[start + 1:]:
+            s = l.strip()
+            if not s:
+                if in_table:
+                    break
+                continue
+            if not s.startswith("|"):
+                if in_table:
+                    break
+                continue
+            in_table = True
+            cells = [c.strip() for c in s.strip("|").split("|")]
+            if len(cells) >= 4 and cells[0] in activity_rows:
+                for tok in re.findall(r"`([A-Za-z0-9]+)`", cells[3]):
+                    expected.add(tok)
+        if not expected:
+            problems.append("no RBG activity reasons parsed from the family "
+                            "table")
+        elif set(order) != expected:
+            problems.append("precedence list [%s] is not exactly the "
+                            "family-table RBG activity reasons [%s]"
+                            % (", ".join(order) or "(none)",
+                               ", ".join(sorted(expected))))
+    if not re.search(r"When multiple Activity facts are present, RBG uses "
+                     r"the highest-precedence activity reason", kep_text):
+        problems.append("'highest-precedence activity reason' rule not "
+                        "stated")
+    if not (re.search(r"describes (?:all|every) (?:concurrent )?activit",
+                      kep_text)
+            or re.search(r"describes all activities in message", kep_text)):
+        problems.append("all-activities-in-message clause not stated")
+    if len(order) == len(set(order)) and len(order) >= 3:
+        idx = {t: i for i, t in enumerate(order)}
+        for hi, lo in (("Creating", "Recovering"),
+                       ("Recovering", "ScalingOrUpdating")):
+            if (re.search(r"`%s` outranks" % hi, kep_text)
+                    and idx.get(hi, 99) > idx.get(lo, -1)):
+                problems.append("rationale says %s outranks %s but list "
+                                "order is %s" % (hi, lo, " > ".join(order)))
+    emit("C17-rbg-precedence-declared", not problems,
+         "; ".join(problems) if problems
+         else "RBG within-Activity precedence design content declared as "
+              "[%s]" % " > ".join(order))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default=".")
@@ -797,6 +875,7 @@ def main():
     check_c14(kep_text)
     check_c15(kep_text)
     check_c16(kep_text)
+    check_c17(kep_text)
 
     for cid, ok, detail in RESULTS:
         print("%s\t%s" % (cid, "pass" if ok else "fail"))
