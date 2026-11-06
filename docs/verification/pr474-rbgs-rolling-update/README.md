@@ -91,6 +91,60 @@ becomes whether the new path is correct — covered by POS1/POS2 below.
 
 ## Summary of results
 
+### Round 8 (head `09aaa4d7`, base tip `73e05db4`, previous head `39732268` — the blocker fix round)
+
+The author **fixed the round-6/7 blocker**. The delta `39732268..09aaa4d7`
+is four PR commits plus a merge of current main:
+
+- `94981f04` "treat empty role collections as semantically equal" —
+  **C4358788576 FIXED**: `rolesEqual` now compares with
+  `apiequality.Semantic.DeepEqual` (nil == empty map/slice), plus an author
+  round-trip regression table over 8 empty-collection shapes (env,
+  nodeSelector, tolerations, annotations, labels, dependencies,
+  servicePorts, engineRuntimes).
+- `3981d38a` "wake sets when terminating orphans disappear" —
+  **C4445152303 FIXED**: the set controller Watches ownerless RBGs and maps
+  them to their set by the set-name label (`groupSetForOrphanRBG`), with
+  unit + envtest coverage.
+- `90858736` "cover availability shortfalls when sizing surge" —
+  **C4431272984 FIXED**: `needed = min(maxSurge, max(0,
+  servingOutdated+floor-readyBase))` when `servingOutdated > 0`; the deficit
+  below the availability floor is now covered. Residual: the PR body's surge
+  formula sentence still describes the old headroom form (doc-match 44/46 —
+  see DOC-SURGE-FORMULA-R8 below).
+- `09aaa4d7` "use RoleInstanceSet for metadata-only rollout coverage" —
+  e2e test-only.
+- `276a3813` merge of origin/main `73e05db4` (upstream #524 deprecation
+  gate, #540 sts rollout-error preservation, #530 KEP-284 pod cache
+  filtering). Two conflict resolutions, both reviewed and safe:
+  `rolebasedgroupset_admission.go` keeps the PR's
+  `validateGroupSetRolloutStrategy` + `validateGroupSetScalingAdapters` on
+  the update path; `rolebasedgroupset_default.go` keeps the PR's webhook
+  marker (the `mrolebasedgroupset.kb.io` config survives in
+  `config/webhook/manifests.yaml`).
+
+| ID | Claim | Layer | Verdict | Evidence |
+|----|-------|-------|---------|----------|
+| C4358788576 (blocker, rounds 6–7) | An explicitly empty `roles[].annotations: {}` written declaratively must not wedge the child into a perpetual-outdated rewrite loop | 1+2 | **FIXED at `09aaa4d7`** — both carried contracts flipped GREEN at head: `TestVerifyPR474_EmptyRoleAnnotationsMapNoWedge` (envtest, real apiserver) and `TestVerifyPR474_RolesEqual_EmptyMapEqualsOmitted` (unit primitive); they were RED at `39732268` in round 7, so the flip is the fix signal | results/reverify-r8-unit.log; results/reverify-r8-integration.log |
+| C4431272984 (Copilot flag, rounds 6–7) | Surge sizing must cover the deficit below the availability floor, not only the serving outdated batch minus headroom | 1 | **FIXED at head** — new contract `TestVerifyPR474_Surge_DeficitBelowFloorCovered` GREEN at `09aaa4d7` and **RED at `39732268`** (differential: the old headroom formula creates only 1 surge where 2 are needed); author also added the table case "failure below the floor needs both the serving group and the deficit covered" | results/reverify-r8-unit.log; results/r8-differential-prev.log |
+| C4445152303 (Copilot flag, round 7) | A terminating orphan occupies its ordinal but its deletion never re-enqueues the set | 1 | **FIXED at head** — new contract `TestVerifyPR474_OrphanWakeWatchMapping` GREEN (ownerless/terminating labeled children map to their set; controller-owned and unlabeled do not); end-to-end refill proven by the author's envtest DescribeTable "refills an ordinal when a terminating orphan disappears" inside the full author suite, re-run GREEN at head (252 s). Harness-update: `groupSetForOrphanRBG` did not exist at `39732268`, so this contract cannot compile on older refs | results/reverify-r8-unit.log; results/author-envtest-r8.log |
+| F1/AC8 (body matches shipped API) | The PR body describes the shipped behavior | doc | **44/46 — regressed on one line**: the body's surge formula (`min(maxSurge, max(0, servingOutdated - headroom))`) no longer matches the code (`min(maxSurge, max(0, servingOutdated + floor - readyBase))` — the deficit term). New finding DOC-SURGE-FORMULA-R8 (minor, doc-only) | results/doc-match-r8.log |
+| Round-1–7 contracts (P0, POS1–POS5, F2, F8, C10, F11, F13, C11–C17, round-6/7 sets) | Full regression sweep on the merged tree — also re-verifies every carried contract against the **new base** (upstream #524/#540/#530) and the two merge resolutions | 1+2 | **Green** — 34/34 unit contracts PASS (incl. the two formerly-RED blocker contracts and the two new round-8 contracts); envtest `PR #474` focused specs ok (28 s); full repo unit sweep 37 packages ok; `-race` on `internal/controller/workloads` ok (22 s); author full rbgs_rolling envtest suite ok (252 s); CI all checks pass at `09aaa4d7` (incl. E2E rollout) | results/reverify-r8-unit.log; results/reverify-r8-integration.log; results/full-unit-r8.log; results/race-r8.log; results/author-envtest-r8.log |
+| F12 (canary) | One-time migration churn for sets minted by intermediate PR commits | 1 | **Still present** (canary PASSes) — untouched by the delta | results/reverify-r8-unit.log |
+
+Round-8 notes:
+- **New harness file**:
+  `internal/controller/workloads/rolebasedgroupset_round8_verify_test.go`
+  (two new contracts). Additive only; production code untouched.
+- Open items carried unchanged (their files are untouched by the delta):
+  C4242488120, C4242488140, C4242488155, Q1, Q2, F5, F6, F17, F18,
+  F3-release-note, C4431272968, C4445152194.
+- New finding this round: **DOC-SURGE-FORMULA-R8** (minor) — the body's
+  surge-sizing formula sentence was not updated with `90858736`; the
+  qualitative claim next to it ("an already-unready held-back group ...
+  available surge capacity to be used instead of stalling") is now *more*
+  accurate than before, only the formula token is stale.
+
 ### Round 7 (head `39732268`, base tip `09accf63`, previous head `af9dd84b` — delta = a rebase onto current main plus one test-only commit)
 
 The author **did not address the round-6 blocker**. The PR advanced

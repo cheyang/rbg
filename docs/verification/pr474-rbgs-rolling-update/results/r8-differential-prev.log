@@ -1,0 +1,12 @@
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-v2
+        	            	+
+        	Test:       	TestVerifyPR474_Surge_DeficitBelowFloorCovered
+        	Messages:   	second surge covers the deficit below the floor (C4431272984)
+2026-11-07T05:59:35+08:00	INFO	Start to reconcile rbgset	{"rbgset": {"name":"surge-deficit","namespace":"default"}}
+--- FAIL: TestVerifyPR474_Surge_DeficitBelowFloorCovered (0.05s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.065s
+FAIL
