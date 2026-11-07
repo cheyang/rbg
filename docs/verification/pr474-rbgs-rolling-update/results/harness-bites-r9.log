@@ -1,0 +1,5 @@
+            	Error:      	Should be false
+            	Test:       	TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates/annotations
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.013s
+FAIL

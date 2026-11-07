@@ -12,7 +12,8 @@
   "api/workloads/v1alpha2/rolebasedgroupset_round6_verify_test.go",
   "pkg/reconciler/round6_verify_test.go",
   "internal/controller/workloads/rolebasedgroupset_round7_verify_test.go",
-  "internal/controller/workloads/rolebasedgroupset_round8_verify_test.go"
+  "internal/controller/workloads/rolebasedgroupset_round8_verify_test.go",
+  "internal/controller/workloads/rolebasedgroupset_round9_verify_test.go"
  ],
  "premise": {
   "id": "P0",
@@ -280,6 +281,24 @@
     "TestVerifyPR474_OrphanWakeWatchMapping"
    ],
    "note": "round-7 Copilot flag (a terminating orphan occupies its ordinal but its deletion never re-enqueues the set), fixed this round by 3981d38a: the set controller now Watches ownerless RBGs and maps them to their set by the set-name label. Contract green at head; the symbol did not exist at 39732268 (harness-update for older refs). End-to-end refill covered by the author's envtest DescribeTable 'refills an ordinal when a terminating orphan disappears without unrelated writes' (results/r8-author-envtest.log)."
+  },
+  {
+   "id": "R8TPLCHURN",
+   "polarity": "contract",
+   "layer": "unit (needsUpdate primitive through the real child-creation round trip)",
+   "match": [
+    "TestVerifyPR474_NeedsUpdate_SemanticRoleTemplates"
+   ],
+   "note": "round 9 (head 8f07c37e): FIXED by 8f07c37e \u2014 needsUpdate now compares RoleTemplates with apiequality.Semantic.DeepEqual (nil == empty map/slice), one function below the round-8 rolesEqual swap for the same defect class. Differential: reverting the production one-liner to reflect.DeepEqual makes the author's 5-subtest table TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates all RED (results/harness-bites-r9.log); at head all GREEN. The contract above pins the same behavior through newRBGForSet serialization; carried 34 unit contracts + envtest stay green (results/reverify-r9-unit.log, results/reverify-r9-integration.log). Residual nit F6 (order-sensitivity of the slice comparison) remains open \u2014 Semantic.DeepEqual compares slices in order."
+  },
+  {
+   "id": "DOC-SURGE-FORMULA-R8",
+   "polarity": "contract",
+   "layer": "docs (body-vs-code doc-match)",
+   "match": [
+    "scripts/doc-match-r9.sh"
+   ],
+   "note": "round 9 (head 8f07c37e): FIXED \u2014 the PR body's surge-sizing sentence was rewritten to the shipped deficit-inclusive form: 'the desired surge count is min(maxSurge, max(0, servingOutdated + floor - readyBase)) when servingOutdated > 0, otherwise 0'. doc-match-r9.sh re-pins body and code to that exact formula (plus asserts neither contains the round-6 headroom form) and re-runs every prior body claim: 51/51 PASS, body matches the shipped API (results/doc-match-r9.log). The round-8 gate (AC8) is satisfied."
   }
  ],
  "liveNote": "L3 (live layer) was NOT run: the debate pipeline mandates unit + integration only. The author's kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers paced recreate, surge, partition, and InPlaceUpdate UID preservation on a real cluster; make test-e2e is wired to PR CI.",
@@ -349,6 +368,13 @@
    "newFindings": [
     "DOC-SURGE-FORMULA-R8 (body formula drift, minor)"
    ]
+  },
+  {
+   "round": 9,
+   "headSha": "8f07c37e7110907f43a38343f05633fe37e210b7",
+   "previousHeadSha": "09aaa4d70d4f8525224fe12ead63d18c16ffbedb",
+   "delta": "single commit 8f07c37e on top of the round-8 head (no rebase, base unchanged at 73e05db4): needsUpdate RoleTemplates comparison swapped from reflect.DeepEqual to apiequality.Semantic.DeepEqual plus the author's round-trip regression table (R8TPLCHURN fixed). PR body surge-formula sentence rewritten to the deficit-inclusive form (DOC-SURGE-FORMULA-R8 / AC8 fixed).",
+   "newFindings": []
   }
  ]
 }
