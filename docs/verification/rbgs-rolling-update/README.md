@@ -331,3 +331,31 @@ New round-8 probes (results/reverify/r8-round8-unit-{39732268,09aaa4d7}.log):
   static path — same defect class as C4358788576, one comparison away, churn only
   (no rollout wedge). Bites-checked: swapping to apiequality.Semantic turns it
   green.
+
+## Round 9 — head 8f07c37e (one-commit delta: needsUpdate semantic equality)
+
+Delta `09aaa4d7..8f07c37e` is a single commit, `8f07c37e fix(rbgs): compare role
+templates semantically`: `needsUpdate` (static path, sole caller
+`rolebasedgroupset_controller.go:187`) now compares `RoleTemplates` with
+`apiequality.Semantic.DeepEqual`, plus an author regression test
+(`TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates`, 5 empty-collection
+shapes + premise/non-mutation/real-change controls). Parentage is linear
+(8f07c37e's parent is 09aaa4d7); base unchanged at 73e05db4.
+
+- **R8TPLCHURN FIXED** (differential: RED at 09aaa4d7 in
+  results/reverify/r8-round8-unit-09aaa4d7.log, GREEN at head in
+  results/reverify/unit-8f07c37e.parsed; author test green at head). F6's
+  order-sensitivity half remains open by design: semantic DeepEqual equates
+  nil/empty but compares slices in order.
+- **DOC-SURGE-FORMULA-R8 FIXED**: the PR body (live, updated 2026-11-07T17:25:21Z)
+  now documents `floor = max(0, replicas - maxUnavailable)`; desired surge
+  `min(maxSurge, max(0, servingOutdated + floor - readyBase))` when
+  `servingOutdated > 0`, else 0 — matching rolling.go:429. Harness-update, not a
+  code signal: `bodyDocumentedSurgeFormula` re-transcribed from the fixed body;
+  R8SURGEDOC grid green at head (90/90 cells).
+- F10 pin promoted canary -> contract (the round-6 body rewrite resolved the
+  finding; the pin now guards shipped, body-consistent behavior).
+- Re-verify at 8f07c37e (results/reverify/unit-8f07c37e.parsed,
+  integration-8f07c37e.parsed): **28/28 FIXED, RESULT: all findings fixed**,
+  exit 0. Author workloads+api unit sweep green at head. CI 22/22 SUCCESS on
+  8f07c37e. L3 skipped per debate setup.
