@@ -77,22 +77,30 @@ func TestVerify_R8_RolesEqualEmptyCollections(t *testing.T) {
 }
 
 // bodyDocumentedSurgeFormula transcribes the PR body's section
-// "Rolling and live-budget surge sizing" verbatim:
+// "Rolling and live-budget surge sizing" verbatim. Round-9 transcription, from the
+// body live at 2026-11-07T17:25:21Z (updated after round 8 flagged the drift):
 //
 //	floor = max(0, replicas - maxUnavailable)
-//	headroom = max(0, readyBase - floor)
-//	desired surge = min(maxSurge, max(0, servingOutdated - headroom))
+//	desired surge = min(maxSurge, max(0, servingOutdated + floor - readyBase))
+//	                when servingOutdated > 0, otherwise 0
+//
+// (Round 8 and earlier transcribed the pre-fix body: headroom = max(0, readyBase -
+// floor); desired = min(maxSurge, max(0, servingOutdated - headroom)). The body edit
+// resolved DOC-SURGE-FORMULA-R8 in the direction of the shipped code.)
 func bodyDocumentedSurgeFormula(replicas, maxUnavailable, maxSurge, servingOutdated, readyBase int) int {
 	floor := max(0, replicas-maxUnavailable)
-	headroom := max(0, readyBase-floor)
-	return min(maxSurge, max(0, servingOutdated-headroom))
+	if servingOutdated == 0 {
+		return 0
+	}
+	return min(maxSurge, max(0, servingOutdated+floor-readyBase))
 }
 
 // TestVerify_R8_SurgeMatchesBodyDocumentedFormula is a contract test: the shipped surge
 // sizing must match the formula the PR body publishes. It exercises the real
 // warmUpGroupSetSurge over an availability grid and compares created surge children
 // against the documented formula. RED at 09aaa4d7 whenever readyBase < floor and
-// servingOutdated > 0 (90858736's new deficit term is undocumented).
+// servingOutdated > 0 (90858736's new deficit term was undocumented); GREEN at 8f07c37e
+// after the body was updated to the deficit-inclusive form.
 func TestVerify_R8_SurgeMatchesBodyDocumentedFormula(t *testing.T) {
 	const replicas = 4
 	scheme := runtime.NewScheme()
