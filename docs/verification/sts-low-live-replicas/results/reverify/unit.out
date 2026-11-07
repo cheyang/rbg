@@ -1,0 +1,8 @@
+{"Time":"2026-11-08T02:14:28.225619724+08:00","Action":"start","Package":"sigs.k8s.io/rbgs/pkg/reconciler"}
+{"Time":"2026-11-08T02:14:28.238240133+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired"}
+{"Time":"2026-11-08T02:14:28.238301596+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired","Output":"=== RUN   TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired\n","OutputType":"frame"}
+{"Time":"2026-11-08T02:14:28.238330106+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired","Output":"--- PASS: TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-11-08T02:14:28.238334507+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Test":"TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired","Elapsed":0}
+{"Time":"2026-11-08T02:14:28.238339167+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Output":"PASS\n","OutputType":"frame"}
+{"Time":"2026-11-08T02:14:28.23954869+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Output":"ok  \tsigs.k8s.io/rbgs/pkg/reconciler\t0.014s\n"}
+{"Time":"2026-11-08T02:14:28.239575101+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/pkg/reconciler","Elapsed":0.014}
