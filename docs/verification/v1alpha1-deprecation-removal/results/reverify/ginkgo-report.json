@@ -1,0 +1,650 @@
+[
+  {
+    "SuitePath": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1",
+    "SuiteDescription": "v1alpha1 Deprecation Removal Verification Suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": true,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 7,
+      "SpecsThatWillRun": 7
+    },
+    "StartTime": "2026-11-08T01:00:32.538716709+08:00",
+    "EndTime": "2026-11-08T01:00:39.253566724+08:00",
+    "RunTime": 6714850015,
+    "SuiteConfig": {
+      "RandomSeed": 1794070832,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": null,
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/suite_test.go",
+          "LineNumber": 118
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-11-08T01:00:32.53874911+08:00",
+        "EndTime": "2026-11-08T01:00:38.057814243+08:00",
+        "RunTime": 5519065133,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-11-08T01:00:32+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/config/crd/bases\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-11-08T01:00:34+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-08T01:00:35+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/convert\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=CoordinatedPolicy\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleInstanceSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.webhook\tStarting webhook server\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.certwatcher\tUpdated current TLS certificate\t{\"cert\": \"/tmp/envtest-serving-certs-3611082448/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-3611082448/tls.key\"}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.webhook\tServing webhook server\t{\"host\": \"127.0.0.1\", \"port\": 41755}\n2026-11-08T01:00:35+08:00\tINFO\tcontroller-runtime.certwatcher\tStarting certificate poll+watcher\t{\"cert\": \"/tmp/envtest-serving-certs-3611082448/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-3611082448/tls.key\", \"interval\": \"10s\"}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/suite_test.go",
+              "LineNumber": 118
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-11-08T01:00:32.53875791+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/suite_test.go",
+              "LineNumber": 123
+            },
+            "TimelineLocation": {
+              "Order": 2,
+              "Time": "2026-11-08T01:00:32.538805732+08:00"
+            },
+            "Message": "bootstrapping the v1alpha1 verification environment"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/suite_test.go",
+              "LineNumber": 154
+            },
+            "TimelineLocation": {
+              "Offset": 4696,
+              "Order": 3,
+              "Time": "2026-11-08T01:00:35.866736989+08:00"
+            },
+            "Message": "registering the production webhook handlers this commit serves"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/suite_test.go",
+              "LineNumber": 195
+            },
+            "TimelineLocation": {
+              "Offset": 7885,
+              "Order": 4,
+              "Time": "2026-11-08T01:00:35.967516088+08:00"
+            },
+            "Message": "creating the test namespace"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/suite_test.go",
+              "LineNumber": 199
+            },
+            "TimelineLocation": {
+              "Offset": 7885,
+              "Order": 5,
+              "Time": "2026-11-08T01:00:35.970458213+08:00"
+            },
+            "Message": "seeding the pre-gate legacy state while no webhook configuration is installed"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/suite_test.go",
+              "LineNumber": 202
+            },
+            "TimelineLocation": {
+              "Offset": 7885,
+              "Order": 6,
+              "Time": "2026-11-08T01:00:38.050335707+08:00"
+            },
+            "Message": "installing the shipped webhook manifests"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/suite_test.go",
+              "LineNumber": 118
+            },
+            "TimelineLocation": {
+              "Offset": 7885,
+              "Order": 8,
+              "Time": "2026-11-08T01:00:38.057813223+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 5519055313,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation contract after webhook removal"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+            "LineNumber": 37
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+          "LineNumber": 42
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a v1alpha1 create with a new deprecated workload use",
+        "State": "passed",
+        "StartTime": "2026-11-08T01:00:38.057851104+08:00",
+        "EndTime": "2026-11-08T01:00:38.061027588+08:00",
+        "RunTime": 3176484,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+              "LineNumber": 42
+            },
+            "TimelineLocation": {
+              "Order": 9,
+              "Time": "2026-11-08T01:00:38.057854375+08:00"
+            },
+            "Message": "rejects a v1alpha1 create with a new deprecated workload use",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+              "LineNumber": 42
+            },
+            "TimelineLocation": {
+              "Order": 11,
+              "Time": "2026-11-08T01:00:38.061023888+08:00"
+            },
+            "Message": "rejects a v1alpha1 create with a new deprecated workload use",
+            "Duration": 3169522,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation contract after webhook removal"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+            "LineNumber": 37
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+          "LineNumber": 56
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a v1alpha1 create whose role workload is only schema-defaulted",
+        "State": "passed",
+        "StartTime": "2026-11-08T01:00:38.061048238+08:00",
+        "EndTime": "2026-11-08T01:00:38.063949082+08:00",
+        "RunTime": 2900854,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+              "LineNumber": 56
+            },
+            "TimelineLocation": {
+              "Order": 12,
+              "Time": "2026-11-08T01:00:38.061049829+08:00"
+            },
+            "Message": "rejects a v1alpha1 create whose role workload is only schema-defaulted",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+              "LineNumber": 56
+            },
+            "TimelineLocation": {
+              "Order": 14,
+              "Time": "2026-11-08T01:00:38.063943601+08:00"
+            },
+            "Message": "rejects a v1alpha1 create whose role workload is only schema-defaulted",
+            "Duration": 2893783,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation contract after webhook removal"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+            "LineNumber": 37
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+          "LineNumber": 76
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a v1alpha1 RoleBasedGroupSet create with a deprecated workload template",
+        "State": "passed",
+        "StartTime": "2026-11-08T01:00:38.063973793+08:00",
+        "EndTime": "2026-11-08T01:00:38.141591926+08:00",
+        "RunTime": 77618144,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+              "LineNumber": 76
+            },
+            "TimelineLocation": {
+              "Order": 15,
+              "Time": "2026-11-08T01:00:38.063976253+08:00"
+            },
+            "Message": "rejects a v1alpha1 RoleBasedGroupSet create with a deprecated workload template",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+              "LineNumber": 76
+            },
+            "TimelineLocation": {
+              "Order": 17,
+              "Time": "2026-11-08T01:00:38.141585436+08:00"
+            },
+            "Message": "rejects a v1alpha1 RoleBasedGroupSet create with a deprecated workload template",
+            "Duration": 77609183,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation contract after webhook removal"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+            "LineNumber": 37
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+          "LineNumber": 93
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "returns exactly one deprecation warning on an accepted v1alpha1 create",
+        "State": "passed",
+        "StartTime": "2026-11-08T01:00:38.141618307+08:00",
+        "EndTime": "2026-11-08T01:00:38.146153739+08:00",
+        "RunTime": 4535432,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+              "LineNumber": 93
+            },
+            "TimelineLocation": {
+              "Order": 18,
+              "Time": "2026-11-08T01:00:38.141621147+08:00"
+            },
+            "Message": "returns exactly one deprecation warning on an accepted v1alpha1 create",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+              "LineNumber": 93
+            },
+            "TimelineLocation": {
+              "Order": 20,
+              "Time": "2026-11-08T01:00:38.146147849+08:00"
+            },
+            "Message": "returns exactly one deprecation warning on an accepted v1alpha1 create",
+            "Duration": 4526702,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation contract after webhook removal"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+            "LineNumber": 37
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+          "LineNumber": 109
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "still accepts a grandfathered v1alpha1 update that keeps its deprecated workload type",
+        "State": "passed",
+        "StartTime": "2026-11-08T01:00:38.14617461+08:00",
+        "EndTime": "2026-11-08T01:00:38.153672787+08:00",
+        "RunTime": 7498177,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+              "LineNumber": 109
+            },
+            "TimelineLocation": {
+              "Order": 21,
+              "Time": "2026-11-08T01:00:38.14617694+08:00"
+            },
+            "Message": "still accepts a grandfathered v1alpha1 update that keeps its deprecated workload type",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+              "LineNumber": 109
+            },
+            "TimelineLocation": {
+              "Order": 23,
+              "Time": "2026-11-08T01:00:38.153667576+08:00"
+            },
+            "Message": "still accepts a grandfathered v1alpha1 update that keeps its deprecated workload type",
+            "Duration": 7490626,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation contract after webhook removal"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+            "LineNumber": 37
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+          "LineNumber": 127
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a v1alpha1 update that switches to a different deprecated workload type",
+        "State": "passed",
+        "StartTime": "2026-11-08T01:00:38.15374689+08:00",
+        "EndTime": "2026-11-08T01:00:38.159530425+08:00",
+        "RunTime": 5783546,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+              "LineNumber": 127
+            },
+            "TimelineLocation": {
+              "Order": 24,
+              "Time": "2026-11-08T01:00:38.153749779+08:00"
+            },
+            "Message": "rejects a v1alpha1 update that switches to a different deprecated workload type",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+              "LineNumber": 127
+            },
+            "TimelineLocation": {
+              "Order": 26,
+              "Time": "2026-11-08T01:00:38.159525645+08:00"
+            },
+            "Message": "rejects a v1alpha1 update that switches to a different deprecated workload type",
+            "Duration": 5775865,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 deprecation contract after webhook removal"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+            "LineNumber": 37
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+          "LineNumber": 145
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "reads the legacy object back through the v1alpha1 API",
+        "State": "passed",
+        "StartTime": "2026-11-08T01:00:38.159552666+08:00",
+        "EndTime": "2026-11-08T01:00:38.161048499+08:00",
+        "RunTime": 1495844,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+              "LineNumber": 145
+            },
+            "TimelineLocation": {
+              "Order": 27,
+              "Time": "2026-11-08T01:00:38.159554806+08:00"
+            },
+            "Message": "reads the legacy object back through the v1alpha1 API",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/gate_contract_test.go",
+              "LineNumber": 145
+            },
+            "TimelineLocation": {
+              "Order": 29,
+              "Time": "2026-11-08T01:00:38.161045969+08:00"
+            },
+            "Message": "reads the legacy object back through the v1alpha1 API",
+            "Duration": 1491163,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/suite_test.go",
+          "LineNumber": 207
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-11-08T01:00:38.1610585+08:00",
+        "EndTime": "2026-11-08T01:00:39.253549393+08:00",
+        "RunTime": 1092490893,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-11-08T01:00:38+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-11-08T01:00:38+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-11-08T01:00:38+08:00\tINFO\tStopping and waiting for caches\n2026-11-08T01:00:38+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-11-08T01:00:38+08:00\tINFO\tStopping and waiting for webhooks\n2026-11-08T01:00:38+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-watching file\t{\"cert\": \"/tmp/envtest-serving-certs-3611082448/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-3611082448/tls.key\", \"error\": \"no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:235\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-11-08T01:00:38+08:00\tINFO\tcontroller-runtime.webhook\tShutting down webhook server with timeout of 1 minute\n2026-11-08T01:00:38+08:00\tDEBUG\tcontroller-runtime.certwatcher\tcertificate event\t{\"cert\": \"/tmp/envtest-serving-certs-3611082448/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-3611082448/tls.key\", \"event\": \"CHMOD         \\\"/tmp/envtest-serving-certs-3611082448/tls.key\\\"\"}\n2026-11-08T01:00:38+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-reading certificate\t{\"cert\": \"/tmp/envtest-serving-certs-3611082448/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-3611082448/tls.key\", \"error\": \"open /tmp/envtest-serving-certs-3611082448/tls.crt: no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:243\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-11-08T01:00:39+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-11-08T01:00:39+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/suite_test.go",
+              "LineNumber": 207
+            },
+            "TimelineLocation": {
+              "Order": 30,
+              "Time": "2026-11-08T01:00:38.16105947+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1/suite_test.go",
+              "LineNumber": 207
+            },
+            "TimelineLocation": {
+              "Offset": 2261,
+              "Order": 32,
+              "Time": "2026-11-08T01:00:39.253547233+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 1092487753,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]

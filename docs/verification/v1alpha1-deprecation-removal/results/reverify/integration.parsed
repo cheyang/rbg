@@ -1,0 +1,7 @@
+rejects a v1alpha1 create with a new deprecated workload use	pass
+rejects a v1alpha1 create whose role workload is only schema-defaulted	pass
+rejects a v1alpha1 RoleBasedGroupSet create with a deprecated workload template	pass
+returns exactly one deprecation warning on an accepted v1alpha1 create	pass
+still accepts a grandfathered v1alpha1 update that keeps its deprecated workload type	pass
+rejects a v1alpha1 update that switches to a different deprecated workload type	pass
+reads the legacy object back through the v1alpha1 API	pass
