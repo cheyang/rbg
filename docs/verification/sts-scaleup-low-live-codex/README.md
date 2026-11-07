@@ -139,3 +139,20 @@ uses the idle path (branch returns (0,4), floor raises to 2, log prints 0), and
 the F7 decision-point assertion expects (2,5).
 
 Full `go test ./pkg/reconciler` on c768d5cd: ok. `go build ./...`: clean.
+
+### Round-2 harness fix (envtest flake, harness-only)
+
+The round-1 emulated StatefulSet ControllerRevision carried no owner reference.
+The RBG controller's `getCurrentRevision` lists revisions by the group-name
+label (present in the STS selector labels) and adopts entries with no ownerRef;
+the emulated revision then tied at `Revision: 1` with the RBG revision and, when
+the cache list order placed it last (`GetHighestRevision` keeps the last max),
+`SetMatchesRevision(rbg, proposed, {})` returned true (an empty patch applies
+cleanly) and `GetRolesRevisionHash({})` failed every poisoned reconcile with
+"spec not found or wrong type", blocking scale-back until timeout. The real
+kube StatefulSet controller sets a controller reference to the STS, which
+excludes its revisions from that listing (`ref.UID != rbg.UID`). The harness now
+sets the same ownerRef; 3 consecutive green runs in the previously failing
+environment. Production code untouched; this was a harness fidelity bug, not a
+PR regression (revision-selection code is identical on both bases and untouched
+by the PR).

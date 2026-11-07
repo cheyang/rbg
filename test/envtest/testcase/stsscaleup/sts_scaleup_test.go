@@ -113,6 +113,19 @@ var _ = Describe("PR553 verify: sts scale-up before rolling when live replicas a
 				Name:      stsName + "-emulated",
 				Namespace: testNs,
 				Labels:    sts.Spec.Selector.MatchLabels,
+				// The real kube StatefulSet controller sets a controller
+				// reference to the STS on its ControllerRevisions. This matters:
+				// the RBG controller's getCurrentRevision lists revisions by the
+				// group-name label (which the STS selector labels include) and
+				// keeps objects with no ownerRef or an ownerRef to the RBG
+				// (adoption semantics). Without this ownerRef the emulated
+				// revision is adopted into the RBG's revision list, ties at
+				// Revision 1 with the RBG revision, and — whenever the cache
+				// list order places it last — poisons handleRevisions
+				// ("spec not found or wrong type"), flakily blocking recovery.
+				OwnerReferences: []metav1.OwnerReference{
+					*metav1.NewControllerRef(sts, appsv1.SchemeGroupVersion.WithKind("StatefulSet")),
+				},
 			},
 			Data:     runtime.RawExtension{Raw: []byte("{}")},
 			Revision: 1,
