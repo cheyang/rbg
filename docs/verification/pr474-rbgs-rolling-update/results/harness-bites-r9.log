@@ -1,5 +1,17 @@
-            	Error:      	Should be false
-            	Test:       	TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates/annotations
+== harness-bites: production fix reverted (apiequality -> reflect.DeepEqual), head 8f07c37e ==
+=== RUN   TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates
+=== RUN   TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates/env
+=== RUN   TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates/nodeSelector
+=== RUN   TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates/tolerations
+=== RUN   TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates/labels
+=== RUN   TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates/annotations
+--- FAIL: TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates (0.00s)
+    --- FAIL: TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates/env (0.00s)
+    --- FAIL: TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates/nodeSelector (0.00s)
+    --- FAIL: TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates/tolerations (0.00s)
+    --- FAIL: TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates/labels (0.00s)
+    --- FAIL: TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates/annotations (0.00s)
 FAIL
-FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.013s
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.015s
 FAIL
+== restored: production diff empty: 0 lines ==

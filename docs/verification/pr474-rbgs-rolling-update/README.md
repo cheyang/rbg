@@ -91,6 +91,47 @@ becomes whether the new path is correct — covered by POS1/POS2 below.
 
 ## Summary of results
 
+### Round 9 (head `8f07c37e`, base tip `73e05db4`, previous head `09aaa4d7` — the round-8 gate closed)
+
+The delta `09aaa4d7..8f07c37e` is a **single commit** (no rebase, base
+unchanged) and the PR body was edited:
+
+- `8f07c37e` "compare role templates semantically" — **R8TPLCHURN FIXED**:
+  `needsUpdate` now compares `RoleTemplates` with
+  `apiequality.Semantic.DeepEqual` (nil == empty map/slice), one function
+  below the round-8 `rolesEqual` swap for the same defect class, plus the
+  author's round-trip regression table
+  (`TestRoleBasedGroupSetReconciler_NeedsUpdateEmptyRoleTemplates`, 5 shapes).
+- PR body edit — **DOC-SURGE-FORMULA-R8 FIXED / AC8 satisfied**: the
+  surge-sizing sentence now reads the shipped deficit-inclusive form
+  (`min(maxSurge, max(0, servingOutdated + floor - readyBase))` when
+  `servingOutdated > 0`, otherwise `0`).
+
+No new findings this round. Both round-8 gates are closed with differential
+or mechanical evidence; every carried contract stays green.
+
+| ID | Claim | Layer | Verdict | Evidence |
+|----|-------|-------|---------|----------|
+| R8TPLCHURN (round-8 minor) | An explicitly-empty collection stored in a role template must not mark a serialized child as forever-outdated on the strategy-less path | 1 | **FIXED at `8f07c37e`** — reverting the production one-liner to `reflect.DeepEqual` makes the author's 5-subtest table all RED; at head all GREEN (harness-bites check, production diff restored empty). New carried contract `TestVerifyPR474_NeedsUpdate_SemanticRoleTemplates` pins the same behavior through the real `newRBGForSet` round trip | results/harness-bites-r9.log; results/reverify-r9-unit.log |
+| DOC-SURGE-FORMULA-R8 / AC8 (round-8 gate) | The PR body's surge-sizing formula matches the shipped code | doc | **FIXED** — `doc-match-r9.sh` re-pins body and code to the deficit-inclusive formula (and asserts neither still contains the round-6 headroom form), re-running every prior body claim: **51/51 PASS, body matches the shipped API** | results/doc-match-r9.log |
+| Round-1–8 contracts (35 carried + 2 round-8) | Full regression sweep on the new head | 1+2 | **Green** — 37/37 unit contract lines PASS (incl. the new round-9 contract), envtest `PR #474` focused specs ok (28 s), full repo unit sweep 40 packages ok (`unit-sweep-exit=0`), `-race` on `internal/controller/workloads` ok (22 s), author full rbgs_rolling envtest suite green; CI: all 22 checks pass at `8f07c37e` (live fetch 2026-11-08, incl. E2E rollout, envtest, unit-test) | results/reverify-r9-unit.log; results/reverify-r9-integration.log; results/full-unit-r9.log; results/race-r9.log; results/author-envtest-r9.log |
+| F6 (nit) | `RoleTemplates` comparison is order-sensitive (Semantic.DeepEqual compares slices in order; `rolesEqual` sorts, this path does not) | 1 | **Still open** (churn-only, unchanged by the swap) — not regressed | code review, `rolebasedgroupset_controller.go:497` |
+| F12 (canary) | One-time migration churn for sets minted by intermediate PR commits | 1 | **Still present** (canary PASSes) — untouched by the delta | results/reverify-r9-unit.log |
+| C4498053235 (minor doc) | Stale godoc "It must not be greater than Replicas." on `Partition` | code | **Still open** — verified unchanged at `8f07c37e` (`rolebasedgroupset_types.go:85`); folds into the doc pass | `git show 8f07c37e:api/.../rolebasedgroupset_types.go` |
+
+Round-9 notes:
+- Open items carried unchanged (no code or comment change in their files):
+  C4242488120, C4242488140, C4242488155, Q1, Q2 (no author answer yet —
+  last PR comment is 2026-10-08), F5, F6, F17, F18, F3-release-note,
+  C4431272968, C4445152194, C4498053179.
+- New harness file:
+  `internal/controller/workloads/rolebasedgroupset_round9_verify_test.go`
+  (one new contract). New script `scripts/doc-match-r9.sh`. Additive only;
+  production code untouched.
+- `re-verify.sh` exits 1 after a fully green run because its final verdict
+  grep finds no `--- PASS` lines in the ginkgo-v1 integration log (benign,
+  same shape as round 8's recorded run); the test layers themselves exit 0.
+
 ### Round 8 (head `09aaa4d7`, base tip `73e05db4`, previous head `39732268` — the blocker fix round)
 
 The author **fixed the round-6/7 blocker**. The delta `39732268..09aaa4d7`

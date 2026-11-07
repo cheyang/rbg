@@ -1,0 +1,6 @@
+        	Error:      	Should be false
+        	Test:       	TestVerifyPR474_NeedsUpdate_SemanticRoleTemplates
+        	Messages:   	an explicitly-empty collection dropped by serialization must not mark the child outdated
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.014s
+FAIL
