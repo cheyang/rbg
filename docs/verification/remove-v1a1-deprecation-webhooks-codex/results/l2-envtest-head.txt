@@ -1,0 +1,14 @@
+=== RUN   TestV1alpha1Gate
+Running Suite: v1alpha1 Through-Conversion Gate Suite (PR556 verify) - /home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate
+==========================================================================================================================================================
+Random Seed: 1794070719
+
+Will run 7 of 7 specs
+2026/11/08 00:58:43 http: TLS handshake error from 127.0.0.1:55984: EOF
+•••••••
+
+Ran 7 of 7 Specs in 7.284 seconds
+SUCCESS! -- 7 Passed | 0 Failed | 0 Pending | 0 Skipped
+--- PASS: TestV1alpha1Gate (7.28s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/v1a1gate	7.301s
