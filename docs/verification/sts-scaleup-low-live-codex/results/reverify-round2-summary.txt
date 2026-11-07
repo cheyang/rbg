@@ -1,0 +1,4 @@
+TestVerifyPR553RollingUpdatePartitionLiveFarBelowDesired	pass
+TestVerifyPR553RollingUpdateParametersScalesBackUp	pass
+TestVerifyPR553InFlightRecoveryConvergesWithSurge	pass
+TestPR553StatefulSetScaleUp (integration)	pass
