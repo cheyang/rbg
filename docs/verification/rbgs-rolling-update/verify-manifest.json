@@ -152,12 +152,12 @@
     },
     {
       "id": "F10",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
         "TestVerify_BodyClaim_CurrentReplicasCountsHeldBack"
       ],
-      "note": "Round 3: pins that held-back ordinals (index < partition, old revision) ARE counted in status.currentReplicas \u2014 the round-3 PR body's 'excluded from ... currentReplicas' clause is inaccurate while this passes. Flips RED if the controller changes to exclude them (body then becomes correct)."
+      "note": "Round 3: pinned that held-back ordinals (index < partition, old revision) ARE counted in status.currentReplicas while the round-3 body claimed exclusion. F10 was resolved by the round-6 body rewrite (clause removed). Round 9: promoted canary->contract; GREEN = shipped behavior intact and body-consistent."
     },
     {
       "id": "R4FIX",

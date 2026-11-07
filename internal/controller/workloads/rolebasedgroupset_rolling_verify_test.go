@@ -479,15 +479,15 @@ func TestVerify_ControllerClampsPercentZeroZero_Contract(t *testing.T) {
 	assert.Equal(t, 0, limits.maxSurge)
 }
 
-// TestVerify_BodyClaim_CurrentReplicasCountsHeldBack — POLARITY: CANARY (behavior pin).
-// The round-3 PR body claims "Held-back ordinals are excluded from rolloutComplete,
-// expectedUpdatedReplicas, and currentReplicas." The code counts held-back ordinals
-// (index < partition, still on the current/old revision) in status.CurrentReplicas —
-// updateRollingGroupSetStatus has no partition filter on the CurrentReplicas branch,
-// and the author's own TestSyncRollingGroupSet_StrategiesRecoverMissingOrdinals pins
-// CurrentReplicas=2 with partition=3. While this test PASSES, that body clause is
-// inaccurate; if the controller is changed to exclude held-back ordinals from
-// CurrentReplicas, this flips RED and the body clause becomes true.
+// TestVerify_BodyClaim_CurrentReplicasCountsHeldBack — POLARITY: CONTRACT (promoted
+// round 9 from canary). The round-3 PR body claimed "Held-back ordinals are excluded
+// from rolloutComplete, expectedUpdatedReplicas, and currentReplicas"; the code counts
+// held-back ordinals (index < partition, still on the current/old revision) in
+// status.CurrentReplicas — updateRollingGroupSetStatus has no partition filter on the
+// CurrentReplicas branch. F10 was resolved by the round-6 body rewrite, which dropped
+// the inaccurate clause; the current body ("Revision counters count base ordinals")
+// matches the shipped behavior, so the pin is promoted to a contract against silent
+// behavior regressions.
 func TestVerify_BodyClaim_CurrentReplicasCountsHeldBack(t *testing.T) {
 	current := &groupSetRevision{name: "v1", template: revisionTestTemplate(map[string]string{"version": "v1"})}
 	update := &groupSetRevision{name: "v2", template: revisionTestTemplate(map[string]string{"version": "v2"})}
