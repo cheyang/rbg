@@ -1,0 +1,19 @@
+=== RUN   TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired
+--- PASS: TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired (0.00s)
+=== RUN   TestVerify_L2_RollingUpdateParameters_LiveBelowDesired_NoPanic
+--- PASS: TestVerify_L2_RollingUpdateParameters_LiveBelowDesired_NoPanic (0.04s)
+=== RUN   TestVerify_L2_IdleScaleUp_ReturnsDesiredCount
+--- PASS: TestVerify_L2_IdleScaleUp_ReturnsDesiredCount (0.00s)
+=== RUN   TestVerify_L2_ReconcileStatefulSet_LiveBelowDesired_ScalesUp
+--- PASS: TestVerify_L2_ReconcileStatefulSet_LiveBelowDesired_ScalesUp (0.01s)
+=== RUN   TestVerify_L2_F7_ConvergenceAfterExternalShrink
+    low_live_replicas_verify_test.go:310: convergence trace:
+        iter 0: (2, 5)
+        iter 1: (1, 5)
+        iter 2: (0, 4)
+        iter 3: (0, 4)
+--- PASS: TestVerify_L2_F7_ConvergenceAfterExternalShrink (0.00s)
+=== RUN   TestVerify_L2_NegativeControl_NormalCase6Unchanged
+--- PASS: TestVerify_L2_NegativeControl_NormalCase6Unchanged (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.075s

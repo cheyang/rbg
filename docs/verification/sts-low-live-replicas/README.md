@@ -3,6 +3,51 @@
 Reproducible evidence for the review of PR https://github.com/sgl-project/rbg/pull/553
 (fixes https://github.com/sgl-project/rbg/issues/547).
 
+## Round 2 (current) — head `c768d5cdad1acda87b490880beb3e868f089f900`
+
+The PR was rebased onto the new main `73e05db4` (rebase is content-neutral for
+`pkg/reconciler/`: `git diff b28c5478 34a64c0e -- pkg/reconciler/` is empty) and gained
+one new commit, `c768d5cd "fix(sts): restore surge when scaling back an in-flight
+rollout"`, which adopts the debate's F7 recommendation and **deliberately changes the
+recovery contract**:
+
+- old (b28c5478): `partition = min(partition, stsReplicas)`; return `(partition, roleReplicas)`
+- new (c768d5cd): partition **kept unchanged**; `replicas = wantReplicas(roleUnreadyReplicas)`
+  (surge restored) while `partition > 0`, exactly `roleReplicas` when idle (`partition == 0`)
+
+L2 expectations were re-pinned to the new contract. The full evidence set:
+
+| Run | Ref | Result | Evidence file |
+|-----|-----|--------|---------------|
+| premise (panic on base) | frozen base `73e05db4` | panic `index out of range [1] with length 1` (unchanged from round 1) | `results/base-73e05db4-verify-tests.txt` |
+| old contract (red) | previous head `b28c5478` | 3 FAIL: old clamp values (4/1 vs new 5/2), apply leaves 4 not 5, **F7 stall: (1,4) fixed point for 24 iterations** | `results/previous-head-b28c5478-verify-tests.txt` |
+| new contract (green) | head `c768d5cd` | 6/6 PASS; F7 converges `(2,5) -> (1,5) -> (0,4)` | `results/head-c768d5cd-verify-tests.txt` |
+| head full suite | `c768d5cd` | `go test ./pkg/reconciler` ok, `go build ./...` clean | (this round's review log; same commands as round 1) |
+
+F7 convergence trace on head (maxUnavailable `10%` → 0 for 4 replicas, maxSurge 1,
+external shrink mid-rollout at partition 2 / live 1):
+
+```text
+iter 0: (2, 5)   # recovery branch: partition kept, surge restored
+iter 1: (1, 5)   # case 6 with surge present: rollingStep = 0+1-0 = 1 > 0, partition advances
+iter 2: (0, 4)   # surge reclaimed exactly when unready <= maxSurge, partition already 0
+iter 3: (0, 4)   # stable
+```
+
+On the previous head the same loop parks at `(1, 4)` forever (ordinal 0 never updates) —
+see `results/previous-head-b28c5478-verify-tests.txt`. Mechanism: while the surge is
+present `rollingStep = maxUnavailable + maxSurge - (burstReplicas - stsReplicas) >= 1`,
+so case 6 keeps advancing the partition; the surge is reclaimed only when
+`unready <= maxSurge`, and at that point `continuousReadyReplicas` is high enough that
+`rollingStepPartition` reaches 0 in the same reconcile.
+
+Round 1 (head `b28c5478`, base `98d3c4be`) — original harness and evidence — is kept
+below unchanged.
+
+---
+
+## Round 1 (historical)
+
 Code under review: PR head `b28c5478739b2b3de28f254de1ee4b902527e045`
 (base / merge-base: `98d3c4be8c4c018ddbeb516b66a4eba4981c225c`, which is #540).
 

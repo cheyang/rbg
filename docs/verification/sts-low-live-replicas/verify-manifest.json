@@ -8,8 +8,8 @@
   "premise": {
     "id": "P0",
     "claim": "rollingUpdatePartition panics (index out of range) when a live StatefulSet has far fewer replicas than the role still requests; controller-runtime recovers the panic so the reconcile makes no progress and the workload stays at the reduced size (issue #547)",
-    "reportedComponent": "pkg/reconciler/sts_reconciler.go — StatefulSetReconciler.rollingUpdateParameters case 6 -> rollingUpdatePartition",
-    "patchedComponent": "pkg/reconciler/sts_reconciler.go — rollingUpdateParameters (new scale-up early return) + rollingUpdatePartition (index clamp)",
+    "reportedComponent": "pkg/reconciler/sts_reconciler.go \u2014 StatefulSetReconciler.rollingUpdateParameters case 6 -> rollingUpdatePartition",
+    "patchedComponent": "pkg/reconciler/sts_reconciler.go \u2014 rollingUpdateParameters (new scale-up early return) + rollingUpdatePartition (index clamp)",
     "componentMatch": true,
     "runsAgainst": "base",
     "layer": "integration",
@@ -34,7 +34,9 @@
       "id": "F1",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired"]
+      "match": [
+        "TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired"
+      ]
     },
     {
       "id": "F2",
@@ -42,15 +44,38 @@
       "layer": "integration",
       "match": [
         "TestVerify_L2_RollingUpdateParameters_LiveBelowDesired_NoPanic",
-        "TestVerify_L2_ReconcileStatefulSet_LiveBelowDesired_ScalesUp"
-      ]
+        "TestVerify_L2_ReconcileStatefulSet_LiveBelowDesired_ScalesUp",
+        "TestVerify_L2_IdleScaleUp_ReturnsDesiredCount"
+      ],
+      "note": "Round 2 (head c768d5cd): contract deliberately changed \u2014 partition kept (no clamp), surge restored while partition>0. Expectations updated to the new contract; red on previous head b28c5478 (results/previous-head-b28c5478-verify-tests.txt)."
     },
     {
       "id": "NEG1",
       "polarity": "contract",
       "layer": "integration",
-      "match": ["TestVerify_L2_NegativeControl_NormalCase6Unchanged"]
+      "match": [
+        "TestVerify_L2_NegativeControl_NormalCase6Unchanged"
+      ]
+    },
+    {
+      "id": "F7",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestVerify_L2_F7_ConvergenceAfterExternalShrink"
+      ],
+      "note": "Round 2: c768d5cd restores surge during drift recovery. Loop simulation (maxUnavailable 10% -> 0, maxSurge 1): head converges (2,5)->(1,5)->(0,4); previous head b28c5478 parks at the (1,4) fixed point for 24+ iterations."
     }
   ],
-  "liveNote": "L3 (live cluster) intentionally not run this round per pipeline instructions; the fake-client reconcile-level test covers the user-visible contract (STS scaled back to role.Replicas, no panic)."
+  "liveNote": "L3 (live cluster) intentionally not run this round per pipeline instructions; the fake-client reconcile-level test covers the user-visible contract (STS scaled back to role.Replicas, no panic).",
+  "rounds": {
+    "round1": {
+      "head": "b28c5478739b2b3de28f254de1ee4b902527e045",
+      "verdict": "all findings fixed (old contract)"
+    },
+    "round2": {
+      "head": "c768d5cdad1acda87b490880beb3e868f089f900",
+      "verdict": "all findings fixed (new contract; F7 stall fix verified via convergence test)"
+    }
+  }
 }

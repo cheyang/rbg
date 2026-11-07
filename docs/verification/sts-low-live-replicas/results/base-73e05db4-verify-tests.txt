@@ -1,0 +1,21 @@
+=== RUN   TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired
+--- FAIL: TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired (0.00s)
+panic: runtime error: index out of range [1] with length 1 [recovered, repanicked]
+
+goroutine 146 [running]:
+testing.tRunner.func1.2({0x2fcfc08, 0x20ca0b986018})
+	/usr/local/go/src/testing/testing.go:2123 +0x232
+testing.tRunner.func1()
+	/usr/local/go/src/testing/testing.go:2126 +0x329
+panic({0x2fcfc08?, 0x20ca0b986018?})
+	/usr/local/go/src/runtime/panic.go:859 +0x125
+sigs.k8s.io/rbgs/pkg/reconciler.rollingUpdatePartition({0x3058ca8?, 0x31dc900?}, {0x20ca0bbd775e, 0x1, 0x0?}, 0x1, 0xfffffffe, 0x0)
+	/tmp/pr553-baseharness/pkg/reconciler/sts_reconciler.go:421 +0x318
+sigs.k8s.io/rbgs/pkg/reconciler.TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired(0x20ca0b75d688)
+	/tmp/pr553-baseharness/pkg/reconciler/low_live_replicas_verify_test.go:71 +0x4c
+testing.tRunner(0x20ca0b75d688, 0x3062a88)
+	/usr/local/go/src/testing/testing.go:2193 +0xea
+created by testing.(*T).Run in goroutine 1
+	/usr/local/go/src/testing/testing.go:2258 +0x4d4
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.013s
+FAIL
