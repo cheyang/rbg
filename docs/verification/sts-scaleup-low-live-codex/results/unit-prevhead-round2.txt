@@ -1,0 +1,20 @@
+== previous head b28c5478 polarity control (round-2 contract must FAIL here) ==
+=== RUN   TestVerifyPR553RollingUpdatePartitionLiveFarBelowDesired
+--- PASS: TestVerifyPR553RollingUpdatePartitionLiveFarBelowDesired (0.00s)
+=== RUN   TestVerifyPR553RollingUpdateParametersScalesBackUp
+=== RUN   TestVerifyPR553RollingUpdateParametersScalesBackUp/live_1_of_4,_partition_2_(in-flight)
+    verify_pr553_sts_scaleup_test.go:118: expected replicas=5, got 4
+=== RUN   TestVerifyPR553RollingUpdateParametersScalesBackUp/live_0_of_4,_partition_2_(in-flight)
+    verify_pr553_sts_scaleup_test.go:118: expected replicas=5, got 4
+=== RUN   TestVerifyPR553RollingUpdateParametersScalesBackUp/live_3_of_4,_partition_0_(idle_scale-up)
+--- FAIL: TestVerifyPR553RollingUpdateParametersScalesBackUp (0.04s)
+    --- FAIL: TestVerifyPR553RollingUpdateParametersScalesBackUp/live_1_of_4,_partition_2_(in-flight) (0.04s)
+    --- FAIL: TestVerifyPR553RollingUpdateParametersScalesBackUp/live_0_of_4,_partition_2_(in-flight) (0.00s)
+    --- PASS: TestVerifyPR553RollingUpdateParametersScalesBackUp/live_3_of_4,_partition_0_(idle_scale-up) (0.00s)
+=== RUN   TestVerifyPR553InFlightRecoveryConvergesWithSurge
+    verify_pr553_sts_scaleup_test.go:207: live=1 partition-in=2 -> partition=1 replicas=4
+    verify_pr553_sts_scaleup_test.go:209: step1 recovery: expected (2,5), got (1,4)
+--- FAIL: TestVerifyPR553InFlightRecoveryConvergesWithSurge (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.060s
+FAIL

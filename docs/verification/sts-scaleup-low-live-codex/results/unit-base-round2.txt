@@ -1,0 +1,7 @@
+== frozen baseSha 73e05db4 (round-2 base; pkg/reconciler identical to 98d3c4be) ==
+--- FAIL: TestVerifyPR553RollingUpdatePartitionLiveFarBelowDesired (0.00s)
+panic: runtime error: index out of range [1] with length 1 [recovered, repanicked]
+panic({0x2fe1978?, 0x37b21a490cc0?})
+	/usr/local/go/src/runtime/panic.go:859 +0x125
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.017s
+FAIL

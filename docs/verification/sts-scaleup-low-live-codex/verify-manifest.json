@@ -15,8 +15,10 @@
     "runsAgainst": "base",
     "layer": "unit",
     "verdict": "confirmed",
-    "evidence": "results/premise-base.txt (issue #547 repro panics on base 98d3c4be); results/unit-base.txt (panic at sts_reconciler.go:421); results/integration-summary.txt (controller panic loop, sts stuck at replicas=1)",
-    "match": ["TestVerifyPR553RollingUpdatePartitionLiveFarBelowDesired"]
+    "evidence": "results/premise-base.txt (issue #547 repro panics on base 98d3c4be); results/unit-base.txt (panic at sts_reconciler.go:421); results/integration-summary.txt (controller panic loop, sts stuck at replicas=1); results/unit-base-round2.txt (re-confirmed on round-2 frozen baseSha 73e05db4 after the PR rebase: identical index-out-of-range panic)",
+    "match": [
+      "TestVerifyPR553RollingUpdatePartitionLiveFarBelowDesired"
+    ]
   },
   "layers": {
     "unit": {
@@ -36,13 +38,26 @@
       "match": [
         "TestVerifyPR553RollingUpdatePartitionLiveFarBelowDesired",
         "TestVerifyPR553RollingUpdateParametersScalesBackUp"
-      ]
+      ],
+      "note": "Round 2 (head c768d5cd): L2 expectations updated to the new drift-recovery contract - partition KEPT (no clamp), surge restored via wantReplicas(roleUnreadyReplicas) when partition>0, plain roleReplicas when partition==0. changeReason: author adopted the F7 surge-restoring design in commit c768d5cd. Polarity control: red on previous head b28c5478 (results/unit-prevhead-round2.txt)."
+    },
+    {
+      "id": "F7-stall",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR553InFlightRecoveryConvergesWithSurge"
+      ],
+      "note": "Round-1 finding F7 (Copilot C4483274801): post-recovery rollout stall at partition 1 with effective maxUnavailable=0. Round 2: 4-step convergence walk (1,2)->(2,5)->(1,5)->(0,4)->(0,4). Red on base 73e05db4 (panic) and previous head b28c5478 (step1 returns the stall-triggering (1,4)); green on head c768d5cd."
     },
     {
       "id": "F-fix-e2e",
       "polarity": "contract",
       "layer": "integration",
-      "match": ["TestPR553StatefulSetScaleUp"]
+      "match": [
+        "TestPR553StatefulSetScaleUp"
+      ],
+      "note": "envtest external-shrink scenario has partition==0, so the round-2 design change does not alter it; still green on c768d5cd (results/integration-head-round2.txt, ~7s)."
     }
   ],
   "liveNote": "L3 skipped in this debate round (unit + integration only). If run live: create an RBG with a StatefulSet role (replicas 4, maxUnavailable 1, maxSurge 1), then kubectl scale the sts to 1; the controller must restore spec.replicas=4 and the rbg controller log must show 'scale up before rolling update' instead of a recovered panic."

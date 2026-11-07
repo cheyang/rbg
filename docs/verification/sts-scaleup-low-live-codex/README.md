@@ -98,3 +98,44 @@ nil after API defaulting) whose template/labels match panics the reconcile.
 Verified by scratch test on base and head — identical behavior, unchanged by
 this PR. Tracked in the review ledger as a pre-existing risk; the harness does
 not gate on it.
+
+## Round 2 (head c768d5cd, 2026-11-08) — design change: surge restored, partition kept
+
+The PR was rebased (`98d3c4be` -> frozen baseSha `73e05db4`; `pkg/reconciler`
+content identical between the old and new base) and gained commit `c768d5cd`
+"restore surge when scaling back an in-flight rollout", which addresses the
+round-1 F7 finding (Copilot C4483274801). The drift-recovery branch
+(`stsReplicas < roleReplicas`) changed contract:
+
+| | round 1 (b28c5478) | round 2 (c768d5cd) |
+|---|---|---|
+| partition | `min(partition, live)` (clamped) | kept unchanged |
+| replicas | always `roleReplicas` | `wantReplicas(roleUnreadyReplicas)` when partition > 0 (surge restored), else `roleReplicas` |
+
+Harness response (Harness-update, per policy — not silently treated as a fix):
+the L2 expectations were rewritten to the round-2 contract and a new 4-step
+convergence walk was added. Polarity was re-proven: the updated harness is RED
+on the previous head `b28c5478` (step-1 returns the stall-triggering `(1,4)`;
+see `results/unit-prevhead-round2.txt`) and on the round-2 base `73e05db4`
+(panic, `results/unit-base-round2.txt`), GREEN on `c768d5cd`
+(`results/unit-head-round2.txt`).
+
+| ID | claim | layer | base (73e05db4) | prev head (b28c5478) | head (c768d5cd) |
+|----|-------|-------|-----------------|----------------------|-----------------|
+| F-fix | no panic; branch returns round-2 contract values | unit | panic | FAIL (old design) | PASS |
+| F7-stall | recovery walk converges: (live1,p2)->(2,5)->(1,5)->(0,4)->(0,4) | unit | panic | FAIL at step 1: got (1,4) | PASS |
+| F-fix-e2e | envtest external scale-down recovers to replicas=4 | integration | (round 1: panic loop) | not re-run | PASS (~7s, `results/integration-head-round2.txt`) |
+
+Convergence walk detail (maxUnavailable "10%" -> 0, maxSurge 1, desired 4,
+mid-rollout partition 2, external shrink to live 1):
+1. recovery branch: live 1, partition 2 -> returns (partition 2, replicas 5) — surge restored.
+2. sts (5,2), pods 0-1 old+ready, 2-4 new+ready -> case 6: (1,5) — partition advances.
+3. sts (5,1), pod 0 old+ready, 1-4 new+ready -> case 6: (0,4) — partition 0, surge reclaimed.
+4. sts (4,0), all new+ready -> case 4: (0,4) — at rest. The round-1 fixed point is unreachable.
+
+Scratch critique tests (not in the manifest; working artifacts from the debate)
+were updated for the round-2 behavior and all pass on head: F3 floor case now
+uses the idle path (branch returns (0,4), floor raises to 2, log prints 0), and
+the F7 decision-point assertion expects (2,5).
+
+Full `go test ./pkg/reconciler` on c768d5cd: ok. `go build ./...`: clean.

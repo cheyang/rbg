@@ -1,0 +1,32 @@
+== head c768d5cd (round 2) ==
+=== RUN   TestVerifyPR553RollingUpdatePartitionLiveFarBelowDesired
+--- PASS: TestVerifyPR553RollingUpdatePartitionLiveFarBelowDesired (0.00s)
+=== RUN   TestVerifyPR553RollingUpdateParametersScalesBackUp
+=== RUN   TestVerifyPR553RollingUpdateParametersScalesBackUp/live_1_of_4,_partition_2_(in-flight)
+=== RUN   TestVerifyPR553RollingUpdateParametersScalesBackUp/live_0_of_4,_partition_2_(in-flight)
+=== RUN   TestVerifyPR553RollingUpdateParametersScalesBackUp/live_3_of_4,_partition_0_(idle_scale-up)
+--- PASS: TestVerifyPR553RollingUpdateParametersScalesBackUp (0.05s)
+    --- PASS: TestVerifyPR553RollingUpdateParametersScalesBackUp/live_1_of_4,_partition_2_(in-flight) (0.04s)
+    --- PASS: TestVerifyPR553RollingUpdateParametersScalesBackUp/live_0_of_4,_partition_2_(in-flight) (0.00s)
+    --- PASS: TestVerifyPR553RollingUpdateParametersScalesBackUp/live_3_of_4,_partition_0_(idle_scale-up) (0.00s)
+=== RUN   TestVerifyPR553InFlightRecoveryConvergesWithSurge
+    verify_pr553_sts_scaleup_test.go:207: live=1 partition-in=2 -> partition=2 replicas=5
+    verify_pr553_sts_scaleup_test.go:207: live=5 partition-in=2 -> partition=1 replicas=5
+    verify_pr553_sts_scaleup_test.go:207: live=5 partition-in=1 -> partition=0 replicas=4
+    verify_pr553_sts_scaleup_test.go:207: live=4 partition-in=0 -> partition=0 replicas=4
+--- PASS: TestVerifyPR553InFlightRecoveryConvergesWithSurge (0.00s)
+PASS
+
+== critique tests on head ==
+=== RUN   TestCritiqueF3DeferredFloorRaisesAboveLiveClamp
+    scratch_critique_pr553_test.go:80: returned partition=2 replicas=4 (branch returned 0,4; floor raised partition to 2)
+--- PASS: TestCritiqueF3DeferredFloorRaisesAboveLiveClamp (0.04s)
+=== RUN   TestCritiqueF2PodListFailureBlocksScaleUp
+--- PASS: TestCritiqueF2PodListFailureBlocksScaleUp (0.00s)
+=== RUN   TestCritiqueCopilotStallNoSurgeAfterRecovery
+    scratch_critique_pr553_test.go:149: recovery decision (live 1, partition 2): partition=2 replicas=5
+--- PASS: TestCritiqueCopilotStallNoSurgeAfterRecovery (0.00s)
+PASS
+
+== full package suite on head ==
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.248s
