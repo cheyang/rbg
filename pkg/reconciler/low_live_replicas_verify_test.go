@@ -25,7 +25,16 @@ package reconciler
 // index larger than len(states), causing an index-out-of-range panic.
 //
 // Claim F1 (fix): on the PR head, the same inputs must not panic; the
-// controller must scale the StatefulSet back to role.Replicas.
+// controller must scale the StatefulSet back to at least role.Replicas.
+//
+// Round 2 (head c768d5cd, "restore surge when scaling back an in-flight
+// rollout") deliberately changed the recovery contract to fix the F7 stall:
+// the partition is now kept unchanged (no longer clamped to the live count)
+// and replicas include surge (wantReplicas(roleUnreadyReplicas)) while a
+// rollout is in flight (partition > 0); an idle scale-up (partition 0) still
+// returns exactly role.Replicas. The L2 expectations below pin the NEW
+// contract; on the previous head b28c5478 they observe the old (1,4) values
+// and fail — that red/green pair is the differential evidence for the change.
 //
 // All tests below are CONTRACT tests (they assert intended correct behavior):
 // they FAIL on the base branch (panic / wrong result) and PASS on the fixed
@@ -34,7 +43,9 @@ package reconciler
 
 import (
 	"context"
+	"fmt"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -49,6 +60,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 	"sigs.k8s.io/rbgs/api/workloads/constants"
+	workloadsv1alpha2 "sigs.k8s.io/rbgs/api/workloads/v1alpha2"
+	wrappersv2 "sigs.k8s.io/rbgs/test/wrappers/v1alpha2"
 )
 
 // TestVerify_L1_RollingUpdatePartition_NoPanicWhenLiveBelowDesired is the
@@ -94,10 +107,50 @@ func TestVerify_L2_RollingUpdateParameters_LiveBelowDesired_NoPanic(t *testing.T
 	r := NewStatefulSetReconciler(
 		scheme, fake.NewClientBuilder().WithScheme(scheme).WithObjects(sts, revision).Build())
 
+	// New contract (c768d5cd): a rollout is in flight (partition 2 > 0), so the
+	// partition is kept and surge is restored — live 1 with 4 desired and 1
+	// maxSurge bursts to 5 while the partition stays at 2. Never below desired.
 	partition, replicas, err := r.rollingUpdateParameters(context.Background(), role, sts, false, nil)
 	require.NoError(t, err)
-	assert.Equal(t, int32(4), replicas, "must scale the workload back to the desired count")
-	assert.Equal(t, int32(1), partition, "partition must be clamped to the live replica count")
+	assert.GreaterOrEqual(t, replicas, int32(4), "must scale the workload back to at least the desired count")
+	assert.Equal(t, int32(5), replicas, "in-flight rollout restores surge (wantReplicas)")
+	assert.Equal(t, int32(2), partition, "partition must be kept unchanged during drift recovery")
+}
+
+// TestVerify_L2_IdleScaleUp_ReturnsDesiredCount pins the idle half of the
+// round-2 contract: with no rollout in flight (partition 0), a shrunken live
+// StatefulSet scales back to exactly role.Replicas with no surge.
+func TestVerify_L2_IdleScaleUp_ReturnsDesiredCount(t *testing.T) {
+	scheme := newRolloutErrScheme(t)
+	rbg, role := newRolloutErrRBG(intstr.FromInt32(0))
+	selector := rbg.GetCommonLabelsFromRole(role)
+	revision := &appsv1.ControllerRevision{
+		ObjectMeta: metav1.ObjectMeta{Name: "rev-1", Namespace: "default", Labels: selector},
+		Revision:   1,
+	}
+	sts := &appsv1.StatefulSet{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        rbg.GetWorkloadName(role),
+			Namespace:   "default",
+			UID:         "sts-uid",
+			Annotations: map[string]string{constants.RoleSizeAnnotationKey: "4"},
+		},
+		Spec: appsv1.StatefulSetSpec{
+			Replicas: ptr.To(int32(1)),
+			Selector: &metav1.LabelSelector{MatchLabels: selector},
+			UpdateStrategy: appsv1.StatefulSetUpdateStrategy{
+				Type:          appsv1.RollingUpdateStatefulSetStrategyType,
+				RollingUpdate: &appsv1.RollingUpdateStatefulSetStrategy{Partition: ptr.To(int32(0))},
+			},
+		},
+	}
+	r := NewStatefulSetReconciler(
+		scheme, fake.NewClientBuilder().WithScheme(scheme).WithObjects(sts, revision).Build())
+
+	partition, replicas, err := r.rollingUpdateParameters(context.Background(), role, sts, false, nil)
+	require.NoError(t, err)
+	assert.Equal(t, int32(4), replicas, "idle scale-up returns exactly the desired count")
+	assert.Equal(t, int32(0), partition)
 }
 
 // TestVerify_L2_ReconcileStatefulSet_LiveBelowDesired_ScalesUp is the
@@ -139,7 +192,122 @@ func TestVerify_L2_ReconcileStatefulSet_LiveBelowDesired_ScalesUp(t *testing.T) 
 
 	got := &appsv1.StatefulSet{}
 	require.NoError(t, c.Get(ctx, types.NamespacedName{Name: live.Name, Namespace: live.Namespace}, got))
-	assert.Equal(t, int32(4), *got.Spec.Replicas, "live StatefulSet must be scaled back to the desired count")
+	// Round-2 contract: in-flight rollout (partition 2) -> apply restores surge
+	// (5) and keeps the partition; never at or below the shrunken count.
+	assert.Equal(t, int32(5), *got.Spec.Replicas, "live StatefulSet must be scaled back up with surge")
+	assert.GreaterOrEqual(t, *got.Spec.Replicas, int32(4), "never left at or below the shrunken count")
+	assert.Equal(t, int32(2), *got.Spec.UpdateStrategy.RollingUpdate.Partition, "partition kept during recovery")
+}
+
+// TestVerify_L2_F7_ConvergenceAfterExternalShrink pins the fix for the F7
+// stall (Copilot C4483274801): with maxSurge=1 and an effective maxUnavailable
+// of 0 (10% of 4 replicas), an external shrink mid-rollout previously left the
+// rollout parked one ordinal short forever (the (partition 1, replicas 4)
+// fixed point on the previous head b28c5478). The round-2 surge restoration
+// must let the loop converge to partition 0 / replicas == role.Replicas.
+//
+// The test simulates the reconcile loop against a fully-converged world each
+// iteration: every pod at ordinal < replicas exists, is Running/Ready, and
+// carries the old revision below the partition and the highest revision at or
+// above it (exactly what the StatefulSet controller converges to between
+// reconciles). Contract: converge within 24 iterations, never scale below the
+// desired count, partition monotone non-increasing, no panic.
+func TestVerify_L2_F7_ConvergenceAfterExternalShrink(t *testing.T) {
+	scheme := newRolloutErrScheme(t)
+	rbg := wrappersv2.BuildBasicRoleBasedGroup("test-rbg", "default").Obj()
+	rbg.Spec.Roles[0].Replicas = ptr.To(int32(4))
+	rbg.Spec.Roles[0].RolloutStrategy = &workloadsv1alpha2.RolloutStrategy{
+		Type: workloadsv1alpha2.RollingUpdateStrategyType,
+		RollingUpdate: &workloadsv1alpha2.RollingUpdate{
+			// 10% of 4 rounds down to 0: the corner that produced the stall.
+			MaxUnavailable: ptr.To(intstr.FromString("10%")),
+			MaxSurge:       ptr.To(intstr.FromInt32(1)),
+			Partition:      ptr.To(intstr.FromInt32(0)),
+		},
+	}
+	role := &rbg.Spec.Roles[0]
+	selector := rbg.GetCommonLabelsFromRole(role)
+	ctx := context.Background()
+
+	const oldRev, newRev = "rev-old", "rev-new"
+	revisions := []client.Object{
+		&appsv1.ControllerRevision{
+			ObjectMeta: metav1.ObjectMeta{Name: oldRev, Namespace: "default", Labels: selector},
+			Revision:   1,
+		},
+		&appsv1.ControllerRevision{
+			ObjectMeta: metav1.ObjectMeta{Name: newRev, Namespace: "default", Labels: selector},
+			Revision:   2,
+		},
+	}
+
+	// world builds the pod set the StatefulSet controller converges to for
+	// (replicas, partition): pods below the partition on the old revision,
+	// pods at/above it on the highest revision, all Running and Ready.
+	world := func(replicas int32, partition int32) []client.Object {
+		objs := append([]client.Object{}, revisions...)
+		for idx := int32(0); idx < replicas; idx++ {
+			hash := oldRev
+			if idx >= partition {
+				hash = newRev
+			}
+			objs = append(objs, &corev1.Pod{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      rbg.GetWorkloadName(role) + "-" + strconv.Itoa(int(idx)),
+					Namespace: "default",
+					Labels: mergeLabels(selector, map[string]string{
+						"controller-revision-hash":     hash,
+						"apps.kubernetes.io/pod-index": strconv.Itoa(int(idx)),
+					}),
+				},
+				Status: corev1.PodStatus{
+					Phase:      corev1.PodRunning,
+					Conditions: []corev1.PodCondition{{Type: corev1.PodReady, Status: corev1.ConditionTrue}},
+				},
+			})
+		}
+		return objs
+	}
+
+	// Start: mid-rollout (partition 2), externally shrunk to live 1.
+	sts := &appsv1.StatefulSet{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:        rbg.GetWorkloadName(role),
+			Namespace:   "default",
+			UID:         "sts-uid",
+			Annotations: map[string]string{constants.RoleSizeAnnotationKey: "4"},
+		},
+		Spec: appsv1.StatefulSetSpec{
+			Replicas: ptr.To(int32(1)),
+			Selector: &metav1.LabelSelector{MatchLabels: selector},
+			UpdateStrategy: appsv1.StatefulSetUpdateStrategy{
+				Type:          appsv1.RollingUpdateStatefulSetStrategyType,
+				RollingUpdate: &appsv1.RollingUpdateStatefulSetStrategy{Partition: ptr.To(int32(2))},
+			},
+		},
+	}
+
+	var trace []string
+	converged := false
+	for iter := 0; iter < 24; iter++ {
+		c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(world(*sts.Spec.Replicas, *sts.Spec.UpdateStrategy.RollingUpdate.Partition)...).Build()
+		partition, replicas, err := NewStatefulSetReconciler(scheme, c).rollingUpdateParameters(ctx, role, sts, false, nil)
+		require.NoError(t, err, "iteration %d must not fail", iter)
+		assert.GreaterOrEqual(t, replicas, int32(4), "iteration %d: never scale below the desired count", iter)
+		assert.LessOrEqual(t, partition, *sts.Spec.UpdateStrategy.RollingUpdate.Partition,
+			"iteration %d: partition must be monotone non-increasing", iter)
+		trace = append(trace, fmt.Sprintf("iter %d: (%d, %d)", iter, partition, replicas))
+
+		if partition == 0 && replicas == 4 && *sts.Spec.Replicas == 4 {
+			// One more reconcile from the settled state must be stable.
+			converged = true
+			break
+		}
+		sts.Spec.Replicas = ptr.To(replicas)
+		sts.Spec.UpdateStrategy.RollingUpdate.Partition = ptr.To(partition)
+	}
+	assert.True(t, converged, "rollout must converge to (partition 0, replicas 4); trace:\n%s", strings.Join(trace, "\n"))
+	t.Logf("convergence trace:\n%s", strings.Join(trace, "\n"))
 }
 
 // TestVerify_L2_NegativeControl_NormalCase6Unchanged guards against the fix
