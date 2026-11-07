@@ -1,0 +1,12 @@
+=== RUN   TestCRDDeprecationWarningMatchesMarker
+=== RUN   TestCRDDeprecationWarningMatchesMarker/InstanceSet
+=== RUN   TestCRDDeprecationWarningMatchesMarker/RoleBasedGroupScalingAdapter
+=== RUN   TestCRDDeprecationWarningMatchesMarker/ClusterEngineRuntimeProfile
+=== RUN   TestCRDDeprecationWarningMatchesMarker/RoleBasedGroup
+=== RUN   TestCRDDeprecationWarningMatchesMarker/RoleBasedGroupSet
+=== RUN   TestCRDDeprecationWarningMatchesMarker/Instance
+--- PASS: TestCRDDeprecationWarningMatchesMarker (0.00s)
+=== RUN   TestNoV1alpha1WebhookRemainsInShippedManifests
+--- PASS: TestNoV1alpha1WebhookRemainsInShippedManifests (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/verifyv1a1	0.018s

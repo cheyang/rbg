@@ -1,0 +1,29 @@
+=== RUN   TestCRDDeprecationWarningMatchesMarker
+=== RUN   TestCRDDeprecationWarningMatchesMarker/InstanceSet
+=== RUN   TestCRDDeprecationWarningMatchesMarker/RoleBasedGroupScalingAdapter
+=== RUN   TestCRDDeprecationWarningMatchesMarker/ClusterEngineRuntimeProfile
+=== RUN   TestCRDDeprecationWarningMatchesMarker/RoleBasedGroup
+=== RUN   TestCRDDeprecationWarningMatchesMarker/RoleBasedGroupSet
+=== RUN   TestCRDDeprecationWarningMatchesMarker/Instance
+--- PASS: TestCRDDeprecationWarningMatchesMarker (0.00s)
+    --- PASS: TestCRDDeprecationWarningMatchesMarker/InstanceSet (0.00s)
+    --- PASS: TestCRDDeprecationWarningMatchesMarker/RoleBasedGroupScalingAdapter (0.00s)
+    --- PASS: TestCRDDeprecationWarningMatchesMarker/ClusterEngineRuntimeProfile (0.00s)
+    --- PASS: TestCRDDeprecationWarningMatchesMarker/RoleBasedGroup (0.00s)
+    --- PASS: TestCRDDeprecationWarningMatchesMarker/RoleBasedGroupSet (0.00s)
+    --- PASS: TestCRDDeprecationWarningMatchesMarker/Instance (0.00s)
+=== RUN   TestNoV1alpha1WebhookRemainsInShippedManifests
+--- PASS: TestNoV1alpha1WebhookRemainsInShippedManifests (0.00s)
+=== RUN   TestVerifyV1alpha1DeprecationRemoval
+Running Suite: v1alpha1 Deprecation Removal Verification Suite - /home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/verifyv1a1
+==============================================================================================================================================================
+Random Seed: [1m1794070624[0m
+
+Will run [1m7[0m of [1m7[0m specs
+[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m
+
+[38;5;10m[1mRan 7 of 7 Specs in 6.768 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m7 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- PASS: TestVerifyV1alpha1DeprecationRemoval (6.77s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/verifyv1a1	6.787s

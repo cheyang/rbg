@@ -1,0 +1,81 @@
+{
+  "topic": "v1alpha1-deprecation-removal",
+  "pr": "https://github.com/sgl-project/rbg/pull/556",
+  "harnessPaths": [
+    "docs/verification/v1alpha1-deprecation-removal",
+    "test/envtest/testcase/verifyv1a1"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Users saw two overlapping Warning: 299 headers on every v1alpha1 write: the CRD-level deprecationWarning plus the v1alpha1 admission webhook warning (PR body, confirmed in the ACK cluster test on #552).",
+    "reportedComponent": "v1alpha1 admission webhooks vs CRD deprecationWarning (config/webhook/manifests.yaml + CRD bases)",
+    "patchedComponent": "same: v1alpha1 webhooks removed at source, CRD warning text gains the 0.10.0 removal timeline",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "integration",
+    "verdict": "confirmed",
+    "evidence": "base premise suite (premise-base.patch on 73e05db): accepted v1alpha1 create returns exactly 2 warnings — CRD 'is deprecated; use v1alpha2' (no timeline) + webhook 'will be removed in 0.10.0; migrate to v1alpha2 using the migration guide'; results/base-premise-envtest.txt. Head: exactly 1 warning (results/head-envtest.txt).",
+    "match": ["returns two overlapping deprecation warnings on an accepted v1alpha1 create"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/envtest/testcase/verifyv1a1/ -run 'TestCRDDeprecationWarningMatchesMarker|TestNoV1alpha1WebhookRemainsInShippedManifests' -count=1 -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=${KUBEBUILDER_ASSETS:-/home/ecs-user/.local/share/kubebuilder-envtest/k8s/1.36.2-linux-amd64} go test ./test/envtest/testcase/verifyv1a1/ -run TestVerifyV1alpha1DeprecationRemoval -count=1 -timeout 10m -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    {
+      "id": "V1-gate-reaches-v1alpha1",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "rejects a v1alpha1 create with a new deprecated workload use",
+        "rejects a v1alpha1 create whose role workload is only schema-defaulted",
+        "rejects a v1alpha1 RoleBasedGroupSet create with a deprecated workload template"
+      ]
+    },
+    {
+      "id": "V2-single-warning",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "returns exactly one deprecation warning on an accepted v1alpha1 create"
+      ]
+    },
+    {
+      "id": "V3-grandfathering",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "still accepts a grandfathered v1alpha1 update that keeps its deprecated workload type",
+        "rejects a v1alpha1 update that switches to a different deprecated workload type",
+        "reads the legacy object back through the v1alpha1 API"
+      ]
+    },
+    {
+      "id": "V4-manifests-and-warning-text",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestCRDDeprecationWarningMatchesMarker",
+        "TestNoV1alpha1WebhookRemainsInShippedManifests"
+      ]
+    },
+    {
+      "id": "claude-v1a1-coverage-gap",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "returns exactly one deprecation warning on an accepted v1alpha1 create",
+        "rejects a v1alpha1 create with a new deprecated workload use"
+      ],
+      "_comment": "The review finding itself is an in-repo coverage gap, not a runtime defect: the PR deletes the only v1alpha1 request-path suite. These matches are the template tests the PR should land (adapted from this harness); they stay green here so the re-verify loop keeps the claim alive. Fixing the finding = adding such a suite to the PR, after which this entry is resolved by inspection."
+    }
+  ],
+  "liveNote": "L3 not applicable per round policy (unit + integration only). If ever run live: install the shipped manifests with a real controller and check `kubectl apply` of a v1alpha1 object prints exactly one deprecation warning (kubectl surfaces Warning headers) and a new deprecated use is rejected with the RoleInstanceSet migration hint."
+}

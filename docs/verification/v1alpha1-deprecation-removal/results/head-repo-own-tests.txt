@@ -1,0 +1,5 @@
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.011s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.133s
+ok  	sigs.k8s.io/rbgs/cmd/rbgs	0.064s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/deprecation	6.375s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/webhook	30.000s
