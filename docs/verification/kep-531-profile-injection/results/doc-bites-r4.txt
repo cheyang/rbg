@@ -1,0 +1,16 @@
+== doc-bites round 4 (head 0c51bc0e) — mutations applied to the raw README
+== (whitespace-tolerant, literal semantics); each bite must flip exactly the
+== targeted check to its non-head verdict. Control = unmutated head.
+
+7 bite files written
+[OK] F-ROLE-INSERT-ORDER-CANARY -> fail (expected fail) — r4-1: role-side winner claim reworded
+[OK] F-STAGE3-CHECK-TIMING-CONTRACT -> fail (expected fail) — r4-2: two-static-sources clause removed
+[OK] F-PROFILE-EVOLUTION-TEST-CONTRACT -> fail (expected fail) — r4-3: landing-semantics test case removed
+[OK] F-MOUNTPATH-MECHANISM-CONTRACT -> fail (expected fail) — r4-4: wrong kubelet mountPath citation restored
+[OK] F-SSA-ENV-PREMISE-CONTRACT -> fail (expected fail) — r4-5: false SSA premise restored
+[OK] F-GRADUATION-EVENT-INVENTORY-CONTRACT -> fail (expected fail) — r4-6: EnvCollision+WrapShadowed dropped from Graduation
+[OK] F-INJECTOR-COUNT-WORDING-CONTRACT -> fail (expected fail) — r4-7: 'four-injector pass' restored
+
+== control: unmutated head ==
+passing checks on head: 19
+(no failures on head)

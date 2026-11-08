@@ -5,14 +5,16 @@ Reproducible evidence for the findings raised while reviewing
 Profile Injection — **documentation-only**; production code is identical to
 base `3612013e`/`73e05db4`).
 
-**Round 3** (frozen head `d84004a2`; the PR was force-pushed with a condensed
-document). Round 2 reviewed `7a9827bc`; round 1 reviewed `12693d02`.
+**Round 4** (frozen head `0c51bc0e`; the PR advanced through two commits
+`947eb2aa` + `0c51bc0e` — a Copilot-round dedupe and the round-4/5 review
+fixes, +348/−221 on the README and a restored kep.yaml see-also). Round 3
+reviewed `d84004a2`; round 2 `7a9827bc`; round 1 `12693d02`.
 Layers run against the code under review:
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
-| 1. Unit | `SidecarBuilder`/`PodReconciler` injection behavior that the KEP documents and pins compatibility against | `go test ./pkg/discovery/ ./pkg/reconciler/ -run 'TestKEP531_Verify' -json` |
-| 1b. Doc | 18 doc-text checks (round 3): 11 CONTRACT (fixed state of prior findings; fail = regression) + 7 CANARY (open wording defects; flip = fixed) | `bash docs/verification/kep-531-profile-injection/scripts/check_doc_contracts.sh [--json]` |
+| 1. Unit | `SidecarBuilder`/`PodReconciler` injection behavior that the KEP documents and pins compatibility against, plus the v1alpha1 conversion premise pin | `go test ./pkg/discovery/ ./pkg/reconciler/ -run 'TestKEP531_Verify' -json` |
+| 1b. Doc | 19 doc-text checks (round 4): 17 CONTRACT (fixed state of prior findings; fail = regression) + 2 CANARY (open wording defects; flip = fixed) | `bash docs/verification/kep-531-profile-injection/scripts/check_doc_contracts.sh [--json]` |
 | 2. Integration | — (skipped: docs-only PR, no runtime change) | — |
 | 3. Live | — (not applicable) | — |
 
@@ -55,6 +57,34 @@ Premise evidence (base `3612013e`):
 - Gap 4 (updateStrategy unconsumed): no consumer of
   `ClusterEngineRuntimeProfileSpec.UpdateStrategy` in `pkg/` (grep). The KEP
   does not address it anywhere — see finding F2.
+
+## Summary of results — round 4 (head `0c51bc0e`)
+
+Re-verify on the new head (grafted harness, `--layers unit,doc`):
+
+| finding | class | layer | verdict at `0c51bc0e` |
+|---|---|---|---|
+| F-ENV-CONFLICT … F-INFERENCE-KIT-404, F-ENV-VAR-DIRECTION (all round-1..3 contracts) | fixed | doc | **stay FIXED** — every prior contract green at the new head |
+| F-MOUNTPATH-MECHANISM | nit (r1–r3) | doc | **FIXED at 0c51bc0e** — canary flipped; now cites the apiserver "must be unique" admission check (true); inverted into contract |
+| F-INJECTOR-COUNT-WORDING | nit (r1–r3) | doc | **FIXED at 0c51bc0e** — "the four built-in injector passes" enumerated by kind; inverted into contract |
+| F-STAGE3-CHECK-TIMING (= F-STAGE3-LEGACY-VISIBILITY) | minor (r2→r3) | doc | **FIXED at 0c51bc0e** — stage-3 check counts two static sources (snapshot + the role's own legacy env names, "legacy-merge output being role content"); inverted into contract |
+| F-SSA-ENV-PREMISE | minor (r3) | doc/unit | **FIXED at 0c51bc0e** — false SSA premise removed with the whole final normalization; env model is verbatim-positional; inverted into contract |
+| F-GRADUATION-EVENT-INVENTORY | nit (r2) | doc | **FIXED at 0c51bc0e** — EngineRuntimeEnvCollision + EngineRuntimeWrapShadowed named and listed at Graduation; inverted into contract |
+| F-PROFILE-EVOLUTION-TEST | minor (r1–r3) | doc | **FIXED at 0c51bc0e** — landing semantics + `--disable-profile-immutability` transition path in the Test Plan; canary re-pinned and inverted |
+| F-KEPYAML-SEEALSO-REMOVED | nit (r1–r3) | kep.yaml | **FIXED at 0c51bc0e** — live issue-#531 see-also restored (verified by diff + F-INFERENCE-KIT-404-CONTRACT) |
+| F-PROPAGATION-DOWNGRADE-WORDING | nit (r3) | doc | **FIXED** — Downgrade intro rewritten to the every-reconcile/publishes-via-rollout model |
+| F-DELETE-FINALIZER-RACE | nit (r3) | doc | **FIXED** — "Two races of the same shape exist and are accepted"; delete window named |
+| F-FLAG-FINALIZER-TRANSITION, F-CERP-LIFECYCLE-COMPAT-PLACEMENT, F-STALE-PR-BODY, F-STAGE3-LEGACY-VISIBILITY | minors (r3) | doc | **FIXED at 0c51bc0e** — active finalizer removal under the flag + transition test; Compatibility #6 added + #2 alpha-qualified; PR description refreshed to the final grammar |
+| C-COPILOT-* (V1ALPHA1-CEL-RULE, PREPROTECTION-WINDOW, RBGSET-SCOPE, UPDATE-ADOPT-RACE, NORMALIZATION-ORDER) | advisories (r3) | doc | **ADDRESSED or moot** — version-specific v1alpha1 predicate; DELETE interception covering the pre-finalizer window; RBGSet references counted; the accepted races stated; the normalization removed entirely |
+| F-ROLE-INSERT-ORDER | **NEW minor (r4)** | doc | **OPEN** — role-side bullet: "the later reference's entry lands later and wins" is true for appends only; two `/env/0` head inserts invert it (the cross-profile bullet states the inversion). Canary pins the sentence |
+| F-V1ALPHA1-CEL-EMPTY-COMPONENTS | **NEW nit (r4, question)** | unit | **OPEN (premise pinned)** — `!has(self.components)` vs the conversion's `len>0` default diverge for `components: []`; pinned by `TestKEP531_Verify_V1alpha1EmptyComponentsConvertsToStandalone` |
+| F-PODSECURITY-STAGE | nit (r1–r3) | doc | **STILL-OPEN** — "fails at workload creation" wording (the only carried wording nit) |
+
+Harness-bites: 7/7 targeted mutations flip exactly their check
+(`results/doc-bites-r4.txt`); control = 19 passing checks, no failures.
+Main moved 73e05db4 → fd160cc9 between rounds (chart/manifest version bumps
+only — no renderer/CRD/API change), so all main-behavior pins remain valid;
+the merge base is unchanged at `3612013e`.
 
 ## Summary of results — round 3 (head `d84004a2`)
 
