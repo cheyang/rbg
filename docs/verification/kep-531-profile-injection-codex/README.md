@@ -192,3 +192,69 @@ KEP newly asserts it (tracked as F-SSA-DUPLICATE-ENV-PREMISE).
 - Handoff prompt: "Check out branch verify/kep-531-profile-injection-codex of the
   reviewer's fork (https://github.com/cheyang/rbg.git), read
   docs/verification/kep-531-profile-injection-codex/README.md, run scripts/re-verify.sh."
+
+## Round 4 — head 0c51bc0e (positional env redesign; the round-2/3 open set mostly lands)
+
+Two commits over d84004a2 (`947eb2aa` Copilot-round dedupe, `0c51bc0e` round-4/5
+findings): the env model is redesigned — author precedence and the final
+normalization are **gone**; patches land verbatim and kubelet last-occurrence
+decides, with profile-side entries on role-owned names legal only at `/env/0`,
+a `Two races` delete-side window named, the escape hatch now *removing* existing
+finalizers, DELETE admission added, the RBGSet/uncached-lookup/v1alpha1-CEL
+premises folded in, and kep.yaml regaining its issue-#531 see-also.
+
+### Code-fact harness (17 Go tests)
+
+`bash scripts/re-verify.sh 0c51bc0e...` — **17/17 FIXED** (all green at head;
+raw output in `results/reverify/`). Production code is still identical to the
+merge-base (the diff is `keps/` only), so every pinned main-behavior claim holds.
+New-codebase pins re-verified this round: apiserver `ValidateEnv` has **no**
+duplicate-name check (vendor validation.go:2686-2710) while duplicate mountPath
+is rejected (:3046) — the two platform facts the positional model now rests on —
+and v1alpha1 `RoleSpec` has no `standalonePattern` (conversion default at
+rolebasedgroup_conversion.go:199-209), matching the doc's new v1alpha1 CEL
+predicate.
+
+### Doc-text contracts: 21 pass / 5 fail at head
+
+`scripts/check-doc-contracts.sh` re-pinned for the round-4 wording (the r3
+DOC-STAGE3-LEGACY/DOC-FLAG-FINALIZER/DOC-DELETE-RACE pins were Harness-updates —
+the sentences they pinned were rewritten; the re-pinned contracts FAIL at prev
+d84004a2 and PASS at head, which is also their bite proof). Raw outputs:
+`results/doc-contracts-r4-{0c51bc0e,d84004a2,3612013e}.txt`.
+
+| check | finding | prev d84004a2 | head 0c51bc0e |
+|---|---|---|---|
+| DOC-CONSISTENCY | F-ENV-CONFLICT (r1 blocker) | PASS | PASS |
+| DOC-ISSUE-COVERAGE | F-COVERAGE-UPDATESTRATEGY (r1 major) | PASS | PASS |
+| DOC-CAPS | F-CAPS-MAXITEMS (r1 major) | PASS | PASS |
+| DOC-MAIN-ACCURACY | F-MOUNTPATH-MECHANISM fixed; F-PODSECURITY-STAGE + F-INJECTOR-COUNT-WORDING open (nits) | FAIL | **FAIL** (2 terms remain) |
+| DOC-STAGE3-LEGACY | F-STAGE3-LEGACY-VISIBILITY | FAIL | **PASS (fixed)** |
+| DOC-SSA-ENV-KEYED | F-SSA-ENV-PREMISE | FAIL | **PASS (fixed — claim and normalization removed)** |
+| DOC-ENV-POSITIONAL-MODEL | round-4 model pin (new regression contract) | FAIL | PASS |
+| DOC-FLAG-FINALIZER | F-FLAG-FINALIZER-TRANSITION | FAIL | **PASS (fixed — 'neither added nor kept', active removal + transition test)** |
+| DOC-DELETE-RACE | F-DELETE-FINALIZER-RACE | FAIL | **PASS (fixed — 'Two races of the same shape')** |
+| DOC-COMPAT-CERP-LIFECYCLE | F-CERP-LIFECYCLE-COMPAT-PLACEMENT | FAIL | **PASS (fixed — Compatibility #6 + #2 alpha qualifier)** |
+| DOC-GRADUATION-EVENTS | F-GRADUATION-EVENT-INVENTORY | FAIL | **PASS (fixed — EnvCollision + WrapShadowed inventoried)** |
+| DOC-KEPYAML-SEEALSO | F-KEPYAML-SEEALSO-REMOVED | FAIL | **PASS (fixed — see-also: issues/531)** |
+| DOC-DOWNGRADE-WORDING | F-PROPAGATION-DOWNGRADE-WORDING | FAIL | **PASS (fixed)** |
+| DOC-V1ALPHA1-CEL | C-COPILOT-V1ALPHA1-CEL-RULE | FAIL | **PASS (addressed — v1alpha1 predicate specified)** |
+| DOC-PROFILE-EVOLUTION-TEST | F-PROFILE-EVOLUTION-TEST | FAIL | **PASS (fixed via the alpha-warning-window landing case)** |
+| DOC-CAPABILITY-FORM-REGEX | **F-CAPABILITY-FORM-REGEX (new minor)** | FAIL | **FAIL (open)** |
+| DOC-DEPRECATED-PATH-MECHANISM | **F-DEPRECATED-PATH-MECHANISM (new minor)** | PASS (vacuous — r4 wording) | **FAIL (open)** |
+| DOC-FINALIZER-REMOVAL-OVERCLAIM | **F-FINALIZER-REMOVAL-OVERCLAIM (new nit)** | PASS (sentence absent) | **FAIL (open)** |
+| DOC-WEBHOOK-ROLLBACK | **F-WEBHOOK-ROLLBACK (new minor)** | FAIL | **FAIL (open — predates this round, discovered now)** |
+
+Harness-bites for the new open-finding contracts: `results/doc-bites-r4.txt` —
+all five failing checks flip to PASS (26/26 green) on a scratch copy of the head
+text with the proposed one-sentence fixes applied; no production code touched.
+
+Also fixed this round without a dedicated check: F-STALE-PR-BODY (the PR
+description was refreshed to the positional model + immutability subsystem;
+verified read-only via `gh pr view`), C-COPILOT-NORMALIZATION-ORDER (the
+normalization it worried about is removed; the $(VAR) consumer rule now
+specifies the ordering edge), C-COPILOT-PREPROTECTION-WINDOW (DELETE admission
+covers the pre-backfill window; the residual is accepted race #2),
+C-COPILOT-RBGSET-SCOPE (zero-replica group templates counted, uncached
+lookup), C-COPILOT-UPDATE-ADOPT-RACE (uncached lookup removes the stale-cache
+variant; the genuine in-flight race is named and accepted).

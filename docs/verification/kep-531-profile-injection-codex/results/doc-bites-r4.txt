@@ -1,0 +1,15 @@
+PASS  DOC-MAIN-ACCURACY            mechanism-citation slips fixed (mountPath apiserver / PodSecurity stage / injector-set variation / $(VAR) direction)
+PASS  DOC-CAPABILITY-FORM-REGEX    capability form-warning regex must exclude the CAP_ prefix the Test Plan promises to warn on
+PASS  DOC-DEPRECATED-PATH-MECHANISM deprecated-path rejection of the new fields names its enforcement mechanism
+PASS  DOC-FINALIZER-REMOVAL-OVERCLAIM finalizer-removal freshness: uncached confirm narrows, not closes, the reference-create race
+PASS  DOC-WEBHOOK-ROLLBACK         Downgrade path addresses the retained CERP webhook configuration (failurePolicy deadlock)
+pass=26 fail=0
+# Round-4 harness-bites: the four new open-finding contracts + the two surviving
+# DOC-MAIN-ACCURACY nits all FAIL at head 0c51bc0e and flip to PASS on a scratch
+# copy with the proposed text fixes applied (26/26 green). The round-4 fix
+# contracts (DOC-STAGE3-LEGACY, DOC-SSA-ENV-KEYED, DOC-ENV-POSITIONAL-MODEL,
+# DOC-FLAG-FINALIZER, DOC-DELETE-RACE, DOC-COMPAT-CERP-LIFECYCLE,
+# DOC-GRADUATION-EVENTS, DOC-KEPYAML-SEEALSO, DOC-DOWNGRADE-WORDING,
+# DOC-V1ALPHA1-CEL, DOC-PROFILE-EVOLUTION-TEST) FAIL at prev d84004a2 and PASS
+# at head — the prev/head differential is their polarity proof. No production
+# code touched; the bite repo is a scratch /tmp clone of the KEP text.

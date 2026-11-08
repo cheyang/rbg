@@ -1,0 +1,28 @@
+PASS  DOC-CONSISTENCY              single-scope env-duplicate rule; legacy merge unchecked; dup-reference byte-for-byte case in Test Plan
+PASS  DOC-ISSUE-COVERAGE           updateStrategy/profile-lifecycle dispositioned; kep.yaml overclaim gone
+PASS  DOC-CAPS                     no false pre-existing-cap claims; published lists documented uncapped
+FAIL  DOC-MAIN-ACCURACY            mechanism-citation slips fixed (mountPath apiserver / PodSecurity stage / injector-set variation / $(VAR) direction)
+PASS  DOC-COMPONENT-VOCAB          component field documented as unvalidated (mirrors unmarked source vocabulary)
+PASS  DOC-CONVERSION               v1alpha1<->v1alpha2 round-trip pinned (Version Serving + Graduation)
+PASS  DOC-ENABLEMENT               Feature Enablement and Rollback section present (KEP template, alpha)
+PASS  DOC-UNKNOWN-TARGET           unknown targetContainers name stated as render error in the resolution prose
+PASS  DOC-VMOUNT-EQUALITY          volumeMount no-op requires full-field semantic equality
+PASS  DOC-NO-404-LINK              kep.yaml carries no dead see-also link
+PASS  DOC-STAGE3-LEGACY            stage-3 ownership counts the role's own legacy-merge env names; 'earlier references only' gone
+PASS  DOC-PROPAGATION-TRIGGER      propagation settled: no inaccurate trigger claim; referenced profiles immutable
+PASS  DOC-SSA-ENV-KEYED            false SSA premise and the normalization/author-precedence model are gone
+PASS  DOC-ENV-POSITIONAL-MODEL     positional env model stated: verbatim landing, index-0-only profile default on role-owned names, collision event
+PASS  DOC-FLAG-FINALIZER           escape-hatch flag: existing in-use finalizers actively removed; transition test planned
+PASS  DOC-DELETE-RACE              accepted-race inventory names the finalizer-add/delete window; no exhaustiveness claim
+PASS  DOC-COMPAT-CERP-LIFECYCLE    Compatibility section carries the CERP lifecycle item; #2 qualified for the alpha window
+PASS  DOC-GRADUATION-EVENTS        Graduation checklist inventories all named warning events incl. the shadowing and env-collision events
+PASS  DOC-KEPYAML-SEEALSO          kep.yaml see-also links issue #531
+PASS  DOC-DOWNGRADE-WORDING        Downgrade framing: every reconcile re-renders; pods change only via the workload's own rollout
+PASS  DOC-V1ALPHA1-CEL             v1alpha1 CEL mirror carries the version-specific predicate (no standalonePattern in v1alpha1)
+PASS  DOC-PROFILE-EVOLUTION-TEST   profile-edit landing semantics stated and pinned by a planned envtest
+FAIL  DOC-CAPABILITY-FORM-REGEX    capability form-warning regex must exclude the CAP_ prefix the Test Plan promises to warn on
+FAIL  DOC-DEPRECATED-PATH-MECHANISM deprecated-path rejection of the new fields names its enforcement mechanism
+FAIL  DOC-FINALIZER-REMOVAL-OVERCLAIM finalizer-removal freshness: uncached confirm narrows, not closes, the reference-create race
+FAIL  DOC-WEBHOOK-ROLLBACK         Downgrade path addresses the retained CERP webhook configuration (failurePolicy deadlock)
+----
+pass=21 fail=5

@@ -1,284 +1,318 @@
 {
-  "topic": "kep-531-profile-injection-codex",
-  "pr": "https://github.com/sgl-project/rbg/pull/548",
-  "harnessPaths": [
-    "docs/verification/kep-531-profile-injection-codex",
-    "pkg/discovery/kep531_premise_verify_test.go",
-    "pkg/reconciler/kep531_structure_verify_test.go"
-  ],
-  "premise": {
-    "id": "P0",
-    "claim": "KEP-531's description of main's renderer is accurate: leaderWorkerPattern injects profiles into the leader template only; customComponentsPattern injects into every declared component; injectContainers is inert; the legacy containers merge is env/args-only and no-ops for init containers; env injectors run after the sidecar stage, dedupe last-wins, and cover profile-injected containers.",
-    "reportedComponent": "pkg/discovery/sidecar_builder.go, pkg/reconciler/{pod_reconciler,roleinstanceset_reconciler,lws_reconciler}.go",
-    "patchedComponent": "keps/531-engine-runtime-profile-injection/ (docs only)",
-    "componentMatch": true,
-    "runsAgainst": "base",
-    "layer": "unit",
-    "verdict": "confirmed",
-    "evidence": "16/16 harness tests pass on the PR head tree (code identical to base); see results/unit-discovery.json and results/unit-structure.json. One KEP sentence is contradicted: Compatibility #6's 'matching the v1alpha2 cap' \u2014 no MaxItems exists on either API version (S3).",
-    "match": [
-      "TestKEP531_"
-    ]
+ "topic": "kep-531-profile-injection-codex",
+ "pr": "https://github.com/sgl-project/rbg/pull/548",
+ "harnessPaths": [
+  "docs/verification/kep-531-profile-injection-codex",
+  "pkg/discovery/kep531_premise_verify_test.go",
+  "pkg/reconciler/kep531_structure_verify_test.go"
+ ],
+ "premise": {
+  "id": "P0",
+  "claim": "KEP-531's description of main's renderer is accurate: leaderWorkerPattern injects profiles into the leader template only; customComponentsPattern injects into every declared component; injectContainers is inert; the legacy containers merge is env/args-only and no-ops for init containers; env injectors run after the sidecar stage, dedupe last-wins, and cover profile-injected containers.",
+  "reportedComponent": "pkg/discovery/sidecar_builder.go, pkg/reconciler/{pod_reconciler,roleinstanceset_reconciler,lws_reconciler}.go",
+  "patchedComponent": "keps/531-engine-runtime-profile-injection/ (docs only)",
+  "componentMatch": true,
+  "runsAgainst": "base",
+  "layer": "unit",
+  "verdict": "confirmed",
+  "evidence": "16/16 harness tests pass on the PR head tree (code identical to base); see results/unit-discovery.json and results/unit-structure.json. One KEP sentence is contradicted: Compatibility #6's 'matching the v1alpha2 cap' — no MaxItems exists on either API version (S3).",
+  "match": [
+   "TestKEP531_"
+  ]
+ },
+ "layers": {
+  "unit": {
+   "kind": "gotest",
+   "cmd": "go test ./pkg/discovery/ -run 'TestKEP531_' -json"
   },
-  "layers": {
-    "unit": {
-      "kind": "gotest",
-      "cmd": "go test ./pkg/discovery/ -run 'TestKEP531_' -json"
-    },
-    "integration": {
-      "kind": "gotest",
-      "cmd": "go test ./pkg/reconciler/ -run 'TestKEP531_' -json"
-    }
+  "integration": {
+   "kind": "gotest",
+   "cmd": "go test ./pkg/reconciler/ -run 'TestKEP531_' -json"
+  }
+ },
+ "findings": [
+  {
+   "id": "C-legacy-env-args-only",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestKEP531_LegacyOverrideMergesEnvArgsOnly"
+   ]
   },
-  "findings": [
-    {
-      "id": "C-legacy-env-args-only",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestKEP531_LegacyOverrideMergesEnvArgsOnly"
-      ]
-    },
-    {
-      "id": "C-legacy-init-noop",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestKEP531_LegacyOverrideInitContainerIsNoop"
-      ]
-    },
-    {
-      "id": "C-legacy-unknown-skip",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestKEP531_LegacyOverrideUnknownContainerSkipped"
-      ]
-    },
-    {
-      "id": "C-append-if-missing-role-wins",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestKEP531_AppendIfMissingRoleWins"
-      ]
-    },
-    {
-      "id": "C-duplicate-references",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestKEP531_DuplicateReferencesDedupPodLevelLegacyAppendsTwice"
-      ]
-    },
-    {
-      "id": "C-cross-profile-collision",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestKEP531_CrossProfileCollisionFirstReferenceWins"
-      ]
-    },
-    {
-      "id": "C-env-stage-coverage",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestKEP531_InjectEnvCoversProfileInjectedContainer"
-      ]
-    },
-    {
-      "id": "C-mergeenvvars-order",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestKEP531_MergeEnvVarsLastWinsAndReorders"
-      ]
-    },
-    {
-      "id": "C-leader-only-default",
-      "polarity": "contract",
-      "layer": "integration",
-      "match": [
-        "TestKEP531_S1_WorkerTemplatesSkipSidecarInjection"
-      ]
-    },
-    {
-      "id": "C-injectcontainers-inert",
-      "polarity": "contract",
-      "layer": "integration",
-      "match": [
-        "TestKEP531_S2_InjectContainersInert"
-      ]
-    },
-    {
-      "id": "C-no-maxitems-caps",
-      "polarity": "contract",
-      "layer": "integration",
-      "match": [
-        "TestKEP531_S3_NoMaxItemsCapsExistOnMain"
-      ]
-    },
-    {
-      "id": "C-component-names-unconstrained",
-      "polarity": "contract",
-      "layer": "integration",
-      "match": [
-        "TestKEP531_S4_CustomComponentNamesUnconstrained"
-      ]
-    },
-    {
-      "id": "C-cerp-cluster-scoped",
-      "polarity": "contract",
-      "layer": "integration",
-      "match": [
-        "TestKEP531_S5_CERPClusterScoped"
-      ]
-    },
-    {
-      "id": "C-no-profile-watch",
-      "polarity": "contract",
-      "layer": "integration",
-      "match": [
-        "TestKEP531_S6_ProfileEditsDoNotPropagate"
-      ]
-    },
-    {
-      "id": "C-templateref-lws",
-      "polarity": "contract",
-      "layer": "integration",
-      "match": [
-        "TestKEP531_S7_TemplateRefProhibitedForLWS"
-      ]
-    },
-    {
-      "id": "C-mountpath-uniqueness",
-      "polarity": "contract",
-      "layer": "integration",
-      "match": [
-        "TestKEP531_S8_ApiserverRejectsDuplicateMountPath"
-      ]
-    },
-    {
-      "id": "C-ris-template-schemaless",
-      "polarity": "contract",
-      "layer": "integration",
-      "match": [
-        "TestKEP531_S9_RISTemplateSchemalessSoSSACannotRejectDuplicateEnv"
-      ]
-    }
-  ],
-  "_docFindings": {
-    "_note": "The debate findings are defects in the KEP TEXT. Round 2 adds scripts/check-doc-contracts.sh (contract polarity over the doc at a ref); results in results/doc-contracts-{head,prev,base}-*.txt. re-verify.sh still judges the code-fact claims (16 Go tests).",
-    "round2": {
-      "head": "7a9827bcbd474422ff9caae07a778417e062a1cd",
-      "script": "scripts/check-doc-contracts.sh",
-      "fixed": [
-        "F-ENV-CONFLICT",
-        "F-COVERAGE-UPDATESTRATEGY",
-        "F-CAPS-MAXITEMS",
-        "F-COMPONENT-VOCAB",
-        "F-ENABLEMENT-ROLLBACK",
-        "F-CONVERSION-ROUNDTRIP",
-        "F-INFERENCE-KIT-404",
-        "F-UNKNOWN-TARGET-PROSE",
-        "F-COPILOT-SECRET-CHANNEL",
-        "F-COPILOT-VOLUMEMOUNT-EQUALITY"
-      ],
-      "stillOpen": [
-        "F-MOUNTPATH-MECHANISM",
-        "F-PODSECURITY-STAGE",
-        "F-ENV-VAR-DIRECTION",
-        "F-INJECTOR-COUNT-WORDING",
-        "F-PROFILE-EVOLUTION-TEST"
-      ],
-      "new": [
-        "F-STAGE3-LEGACY-VISIBILITY (major)",
-        "F-PROPAGATION-TRIGGER (minor)",
-        "F-KEPYAML-SEEALSO-REMOVED (nit)",
-        "F-GRADUATION-EVENT-INVENTORY (nit)"
-      ]
-    },
-    "F1": {
-      "evidence": [
-        "TestKEP531_S3_NoMaxItemsCapsExistOnMain",
-        "DOC-CAPS"
-      ],
-      "summary": "FIXED at 7a9827bc: published lists documented uncapped ('no new caps'); caps only on new fields (MaxItems=32)."
-    },
-    "F2": {
-      "evidence": [
-        "TestKEP531_S6_ProfileEditsDoNotPropagate",
-        "DOC-ISSUE-COVERAGE"
-      ],
-      "summary": "FIXED at 7a9827bc: updateStrategy/profile lifecycle dispositioned (Non-Goals + Profile Mutability); kep.yaml overclaim removed with the whole see-also block."
-    },
-    "F3": {
-      "evidence": [
-        "TestKEP531_S4_CustomComponentNamesUnconstrained",
-        "DOC-COMPONENT-VOCAB"
-      ],
-      "summary": "FIXED at 7a9827bc: component carries no pattern; rationale + mixed-case test added."
-    },
-    "F4": {
-      "evidence": [
-        "TestKEP531_S8_ApiserverRejectsDuplicateMountPath",
-        "DOC-MAIN-ACCURACY"
-      ],
-      "summary": "STILL OPEN (nit): partial-match case now cites apiserver 'must be unique' correctly, but the different-volume same-mountPath sentence still says 'kubelet resolves overlapping mount paths last-wins'."
-    },
-    "F-ENV-CONFLICT": {
-      "evidence": [
-        "DOC-CONSISTENCY",
-        "TestKEP531_DuplicateReferencesDedupPodLevelLegacyAppendsTwice"
-      ],
-      "summary": "FIXED at 7a9827bc: positional model, intra-list duplicate error, legacy merge explicitly unchecked ('no conflict check to carve out: legacy-only duplicates never error'); dup-reference byte-for-byte case in Test Plan."
-    },
-    "F-STAGE3-LEGACY-VISIBILITY": {
-      "evidence": [
-        "DOC-STAGE3-LEGACY",
-        "TestKEP531_LegacyOverrideMergesEnvArgsOnly"
-      ],
-      "summary": "OPEN (major, new in r2): stage-3 role-owned check visibility omits the same reference's legacy-merge env output, contradicting Compatibility #3's coexistence promise."
-    },
-    "F-PROPAGATION-TRIGGER": {
-      "evidence": [
-        "DOC-PROPAGATION-TRIGGER",
-        "TestKEP531_S6_ProfileEditsDoNotPropagate"
-      ],
-      "summary": "OPEN (minor, new in r2): 'today only deliberate workload updates' inaccurate \u2014 every RBG reconcile re-renders and applies (RIS unconditional SSA; LWS drift-compared); triggers include controller restarts and owned-child events."
-    },
-    "round3": {
-      "head": "d84004a29c80b7e284a0e9662dd5d4c3b23a2da9",
-      "script": "scripts/check-doc-contracts.sh",
-      "fixed": [
-        "F-PROPAGATION-TRIGGER (by redesign: immutable-while-referenced)",
-        "F-PROFILE-EVOLUTION-TEST (immutability battery incl. webhook bypass + migration)",
-        "Q-CERP-V1ALPHA1-NONE-CONVERSION (v1alpha1 mirror + round-trip envtest)",
-        "F-ENV-VAR-DIRECTION",
-        "C-COPILOT-GHOST-COMPONENT",
-        "C-COPILOT-SH-C-ARGS",
-        "C-COPILOT-ENV-PRECEDENCE-FLIP"
-      ],
-      "refutedPremise": [
-        "C-COPILOT-SSA-MAP-LIST \u2014 premise verified false (S9); KEP now asserts it, tracked as F-SSA-DUPLICATE-ENV-PREMISE"
-      ],
-      "stillOpen": [
-        "F-STAGE3-LEGACY-VISIBILITY (major)",
-        "F-MOUNTPATH-MECHANISM",
-        "F-PODSECURITY-STAGE",
-        "F-INJECTOR-COUNT-WORDING",
-        "F-KEPYAML-SEEALSO-REMOVED",
-        "F-GRADUATION-EVENT-INVENTORY",
-        "F-STALE-PR-BODY"
-      ],
-      "new": [
-        "F-SSA-DUPLICATE-ENV-PREMISE (minor)",
-        "F-FLAG-FINALIZER-TRANSITION (minor)",
-        "F-DELETE-FINALIZER-RACE (nit)"
-      ],
-      "harnessUpdates": "DOC-CONSISTENCY/DOC-ISSUE-COVERAGE/DOC-COMPONENT-VOCAB restringed for the d84004a2 condensation; DOC-PROPAGATION-TRIGGER strengthened; DOC-DELETE-RACE tightened after a false-pass (bite check)"
-    }
+  {
+   "id": "C-legacy-init-noop",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestKEP531_LegacyOverrideInitContainerIsNoop"
+   ]
   },
-  "liveNote": "No live layer: this PR is docs-only; there is no runtime change to observe. The e2e scenarios belong to the follow-up implementation PRs (see the KEP Test Plan)."
+  {
+   "id": "C-legacy-unknown-skip",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestKEP531_LegacyOverrideUnknownContainerSkipped"
+   ]
+  },
+  {
+   "id": "C-append-if-missing-role-wins",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestKEP531_AppendIfMissingRoleWins"
+   ]
+  },
+  {
+   "id": "C-duplicate-references",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestKEP531_DuplicateReferencesDedupPodLevelLegacyAppendsTwice"
+   ]
+  },
+  {
+   "id": "C-cross-profile-collision",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestKEP531_CrossProfileCollisionFirstReferenceWins"
+   ]
+  },
+  {
+   "id": "C-env-stage-coverage",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestKEP531_InjectEnvCoversProfileInjectedContainer"
+   ]
+  },
+  {
+   "id": "C-mergeenvvars-order",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestKEP531_MergeEnvVarsLastWinsAndReorders"
+   ]
+  },
+  {
+   "id": "C-leader-only-default",
+   "polarity": "contract",
+   "layer": "integration",
+   "match": [
+    "TestKEP531_S1_WorkerTemplatesSkipSidecarInjection"
+   ]
+  },
+  {
+   "id": "C-injectcontainers-inert",
+   "polarity": "contract",
+   "layer": "integration",
+   "match": [
+    "TestKEP531_S2_InjectContainersInert"
+   ]
+  },
+  {
+   "id": "C-no-maxitems-caps",
+   "polarity": "contract",
+   "layer": "integration",
+   "match": [
+    "TestKEP531_S3_NoMaxItemsCapsExistOnMain"
+   ]
+  },
+  {
+   "id": "C-component-names-unconstrained",
+   "polarity": "contract",
+   "layer": "integration",
+   "match": [
+    "TestKEP531_S4_CustomComponentNamesUnconstrained"
+   ]
+  },
+  {
+   "id": "C-cerp-cluster-scoped",
+   "polarity": "contract",
+   "layer": "integration",
+   "match": [
+    "TestKEP531_S5_CERPClusterScoped"
+   ]
+  },
+  {
+   "id": "C-no-profile-watch",
+   "polarity": "contract",
+   "layer": "integration",
+   "match": [
+    "TestKEP531_S6_ProfileEditsDoNotPropagate"
+   ]
+  },
+  {
+   "id": "C-templateref-lws",
+   "polarity": "contract",
+   "layer": "integration",
+   "match": [
+    "TestKEP531_S7_TemplateRefProhibitedForLWS"
+   ]
+  },
+  {
+   "id": "C-mountpath-uniqueness",
+   "polarity": "contract",
+   "layer": "integration",
+   "match": [
+    "TestKEP531_S8_ApiserverRejectsDuplicateMountPath"
+   ]
+  },
+  {
+   "id": "C-ris-template-schemaless",
+   "polarity": "contract",
+   "layer": "integration",
+   "match": [
+    "TestKEP531_S9_RISTemplateSchemalessSoSSACannotRejectDuplicateEnv"
+   ]
+  }
+ ],
+ "_docFindings": {
+  "_note": "The debate findings are defects in the KEP TEXT. scripts/check-doc-contracts.sh holds the contract checks (PASS = criterion met); results in results/doc-contracts-*.txt. re-verify.sh judges the code-fact claims (17 Go tests). Round 4 re-pins the doc contracts for the positional env redesign (author-precedence + normalization removed) and adds checks for the round-4 fixes and findings.",
+  "round2": {
+   "head": "7a9827bcbd474422ff9caae07a778417e062a1cd",
+   "script": "scripts/check-doc-contracts.sh",
+   "fixed": [
+    "F-ENV-CONFLICT",
+    "F-COVERAGE-UPDATESTRATEGY",
+    "F-CAPS-MAXITEMS",
+    "F-COMPONENT-VOCAB",
+    "F-ENABLEMENT-ROLLBACK",
+    "F-CONVERSION-ROUNDTRIP",
+    "F-INFERENCE-KIT-404",
+    "F-UNKNOWN-TARGET-PROSE",
+    "F-COPILOT-SECRET-CHANNEL",
+    "F-COPILOT-VOLUMEMOUNT-EQUALITY"
+   ],
+   "stillOpen": [
+    "F-MOUNTPATH-MECHANISM",
+    "F-PODSECURITY-STAGE",
+    "F-ENV-VAR-DIRECTION",
+    "F-INJECTOR-COUNT-WORDING",
+    "F-PROFILE-EVOLUTION-TEST"
+   ],
+   "new": [
+    "F-STAGE3-LEGACY-VISIBILITY (major)",
+    "F-PROPAGATION-TRIGGER (minor)",
+    "F-KEPYAML-SEEALSO-REMOVED (nit)",
+    "F-GRADUATION-EVENT-INVENTORY (nit)"
+   ]
+  },
+  "F1": {
+   "evidence": [
+    "TestKEP531_S3_NoMaxItemsCapsExistOnMain",
+    "DOC-CAPS"
+   ],
+   "summary": "FIXED at 7a9827bc: published lists documented uncapped ('no new caps'); caps only on new fields (MaxItems=32)."
+  },
+  "F2": {
+   "evidence": [
+    "TestKEP531_S6_ProfileEditsDoNotPropagate",
+    "DOC-ISSUE-COVERAGE"
+   ],
+   "summary": "FIXED at 7a9827bc: updateStrategy/profile lifecycle dispositioned (Non-Goals + Profile Mutability); kep.yaml overclaim removed with the whole see-also block."
+  },
+  "F3": {
+   "evidence": [
+    "TestKEP531_S4_CustomComponentNamesUnconstrained",
+    "DOC-COMPONENT-VOCAB"
+   ],
+   "summary": "FIXED at 7a9827bc: component carries no pattern; rationale + mixed-case test added."
+  },
+  "F4": {
+   "evidence": [
+    "TestKEP531_S8_ApiserverRejectsDuplicateMountPath",
+    "DOC-MAIN-ACCURACY"
+   ],
+   "summary": "STILL OPEN (nit): partial-match case now cites apiserver 'must be unique' correctly, but the different-volume same-mountPath sentence still says 'kubelet resolves overlapping mount paths last-wins'."
+  },
+  "F-ENV-CONFLICT": {
+   "evidence": [
+    "DOC-CONSISTENCY",
+    "TestKEP531_DuplicateReferencesDedupPodLevelLegacyAppendsTwice"
+   ],
+   "summary": "FIXED at 7a9827bc: positional model, intra-list duplicate error, legacy merge explicitly unchecked ('no conflict check to carve out: legacy-only duplicates never error'); dup-reference byte-for-byte case in Test Plan."
+  },
+  "F-STAGE3-LEGACY-VISIBILITY": {
+   "evidence": [
+    "DOC-STAGE3-LEGACY",
+    "TestKEP531_LegacyOverrideMergesEnvArgsOnly"
+   ],
+   "summary": "OPEN (major, new in r2): stage-3 role-owned check visibility omits the same reference's legacy-merge env output, contradicting Compatibility #3's coexistence promise."
+  },
+  "F-PROPAGATION-TRIGGER": {
+   "evidence": [
+    "DOC-PROPAGATION-TRIGGER",
+    "TestKEP531_S6_ProfileEditsDoNotPropagate"
+   ],
+   "summary": "OPEN (minor, new in r2): 'today only deliberate workload updates' inaccurate — every RBG reconcile re-renders and applies (RIS unconditional SSA; LWS drift-compared); triggers include controller restarts and owned-child events."
+  },
+  "round3": {
+   "head": "d84004a29c80b7e284a0e9662dd5d4c3b23a2da9",
+   "script": "scripts/check-doc-contracts.sh",
+   "fixed": [
+    "F-PROPAGATION-TRIGGER (by redesign: immutable-while-referenced)",
+    "F-PROFILE-EVOLUTION-TEST (immutability battery incl. webhook bypass + migration)",
+    "Q-CERP-V1ALPHA1-NONE-CONVERSION (v1alpha1 mirror + round-trip envtest)",
+    "F-ENV-VAR-DIRECTION",
+    "C-COPILOT-GHOST-COMPONENT",
+    "C-COPILOT-SH-C-ARGS",
+    "C-COPILOT-ENV-PRECEDENCE-FLIP"
+   ],
+   "refutedPremise": [
+    "C-COPILOT-SSA-MAP-LIST — premise verified false (S9); KEP now asserts it, tracked as F-SSA-DUPLICATE-ENV-PREMISE"
+   ],
+   "stillOpen": [
+    "F-STAGE3-LEGACY-VISIBILITY (major)",
+    "F-MOUNTPATH-MECHANISM",
+    "F-PODSECURITY-STAGE",
+    "F-INJECTOR-COUNT-WORDING",
+    "F-KEPYAML-SEEALSO-REMOVED",
+    "F-GRADUATION-EVENT-INVENTORY",
+    "F-STALE-PR-BODY"
+   ],
+   "new": [
+    "F-SSA-DUPLICATE-ENV-PREMISE (minor)",
+    "F-FLAG-FINALIZER-TRANSITION (minor)",
+    "F-DELETE-FINALIZER-RACE (nit)"
+   ],
+   "harnessUpdates": "DOC-CONSISTENCY/DOC-ISSUE-COVERAGE/DOC-COMPONENT-VOCAB restringed for the d84004a2 condensation; DOC-PROPAGATION-TRIGGER strengthened; DOC-DELETE-RACE tightened after a false-pass (bite check)"
+  },
+  "round4": {
+   "head": "0c51bc0e42e995c7fded14cf339f800be1ade1cf",
+   "script": "scripts/check-doc-contracts.sh",
+   "fixedAtHead": [
+    "F-STAGE3-LEGACY-VISIBILITY",
+    "F-SSA-ENV-PREMISE",
+    "F-FLAG-FINALIZER-TRANSITION",
+    "F-CERP-LIFECYCLE-COMPAT-PLACEMENT",
+    "F-DELETE-FINALIZER-RACE",
+    "F-MOUNTPATH-MECHANISM",
+    "F-GRADUATION-EVENT-INVENTORY",
+    "F-KEPYAML-SEEALSO-REMOVED",
+    "F-PROPAGATION-DOWNGRADE-WORDING",
+    "C-COPILOT-V1ALPHA1-CEL-RULE",
+    "C-COPILOT-NORMALIZATION-ORDER",
+    "C-COPILOT-PREPROTECTION-WINDOW",
+    "C-COPILOT-RBGSET-SCOPE",
+    "C-COPILOT-UPDATE-ADOPT-RACE",
+    "F-PROFILE-EVOLUTION-TEST",
+    "F-STALE-PR-BODY"
+   ],
+   "stillOpen": [
+    "F-PODSECURITY-STAGE (nit)",
+    "F-INJECTOR-COUNT-WORDING (nit, re-pinned r4 wording)"
+   ],
+   "new": [
+    "F-CAPABILITY-FORM-REGEX (minor)",
+    "F-DEPRECATED-PATH-MECHANISM (minor)",
+    "F-WEBHOOK-ROLLBACK (minor)",
+    "F-FINALIZER-REMOVAL-OVERCLAIM (nit)",
+    "F-PROFILE-DEFAULT-GEOMETRY (minor)",
+    "F-NONGOALS-PODRECONCILER-LWS (nit)"
+   ]
+  }
+ },
+ "liveNote": "No live layer: this PR is docs-only; there is no runtime change to observe. The e2e scenarios belong to the follow-up implementation PRs (see the KEP Test Plan)."
 }
