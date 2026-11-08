@@ -36,15 +36,65 @@ package discovery
 //      handed to apply only on the init-container path (InjectEnv scans
 //      podSpec.Spec.Containers only), which no SSA rejection stops.
 //      TestKEP531_Verify_BuiltInEnvInjectorDedupesWholeContainerEnv pins it.
+//
+// Round-4 update (0c51bc0e): the KEP removed the "final env normalization"
+// entirely — patch output now lands verbatim (never reordered or deduped)
+// and resolves by standard kubelet last-occurrence semantics, so fact 1 is
+// now cited as "SSA never rejects env duplicates, hence no normalization is
+// needed" rather than justifying a dedupe step. Both unit pins remain valid
+// main-behavior facts. A new round-4 pin,
+// TestKEP531_Verify_V1alpha1EmptyComponentsConvertsToStandalone, records the
+// premise of F-V1ALPHA1-CEL-EMPTY-COMPONENTS.
 
 import (
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	v1 "k8s.io/api/core/v1"
+	workloadsv1alpha1 "sigs.k8s.io/rbgs/api/workloads/v1alpha1"
+	workloadsv1alpha2 "sigs.k8s.io/rbgs/api/workloads/v1alpha2"
 )
+
+// TestKEP531_Verify_V1alpha1EmptyComponentsConvertsToStandalone pins the
+// code premise of F-V1ALPHA1-CEL-EMPTY-COMPONENTS (round-4 nit): the KEP
+// (README "Validation Model") says the v1alpha1 mirror of the cross-field CEL
+// rule substitutes `!has(self.leaderWorkerSet) && !has(self.components)` for
+// v1alpha2's `has(self.standalonePattern)`, "matching the Hub conversion's
+// pattern inference". The conversion's inference is `len(components) > 0`
+// (default → standalone), while CEL's has() is TRUE for a present-but-empty
+// list — `components: []` is writable (no MinItems) and converts to
+// standalonePattern, yet the predicate would classify it as non-standalone.
+// This test passes while that divergence exists on main; it is the runnable
+// premise for the question, not a main-code bug.
+func TestKEP531_Verify_V1alpha1EmptyComponentsConvertsToStandalone(t *testing.T) {
+	_, hasField := reflect.TypeOf(workloadsv1alpha1.RoleSpec{}).FieldByName("StandalonePattern")
+	assert.False(t, hasField,
+		"v1alpha1 RoleSpec is expected to have no StandalonePattern field; "+
+			"if it gained one, the KEP's v1alpha1 CEL predicate note is stale")
+
+	src := &workloadsv1alpha1.RoleBasedGroup{
+		Spec: workloadsv1alpha1.RoleBasedGroupSpec{
+			Roles: []workloadsv1alpha1.RoleSpec{
+				{
+					Name:       "r",
+					Components: []workloadsv1alpha1.InstanceComponent{}, // present but empty — writable (no MinItems)
+				},
+			},
+		},
+	}
+	dst := &workloadsv1alpha2.RoleBasedGroup{}
+	if err := src.ConvertTo(dst); err != nil {
+		t.Fatalf("v1alpha1 → Hub conversion failed: %v", err)
+	}
+	assert.NotNil(t, dst.Spec.Roles[0].Pattern.StandalonePattern,
+		"the Hub conversion infers standalone for a present-but-empty components list "+
+			"(len>0 switch default), while the KEP's v1alpha1 CEL predicate "+
+			"!has(self.components) classifies the same object as non-standalone — "+
+			"the write-surface asymmetry of F-V1ALPHA1-CEL-EMPTY-COMPONENTS")
+}
 
 // TestKEP531_Verify_RISTemplateEnvIsNotMapKeyed pins the served RIS CRD
 // schema premise of F-SSA-ENV-PREMISE: the pod template carried by

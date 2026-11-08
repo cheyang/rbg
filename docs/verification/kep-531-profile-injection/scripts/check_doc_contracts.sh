@@ -157,15 +157,16 @@ fi
 
 # ---------- CANARY checks (open findings — pass while defective, flip on fix) ----------
 
-# F-MOUNTPATH-MECHANISM (open nit, rounds 1-3): the wrong "kubelet last-wins"
-# citation for duplicate mountPaths. Round-2 text had the correct apiserver
-# "must be unique" citation adjacent; the round-3 condense kept only the wrong
-# mechanism (dropping "the", which briefly fooled the round-2 phrase match —
-# this check matches the round-3 wording and the missing correct citation).
-if has "kubelet resolves overlapping mount paths last-wins" && lacks "must be unique"; then
-  emit "F-MOUNTPATH-MECHANISM-CANARY" pass "defective kubelet-last-wins citation present, apiserver citation absent"
+# F-MOUNTPATH-MECHANISM (nit, rounds 1-3; FIXED at 0c51bc0e — canary flipped
+# and inverted into this contract): the duplicate-mountPath render-error rule
+# is now cited to the apiserver's "must be unique" pod-admission validation
+# (true: k8s core ValidateContainers rejects duplicate mountPaths per
+# container), not to a kubelet last-wins claim.
+if has "the apiserver rejects duplicate mount paths within a container at pod admission" \
+   && lacks "kubelet resolves overlapping mount paths"; then
+  emit "F-MOUNTPATH-MECHANISM-CONTRACT" pass "duplicate-mountPath rule cites the apiserver admission check"
 else
-  emit "F-MOUNTPATH-MECHANISM-CANARY" fail "FIXED? mountPath mechanism citation corrected — invert into a contract"
+  emit "F-MOUNTPATH-MECHANISM-CONTRACT" fail "mountPath citation regressed to a wrong mechanism (or the apiserver citation was removed)"
 fi
 
 # F-PODSECURITY-STAGE (open nit): risk table says "fails at workload creation"
@@ -185,61 +186,90 @@ else
   emit "F-ENV-VAR-DIRECTION-CONTRACT" fail "absolute \$(VAR) direction claim is back"
 fi
 
-# F-INJECTOR-COUNT-WORDING (open nit): "four-injector pass" overgeneralizes;
-# per-template injector sets vary 2-4 (RIS worker 3, LWS leader 3, LWS worker 2).
-if has "four-injector pass"; then
-  emit "F-INJECTOR-COUNT-WORDING-CANARY" pass "'four-injector pass' overgeneralization present"
+# F-INJECTOR-COUNT-WORDING (nit, rounds 1-3; FIXED at 0c51bc0e — canary
+# flipped and inverted): the chain is now described as "the four built-in
+# injector passes — config, sidecar stages 1–2, env, LWP env" — an
+# enumeration of the chain's injector kinds, no longer claiming every
+# template runs all four (per-template sets vary 2-4).
+if has "the four built-in injector passes" && lacks "four-injector pass"; then
+  emit "F-INJECTOR-COUNT-WORDING-CONTRACT" pass "injector chain enumerated by kind, not per-template count"
 else
-  emit "F-INJECTOR-COUNT-WORDING-CANARY" fail "FIXED? injector-count wording qualified — invert into a contract"
+  emit "F-INJECTOR-COUNT-WORDING-CONTRACT" fail "'four-injector pass' overgeneralization is back (or the enumeration was removed)"
 fi
 
-# F-STAGE3-LEGACY-VISIBILITY (round-2 consensus major, downgraded to a minor
-# residual at d84004a2 — this canary pins the surviving clause): the stage-3
-# sentence still resolves role-owned checks against "the role template and the
-# pod-level content of earlier references only", omitting the referencing
-# role's own legacy containers[].env names and contradicting the phased order
-# (all pod-level content lands in stages 1-2 before any stage-3 pass).
-if has "content of earlier references only"; then
-  emit "F-STAGE3-CHECK-TIMING-CANARY" pass "stage-3 check-visibility clause still omits own-reference legacy env"
+# F-STAGE3-LEGACY-VISIBILITY / F-STAGE3-CHECK-TIMING (round-2 major downgraded
+# to minor at r3; FIXED at 0c51bc0e — canary flipped and inverted): the stage-3
+# role-owned env check now counts BOTH static sources — the pre-injection
+# snapshot AND the referencing role's own legacy engineRuntimes[].containers[].env
+# names ("legacy-merge output being role content"), so the promised render
+# error for a profile append onto a legacy-declared name can fire. The old
+# "content of earlier references only" clause is gone.
+if has "two static sources" && has "legacy-merge output being role content" \
+   && lacks "content of earlier references only"; then
+  emit "F-STAGE3-CHECK-TIMING-CONTRACT" pass "stage-3 check sees snapshot + own-role legacy env names"
 else
-  emit "F-STAGE3-CHECK-TIMING-CANARY" fail "FIXED? stage-3 check-visibility clause reworded — invert into a contract"
+  emit "F-STAGE3-CHECK-TIMING-CONTRACT" fail "stage-3 role-owned visibility regressed (legacy env names no longer counted)"
 fi
 
-# F-PROFILE-EVOLUTION-TEST (open minor, rounds 1-2, reframed at round 3): with
-# the immutability redesign the default path cannot evolve a referenced
-# profile; the residual gap is the --disable-profile-immutability landing
-# semantics (edited profile + consenting reference: does the next render pick
-# it up?) — still unstated and untested.
+# F-ROLE-INSERT-ORDER (round-4 NEW minor): the Patch Grammar's role-side bullet
+# claims two references' role-side same-name entries resolve "by reference
+# order — the later reference's entry lands later and wins", which holds for
+# appends only. For two /env/0 head inserts the later pass lands its entry at
+# index 0 (pushing the earlier reference's entry to index 1), so by the doc's
+# own last-occurrence rule the EARLIER reference's entry wins — the inversion
+# the cross-profile bullet states explicitly ("head-insert geometry puts the
+# later reference's entry ahead, so the earlier reference's default wins").
+# Pass while the unqualified winner claim is present; flips when reworded.
+if has "the later reference's entry lands later and wins"; then
+  emit "F-ROLE-INSERT-ORDER-CANARY" pass "role-side two-reference winner claim contradicts own head-insert geometry"
+else
+  emit "F-ROLE-INSERT-ORDER-CANARY" fail "FIXED? role-side winner claim qualified by spelling — invert into a contract"
+fi
+
+# F-PROFILE-EVOLUTION-TEST (minor, rounds 1-3; FIXED at 0c51bc0e — canary
+# re-pinned onto the new wording and inverted into this contract): the Test
+# Plan now covers both the landing semantics (an admitted edit to a referenced
+# profile landing, subsequent renders reading the changed content — the
+# alpha-warning-window case, which is also the disable-flag question: freeze
+# off, edit lands, next render reads it) and the flag transition path (a
+# finalizer installed under default operation removed once the flag is set).
 testplan="$(awk '/^## Test Plan/{f=1;next} /^## /{f=0} f' "$README")"
-if ! printf '%s' "$testplan" | grep -qi "evolution\|profile change\|profile edit\|profile mutab\|consenting reference"; then
-  emit "F-PROFILE-EVOLUTION-TEST-CANARY" pass "Test Plan still lacks the disable-flag landing-semantics case"
+if printf '%s' "$testplan" | grep -q "the transition path" \
+   && printf '%s' "$testplan" | grep -q "subsequent renders reading the changed content"; then
+  emit "F-PROFILE-EVOLUTION-TEST-CONTRACT" pass "landing semantics + disable-flag transition path in the Test Plan"
 else
-  emit "F-PROFILE-EVOLUTION-TEST-CANARY" fail "FIXED? Test Plan now covers consented profile evolution — invert into a contract"
+  emit "F-PROFILE-EVOLUTION-TEST-CONTRACT" fail "disable-flag landing-semantics / transition coverage removed from the Test Plan"
 fi
 
-# F-SSA-ENV-PREMISE (round-3 NEW minor): the Patch Grammar justifies the final
-# env normalization with "server-side apply, whose env list is keyed by name
-# and rejects duplicates" — false for the served RIS CRD (roleInstanceTemplate
-# is x-kubernetes-preserve-unknown-fields: true, no env listType=map; lists
-# are atomic under SSA). Code premise pinned in the unit layer by
-# TestKEP531_Verify_RISTemplateEnvIsNotMapKeyed. Pass while the false claim
-# is present; flips when the justification is corrected.
-if has "keyed by name and rejects duplicates"; then
-  emit "F-SSA-ENV-PREMISE-CANARY" pass "false SSA duplicate-rejection premise present"
+# F-SSA-ENV-PREMISE (round-3 NEW minor; FIXED at 0c51bc0e — canary flipped and
+# inverted into this contract): the false "server-side apply, whose env list is
+# keyed by name and rejects duplicates" justification is gone (the whole final
+# normalization was removed with it — entries land verbatim, never reordered or
+# deduplicated, matching the unit pin TestKEP531_Verify_RISTemplateEnvIsNotMapKeyed:
+# the served RIS CRD carries no map-keyed env list, so SSA never rejects env
+# duplicates). Contract: the false premise stays out and the verbatim-position
+# statement stays in.
+if lacks "keyed by name and rejects duplicates" \
+   && has "the render adds no winner rule of its own" \
+   && has "never reordered or deduplicated"; then
+  emit "F-SSA-ENV-PREMISE-CONTRACT" pass "env model is verbatim-positional; false SSA premise absent"
 else
-  emit "F-SSA-ENV-PREMISE-CANARY" fail "FIXED? SSA premise corrected — invert into a contract"
+  emit "F-SSA-ENV-PREMISE-CONTRACT" fail "false SSA duplicate-rejection premise is back (or the verbatim statement was removed)"
 fi
 
-# F-GRADUATION-EVENT-INVENTORY (round-2 nit, still open): the render-time
-# positional-shadowing event is promised in Non-Goals/Render Pipeline and
-# tested in the Test Plan but is unnamed and absent from the Graduation
-# checklist's warning-events item.
+# F-GRADUATION-EVENT-INVENTORY (round-2 nit; FIXED at 0c51bc0e — canary
+# flipped and inverted into this contract): the warning-event inventory in the
+# Graduation checklist now names every event the doc promises — including the
+# newly named EngineRuntimeEnvCollision and EngineRuntimeWrapShadowed.
 gradsec="$(awk '/^## Graduation Criteria/{f=1;next} /^## /{f=0} f' "$README")"
-if printf '%s' "$testplan" | grep -qi "shadowing event" \
-   && ! printf '%s' "$gradsec" | grep -qi "shadowing"; then
-  emit "F-GRADUATION-EVENT-INVENTORY-CANARY" pass "shadowing event still missing from the Graduation checklist"
+if printf '%s' "$gradsec" | grep -q "EngineRuntimeEnvCollision" \
+   && printf '%s' "$gradsec" | grep -q "EngineRuntimeWrapShadowed" \
+   && printf '%s' "$gradsec" | grep -q "EngineRuntimeNameCollision" \
+   && printf '%s' "$gradsec" | grep -q "UnaimedContainerPatch" \
+   && printf '%s' "$gradsec" | grep -q "EngineRuntimeRenderFailed"; then
+  emit "F-GRADUATION-EVENT-INVENTORY-CONTRACT" pass "Graduation warning-events checklist names the full event inventory"
 else
-  emit "F-GRADUATION-EVENT-INVENTORY-CANARY" fail "FIXED? shadowing event named and listed at Graduation — invert into a contract"
+  emit "F-GRADUATION-EVENT-INVENTORY-CONTRACT" fail "an event promised in the body is missing from the Graduation checklist"
 fi
 
 # Overall exit: 0 iff no CONTRACT regression and no CANARY flip (ledger steady).
