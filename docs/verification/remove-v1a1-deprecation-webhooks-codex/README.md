@@ -37,6 +37,31 @@ vacuous pass conditions. `make manifests` on the head tree produces no diff
 (idempotent). Neighboring suites `test/envtest/testcase/deprecation` and
 `.../webhook` pass unchanged.
 
+
+## Round 2 (incremental, head 22b2212b)
+
+Delta 6108f204..22b2212b is test-only (+390): the author landed
+`test/envtest/testcase/v1a1gate/` + `test/envtest/testutil/v1a1gate_setup.go`
+(their own version, 4 specs) in response to round 1's F1.
+
+- **Re-verify of this harness on 22b2212b**: all 7 contract specs FIXED/green
+  (`results/reverify/integration.parsed`, run via `scripts/re-verify.sh`).
+  Production behavior unchanged by the test-only delta, as expected.
+- **Author's suite verified**: passes 4/4 at 22b2212b
+  (`results/round2-author-suite-head.txt`).
+- **Author's suite bites**: flipping its installed webhook config to
+  `matchPolicy: Exact` makes the deprecated-v1alpha1-create spec fail
+  ("Expected an error to have occurred") — the suite genuinely exercises the
+  Equivalent-match conversion routing
+  (`results/round2-author-suite-bites-exact-matchpolicy.txt`).
+- **Coverage differential vs the deleted deprecationv1a1 suite**: the landed
+  suite covers rejection (RBG + RBGSet) and ungated deletes. It does NOT
+  assert the on-the-wire warning count/text (no Warning-handler recorder) and
+  does NOT cover v1alpha1-path grandfathering/type-switch updates (A3/A4/A5
+  here remain the only executable checks of those; v1alpha2 validator
+  grandfathering is unit-tested in `api/workloads/v1alpha2`). F1 stays open,
+  narrowed to those two legs.
+
 ## How to run
 
 ```bash

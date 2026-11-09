@@ -1,0 +1,864 @@
+[
+  {
+    "SuitePath": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate",
+    "SuiteDescription": "v1alpha1 Through-Conversion Gate Suite (PR556 verify)",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": true,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 7,
+      "SpecsThatWillRun": 7
+    },
+    "StartTime": "2026-11-10T00:49:01.264852316+08:00",
+    "EndTime": "2026-11-10T00:49:08.798741227+08:00",
+    "RunTime": 7533888901,
+    "SuiteConfig": {
+      "RandomSeed": 1794242941,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": null,
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/suite_test.go",
+          "LineNumber": 54
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-11-10T00:49:01.264887758+08:00",
+        "EndTime": "2026-11-10T00:49:08.660057599+08:00",
+        "RunTime": 7395169841,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-11-10T00:49:01+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-11-10T00:49:03+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-11-10T00:49:03+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/config/crd/bases\"}\n2026-11-10T00:49:03+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-11-10T00:49:03+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-11-10T00:49:03+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-11-10T00:49:03+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-11-10T00:49:03+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-11-10T00:49:03+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-10T00:49:04+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-10T00:49:05+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/convert\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=CoordinatedPolicy\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleInstanceSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.webhook\tStarting webhook server\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.certwatcher\tUpdated current TLS certificate\t{\"cert\": \"/tmp/envtest-serving-certs-300167165/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-300167165/tls.key\"}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.webhook\tServing webhook server\t{\"host\": \"127.0.0.1\", \"port\": 38885}\n2026-11-10T00:49:05+08:00\tINFO\tcontroller-runtime.certwatcher\tStarting certificate poll+watcher\t{\"cert\": \"/tmp/envtest-serving-certs-300167165/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-300167165/tls.key\", \"interval\": \"10s\"}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/suite_test.go",
+              "LineNumber": 54
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-11-10T00:49:01.264898758+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testutil/v1a1gate_setup.go",
+              "LineNumber": 128
+            },
+            "TimelineLocation": {
+              "Order": 2,
+              "Time": "2026-11-10T00:49:01.26494346+08:00"
+            },
+            "Message": "bootstrapping the v1alpha1-gate test environment"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testutil/v1a1gate_setup.go",
+              "LineNumber": 162
+            },
+            "TimelineLocation": {
+              "Offset": 4688,
+              "Order": 3,
+              "Time": "2026-11-10T00:49:05.32898341+08:00"
+            },
+            "Message": "registering the production v1alpha2 webhook handlers"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testutil/v1a1gate_setup.go",
+              "LineNumber": 207
+            },
+            "TimelineLocation": {
+              "Offset": 7873,
+              "Order": 4,
+              "Time": "2026-11-10T00:49:05.429666945+08:00"
+            },
+            "Message": "patching the shipped CRD conversion stanzas onto the test CRDs"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testutil/v1a1gate_setup.go",
+              "LineNumber": 210
+            },
+            "TimelineLocation": {
+              "Offset": 7873,
+              "Order": 5,
+              "Time": "2026-11-10T00:49:06.574765962+08:00"
+            },
+            "Message": "creating the gate namespace"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testutil/v1a1gate_setup.go",
+              "LineNumber": 213
+            },
+            "TimelineLocation": {
+              "Offset": 7873,
+              "Order": 6,
+              "Time": "2026-11-10T00:49:06.577592622+08:00"
+            },
+            "Message": "waiting for the conversion endpoint to answer through the API server"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/suite_test.go",
+              "LineNumber": 63
+            },
+            "TimelineLocation": {
+              "Offset": 7873,
+              "Order": 7,
+              "Time": "2026-11-10T00:49:08.652839662+08:00"
+            },
+            "Message": "installing the shipped admission webhook configurations"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/suite_test.go",
+              "LineNumber": 54
+            },
+            "TimelineLocation": {
+              "Offset": 7873,
+              "Order": 9,
+              "Time": "2026-11-10T00:49:08.660056749+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 7395157991,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 writes after the v1alpha1 admission webhooks are removed"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 31
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+          "LineNumber": 36
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a new v1alpha1 RoleBasedGroup with an explicit deprecated workload type via the v1alpha2 gate",
+        "State": "passed",
+        "StartTime": "2026-11-10T00:49:08.66009102+08:00",
+        "EndTime": "2026-11-10T00:49:08.662690252+08:00",
+        "RunTime": 2599232,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 10,
+              "Time": "2026-11-10T00:49:08.6600939+08:00"
+            },
+            "Message": "v1alpha1 writes after the v1alpha1 admission webhooks are removed",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 12,
+              "Time": "2026-11-10T00:49:08.660106311+08:00"
+            },
+            "Message": "v1alpha1 writes after the v1alpha1 admission webhooks are removed",
+            "Duration": 12401,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 36
+            },
+            "TimelineLocation": {
+              "Order": 13,
+              "Time": "2026-11-10T00:49:08.660107111+08:00"
+            },
+            "Message": "rejects a new v1alpha1 RoleBasedGroup with an explicit deprecated workload type via the v1alpha2 gate",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 36
+            },
+            "TimelineLocation": {
+              "Order": 15,
+              "Time": "2026-11-10T00:49:08.662687102+08:00"
+            },
+            "Message": "rejects a new v1alpha1 RoleBasedGroup with an explicit deprecated workload type via the v1alpha2 gate",
+            "Duration": 2579982,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 writes after the v1alpha1 admission webhooks are removed"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 31
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+          "LineNumber": 47
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a new v1alpha1 RoleBasedGroup that relies on v1alpha1 schema defaulting (apps/v1 StatefulSet)",
+        "State": "passed",
+        "StartTime": "2026-11-10T00:49:08.662713883+08:00",
+        "EndTime": "2026-11-10T00:49:08.667597657+08:00",
+        "RunTime": 4883784,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 16,
+              "Time": "2026-11-10T00:49:08.662715873+08:00"
+            },
+            "Message": "v1alpha1 writes after the v1alpha1 admission webhooks are removed",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 18,
+              "Time": "2026-11-10T00:49:08.662722544+08:00"
+            },
+            "Message": "v1alpha1 writes after the v1alpha1 admission webhooks are removed",
+            "Duration": 6680,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 47
+            },
+            "TimelineLocation": {
+              "Order": 19,
+              "Time": "2026-11-10T00:49:08.662723053+08:00"
+            },
+            "Message": "rejects a new v1alpha1 RoleBasedGroup that relies on v1alpha1 schema defaulting (apps/v1 StatefulSet)",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 47
+            },
+            "TimelineLocation": {
+              "Order": 21,
+              "Time": "2026-11-10T00:49:08.667593197+08:00"
+            },
+            "Message": "rejects a new v1alpha1 RoleBasedGroup that relies on v1alpha1 schema defaulting (apps/v1 StatefulSet)",
+            "Duration": 4870154,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 writes after the v1alpha1 admission webhooks are removed"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 31
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+          "LineNumber": 73
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "accepts a v1alpha1 RoleBasedGroup that names RoleInstanceSet and returns exactly one deprecation warning",
+        "State": "passed",
+        "StartTime": "2026-11-10T00:49:08.667620168+08:00",
+        "EndTime": "2026-11-10T00:49:08.672271064+08:00",
+        "RunTime": 4650896,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 22,
+              "Time": "2026-11-10T00:49:08.667623138+08:00"
+            },
+            "Message": "v1alpha1 writes after the v1alpha1 admission webhooks are removed",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 24,
+              "Time": "2026-11-10T00:49:08.667636188+08:00"
+            },
+            "Message": "v1alpha1 writes after the v1alpha1 admission webhooks are removed",
+            "Duration": 13061,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 73
+            },
+            "TimelineLocation": {
+              "Order": 25,
+              "Time": "2026-11-10T00:49:08.667637199+08:00"
+            },
+            "Message": "accepts a v1alpha1 RoleBasedGroup that names RoleInstanceSet and returns exactly one deprecation warning",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 73
+            },
+            "TimelineLocation": {
+              "Order": 27,
+              "Time": "2026-11-10T00:49:08.672267573+08:00"
+            },
+            "Message": "accepts a v1alpha1 RoleBasedGroup that names RoleInstanceSet and returns exactly one deprecation warning",
+            "Duration": 4630374,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 writes after the v1alpha1 admission webhooks are removed"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 31
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+          "LineNumber": 88
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "keeps the grandfathered legacy object updatable through v1alpha1",
+        "State": "passed",
+        "StartTime": "2026-11-10T00:49:08.672287454+08:00",
+        "EndTime": "2026-11-10T00:49:08.679628966+08:00",
+        "RunTime": 7341512,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 28,
+              "Time": "2026-11-10T00:49:08.672289664+08:00"
+            },
+            "Message": "v1alpha1 writes after the v1alpha1 admission webhooks are removed",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 30,
+              "Time": "2026-11-10T00:49:08.672297345+08:00"
+            },
+            "Message": "v1alpha1 writes after the v1alpha1 admission webhooks are removed",
+            "Duration": 7681,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 88
+            },
+            "TimelineLocation": {
+              "Order": 31,
+              "Time": "2026-11-10T00:49:08.672298025+08:00"
+            },
+            "Message": "keeps the grandfathered legacy object updatable through v1alpha1",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 88
+            },
+            "TimelineLocation": {
+              "Order": 33,
+              "Time": "2026-11-10T00:49:08.679626146+08:00"
+            },
+            "Message": "keeps the grandfathered legacy object updatable through v1alpha1",
+            "Duration": 7328112,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 writes after the v1alpha1 admission webhooks are removed"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 31
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+          "LineNumber": 97
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects switching the legacy role to another deprecated workload type through v1alpha1",
+        "State": "passed",
+        "StartTime": "2026-11-10T00:49:08.679643256+08:00",
+        "EndTime": "2026-11-10T00:49:08.691432906+08:00",
+        "RunTime": 11789640,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 34,
+              "Time": "2026-11-10T00:49:08.679645136+08:00"
+            },
+            "Message": "v1alpha1 writes after the v1alpha1 admission webhooks are removed",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 36,
+              "Time": "2026-11-10T00:49:08.679655036+08:00"
+            },
+            "Message": "v1alpha1 writes after the v1alpha1 admission webhooks are removed",
+            "Duration": 9911,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 97
+            },
+            "TimelineLocation": {
+              "Order": 37,
+              "Time": "2026-11-10T00:49:08.679656597+08:00"
+            },
+            "Message": "rejects switching the legacy role to another deprecated workload type through v1alpha1",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 97
+            },
+            "TimelineLocation": {
+              "Order": 39,
+              "Time": "2026-11-10T00:49:08.691427746+08:00"
+            },
+            "Message": "rejects switching the legacy role to another deprecated workload type through v1alpha1",
+            "Duration": 11771139,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 writes after the v1alpha1 admission webhooks are removed"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 31
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+          "LineNumber": 110
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a new v1alpha1 RoleBasedGroupSet whose template uses a deprecated workload type",
+        "State": "passed",
+        "StartTime": "2026-11-10T00:49:08.691467267+08:00",
+        "EndTime": "2026-11-10T00:49:08.764443266+08:00",
+        "RunTime": 72975999,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 40,
+              "Time": "2026-11-10T00:49:08.691472827+08:00"
+            },
+            "Message": "v1alpha1 writes after the v1alpha1 admission webhooks are removed",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 42,
+              "Time": "2026-11-10T00:49:08.691489808+08:00"
+            },
+            "Message": "v1alpha1 writes after the v1alpha1 admission webhooks are removed",
+            "Duration": 16981,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 110
+            },
+            "TimelineLocation": {
+              "Order": 43,
+              "Time": "2026-11-10T00:49:08.691490928+08:00"
+            },
+            "Message": "rejects a new v1alpha1 RoleBasedGroupSet whose template uses a deprecated workload type",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 110
+            },
+            "TimelineLocation": {
+              "Order": 45,
+              "Time": "2026-11-10T00:49:08.764437556+08:00"
+            },
+            "Message": "rejects a new v1alpha1 RoleBasedGroupSet whose template uses a deprecated workload type",
+            "Duration": 72946638,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 writes after the v1alpha1 admission webhooks are removed"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 31
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+          "LineNumber": 118
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "leaves v1alpha1 deletes ungated",
+        "State": "passed",
+        "StartTime": "2026-11-10T00:49:08.764467697+08:00",
+        "EndTime": "2026-11-10T00:49:08.773492198+08:00",
+        "RunTime": 9024501,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 46,
+              "Time": "2026-11-10T00:49:08.764470337+08:00"
+            },
+            "Message": "v1alpha1 writes after the v1alpha1 admission webhooks are removed",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 32
+            },
+            "TimelineLocation": {
+              "Order": 48,
+              "Time": "2026-11-10T00:49:08.764483707+08:00"
+            },
+            "Message": "v1alpha1 writes after the v1alpha1 admission webhooks are removed",
+            "Duration": 13370,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 118
+            },
+            "TimelineLocation": {
+              "Order": 49,
+              "Time": "2026-11-10T00:49:08.764484657+08:00"
+            },
+            "Message": "leaves v1alpha1 deletes ungated",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 118
+            },
+            "TimelineLocation": {
+              "Order": 51,
+              "Time": "2026-11-10T00:49:08.773487228+08:00"
+            },
+            "Message": "leaves v1alpha1 deletes ungated",
+            "Duration": 9002571,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/suite_test.go",
+          "LineNumber": 68
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-11-10T00:49:08.773513289+08:00",
+        "EndTime": "2026-11-10T00:49:08.798730257+08:00",
+        "RunTime": 25216968,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-11-10T00:49:08+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-11-10T00:49:08+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-11-10T00:49:08+08:00\tINFO\tStopping and waiting for caches\n2026-11-10T00:49:08+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-11-10T00:49:08+08:00\tINFO\tStopping and waiting for webhooks\n2026-11-10T00:49:08+08:00\tINFO\tcontroller-runtime.webhook\tShutting down webhook server with timeout of 1 minute\n2026-11-10T00:49:08+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-watching file\t{\"cert\": \"/tmp/envtest-serving-certs-300167165/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-300167165/tls.key\", \"error\": \"no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:235\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-11-10T00:49:08+08:00\tDEBUG\tcontroller-runtime.certwatcher\tcertificate event\t{\"cert\": \"/tmp/envtest-serving-certs-300167165/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-300167165/tls.key\", \"event\": \"CHMOD         \\\"/tmp/envtest-serving-certs-300167165/tls.key\\\"\"}\n2026-11-10T00:49:08+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-reading certificate\t{\"cert\": \"/tmp/envtest-serving-certs-300167165/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-300167165/tls.key\", \"error\": \"open /tmp/envtest-serving-certs-300167165/tls.crt: no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:243\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-11-10T00:49:08+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-watching file\t{\"cert\": \"/tmp/envtest-serving-certs-300167165/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-300167165/tls.key\", \"error\": \"bad file descriptor\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:235\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-11-10T00:49:08+08:00\tDEBUG\tcontroller-runtime.certwatcher\tcertificate event\t{\"cert\": \"/tmp/envtest-serving-certs-300167165/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-300167165/tls.key\", \"event\": \"REMOVE        \\\"/tmp/envtest-serving-certs-300167165/tls.key\\\"\"}\n2026-11-10T00:49:08+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-reading certificate\t{\"cert\": \"/tmp/envtest-serving-certs-300167165/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-300167165/tls.key\", \"error\": \"open /tmp/envtest-serving-certs-300167165/tls.crt: no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:243\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-11-10T00:49:08+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-11-10T00:49:08+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/suite_test.go",
+              "LineNumber": 68
+            },
+            "TimelineLocation": {
+              "Order": 52,
+              "Time": "2026-11-10T00:49:08.773514829+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testutil/setup.go",
+              "LineNumber": 140
+            },
+            "TimelineLocation": {
+              "Order": 53,
+              "Time": "2026-11-10T00:49:08.77353331+08:00"
+            },
+            "Message": "tearing down the test environment"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/home/ecs-user/.pr-debate/homes/codex/wt-pr556-codex/test/envtest/testcase/v1a1gate/suite_test.go",
+              "LineNumber": 68
+            },
+            "TimelineLocation": {
+              "Offset": 3804,
+              "Order": 55,
+              "Time": "2026-11-10T00:49:08.798728517+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 25213678,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,7 @@
+rejects a new v1alpha1 RoleBasedGroup with an explicit deprecated workload type via the v1alpha2 gate	pass
+rejects a new v1alpha1 RoleBasedGroup that relies on v1alpha1 schema defaulting (apps/v1 StatefulSet)	pass
+accepts a v1alpha1 RoleBasedGroup that names RoleInstanceSet and returns exactly one deprecation warning	pass
+keeps the grandfathered legacy object updatable through v1alpha1	pass
+rejects switching the legacy role to another deprecated workload type through v1alpha1	pass
+rejects a new v1alpha1 RoleBasedGroupSet whose template uses a deprecated workload type	pass
+leaves v1alpha1 deletes ungated	pass
