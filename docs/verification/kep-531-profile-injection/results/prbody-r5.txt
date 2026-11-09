@@ -1,0 +1,8 @@
+PR body staleness check, 2026-11-10 (gh pr view 548 --repo sgl-project/rbg, read-only)
+updatedAt: 2026-11-09T20:19:16Z  headRefOid: b4637b5113796930a72218ae02275f042d83ab52
+
+PR body contains 'in-use finalizer'                  : True
+PR body contains 'alpha-warning / beta-rejection'    : True
+PR body contains 'disable-profile-immutability'      : True
+
+All three describe the round-4 design removed at b4637b51 -> F-STALE-PR-BODY REOPENED.

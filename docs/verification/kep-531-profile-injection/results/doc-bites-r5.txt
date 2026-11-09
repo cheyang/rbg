@@ -1,0 +1,21 @@
+# Round-5 doc-contract bites (head b4637b51) — 2026-11-10
+# Each bite applies the proposed fix (canaries: the defective claim must
+# disappear) or reverts the fixed wording (contracts: the regression must
+# fire) to a scratch copy of the head README; the named check must flip.
+
+bite race-outcome-fix         OK   (F-RACE-OUTCOME-OVERCLAIM-CANARY -> fail)
+bite delete-recreate-fix      OK   (F-DELETE-RECREATE-OUTCOME-CANARY -> fail)
+bite annotation-flip-fix      OK   (F-ANNOTATION-FLIP-DODGE-CANARY -> fail)
+bite reinstall-fix            OK   (F-REUPGRADE-WEBHOOK-REINSTALL-CANARY -> fail)
+bite unscoped-safety-fix      OK   (F-DOWNGRADE-UNSCOPED-SAFETY-CANARY -> fail)
+bite podsec-revert            OK   (F-PODSECURITY-STAGE-CONTRACT -> fail)
+bite injector-count-revert    OK   (F-INJECTOR-COUNT-WORDING-CONTRACT -> fail)
+bite role-insert-revert       OK   (F-ROLE-INSERT-ORDER-CONTRACT -> fail)
+bite evolution-test-revert    OK   (F-PROFILE-EVOLUTION-TEST-CONTRACT -> fail)
+bite deprecated-path-revert   OK   (F-DEPRECATED-PATH-MECHANISM-CONTRACT -> fail)
+bite webhook-rollback-revert  OK   (F-WEBHOOK-ROLLBACK-CONTRACT -> fail)
+bite capability-regex-revert  OK   (F-CAPABILITY-FORM-REGEX-CONTRACT -> fail)
+bite default-geom-revert      OK   (F-PROFILE-DEFAULT-GEOMETRY-CONTRACT -> fail)
+bite v1alpha1-cel-revert      OK   (F-V1ALPHA1-CEL-EMPTY-COMPONENTS-CONTRACT -> fail)
+bite snapshot-source-revert   OK   (F-SNAPSHOT-ENV-SOURCE-CONTRACT -> fail)
+bite podreconciler-revert     OK   (F-PODRECONCILER-TERMINOLOGY-CONTRACT -> fail)

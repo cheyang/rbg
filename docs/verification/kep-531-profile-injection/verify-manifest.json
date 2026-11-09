@@ -135,12 +135,12 @@
     },
     {
       "id": "F-PODSECURITY-STAGE",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "doc",
       "match": [
-        "F-PODSECURITY-STAGE-CANARY"
+        "F-PODSECURITY-STAGE-CONTRACT"
       ],
-      "note": "Carried nit (rounds 1-4), still open: the risk table still says PodSecurity \"fails at workload creation\" (it is pod/workload admission) — the only round-1..3 wording nit surviving at 0c51bc0e."
+      "note": "Round-1 nit, genuinely FIXED at b4637b51 (was open at 0c51bc0e): the risk table now says \"fails at pod admission, not render\" and the mountPath paragraph \"fail at pod creation anyway\"; \"fails at workload creation\" is gone. Canary flipped and inverted into a contract (bite: podsec-revert)."
     },
     {
       "id": "F-ENV-VAR-DIRECTION",
@@ -158,7 +158,7 @@
       "match": [
         "F-INJECTOR-COUNT-WORDING-CONTRACT"
       ],
-      "note": "Round-1 nit, FIXED at 0c51bc0e (canary flipped, inverted): the chain is now enumerated by injector kind (\"the four built-in injector passes — config, sidecar stages 1–2, env, LWP env\"), not as a per-template count."
+      "note": "Rounds 1-4 nit, genuinely FIXED at b4637b51 (the round-4 \"enumeration by kind\" closure was retracted in cross-critique): the doc now states \"two to four passes by chain\" with the two reasons. Code-verified: injector chain sets are 2 (LWS worker), 3 (RIS worker; PodReconciler default), 4 (RIS leader) - lws_reconciler.go:282, roleinstanceset_reconciler.go:407/:426, pod_reconciler.go:97 - and InjectConfig no-ops for non-stateful roles (pkg/discovery/injector.go:73-75), so \"the config injector runs for stateful roles only\" is accurate. Contract re-pinned (bite: injector-count-revert)."
     },
     {
       "id": "F-STAGE3-CHECK-TIMING",
@@ -176,7 +176,7 @@
       "match": [
         "F-PROFILE-EVOLUTION-TEST-CONTRACT"
       ],
-      "note": "Round-1..3 minor, FIXED at 0c51bc0e (canary re-pinned to the new wording and inverted): the Test Plan now covers the landing semantics (admitted edit to a referenced profile landing, subsequent renders reading the changed content) and the --disable-profile-immutability transition path (installed finalizer removed once the flag is set)."
+      "note": "Rounds 1-4 minor. RE-CONTRACTED at b4637b51, changeReason: the immutability subsystem was redesigned to webhook-only enforcement (no finalizer, no --disable-profile-immutability flag, no alpha warning window), so the previously-contracted flag/finalizer transition cases no longer exist by design. The new-design equivalent coverage is pinned instead: the bypassed-mutation watch event, the reference-bookkeeping drift cases (referencedGeneration / Frozen condition, baseline surviving restarts), and the accepted deletion race (bite: evolution-test-revert)."
     },
     {
       "id": "F3",
@@ -209,21 +209,145 @@
     },
     {
       "id": "F-ROLE-INSERT-ORDER",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "doc",
       "match": [
-        "F-ROLE-INSERT-ORDER-CANARY"
+        "F-ROLE-INSERT-ORDER-CONTRACT"
       ],
-      "note": "Round-4 NEW minor: the Patch Grammar role-side bullet claims two references' role-side same-name env entries \"resolve by reference order — the later reference's entry lands later and wins\", which holds for appends only; for two /env/0 head inserts the later pass lands at index 0 and the EARLIER reference's entry is the last occurrence and wins — the inversion the cross-profile bullet states explicitly. Canary passes while the unqualified winner claim is present."
+      "note": "Round-4 NEW minor, FIXED at b4637b51: the role-side bullet now resolves \"by reference order, by spelling\" - appends: later reference wins; two /env/0 head inserts invert it - and the Test Plan echo covers both spellings. Canary flipped and inverted into a contract; the append-qualified sentence legitimately retains the old substring, so the contract pins the by-spelling qualification and the inversion clause (bite: role-insert-revert)."
     },
     {
       "id": "F-V1ALPHA1-CEL-EMPTY-COMPONENTS",
       "polarity": "contract",
-      "layer": "unit",
+      "layer": "doc",
       "match": [
-        "TestKEP531_Verify_V1alpha1EmptyComponentsConvertsToStandalone"
+        "F-V1ALPHA1-CEL-EMPTY-COMPONENTS-CONTRACT"
       ],
-      "note": "Round-4 NEW nit (question-level) — PREMISE PIN, not a fix: the KEP's v1alpha1 CEL predicate !has(self.leaderWorkerSet) && !has(self.components) diverges from the Hub conversion (len(components)>0 default → standalone) for a present-but-empty components list (writable, no MinItems): the predicate classifies it as non-standalone while the conversion maps it to standalonePattern. The unit test pins both premises (no StandalonePattern field on v1alpha1 RoleSpec; empty list converts to standalone). The nit itself lives in the KEP text and stays open in the ledger."
+      "note": "Round-4 NEW nit, FIXED at b4637b51: the v1alpha1 predicate is now !has(self.leaderWorkerSet) && !(has(self.components) && size(self.components) > 0) with the has()-on-empty-list rationale stated and the envtest pin extended to the empty-components edge. The unit contract (TestKEP531_Verify_V1alpha1EmptyComponentsConvertsToStandalone) stays green; doc contract added (bite: v1alpha1-cel-revert)."
+    },
+    {
+      "id": "F-DEPRECATED-PATH-MECHANISM",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": [
+        "F-DEPRECATED-PATH-MECHANISM-CONTRACT"
+      ],
+      "note": "Round-4 minor, FIXED at b4637b51: the rejection now names its mechanism at all three promise sites - write time via the shared role-side validation function riding the existing webhooks (the role-side fourth invariant), render failure (EngineRuntimeRenderFailed) as the annotation-flip backstop - plus a Test Plan case. Residual: the flip-dodge premise itself is inaccurate (see F-ANNOTATION-FLIP-DODGE); the layering is correct, the stated reason is not."
+    },
+    {
+      "id": "F-WEBHOOK-ROLLBACK",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": [
+        "F-WEBHOOK-ROLLBACK-CONTRACT"
+      ],
+      "note": "Round-4 minor, FIXED at b4637b51: the Downgrade story now leads with removing the CERP webhook entry BEFORE the image rollback, the alpha failurePolicy is stated (Fail from the alpha, matching the existing RBG webhooks), and the Test Plan gains the admission-enabled rollback drill. Residual: the reinstall-half of the story is inaccurate (see F-REUPGRADE-WEBHOOK-REINSTALL); the removal-half and the drill are correct."
+    },
+    {
+      "id": "F-CAPABILITY-FORM-REGEX",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": [
+        "F-CAPABILITY-FORM-REGEX-CONTRACT"
+      ],
+      "note": "Round-4 minor, FIXED at b4637b51: the form warning now fires on names matching the canonical uppercase form while carrying the CAP_ prefix (checked case-insensitively) - the form the paragraph itself names as the containerd hazard and the Test Plan promises (bite: capability-regex-revert)."
+    },
+    {
+      "id": "F-PROFILE-DEFAULT-GEOMETRY",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": [
+        "F-PROFILE-DEFAULT-GEOMETRY-CONTRACT"
+      ],
+      "note": "Round-4 minor, FIXED at b4637b51: the index-0 rule rationale now states the real geometry - an insert whose index exceeds the role entry's own lands after it and wins, but that index is unknowable to the patch author; only the head is statically knowable (bite: default-geom-revert)."
+    },
+    {
+      "id": "F-SNAPSHOT-ENV-SOURCE",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": [
+        "F-SNAPSHOT-ENV-SOURCE-CONTRACT"
+      ],
+      "note": "Round-4 nit, FIXED at b4637b51: the stage-3 check's first static source is now named as the role template's own env entries read off the containers named in the pre-injection snapshot, with the snapshot-holds-container-names clarification (bite: snapshot-source-revert)."
+    },
+    {
+      "id": "F-PODRECONCILER-TERMINOLOGY",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": [
+        "F-PODRECONCILER-TERMINOLOGY-CONTRACT"
+      ],
+      "note": "Round-4 nit, FIXED at b4637b51: the doc drops the PodReconciler shorthand entirely (zero occurrences at head) and consistently says 'the Deployment/StatefulSet/LWS surfaces are deprecated' (bite: podreconciler-revert)."
+    },
+    {
+      "id": "F-FINALIZER-REMOVAL-OVERCLAIM",
+      "polarity": "contract",
+      "layer": "doc",
+      "match": [
+        "F-FINALIZER-REMOVAL-OVERCLAIM-CONTRACT"
+      ],
+      "note": "Round-4 nit, FIXED BY REMOVAL at b4637b51: the in-use finalizer is gone entirely ('There is deliberately no in-use finalizer beside the webhook', with argued rationale), and with it the check-then-act closure claim; the delete race is now honestly accepted as an admission window. Successor risks tracked as the new minors F-RACE-OUTCOME-OVERCLAIM and F-DELETE-RECREATE-OUTCOME."
+    },
+    {
+      "id": "F-RACE-OUTCOME-OVERCLAIM",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": [
+        "F-RACE-OUTCOME-OVERCLAIM-CANARY"
+      ],
+      "note": "Round-5 NEW minor (Claude found the delete-race leg; Copilot comment 4517519175 independently raised the update-race interleaving). The accepted-race paragraph claims 'Both end in render failure, never silent miscontent' and the risk table 'all ending in visible render failure' - overbroad twice: (a) the doc's own race-#1 outcome (a successful first render reading post-update content) is not a render failure; (b) the TOCTOU window admits an interleaving where the referencing role is stored and rendered BEFORE the update commits - later re-renders then consume the changed content on a live reference, i.e. silent content drift with the CERP watch event as the only signal. One honest sentence naming the second interleaving (and its watch-event evidence) closes it."
+    },
+    {
+      "id": "F-DELETE-RECREATE-OUTCOME",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": [
+        "F-DELETE-RECREATE-OUTCOME-CANARY"
+      ],
+      "note": "Round-5 NEW minor (Claude). 'closes the delete + recreate-under-same-name bypass at its first write' overreaches inside accepted race #2: the DELETE is admitted against a reference-less cluster, the referencing role is stored, and a CREATE under the same name is unrestricted ('a new profile has no references by construction' - false for the dangling-reference shape; the webhook intercepts UPDATE/DELETE only) - the dangling reference then silently renders the recreated content: no render failure, no watch event (CREATE is not a spec change on a referenced profile), fresh bookkeeping baseline. The round-4 finalizer pair closed exactly this bypass ('Without the pair, delete + recreate under the same name would bypass the freeze with two writes' - removed this round). Fix: intercept CREATE while a reference to the name exists (the same uncached lookup), or name the recreate outcome in the accepted race."
+    },
+    {
+      "id": "F-ANNOTATION-FLIP-DODGE",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": [
+        "F-ANNOTATION-FLIP-DODGE-CANARY"
+      ],
+      "note": "Round-5 NEW minor (Claude). The Validation Model claims a role 'flipped to a deprecated surface afterwards dodges write-time rejection' - false against the repo's own admission shape: the RBG/RBGSet validating webhooks intercept CREATE and UPDATE (config/webhook/manifests.yaml:34-36/:54-56), and the repo's existing shared validation is documented 'The whole object is checked on both create and update' (api/workloads/v1alpha2/rolebasedgroup_validation.go:289-290) - the annotation flip is itself an RBG spec write, so the shared function rejects it at admission once the webhook serves the check. The render leg is needed for the uninstalled/outdated-webhook window only (which the next paragraph already states). The Test Plan annotation-flip case must produce its state through that window, not a plain kubectl flip."
+    },
+    {
+      "id": "F-REUPGRADE-WEBHOOK-REINSTALL",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": [
+        "F-REUPGRADE-WEBHOOK-REINSTALL-CANARY"
+      ],
+      "note": "Round-5 NEW minor (Copilot comment 4517519250; code-verified by Claude). The rollback drill claims re-upgrading the controller 'reinstalls the entry (it deploys with the image)' - the controller never creates webhook configurations: startup only patches caBundle on existing ones (cmd/rbgs/main.go:579-589, pkg/webhook/certmanager.go:263-301 - patchOneWebhookConfiguration Get()s the object and errors if missing). Reinstalling the entry is a release/manifest action that must be named as its own step; otherwise an image-only re-upgrade silently leaves immutability unenforced. Fix: one clause + make re-applying the configuration an explicit drill step."
+    },
+    {
+      "id": "F-DOWNGRADE-UNSCOPED-SAFETY",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": [
+        "F-DOWNGRADE-UNSCOPED-SAFETY-CANARY"
+      ],
+      "note": "Round-5 NEW minor (Copilot comment 4517519293; doc-verified by Claude). 'A cluster whose references are all unscoped can downgrade at any depth, always safely, rendering identically to main' - scenario 4 (component absent + targetContainers present, standalonePattern) is an unscoped reference whose patches silently stop firing under the old controller, and the doc's own downgrade step 2 requires removing references 'that use the new fields'. The safety condition should be 'using neither new field', and the standalone scenario-4 shape belongs in the downgrade drill."
+    },
+    {
+      "id": "F-STALE-PR-BODY",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": [],
+      "note": "Round-3 minor, fixed at 0c51bc0e, REOPENED at b4637b51: the PR body (gh pr view, read-only, 2026-11-10) still describes the removed round-4 design - 'deletion pends on an in-use finalizer (PVC-protection shape)', 'staged alpha-warning / beta-rejection (failurePolicy: Fail)', '--disable-profile-immutability (alpha-only) is the escape hatch' - while the head removed the finalizer, the warning window, and the flag outright. Not pinnable in the README harness (the defect lives in the PR body); re-verified by live gh read each round. Evidence: results/prbody-r5.txt."
+    },
+    {
+      "id": "Q-CERP-NO-ADOPTION",
+      "polarity": "canary",
+      "layer": "doc",
+      "match": [
+        "Q-CERP-NO-ADOPTION-CANARY"
+      ],
+      "note": "Round-5 NEW question (Claude), recorded non-gating: 'ClusterEngineRuntimeProfile has no live adoption' (:939, :1165) is an empirical claim about deployments, not verifiable from the repo - the CRD has shipped since 2025-05 (commit 684c930b) through v0.8.0-alpha releases and is documented in doc/features/engine-runtime.md. It is now load-bearing for rejection-from-alpha replacing the round-4 warning window. Ask the author to ground it (no known adopters / pre-1.0 alpha contract) or name it as a premise the alpha implementation must confirm before shipping rejection."
     }
   ],
   "liveNote": "L3 not applicable: docs-only PR; no runtime behavior change to observe on a cluster. The KEP's own Test Plan specifies the envtest/e2e matrix for the follow-up implementation PRs — this harness is the regression suite those PRs must keep green."
