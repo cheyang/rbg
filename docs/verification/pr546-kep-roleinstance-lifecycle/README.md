@@ -5,18 +5,20 @@ Reproducible evidence for the findings raised while reviewing
 Lifecycle Hooks — a **documentation-only** PR: `keps/527-roleinstance-lifecycle/{README.md,README.zh-CN.md,kep.yaml}`).
 
 Harness branch: `verify/pr546-kep-roleinstance-lifecycle-claude`, rebased on the
-reviewed PR head `fb6c2b36` (round 1 reviewed `6e8419ab`, round 2 `71dd5e87`).
+reviewed PR head `43dab57b` (round 1 reviewed `6e8419ab`, round 2 `71dd5e87`,
+round 3 `fb6c2b36`).
 **Production code is touched only by the PR itself** — the branch adds only test
 files and this harness on top of the PR head.
 
-Layers run against the code under review (PR head `fb6c2b36`):
+Layers run against the code under review (PR head `43dab57b`):
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
 | 1. Unit (Go) | pins the KEP's factual claims about *existing* code (premise + Ready-Gating prerequisite) | `go test ./pkg/inplace/instance/readiness/ ./pkg/inplace/instance/lifecycle/ -run 'TestKep527' -v` |
 | 2. Docs | markdownlint (CI config + default), whitespace, kep.yaml see-also resolution, en/zh parity | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_kep_docs.sh` |
-| 2b. Round-3 contracts (**gating**) | pins every round-2 open finding the head claims fixed + substance carry-pins for the round-2 fixes the removal pivot rewrote (required/forbidden text, both languages) | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh <repo-root>` |
-| 2c. Round-2 contracts (reference) | round-2 wording pins — fail on head **by design** (the round-3 removal pivot deleted the coexistence sentences they matched); kept for history, not gating | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh <repo-root>` |
+| 2b. Round-4 contracts (**gating**) | pins every round-3 open/nit finding the head claims fixed, the round-4 pivot contracts (mutual exclusion, independent type, absence semantics, label syntax), and substance carry-pins proving prior fixes survived the rewrite (required/forbidden text, both languages) | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round4_contracts.sh <repo-root>` |
+| 2c. Round-3 contracts (reference) | round-3 wording pins — fail on head **by design** (the round-4 coexistence pivot restored what the removal pivot had deleted); kept for history, not gating | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh <repo-root>` |
+| 2d. Round-2 contracts (reference) | round-2 wording pins; kept for history, not gating | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh <repo-root>` |
 | 3. Live | **not run this round** (round policy: unit + integration only) | see `verify-manifest.json` `liveNote` |
 
 > Test polarity: contract tests (assert intended behavior) FAIL on buggy code /
@@ -44,6 +46,85 @@ Note on scope: issue #527's expected-capabilities table lists **five** hooks
 proposes **four** (`preUpdate`, `preRecover`, `postReady`, `preDelete`),
 dropping `preCreate`/`postDelete` without an explicit rationale and adding
 `preRecover`. See finding F-SCOPE-PRECREATE.
+
+
+## Round 4 (head 43dab57b) — delta reviewed: df110cf0, 8583c011, 10f48e8d, 43dab57b
+
+The author answered the round-3 review with a **second design pivot** (docs-only,
++219/−153):
+
+1. **Coexistence restored** (8583c011): the round-3 *removal* of the legacy
+   `RoleInstanceSetSpec.lifecycle` protocol is reversed back to coexistence —
+   an admission webhook rejects a Role/RIS combination in which the new
+   Role-level lifecycle and a legacy user-configured RIS lifecycle are both
+   non-empty; distinct state keys; the legacy protocol stays on the RIS
+   controller, the new protocol on the RI controller; legacy `inPlaceUpdate`
+   is deprecated, not deleted. This directly answers the round-3 question
+   F-LEGACY-REMOVAL-TRANSITION: issue #527's "Remain compatible with existing
+   lifecycle and readiness gate mechanisms" is satisfied again.
+2. **Independent hook type** (43dab57b): the new protocol no longer reuses the
+   legacy hook type. Pre-operation hooks expose `labelsHandler` +
+   `markNotReady`; `postReady` exposes only `labelsHandler`; legacy keeps
+   `finalizersHandler` / `inPlaceUpdate` / `markPodNotReady`. All of it is
+   pinned in the Wire Names and Constants table in both languages.
+3. **Absence semantics** (df110cf0): the round-2/3 "admission must reject
+   lifecycle changes while an affected RI has a non-empty `hook-state`" guard
+   is **deleted** (both languages) and replaced with declarative semantics:
+   the controller always evaluates the latest effective configuration; a
+   removed hook is treated as absent (no marker matching, finalizer removed,
+   deletion may continue) — including mid-deletion `preDelete` removal. This
+   is a deliberate reversal of a previously-fixed finding; the safety analysis
+   is filed as the new question **F-PREDELETE-REMOVAL-ONE-WAY** (non-gating).
+4. **Nits** (10f48e8d): kep.yaml feature-gates object shape, interrupt
+   sentence rewording, zh translation of `source of truth`/`desired snapshot`,
+   template-snapshot ownership rule restored.
+
+Harness-update (disclosed): the round-3 pins that matched the removal wording,
+the `markPodNotReady` usage, and the in-flight admission `must` fail on head
+**by design** — the pivot deleted the sentences they matched. Their substance
+is re-pinned under the round-4 wording in `check_round4_contracts.sh`
+(differential: green on head `43dab57b`, red on previous head `fb6c2b36`
+[54 FAIL] and base `09accf63` [74 FAIL]; bites verified by deleting the pinned
+sentences in a scratch worktree).
+
+Round-3 open items vs the new head:
+
+- **FIXED** `F-LEGACY-REMOVAL-TRANSITION` (by the reversal itself): coexistence
+  satisfies issue #527's compatibility requirement; no migration, no
+  legacy-state drain, no gate-off removal contract is owed. Narrowed residue
+  (gate-off behavior of the *new* protocol fields, enablement on objects
+  carrying both protocols) is filed as the new question `F-COEXIST-GATE-EDGE`.
+- **FIXED** `F-INTERRUPT-WHEN-DEAD-AMBIGUITY`: "Update may interrupt Recovery;
+  the previous engine may then be dead." (+ zh mirror).
+- **FIXED** `F-KEPYAML-GATE-SHAPE`: `feature-gates: - name: RoleInstanceLifecycleHooks`.
+- **FIXED** `F-PROPAGATED-SNAPSHOT-EDIT`: "must not be independently edited or
+  combined with the legacy protocol" (+ zh).
+- **FIXED** `F-ZH-ENGLISH-TERMS`: `唯一事实来源` / `期望快照`; zero remaining
+  untranslated phrases.
+- **FIXED (outside this PR)** `F-KEP502-CREATING-PHASE-CONFLICT`: PR #528
+  (KEP-502, still OPEN) amended its transition table to "Remain `Creating`;
+  fold the new target into Create convergence without invoking hooks",
+  explicitly "consistent with the KEP-527 hook rules" (re-fetched 2026-11-10
+  from PR #528's diff). External evidence — not machine-pinnable in this repo.
+- **DISPUTED** `F-INFLIGHT-CONFIG-ADMISSION` / `F-INFLIGHT-ADMISSION-MUST`:
+  the author reversed the rule by design (see 3 above); the reversed rule is
+  pinned ABSENT so it cannot silently return, and the new semantics are pinned
+  PRESENT. The safety question is `F-PREDELETE-REMOVAL-ONE-WAY`.
+- **OPEN** `F-SEEALSO-502` (4th round): `kep.yaml` still lists
+  `/keps/502-workload-status-model`, absent from the head tree and origin/main
+  (re-checked 2026-11-10); PR #528 still OPEN. Auto-resolves if #528 merges.
+- **OPEN (new, questions/nits)**: `F-PREDELETE-REMOVAL-ONE-WAY` (mid-deletion
+  `preDelete` removal is now a one-way barrier release), `F-COEXIST-GATE-EDGE`
+  (gate-off behavior of the new protocol fields), `F-STALE-LABEL-DISPOSITION`
+  (three inconsistent normative strengths for stale runtime labels).
+- All twelve round-1/2 fixed findings **survived** the rewrite (CARRY pins
+  green on head: finalizer ordering, gate lifetime, namespace-teardown
+  scoping, RBGSet foreground boundary, break-glass, dead-engine contract,
+  KEP-502 phase storage, wire names, preCreate rationale, postReady-omitted
+  path, no-per-Pod-finalizers, kep.yaml noise).
+- CI on head 43dab57b: 15/15 green (e2e jobs skipped by check-changes as
+  designed for this docs-only diff; `keps/**/*.md` remains outside every CI
+  lint glob — lint health is harness-verified, clean under both configs).
 
 ## Round 3 (head fb6c2b36) — delta reviewed: f627bcc2, c4dd645d, fb6c2b36
 

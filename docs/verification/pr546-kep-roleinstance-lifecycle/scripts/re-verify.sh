@@ -6,11 +6,16 @@
 # are green. Canary polarity is honored: a canary counts as "fixed" only when
 # it FLIPS to fail (its assertion of the wrong behavior no longer holds).
 #
-# Round 3 (head fb6c2b36): the legacy-RIS-protocol removal pivot rewrites the
-# wording the round-2 pins matched, so round-2 pins are kept for reference but
-# no longer gate; the round-3 pins are the gating contract set. A round-2 pin
-# failing with the round-3 pin passing means "superseded wording, substance
-# preserved" — see check_round3_contracts.sh for the replacement anchors.
+# Round 4 (head 43dab57b): a SECOND pivot reverses the round-3 removal back
+# to coexistence with admission-enforced mutual exclusion, defines an
+# independent hook type (labelsHandler/markNotReady), and replaces the
+# in-flight config-change admission guard with latest-effective-config /
+# absence semantics. The round-3 pins that matched the removed wording fail on
+# head BY DESIGN and no longer gate; the round-4 pins are the gating contract
+# set (see check_round4_contracts.sh). Round-2 and round-3 scripts are kept
+# for reference. A superseded pin failing with its round-4 replacement passing
+# means "superseded wording, substance re-pinned" — a disclosed Harness-update,
+# not evidence of a fix or of a regression.
 #
 # Usage: bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/re-verify.sh [<ref>]
 #   <ref> defaults to the current PR head fetched from manifest.pr
@@ -53,14 +58,21 @@ bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check
 DOC_STATUS="${PIPESTATUS[0]}"
 
 echo
-echo "== Round-3 contracts (gating; fixed-findings regression pins, red = regression) =="
+echo "== Round-4 contracts (gating; fixed-findings regression pins, red = regression) =="
+CHECK_ROUND4_OUT="$TOPIC_DIR/results" \
+  bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round4_contracts.sh" "$WORKTREE" \
+  2>&1 | tee "$TOPIC_DIR/results/round4-contracts-rerun.txt" | grep -E '^(FAIL|OPEN|ROUND4)'
+R4_STATUS="${PIPESTATUS[0]}"
+
+echo
+echo "== Round-3 contracts (reference only since the round-4 coexistence pivot; NOT gating) =="
 CHECK_ROUND3_OUT="$TOPIC_DIR/results" \
   bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh" "$WORKTREE" \
   2>&1 | tee "$TOPIC_DIR/results/round3-contracts-rerun.txt" | grep -E '^(FAIL|OPEN|ROUND3)'
 R3_STATUS="${PIPESTATUS[0]}"
 
 echo
-echo "== Round-2 contracts (reference only since the round-3 removal pivot; NOT gating) =="
+echo "== Round-2 contracts (reference only; NOT gating) =="
 CHECK_ROUND2_OUT="$TOPIC_DIR/results" \
   bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh" "$WORKTREE" \
   2>&1 | tee "$TOPIC_DIR/results/round2-contracts-rerun.txt" | grep -E '^(FAIL|OPEN|ROUND2)' | head -12
@@ -104,25 +116,27 @@ else
   echo "F-CUSTOMREADY-STATUS-EMPTY: Harness-update (test missing or did not run)"
 fi
 
-# Round-3 fixed findings: verdicts come from the round-3 contract pins.
-if [ "$R3_STATUS" -eq 0 ]; then
-  for f in F-SCOPE-PRECREATE F-PROPAGATED-VS-LEGACY F-FINALIZER-BOOTSTRAP-RACE \
-           F-NS-TEARDOWN-BYPASS F-RBGSET-FOREGROUND-BOUNDARY \
-           F-INFLIGHT-ADMISSION-MUST F-DISABLE-SUPPORTED-CONTRADICTION \
-           F-NOPOSTREADY-CLEANUP-CLARIFICATION F-WIRE-NAMES \
-           CARRY-PREDELETE-LIVENESS CARRY-GATE-LIFETIME CARRY-ESCAPE-HATCH \
+# Round-4 fixed findings: verdicts come from the round-4 contract pins.
+if [ "$R4_STATUS" -eq 0 ]; then
+  for f in F-OLDNEW-COEXIST F-INDEPENDENT-TYPE F-LATEST-CONFIG-SEMANTICS \
+           F-LABEL-SYNTAX F-INTERRUPT-WHEN-DEAD-AMBIGUITY F-KEPYAML-GATE-SHAPE \
+           F-PROPAGATED-SNAPSHOT-EDIT F-ZH-ENGLISH-TERMS \
+           CARRY-PRECREATE-RATIONALE CARRY-FINALIZER-ORDERING CARRY-NS-TEARDOWN \
+           CARRY-RBGSET-BOUNDARY CARRY-GATE-LIFETIME CARRY-ESCAPE-HATCH \
            CARRY-DEAD-ENGINE CARRY-PHASE-STORAGE CARRY-NOPODFINALIZERS \
-           CARRY-KEPYAML-NOISE; do
-    echo "$f: Fixed (round-3 contract pin green on this ref)"
+           CARRY-PREDELETE-LIVENESS CARRY-DISABLE-SUPPORTED \
+           CARRY-NOPOSTREADY-OMITTED CARRY-WIRE-NAMES CARRY-KEPYAML-NOISE; do
+    echo "$f: Fixed (round-4 contract pin green on this ref)"
   done
 else
-  echo "Round-3 fixed findings: one or more REGRESSED (see results/round3-contracts-rerun.txt)"
+  echo "Round-4 fixed findings: one or more MISSING (see results/round4-contracts-rerun.txt)"
 fi
-echo "F-LEGACY-REMOVAL-COMPAT: Manual-review (design question — removal vs issue #527 compatibility; gate-off behavior of removed fields)"
-echo "F-PROPAGATED-SNAPSHOT-EDIT: Manual-review (nit residue — no stated rule for user edits of the controller-written template snapshot)"
+echo "F-INFLIGHT-CONFIG-ADMISSION / F-INFLIGHT-ADMISSION-MUST: Disputed (author reversed the rule by design in round 4 — see F-PREDELETE-REMOVAL-ONE-WAY; reversed rule pinned absent)"
+echo "F-LEGACY-REMOVAL-TRANSITION: Resolved by the round-4 reversal (coexistence satisfies issue #527 compatibility; narrowed residue tracked as F-COEXIST-GATE-EDGE)"
+echo "F-KEP502-CREATING-PHASE-CONFLICT: Fixed in the dependency PR (PR #528 amended to fold Creating-target changes, citing KEP-527 consistency) — external evidence, re-fetch to confirm"
 
 echo
-if [ "$premise_ok" -eq 1 ] && [ "$GO_STATUS" -eq 0 ] && [ "$R3_STATUS" -eq 0 ] \
+if [ "$premise_ok" -eq 1 ] && [ "$GO_STATUS" -eq 0 ] && [ "$R4_STATUS" -eq 0 ] \
    && ! grep -q 'see-also: FAIL' "$TOPIC_DIR/results/docchecks-rerun.txt"; then
   echo "RESULT: all machine-checkable gating findings fixed (F-SEEALSO-502 aside)"
   exit 0
