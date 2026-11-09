@@ -258,3 +258,52 @@ covers the pre-backfill window; the residual is accepted race #2),
 C-COPILOT-RBGSET-SCOPE (zero-replica group templates counted, uncached
 lookup), C-COPILOT-UPDATE-ADOPT-RACE (uncached lookup removes the stale-cache
 variant; the genuine in-flight race is named and accepted).
+
+## Round 5 — head b4637b51 (two commits over round 4; main moved to fd160cc9)
+
+The head redesigns the immutability subsystem again: the in-use finalizer, the
+alpha warning window and the `--disable-profile-immutability` escape hatch are
+**removed**; enforcement is a `failurePolicy: Fail` CERP webhook (update+DELETE)
+from the alpha, a controller watch, and persisted status bookkeeping
+(`status.referenceCount` + `REFERENCES` printer column,
+`status.referencedGeneration`, `Frozen` condition). Plus the round-4 fix batch.
+
+### Code-fact harness
+
+`bash scripts/re-verify.sh` (auto-fetched head b4637b51) — **17/17 FIXED** (all
+premise contract tests green; raw output in `results/reverify/`). The PR remains
+docs-only (`git diff --name-only 3612013e..b4637b51` = the two KEP files), so
+every pinned main-behavior claim still holds.
+
+### Doc-text contracts: `scripts/check-doc-contracts.sh`
+
+33 checks this round. Raw outputs: `results/doc-contracts-r5-{b4637b51,0c51bc0e,
+3612013e}.txt`; bites: `results/doc-bites-r5.txt`; PR-body check:
+`results/pr-body-r5.txt` (`scripts/check-pr-body.sh`).
+
+Fixed this round (contract flip FAIL@prev → PASS@head, each re-verified by hand
+against the head text): F-ROLE-INSERT-ORDER (DOC-ROLE-INSERT-ORDER),
+F-PROFILE-DEFAULT-GEOMETRY (DOC-PROFILE-DEFAULT-GEOMETRY),
+F-SNAPSHOT-ENV-SOURCE (DOC-SNAPSHOT-ENV-SOURCE), F-CAPABILITY-FORM-REGEX
+(DOC-CAPABILITY-FORM-REGEX re-pinned — the CAP_ clause is now in the rule),
+F-DEPRECATED-PATH-MECHANISM (write-time shared validation + render backstop
+named at all three sites), F-WEBHOOK-ROLLBACK (rollback step 1 removes the
+webhook entry first; alpha failurePolicy stated), F-V1ALPHA1-CEL-EMPTY-COMPONENTS
+(DOC-V1ALPHA1-CEL tightened to the `size(self.components) > 0` predicate),
+F-PODSECURITY-STAGE + F-INJECTOR-COUNT-WORDING (DOC-MAIN-ACCURACY green),
+F-FINALIZER-REMOVAL-OVERCLAIM (fixed by removal of the finalizer),
+F-PODRECONCILER-TERMINOLOGY (zero `PodReconciler` mentions remain).
+Harness-updates (re-pinned for the redesign, substance preserved):
+DOC-DELETE-RACE, DOC-COMPAT-CERP-LIFECYCLE, DOC-PROFILE-EVOLUTION-TEST;
+DOC-FLAG-FINALIZER replaced by DOC-IMMUTABILITY-REDESIGN (removal consistency).
+
+| check | finding | prev 0c51bc0e | head b4637b51 | status |
+|---|---|---|---|---|
+| DOC-INJECTOR-CHAIN-ATTRIBUTION | F-INJECTOR-CHAIN-ATTRIBUTION (new nit) | PASS (absent) | FAIL | OPEN — variation attributed to config statefulness (a no-op, not a membership driver); lwpEnv's RIS-only membership unmentioned; rules mispredict LWS leader (default 3) as 4 |
+| DOC-NO-LIVE-ADOPTION | F-NO-LIVE-ADOPTION-CLAIM (new minor) | PASS (absent) | FAIL — "CERP has no live adoption"/"zero adoption" is unverifiable (CERP shipped in stable v0.7.0/v0.8.0; profileName live on main) and load-bearing for removing the warning window + opt-out flag | OPEN |
+| DOC-BOOKKEEPING-OLD-CRD | F-BOOKKEEPING-OLD-CRD-PRUNING (new nit) | PASS (absent) | FAIL — "reference bookkeeping … regardless of CRD version" overclaims: base CERP CRD status schema is `type: object` (no properties, no preserve-unknown) → pruned on the new-controller/old-CRD row | OPEN |
+| DOC-DRIFT-BASELINE-EDGE | F-DRIFT-BASELINE-UNOBSERVED-DRAIN (new nit) | PASS (absent) | FAIL — "precise evidence that the spec changed while referenced, with the webhook bypassed" ignores the unobserved-drain legal-edit window | OPEN |
+| PR-BODY-FRESHNESS | F-STALE-PR-BODY (reopened minor) | pass (r4: body in sync) | FAIL — body still describes the in-use finalizer, alpha-warning/beta-rejection staging, and --disable-profile-immutability | OPEN |
+
+Bites: all four new FAILs flip to PASS on a scratch clone carrying the proposed
+one-sentence fixes (33/33 green there) — see `results/doc-bites-r5.txt`.

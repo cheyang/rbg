@@ -15,7 +15,7 @@
   "runsAgainst": "base",
   "layer": "unit",
   "verdict": "confirmed",
-  "evidence": "16/16 harness tests pass on the PR head tree (code identical to base); see results/unit-discovery.json and results/unit-structure.json. One KEP sentence is contradicted: Compatibility #6's 'matching the v1alpha2 cap' — no MaxItems exists on either API version (S3).",
+  "evidence": "16/16 harness tests pass on the PR head tree (code identical to base); see results/unit-discovery.json and results/unit-structure.json. One KEP sentence is contradicted: Compatibility #6's 'matching the v1alpha2 cap' \u2014 no MaxItems exists on either API version (S3).",
   "match": [
    "TestKEP531_"
   ]
@@ -246,7 +246,7 @@
     "DOC-PROPAGATION-TRIGGER",
     "TestKEP531_S6_ProfileEditsDoNotPropagate"
    ],
-   "summary": "OPEN (minor, new in r2): 'today only deliberate workload updates' inaccurate — every RBG reconcile re-renders and applies (RIS unconditional SSA; LWS drift-compared); triggers include controller restarts and owned-child events."
+   "summary": "OPEN (minor, new in r2): 'today only deliberate workload updates' inaccurate \u2014 every RBG reconcile re-renders and applies (RIS unconditional SSA; LWS drift-compared); triggers include controller restarts and owned-child events."
   },
   "round3": {
    "head": "d84004a29c80b7e284a0e9662dd5d4c3b23a2da9",
@@ -261,7 +261,7 @@
     "C-COPILOT-ENV-PRECEDENCE-FLIP"
    ],
    "refutedPremise": [
-    "C-COPILOT-SSA-MAP-LIST — premise verified false (S9); KEP now asserts it, tracked as F-SSA-DUPLICATE-ENV-PREMISE"
+    "C-COPILOT-SSA-MAP-LIST \u2014 premise verified false (S9); KEP now asserts it, tracked as F-SSA-DUPLICATE-ENV-PREMISE"
    ],
    "stillOpen": [
     "F-STAGE3-LEGACY-VISIBILITY (major)",
@@ -311,6 +311,31 @@
     "F-FINALIZER-REMOVAL-OVERCLAIM (nit)",
     "F-PROFILE-DEFAULT-GEOMETRY (minor)",
     "F-NONGOALS-PODRECONCILER-LWS (nit)"
+   ]
+  },
+  "round5": {
+   "head": "b4637b5113796930a72218ae02275f042d83ab52",
+   "script": "scripts/check-doc-contracts.sh",
+   "note": "Immutability redesign (finalizer/warning-window/escape-hatch removed; fail-closed webhook from alpha; status bookkeeping added). 33 checks: 29 PASS / 4 FAIL at head; re-pinned DOC-DELETE-RACE, DOC-COMPAT-CERP-LIFECYCLE, DOC-PROFILE-EVOLUTION-TEST, DOC-CAPABILITY-FORM-REGEX; DOC-FLAG-FINALIZER replaced by DOC-IMMUTABILITY-REDESIGN; DOC-V1ALPHA1-CEL tightened to the size>0 predicate.",
+   "fixed": [
+    "F-ROLE-INSERT-ORDER",
+    "F-PROFILE-DEFAULT-GEOMETRY",
+    "F-SNAPSHOT-ENV-SOURCE",
+    "F-CAPABILITY-FORM-REGEX",
+    "F-DEPRECATED-PATH-MECHANISM",
+    "F-WEBHOOK-ROLLBACK",
+    "F-V1ALPHA1-CEL-EMPTY-COMPONENTS",
+    "F-PODSECURITY-STAGE",
+    "F-INJECTOR-COUNT-WORDING",
+    "F-FINALIZER-REMOVAL-OVERCLAIM (by removal)",
+    "F-PODRECONCILER-TERMINOLOGY"
+   ],
+   "new": [
+    "F-INJECTOR-CHAIN-ATTRIBUTION (nit)",
+    "F-NO-LIVE-ADOPTION-CLAIM (minor)",
+    "F-BOOKKEEPING-OLD-CRD-PRUNING (nit)",
+    "F-DRIFT-BASELINE-UNOBSERVED-DRAIN (nit)",
+    "F-STALE-PR-BODY (reopened minor \u2014 scripts/check-pr-body.sh)"
    ]
   }
  },

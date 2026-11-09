@@ -1,0 +1,3 @@
+FAIL  PR-BODY-FRESHNESS body still describes removed machinery: 'in-use finalizer'
+FAIL  PR-BODY-FRESHNESS body still describes removed machinery: 'disable-profile-immutability'
+FAIL  PR-BODY-FRESHNESS body still describes removed machinery: 'alpha-warning'
