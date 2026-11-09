@@ -5,11 +5,15 @@ Reproducible evidence for the findings raised while reviewing
 Profile Injection — **documentation-only**; production code is identical to
 base `3612013e`/`73e05db4`).
 
-**Round 4** (frozen head `0c51bc0e`; the PR advanced through two commits
-`947eb2aa` + `0c51bc0e` — a Copilot-round dedupe and the round-4/5 review
-fixes, +348/−221 on the README and a restored kep.yaml see-also). Round 3
-reviewed `d84004a2`; round 2 `7a9827bc`; round 1 `12693d02`.
-Layers run against the code under review:
+**Round 5** (frozen head `b4637b51`; the PR advanced through two commits
+`51f91ca3` + `b4637b51` — the round-6/7 review fixes, +272/−171 on the README
+only). The headline change is a **redesign of the immutability subsystem**:
+webhook-only enforcement (rejection, `failurePolicy: Fail`, from the alpha —
+no warning window), **no in-use finalizer**, **no
+`--disable-profile-immutability` flag**, plus a new Reference Bookkeeping
+section (`status.referenceCount`/`referencedGeneration`/`Frozen` condition).
+Round 4 reviewed `0c51bc0e`; round 3 `d84004a2`; round 2 `7a9827bc`;
+round 1 `12693d02`. Layers run against the code under review:
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
@@ -57,6 +61,52 @@ Premise evidence (base `3612013e`):
 - Gap 4 (updateStrategy unconsumed): no consumer of
   `ClusterEngineRuntimeProfileSpec.UpdateStrategy` in `pkg/` (grep). The KEP
   does not address it anywhere — see finding F2.
+
+## Summary of results — round 5 (head `b4637b51`)
+
+Re-verify on the new head (grafted harness, `--layers unit,doc`;
+`results/reverify-round5.txt`, bites `results/doc-bites-r5.txt`,
+PR-body evidence `results/prbody-r5.txt`):
+
+| finding | class | layer | verdict at `b4637b51` |
+|---|---|---|---|
+| All round-1..4 contracts (28 findings) | fixed | doc/unit | **stay FIXED** — every contract green at the new head; production code identical to the merge-base, so every main-behavior pin carries |
+| F-ROLE-INSERT-ORDER | minor (r4) | doc | **FIXED** — winner claim qualified by spelling (appends: later reference wins; two `/env/0` head inserts invert); Test Plan covers both; canary flipped, inverted into contract |
+| F-CAPABILITY-FORM-REGEX | minor (r4) | doc | **FIXED** — form warning now fires on canonical-form names carrying the `CAP_` prefix (case-insensitive); the Test Plan promise fires; contract added |
+| F-DEPRECATED-PATH-MECHANISM | minor (r4) | doc | **FIXED** — mechanism named at all three layers (write-time shared validation function; render backstop); contract added. Residual premise defect tracked as F-ANNOTATION-FLIP-DODGE |
+| F-WEBHOOK-ROLLBACK | minor (r4) | doc | **FIXED** — webhook-entry-first rollback + alpha failurePolicy named + admission-enabled drill; contract added. Residual tracked as F-REUPGRADE-WEBHOOK-REINSTALL |
+| F-PROFILE-DEFAULT-GEOMETRY | minor (r4) | doc | **FIXED** — rationale states the real geometry ("only the head is statically knowable"); contract added |
+| F-V1ALPHA1-CEL-EMPTY-COMPONENTS | nit (r4) | doc+unit | **FIXED** — predicate gains `size(self.components) > 0` guard + envtest pin for the empty-`components` edge |
+| F-SNAPSHOT-ENV-SOURCE | nit (r4) | doc | **FIXED** — first source named as the role template's own env entries |
+| F-PODSECURITY-STAGE | nit (r1–r4) | doc | **FIXED** — "pod admission"/"pod creation" replaces "workload creation"; canary flipped, inverted |
+| F-INJECTOR-COUNT-WORDING | nit (r1–r4) | doc | **FIXED** (genuinely, this time) — "two to four passes by chain" with both reasons; code-verified: sets are 2/3/3/4 and `InjectConfig` no-ops for non-stateful roles (`pkg/discovery/injector.go:73`) |
+| F-PODRECONCILER-TERMINOLOGY | nit (r4) | doc | **FIXED** — PodReconciler shorthand removed entirely (zero occurrences) |
+| F-FINALIZER-REMOVAL-OVERCLAIM | nit (r4) | doc | **FIXED BY REMOVAL** — the finalizer (and its check-then-act overclaim) is gone; successors tracked below |
+| F-PROFILE-EVOLUTION-TEST | minor (r1–r4) | doc | **RE-CONTRACTED** (changeReason recorded) — the flag/finalizer transition cases no longer exist by design; the new-design lifecycle coverage (watch event, bookkeeping drift, deletion race) is pinned instead |
+| F-RACE-OUTCOME-OVERCLAIM | **NEW minor (r5)** | doc | **OPEN** — "Both end in render failure, never silent miscontent" / risk table "all ending in visible render failure" are overbroad: race #1's own outcome is a successful render, and the window admits an interleaving where a role rendered before the update commits silently consumes changed content later (Copilot 4517519175 raised the update-race leg; Claude confirmed and added the delete-race leg). Canary pins it |
+| F-DELETE-RECREATE-OUTCOME | **NEW minor (r5)** | doc | **OPEN** — "closes the delete + recreate-under-same-name bypass at its first write" overreaches inside accepted race #2: create is unrestricted and unintercepted, so a recreate under the dangling reference silently swaps content (no render failure, no watch event, fresh baseline). The round-4 finalizer pair closed exactly this. Canary pins it |
+| F-ANNOTATION-FLIP-DODGE | **NEW minor (r5)** | doc | **OPEN** — "flipped to a deprecated surface afterwards dodges write-time rejection" is false: the RBG/RBGSet webhooks intercept CREATE **and UPDATE** (`config/webhook/manifests.yaml`), and the repo's own shared validation is documented "checked on both create and update" (`rolebasedgroup_validation.go:289`); the flip write itself is rejected. The render leg covers the uninstalled/outdated-webhook window only. Canary pins it |
+| F-REUPGRADE-WEBHOOK-REINSTALL | **NEW minor (r5)** | doc | **OPEN** — "reinstalls the entry (it deploys with the image)" is false against the code: the controller only patches caBundle on **existing** configurations (`cmd/rbgs/main.go:579`, `pkg/webhook/certmanager.go:263` — Get errors if missing); an image-only re-upgrade silently leaves immutability unenforced (Copilot 4517519250; code-verified). Canary pins it |
+| F-DOWNGRADE-UNSCOPED-SAFETY | **NEW minor (r5)** | doc | **OPEN** — "references are all unscoped can downgrade … always safely" contradicts scenario 4 (targetContainers without component) and the doc's own step 2 ("remove the references that use the new fields"); the condition should be "using neither new field" (Copilot 4517519293; doc-verified). Canary pins it |
+| F-STALE-PR-BODY | minor (r3, fixed r4) | doc (external) | **REOPENED** — the PR body still describes the removed design ("in-use finalizer", "staged alpha-warning / beta-rejection", "`--disable-profile-immutability`"); verified by live read-only `gh pr view` (`results/prbody-r5.txt`); pinned as a live gh canary |
+| Q-CERP-NO-ADOPTION | **NEW question (r5)** | doc | **OPEN (non-gating)** — "ClusterEngineRuntimeProfile has no live adoption" is an empirical premise (CRD shipped since 2025-05 through v0.8.0-alpha) now load-bearing for rejection-from-alpha; ask the author to ground it or name it a premise the alpha implementation must confirm |
+
+Round-5 design-verification notes (all checked against the head tree):
+
+- Injector-chain claims: 2/3/3/4 passes per chain, config injector
+  stateful-only — verified (`lws_reconciler.go:282`,
+  `roleinstanceset_reconciler.go:407/:426`, `pod_reconciler.go:97`,
+  `pkg/discovery/injector.go:73-75`).
+- Reference Bookkeeping premises: `clusterengineruntimeprofiles/status`
+  update RBAC held by the controller (`config/rbac/role.yaml:144-158`);
+  CERP CRD has a status subresource (`config/crd/bases/…clusterengineruntimeprofiles.yaml:4331`);
+  `metadata.generation` semantics correct for CRs.
+- New Documentation section: both "never implemented" claims verified present
+  in `doc/features/engine-runtime.md` (`RollingUpdate` :23/:61, `injectContainers`
+  volume mounting :122), and both confirmed never implemented by the round-1
+  premise pins.
+- Webhook registration: startup patches caBundle on existing configurations
+  only and errors when one is missing — the basis of F-REUPGRADE-WEBHOOK-REINSTALL.
 
 ## Summary of results — round 4 (head `0c51bc0e`)
 
