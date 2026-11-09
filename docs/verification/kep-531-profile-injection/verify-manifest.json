@@ -337,8 +337,10 @@
       "id": "F-STALE-PR-BODY",
       "polarity": "canary",
       "layer": "doc",
-      "match": [],
-      "note": "Round-3 minor, fixed at 0c51bc0e, REOPENED at b4637b51: the PR body (gh pr view, read-only, 2026-11-10) still describes the removed round-4 design - 'deletion pends on an in-use finalizer (PVC-protection shape)', 'staged alpha-warning / beta-rejection (failurePolicy: Fail)', '--disable-profile-immutability (alpha-only) is the escape hatch' - while the head removed the finalizer, the warning window, and the flag outright. Not pinnable in the README harness (the defect lives in the PR body); re-verified by live gh read each round. Evidence: results/prbody-r5.txt."
+      "match": [
+        "F-STALE-PR-BODY-CANARY"
+      ],
+      "note": "Round-3 minor, fixed at 0c51bc0e, REOPENED at b4637b51: the PR body (gh pr view, read-only, 2026-11-10) still describes the removed round-4 design - 'deletion pends on an in-use finalizer (PVC-protection shape)', 'staged alpha-warning / beta-rejection (failurePolicy: Fail)', '--disable-profile-immutability (alpha-only) is the escape hatch' - while the head removed the finalizer, the warning window, and the flag outright. Not pinnable in the README harness (the defect lives in the PR body); re-verified by live gh read each round. Evidence: results/prbody-r5.txt. Pinned as a live read-only gh check (F-STALE-PR-BODY-CANARY); emits nothing when gh is absent, so re-verify reports HARNESS-UPDATE — honest for an external surface."
     },
     {
       "id": "Q-CERP-NO-ADOPTION",

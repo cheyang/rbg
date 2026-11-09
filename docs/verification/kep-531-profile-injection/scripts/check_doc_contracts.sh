@@ -445,9 +445,6 @@ else
   emit "F-DOWNGRADE-UNSCOPED-SAFETY-CANARY" fail "FIXED? safety condition restricted to neither-new-field — invert into a contract"
 fi
 
-# Overall exit: 0 iff no CONTRACT regression and no CANARY flip (ledger steady).
-exit 0
-
 # Q-CERP-NO-ADOPTION (round-5 NEW question, non-gating): 'ClusterEngineRuntimeProfile
 # has no live adoption' is an empirical claim about deployments, unverifiable from
 # the repo (the CRD has shipped since 2025-05 through v0.8.0-alpha releases).
@@ -458,3 +455,25 @@ if has "ClusterEngineRuntimeProfile has no live adoption"; then
 else
   emit "Q-CERP-NO-ADOPTION-CANARY" fail "FIXED? no-adoption premise grounded/softened — invert or drop"
 fi
+
+# F-STALE-PR-BODY (round-3 minor, fixed r4, REOPENED at b4637b51): the PR body
+# still describes the round-4 immutability design (in-use finalizer, warning
+# window, --disable-profile-immutability) that the head removed. The defect
+# lives in the PR body, not the README, so this check reads it live (read-only
+# gh; emits nothing when gh is unavailable — re-verify then reports
+# HARNESS-UPDATE, the honest verdict for an uncheckable external surface).
+PRBODY=""
+if command -v gh >/dev/null 2>&1; then
+  PRBODY="$(gh pr view 548 --repo sgl-project/rbg --json body -q .body 2>/dev/null || true)"
+fi
+if [ -n "$PRBODY" ]; then
+  if printf '%s' "$PRBODY" | grep -qF "in-use finalizer" \
+     && printf '%s' "$PRBODY" | grep -qF "disable-profile-immutability"; then
+    emit "F-STALE-PR-BODY-CANARY" pass "PR body still describes the removed finalizer/flag design"
+  else
+    emit "F-STALE-PR-BODY-CANARY" fail "FIXED? PR body refreshed to the head design — invert into a contract"
+  fi
+fi
+
+# Overall exit: 0 iff no CONTRACT regression and no CANARY flip (ledger steady).
+exit 0
