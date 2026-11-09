@@ -1,201 +1,225 @@
 {
-  "topic": "kep-502-status-model-codex",
-  "pr": "https://github.com/sgl-project/rbg/pull/528",
-  "harnessPaths": [
-    "docs/verification/kep-502-status-model-codex",
-    "keps/502-workload-status-model/doc_consistency_test.go"
-  ],
-  "premise": {
-    "id": "P0",
-    "claim": "RBG / RIS / RI lack status.phase; RBG declares Progressing and RollingUpdateInProgress but built-in controllers on main do not write them; RIS / RI FailedScale and FailedUpdate record individual operation failures as sticky conditions; RBG Ready reflects replica readiness without revision convergence (issue #502 'Current limitations', restated in the KEP Motivation).",
-    "reportedComponent": "RBG / RIS / RI status model (workloads.x-k8s.io/v1alpha2)",
-    "patchedComponent": "keps/502-workload-status-model/ (design doc only)",
-    "componentMatch": true,
-    "runsAgainst": "base",
-    "layer": "unit",
-    "verdict": "confirmed",
-    "evidence": "TestPremise* pass at reviewed head f05e1dd; PR diff touches only keps/, so head == base 885d655 for every file read. See results/unit-head-f05e1dd.txt and results/issue-502.json.",
-    "match": [
-      "TestPremise"
-    ]
+ "topic": "kep-502-status-model-codex",
+ "pr": "https://github.com/sgl-project/rbg/pull/528",
+ "harnessPaths": [
+  "docs/verification/kep-502-status-model-codex",
+  "keps/502-workload-status-model/doc_consistency_test.go"
+ ],
+ "premise": {
+  "id": "P0",
+  "claim": "RBG / RIS / RI lack status.phase; RBG declares Progressing and RollingUpdateInProgress but built-in controllers on main do not write them; RIS / RI FailedScale and FailedUpdate record individual operation failures as sticky conditions; RBG Ready reflects replica readiness without revision convergence (issue #502 'Current limitations', restated in the KEP Motivation).",
+  "reportedComponent": "RBG / RIS / RI status model (workloads.x-k8s.io/v1alpha2)",
+  "patchedComponent": "keps/502-workload-status-model/ (design doc only)",
+  "componentMatch": true,
+  "runsAgainst": "base",
+  "layer": "unit",
+  "verdict": "confirmed",
+  "evidence": "TestPremise* pass at reviewed head f05e1dd; PR diff touches only keps/, so head == base 885d655 for every file read. See results/unit-head-f05e1dd.txt and results/issue-502.json.",
+  "match": [
+   "TestPremise"
+  ]
+ },
+ "layers": {
+  "unit": {
+   "kind": "gotest",
+   "cmd": "go test ./keps/502-workload-status-model/ -run 'Test' -json"
+  }
+ },
+ "findings": [
+  {
+   "id": "F1-preparing-undefined",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestRBGCandidateReasonsDefined"
+   ]
   },
-  "layers": {
-    "unit": {
-      "kind": "gotest",
-      "cmd": "go test ./keps/502-workload-status-model/ -run 'Test' -json"
-    }
+  {
+   "id": "F2-priority-rule-vs-example",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestExampleConsistentWithPriorityRule"
+   ]
   },
-  "findings": [
-    {
-      "id": "F1-preparing-undefined",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestRBGCandidateReasonsDefined"
-      ]
-    },
-    {
-      "id": "F2-priority-rule-vs-example",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestExampleConsistentWithPriorityRule"
-      ]
-    },
-    {
-      "id": "F3-progressing-false-rejection-mapping",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestProgressingFalseCoversConfigRejection"
-      ]
-    },
-    {
-      "id": "F4-ready-terminating-retained-mislabel",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestReadyTerminatingChangeAcknowledged"
-      ]
-    },
-    {
-      "id": "F5-rolesnotready-collision",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestRolesNotReadyDistinctionAcknowledged"
-      ]
-    },
-    {
-      "id": "F6-inplace-reason-casing",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestRIReadinessReasonsMatchCode"
-      ]
-    },
-    {
-      "id": "F7-toc-missing-reason-taxonomy",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestTOCComplete"
-      ]
-    },
-    {
-      "id": "F8-event-budget-risk",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestEventBudgetRiskInRisksTable"
-      ]
-    },
-    {
-      "id": "O1-ready-reason-row-ambiguity",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestReadyTerminatingReasonRowSplit"
-      ]
-    },
-    {
-      "id": "Q1-ris-phase-during-recovery",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestRecoveryPhaseSplitRISvsRI"
-      ]
-    },
-    {
-      "id": "Q2-no-failure-phase",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestNoFailedPhaseStated"
-      ]
-    },
-    {
-      "id": "Q3-ris-concurrent-scaling-visibility",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestRISOverlapPrecedenceStated"
-      ]
-    },
-    {
-      "id": "G1-doc-tooling",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestKepYAMLWellFormed",
-        "TestYAMLExamplesParse"
-      ]
-    },
-    {
-      "id": "F9-rbg-transition-input-inconsistent",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestTransitionInputVocabularyConsistent"
-      ]
-    },
-    {
-      "id": "F10-ris-activity-reasons-unenumerated",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestRISActivityReasonsEnumerated"
-      ]
-    },
-    {
-      "id": "C4457744212-activity-family-tie-break",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestRBGActivityPrecedenceDefined"
-      ]
-    },
-    {
-      "id": "F11-ris-activity-tie-break-unstated",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestRISActivityTieBreakStated"
-      ]
-    },
-    {
-      "id": "F12-rbg-replacement-creation-reason-mapping",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestRBGReplacementCreationMapsToRecovery"
-      ]
-    },
-    {
-      "id": "F13-test-plan-creating-branch-dropped",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestRBGActivityPrecedenceCoverage"
-      ]
-    },
-    {
-      "id": "F14-consuming-table-config-compat-dead-branch",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestConsumingTableAttentionRowConsistency"
-      ]
-    },
-    {
-      "id": "F15-minready-timestamp-scope-stateful-too",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "TestReadyTimestampMigrationScope"
-      ]
-    }
-  ],
-  "liveNote": "Docs-only KEP PR: no live layer. Integration replay (markdownlint-cli2 with .github/.markdownlint.json, YAML parsing of kep.yaml and the 3 examples) is recorded in results/markdownlint.txt and embedded as Go guards (TestKepYAMLWellFormed, TestYAMLExamplesParse).",
-  "roundNote": "Round 5 (head 0b7285b7): major design pivot \u2014 RBG and RIS no longer add status.phase (workflow reported via Progressing.reason + existing counters; RIS also drops its new Ready condition); only RI keeps an optional phase and gains an explicit allowed-edge table. Re-anchored pivot-affected guards additively (O1 row split, Q1 recovery split, Q3 overlap precedence, F9 input vocabulary, G1 example phase polarity) \u2014 all accept both the pre-pivot and post-pivot resolutions and keep their historical polarity (red where the finding was open, green where fixed). F11 FIXED: RIS activity precedence stated (:347) plus Test Plan bullet (:511) \u2014 guard green at head. F12 still OPEN (minor): the :199 definitions scope Recovering to 'established child repaired or replaced' but the family table's Initial creation -> Creating row (:169) is unconditional and parents aggregate child reason families mechanically (:133, :176), so a replacement RIS's Creating still maps to RBG Creating, which outranks Recovering (:191-197) \u2014 probe red, fix simulation flips it green. New findings: F13 [minor, revision regression] the delta dropped the Creating-branch concurrent-activity bullet from the Test Plan while the precedence still ranks Creating first (guard green at da818779, red at head); F14 [nit] the new Consuming-the-Status 'need attention' row lists configuration-compatibility families under Progressing=True, but those reasons only ever accompany Progressing=False (:213 vs candidate table); F15 [nit] the new RI transition-timestamps migration row attributes the minReadySeconds lastTransitionTime dependency to stateless only, but stateful isInstanceAvailable reads the same timestamp (stateful_instance_set_helper.go). All fix simulations flip the respective guard green (results/bite-check-round5.txt). New premise guards green at head and at base: stateless/stateful readiness difference, RI condition timestamp rebuild, minReadySeconds timestamp use in both modes, lifecycle label contract, RBG Ready never Unknown."
+  {
+   "id": "F3-progressing-false-rejection-mapping",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestProgressingFalseCoversConfigRejection"
+   ]
+  },
+  {
+   "id": "F4-ready-terminating-retained-mislabel",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestReadyTerminatingChangeAcknowledged"
+   ]
+  },
+  {
+   "id": "F5-rolesnotready-collision",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestRolesNotReadyDistinctionAcknowledged"
+   ]
+  },
+  {
+   "id": "F6-inplace-reason-casing",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestRIReadinessReasonsMatchCode"
+   ]
+  },
+  {
+   "id": "F7-toc-missing-reason-taxonomy",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestTOCComplete"
+   ]
+  },
+  {
+   "id": "F8-event-budget-risk",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestEventBudgetRiskInRisksTable"
+   ]
+  },
+  {
+   "id": "O1-ready-reason-row-ambiguity",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestReadyTerminatingReasonRowSplit"
+   ]
+  },
+  {
+   "id": "Q1-ris-phase-during-recovery",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestRecoveryPhaseSplitRISvsRI"
+   ]
+  },
+  {
+   "id": "Q2-no-failure-phase",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestNoFailedPhaseStated"
+   ]
+  },
+  {
+   "id": "Q3-ris-concurrent-scaling-visibility",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestRISOverlapPrecedenceStated"
+   ]
+  },
+  {
+   "id": "G1-doc-tooling",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestKepYAMLWellFormed",
+    "TestYAMLExamplesParse"
+   ]
+  },
+  {
+   "id": "F9-rbg-transition-input-inconsistent",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestTransitionInputVocabularyConsistent"
+   ]
+  },
+  {
+   "id": "F10-ris-activity-reasons-unenumerated",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestRISActivityReasonsEnumerated"
+   ]
+  },
+  {
+   "id": "C4457744212-activity-family-tie-break",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestRBGActivityPrecedenceDefined"
+   ]
+  },
+  {
+   "id": "F11-ris-activity-tie-break-unstated",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestRISActivityTieBreakStated"
+   ]
+  },
+  {
+   "id": "F12-rbg-replacement-creation-reason-mapping",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestRBGReplacementCreationMapsToRecovery"
+   ]
+  },
+  {
+   "id": "F13-test-plan-creating-branch-dropped",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestRBGActivityPrecedenceCoverage"
+   ]
+  },
+  {
+   "id": "F14-consuming-table-config-compat-dead-branch",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestConsumingTableAttentionRowConsistency"
+   ]
+  },
+  {
+   "id": "F15-minready-timestamp-scope-stateful-too",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestReadyTimestampMigrationScope"
+   ]
+  },
+  {
+   "id": "F15-precheck-progressing-contradiction",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestPreCheckProgressingWriteDerived"
+   ]
+  },
+  {
+   "id": "F18-kep527-reference-dangling",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestReferencedKEPsResolvable"
+   ]
+  },
+  {
+   "id": "F19-ris-establishment-boundary-existential",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestRISEstablishmentBoundaryCollective"
+   ]
+  }
+ ],
+ "liveNote": "Docs-only KEP PR: no live layer. Integration replay (markdownlint-cli2 with .github/.markdownlint.json, YAML parsing of kep.yaml and the 3 examples) is recorded in results/markdownlint.txt and embedded as Go guards (TestKepYAMLWellFormed, TestYAMLExamplesParse).",
+ "roundNote": "Round 6 (head 39e2ecdf): delta +21/-19 fixes ledger F12 (Creating scoped to initial establishment at both layers, replacement-child classified under the owning workflow, scale-up covered: TestRBGReplacementCreationMapsToRecovery red@0b7285b7 / green@39e2ecdf) and ledger F15 (dispatch write now derives the Progressing value and names the compatibility-failure -> Progressing=False mapping: TestPreCheckProgressingWriteDerived red@prev / green@head). Harness updates: F6 guard re-anchored after the doc dropped the word 'Candidate' (enumeration unchanged; polarity re-proven red@f05e1dd). New findings this delta: F18 (KEP-527 references dangle \u2014 keps/527-* absent in-tree, PR #546 open) and F19 (RIS establishment boundary existential vs the RBG collective analog). Still open: F13, F14, F16 (harness F15-minready). Polarity/bite evidence: results/polarity-round6.txt. Round 5 (head 0b7285b7): major design pivot \u2014 RBG and RIS no longer add status.phase; see git history for the full round-5 note."
 }

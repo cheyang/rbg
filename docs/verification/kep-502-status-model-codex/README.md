@@ -314,3 +314,51 @@ Kickoff prompt for a fresh agent: "Check out
 https://github.com/cheyang/rbg.git branch verify/kep-502-status-model-codex and
 run docs/verification/kep-502-status-model-codex/scripts/re-verify.sh; report
 the per-finding table."
+
+## Round 6 — revision 39e2ecdf (incremental, 2026-11-10)
+
+Delta 0b7285b7..39e2ecdf (3 commits, docs-only, +21/-19): "docs: fix progress
+write and creation reason rules", "docs: fold Creating target changes into
+create convergence", "docs: tighten normative status wording".
+
+Fixed this round (double evidence: guard differential + head-blob read):
+
+| finding | severity | status @39e2ecdf | evidence |
+| --- | --- | --- | --- |
+| F12-rbg-replacement-creation-reason-mapping (ledger F12, incl. Copilot C4495569498 scale-up extension) | minor | FIXED | `TestRBGReplacementCreationMapsToRecovery` (extended with the scale-up clause) red@0b7285b7 / green@39e2ecdf: :199 scopes RBG `Creating` to initial establishment and classifies an established group's missing child under the owning workflow (`Recovering` for replacement, `ScalingOrUpdating` for an added role); :348 does the same for RIS (`ScalingUp` / `RollingUpdate` / `Recovering`); the Test Plan bullet pins "scale-up 2→3 with the third RI not yet created reports `ScalingUp`". |
+| F15-precheck-progressing-contradiction (ledger F15; harness id added this round) | minor | FIXED | New guard `TestPreCheckProgressingWriteDerived` red@0b7285b7 (both the :140 rule and the :510 test-plan bullet) / green@39e2ecdf: the dispatch write now derives the `Progressing` value from the validation/pause/progress rules and names "a confirmed compatibility failure writes `Progressing=False` with the matching incompatibility reason" — consistent with the Accepted=False mapping. |
+
+Harness-update (not a regression): `TestRIReadinessReasonsMatchCode` (F6)
+re-anchored — the delta renamed "Candidate reasons for aggregated RI
+readiness" to "Reasons for ..." with the enumeration unchanged; the guard now
+matches the stable suffix and its polarity is re-proven (red@f05e1dd catches
+the original `InPlaceUpdateNotReady` casing bug, green@head).
+
+New findings introduced by this delta:
+
+| finding | severity | status | evidence |
+| --- | --- | --- | --- |
+| F18-kep527-reference-dangling | nit | OPEN | `TestReferencedKEPsResolvable` green@0b7285b7 / red@39e2ecdf: three normative references to "KEP-527" (:248, :412, :438) but no `keps/527-*` directory in this tree (KEP-527 is PR #546, OPEN) — if this KEP merges first the pointer dangles; the round-5 code-verified concrete hook-label sentence it replaced is gone. The claim itself matches KEP-527's current draft text (verified against PR #546 head: creating folds target changes into Create convergence without hooks). Bite check: marking the reference pending flips green (results/polarity-round6.txt). |
+| F19-ris-establishment-boundary-existential | minor | OPEN | `TestRISEstablishmentBoundaryCollective` green@0b7285b7 / red@39e2ecdf: the RIS Creating boundary (:348 "before the RIS has an established revision or established RIs for its target") reads existentially while the RBG analog (:199 "before the target's required roles have been established") is collective — read as written, an initial 0→3 bootstrap stops being `Creating` once the FIRST RI establishes and the remaining initial RIs fall under "a required RI that does not yet exist" → `ScalingUp`, the misclassification the Test Plan (:493) tells implementers to avoid. Bite check: collective rewording flips green. |
+
+Still open (unchanged by the delta; guards red at head as designed):
+F13-test-plan-creating-branch-dropped (nit; no concurrent-activity `Creating`
+scenario in the Test Plan while the precedence ranks Creating first),
+F14-consuming-table-config-compat-dead-branch (nit; the "need attention" row
+(:213) is unchanged — config-compatibility families still listed under
+`Progressing=True` where they can never occur),
+F15-minready-timestamp-scope-stateful-too (= ledger F16; nit; migration row
+:566 unchanged, still stateless-only while stateful `isInstanceAvailable`
+reads the same timestamp).
+
+Ledger items without harness guards, checked by head-blob read: Q5's
+condition-observedGeneration half is ADDRESSED (:212/:216 add the
+condition-level check; Copilot C4495569437) but the row remains
+kind-unscoped and RI has no `Converged` reason (:461) — RI half open; Q6
+(Progressing during deletion) untouched; ledger F17 (stale PR body: still
+promises "persisted phase transitions for RBG, RIS, and RI") untouched.
+
+Suite at head: 30 pass / 5 intentional open-finding reds (F13, F14,
+F16-minready, F18, F19) — results/unit-head-39e2ecdf.txt; polarity matrix in
+results/polarity-round6.txt; markdownlint replay 0 issues. CI at head:
+9 SUCCESS / 6 SKIPPED (e2e groups legitimately skip on the docs-only diff).

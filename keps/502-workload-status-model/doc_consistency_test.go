@@ -599,18 +599,20 @@ func TestRIReadinessReasonsMatchCode(t *testing.T) {
 	doc := kepDoc(t)
 	var enum string
 	for _, l := range strings.Split(doc, "\n") {
-		if strings.Contains(l, "Candidate reasons for aggregated RI readiness") {
+		if strings.Contains(l, "for aggregated RI readiness") {
 			enum = l
 			break
 		}
 	}
 	if enum == "" {
-		t.Fatal("RI aggregated-readiness candidate-reasons sentence not found")
+		t.Fatal("RI aggregated-readiness reasons sentence not found")
 	}
 	// The sentence shares a paragraph line with the operation-specific
 	// Progressing reasons; only tokens after the marker belong to the
-	// readiness enumeration.
-	parts := strings.SplitN(enum, "Candidate reasons for aggregated RI readiness are", 2)
+	// readiness enumeration. Round-6 re-anchor (39e2ecdf): the doc dropped
+	// the word "Candidate" ("Reasons for aggregated RI readiness are ...");
+	// the enumeration content is unchanged, so match the stable suffix.
+	parts := strings.SplitN(enum, "for aggregated RI readiness are", 2)
 	// The enumeration is plain text: "Ready, PodsNotReady, InplaceUpdateNotReady,
 	// and ReadinessGatesNotReady." — split on commas/and, trim spaces and periods.
 	tail := strings.TrimSuffix(strings.TrimSpace(parts[1]), ".")
@@ -1221,6 +1223,26 @@ func TestRBGReplacementCreationMapsToRecovery(t *testing.T) {
 			return
 		}
 	}
+	// Round-6 strengthening (head 39e2ecdf): the fix must also cover the
+	// scale-up extension (Copilot C4495569498) — an established set scaling
+	// out (a required RI that does not yet exist because the target grew)
+	// must be classified `ScalingUp`, not `Creating`.
+	scaleOK := false
+	for _, l := range strings.Split(doc, "\n") {
+		if strings.Contains(l, "`ScalingUp`") &&
+			(strings.Contains(l, "scale-up") || strings.Contains(l, "scaling")) &&
+			(strings.Contains(l, "new RI") || strings.Contains(l, "adds instances") ||
+				strings.Contains(l, "not yet created")) {
+			scaleOK = true
+			break
+		}
+	}
+	if !scaleOK {
+		t.Errorf("F12(scale-up): no statement classifies a scale-up that creates a new RI as " +
+			"`ScalingUp` (rather than `Creating`) — the established-set scale-up case must not " +
+			"fall under the Creating reason")
+		return
+	}
 	t.Errorf("F12: the within-Activity precedence (:191-197) can still report `Creating` for an " +
 		"RBG that is mid-recovery. A replacement RIS reports Creating (RIS-level definition :347; " +
 		"family table Initial creation -> Creating :169 is unconditional) and parents aggregate " +
@@ -1471,5 +1493,162 @@ func TestReadyTimestampMigrationScope(t *testing.T) {
 			"RoleInstanceReady.lastTransitionTime to stateless mode only, but stateful " +
 			"isInstanceAvailable reads the same timestamp — scope the behavior change and the " +
 			"regression tests to both modes")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// F15-precheck (round-5 ledger finding; FIXED at 39e2ecdf): the common-rule
+// dispatch bullet prescribed "write status.observedGeneration=N together with
+// Progressing=True ... Preflight or compatibility failures must not skip this
+// status write" while the Accepted section requires Accepted=False ->
+// Progressing=False with the matching incompatibility reason. For exactly the
+// preCheck-failure case the bullet names, the unconditional True contradicted
+// the mapping. Contract: FAILS while the dispatch-write rule prescribes
+// Progressing=True without deriving the value from the validation / pause /
+// progress rules and naming the compatibility-failure -> Progressing=False
+// case. Red at 0b7285b7, green at 39e2ecdf.
+// ---------------------------------------------------------------------------
+
+func TestPreCheckProgressingWriteDerived(t *testing.T) {
+	doc := stripFences(kepDoc(t))
+	var rule, testplan string
+	for _, l := range strings.Split(doc, "\n") {
+		if strings.Contains(l, "observedGeneration=N") && strings.Contains(l, "dispatch") {
+			if rule == "" {
+				rule = l
+			}
+		}
+		if strings.Contains(l, "Before or during dispatch of a new generation") {
+			testplan = l
+		}
+	}
+	if rule == "" || testplan == "" {
+		t.Fatal("F15-guard anchor drift: dispatch-write rule or its Test Plan bullet not found")
+	}
+	for name, l := range map[string]string{"common rule": rule, "test plan": testplan} {
+		unconditionalTrue := strings.Contains(l, "together with `Progressing=True`")
+		derived := strings.Contains(l, "derived from") && strings.Contains(l, "validation") &&
+			strings.Contains(l, "pause") && strings.Contains(l, "progress rules")
+		if unconditionalTrue || !derived {
+			t.Errorf("F15: %s still prescribes the dispatch write as unconditionally "+
+				"Progressing=True (or no longer derives the value from the validation/pause/"+
+				"progress rules) — a preCheck compatibility failure must write Progressing=False "+
+				"with the matching incompatibility reason (Accepted=False mapping): %s",
+				name, strings.TrimSpace(l))
+		}
+	}
+	// The False-with-matching-reason case must be named explicitly in the
+	// common rule so the two rules cannot be read as competing.
+	if !strings.Contains(rule, "`Progressing=False`") ||
+		!(strings.Contains(rule, "incompatibility reason") || strings.Contains(rule, "matching reason")) {
+		t.Errorf("F15: the common dispatch-write rule does not name the confirmed compatibility " +
+			"failure -> Progressing=False (matching incompatibility reason) case")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// F18 (round 6, nit): the RI section now defers the hook protocol to
+// "KEP-527" ("Hook execution, retries, and release use the hook-state labels
+// and finalizer handshake defined by KEP-527"; "consistent with the KEP-527
+// hook rules"; "This matches KEP-527"). KEP-527 is PR #546, still OPEN — no
+// keps/527-* directory exists in this tree, so if this KEP merges first the
+// normative pointer dangles (and the round-5 code-verified concrete label
+// sentence it replaced is gone). Contract: FAILS while any "KEP-<n>"
+// reference has no keps/<n>-* directory in-repo and the referencing line
+// does not mark the target as pending / provisional / under review.
+// ---------------------------------------------------------------------------
+
+func TestReferencedKEPsResolvable(t *testing.T) {
+	doc := stripFences(kepDoc(t))
+	entries, err := os.ReadDir(filepath.Join(repoRoot(), "keps"))
+	if err != nil {
+		t.Fatalf("read keps/: %v", err)
+	}
+	have := map[string]bool{}
+	for _, e := range entries {
+		if e.IsDir() {
+			if n := strings.SplitN(e.Name(), "-", 2); len(n) == 2 {
+				have[n[0]] = true
+			}
+		}
+	}
+	kepRe := regexp.MustCompile(`KEP-(\d+)`)
+	qualRe := regexp.MustCompile(`(?i)pending|provisional|under review|unmerg|PR #|upcoming`)
+	var dangling []string
+	seen := map[string]bool{}
+	for _, l := range strings.Split(doc, "\n") {
+		for _, m := range kepRe.FindAllStringSubmatch(l, -1) {
+			if m[1] == "502" || seen[m[1]] {
+				continue // self-reference
+			}
+			seen[m[1]] = true
+			if have[m[1]] {
+				continue
+			}
+			if qualRe.MatchString(l) {
+				t.Logf("F18: KEP-%s not in tree but marked pending/provisional: %s",
+					m[1], strings.TrimSpace(l))
+				continue
+			}
+			dangling = append(dangling, "KEP-"+m[1])
+		}
+	}
+	if len(dangling) > 0 {
+		t.Errorf("F18: normative references to KEPs not present in this tree (keps/ has no "+
+			"matching directory) and not marked pending: %s — keep the concrete hook-protocol "+
+			"sentence alongside the pointer, or mark the referenced KEP as a pending proposal",
+			strings.Join(dangling, ", "))
+	}
+}
+
+// ---------------------------------------------------------------------------
+// F19 (round 6, minor): the F12 fix scoped `Creating` to initial
+// establishment at both layers, but the two boundaries read asymmetrically.
+// RBG: "before the target's required roles have been established"
+// (collective — Creating lasts until ALL required roles are established).
+// RIS: "before the RIS has an established revision or established RIs for
+// its target" (existential — the FIRST established revision or RI ends it).
+// Read existentially, an initial 0 -> 3 bootstrap stops being `Creating`
+// once RI-0 establishes, and the still-missing initial RIs fall under
+// "a required RI that does not yet exist" -> `ScalingUp` — the exact
+// misclassification the Test Plan bullet tells implementers to distinguish
+// ("Distinguish RIS initial creation from scale-up"). Contract: FAILS while
+// the RIS definition lacks a collective boundary marker (the RIs / instances
+// required by the target) or explicit mid-bootstrap handling.
+// ---------------------------------------------------------------------------
+
+func TestRISEstablishmentBoundaryCollective(t *testing.T) {
+	doc := kepDoc(t)
+	ris := sectionExact(doc, "RoleInstanceSet")
+	if ris == "" {
+		t.Fatal("F19-guard anchor drift: RoleInstanceSet section not found")
+	}
+	// Anchor on the boundary SENTENCE (a paragraph is one markdown line):
+	// later sentences ("a required RI that does not yet exist ...") are the
+	// classification rule, not the establishment boundary, and an earlier
+	// sentence on the same line may be the precedence declaration.
+	var def string
+	for _, l := range strings.Split(ris, "\n") {
+		for _, s := range strings.Split(l, ". ") {
+			if strings.Contains(s, "`Creating` is used") {
+				def = s
+				break
+			}
+		}
+		if def != "" {
+			break
+		}
+	}
+	if def == "" {
+		t.Fatal("F19-guard anchor drift: RIS Creating definition not found")
+	}
+	collective := strings.Contains(def, "required") || strings.Contains(def, "all ") ||
+		strings.Contains(def, "mid-bootstrap")
+	if !collective {
+		t.Errorf("F19: the RIS Creating boundary is existential ('an established revision or "+
+			"established RIs') while the RBG analog is collective ('required roles have been "+
+			"established') — read as written, the tail of an initial bootstrap reports ScalingUp. "+
+			"Bind the boundary to the RIs / revision required by the target, or state how the "+
+			"mid-bootstrap tail is classified. RIS definition: %s", strings.TrimSpace(def))
 	}
 }

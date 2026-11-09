@@ -1,0 +1,22 @@
+# Round-6 polarity / bite-check evidence (harness file = this branch's doc_consistency_test.go)
+# Guards under test: F6 re-anchor, F12 scale-up extension, F15-precheck, F18, F19
+
+== f05e1dd (round-1 head) — F6 re-anchor polarity ==
+    doc_consistency_test.go:637: F6-casing: RI readiness candidate reasons not written verbatim by the current controller (pkg/reconciler/roleinstance/instance_status.go): InPlaceUpdateNotReady
+--- FAIL: TestRIReadinessReasonsMatchCode (0.00s)
+== 0b7285b7 (round-5 head) — F15/F12-extension red (repro), F18/F19 green (introduction control) ==
+--- FAIL: TestRBGReplacementCreationMapsToRecovery (0.00s)
+--- FAIL: TestPreCheckProgressingWriteDerived (0.00s)
+--- PASS: TestReferencedKEPsResolvable (0.00s)
+--- PASS: TestRISEstablishmentBoundaryCollective (0.00s)
+
+== 39e2ecdf (round-6 head) — F15/F12 green (fixed), F18/F19 red (open, reproduction) ==
+--- PASS: TestRIReadinessReasonsMatchCode (0.00s)
+--- PASS: TestRBGReplacementCreationMapsToRecovery (0.00s)
+--- PASS: TestPreCheckProgressingWriteDerived (0.00s)
+--- FAIL: TestReferencedKEPsResolvable (0.00s)
+--- FAIL: TestRISEstablishmentBoundaryCollective (0.00s)
+
+== bite check at head: simulated fixes flip the new guards green ==
+ok  	sigs.k8s.io/rbgs/keps/502-workload-status-model	0.002s
+reverted: 0 modified
