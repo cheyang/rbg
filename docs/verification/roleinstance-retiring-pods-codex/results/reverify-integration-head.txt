@@ -1,0 +1,23 @@
+re-verify: manifest = docs/verification/roleinstance-retiring-pods-codex/verify-manifest.json
+re-verify: resolving PR head via 'git fetch https://github.com/sgl-project/rbg.git pull/557/head' (machine-independent)
+re-verify: current head = 8f63c864e669cfc14920ab3d9c79b46d2762c942
+re-verify: last-reviewed = 8f63c864e669cfc14920ab3d9c79b46d2762c942  (review delta = 8f63c864e669cfc14920ab3d9c79b46d2762c942..8f63c864e669cfc14920ab3d9c79b46d2762c942)
+re-verify: fixed-ref=8f63c864e669cfc14920ab3d9c79b46d2762c942  harness-from=verify/roleinstance-retiring-pods-codex
+re-verify: running layer 'integration' (ginkgo)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+P0-guard contract  unit         SKIPPED        layer not in --layers
+CORE-drain contract  integration  FIXED          pass=5 fail=0 miss=0
+F-A    canary    unit         SKIPPED        layer not in --layers
+F-B    canary    unit         SKIPPED        layer not in --layers
+
+Live layer (manual): L3 skipped in this debate round (no KUBECONFIG layer). To sanity check live: on a kind cluster, create a leaderWorkerPattern RBG with default policy, kubectl delete one member pod of a Ready instance, and observe status.retiringPods recorded before pod deletion, all member UIDs rotated, and RestartCount incremented exactly once.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/roleinstance-retiring-pods-codex/results/reverify
+
+Review delta this round: 8f63c864e669cfc14920ab3d9c79b46d2762c942..8f63c864e669cfc14920ab3d9c79b46d2762c942
+After reviewing that delta, advance the marker for the next round:
+  echo 8f63c864e669cfc14920ab3d9c79b46d2762c942 > docs/verification/roleinstance-retiring-pods-codex/.last-reviewed && git add docs/verification/roleinstance-retiring-pods-codex/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.

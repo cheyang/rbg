@@ -5,7 +5,8 @@
     "docs/verification/roleinstance-retiring-pods-codex",
     "pkg/reconciler/roleinstance/sync/verify_pr557_premise_test.go",
     "pkg/reconciler/roleinstance/sync/verify_pr557_freshread_test.go",
-    "pkg/reconciler/roleinstance/sync/verify_pr557_deleteprecondition_test.go"
+    "pkg/reconciler/roleinstance/sync/verify_pr557_deleteprecondition_test.go",
+    "pkg/reconciler/roleinstance/verify_pr557_legacy_condition_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -17,12 +18,15 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "results/unit-base.txt: both premise contract tests FAIL on base fd160cc (no deletionTimestamp trigger; readiness gate closed) and PASS on head 8f63c86 (results/unit-head.txt). Integration corroboration: base envtest spec 'should not recreate during initial creation (instance not yet Ready)' passes on base, i.e. the base suite asserted the gated behavior (results/envtest-base-guard-old-behavior.txt).",
-    "match": ["TestPR557PremiseTerminatingMemberTriggers", "TestPR557PremiseRestartWhileNotReadyTriggers"]
+    "match": [
+      "TestPR557PremiseTerminatingMemberTriggers",
+      "TestPR557PremiseRestartWhileNotReadyTriggers"
+    ]
   },
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/reconciler/roleinstance/sync/ -run 'TestPR557' -count=1 -json"
+      "cmd": "go test ./pkg/reconciler/roleinstance/ ./pkg/reconciler/roleinstance/sync/ -run 'TestPR557' -count=1 -json"
     },
     "integration": {
       "kind": "ginkgo",
@@ -31,18 +35,51 @@
     }
   },
   "findings": [
-    { "id": "P0-guard", "polarity": "contract", "layer": "unit",
-      "match": ["TestPR557PremiseTerminatingMemberTriggers", "TestPR557PremiseRestartWhileNotReadyTriggers"] },
-    { "id": "CORE-drain", "polarity": "contract", "layer": "integration",
-      "match": ["does not recreate ordinary Pending members before first Ready",
-                "does not delete a new UID under an old list, then retries its explicit failure",
-                "retries three fresh member-Pod sets before first Ready without changing the RI UID",
-                "restarts the whole instance after an individually repaired member fails",
-                "drains a terminating member once and resumes only after its finalizer is released"] },
-    { "id": "F-A", "polarity": "canary", "layer": "unit",
-      "match": ["TestPR557FreshReadBlocksNonPolicyInstance"] },
-    { "id": "F-B", "polarity": "canary", "layer": "unit",
-      "match": ["TestPR557StaleSnapshotDeleteConflicts"] }
+    {
+      "id": "P0-guard",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestPR557PremiseTerminatingMemberTriggers",
+        "TestPR557PremiseRestartWhileNotReadyTriggers"
+      ]
+    },
+    {
+      "id": "CORE-drain",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "does not recreate ordinary Pending members before first Ready",
+        "does not delete a new UID under an old list, then retries its explicit failure",
+        "retries three fresh member-Pod sets before first Ready without changing the RI UID",
+        "restarts the whole instance after an individually repaired member fails",
+        "drains a terminating member once and resumes only after its finalizer is released"
+      ]
+    },
+    {
+      "id": "UPGRADE-legacy-condition",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestPR557LegacyRestartingConditionCleared"
+      ]
+    },
+    {
+      "id": "F-A",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestPR557FreshReadBlocksNonPolicyInstance"
+      ]
+    },
+    {
+      "id": "F-B",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestPR557StaleSnapshotDeleteConflicts"
+      ]
+    }
   ],
   "liveNote": "L3 skipped in this debate round (no KUBECONFIG layer). To sanity check live: on a kind cluster, create a leaderWorkerPattern RBG with default policy, kubectl delete one member pod of a Ready instance, and observe status.retiringPods recorded before pod deletion, all member UIDs rotated, and RestartCount incremented exactly once."
 }

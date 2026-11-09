@@ -1,0 +1,4 @@
+=== RUN   TestPR557LegacyRestartingConditionCleared
+--- PASS: TestPR557LegacyRestartingConditionCleared (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.056s
