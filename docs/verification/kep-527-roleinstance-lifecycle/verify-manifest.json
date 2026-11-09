@@ -93,21 +93,23 @@
     },
     {
       "id": "F8",
-      "ledgerId": "F-INFLIGHT-ADMISSION-MUST",
+      "ledgerId": "F-INFLIGHT-CONFIG-ADMISSION",
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "CheckInflightAdmissionMust"
-      ]
+        "CheckInflightSemanticsDefined"
+      ],
+      "summary": "F-INFLIGHT-CONFIG-ADMISSION (round-4 form): in-flight config-change semantics defined declaratively (latest-config evaluation, absence semantics, test-plan coverage). Harness-update: round 2-3 pinned the admission-rejection mechanism that round 4 replaced."
     },
     {
       "id": "F9",
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "CheckLegacyRemovalStated"
+        "CheckLegacyCoexistenceSpecified"
       ],
-      "summary": "F-PROPAGATED-VS-LEGACY (round-3 form): legacy RIS lifecycle protocol removal + admission rejection + distinct new fields stated"
+      "summary": "F-OLDNEW-ISOLATION / F-PROPAGATED-VS-LEGACY (round-4 form): legacy protocol retained, admission-enforced mutual exclusion, distinct fields and state keys. Harness-update: round 3 pinned the removal mechanism that round 4 reverted.",
+      "ledgerId": "F-OLDNEW-ISOLATION/F-PROPAGATED-VS-LEGACY"
     },
     {
       "id": "F10",
@@ -180,8 +182,39 @@
         "CheckInterruptConditionalityClear"
       ],
       "summary": "NEW NIT F-INTERRUPT-WHEN-DEAD-AMBIGUITY: 'Update may interrupt Recovery when the previous engine is dead' misreads as conditional interrupt. Open (sentence present since 71dd5e87)."
+    },
+    {
+      "id": "F18",
+      "ledgerId": "F-PROPAGATED-SNAPSHOT-EDIT",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckSnapshotOwnershipStated"
+      ],
+      "summary": "Round-3 nit: snapshot ownership rule (must not be independently edited) stated EN+zh. Open at fb6c2b36, fixed at 43dab57b."
+    },
+    {
+      "id": "F19",
+      "ledgerId": "F-ZH-ENGLISH-TERMS",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckZhTermsTranslated"
+      ],
+      "summary": "Round-3 nit: no untranslated 'source of truth'/'desired snapshot' in zh-CN. Open at fb6c2b36, fixed at 43dab57b."
+    },
+    {
+      "id": "F20",
+      "ledgerId": "F-MARKNOTREADY-NAME",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckMarkNotReadyNaming"
+      ],
+      "summary": "Round-4 naming split: new protocol uses markNotReady (independent type); legacy markPodNotReady only in legacy-context sentences."
     }
   ],
   "liveNote": "Docs-only PR: no live layer. Design-level findings F1-F3 are verified by codebase inspection and their checks are text proxies that confirm the KEP ADDRESSES the topic; design correctness of the added text still requires human review.",
-  "_codex_note": "All checks use contract polarity: pass = intended state. Round 2 (head 71dd5e87): F1/F2/F3/F5 fixed by the revision; F4 partial; F6-F8 added. Round 3 (head fb6c2b36): revision replaced mutual-exclusion with wholesale removal of the legacy RIS lifecycle protocol (CheckOldNewCoexistenceRule broadened as a Harness-update to accept removal language), pinned wire names/constants, added preCreate rationale, finalizer-establishment ordering, namespace-teardown scoping, RBGSet foreground boundary, postReady-omitted path, disable-supported clarification (F9-F15 all pass at head). New nits F16 (kep.yaml feature-gates bare-string vs template object form; fail at head) and F17 (interrupt-when-dead conditionality ambiguity, sentence present since 71dd5e87; fail at previous and head). F4 residual: CheckSeeAlsoDirsExist still fails (dangling /keps/502-workload-status-model; PR #528 open). The stock skill re-verify.sh supports only gotest/ginkgo; scripts/re-verify.sh here is a shell-kind adaptation with the same fetch/graft/verdict contract."
+  "_codex_note": "All checks use contract polarity: pass = intended state. Round 2 (head 71dd5e87): F1/F2/F3/F5 fixed by the revision; F4 partial; F6-F8 added. Round 3 (head fb6c2b36): revision replaced mutual-exclusion with wholesale removal of the legacy RIS lifecycle protocol (CheckOldNewCoexistenceRule broadened as a Harness-update to accept removal language), pinned wire names/constants, added preCreate rationale, finalizer-establishment ordering, namespace-teardown scoping, RBGSet foreground boundary, postReady-omitted path, disable-supported clarification (F9-F15 all pass at head). New nits F16 (kep.yaml feature-gates bare-string vs template object form; fail at head) and F17 (interrupt-when-dead conditionality ambiguity, sentence present since 71dd5e87; fail at previous and head). F4 residual: CheckSeeAlsoDirsExist still fails (dangling /keps/502-workload-status-model; PR #528 open). The stock skill re-verify.sh supports only gotest/ginkgo; scripts/re-verify.sh here is a shell-kind adaptation with the same fetch/graft/verdict contract.",
+  "_codex_note_round4": "Round 4 (head 43dab57b): the author REVERTED the round-3 removal pivot — legacy RIS lifecycle protocol is retained, coexisting with admission-enforced mutual exclusion; the new protocol moved to an independent hook type (labelsHandler + markNotReady; legacy keeps markPodNotReady); in-flight config changes switched from admission-rejected to declarative latest-wins/absence semantics; kep.yaml feature-gates now use the template object form; the interrupt sentence is fixed; zh 'source of truth'/'desired snapshot' translated. Harness-updates (disclosed): CheckInflightAdmissionMust -> CheckInflightSemanticsDefined (F8), CheckLegacyRemovalStated -> CheckLegacyCoexistenceSpecified (F9); both old pins fail at 43dab57b BY DESIGN (the pinned mechanism was replaced, not the finding reopened). New pins F18/F19/F20. CheckSeeAlsoDirsExist still fails (PR #528 open). F-KEP502-CREATING-PHASE-CONFLICT resolved on the PR #528 side at 39e2ecdf (table now says Remain Creating / fold into Create, cross-referencing KEP-527) — not pinnable here because keps/502 is absent from this PR's tree."
 }

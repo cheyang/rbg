@@ -83,6 +83,34 @@ Raw output: `results/reverify/unit-fb6c2b36.tsv` (head), `results/reverify/unit-
 
 Round-3 reasoning-only finding (no runnable layer, docs design gap): F-LEGACY-REMOVAL-TRANSITION — the removal redesign leaves three transition points unstated: (a) whether legacy-field rejection is conditioned on the `RoleInstanceLifecycleHooks` gate (gate-off behavior for existing users after controller upgrade), (b) what enforces "migration required before the feature is enabled" when the gate flips on with unmigrated objects, (c) drain/cleanup of legacy runtime state (legacy hook finalizers from `finalizersHandler`, old `role-instance-lifecycle-state` labels) at migration — a controller that "neither writes nor interprets them" never removes a leftover legacy finalizer, wedging RI deletion. Pre-implementable blocker #1 names "the migration procedure" but none of these specifics.
 
+
+## Observed vs expected (head 43dab57b — round 4, incremental)
+
+Delta `fb6c2b36..43dab57b` (docs-only, +219/-153): the revision **reverts the round-3 removal pivot** — the legacy RIS lifecycle protocol is retained and coexists with the new protocol under admission-enforced mutual exclusion per RIS; the new protocol moves to an **independent hook type** (`labelsHandler` + `markNotReady`; `postReady` has `labelsHandler` only), so the legacy `markPodNotReady` wire name stays with the legacy protocol; in-flight config changes switch from admission-rejected to **declarative latest-wins / absence semantics** (with test-plan coverage); kep.yaml feature-gates adopts the template object form; the interrupt sentence and the zh untranslated-English nits are fixed; the snapshot-ownership sentence returns ("must not be independently edited").
+
+| Finding | Check | base 09accf63 | previous fb6c2b36 | head 43dab57b | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| F1/F2/F5/F6/F7, F10-F15 (carried fixes) | carried pins | fail | pass | pass | still FIXED (regression guard) |
+| F3/F9 old/new boundary (F-OLDNEW-ISOLATION, F-PROPAGATED-VS-LEGACY) | CheckOldNewCoexistenceRule + CheckLegacyCoexistenceSpecified | fail | pass / fail | pass | still FIXED — Harness-update: round-3 removal pin replaced by the round-4 coexistence pin (mutual exclusion + legacy retained + distinct fields/keys, EN+zh); previous-head red is the mechanism change, not a reopened finding |
+| F8 in-flight config (F-INFLIGHT-CONFIG-ADMISSION) | CheckInflightSemanticsDefined | fail | fail | pass | still FIXED — Harness-update: admission-rejection pin replaced by the declarative-semantics pin the revision substituted; concern (undefined in-flight behavior) stays addressed |
+| F4 kep.yaml defects | CheckKepYaml{NoSegmentComment,AuthorsSet} / CheckSeeAlsoDirsExist | fail×3 | pass/pass/fail | pass/pass/fail | PARTIAL — see-also `/keps/502-workload-status-model` still dangles; PR #528 still OPEN (re-fetched 2026-11-10, head 39e2ecdf) |
+| F16 kep.yaml gate shape (F-KEPYAML-GATE-SHAPE) | CheckKepYamlFeatureGateShape | fail | fail | pass | FIXED — object form `- name: RoleInstanceLifecycleHooks` |
+| F17 interrupt conditionality (F-INTERRUPT-WHEN-DEAD-AMBIGUITY) | CheckInterruptConditionalityClear | fail | fail | pass | FIXED — "Update may interrupt Recovery; the previous engine may then be dead." |
+| F18 snapshot ownership (F-PROPAGATED-SNAPSHOT-EDIT) | CheckSnapshotOwnershipStated | fail | fail | pass | FIXED — "must not be independently edited or combined with the legacy protocol" (EN+zh) |
+| F19 zh English terms (F-ZH-ENGLISH-TERMS) | CheckZhTermsTranslated | fail | fail | pass | FIXED — 'source of truth'/'desired snapshot' translated |
+| F20 naming split (F-MARKNOTREADY-NAME, round-4 form) | CheckMarkNotReadyNaming | fail | fail | pass | still FIXED — new protocol `markNotReady`, legacy `markPodNotReady` confined to legacy-context sentences (EN: 2/2, zh: 2/2); matches code (`MarkNotReady` Go field / `markPodNotReady` wire at roleinstanceset_types.go:96-104) |
+| Codebase-truth claims (10) | group 1 | pass ×10 | pass ×10 | pass ×10 | KEP accurate on head (incl. "legacy protocol executed by the RIS controller" — pkg/reconciler/roleinstanceset/statelessmode/sync/{scale,update}.go) |
+| Hygiene (3) | group 3 | pass ×3 | pass ×3 | pass ×3 | clean (markdownlint 0 issues, section parity, whitespace) |
+
+Raw output: `results/reverify/unit-43dab57b.tsv` (head), `unit-fb6c2b36-round4.tsv` (previous head, updated harness), `unit-09accf63-round4.tsv` (base control).
+
+Round-4 reasoning-only closures (no runnable layer on this PR's tree):
+
+- **F-LEGACY-REMOVAL-TRANSITION — dissolved by the pivot-back.** All four sub-questions from round 3 are moot: gate-off behavior is the status quo (legacy controller unchanged), no migrate-before-enable enforcement is needed (the legacy field keeps working), legacy runtime state drains via the still-running legacy controller, and the divergence from issue #527's "Remain compatible with existing lifecycle and readiness gate mechanisms" disappears (Goal: "Preserve the legacy RIS lifecycle protocol"; Non-Goal: mutual exclusion; migration deferred to a **post-Alpha** path named in pre-implementable blocker #1).
+- **F-KEP502-CREATING-PHASE-CONFLICT — FIXED on the dependency side.** PR #528 head 39e2ecdf (fetched 2026-11-10) now prescribes "`Creating` | update/recovery target identified before initial creation completes | **Remain `Creating`; fold the new target into Create convergence without invoking hooks**" and adds an explicit cross-reference ("consistent with the KEP-527 hook rules"; "This matches KEP-527"). KEP-527's own Creating row is unchanged. Not pinnable in this harness: keps/502 is absent from this PR's tree until #528 merges.
+
+Round-4 design note (reasoning only, surfaced as question F-CONFIG-REMOVAL-SKIPS-HOOK): the new declarative semantics make removing a hook configuration mid-operation a supported skip path — including `preDelete` during deletion ("removes the reserved finalizer so deletion may continue. This is the direct result of the user removing the hook"). Round 3 explicitly forbade this ("must not be interpreted as marker release … or permission to skip the hook"). The reversal is stated plainly and is test-plan-covered, so it is a legitimate design choice; but the Risks/Troubleshooting sections never acknowledge that config removal now doubles as a hook-bypass (the break-glass section still covers only marker removal). One sentence would close it.
+
 ## How to run
 
 ```bash

@@ -145,23 +145,33 @@ if [ -f "$KEP_EN" ] && sed -n '/^## Motivation/,/^## Proposal/p' "$KEP_EN" \
 if [ -f "$KEP_ZH" ] && ! grep -q '在同一 RI 上同时生效' "$KEP_ZH"; then
   ok CheckEnZhCoexistenceScopeParity; else bad CheckEnZhCoexistenceScopeParity; fi
 
-# F8 (F-INFLIGHT-ADMISSION-MUST, nit). The in-flight lifecycle-change admission
-#     rule must use normative "must" like the sibling admission rules and the
-#     test plan, not "should".
-if [ -f "$KEP_EN" ] && grep -q 'Admission must reject lifecycle changes' "$KEP_EN"; then
-  ok CheckInflightAdmissionMust; else bad CheckInflightAdmissionMust; fi
+# F8 (F-INFLIGHT-CONFIG-ADMISSION; Harness-update, round 4). Rounds 2-3 pinned
+#     the admission-rejection resolution ("Admission must reject lifecycle
+#     changes while an affected RI has a non-empty hook-state"). Round 4
+#     deliberately replaced that mechanism with declarative latest-config
+#     semantics ("treats it as absent"). The underlying finding (in-flight
+#     config change must have defined semantics) stays addressed; pin the new
+#     resolution form + zh mirror + test-plan coverage.
+if [ -f "$KEP_EN" ] && grep -q 'always evaluates the latest effective lifecycle configuration' "$KEP_EN" \
+  && grep -q 'treats it as absent' "$KEP_EN" \
+  && grep -q 'Removing an active hook uses absence semantics' "$KEP_EN" \
+  && grep -q '声明式语义' "$KEP_ZH"; then
+  ok CheckInflightSemanticsDefined; else bad CheckInflightSemanticsDefined; fi
 
 # --- group 2b: round-3 checks (delta 71dd5e87..fb6c2b36) ---
 
-# F9 (F-PROPAGATED-VS-LEGACY, round-3 form). The redesign resolves the
-#     propagated-vs-user-configured ambiguity by removal: the legacy RIS
-#     lifecycle protocol must be stated as removed with admission rejection, and
-#     the new config must live on distinct fields (Role/RIS-template/RI spec).
-if [ -f "$KEP_EN" ] && grep -q 'protocol is removed' "$KEP_EN" \
-  && grep -q 'Admission rejects' "$KEP_EN" \
+# F9 (F-OLDNEW-ISOLATION / F-PROPAGATED-VS-LEGACY; Harness-update, round 4).
+#     Round 3 pinned wholesale removal of the legacy protocol; round 4 reverted
+#     to coexistence with admission-enforced mutual exclusion (the round-2
+#     resolution form, strengthened). Pin: mutual-exclusion rule + legacy field
+#     retained + distinct new field paths + distinct state keys + zh mirror.
+if [ -f "$KEP_EN" ] && grep -qiE 'mutual(ly)? exclusive' "$KEP_EN" \
+  && grep -q 'legacy RIS field remains' "$KEP_EN" \
   && grep -q 'roleInstanceTemplate.lifecycle' "$KEP_EN" \
-  && grep -q 'RoleInstance.spec.lifecycle' "$KEP_EN"; then
-  ok CheckLegacyRemovalStated; else bad CheckLegacyRemovalStated; fi
+  && grep -q 'RoleInstance.spec.lifecycle' "$KEP_EN" \
+  && grep -q 'distinct state keys' "$KEP_EN" \
+  && grep -q '同一个 RIS 上二者互斥' "$KEP_ZH"; then
+  ok CheckLegacyCoexistenceSpecified; else bad CheckLegacyCoexistenceSpecified; fi
 
 # F10 (F-FINALIZER-BOOTSTRAP-RACE). The reserved finalizer must be established
 #     before the effective preDelete config is exposed, and enablement on an RI
@@ -219,6 +229,41 @@ fi
 #     unconditional). Fails while the ambiguous sentence stands.
 if [ -f "$KEP_EN" ] && ! grep -q 'may interrupt Recovery when the previous engine is dead' "$KEP_EN"; then
   ok CheckInterruptConditionalityClear; else bad CheckInterruptConditionalityClear; fi
+
+# --- group 2c: round-4 checks (delta fb6c2b36..43dab57b) ---
+
+# F18 (F-PROPAGATED-SNAPSHOT-EDIT, nit). RBG-managed RIS lifecycle snapshot
+#     ownership must be stated: propagated from the Role, must not be
+#     independently edited or combined with the legacy protocol (EN+zh).
+if [ -f "$KEP_EN" ] && grep -q 'must not be independently edited' "$KEP_EN" \
+  && grep -q '不得独立修改' "$KEP_ZH"; then
+  ok CheckSnapshotOwnershipStated; else bad CheckSnapshotOwnershipStated; fi
+
+# F19 (F-ZH-ENGLISH-TERMS, nit). The zh-CN file must not embed the untranslated
+#     English prose phrases from the configuration-hierarchy section.
+if [ -f "$KEP_ZH" ] && ! grep -qE 'source of truth|desired snapshot' "$KEP_ZH"; then
+  ok CheckZhTermsTranslated; else bad CheckZhTermsTranslated; fi
+
+# F20 (F-MARKNOTREADY-NAME, round-4 form). The new protocol's field is
+#     markNotReady on an independent hook type; the legacy wire name
+#     markPodNotReady must survive only in legacy-context sentences (EN+zh),
+#     and the new-protocol examples must use markNotReady.
+naming_ok=1
+if [ -f "$KEP_EN" ] && [ -f "$KEP_ZH" ]; then
+  grep -q 'markNotReady: true' "$KEP_EN" || naming_ok=0
+  grep -q 'markNotReady: true' "$KEP_ZH" || naming_ok=0
+  while IFS= read -r hit; do
+    ln="${hit%%:*}"
+    sed -n "$(( ln > 2 ? ln - 2 : 1 )),$(( ln + 2 ))p" "$KEP_EN" | grep -qiE 'legacy' || naming_ok=0
+  done < <(grep -n 'markPodNotReady' "$KEP_EN")
+  while IFS= read -r hit; do
+    ln="${hit%%:*}"
+    sed -n "$(( ln > 2 ? ln - 2 : 1 )),$(( ln + 2 ))p" "$KEP_ZH" | grep -qE 'legacy|旧' || naming_ok=0
+  done < <(grep -n 'markPodNotReady' "$KEP_ZH")
+else
+  naming_ok=0
+fi
+if [ "$naming_ok" -eq 1 ]; then ok CheckMarkNotReadyNaming; else bad CheckMarkNotReadyNaming; fi
 
 # --- group 3: document hygiene (regression guards for future revisions) ---
 
