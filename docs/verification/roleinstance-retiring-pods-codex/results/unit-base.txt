@@ -1,0 +1,15 @@
+=== RUN   TestPR557StaleSnapshotDeleteConflicts
+    verify_pr557_deleteprecondition_test.go:106: bug-canary: stale-snapshot delete succeeded without preconditions (pre-PR behavior)
+--- FAIL: TestPR557StaleSnapshotDeleteConflicts (0.04s)
+=== RUN   TestPR557FreshReadBlocksNonPolicyInstance
+    verify_pr557_freshread_test.go:106: bug-canary: non-policy instance tolerated an apiserver read failure (pre-PR behavior)
+--- FAIL: TestPR557FreshReadBlocksNonPolicyInstance (0.00s)
+=== RUN   TestPR557PremiseTerminatingMemberTriggers
+    verify_pr557_premise_test.go:102: premise of #542 reproduced: an observed member deletion while NotReady does NOT trigger recreation; the replacement pod can never rejoin the group and the instance stays NotReady forever
+--- FAIL: TestPR557PremiseTerminatingMemberTriggers (0.00s)
+=== RUN   TestPR557PremiseRestartWhileNotReadyTriggers
+    verify_pr557_premise_test.go:116: premise of #542 reproduced: a container restart while NotReady does NOT trigger recreation (readiness gate permanently closed)
+--- FAIL: TestPR557PremiseRestartWhileNotReadyTriggers (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.056s
+FAIL

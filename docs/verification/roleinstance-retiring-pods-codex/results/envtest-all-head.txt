@@ -1,0 +1,6 @@
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/deprecation	6.189s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/deprecationv1a1	6.184s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	51.191s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy	226.712s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/stateful	42.697s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/webhook	30.770s

@@ -1,0 +1,12 @@
+=== RUN   TestPR557StaleSnapshotDeleteConflicts
+    verify_pr557_deleteprecondition_test.go:111: observed PR-head behavior: stale informer pod delete rejected with conflict: Operation cannot be fulfilled on pods "scalein-0-worker-1": the ResourceVersion in the precondition (999) does not match the ResourceVersion in record (1000). The object might have been modified
+--- PASS: TestPR557StaleSnapshotDeleteConflicts (0.04s)
+=== RUN   TestPR557FreshReadBlocksNonPolicyInstance
+    verify_pr557_freshread_test.go:108: observed PR-head behavior: scaling blocked for restartPolicy=None instance: simulated transient apiserver read failure
+--- PASS: TestPR557FreshReadBlocksNonPolicyInstance (0.00s)
+=== RUN   TestPR557PremiseTerminatingMemberTriggers
+--- PASS: TestPR557PremiseTerminatingMemberTriggers (0.00s)
+=== RUN   TestPR557PremiseRestartWhileNotReadyTriggers
+--- PASS: TestPR557PremiseRestartWhileNotReadyTriggers (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.059s
