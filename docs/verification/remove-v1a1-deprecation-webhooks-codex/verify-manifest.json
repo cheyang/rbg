@@ -17,7 +17,9 @@
     "layer": "integration",
     "verdict": "confirmed",
     "evidence": "On base 73e05db4 (harness + base-only registration of the removed webhooks), a v1alpha1 RBG create returned exactly the two overlapping warnings the PR describes (results/p0-premise-base.txt, spec 3 failure lists both). On head 6108f204 the same write returns exactly one warning carrying the 0.10.0 timeline, and all enforcement specs pass (results/l2-envtest-head.txt, 7/7).",
-    "match": ["returns exactly one deprecation warning"]
+    "match": [
+      "returns exactly one deprecation warning"
+    ]
   },
   "layers": {
     "unit": {
@@ -26,18 +28,67 @@
     },
     "integration": {
       "kind": "ginkgo",
-      "cmd": "KUBEBUILDER_ASSETS=$(setup-envtest use 1.31.0 --bin-dir ~/.local/share/kubebuilder-envtest -p path 2>/dev/null || echo ~/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64) go test ./test/envtest/testcase/v1a1gate -count=1 -timeout 10m",
-      "report": ""
+      "cmd": "KUBEBUILDER_ASSETS=$(setup-envtest use 1.31.0 --bin-dir ~/.local/share/kubebuilder-envtest -p path 2>/dev/null || echo ~/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64) go test ./test/envtest/testcase/v1a1gate -count=1 -timeout 10m -ginkgo.json-report=\"$GINKGO_REPORT\"",
+      "report": "$GINKGO_REPORT"
     }
   },
   "findings": [
-    { "id": "A1-gate-create", "polarity": "contract", "layer": "integration", "match": ["rejects a new v1alpha1 RoleBasedGroup with an explicit deprecated workload type"] },
-    { "id": "A2-gate-defaulted", "polarity": "contract", "layer": "integration", "match": ["relies on v1alpha1 schema defaulting"] },
-    { "id": "A3-single-warning", "polarity": "contract", "layer": "integration", "match": ["returns exactly one deprecation warning"] },
-    { "id": "A4-grandfathered-update", "polarity": "contract", "layer": "integration", "match": ["keeps the grandfathered legacy object updatable"] },
-    { "id": "A5-type-switch-rejected", "polarity": "contract", "layer": "integration", "match": ["rejects switching the legacy role to another deprecated workload type"] },
-    { "id": "A6-rbgset-template-rejected", "polarity": "contract", "layer": "integration", "match": ["rejects a new v1alpha1 RoleBasedGroupSet whose template uses a deprecated workload type"] },
-    { "id": "A7-delete-ungated", "polarity": "contract", "layer": "integration", "match": ["leaves v1alpha1 deletes ungated"] }
+    {
+      "id": "A1-gate-create",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "rejects a new v1alpha1 RoleBasedGroup with an explicit deprecated workload type"
+      ]
+    },
+    {
+      "id": "A2-gate-defaulted",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "relies on v1alpha1 schema defaulting"
+      ]
+    },
+    {
+      "id": "A3-single-warning",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "returns exactly one deprecation warning"
+      ]
+    },
+    {
+      "id": "A4-grandfathered-update",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "keeps the grandfathered legacy object updatable"
+      ]
+    },
+    {
+      "id": "A5-type-switch-rejected",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "rejects switching the legacy role to another deprecated workload type"
+      ]
+    },
+    {
+      "id": "A6-rbgset-template-rejected",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "rejects a new v1alpha1 RoleBasedGroupSet whose template uses a deprecated workload type"
+      ]
+    },
+    {
+      "id": "A7-delete-ungated",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "leaves v1alpha1 deletes ungated"
+      ]
+    }
   ],
   "liveNote": "L3 skipped by debate policy. On a live cluster the equivalent signal: kubectl create of a v1alpha1 RBG with a deprecated workload type must fail with the v1alpha2 gate's migration-hint error, and any accepted v1alpha1 write must print exactly one 'Warning: ... deprecated and will be removed in 0.10.0'."
 }
