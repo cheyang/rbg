@@ -1,0 +1,13 @@
+kep527-reference-check — round-6 delta's new factual claims about KEP-527
+KEP-527 = OPEN PR #546 'KEP-527: Add RoleInstance lifecycle hooks proposal' (keps/527-roleinstance-lifecycle), fetched refs/pull/546/head on 2026-11-10
+
+KEP-502 claim -> KEP-527 evidence (verified by direct read of the PR #546 head blob):
+1. KEP-502:412 'Hook execution, retries, and release use the hook-state labels and finalizer handshake defined by KEP-527'
+   KEP-527:271 hook-state key rbg.workloads.x-k8s.io/role-instance-hook-state; :285 preDelete finalizer rbg.workloads.x-k8s.io/role-instance-pre-delete; :425-427 'must use the exact hook-state label key ... and must not reuse the existing rbg.workloads.x-k8s.io/role-instance-lifecycle-state key' -> ACCURATE (delegation, not current-code claim; today's code label verified separately by C11 claim 3 code check)
+2. KEP-502:248 'Creating does not transition directly to Updating or Recovering, consistent with the KEP-527 hook rules'
+   KEP-527:749 '| Creating | Update, Recovery | Fold target into Create; no hooks |'; :758-761 'For Creating, a target change is folded into Create convergence rather than ignored. A corrected initial image may replace a member that has not reached workload Ready, but the controller does not enter separate Update or Recovery operations and does not invoke their hooks.' -> ACCURATE
+3. KEP-502:438 'This matches KEP-527: preUpdate and preRecover apply to an established instance, so replacing members that have not yet reached workload Ready during a first deploy does not invoke them'
+   supported by KEP-527:758-761 (same semantics, different words) and :855-858 ('Creating folds target changes into Create convergence, including correcting a failed initial image, but does not enter separate Update or Recovery operations or invoke their hooks') -> ACCURATE
+4. KEP-502:445/:495 'do not invoke preUpdate or preRecover' during Create convergence -> same KEP-527:749/:758-761 support -> ACCURATE
+
+Caveat (non-gating): KEP-527 is an OPEN, unmerged proposal; KEP-502 now normatively depends on its hook-eligibility semantics. Both proposals currently agree verbatim on the Create-fold rule; if PR #546 evolves, these KEP-502 clauses should be re-checked (tracked as question Q7 in the round-6 ledger).

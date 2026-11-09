@@ -1,0 +1,20 @@
+bite-check-round6 — mutations against head 39e2ecdf (scripts: run.py / run2.py in scripts/)
+
+== proposed-fix mutations (each open finding's one-sentence fix -> its guard flips green) ==
+fixB-F14-drop-disjunct       {'C20-consuming-table-attention-row': 'pass'}
+fixC-F13-restore-bullet      {'C10-rbg-activity-precedence': 'pass'}
+fixD-F16-both-modes          {'C21-minready-both-modes': 'pass'}
+fixE-Q5-kind-scope           {'C22-decision-table-kind-scope': 'pass'}
+fixF-Q6-deletion-sentence    {'C24-progressing-during-deletion': 'pass'}
+fixG-F19-define-display-priority {'C25-display-priority-resolves': 'pass'}
+fixA-F18-scope-both-sentences    {'C19-ri-prose-edge-consistency': 'pass'}
+  (fixA in run.py scopes only the first RI prose sentence; C19 correctly stays red — the F18 fix must scope both sentences, as run2's fixA does)
+
+== regression mutations (fixed guards -> flip red: every guard bites) ==
+mut1-C13-bites (drop RBG scoping) {'C13-replacement-mapping-stated': 'fail', 'C16-replacement-discriminator': 'fail'}
+mut2-C16-bites (drop RIS discriminator) {'C16-replacement-discriminator': 'fail'}
+mut3-C18-bites (restore old edge) {'C18-create-fold-consistency': 'fail'}
+mut4-C23-bites (drop condition-observedGeneration) {'C23-completion-observedGeneration': 'fail'}
+mut5-C11-bites (drop KEP-527 delegation) {'C11-round5-code-claims': 'fail'}
+mut6-C15-bites (restore :510 contradiction) {'C15-precheck-write-consistency': 'fail'}
+  (mut6 in run.py targeted the :140 rule instead of the :510 bullet — the round-5 contradiction lived in both; run2's mut6 restores it at :510 and C15 flips red, re-proving the guard bites)

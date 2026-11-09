@@ -1,0 +1,2 @@
+re-verify: working tree has uncommitted tracked changes; commit or stash first
+           (this script runs 'git checkout -f' and would discard them)

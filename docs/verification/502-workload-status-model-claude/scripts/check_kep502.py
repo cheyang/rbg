@@ -589,10 +589,15 @@ def check_c11(kep_text, repo):
     else:
         problems.append("stateful helper file not found")
 
-    # 3. lifecycle-state label + values
-    if not re.search(r"`rbg\.workloads\.x-k8s\.io/role-instance-lifecycle-"
-                     r"state`", kep_text):
-        problems.append("KEP claim missing: lifecycle-state label key")
+    # 3. hook protocol ownership (round-6 Harness-update: 39e2ecdf replaced
+    #    the in-doc lifecycle-state label enumeration with a delegation to
+    #    KEP-527; the code-side constants are still verified as context —
+    #    today's protocol label and its five values exist in the repo).
+    if not re.search(r"hook-state labels and finalizer handshake defined "
+                     r"by KEP-527", kep_text):
+        problems.append("KEP claim missing: hook protocol ownership "
+                        "(hook-state labels / finalizer handshake, "
+                        "KEP-527)")
     p_const = os.path.join(repo, "api/workloads/constants/constants.go")
     p_annot = os.path.join(repo, "api/workloads/constants/annotation.go")
     consts = ""
@@ -647,29 +652,54 @@ def check_c12(kep_text):
 
 
 def check_c13(kep_text):
-    """F12 guard (round-4 open item, fixed definitionally at 0b7285b7):
-    the replacement-child -> parent-reason mapping must be stated at BOTH
-    layers — Creating for a child that does not yet exist and is being
-    created; Recovering for an established child being repaired or replaced.
-    Polarity: contract (fail == mapping unstated at either layer).
+    """F12 guard (round-4 open item; round-6 Harness-update after the fix at
+    39e2ecdf reworded the guarded lines): `Creating` must be scoped to
+    initial establishment at BOTH layers, and a post-establishment missing /
+    replacement child must be classified under the workflow that requires it
+    — Recovering for replacing an established child, ScalingOrUpdating /
+    ScalingUp for a target that adds one, RollingUpdate for update-created
+    instances (this also retires Copilot C4495569498's scale-up
+    over-capture, pinned by the 2 -> 3 test bullet).
+    Polarity: contract (fail == scoping or classification unstated at
+    either layer). Fails at 0b7285b7 (round-5 definitional wording only),
+    passes at 39e2ecdf.
     """
     problems = []
-    if not re.search(r"`Creating` is used when a required child object does "
-                     r"not yet exist and is being created", kep_text):
-        problems.append("RBG Creating definition not stated")
-    if not re.search(r"`Recovering` is used when an established child is "
-                     r"being repaired or replaced", kep_text):
-        problems.append("RBG replacement->Recovering mapping not stated")
-    if not re.search(r"`Creating` is used when a required RI does not yet "
-                     r"exist and is being created", kep_text):
-        problems.append("RIS Creating definition not stated")
-    if not re.search(r"`Recovering` is used when an established RI is being "
-                     r"repaired or replaced", kep_text):
-        problems.append("RIS replacement->Recovering mapping not stated")
+    # RBG layer: establishment scoping + post-establishment classification
+    if not re.search(r"`Creating` is used only during initial RBG "
+                     r"establishment", kep_text):
+        problems.append("RBG Creating not scoped to initial establishment")
+    if not re.search(r"Once the RBG is established, a missing child is not "
+                     r"`Creating`", kep_text):
+        problems.append("RBG post-establishment missing-child classification "
+                        "not stated")
+    if not re.search(r"such as `Recovering` for replacing an established "
+                     r"child or `ScalingOrUpdating` for a target that adds "
+                     r"one", kep_text):
+        problems.append("RBG replacement->Recovering / scale-up->"
+                        "ScalingOrUpdating mapping not stated")
+    # RIS layer
+    if not re.search(r"`Creating` is used only during initial set "
+                     r"establishment", kep_text):
+        problems.append("RIS Creating not scoped to initial establishment")
+    if not re.search(r"Once the set is established, a required RI that does "
+                     r"not yet exist is not `Creating`", kep_text):
+        problems.append("RIS post-establishment missing-RI classification "
+                        "not stated")
+    if not re.search(r"`ScalingUp` when scaling adds instances, "
+                     r"`RollingUpdate` when update work creates or replaces "
+                     r"instances", kep_text):
+        problems.append("RIS scale-up / update classification not stated")
+    # test-plan bullet pinning the scale-up case (C4495569498)
+    if not (re.search(r"reports `ScalingUp`", kep_text)
+            and u"2 → 3" in kep_text):
+        problems.append("scale-up test bullet (2 -> 3 reports ScalingUp) "
+                        "not stated")
     emit("C13-replacement-mapping-stated", not problems,
          "; ".join(problems) if problems
-         else "establishment-based Creating/Recovering mapping stated at "
-              "both RBG and RIS layers")
+         else "Creating scoped to initial establishment at both layers; "
+              "post-establishment missing children classified under the "
+              "requiring workflow (incl. scale-up)")
 
 
 def check_c14(kep_text):
@@ -732,39 +762,38 @@ def check_c15(kep_text):
 
 
 def check_c16(kep_text):
-    """F14 repro (round-5 open, nit): the 'established' discriminator for
-    Creating vs Recovering is not operationalized. Both clauses apply to an
-    absent child that is being replaced (required child does not yet exist
-    AND an established child is being replaced); the KEP never states how
-    the controller derives 'established' from persisted facts, especially
-    after controller restart when Progressing.reason is recomputed 'from
-    current facts'.
-    Polarity: contract (fail == discriminator unstated; passes once the KEP
-    states how establishment is determined or scopes the clauses).
+    """F12 residual (round-5 Claude F14, folded into F12 by synthesis;
+    round-6 Harness-update after 39e2ecdf): the 'established' discriminator
+    must be derivable from persisted / current facts, so a controller —
+    including after restart, when Progressing.reason is recomputed 'from
+    current facts' — can decide establishment. Round-6 fix: the RIS clause
+    names persisted facts ('an established revision or established RIs for
+    its target') and the RBG clause names the target's required roles.
+    Polarity: contract (fail == discriminator not tied to persisted facts).
     """
     problems = []
-    has_mapping = (re.search(r"`Creating` is used when a required child "
-                             r"object does not yet exist", kep_text)
-                   and re.search(r"`Recovering` is used when an established "
-                                 r"child is being repaired or replaced",
-                                 kep_text))
-    if has_mapping:
-        disc = re.search(r"establish(?:ed|ment)[^.;]*(?:roleStatuses|"
-                         r"persisted status|previously observed|"
-                         r"observed at least once|history)", kep_text)
-        if not disc:
-            problems.append("no statement operationalizes how the "
-                            "controller determines a child was "
-                            "established (roleStatuses / persisted facts / "
-                            "prior observation), so the absent-replacement-"
-                            "child case matches both the Creating and the "
-                            "Recovering clause")
-    else:
-        problems.append("establishment mapping not found (harness anchor "
+    has_scoping = re.search(r"`Creating` is used only during initial "
+                            r"(?:RBG|set) establishment", kep_text)
+    if not has_scoping:
+        problems.append("establishment scoping not found (harness anchor "
                         "may be stale — see C13)")
+    else:
+        disc = (re.search(r"established revision or established RIs for "
+                          r"its target", kep_text)
+                and re.search(r"required roles have been established",
+                              kep_text))
+        if not disc:
+            problems.append("establishment discriminator not tied to "
+                            "persisted facts (established revision / "
+                            "established RIs / required roles established)")
+        if not re.search(r"recompute `Progressing\.reason` from current "
+                         r"facts", kep_text):
+            problems.append("restart recompute rule not stated")
     emit("C16-replacement-discriminator", not problems,
          "; ".join(problems) if problems
-         else "establishment discriminator operationalized")
+         else "establishment discriminator tied to persisted facts "
+              "(RIS: established revision / established RIs; RBG: required "
+              "roles established)")
 
 
 def check_c17(kep_text):
@@ -845,6 +874,265 @@ def check_c17(kep_text):
               "[%s]" % " > ".join(order))
 
 
+# ---------------------------------------------------------------- C18 (r6)
+
+def check_c18(kep_text):
+    """Round-6 fix guard (commits 667f7c71 + 39e2ecdf; also retires Copilot
+    advisory C4495569567): target changes during initial RI creation fold
+    into Create convergence — no Creating -> Updating / Recovering edge, no
+    preUpdate / preRecover invocation — and `Updating` is the Activity
+    reason only when no current blocker or incomplete observation takes
+    precedence (C4495569567's suggested fix, verbatim at :438).
+    Polarity: contract (fail == fold rule or blocker qualifier missing).
+    Fails at 0b7285b7 (Creating->Updating edge present), passes at head.
+    Note: F19 (C19) tracks the one leftover unscoped summary-prose sentence
+    this contract deliberately does not cover.
+    """
+    problems = []
+    # edge-table fold row (and no Creating->Updating edge)
+    if not re.search(r"\| `Creating` \| An update or recovery target is "
+                     r"identified before initial creation completes \| "
+                     r"Remain `Creating`", kep_text):
+        problems.append("edge table lacks the Creating fold row")
+    if re.search(r"\| `Creating` \| A new update target is identified[^\n]*"
+                 r"\| `Updating` \|", kep_text):
+        problems.append("edge table still has a Creating->Updating edge")
+    # situation-table fold row
+    if not re.search(r"Remain Creating and converge toward the latest "
+                     r"target; do not invoke preUpdate or preRecover",
+                     kep_text):
+        problems.append("situation-table fold row missing")
+    # design prose: Creating exits only to Running/Terminating
+    if not re.search(r"`Creating` exits only to `Running` or `Terminating`",
+                     kep_text):
+        problems.append("'Creating exits only to Running or Terminating' "
+                        "statement missing")
+    if not re.search(r"`Creating` does not transition directly to "
+                     r"`Updating` or `Recovering`", kep_text):
+        problems.append("'Creating does not transition directly' statement "
+                        "missing")
+    # C4495569567: Updating yields to live blockers
+    if not re.search(r"`Updating` is the Activity reason only when no "
+                     r"current blocker or incomplete observation takes "
+                     r"precedence", kep_text):
+        problems.append("Updating-yields-to-blocker qualifier missing")
+    # test-plan fold bullet
+    if not re.search(r"template changes during `Creating` remain `Creating`",
+                     kep_text):
+        problems.append("test-plan fold bullet missing")
+    emit("C18-create-fold-consistency", not problems,
+         "; ".join(problems) if problems
+         else "Create-convergence fold stated consistently (edge table, "
+              "situation table, prose, test plan) + Updating yields to "
+              "blockers (C4495569567 retired)")
+
+
+def check_c19(kep_text):
+    """F18 repro (round-6, nit, revision-introduced by 667f7c71): the RI
+    section's summary prose still says 'Identifying an update target enters
+    Updating' / 'Confirming independent recovery ... enters Recovering'
+    without phase scope, while the normative edge table now folds update /
+    recovery targets identified during initial creation into Create
+    convergence. An implementer coding from the prose alone would
+    transition Creating -> Updating. Passes once the prose is scoped (e.g.
+    'from Running / Recovering') or aligned with the fold rule.
+    Polarity: contract (pass @0b7285b7 — prose matched the edge table there;
+    fail @39e2ecdf — the delta changed the edge table but not the prose).
+    """
+    problems = []
+    fold = re.search(r"Remain `Creating`; fold the new target into Create "
+                     r"convergence", kep_text)
+    for pat, what in (
+            (r"Identifying an update target enters Updating[^.]*\.",
+             "'Identifying an update target enters Updating'"),
+            (r"Confirming independent recovery of required Pods outside an "
+             r"update enters Recovering[^.]*\.",
+             "'Confirming independent recovery ... enters Recovering'")):
+        m = re.search(pat, kep_text)
+        if m and fold:
+            s = m.group(0)
+            if not re.search(r"from `(?:Running|Recovering)`|once "
+                             r"established|after initial creation "
+                             r"completes|during initial creation", s):
+                problems.append("unscoped RI summary prose contradicts the "
+                                "Create-convergence fold: %s" % what)
+    emit("C19-ri-prose-edge-consistency", not problems,
+         "; ".join(problems) if problems
+         else "RI summary prose scoped consistently with the edge table")
+
+
+def check_c20(kep_text):
+    """F14 repro (round-5 open, nit): the Consuming-the-Status decision
+    table's needs-attention row lists configuration-compatibility families
+    under `Progressing=True`, but every config-incompatibility reason maps
+    to `Progressing=False` (:140 round-6 rule + :234 mapping) — a dead
+    disjunct in the very table Flux CEL / Argo CD Lua implementers are told
+    to codify. The `Accepted=False` disjunct already covers the family.
+    Polarity: contract (fail == dead disjunct present). Fails at head;
+    dropping 'or configuration-compatibility' from the Progressing=True
+    list flips it green.
+    """
+    problems = []
+    m = re.search(r"\| Does it need attention\? \|([^\n]*)\|", kep_text)
+    if m is None:
+        problems.append("decision-table needs-attention row not found")
+    else:
+        row = m.group(1)
+        if "configuration-compatibility" in row and \
+                "Progressing=True" in row:
+            problems.append("needs-attention row lists configuration-"
+                            "compatibility under Progressing=True (dead "
+                            "disjunct: config-incompatibility reasons only "
+                            "occur with Progressing=False)")
+    emit("C20-consuming-table-attention-row", not problems,
+         "; ".join(problems) if problems
+         else "needs-attention row consistent with the "
+              "Accepted=False -> Progressing=False mapping")
+
+
+def check_c21(kep_text):
+    """F16 repro (round-5 open, nit): the RI transition-timestamps migration
+    row attributes the minReadySeconds lastTransitionTime dependency to
+    stateless RIS only, but stateful mode's isInstanceAvailable
+    (stateful_instance_set_helper.go:240-256, feeding availableReplicas at
+    :219) also derives availability from RoleInstanceReady.
+    lastTransitionTime — availability timing changes after upgrade in BOTH
+    modes. Passes once the row says 'stateless and stateful'.
+    Polarity: contract (fail == stateless-only scoping). Fails at head.
+    """
+    problems = []
+    m = re.search(r"\| RI transition timestamps \|([^\n]*)\|", kep_text)
+    if m is None:
+        problems.append("RI transition timestamps migration row not found")
+    else:
+        row = m.group(1)
+        if re.search(r"stateless RIS uses these timestamps", row) and \
+                not re.search(r"stateful", row):
+            problems.append("migration row scopes minReadySeconds to "
+                            "stateless only; stateful isInstanceAvailable "
+                            "reads the same lastTransitionTime")
+    emit("C21-minready-both-modes", not problems,
+         "; ".join(problems) if problems
+         else "migration row covers both modes' minReadySeconds "
+              "timestamp dependency")
+
+
+def _consuming_section(kep_text):
+    m = re.search(r"### Consuming the Status\n(.*?)\n### ", kep_text, re.S)
+    return m.group(1) if m else ""
+
+
+def check_c22(kep_text):
+    """Q5 residual (round-5 open, nit, narrowed in round 6): the decision
+    table states no kind scope. `Converged` is defined only in the RBG/RIS
+    Progressing=False rows (the RI reason list is a hedged 'such as' list),
+    and RIS adds no `Ready` condition — so a consumer applying the table to
+    a RI (or its Ready row to a RIS) cannot answer the questions. Passes
+    once the table is kind-scoped (RBG / RIS) or split per kind.
+    Polarity: contract (fail == no kind scope). Fails at head.
+    """
+    problems = []
+    sec = _consuming_section(kep_text)
+    if not sec:
+        problems.append("Consuming the Status section not found")
+    elif not re.search(r"(?:for|applies to|scoped to)[^.]{0,40}"
+                       r"`?RBG`?[^.]{0,10}`?RIS`?", sec):
+        problems.append("decision table states no kind scope (Converged is "
+                        "not an RI reason; RIS adds no Ready condition)")
+    emit("C22-decision-table-kind-scope", not problems,
+         "; ".join(problems) if problems
+         else "decision table kind-scoped")
+
+
+def check_c23(kep_text):
+    """Round-6 fix guard (retires the mechanism half of Q5 / Copilot
+    C4495569437): the completion row requires the `Progressing` condition's
+    own observedGeneration == metadata.generation, because a legacy or
+    rolled-back controller can advance status.observedGeneration while
+    leaving a stale Converged condition written for an older generation.
+    Polarity: contract (fail == condition-level check missing). Fails at
+    0b7285b7, passes at 39e2ecdf.
+    """
+    problems = []
+    m = re.search(r"\| Is the change done\? \|([^\n]*)\|", kep_text)
+    if m is None:
+        problems.append("decision-table completion row not found")
+    else:
+        row = m.group(1)
+        if "condition's own `observedGeneration" not in row:
+            problems.append("completion row lacks the Progressing "
+                            "condition's own observedGeneration check")
+    if not re.search(r"condition-level `observedGeneration` check is "
+                     r"required for completion", kep_text):
+        problems.append("condition-level observedGeneration rationale "
+                        "paragraph missing")
+    emit("C23-completion-observedGeneration", not problems,
+         "; ".join(problems) if problems
+         else "completion requires the condition's own observedGeneration "
+              "(rollback-safe)")
+
+
+def check_c24(kep_text):
+    """Q6 repro (round-5 open, nit): nothing in the document states what
+    `Progressing` reports while an RBG/RIS is terminating — the Terminating
+    reasons were withdrawn from the reason tables, Ready is documented as
+    not rewritten on deletion, and the current controller early-returns on
+    deletionTimestamp, so Progressing goes stale with no documented
+    expectation. Passes once one sentence ties Progressing semantics to
+    deletion (e.g. 'Progressing retains its last value during deletion;
+    consumers must check deletionTimestamp first').
+    Polarity: contract (fail == no statement). Fails at head and at
+    0b7285b7.
+    """
+    problems = []
+    hit = False
+    for line in kep_text.splitlines():
+        s = line.strip()
+        if s.startswith("|") or s.startswith("```"):
+            continue  # skip table rows / fenced blocks
+        for sent in re.split(r"(?<=\.)\s+", s):
+            if "`Progressing`" in sent and re.search(
+                    r"deletionTimestamp|deletion\b|Terminating|"
+                    r"terminating", sent):
+                hit = True
+                break
+        if hit:
+            break
+    if not hit:
+        problems.append("no statement covers Progressing semantics during "
+                        "deletion/termination")
+    emit("C24-progressing-during-deletion", not problems,
+         "; ".join(problems) if problems
+         else "Progressing-during-deletion semantics stated")
+
+
+def check_c25(kep_text):
+    """F19 repro (round-6 late discovery, nit; dangling since the round-5
+    pivot 0b7285b7): :247 instructs 'select the RI phase using the display
+    priority defined in the RoleInstance section', but the RoleInstance
+    section defines no display priority (the multi-workflow selection rules
+    exist in the edge / situation tables but are never labeled 'display
+    priority'). Passes once the reference resolves or is reworded.
+    Polarity: contract (fail == dangling reference). Fails at head and at
+    0b7285b7.
+    """
+    problems = []
+    if re.search(r"display priority defined in the RoleInstance section",
+                 kep_text):
+        m = re.search(r"### RoleInstance\n(.*?)\n### Test Plan", kep_text,
+                      re.S)
+        ri = m.group(1) if m else ""
+        if "display priority" not in ri:
+            problems.append("reference to 'display priority defined in the "
+                            "RoleInstance section' does not resolve — the "
+                            "RoleInstance section defines no display "
+                            "priority")
+    emit("C25-display-priority-resolves", not problems,
+         "; ".join(problems) if problems
+         else "display-priority reference resolves within the RoleInstance "
+              "section")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default=".")
@@ -876,6 +1164,14 @@ def main():
     check_c15(kep_text)
     check_c16(kep_text)
     check_c17(kep_text)
+    check_c18(kep_text)
+    check_c19(kep_text)
+    check_c20(kep_text)
+    check_c21(kep_text)
+    check_c22(kep_text)
+    check_c23(kep_text)
+    check_c24(kep_text)
+    check_c25(kep_text)
 
     for cid, ok, detail in RESULTS:
         print("%s\t%s" % (cid, "pass" if ok else "fail"))
