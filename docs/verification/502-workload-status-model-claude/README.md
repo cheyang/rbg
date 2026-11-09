@@ -1,12 +1,69 @@
 # Verification — KEP-502 workload status model (PR #528) — Reviewer A (Claude)
 
 - PR: https://github.com/sgl-project/rbg/pull/528
-- Round 5 reviewed head: `0b7285b7c2ad23f139f0edb8549a316129e9b4a2` (round 4: `da818779ef984be98467d4ad65d0818bb17aa0e6`; round 3: `f622d642ac10326f66554b590e0513734aa9249a`; round 2: `6335eac61b7ef71d7479a8b2686829d7e59ce3e1`; round 1: `f05e1dd83d2691e4157bf1bd3548fe405b2a49d5`; base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
+- Round 6 reviewed head: `39e2ecdf0d8f6a3656923ab33b8391dd7ab88fd1` (round 5: `0b7285b7c2ad23f139f0edb8549a316129e9b4a2`; round 4: `da818779ef984be98467d4ad65d0818bb17aa0e6`; round 3: `f622d642ac10326f66554b590e0513734aa9249a`; round 2: `6335eac61b7ef71d7479a8b2686829d7e59ce3e1`; round 1: `f05e1dd83d2691e4157bf1bd3548fe405b2a49d5`; base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
 - Harness branch: `verify/502-workload-status-model-claude` (pushed to the reviewer's fork `cheyang/rbg`)
 - This is a **docs-only PR** (adds `keps/502-workload-status-model/{README.md,kep.yaml}`); the code
   under review is a design document, so the harness checks the *document's* contract: its factual
   claims about the current API, and the internal consistency of its machine-readable reason taxonomy.
 - Live layer (L3): skipped — debate setup runs unit + integration only, and a KEP has no runtime.
+
+## Round 6 (delta `0b7285b..39e2ecd`) — both round-5 minor findings fixed; 7 nits open, 2 new
+
+The author pushed three docs commits (+21/−19, README only): `1f7fc3e1 "docs: fix progress write
+and creation reason rules"`, `667f7c71 "docs: fold Creating target changes into create
+convergence"`, `39e2ecdf "docs: tighten normative status wording"`. Together they land every
+[SHOULD] item of the round-5 review except the small nits.
+
+Round-5 open items:
+
+| Finding | Check | At 0b7285b (prev) | At 39e2ecd (head) | Verdict |
+| --- | --- | --- | --- | --- |
+| F12 replacement-child mapping (minor) | **C13 + C16 (re-anchored)** | fail / fail | **pass / pass** | **FIXED** — `Creating` scoped to initial establishment at BOTH layers ("only during initial RBG establishment" / "only during initial set establishment, before the RIS has an established revision or established RIs for its target"); post-establishment missing children classified under the requiring workflow (Recovering for replacement, ScalingOrUpdating/ScalingUp for scale-up, RollingUpdate for update-created); the :492 test bullet pins 2→3 → `ScalingUp`, retiring Copilot C4495569498's scale-up over-capture; the 'established' discriminator residual is closed by the persisted-facts wording (RIS: established revision / established RIs) |
+| F15 preCheck status-write contradiction (minor) | C15 | fail | **pass** | **FIXED** — :140/:510 now derive the Progressing companion from "the validation, pause, and progress rules" with the three explicit cases (incomplete work → True; confirmed compatibility failure → False with the matching reason; full pause → False(Paused)); consistent with :234 |
+| F13 concurrency-bullet regression (nit) | C10 part (4) | fail | fail | **OPEN** — :507 still covers only Recovering-over-update and ScalingOrUpdating; no Creating branch |
+| F14 attention-row dead disjunct (nit) | **C20 (new)** | fail | fail | **OPEN** — with F15 fixed, config-compat reasons unambiguously never occur with Progressing=True, so the disjunct is dead |
+| F16 minReady migration row (nit) | **C21 (new)** | fail | fail | **OPEN** — stateless-only scoping; code premise re-verified first-hand this round (stateful `isInstanceAvailable` reads `RoleInstanceReady.lastTransitionTime`, stateful_instance_set_helper.go:240-256 → :219) |
+| Q5 decision-table scope (nit) | **C23 (new, fixed half) + C22 (new, open half)** | — / fail | **pass / fail** | **NARROWED** — the completion row now requires the `Progressing` condition's own `observedGeneration` (rollback-safe; Copilot C4495569437's mechanism); the kind-scope gap remains |
+| Q6 Progressing during deletion (nit) | **C24 (new)** | fail | fail | **OPEN** — still no statement |
+| C4495569567 Updating-over-blocker (Copilot advisory) | **C18 (new)** | fail | **pass** | **FIXED** — the `Creating → Updating` edge is removed entirely (fold into Create convergence); :438 adds the verbatim fix ("`Updating` is the Activity reason only when no current blocker or incomplete observation takes precedence") |
+
+New content verified this round: the three KEP-527 cross-references introduced by the delta are
+**accurate against PR #546's current head** (hook-state labels + preDelete finalizer; the
+Create-fold "no hooks" rule; preUpdate/preRecover established-instance applicability) — see
+`results/kep527-reference-check.txt`. The normative tightening ("should"→"must", "Candidate
+Reasons"→"Reasons") is consistent: `Paused` and `ObservationIncomplete` are both present in the
+now-definitive reason table (C2 sweep green). kep.yaml is untouched by the delta; TOC matches all
+headings; markdownlint reports 0 issues (`results/markdownlint-head-39e2ecdf.txt`).
+
+Harness updates (additive, disclosed): **C13/C16 re-anchored** (the fix removed their round-5
+anchor phrases — Harness-update, not proof; polarity re-proven against every historical head,
+`results/polarity-round6.txt`: fail at all six prior heads, pass at 39e2ecdf), **C11 claim 3
+re-anchored** to the KEP-527 hook-protocol delegation (code constants still verified), and eight
+new checks **C18–C25**. Every new/re-anchored guard is bite-proven by mutation
+(`results/bite-check-round6.txt`): each open finding's one-sentence fix flips its guard green
+(fixA–fixG) and each fixed guard flips red when its fix is reverted (mut1–mut6).
+
+New open items this round (both nit):
+
+1. **F18 [nit, revision-introduced by 667f7c71], README.md:414** — the RI section's summary prose
+   still says "Identifying an update target enters Updating" / "Confirming independent recovery of
+   required Pods outside an update enters Recovering" without phase scope, while the delta changed
+   the normative edge table to fold update/recovery targets identified during initial creation
+   into Create convergence. C19: pass@0b7285b / fail@39e2ecd (differential); scoping both
+   sentences flips it green.
+2. **F19 [nit, late discovery; dangling since the round-5 pivot], README.md:247** — "select the RI
+   phase using the display priority defined in the RoleInstance section": the RoleInstance section
+   defines no display priority. C25 fail@head; defining it (or rewording the reference) flips green.
+
+Also noted (non-gating question Q7): KEP-502 now normatively depends on KEP-527, which is an OPEN
+PR (#546); the claims are accurate today, but the two proposals must stay in sync.
+
+Full re-verify at head (`results/reverify-head-39e2ecdf.txt`): 11 findings FIXED (F2, F3, F4, F9,
+F10, F11, F12, F15, C4457744212, C4495569567, and all regression guards), 7 open (F13, F14, F16,
+Q5-kind-scope, Q6, F18, F19) — **every open item is nit-severity with a one-sentence fix whose
+repro lives on this branch**. F17 (PR body) is not guardable from the repo; it stays open by
+direct PR-body comparison.
 
 ## Round 5 (delta `da81877..0b7285b`) — redesign; both round-4 open items fixed, three new open items (nit/nit/minor)
 

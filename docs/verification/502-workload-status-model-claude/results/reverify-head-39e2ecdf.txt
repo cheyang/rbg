@@ -1,2 +1,35 @@
-re-verify: working tree has uncommitted tracked changes; commit or stash first
-           (this script runs 'git checkout -f' and would discard them)
+re-verify: manifest = docs/verification/502-workload-status-model-claude/verify-manifest.json
+re-verify: last-reviewed = 39e2ecdf0d8f6a3656923ab33b8391dd7ab88fd1  (review delta = 39e2ecdf0d8f6a3656923ab33b8391dd7ab88fd1..39e2ecdf)
+re-verify: fixed-ref=39e2ecdf  harness-from=df206c7bd704877769a38595c26f932a4f25603d
+re-verify: running layer 'unit' (script)
+re-verify: running layer 'integration' (script)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+F2-undefined-reason-preparing contract  unit         FIXED          pass=1 fail=0 miss=0
+F3-reason-collision-role-not-ready contract  unit         FIXED          pass=1 fail=0 miss=0
+F4-inplace-reason-casing contract  unit         FIXED          pass=1 fail=0 miss=0
+F9-rbg-transition-input-inconsistent contract  unit         FIXED          pass=1 fail=0 miss=0
+F10-ris-activity-reasons-unenumerated contract  unit         FIXED          pass=1 fail=0 miss=0
+C4457744212-activity-family-tie-break contract  unit         FIXED          pass=1 fail=0 miss=0
+F11-ris-activity-tie-break-unstated contract  unit         FIXED          pass=1 fail=0 miss=0
+F12-rbg-replacement-creation-reason-mapping contract  unit         FIXED          pass=2 fail=0 miss=0
+F13-concurrent-activity-coverage-regression contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+F14-consuming-table-config-compat-dead-branch contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+F15-precheck-write-contradiction contract  unit         FIXED          pass=1 fail=0 miss=0
+F16-minready-timestamp-scope-stateful-too contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+Q5-converged-undefined-at-ri-layer contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+Q6-progressing-during-deletion-unspecified contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+F18-ri-prose-vs-edge-table contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+F19-display-priority-dangling-ref contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+C4495569567-ri-updating-vs-blocker-precedence contract  unit         FIXED          pass=1 fail=0 miss=0
+
+Live layer (manual): L3 skipped (debate setup: unit + integration layers only). Docs-only KEP PR; no live runtime signal.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/502-workload-status-model-claude/results/reverify
+
+Review delta this round: 39e2ecdf0d8f6a3656923ab33b8391dd7ab88fd1..39e2ecdf
+After reviewing that delta, advance the marker for the next round:
+  echo 39e2ecdf > docs/verification/502-workload-status-model-claude/.last-reviewed && git add docs/verification/502-workload-status-model-claude/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.
