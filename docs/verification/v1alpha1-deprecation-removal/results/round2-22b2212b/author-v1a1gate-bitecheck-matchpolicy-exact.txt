@@ -1,0 +1,32 @@
+Running Suite: v1alpha1 Request Path Gate Suite - /tmp/rbg-head-22b2212b/test/envtest/testcase/v1a1gate
+=======================================================================================================
+Random Seed: [1m1794243264[0m
+
+Will run [1m4[0m of [1m4[0m specs
+2026/11/10 00:54:27 http: TLS handshake error from 127.0.0.1:59352: EOF
+[38;5;243m------------------------------[0m
+[38;5;9m• [FAILED] [0.005 seconds][0m
+[0mv1alpha1 request path through the conversion chain [38;5;9m[1m[It] rejects a new deprecated use submitted via v1alpha1 (conversion -> v1alpha2 gate)[0m
+[38;5;243m/tmp/rbg-head-22b2212b/test/envtest/testcase/v1a1gate/gate_test.go:57[0m
+
+  [38;5;243mTimeline >>[0m
+  2026-11-10T00:54:30+08:00	INFO	workloads.x-k8s.io/v1alpha1 RoleBasedGroup is deprecated and will be removed in 0.10.0; use workloads.x-k8s.io/v1alpha2 RoleBasedGroup
+  [38;5;9m[FAILED][0m in [It] - /tmp/rbg-head-22b2212b/test/envtest/testcase/v1a1gate/gate_test.go:66 [38;5;243m@ 11/10/26 00:54:30.007[0m
+  [38;5;243m<< Timeline[0m
+
+  [38;5;9m[FAILED] Expected an error to have occurred.  Got:
+      <nil>: nil[0m
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/tmp/rbg-head-22b2212b/test/envtest/testcase/v1a1gate/gate_test.go:66[0m [38;5;243m@ 11/10/26 00:54:30.007[0m
+[38;5;243m------------------------------[0m
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+
+[38;5;9m[1mSummarizing 1 Failure:[0m
+  [38;5;9m[FAIL][0m [0mv1alpha1 request path through the conversion chain [38;5;9m[1m[It] rejects a new deprecated use submitted via v1alpha1 (conversion -> v1alpha2 gate)[0m
+  [38;5;243m/tmp/rbg-head-22b2212b/test/envtest/testcase/v1a1gate/gate_test.go:66[0m
+
+[38;5;9m[1mRan 1 of 4 Specs in 6.015 seconds[0m
+[38;5;9m[1mFAIL![0m -- [38;5;10m[1m0 Passed[0m | [38;5;9m[1m1 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m3 Skipped[0m
+--- FAIL: TestV1alpha1Gate (6.02s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/v1a1gate	6.032s
+FAIL

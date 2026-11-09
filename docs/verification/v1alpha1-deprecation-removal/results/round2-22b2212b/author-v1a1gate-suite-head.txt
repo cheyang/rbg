@@ -1,0 +1,14 @@
+=== RUN   TestV1alpha1Gate
+Running Suite: v1alpha1 Request Path Gate Suite - /tmp/rbg-head-22b2212b/test/envtest/testcase/v1a1gate
+=======================================================================================================
+Random Seed: [1m1794243249[0m
+
+Will run [1m4[0m of [1m4[0m specs
+2026/11/10 00:54:13 http: TLS handshake error from 127.0.0.1:45154: EOF
+[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m[38;5;10m•[0m
+
+[38;5;10m[1mRan 4 of 4 Specs in 7.120 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m4 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m0 Skipped[0m
+--- PASS: TestV1alpha1Gate (7.12s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/v1a1gate	7.134s

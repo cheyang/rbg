@@ -141,6 +141,57 @@ The harness lives on branch `verify/v1alpha1-deprecation-removal-claude`
    the canary suite pass while the head suite's single-warning spec fails —
    both directions of the differential.
 
+## Round 2 — head `22b2212b5b7a141c61fcb7fb76907a71964143d6` (incremental)
+
+Delta `6108f204..22b2212b` (commits `0987a208`, `22b2212b`): +390 lines,
+test-only — the author landed their own in-repo v1alpha1 request-path suite,
+`test/envtest/testcase/v1a1gate/` + `test/envtest/testutil/v1a1gate_setup.go`,
+responding to `claude-v1a1-coverage-gap` / ledger F1. No production code
+changed; base unchanged (`73e05db4`).
+
+Re-verify on the new head (`results/round2-22b2212b/`):
+
+- This harness, all 7 contract specs **green** (V1 gate ×3, V2 single warning,
+  V3 grandfathering ×3) + L1 unit layer green — behavior at `22b2212b` is
+  identical to the previously verified `6108f204`.
+- The author's new suite: **green** at head (4 specs; `author-v1a1gate-suite-head.txt`),
+  wired into CI (`.github/workflows/envtest.yml` runs `./test/envtest/testcase/...`),
+  and it **bites**: flipping the installed webhook to `matchPolicy: Exact`
+  makes its v1alpha1 reject spec fail (`author-v1a1gate-bitecheck-matchpolicy-exact.txt`)
+  — so an Exact flip or a converter regression now turns CI red in-repo.
+- Full repo sweep at head: all 6 envtest packages ok (`full-envtest-sweep-head.txt`);
+  `go build ./...`, `go vet`, unit tests ok. All 22 GitHub checks SUCCESS on
+  this head (envtest check locally reproduced).
+
+Coverage verdict for F1: **partially fixed**. The landed suite now covers
+in-repo: explicit deprecated-use rejection via v1alpha1, the RBGS
+template path, delete-ungated, and a plain-accept control. Still **not**
+covered in-repo (this harness keeps guarding them, reference implementation
+on this branch):
+
+1. the single-warning count/text contract (the PR's headline user-facing
+   change) — no `Warning:` header assertion anywhere in the repo;
+2. grandfathering (pre-gate v1alpha1 object: same-type update accepted,
+   deprecated-type switch rejected, v1alpha1 read-back);
+3. the schema-defaulted workload rejection (v1alpha1 schema defaults
+   `workload` to `apps/v1 StatefulSet` — a create that omits the workload
+   entirely; only the explicit variant is tested).
+
+Two notes on the new suite's setup (both verified empirically):
+
+- The comment in `v1a1gate_setup.go` claiming the explicit
+  `PrepWithoutInstalling()` call is required (else "conversion strategy None")
+  is wrong for controller-runtime v0.22.1: `Environment.Start()` itself calls
+  `PrepWithoutInstalling()` (pkg/envtest/server.go:317-319). Removing the
+  explicit call, the suite still passes with conversion active
+  (`author-v1a1gate-prep-redundancy.txt`). Harmless call, inaccurate rationale.
+- The suite installs only the two gate-carrying validating webhooks
+  (`vrolebasedgroup`, `vrolebasedgroupset`), matchPolicy unset (Equivalent) —
+  the correct composition for this contract; production's
+  `config/webhook/manifests.yaml` also defaults to Equivalent.
+
+`.last-reviewed` advanced to `22b2212b`.
+
 ### Kickoff prompt for a fresh agent
 
 ```text
