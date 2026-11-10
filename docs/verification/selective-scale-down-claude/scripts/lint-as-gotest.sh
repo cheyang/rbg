@@ -27,8 +27,12 @@ resolve_bin() {
     printf 'bin/golangci-lint\n'
     return 0
   fi
-  echo "lint-canary: installing golangci-lint ${PINNED_VERSION}" >&2
-  GOBIN="$(pwd)/bin" go install "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${PINNED_VERSION}" >&2 || return 1
+  # Round 2 fix: the re-verify layer runner merges stderr into the JSON stream
+  # ("$cmd" >out 2>&1), which broke jq parsing (F1 came back HARNESS-UPDATE).
+  # Keep stderr clean: route install chatter to a log beside the results.
+  LINT_LOG="${LINT_LOG:-/tmp/pr538-lint-install.log}"
+  echo "lint-canary: installing golangci-lint ${PINNED_VERSION}" >"$LINT_LOG"
+  GOBIN="$(pwd)/bin" go install "github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${PINNED_VERSION}" >>"$LINT_LOG" 2>&1 || return 1
   [ -x "bin/golangci-lint" ] && printf 'bin/golangci-lint\n'
 }
 
