@@ -1,0 +1,14 @@
+# re-verify.sh against 91d244f5abe71543b74e11db12db67225b92a51e (round 3 head)
+# delta reviewed: 22b2212b5b7a141c61fcb7fb76907a71964143d6..91d244f5abe71543b74e11db12db67225b92a51e
+# layers: unit (go test ./api/workloads/v1alpha1 ./api/workloads/v1alpha2 ./cmd/rbgs) — all ok
+#         integration (ginkgo, grafted harness suite) — see ginkgo-report.json / integration.parsed
+
+ID                     POLARITY   LAYER        VERDICT
+A1-gate-create         contract   integration  FIXED (pass)
+A2-gate-defaulted      contract   integration  FIXED (pass)  # wire-level omission -> StatefulSet default -> gate rejects (still harness-only in-repo)
+A3-single-warning      contract   integration  FIXED (pass)  # now also pinned in-repo by the author's new wire-contract specs
+A4-grandfathered-update contract  integration  FIXED (pass)  # v1alpha1 conversion path still harness-only in-repo
+A5-type-switch-rejected contract  integration  FIXED (pass)  # v1alpha1 conversion path still harness-only in-repo
+A6-rbgset-template-rejected contract integration FIXED (pass)
+A7-delete-ungated      contract   integration  FIXED (pass)
+RESULT: all 7 contracts hold at 91d244f5. Behavior unchanged; the delta is test-only.

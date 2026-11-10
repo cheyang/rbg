@@ -1,6 +1,6 @@
 # Verification — PR #556: remove v1alpha1 admission webhooks
 
-Reviewer: Codex (Reviewer B). Round: initial. Reviewed head: `6108f204a1eec7b6c1300447ef7150178150b248` (base `73e05db4`).
+Reviewer: Codex (Reviewer B). Round: 3 (incremental). Reviewed head: `91d244f5abe71543b74e11db12db67225b92a51e` (base `73e05db4`).
 Harness: additive only — `test/envtest/testutil/v1a1gate_setup.go` + `test/envtest/testcase/v1a1gate/`. No production code touched.
 
 ## Premise (P0) — CONFIRMED
@@ -61,6 +61,49 @@ Delta 6108f204..22b2212b is test-only (+390): the author landed
   here remain the only executable checks of those; v1alpha2 validator
   grandfathering is unit-tested in `api/workloads/v1alpha2`). F1 stays open,
   narrowed to those two legs.
+
+## Round 3 (incremental, head 91d244f5)
+
+Delta 22b2212b..91d244f5 is a single test-only commit (+141/-6) adding a second
+Describe (`v1alpha1 wire contract`, 3 specs: exactly-one-warning-with-0.10.0,
+no-warning-on-v1alpha2, reject-omitted-workload) to the author's v1a1gate
+suite, wiring a `GateWarningRecorder` into the suite client, and fixing the
+PrepWithoutInstalling comment (round-2 F3 -> fixed).
+
+- **Re-verify of this harness on 91d244f5**: all 7 contract specs green
+  (`results/round3-reverify-head.txt`, `results/reverify/`). Behavior
+  unchanged (test-only delta).
+- **NEW F4 (blocker, revision regression)**: the author's suite is now
+  order-flaky. The two Ordered Describes share `gateNamespace`; the first
+  hard-fails on AlreadyExists (`testutil.CreateNamespace`), the second
+  tolerates it. Ginkgo randomizes top-level container order per seed, so when
+  the wire-contract Describe runs first the suite fails with
+  `namespaces "v1a1-gate-test" already exists`. Evidence:
+  `results/round3-author-suite-seed-sweep.txt` (5/8 seeds FAIL at 91d244f5),
+  `results/round3-author-suite-head-seed-fail.txt` (fixed-seed repro),
+  `results/round3-flake-fixcheck.txt` (all failing seeds pass once the first
+  BeforeAll tolerates AlreadyExists). Runnable repro:
+  `scripts/flake-repro.sh`. CI envtest job is green on this head by luck (no
+  seed pinning, `.github/workflows/envtest.yml:119`).
+- **F1 leg 1 (warning count/text) now covered in-repo**: the new wire-contract
+  specs pass and BITE — stripping the timeline from the CRD deprecationWarning
+  fails the spec on the `0.10.0` assertion
+  (`results/round3-author-suite-bites-crd-timeline.txt`).
+- **F1 leg 3 partially covered**: the author's omitted-workload spec exercises
+  only the typed-Go-client variant (the struct field serializes explicit empty
+  strings, so schema pattern validation on `workload.apiVersion` rejects
+  before defaulting/admission). The wire-level variant (key absent -> CRD
+  defaults to apps/v1 StatefulSet -> v1alpha2 gate rejects with the migration
+  hint) remains harness-only (A2, green at head). The spec's comment ("the
+  v1alpha1 path cannot silently default to a deprecated workload type") is
+  wrong for wire clients such as kubectl.
+- **F1 leg 2 (v1alpha1 grandfathering through conversion) still harness-only**
+  (A4/A5, green at head). The new in-file comment claims it is covered by
+  `test/envtest/testcase/deprecation` "through the v1alpha1 conversion chain";
+  that suite imports and exercises v1alpha2 types only.
+- **F5 (nit)**: `GateWarningRecorder.Containing` is added at
+  `test/envtest/testutil/v1a1gate_setup.go:269` but never called anywhere in
+  the tree (the suite uses `All()`/`Reset()`).
 
 ## How to run
 

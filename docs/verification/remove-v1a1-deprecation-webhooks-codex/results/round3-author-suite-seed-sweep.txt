@@ -1,0 +1,9 @@
+# seed sweep, author's suite at 91d244f5 (unmodified)
+seed 1  PASS
+seed 2  FAIL
+seed 3  PASS
+seed 4  FAIL
+seed 5  FAIL
+seed 6  PASS
+seed 7  FAIL
+seed 8  FAIL
