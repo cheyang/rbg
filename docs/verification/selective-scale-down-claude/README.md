@@ -1,11 +1,36 @@
 # selective-scale-down-claude — bug verification
 
 Reproducible evidence for the findings raised by Reviewer A (Claude) while
-reviewing https://github.com/sgl-project/rbg/pull/538
-(head `07ae1194c0481b2f39db2d41c32c08a6b2123b1d`, base
-`4a0765f78b0930114a4b73a64433ee8f27c34372`, round 1 / initial).
+reviewing https://github.com/sgl-project/rbg/pull/538.
 
-Layers run against the **code under review** (`07ae1194`):
+**Current round: 2 / incremental** — head `f3d448746b02a10ebff161885e98d352d19d393f`,
+base `fd160cc964b0e1438bead4ad7324d0a8f0bf5eac`, previous reviewed head
+`07ae1194c0481b2f39db2d41c32c08a6b2123b1d`. Round 1 ran against head `07ae1194`
+/ base `4a0765f`.
+
+## Round 2 results (2026-11-11)
+
+The author rebased onto new main `fd160cc` (feature files byte-identical; the
+single conflict hunk in `updateRBGStatus` adopts upstream #533) and added 10
+fix commits addressing the round-1 review. Re-verify (same harness, polarity
+unchanged, against `f3d44874`):
+
+| ID | Round 1 | Round 2 | Note |
+|----|---------|---------|------|
+| F1 lint gate | fail (blocker) | **FIXED** | pinned golangci-lint v2.13.1: 0 issues on head (6 before); CI `lint` check SUCCESS. Constant extracted, writer split into helpers, test slices preallocated. Kept as a green regression pin. |
+| F3 surge on excluded ordinal | fail | **STILL-BROKEN** | surge reworked to on-demand allocation (`materializeSurge`), but new slots still come from `skips.Next()` over the committed gap record only — E above the last member (E="1,3,5", members [0,2,4]) still yields surge ordinal 5. results/reverify/unit.out |
+| F4 FailedScale erasure | fail | **STILL-BROKEN** | only the lint goconst half was fixed (constant extracted); the drop predicate still removes every FailedScale condition while the record is invalid. The author's own test pins the replace semantics, so this is now a conscious-decision disagreement, still minor. results/reverify/unit.out |
+| F7 memberOrdinals coverage | green | green | author added `TestConfigBuilderBuildCommittedSparseMembership` (Build-level, exact addresses) — coverage gap closed |
+| REG commit/controller suites | green | green | re-verified on the rebased head; base change did not break contracts |
+
+Additionally verified green on head (outside the manifest, full suites):
+author's new envtests (`TestOrdinaryRISRemovesMetadataAfterManagedFieldsHandoff`,
+`TestSelectiveDenseOrphanReapply`, `TestSelectiveMembershipPreservesSharedMetadata`),
+full `rbg` + `webhook` envtest suites, full unit tree, and the round-1 Copilot
+advisories are fixed (surge layout memory: `TestSurgeLayoutMaterializesOnlyActiveDemand`;
+shared-SSA-key deletion: `metadataOwnership` exclusive-ownership check).
+
+Layers run against the **code under review** (round 2: `f3d44874`; round 1: `07ae1194`):
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|

@@ -2,11 +2,13 @@
   "topic": "selective-scale-down-claude",
   "pr": "https://github.com/sgl-project/rbg/pull/538",
   "round": {
-    "number": 1,
-    "mode": "initial",
+    "number": 2,
+    "mode": "incremental",
     "reviewer": "claude",
-    "baseSha": "4a0765f78b0930114a4b73a64433ee8f27c34372",
-    "headSha": "07ae1194c0481b2f39db2d41c32c08a6b2123b1d"
+    "baseSha": "fd160cc964b0e1438bead4ad7324d0a8f0bf5eac",
+    "headSha": "f3d448746b02a10ebff161885e98d352d19d393f",
+    "previousHeadSha": "07ae1194c0481b2f39db2d41c32c08a6b2123b1d",
+    "notes": "PR rebased onto new main fd160cc (feature files byte-identical; one conflict hunk in updateRBGStatus adopted upstream #533) plus 10 fix commits. Round-2 verdicts: F1 FIXED (lint gate green), F3/F4 STILL-BROKEN, F7/REG green. F1's TestClaudeLintGateGreen is kept as a contract regression pin."
   },
   "harnessPaths": [
     "docs/verification/selective-scale-down-claude",
@@ -25,7 +27,9 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "TestClaudePremiseDenseScaleDownCannotRetireMiddleOrdinal passes on merge-base 4a0765f (results/premise-base.out): base scale-down always removes the highest ordinals and scale-up refills them, so ordinal 1 cannot be retired while 2-4 survive; base utils also carry a reserveOrdinals stub that is hardcoded empty (stateful_instance_set_utils.go:571 on base).",
-    "match": ["TestClaudePremiseDenseScaleDownCannotRetireMiddleOrdinal"]
+    "match": [
+      "TestClaudePremiseDenseScaleDownCannotRetireMiddleOrdinal"
+    ]
   },
   "layers": {
     "unit": {
@@ -46,31 +50,42 @@
       "id": "F1",
       "polarity": "contract",
       "layer": "lint",
-      "match": ["TestClaudeLintGateGreen"]
+      "match": [
+        "TestClaudeLintGateGreen"
+      ]
     },
     {
       "id": "F3",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestClaudeSurgeOrdinalAvoidsUserExcludedOrdinals"]
+      "match": [
+        "TestClaudeSurgeOrdinalAvoidsUserExcludedOrdinals"
+      ]
     },
     {
       "id": "F4",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestClaudeInvalidRecordPreservesUnrelatedFailedScaleCondition"]
+      "match": [
+        "TestClaudeInvalidRecordPreservesUnrelatedFailedScaleCondition"
+      ]
     },
     {
       "id": "F7",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestClaudeMemberOrdinalsBranches"]
+      "match": [
+        "TestClaudeMemberOrdinalsBranches"
+      ]
     },
     {
       "id": "REG-COMMIT",
       "polarity": "contract",
       "layer": "integration",
-      "match": ["TestConditionalMembershipWithLegacyApplyOwnership", "TestRBGController"]
+      "match": [
+        "TestConditionalMembershipWithLegacyApplyOwnership",
+        "TestRBGController"
+      ]
     }
   ],
   "liveNote": "L3 (kind cluster) not configured for this review round: the author's envtest suites run the real controllers against a real API server, which is the integration ceiling here. If a live layer is added, check that a kind rollout with E=\"1,3,5\" never schedules a surge Pod on ordinal 5."
