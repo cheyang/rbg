@@ -1,12 +1,93 @@
 # Verification — KEP-502 workload status model (PR #528) — Reviewer A (Claude)
 
 - PR: https://github.com/sgl-project/rbg/pull/528
-- Round 6 reviewed head: `39e2ecdf0d8f6a3656923ab33b8391dd7ab88fd1` (round 5: `0b7285b7c2ad23f139f0edb8549a316129e9b4a2`; round 4: `da818779ef984be98467d4ad65d0818bb17aa0e6`; round 3: `f622d642ac10326f66554b590e0513734aa9249a`; round 2: `6335eac61b7ef71d7479a8b2686829d7e59ce3e1`; round 1: `f05e1dd83d2691e4157bf1bd3548fe405b2a49d5`; base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
+- Round 7 reviewed head: `058073514731f8d2ebfeffe68a51b587102ab110` (round 6: `39e2ecdf0d8f6a3656923ab33b8391dd7ab88fd1`; round 5: `0b7285b7c2ad23f139f0edb8549a316129e9b4a2`; round 4: `da818779ef984be98467d4ad65d0818bb17aa0e6`; round 3: `f622d642ac10326f66554b590e0513734aa9249a`; round 2: `6335eac61b7ef71d7479a8b2686829d7e59ce3e1`; round 1: `f05e1dd83d2691e4157bf1bd3548fe405b2a49d5`; base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
 - Harness branch: `verify/502-workload-status-model-claude` (pushed to the reviewer's fork `cheyang/rbg`)
 - This is a **docs-only PR** (adds `keps/502-workload-status-model/{README.md,kep.yaml}`); the code
   under review is a design document, so the harness checks the *document's* contract: its factual
   claims about the current API, and the internal consistency of its machine-readable reason taxonomy.
 - Live layer (L3): skipped — debate setup runs unit + integration only, and a KEP has no runtime.
+
+## Round 7 (delta `39e2ecd..0580735`) — second redesign (drop Accepted, deprecate RBG Ready, rename reasons); 4 flips were Harness-updates, all now fixed; 2 new open items
+
+The author pushed ten docs commits (+120/−126, README only): `d0c9266e` (phase vs external gates),
+`71823db3` (unclassified family), `5258477a` (deprecate RBG Ready), `65b92ea1` (drop Accepted),
+`8ce83ba7` (rename RBG activity reason), `fc85dad1` (reason provenance), `4726de68` (RIS update
+reason strategy-agnostic), `6a7c3b14`/`09b9edb6`/`05807351` (wording).
+
+Design changes: RBG **drops the `Accepted` condition** (configuration incompatibility becomes a
+`Progressing=True` configuration-family blocker ranked first); the RBG **`Ready` condition is
+deprecated** (removed after a compatibility window; readiness = roleStatuses + RIS counters + RI
+`RoleInstanceReady`); RBG update/scale reason renamed `ScalingOrUpdating` → **`RoleInstanceSetUpdated`**,
+RIS `RollingUpdate` → **`RoleInstanceUpdated`** (strategy-agnostic, modeled on Deployment's
+`ReplicaSetUpdated`); a new **unclassified blocker family** (`PodOperationUnclassified` at RI,
+`UnclassifiedBlocker` at RIS/RBG) replaces the old retain-Activity-reason rule; a **reason-provenance
+table** fixes the lowest observer for every RBG reason (dependencies/gang/config are RBG-owned;
+RIS must newly read RI `Progressing`); and **RI phase completion is separated from external readiness
+gates** (controller-observed workload readiness only).
+
+The naive first re-run showed 9 red vs round 6's 6 — but four of those flips were stale anchors
+(the redesign renamed their guarded text), not regressions. After re-anchoring, all four are
+**genuinely fixed by the redesign**:
+
+| Finding | Check | At 39e2ecd (old anchor) | At 0580735 (re-anchored) | Verdict |
+| --- | --- | --- | --- | --- |
+| F4 RoleInstanceReady reasons vs code (minor) | **C4 (re-anchored)** | pass (old anchor) | **pass** | **FIXED (Harness-update)** — new sentence "RoleInstanceReady reasons are Ready, PodsNotReady, InplaceUpdateNotReady, and ReadinessGatesNotReady when a configured gate condition is missing" matches `instance_status.go` `instanceReady.Reason` writes exactly |
+| F11 RIS activity tie-break (nit) | **C12 (re-anchored)** | pass | **pass** | **FIXED (Harness-update)** — precedence statement present with the renamed `RoleInstanceUpdated`; "Recovery outranks active update and scaling" unchanged |
+| F12 replacement-child mapping (minor) | **C13/C16 (re-anchored)** | pass | **pass / pass** | **FIXED (Harness-update)** — mapping present with renamed tokens; establishment discriminator wording unchanged |
+| F15 preCheck status-write contradiction (minor) | **C15 (re-anchored)** | pass | **pass** | **FIXED by the Accepted drop** — configuration blockers are consistently `Progressing=True` in the common rules, the validation-ownership section, and the test plan; no surviving `Progressing=False` mapping |
+| F14 attention-row dead disjunct (nit) | **C20 (re-anchored, inverted contract)** | fail | **pass** | **FIXED by the Accepted drop** — under the new model configuration-family blockers *do* occur with `Progressing=True`, so the attention row's disjunct is live; re-anchored as a liveness contract |
+
+Round-6 Copilot advisories resolved by this redesign (pinned by new C28, green at head, red at
+every earlier head):
+
+- **C4515734270** (example made `RoleInstanceCustomReady` determine `RoleInstanceReady`): the RI
+  example now gives the custom gate its own condition and reason (`ExternalCheckPending`) and
+  `RoleInstanceReady` carries `PodsNotReady` — exactly the suggested fix; prose states "external
+  gates are not folded into it", matching `getInstanceReadyCondition`.
+- **C4515733997** (readiness-gate circular wait with KEP-527 `markPodNotReady`): phase completion
+  is now controller-observed workload readiness only; the doc states the lifecycle-owned gate
+  "remains until the RI enters `Running`, but it does not prevent the RI from entering `Running`".
+
+New factual claims verified against k8s sources this round (`k8s.io/api@v0.34.2`,
+`k8s.io/kubernetes@v1.34.2`): Deployment/StatefulSet define no `Ready` condition (StatefulSetConditionType
+has no constants in the shipped API), and `ReplicaSetUpdated` is a genuine Deployment
+`Progressing`-condition reason — the new analogy claims are accurate. "Today's RIS code reads only
+`RoleInstanceReady`" re-verified against `pkg/reconciler/roleinstanceset/` (no reads of RI
+`Progressing`).
+
+New open items this round:
+
+1. **F22 [minor, revision-introduced by fc85dad1], README.md:167 area** — the taxonomy prescribes
+   that each controller's own CR-operation errors are reported "directly as `UnclassifiedBlocker`"
+   (categorical), while the new provenance table lists "RI (or RIS / RBG for their own CR
+   operations)" as lowest observer for the *specific* families (PermissionDenied, AdmissionDenied,
+   WaitingForQuota, WaitingForResources) — implying a classifiable own-operation error (e.g. a
+   quota-blocked RIS create) reports the family reason; the RIS section hedges with "normally
+   `UnclassifiedBlocker`". Three passages, two answers for the same scenario. C26: fail at head;
+   scoping the categorical sentence flips it green (`results/bite-check-round7.txt`).
+2. **F23 [nit, revision-introduced by d0c9266e], README.md:430** — the leftover sentence "Readiness
+   gates only `Creating → Running` and completion decisions" contradicts the new rule ("external
+   readiness gates do not gate phase transitions") under the doc's own vocabulary, where
+   "readiness gates" = `spec.readinessGates` / externally owned gates; the phase table requires
+   "controller-observed readiness requirements". C27: clean introduction differential (green at
+   39e2ecd, red only at 0580735); rewording to "readyPolicy and the in-place update readiness
+   gate" flips it green.
+
+Carried open (all nit except F19): F13 (C10 part 4 — the Creating-branch concurrency bullet is
+still absent from the test plan), F16 (C21 — the minReadySeconds migration row still scopes the
+lastTransitionTime dependency to stateless only; stateful `isInstanceAvailable` also reads it),
+F17 (PR body still promises "persisted phase transitions for RBG, RIS, and RI" and "Clarify
+Accepted / Progressing / Ready semantics" — now doubly stale after the Accepted drop and the Ready
+deprecation), F18 (KEP-527 references still dangling — no `keps/527-*` at head; verified by
+`git ls-tree`), F19 (RIS `Creating` boundary still existential — :338 unchanged), F20 (C19 — RI
+summary prose still unscoped), F21 (C25 — display-priority reference still dangling), Q5 (C22 —
+decision table still kind-unscoped for the `Converged` row), Q6 (C24 — Progressing during
+deletion still unspecified).
+
+Full re-verify at head (`results/reverify-head-05807351.txt`): 12 FIXED, 8 open (F13, F16, F20,
+F21, F22, F23, Q5, Q6 — plus unguarded ledger items F17/F18/F19 confirmed open by direct
+head-blob reads). F22 is the only new minor; F23 is a nit. No blockers, no majors.
 
 ## Round 6 (delta `0b7285b..39e2ecd`) — both round-5 minor findings fixed; 7 nits open, 2 new
 
