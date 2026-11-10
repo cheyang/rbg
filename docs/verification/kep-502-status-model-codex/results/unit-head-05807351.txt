@@ -1,0 +1,101 @@
+=== RUN   TestPremiseNoPhaseFieldInStatus
+--- PASS: TestPremiseNoPhaseFieldInStatus (0.00s)
+=== RUN   TestPremiseProgressingRollingUpdateDeclaredButUnwritten
+--- PASS: TestPremiseProgressingRollingUpdateDeclaredButUnwritten (0.00s)
+=== RUN   TestPremiseFailedScaleFailedUpdatePersisted
+--- PASS: TestPremiseFailedScaleFailedUpdatePersisted (0.00s)
+=== RUN   TestPremiseRISRIConditionsLackObservedGeneration
+--- PASS: TestPremiseRISRIConditionsLackObservedGeneration (0.00s)
+=== RUN   TestPremiseRBGReadyReplicaCountBasedAndUnchangedDuringDeletion
+--- PASS: TestPremiseRBGReadyReplicaCountBasedAndUnchangedDuringDeletion (0.00s)
+=== RUN   TestRBGCandidateReasonsDefined
+--- PASS: TestRBGCandidateReasonsDefined (0.00s)
+=== RUN   TestExampleConsistentWithPriorityRule
+--- PASS: TestExampleConsistentWithPriorityRule (0.00s)
+=== RUN   TestProgressingFalseCoversConfigRejection
+--- PASS: TestProgressingFalseCoversConfigRejection (0.00s)
+=== RUN   TestReadyTerminatingChangeAcknowledged
+--- PASS: TestReadyTerminatingChangeAcknowledged (0.00s)
+=== RUN   TestTOCComplete
+--- PASS: TestTOCComplete (0.00s)
+=== RUN   TestKepYAMLWellFormed
+--- PASS: TestKepYAMLWellFormed (0.00s)
+=== RUN   TestYAMLExamplesParse
+--- PASS: TestYAMLExamplesParse (0.00s)
+=== RUN   TestRolesNotReadyDistinctionAcknowledged
+--- PASS: TestRolesNotReadyDistinctionAcknowledged (0.00s)
+=== RUN   TestRIReadinessReasonsMatchCode
+--- PASS: TestRIReadinessReasonsMatchCode (0.00s)
+=== RUN   TestEventBudgetRiskInRisksTable
+--- PASS: TestEventBudgetRiskInRisksTable (0.00s)
+=== RUN   TestReadyTerminatingReasonRowSplit
+--- PASS: TestReadyTerminatingReasonRowSplit (0.00s)
+=== RUN   TestRecoveryPhaseSplitRISvsRI
+--- PASS: TestRecoveryPhaseSplitRISvsRI (0.00s)
+=== RUN   TestNoFailedPhaseStated
+--- PASS: TestNoFailedPhaseStated (0.00s)
+=== RUN   TestRISOverlapPrecedenceStated
+--- PASS: TestRISOverlapPrecedenceStated (0.00s)
+=== RUN   TestTransitionInputVocabularyConsistent
+--- PASS: TestTransitionInputVocabularyConsistent (0.01s)
+=== RUN   TestRISActivityReasonsEnumerated
+--- PASS: TestRISActivityReasonsEnumerated (0.00s)
+=== RUN   TestRBGActivityPrecedenceDefined
+--- PASS: TestRBGActivityPrecedenceDefined (0.00s)
+=== RUN   TestRBGActivityPrecedenceCoverage
+    doc_consistency_test.go:1292: F13: Test Plan has no concurrent-activity scenario for precedence branch(es) [Creating] — every branch of the declared order [Creating Recovering RoleInstanceSetUpdated] needs a scenario, e.g. one role Creating while another updates
+--- FAIL: TestRBGActivityPrecedenceCoverage (0.00s)
+=== RUN   TestRISActivityTieBreakStated
+    doc_consistency_test.go:1324: F11: RIS tie-break statement found: Activity precedence for RIS `Progressing` is `Creating`, `Recovering`, `RoleInstanceUpdated`, and `ScalingUp` / `ScalingDown`. `Creating` is used only during initial set establishment, before the RIS has an established revision or established RIs for its target. Once the set is established, a required RI that does not yet exist is not `Creating`: it is classified under the workflow that requires it — `ScalingUp` when scaling adds instances, `RoleInstanceUpdated` when update work creates, replaces, or updates instances in place, and `Recovering` when an established RI is being repaired or replaced. Recovery outranks active update and scaling, an active update outranks scaling, and if only scaling remains active, use `ScalingUp` or `ScalingDown`. `RoleInstanceUpdated` is strategy-agnostic: it covers rolling replacement and in-place updates, so the reason does not change when the update strategy changes.
+--- PASS: TestRISActivityTieBreakStated (0.00s)
+=== RUN   TestRBGReplacementCreationMapsToRecovery
+    doc_consistency_test.go:1397: F12: Creating scoped to initial creation: No phase returns to `Creating`, and `Creating` exits only to `Running` or `Terminating`: recreating an established RI's Pods is recovery, and an update or recovery target identified before initial creation completes is folded into Create convergence, with message noting the target change. This matches KEP-527: `preUpdate` and `preRecover` apply to an established instance, so replacing members that have not yet reached workload Ready during a first deploy does not invoke them. `Creating` still describes first convergence toward the latest target, including replacement of partially created resources. `Updating` is the Activity reason only when no current blocker or incomplete observation takes precedence; for example, a quota-blocked Pod creation keeps `Progressing=True(reason=PodCreateQuotaExceeded)` while `phase=Updating`. Readiness gates only `Creating → Running` and completion decisions, but a readiness drop alone never triggers a phase transition. Deletion wins from every phase.
+--- PASS: TestRBGReplacementCreationMapsToRecovery (0.00s)
+=== RUN   TestPremiseRISReadinessModeDifference
+--- PASS: TestPremiseRISReadinessModeDifference (0.00s)
+=== RUN   TestPremiseRIConditionTimestampsRebuilt
+--- PASS: TestPremiseRIConditionTimestampsRebuilt (0.00s)
+=== RUN   TestPremiseMinReadySecondsTimestampBothModes
+--- PASS: TestPremiseMinReadySecondsTimestampBothModes (0.00s)
+=== RUN   TestPremiseLifecycleLabelContract
+--- PASS: TestPremiseLifecycleLabelContract (0.00s)
+=== RUN   TestPremiseRBGReadyNeverUnknown
+--- PASS: TestPremiseRBGReadyNeverUnknown (0.00s)
+=== RUN   TestConsumingTableAttentionRowConsistency
+--- PASS: TestConsumingTableAttentionRowConsistency (0.00s)
+=== RUN   TestReadyTimestampMigrationScope
+    doc_consistency_test.go:1724: F15: the migration row attributes the minReadySeconds dependency on RoleInstanceReady.lastTransitionTime to stateless mode only, but stateful isInstanceAvailable reads the same timestamp — scope the behavior change and the regression tests to both modes
+--- FAIL: TestReadyTimestampMigrationScope (0.00s)
+=== RUN   TestPreCheckProgressingWriteDerived
+--- PASS: TestPreCheckProgressingWriteDerived (0.00s)
+=== RUN   TestReferencedKEPsResolvable
+    doc_consistency_test.go:1853: F18: normative references to KEPs not present in this tree (keps/ has no matching directory) and not marked pending: KEP-527 — keep the concrete hook-protocol sentence alongside the pointer, or mark the referenced KEP as a pending proposal
+--- FAIL: TestReferencedKEPsResolvable (0.00s)
+=== RUN   TestRISEstablishmentBoundaryCollective
+    doc_consistency_test.go:1904: F19: the RIS Creating boundary is existential ('an established revision or established RIs') while the RBG analog is collective ('required roles have been established') — read as written, the tail of an initial bootstrap reports ScalingUp. Bind the boundary to the RIs / revision required by the target, or state how the mid-bootstrap tail is classified. RIS definition: `Creating` is used only during initial set establishment, before the RIS has an established revision or established RIs for its target
+--- FAIL: TestRISEstablishmentBoundaryCollective (0.00s)
+=== RUN   TestRISBlockerPropagationClaimAccurate
+    doc_consistency_test.go:1940: F22: the doc claims today's RIS code reads only `RoleInstanceReady`, but stateless IsRunningAndReady also reads every spec.readinessGates condition (pkg/reconciler/roleinstanceset/statelessmode/utils/utils.go) — the doc itself documents that mode difference. Scope the sentence to blocker propagation (e.g. 'reads no RI `Progressing` condition').
+--- FAIL: TestRISBlockerPropagationClaimAccurate (0.00s)
+=== RUN   TestPhaseCompletionIndependentOfExternalGates
+--- PASS: TestPhaseCompletionIndependentOfExternalGates (0.00s)
+=== RUN   TestConfirmedBlockerSurvivesUnclassifiedError
+--- PASS: TestConfirmedBlockerSurvivesUnclassifiedError (0.00s)
+=== RUN   TestCustomReadyDoesNotDetermineInstanceReady
+--- PASS: TestCustomReadyDoesNotDetermineInstanceReady (0.00s)
+=== RUN   TestRISummaryProseScopedToFoldRule
+    doc_consistency_test.go:2042: F20: the RI summary prose "Identifying an update target enters Updating; an empty revision during initial creation is not evidence of an update." is unscoped: under the fold rule an update target identified during initial creation must NOT enter Updating — scope the sentence (e.g. 'From `Running` or `Recovering`, ...')
+    doc_consistency_test.go:2042: F20: the RI summary prose "Confirming independent recovery of required Pods outside an update enters Recovering" is unscoped: under the fold rule an update target identified during initial creation must NOT enter Updating — scope the sentence (e.g. 'From `Running` or `Recovering`, ...')
+--- FAIL: TestRISummaryProseScopedToFoldRule (0.00s)
+=== RUN   TestDisplayPriorityReferenceResolves
+    doc_consistency_test.go:2073: F21: 'select the RI phase using the display priority defined in the RoleInstance section' does not resolve — the RoleInstance section defines no display priority (define it there or point at the edge / situation tables)
+--- FAIL: TestDisplayPriorityReferenceResolves (0.00s)
+=== RUN   TestDecisionTableStatesKindScope
+    doc_consistency_test.go:2112: Q5: the decision table states no kind scope and `Converged` is undefined for RI — a consumer cannot answer 'Is the change done?' for a RoleInstance (scope the table to RBG / RIS or define RI completion)
+--- FAIL: TestDecisionTableStatesKindScope (0.00s)
+=== RUN   TestProgressingDuringDeletionSpecified
+    doc_consistency_test.go:2150: Q6: no statement of what `Progressing` reports while an RBG / RIS object is terminating — the controller early-returns on deletionTimestamp, so the condition goes stale; say so (e.g. '`Progressing` retains its last value during deletion; consumers must check deletionTimestamp first')
+--- FAIL: TestProgressingDuringDeletionSpecified (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/keps/502-workload-status-model	0.019s
+FAIL

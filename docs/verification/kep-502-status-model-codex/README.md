@@ -362,3 +362,82 @@ Suite at head: 30 pass / 5 intentional open-finding reds (F13, F14,
 F16-minready, F18, F19) — results/unit-head-39e2ecdf.txt; polarity matrix in
 results/polarity-round6.txt; markdownlint replay 0 issues. CI at head:
 9 SUCCESS / 6 SKIPPED (e2e groups legitimately skip on the docs-only diff).
+
+## Round 7 — revision 05807351 (incremental, 2026-11-11)
+
+Delta 39e2ecdf..05807351 (10 commits, docs-only, +120/-126): a redesign round —
+drops the `Accepted` condition (configuration incompatibility is now a
+`Progressing=True` blocker family), deprecates the RBG `Ready` condition
+(compatibility window, then removal), renames the activity reasons
+(`ScalingOrUpdating` -> `RoleInstanceSetUpdated`, RIS `RollingUpdate` ->
+`RoleInstanceUpdated`), adds the Unclassified blocker family
+(`PodOperationUnclassified` / `UnclassifiedBlocker`) with a confirmed-blocker
+protection rule, separates RI phase completion from externally owned readiness
+gates, and adds a reason-provenance table.
+
+Fixed / resolved by the redesign (guard differential + head-blob read):
+
+| finding | severity | status @05807351 | evidence |
+| --- | --- | --- | --- |
+| F14-consuming-table-config-compat-dead-branch | nit | FIXED (by redesign) | The "need attention" row's config-compatibility disjunct is live: config blockers now report `Progressing=True` with the family reason (:140, :238-246, candidate row :306). Guard re-anchored to the generalized contract (every family the row names must have a reason that can occur with the row's status): red@0b7285b7 / red@39e2ecdf / green@head (results/polarity-round7.txt). |
+| C4515733997-readiness-gate-circular-wait (Copilot advisory) | nit | ADDRESSED | Phase completion now uses controller-observed workload readiness only; external gates "do not gate phase transitions" (:247-256, :402-422) — the circular wait with the KEP-527 lifecycle gate is removed explicitly. New pin `TestPhaseCompletionIndependentOfExternalGates` red@39e2ecdf / green@head. |
+| C4515734101-activity-fallback-vs-blocker-clearing (Copilot advisory) | nit | ADDRESSED | "When a blocker family is already confirmed for the current target, an unclassifiable error does not replace it" (:177) + Unclassified family + test-plan bullet (:501). New pin `TestConfirmedBlockerSurvivesUnclassifiedError` red@39e2ecdf / green@head. |
+| C4515734270-customready-aggregation-example (Copilot advisory) | nit | ADDRESSED | RI example's `RoleInstanceReady=False` is now `PodsNotReady` (missing Pod), and "RoleInstanceCustomReady and other externally owned readiness gates remain separate conditions and do not change RoleInstanceReady" (:453). New pin `TestCustomReadyDoesNotDetermineInstanceReady` red@39e2ecdf / green@head. |
+
+Harness-updates (re-anchored for the redesign; polarity re-proven, none are
+regressions): `TestRIReadinessReasonsMatchCode` (F6; sentence lead-in renamed,
+enumeration unchanged and still matches the code), `TestRBGActivityPrecedenceDefined`
+(C4457744212; order check derived from the family table, rename-proof),
+`TestConsumingTableAttentionRowConsistency` (F14; new contract above),
+`TestPreCheckProgressingWriteDerived` (F15; the dispatch rule must now agree
+with the doc's own config mapping — green at both 39e2ecdf (False form) and head
+(True form), red@0b7285b7), `TestProgressingFalseCoversConfigRejection` (F3;
+was a vacuous pass after the redesign removed the `Accepted=False` row — now
+asserts every config-family reason has a defined `Progressing` mapping;
+red@f05e1dd re-proven), `TestReadyTerminatingReasonRowSplit` (O1; the Ready
+rows are gone with the deprecation — successor contract pins the documented
+deprecation + compatibility window, combined-row tripwire retained).
+`TestRBGActivityPrecedenceCoverage` (F13) re-anchored to derive branches from
+the declared fence; red@head on `[Creating]` only, as designed.
+
+New finding introduced by this delta:
+
+| finding | severity | status | evidence |
+| --- | --- | --- | --- |
+| F22-ris-readiness-code-claim-overbroad | nit | OPEN | `TestRISBlockerPropagationClaimAccurate` green@39e2ecdf (sentence absent) / red@head: :336 claims "Today's RIS code reads only `RoleInstanceReady`", but stateless `IsRunningAndReady` (pkg/reconciler/roleinstanceset/statelessmode/utils/utils.go) also reads every `spec.readinessGates` condition — the doc's own mode-difference sentence (:343) says so. The design point (RIS reads no RI `Progressing`, so blocker propagation is new) is correct; only the absolute wording is wrong. Fix: "reads no RI `Progressing` condition". |
+
+Still open (unchanged by the delta; guards red at head as designed):
+F13-concurrent-activity-coverage-regression (nit; no `Creating` concurrent-activity
+scenario in the Test Plan), F16-minready-timestamp-scope-stateful-too (nit; the
+migration row :559 still says stateless-only while stateful `isInstanceAvailable`
+reads the same timestamp), F18-kep527-reference-dangling (nit; KEP-527 references
+at :248/:403/:422/:430 still resolve to no in-tree KEP; PR #546 still OPEN),
+F19-ris-establishment-boundary-existential (minor; :338 unchanged),
+F20-ri-prose-vs-edge-table (nit; :410 "Identifying an update target enters
+Updating" still unscoped vs the fold edge — new guard
+`TestRISummaryProseScopedToFoldRule` green@0b7285b7 / red@39e2ecdf / red@head),
+F21-display-priority-dangling-ref (nit; :257 still the only "display priority"
+occurrence — new guard red@0b7285b7 / red@head), F17-pr-body-stale-after-pivot
+(nit; PR body re-fetched 2026-11-11 still promises "persisted phase transitions
+for RBG, RIS, and RI" and now also omits the Accepted-drop / Ready-deprecation /
+reason renames), Q5-converged-undefined-at-ri-layer (nit; kind-scope half — new
+guard `TestDecisionTableStatesKindScope` red@0b7285b7 / red@head; the serving-row
+half improved: the row now enumerates per-kind facts), Q6-progressing-during-
+deletion-unspecified (nit; new guard `TestProgressingDuringDeletionSpecified`
+red@0b7285b7 / red@head).
+
+New code-factual claims in the delta verified against main-branch code (head ==
+base for code, docs-only PR): RI readiness aggregation order (in-place gate
+before Pod readiness) and reason set match `instance_status.go`
+getInstanceReadyCondition; "external gates are not folded into
+`RoleInstanceReady`" matches the code; `roleStatuses` and the RBG-scoped
+`GangConfigured` condition exist; RIS code reads no RI `Progressing` today;
+`markPodNotReady` exists (instance_status.go:487). The one inaccurate claim is
+F22. Deployment's `ReplicaSetUpdated` Progressing reason and the absence of a
+Deployment/StatefulSet `Ready` condition are upstream facts relied on by the
+rename rationale.
+
+Suite at head: 34 pass / 9 intentional open-finding reds (F13, F16, F18, F19,
+F20, F21, F22, Q5, Q6) — results/unit-head-05807351.txt; polarity matrix in
+results/polarity-round7.txt; markdownlint replay 0 issues
+(results/markdownlint-head-05807351.txt).

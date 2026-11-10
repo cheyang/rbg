@@ -370,34 +370,76 @@ func TestExampleConsistentWithPriorityRule(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestProgressingFalseCoversConfigRejection(t *testing.T) {
+	// Round-7 re-anchor (05807351): the Accepted condition is gone and
+	// configuration-family blockers report Progressing=True. The durable
+	// contract: every configuration-family reason the doc defines has a
+	// defined Progressing mapping — listed in a candidate-table Progressing
+	// row or tied to Progressing in prose. Red at f05e1dd (TemplateInvalid /
+	// DependencyCycle had no Progressing mapping), green since.
 	doc := kepDoc(t)
 	rows := candidateReasonsTable(t)
-	acceptedFalse := rows["Accepted=False"]
-	progressingFalse := map[string]bool{}
-	for _, r := range rows["Progressing=False"] {
-		progressingFalse[r] = true
+	config := map[string]bool{}
+	for _, r := range rows["Accepted=False"] {
+		config[r] = true
 	}
-	// A missing reason is also acceptable if some line ties it to Progressing.
-	coveredInProse := map[string]bool{}
+	rt := section(doc, "Reason Taxonomy and Aggregation")
+	inFam := false
+	for _, l := range strings.Split(rt, "\n") {
+		if strings.HasPrefix(l, "| Reason family |") {
+			inFam = true
+			continue
+		}
+		if inFam && !strings.HasPrefix(l, "|") {
+			break
+		}
+		if !inFam || strings.HasPrefix(l, "| ---") {
+			continue
+		}
+		cells := strings.Split(l, "|")
+		if len(cells) < 5 {
+			continue
+		}
+		if strings.EqualFold(strings.TrimSpace(cells[1]), "Configuration") {
+			for _, tok := range backtickTokens(cells[4]) {
+				config[tok] = true
+			}
+		}
+	}
+	val := section(doc, "Validation Ownership")
+	for _, r := range []string{"InvalidSpec", "TemplateInvalid", "DependencyCycle",
+		"IncompatibleGangConfig", "SchedulerUnsupported"} {
+		if strings.Contains(val, "`"+r+"`") {
+			config[r] = true
+		}
+	}
+	covered := map[string]bool{}
+	for name, reasons := range rows {
+		if strings.HasPrefix(name, "Progressing") {
+			for _, r := range reasons {
+				covered[r] = true
+			}
+		}
+	}
 	for _, l := range strings.Split(doc, "\n") {
 		if !strings.Contains(l, "Progressing") {
 			continue
 		}
-		for _, r := range acceptedFalse {
+		for r := range config {
 			if strings.Contains(l, "`"+r+"`") {
-				coveredInProse[r] = true
+				covered[r] = true
 			}
 		}
 	}
 	var missing []string
-	for _, r := range acceptedFalse {
-		if !progressingFalse[r] && !coveredInProse[r] {
+	for r := range config {
+		if !covered[r] {
 			missing = append(missing, r)
 		}
 	}
+	sort.Strings(missing)
 	if len(missing) > 0 {
-		t.Errorf("F3: Progressing=False covers 'configuration rejected' but these Accepted=False "+
-			"rejection reasons have no defined Progressing=False mapping: %s", strings.Join(missing, ", "))
+		t.Errorf("F3: these configuration-rejection reasons have no defined Progressing "+
+			"mapping (candidate table or prose): %s", strings.Join(missing, ", "))
 	}
 }
 
@@ -597,10 +639,17 @@ func TestRolesNotReadyDistinctionAcknowledged(t *testing.T) {
 
 func TestRIReadinessReasonsMatchCode(t *testing.T) {
 	doc := kepDoc(t)
-	var enum string
+	var enum, marker string
 	for _, l := range strings.Split(doc, "\n") {
-		if strings.Contains(l, "for aggregated RI readiness") {
-			enum = l
+		if strings.Contains(l, "for aggregated RI readiness are") {
+			enum, marker = l, "for aggregated RI readiness are"
+			break
+		}
+		// Round-7 re-anchor (05807351): the sentence lead-in became
+		// "`RoleInstanceReady` reasons are ..." with a trailing qualifier
+		// clause ("when a configured gate condition is missing").
+		if strings.Contains(l, "`RoleInstanceReady` reasons are") {
+			enum, marker = l, "`RoleInstanceReady` reasons are"
 			break
 		}
 	}
@@ -612,10 +661,12 @@ func TestRIReadinessReasonsMatchCode(t *testing.T) {
 	// readiness enumeration. Round-6 re-anchor (39e2ecdf): the doc dropped
 	// the word "Candidate" ("Reasons for aggregated RI readiness are ...");
 	// the enumeration content is unchanged, so match the stable suffix.
-	parts := strings.SplitN(enum, "for aggregated RI readiness are", 2)
+	parts := strings.SplitN(enum, marker, 2)
 	// The enumeration is plain text: "Ready, PodsNotReady, InplaceUpdateNotReady,
 	// and ReadinessGatesNotReady." — split on commas/and, trim spaces and periods.
-	tail := strings.TrimSuffix(strings.TrimSpace(parts[1]), ".")
+	// Round 7: cut the trailing qualifier clause before tokenizing.
+	tail := strings.SplitN(parts[1], " when ", 2)[0]
+	tail = strings.TrimSuffix(strings.TrimSpace(tail), ".")
 	tail = strings.Replace(tail, ", and ", ", ", 1)
 	var tokens []string
 	for _, w := range strings.FieldsFunc(tail, func(r rune) bool { return r == ',' || r == ' ' }) {
@@ -677,6 +728,7 @@ func TestReadyTerminatingReasonRowSplit(t *testing.T) {
 	// separate candidate rows, and Terminating never pairs with Ready=True.
 	// Green at f622d642/da818779 (split rows with Terminating under False) and
 	// at 0b7285b7 (split rows, Terminating gone); red at f05e1dd (combined row).
+	doc := kepDoc(t)
 	rows := candidateReasonsTable(t)
 	for name, reasons := range rows {
 		if strings.Contains(name, "Ready=True") && strings.Contains(name, "False") {
@@ -691,11 +743,22 @@ func TestReadyTerminatingReasonRowSplit(t *testing.T) {
 			}
 		}
 	}
-	if _, ok := rows["Ready=True"]; !ok {
-		t.Error("O1-row-ambiguity: Ready=True candidate row missing")
+	_, hasTrue := rows["Ready=True"]
+	_, hasFalse := rows["Ready=False"]
+	if hasTrue != hasFalse {
+		t.Error("O1-row-ambiguity: only one of the Ready=True / Ready=False candidate rows exists")
 	}
-	if _, ok := rows["Ready=False"]; !ok {
-		t.Error("O1-row-ambiguity: Ready=False candidate row missing")
+	if !hasTrue && !hasFalse {
+		// Round-7 re-anchor (05807351): RBG Ready is deprecated and its
+		// candidate rows are gone, so the row ambiguity cannot recur. The
+		// durable contract is then that the RBG section documents the
+		// deprecation and the compatibility window.
+		rbgSec := section(doc, "RoleBasedGroup")
+		if !(strings.Contains(rbgSec, "`Ready` condition is deprecated") &&
+			strings.Contains(rbgSec, "compatibility window")) {
+			t.Error("O1-row-ambiguity: RBG Ready candidate rows are gone, but the RBG section " +
+				"does not document the Ready deprecation and its compatibility window")
+		}
 	}
 }
 
@@ -967,6 +1030,83 @@ func TestRISActivityReasonsEnumerated(t *testing.T) {
 // concurrent-activity scenarios. Red at f622d642, green at da818779.
 // ---------------------------------------------------------------------------
 
+// withinActivityOrder parses the RBG within-Activity precedence fence (the
+// declaration introduced for C4457744212): the phrase "Within the Activity
+// family" followed by a fenced, one-reason-per-line list. Returns nil when no
+// such declaration exists.
+func withinActivityOrder(doc string) []string {
+	lines := strings.Split(doc, "\n")
+	declIdx := -1
+	for i, l := range lines {
+		if strings.Contains(l, "Within the Activity family") {
+			declIdx = i
+			break
+		}
+	}
+	if declIdx == -1 {
+		return nil
+	}
+	var listed []string
+	open := false
+	for _, l := range lines[declIdx+1:] {
+		if strings.HasPrefix(strings.TrimSpace(l), "```") {
+			if open {
+				break
+			}
+			open = true
+			continue
+		}
+		if open {
+			tok := strings.TrimSpace(strings.ReplaceAll(strings.TrimSpace(l), "`", ""))
+			if tok != "" {
+				listed = append(listed, tok)
+			}
+		}
+	}
+	return listed
+}
+
+// rbgActivityReasons derives the RBG activity reasons from the "Activity and
+// child-readiness reasons" family table (RBG column), excluding the
+// child-readiness row. Returns nil when the table is absent.
+func rbgActivityReasons(doc string) []string {
+	activityFacts := map[string]bool{
+		"Initial creation":       true,
+		"Update":                 true,
+		"Instance-count scaling": true,
+		"Recovery":               true,
+	}
+	seen := map[string]bool{}
+	var out []string
+	inTable := false
+	for _, l := range strings.Split(doc, "\n") {
+		if strings.HasPrefix(l, "| Fact |") {
+			inTable = true
+			continue
+		}
+		if inTable && !strings.HasPrefix(l, "|") {
+			break
+		}
+		if !inTable || strings.HasPrefix(l, "| ---") {
+			continue
+		}
+		cells := strings.Split(l, "|")
+		if len(cells) < 6 {
+			continue
+		}
+		if !activityFacts[strings.TrimSpace(cells[1])] {
+			continue
+		}
+		for _, tok := range backtickTokens(cells[4]) {
+			if !seen[tok] {
+				seen[tok] = true
+				out = append(out, tok)
+			}
+		}
+	}
+	return out
+}
+
 func TestRBGActivityPrecedenceDefined(t *testing.T) {
 	doc := kepDoc(t)
 
@@ -1072,10 +1212,29 @@ func TestRBGActivityPrecedenceDefined(t *testing.T) {
 		t.Errorf("C4457744212: within-Activity precedence list does not match the family table — "+
 			"missing: %v; not an RBG activity reason: %v; listed twice: %v", missing, extra, dup)
 	}
-	// Reviewed order: Creating > Recovering > ScalingOrUpdating.
-	want := []string{"Creating", "Recovering", "ScalingOrUpdating"}
-	if strings.Join(listed, ",") != strings.Join(want, ",") {
-		t.Errorf("C4457744212: within-Activity precedence order = %v, reviewed semantics require %v", listed, want)
+	// Reviewed order semantics (round-7 re-anchor, 05807351): Creating ranks
+	// first and Recovering outranks the update/scaling aggregate reason. The
+	// aggregate was renamed (ScalingOrUpdating -> RoleInstanceSetUpdated), so
+	// the check is positional instead of name-hardcoded; set equality with the
+	// family table was already enforced above.
+	if listed[0] != "Creating" {
+		t.Errorf("C4457744212: within-Activity precedence must rank Creating first, got %v", listed)
+	}
+	recIdx := -1
+	for i, tok := range listed {
+		if tok == "Recovering" {
+			recIdx = i
+			break
+		}
+	}
+	if recIdx == -1 {
+		t.Errorf("C4457744212: within-Activity precedence omits Recovering: %v", listed)
+	}
+	for i, tok := range listed {
+		if tok != "Creating" && tok != "Recovering" && recIdx >= 0 && i < recIdx {
+			t.Errorf("C4457744212: %s outranks Recovering in the within-Activity precedence %v; "+
+				"reviewed semantics rank Recovering above the update/scaling aggregate", tok, listed)
+		}
 	}
 }
 
@@ -1091,12 +1250,28 @@ func TestRBGActivityPrecedenceCoverage(t *testing.T) {
 	if tp == "" {
 		t.Fatal("C4457744212-guard anchor drift: Test Plan section not found")
 	}
-	branchCovered := map[string]bool{"Creating": false, "Recovering": false, "ScalingOrUpdating": false}
+	// Round-7 re-anchor (05807351): derive the branches from the declared
+	// within-Activity precedence fence when present (robust to the
+	// ScalingOrUpdating -> RoleInstanceSetUpdated rename); fall back to the
+	// family table's RBG activity reasons on heads without the fence.
+	branches := withinActivityOrder(doc)
+	if len(branches) == 0 {
+		branches = rbgActivityReasons(doc)
+	}
+	if len(branches) == 0 {
+		t.Fatal("C4457744212-guard anchor drift: cannot derive the RBG activity branches")
+	}
+	branchCovered := map[string]bool{}
+	for _, b := range branches {
+		branchCovered[b] = false
+	}
 	for _, l := range strings.Split(tp, "\n") {
 		// A concurrency bullet names the winning reason together with another
-		// concurrent activity ("another", "overlap", "concurrent", "while").
+		// concurrent activity ("another", "overlap", "concurrent", "while",
+		// "different" as in "when different RISs are updating and scaling").
 		concurrency := strings.Contains(l, "another") || strings.Contains(l, "overlap") ||
-			strings.Contains(l, "concurrent") || strings.Contains(l, "while")
+			strings.Contains(l, "concurrent") || strings.Contains(l, "while") ||
+			strings.Contains(l, "different")
 		if !concurrency {
 			continue
 		}
@@ -1114,10 +1289,10 @@ func TestRBGActivityPrecedenceCoverage(t *testing.T) {
 	}
 	sort.Strings(uncovered)
 	if len(uncovered) > 0 {
-		t.Errorf("C4457744212: Test Plan has no concurrent-activity scenario for precedence "+
-			"branch(es) %v — every branch of the declared order (Creating > Recovering > "+
-			"ScalingOrUpdating) needs a scenario, e.g. one role Creating while another updates",
-			uncovered)
+		t.Errorf("F13: Test Plan has no concurrent-activity scenario for precedence "+
+			"branch(es) %v — every branch of the declared order %v needs a scenario, "+
+			"e.g. one role Creating while another updates",
+			uncovered, branches)
 	}
 }
 
@@ -1427,31 +1602,88 @@ func TestConsumingTableAttentionRowConsistency(t *testing.T) {
 	if attention == "" {
 		t.Fatal("F14-guard anchor drift: 'need attention' row not found")
 	}
-	rowListsConfigUnderTrue := strings.Contains(attention, "`Progressing=True`") &&
-		strings.Contains(attention, "configuration-compatibility")
-	if !rowListsConfigUnderTrue {
-		return // row reworded; nothing to check
+	// Round-7 re-anchor (05807351): the redesign made configuration-family
+	// blockers report Progressing=True, so the original defect (a dead
+	// config-compatibility disjunct under Progressing=True) is resolved. The
+	// durable contract, generalized: EVERY reason family the attention row
+	// names must have at least one RBG reason that can actually occur with the
+	// condition status the row predicates on — no dead disjuncts.
+	var statusTok string
+	switch {
+	case strings.Contains(attention, "`Progressing=True`"):
+		statusTok = "Progressing=True"
+	case strings.Contains(attention, "`Progressing=False`"):
+		statusTok = "Progressing=False"
+	default:
+		t.Fatal("F14-guard anchor drift: attention row names no Progressing status")
 	}
-	// Do any Progressing=True candidate rows carry a config-incompatibility
-	// reason? If so the row is fine.
 	rows := candidateReasonsTable(t)
-	configReasons := rows["Accepted=False"]
-	trueReasons := map[string]bool{}
-	for _, rn := range []string{"Progressing=True", "Progressing=True, waiting"} {
-		for _, r := range rows[rn] {
-			trueReasons[r] = true
+	avail := map[string]bool{}
+	for name, reasons := range rows {
+		if strings.HasPrefix(name, statusTok) {
+			for _, r := range reasons {
+				avail[r] = true
+			}
 		}
 	}
-	for _, r := range configReasons {
-		if trueReasons[r] {
-			return // config reasons can accompany Progressing=True; row is accurate
+	// Map family names (as the row names them) to RBG reasons: the reason-
+	// family table's RBG column, plus the Accepted=False candidate row for
+	// configuration on pre-redesign heads.
+	famReasons := map[string][]string{}
+	rt := section(doc, "Reason Taxonomy and Aggregation")
+	inFam := false
+	for _, l := range strings.Split(rt, "\n") {
+		if strings.HasPrefix(l, "| Reason family |") {
+			inFam = true
+			continue
+		}
+		if inFam && !strings.HasPrefix(l, "|") {
+			break
+		}
+		if !inFam || strings.HasPrefix(l, "| ---") {
+			continue
+		}
+		cells := strings.Split(l, "|")
+		if len(cells) < 5 {
+			continue
+		}
+		famReasons[strings.ToLower(strings.TrimSpace(cells[1]))] = backtickTokens(cells[4])
+	}
+	famReasons["configuration"] = append(famReasons["configuration"], rows["Accepted=False"]...)
+	alias := map[string]string{
+		"configuration-compatibility": "configuration",
+		"configuration":               "configuration",
+		"permission":                  "permission",
+		"admission":                   "admission",
+		"quota":                       "quota",
+		"resources":                   "resources",
+		"gang":                        "gang scheduling",
+		"gang scheduling":             "gang scheduling",
+		"dependencies":                "dependencies",
+		"unclassified":                "unclassified",
+	}
+	var dead []string
+	for name := range alias {
+		if !strings.Contains(attention, name) {
+			continue
+		}
+		live := false
+		for _, r := range famReasons[alias[name]] {
+			if avail[r] {
+				live = true
+				break
+			}
+		}
+		if !live {
+			dead = append(dead, name)
 		}
 	}
-	t.Errorf("F14: the 'need attention' row lists configuration-compatibility families under "+
-		"`Progressing=True`, but every configuration-incompatibility reason (%s) maps to "+
-		"Progressing=False (candidate table and the Accepted=False -> Progressing=False mapping) — "+
-		"the disjunct is dead and points consumers away from the Progressing=False row",
-		strings.Join(configReasons, ", "))
+	sort.Strings(dead)
+	if len(dead) > 0 {
+		t.Errorf("F14: the 'need attention' row predicates on %s but these families have no "+
+			"RBG reason that can occur with that status (candidate table): %s — dead disjunct(s) "+
+			"point consumers at a row that can never fire", statusTok, strings.Join(dead, ", "))
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -1537,12 +1769,36 @@ func TestPreCheckProgressingWriteDerived(t *testing.T) {
 				name, strings.TrimSpace(l))
 		}
 	}
-	// The False-with-matching-reason case must be named explicitly in the
-	// common rule so the two rules cannot be read as competing.
-	if !strings.Contains(rule, "`Progressing=False`") ||
-		!(strings.Contains(rule, "incompatibility reason") || strings.Contains(rule, "matching reason")) {
-		t.Errorf("F15: the common dispatch-write rule does not name the confirmed compatibility " +
-			"failure -> Progressing=False (matching incompatibility reason) case")
+	// The confirmed configuration-failure case must be named explicitly, and
+	// the value the rule prescribes must agree with the doc's own mapping
+	// (round-7 re-anchor, 05807351): pre-redesign heads map Accepted=False ->
+	// Progressing=False with the matching incompatibility reason; the
+	// redesigned model maps a confirmed configuration-family blocker ->
+	// Progressing=True with the configuration-family reason.
+	valSec := section(doc, "Validation Ownership")
+	if valSec == "" {
+		t.Fatal("F15-guard anchor drift: Validation Ownership section not found")
+	}
+	configMapsFalse := strings.Contains(valSec, "Accepted=False") &&
+		strings.Contains(valSec, "`Progressing=False`")
+	if !(strings.Contains(rule, "compatib") || strings.Contains(rule, "configuration")) {
+		t.Errorf("F15: the common dispatch-write rule does not name the confirmed " +
+			"compatibility / configuration-failure case")
+		return
+	}
+	if configMapsFalse {
+		if !strings.Contains(rule, "`Progressing=False`") {
+			t.Errorf("F15: the validation section maps confirmed incompatibility to " +
+				"Progressing=False, but the dispatch-write rule does not prescribe that value")
+		}
+		return
+	}
+	// Redesigned model: config blockers are Progressing=True.
+	ruleHasTrue := strings.Contains(rule, "configuration-family blocker writes `Progressing=True`") ||
+		(strings.Contains(rule, "`Progressing=True`") && strings.Contains(rule, "configuration-family"))
+	if !ruleHasTrue {
+		t.Errorf("F15: the validation section reports confirmed configuration-family blockers as " +
+			"Progressing=True, but the dispatch-write rule does not prescribe that value")
 	}
 }
 
@@ -1651,4 +1907,248 @@ func TestRISEstablishmentBoundaryCollective(t *testing.T) {
 			"Bind the boundary to the RIs / revision required by the target, or state how the "+
 			"mid-bootstrap tail is classified. RIS definition: %s", strings.TrimSpace(def))
 	}
+}
+
+// ---------------------------------------------------------------------------
+// F22 (round 7, nit — new code-factual claim introduced by the delta): the RIS
+// section states "Today's RIS code reads only `RoleInstanceReady`". Read in
+// context the sentence means the RIS never reads the RI `Progressing`
+// condition (true — pkg/reconciler/roleinstanceset has no Progressing reads),
+// but as written it is absolute and false for stateless mode, whose
+// IsRunningAndReady also reads every spec.readinessGates condition — the doc's
+// own mode-difference sentence says so two paragraphs later. Contract: FAILS
+// while the absolute claim stands and stateless code still iterates
+// readinessGates; PASSES if the sentence is scoped (e.g. "reads no RI
+// `Progressing` condition") or removed. Green at 39e2ecdf (sentence absent).
+// ---------------------------------------------------------------------------
+
+func TestRISBlockerPropagationClaimAccurate(t *testing.T) {
+	doc := kepDoc(t)
+	var claim string
+	for _, l := range strings.Split(doc, "\n") {
+		if strings.Contains(l, "reads only `RoleInstanceReady`") {
+			claim = l
+			break
+		}
+	}
+	if claim == "" {
+		return // sentence absent on pre-round-7 heads; nothing to falsify
+	}
+	code := repoFile(t, "pkg/reconciler/roleinstanceset/statelessmode/utils/utils.go")
+	body := funcBody(code, "func IsRunningAndReady(")
+	if body != "" && strings.Contains(body, "ReadinessGates") {
+		t.Errorf("F22: the doc claims today's RIS code reads only `RoleInstanceReady`, but " +
+			"stateless IsRunningAndReady also reads every spec.readinessGates condition " +
+			"(pkg/reconciler/roleinstanceset/statelessmode/utils/utils.go) — the doc itself " +
+			"documents that mode difference. Scope the sentence to blocker propagation " +
+			"(e.g. 'reads no RI `Progressing` condition').")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Round-7 resolution pins (regression coverage for findings the delta fixed).
+// Contract tests: green at 05807351, red at 39e2ecdf where the defect lived.
+// ---------------------------------------------------------------------------
+
+// Pin for Copilot advisory C4515733997 (resolved at 05807351): RI phase
+// completion must not wait on externally owned readiness gates, or the
+// lifecycle-owned gate held until Running creates a circular wait.
+func TestPhaseCompletionIndependentOfExternalGates(t *testing.T) {
+	doc := stripFences(kepDoc(t))
+	ris := section(doc, "RI Phase Transition Principles") + "\n" + sectionExact(doc, "RoleInstance")
+	stated := strings.Contains(ris, "do not gate phase transitions") ||
+		strings.Contains(ris, "do not block the phase transition") ||
+		strings.Contains(ris, "do not gate this phase") ||
+		strings.Contains(ris, "controller-observed workload readiness")
+	if !stated {
+		t.Errorf("C4515733997: the doc no longer states that RI phase completion excludes " +
+			"externally owned readiness gates — the lifecycle-gate circular wait can recur")
+	}
+}
+
+// Pin for Copilot advisory C4515734101 (resolved at 05807351): an
+// unclassifiable error must not displace a blocker family already confirmed
+// for the current target.
+func TestConfirmedBlockerSurvivesUnclassifiedError(t *testing.T) {
+	doc := stripFences(kepDoc(t))
+	stated := strings.Contains(doc, "does not replace it") &&
+		strings.Contains(doc, "confirmed blocker remains") &&
+		strings.Contains(doc, "fresh successful observation")
+	if !stated {
+		t.Errorf("C4515734101: the doc no longer states that an unclassifiable error does not " +
+			"replace a confirmed blocker family (which remains until a fresh successful " +
+			"observation) — the unconditional Activity fallback can displace a live blocker")
+	}
+}
+
+// Pin for Copilot advisory C4515734270 (resolved at 05807351): the RI example
+// must not show an externally owned gate determining RoleInstanceReady, and the
+// doc must state that external gates do not change RoleInstanceReady.
+func TestCustomReadyDoesNotDetermineInstanceReady(t *testing.T) {
+	doc := kepDoc(t)
+	ri := sectionExact(doc, "RoleInstance")
+	if ri == "" {
+		t.Fatal("anchor drift: RoleInstance section not found")
+	}
+	stated := strings.Contains(ri, "do not change `RoleInstanceReady`") ||
+		strings.Contains(ri, "external gates are not folded into it")
+	if !stated {
+		t.Errorf("C4515734270: the doc no longer states that externally owned readiness gates " +
+			"do not change `RoleInstanceReady`")
+	}
+	// The example must not pair RoleInstanceReady=False with a custom-gate cause.
+	lines := strings.Split(ri, "\n")
+	for i, l := range lines {
+		if strings.Contains(l, "type: RoleInstanceReady") {
+			window := strings.Join(lines[i:min(i+6, len(lines))], "\n")
+			if strings.Contains(window, "ReadinessGatesNotReady") &&
+				strings.Contains(window, "RoleInstanceCustomReady") {
+				t.Errorf("C4515734270: the RI example again shows RoleInstanceReady=False " +
+					"(ReadinessGatesNotReady) caused by RoleInstanceCustomReady, unlike the " +
+					"code's aggregation (instance_status.go folds only the in-place gate)")
+			}
+			break
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// F20 (round 6, nit — revision regression, still open at 05807351): the RI
+// summary prose ("Identifying an update target enters Updating") must be
+// scoped consistently with the Create-convergence fold edge (a Creating RI
+// folds an identified update target instead of transitioning). Green at
+// 0b7285b7 (fold edge absent, prose matched the then-current table); red
+// since 39e2ecdf.
+// ---------------------------------------------------------------------------
+
+func TestRISummaryProseScopedToFoldRule(t *testing.T) {
+	doc := kepDoc(t)
+	ri := sectionExact(doc, "RoleInstance")
+	if ri == "" {
+		t.Fatal("F20-guard anchor drift: RoleInstance section not found")
+	}
+	fold := strings.Contains(ri, "fold the new target into Create convergence") ||
+		strings.Contains(ri, "folded into Create convergence")
+	if !fold {
+		return // fold rule absent; prose cannot contradict it
+	}
+	for _, l := range strings.Split(ri, "\n") {
+		for _, s := range strings.Split(l, ". ") {
+			if strings.Contains(s, "Identifying an update target enters Updating") ||
+				strings.Contains(s, "recovery of required Pods outside an update enters Recovering") {
+				scoped := strings.Contains(s, "From `Running`") || strings.Contains(s, "established") ||
+					strings.Contains(s, "outside initial creation") || strings.Contains(s, "after initial creation")
+				if !scoped {
+					t.Errorf("F20: the RI summary prose %q is unscoped: under the fold rule an "+
+						"update target identified during initial creation must NOT enter Updating — "+
+						"scope the sentence (e.g. 'From `Running` or `Recovering`, ...')", strings.TrimSpace(s))
+				}
+			}
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// F21 (round 6, nit — late discovery, still open at 05807351): "the display
+// priority defined in the RoleInstance section" must resolve. Green on
+// pre-pivot heads (the reference phrasing did not exist); red since the
+// round-5 pivot.
+// ---------------------------------------------------------------------------
+
+func TestDisplayPriorityReferenceResolves(t *testing.T) {
+	doc := kepDoc(t)
+	ref := strings.Contains(doc, "display priority defined in the RoleInstance section")
+	if !ref {
+		return // reference absent (pre-pivot or fixed by rewording)
+	}
+	ri := sectionExact(doc, "RoleInstance")
+	defined := false
+	for _, l := range strings.Split(ri, "\n") {
+		if strings.Contains(l, "display priority") &&
+			!strings.Contains(l, "defined in the RoleInstance section") {
+			defined = true
+		}
+	}
+	if !defined {
+		t.Errorf("F21: 'select the RI phase using the display priority defined in the " +
+			"RoleInstance section' does not resolve — the RoleInstance section defines no " +
+			"display priority (define it there or point at the edge / situation tables)")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Q5 (round 5, nit — kind-scope half still open at 05807351): the
+// Consuming-the-Status decision table must state which kinds it applies to,
+// or define `Converged` for RI (RI completion is phase=Running; the RI reason
+// list has no Converged). Green on heads without the table.
+// ---------------------------------------------------------------------------
+
+func TestDecisionTableStatesKindScope(t *testing.T) {
+	doc := kepDoc(t)
+	cs := section(doc, "Consuming the Status")
+	if cs == "" || !strings.Contains(cs, "Is the change done?") {
+		return // decision table absent on pre-round-5 heads
+	}
+	scoped := false
+	for _, l := range strings.Split(cs, "\n") {
+		low := strings.ToLower(l)
+		// A scoping sentence names the table (or its questions) AND restricts
+		// the kinds it covers, e.g. "this table applies to RBG and RIS; RI
+		// completion is phase=Running". Merely mentioning kinds inside one
+		// answer row (the serving row) does not scope the done row.
+		namesTable := strings.Contains(low, "table") || strings.Contains(low, "appl") ||
+			strings.Contains(low, "converged") || strings.Contains(low, "change is done") ||
+			strings.Contains(low, "completion")
+		restrictsKinds := (strings.Contains(low, "rbg") || strings.Contains(low, "ris")) &&
+			strings.Contains(low, "ri")
+		if namesTable && restrictsKinds {
+			scoped = true
+		}
+	}
+	// Alternatively the gap is closed if RI gets a Converged completion reason.
+	ri := sectionExact(doc, "RoleInstance")
+	riConverged := strings.Contains(ri, "`Converged`")
+	if !scoped && !riConverged {
+		t.Errorf("Q5: the decision table states no kind scope and `Converged` is undefined for " +
+			"RI — a consumer cannot answer 'Is the change done?' for a RoleInstance " +
+			"(scope the table to RBG / RIS or define RI completion)")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Q6 (round 5, nit — still open at 05807351): the doc must state what
+// Progressing reports while an RBG / RIS is being deleted (or explicitly
+// defer it). Lines that only say deletion is indicated by
+// metadata.deletionTimestamp do not answer the Progressing question.
+// ---------------------------------------------------------------------------
+
+func TestProgressingDuringDeletionSpecified(t *testing.T) {
+	doc := kepDoc(t)
+	for _, l := range strings.Split(doc, "\n") {
+		// Segment into table cells / sentences so a row label ("Ready /
+		// Progressing") cannot lend "Progressing" to a clause that only
+		// describes Ready.
+		for _, seg := range strings.FieldsFunc(l, func(r rune) bool { return r == '|' }) {
+			for _, s := range strings.Split(seg, ". ") {
+				low := strings.ToLower(s)
+				if !strings.Contains(s, "Progressing") {
+					continue
+				}
+				if !strings.Contains(low, "deletion") && !strings.Contains(low, "terminating") {
+					continue
+				}
+				behavior := strings.Contains(low, "retains") || strings.Contains(low, "stale") ||
+					strings.Contains(low, "stops") || strings.Contains(low, "not updated") ||
+					strings.Contains(low, "frozen") || strings.Contains(low, "unchanged") ||
+					strings.Contains(low, "out of scope") || strings.Contains(low, "unspecified")
+				if behavior {
+					return
+				}
+			}
+		}
+	}
+	t.Errorf("Q6: no statement of what `Progressing` reports while an RBG / RIS object is " +
+		"terminating — the controller early-returns on deletionTimestamp, so the condition goes " +
+		"stale; say so (e.g. '`Progressing` retains its last value during deletion; consumers must " +
+		"check deletionTimestamp first')")
 }
