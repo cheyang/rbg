@@ -212,9 +212,105 @@
         "CheckMarkNotReadyNaming"
       ],
       "summary": "Round-4 naming split: new protocol uses markNotReady (independent type); legacy markPodNotReady only in legacy-context sentences."
+    },
+    {
+      "id": "F21",
+      "ledgerId": "F-COEXIST-GATE-EDGE",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckGateOffBehaviorStated"
+      ],
+      "summary": "Gate-off behavior of the new protocol fields stated (gate defaults false; new fields rejected while disabled; legacy protocol unchanged), EN+zh. Residual (legacy inPlaceUpdate deprecation timeline) stays open in the ledger."
+    },
+    {
+      "id": "F22",
+      "ledgerId": "F-TESTPLAN-ABSENCE-CONTRADICTION",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckAbsenceTestplanConsistent"
+      ],
+      "summary": "FIXED in round 5: integration-test bullet rewritten to match the round-4 absence semantics (EN+zh); stale round-3 bullet pinned absent."
+    },
+    {
+      "id": "F23",
+      "ledgerId": "F-STALE-LABEL-DISPOSITION",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckStaleLabelDispositionSingle"
+      ],
+      "summary": "FIXED in round 5: hook removal cleans at a single normative strength (EN :454/:701/:993, zh mirrors); markerA->markerB reconfiguration deliberately leaves the old marker — the distinction the finding suggested."
+    },
+    {
+      "id": "F24",
+      "ledgerId": "F-TESTPLAN-PREFIX-COVERAGE",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckTestplanPrefixCoverage"
+      ],
+      "summary": "NEW round-5 nit (OPEN): design now rejects handler keys carrying the reserved rbg.workloads.x-k8s.io/ prefix, but the integration-test bullet still covers only the exact-key collision (EN+zh). Contract fails at head while open; vacuous pass on refs without the strengthened rule."
+    },
+    {
+      "id": "F25",
+      "ledgerId": "F-CONFIG-REMOVAL-SKIPS-HOOK",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckRemovalRiskAcknowledged"
+      ],
+      "summary": "Still OPEN in round 5 (strengthened): removal now explicitly follows the released-hook transition (PreUpdate advances to Updating), Risks/Troubleshooting still carry no acknowledgment, and the adjacent 'forcibly removing markers is not routine recovery' caution was deleted. Contract fails at head while open; a pass is a change signal requiring human confirmation of the added wording."
+    },
+    {
+      "id": "F26",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckPreDeleteExecutorIndependent"
+      ],
+      "summary": "Round-5 content guard: preDelete executor must be independently deployed (in-Pod executors scoped to preUpdate/preRecover/postReady), EN+zh."
+    },
+    {
+      "id": "F27",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckDeletingRINeverExposesHook"
+      ],
+      "summary": "Round-5 content guard: an RI with a deletionTimestamp never exposes preDelete; its deletion continues without the hook (replaces round-4 'enablement rejected or deferred'), EN+zh."
+    },
+    {
+      "id": "F28",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckReservedPrefixRejected"
+      ],
+      "summary": "Round-5 content guard: admission rejects handler keys equal to the exact hook-state key or using the reserved rbg.workloads.x-k8s.io/ prefix, EN+zh."
+    },
+    {
+      "id": "F29",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckFieldOwnershipExplicit"
+      ],
+      "summary": "Round-5 content guard: explicit field-ownership paragraph (users own authoritative config; controller owns phase/hook-state/RI snapshot/reserved finalizer), EN+zh."
+    },
+    {
+      "id": "F30",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckUserConfiguredClarified"
+      ],
+      "summary": "Round-5 content guard: 'user-configured' defined for the mutual-exclusion check — any non-empty legacy spec.lifecycle on an RBG-managed RIS is treated as user configuration, EN+zh."
     }
   ],
   "liveNote": "Docs-only PR: no live layer. Design-level findings F1-F3 are verified by codebase inspection and their checks are text proxies that confirm the KEP ADDRESSES the topic; design correctness of the added text still requires human review.",
   "_codex_note": "All checks use contract polarity: pass = intended state. Round 2 (head 71dd5e87): F1/F2/F3/F5 fixed by the revision; F4 partial; F6-F8 added. Round 3 (head fb6c2b36): revision replaced mutual-exclusion with wholesale removal of the legacy RIS lifecycle protocol (CheckOldNewCoexistenceRule broadened as a Harness-update to accept removal language), pinned wire names/constants, added preCreate rationale, finalizer-establishment ordering, namespace-teardown scoping, RBGSet foreground boundary, postReady-omitted path, disable-supported clarification (F9-F15 all pass at head). New nits F16 (kep.yaml feature-gates bare-string vs template object form; fail at head) and F17 (interrupt-when-dead conditionality ambiguity, sentence present since 71dd5e87; fail at previous and head). F4 residual: CheckSeeAlsoDirsExist still fails (dangling /keps/502-workload-status-model; PR #528 open). The stock skill re-verify.sh supports only gotest/ginkgo; scripts/re-verify.sh here is a shell-kind adaptation with the same fetch/graft/verdict contract.",
-  "_codex_note_round4": "Round 4 (head 43dab57b): the author REVERTED the round-3 removal pivot — legacy RIS lifecycle protocol is retained, coexisting with admission-enforced mutual exclusion; the new protocol moved to an independent hook type (labelsHandler + markNotReady; legacy keeps markPodNotReady); in-flight config changes switched from admission-rejected to declarative latest-wins/absence semantics; kep.yaml feature-gates now use the template object form; the interrupt sentence is fixed; zh 'source of truth'/'desired snapshot' translated. Harness-updates (disclosed): CheckInflightAdmissionMust -> CheckInflightSemanticsDefined (F8), CheckLegacyRemovalStated -> CheckLegacyCoexistenceSpecified (F9); both old pins fail at 43dab57b BY DESIGN (the pinned mechanism was replaced, not the finding reopened). New pins F18/F19/F20. CheckSeeAlsoDirsExist still fails (PR #528 open). F-KEP502-CREATING-PHASE-CONFLICT resolved on the PR #528 side at 39e2ecdf (table now says Remain Creating / fold into Create, cross-referencing KEP-527) — not pinnable here because keps/502 is absent from this PR's tree."
+  "_codex_note_round4": "Round 4 (head 43dab57b): the author REVERTED the round-3 removal pivot — legacy RIS lifecycle protocol is retained, coexisting with admission-enforced mutual exclusion; the new protocol moved to an independent hook type (labelsHandler + markNotReady; legacy keeps markPodNotReady); in-flight config changes switched from admission-rejected to declarative latest-wins/absence semantics; kep.yaml feature-gates now use the template object form; the interrupt sentence is fixed; zh 'source of truth'/'desired snapshot' translated. Harness-updates (disclosed): CheckInflightAdmissionMust -> CheckInflightSemanticsDefined (F8), CheckLegacyRemovalStated -> CheckLegacyCoexistenceSpecified (F9); both old pins fail at 43dab57b BY DESIGN (the pinned mechanism was replaced, not the finding reopened). New pins F18/F19/F20. CheckSeeAlsoDirsExist still fails (PR #528 open). F-KEP502-CREATING-PHASE-CONFLICT resolved on the PR #528 side at 39e2ecdf (table now says Remain Creating / fold into Create, cross-referencing KEP-527) — not pinnable here because keps/502 is absent from this PR's tree.",
+  "_codex_note_round5": "Round 5 (head 6c15cc92, delta 43dab57b..6c15cc92, docs-only wording/consistency revision): Harness-updates disclosed for CheckLegacyCoexistenceSpecified (zh Summary reworded), CheckNamespaceTeardownScoped (EN sentence re-wrapped), CheckSnapshotOwnershipStated (reworded + strengthened; the not-combined-with-legacy clause is now carried by the user-configured clarification). New checks F21-F30 pin the round-5 normative additions and the status of round-4 open items: F22/F23 fixed; F21 core fixed (deprecation-timeline residual open); F24 new nit open; F25 still open. re-verify.sh persist-order bug fixed (results were clobbered by the cleanup checkout in earlier rounds)."
 }

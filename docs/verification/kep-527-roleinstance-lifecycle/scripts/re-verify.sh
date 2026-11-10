@@ -55,7 +55,17 @@ echo "re-verify: last-reviewed = $LAST_REVIEWED (review delta = $LAST_REVIEWED..
 
 ORIG_REF="$(git symbolic-ref --quiet --short HEAD || git rev-parse HEAD)"
 HARNESS_SRC="$(git rev-parse HEAD)"
-cleanup() { git checkout -f "$ORIG_REF" >/dev/null 2>&1 || true; rm -rf "$RUNTIME_DIR" 2>/dev/null || true; }
+PERSIST=""; OUT=""
+cleanup() {
+  # Restore the branch first, THEN persist the fresh results: "git checkout -f"
+  # restores tracked files under docs/verification/, so copying before the
+  # checkout leaves stale content in the branch worktree (round-4 bug).
+  git checkout -f "$ORIG_REF" >/dev/null 2>&1 || true
+  if [ -n "$PERSIST" ] && [ -f "$OUT" ]; then
+    mkdir -p "$PERSIST" 2>/dev/null && cp -f "$OUT" "$PERSIST/unit.tsv" 2>/dev/null || true
+  fi
+  rm -rf "$RUNTIME_DIR" 2>/dev/null || true
+}
 trap cleanup EXIT
 
 git checkout -f "$FIXED_REF" >/dev/null 2>&1 || { echo "re-verify: cannot checkout $FIXED_REF" >&2; exit 2; }
@@ -68,7 +78,6 @@ OUT="$RUNTIME_DIR/unit.out"
 bash -c "$CMD" >"$OUT" 2>&1 || true
 
 PERSIST="$(dirname "$MANIFEST_ORIG")/results/reverify"
-mkdir -p "$PERSIST" 2>/dev/null && cp -f "$OUT" "$PERSIST/unit.tsv" 2>/dev/null || true
 
 lookup() { # $1 = match substring -> pass|fail|skip|missing
   local hit; hit="$(awk -F'\t' -v m="$1" 'index($1,m){print $2}' "$OUT" | tail -1)"

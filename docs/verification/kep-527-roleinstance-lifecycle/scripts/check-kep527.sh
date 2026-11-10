@@ -160,17 +160,21 @@ if [ -f "$KEP_EN" ] && grep -q 'always evaluates the latest effective lifecycle 
 
 # --- group 2b: round-3 checks (delta 71dd5e87..fb6c2b36) ---
 
-# F9 (F-OLDNEW-ISOLATION / F-PROPAGATED-VS-LEGACY; Harness-update, round 4).
+# F9 (F-OLDNEW-ISOLATION / F-PROPAGATED-VS-LEGACY; Harness-update, round 5).
 #     Round 3 pinned wholesale removal of the legacy protocol; round 4 reverted
 #     to coexistence with admission-enforced mutual exclusion (the round-2
-#     resolution form, strengthened). Pin: mutual-exclusion rule + legacy field
-#     retained + distinct new field paths + distinct state keys + zh mirror.
+#     resolution form, strengthened). Round 5 reworded the zh Summary sentence
+#     ("同一个 RIS 上二者互斥" -> "准入保证同一个 RIS 上不会同时激活二者");
+#     the zh Non-Goal form is unchanged. Pin: mutual-exclusion rule + legacy field
+#     retained + distinct new field paths + distinct state keys + zh mirrors
+#     (Non-Goal form + new Summary form).
 if [ -f "$KEP_EN" ] && grep -qiE 'mutual(ly)? exclusive' "$KEP_EN" \
   && grep -q 'legacy RIS field remains' "$KEP_EN" \
   && grep -q 'roleInstanceTemplate.lifecycle' "$KEP_EN" \
   && grep -q 'RoleInstance.spec.lifecycle' "$KEP_EN" \
   && grep -q 'distinct state keys' "$KEP_EN" \
-  && grep -q '同一个 RIS 上二者互斥' "$KEP_ZH"; then
+  && grep -q '不允许同一个 RIS 同时配置旧协议和新协议' "$KEP_ZH" \
+  && grep -q '不会同时激活二者' "$KEP_ZH"; then
   ok CheckLegacyCoexistenceSpecified; else bad CheckLegacyCoexistenceSpecified; fi
 
 # F10 (F-FINALIZER-BOOTSTRAP-RACE). The reserved finalizer must be established
@@ -182,7 +186,10 @@ if [ -f "$KEP_EN" ] && grep -q 'adds the finalizer before exposing the effective
 
 # F11 (F-NS-TEARDOWN-BYPASS). Namespace teardown must be explicitly scoped out
 #     of the live-engine guarantee (EN and zh).
-if [ -f "$KEP_EN" ] && grep -q 'Namespace teardown is outside the live-engine guarantee' "$KEP_EN" \
+#     Harness-update (round 5): the EN sentence was re-wrapped across lines;
+#     match wrap-tolerantly.
+if [ -f "$KEP_EN" ] && tr '\n' ' ' < "$KEP_EN" | tr -s ' ' \
+    | grep -q 'Namespace teardown is *outside the live-engine guarantee' \
   && grep -q 'namespace 删除不在存活引擎保证范围' "$KEP_ZH"; then
   ok CheckNamespaceTeardownScoped; else bad CheckNamespaceTeardownScoped; fi
 
@@ -232,11 +239,19 @@ if [ -f "$KEP_EN" ] && ! grep -q 'may interrupt Recovery when the previous engin
 
 # --- group 2c: round-4 checks (delta fb6c2b36..43dab57b) ---
 
-# F18 (F-PROPAGATED-SNAPSHOT-EDIT, nit). RBG-managed RIS lifecycle snapshot
-#     ownership must be stated: propagated from the Role, must not be
-#     independently edited or combined with the legacy protocol (EN+zh).
-if [ -f "$KEP_EN" ] && grep -q 'must not be independently edited' "$KEP_EN" \
-  && grep -q '不得独立修改' "$KEP_ZH"; then
+# F18 (F-PROPAGATED-SNAPSHOT-EDIT, nit; Harness-update, round 5). RBG-managed
+#     RIS lifecycle snapshot ownership must be stated. Round 5 reworded the
+#     clause ("must not be independently edited or combined with the legacy
+#     protocol" -> "is not independently editable" + the stronger overwrite
+#     rule "Direct edits ... are unsupported and are overwritten on the next
+#     RBG reconcile"); the not-combined-with-legacy clause is now carried by
+#     the user-configured clarification (any non-empty legacy spec.lifecycle
+#     on an RBG-managed RIS is treated as user configuration -> admission
+#     rejects the combination). Wrap-tolerant EN pin + zh mirror.
+if [ -f "$KEP_EN" ] && tr '\n' ' ' < "$KEP_EN" | tr -s ' ' \
+    | grep -q 'propagated from the Role and is *not independently editable' \
+  && grep -q 'are unsupported and are overwritten' "$KEP_EN" \
+  && grep -q '不支持直接修改' "$KEP_ZH"; then
   ok CheckSnapshotOwnershipStated; else bad CheckSnapshotOwnershipStated; fi
 
 # F19 (F-ZH-ENGLISH-TERMS, nit). The zh-CN file must not embed the untranslated
@@ -264,6 +279,109 @@ else
   naming_ok=0
 fi
 if [ "$naming_ok" -eq 1 ]; then ok CheckMarkNotReadyNaming; else bad CheckMarkNotReadyNaming; fi
+
+# --- group 2d: round-5 checks (delta 43dab57b..6c15cc92) ---
+
+# flat(): collapse newlines so pins survive the KEP's hard-wrapped prose.
+flat() { tr '\n' ' ' < "$1" | tr -s ' '; }
+
+# F21 (F-COEXIST-GATE-EDGE, round-4 question; gate-off half FIXED in round 5).
+#     The KEP must state the gate-off behavior of the new protocol fields and
+#     the legacy protocol's status while the gate is disabled (EN+zh).
+if [ -f "$KEP_EN" ] && grep -q 'The gate defaults to false' "$KEP_EN" \
+  && flat "$KEP_EN" | grep -q 'the new protocol fields are rejected and the legacy RIS lifecycle protocol retains its existing behavior' \
+  && grep -q '默认关闭' "$KEP_ZH" && grep -q '拒绝新协议字段' "$KEP_ZH"; then
+  ok CheckGateOffBehaviorStated; else bad CheckGateOffBehaviorStated; fi
+
+# F22 (F-TESTPLAN-ABSENCE-CONTRADICTION, round-4 nit; FIXED in round 5). The
+#     integration-test bullet must agree with the round-4 absence semantics:
+#     new bullet present, stale round-3 bullet absent (EN+zh).
+if [ -f "$KEP_EN" ] \
+  && grep -q 'Hook disablement stops marker matching on the next reconciliation' "$KEP_EN" \
+  && ! grep -q 'disablement during an unfinished operation does not skip' "$KEP_EN" \
+  && grep -q '即使其他 lifecycle 操作尚未完成' "$KEP_ZH" \
+  && ! grep -q '操作未完成时禁用不得跳过' "$KEP_ZH"; then
+  ok CheckAbsenceTestplanConsistent; else bad CheckAbsenceTestplanConsistent; fi
+
+# F23 (F-STALE-LABEL-DISPOSITION, round-4 nit; FIXED in round 5). Hook REMOVAL
+#     now has a single disposition ("removes", both prose sites + test bullet),
+#     while RECONFIGURATION (markerA->markerB) deliberately keeps the old
+#     marker in place — the distinction the finding suggested (EN+zh).
+if [ -f "$KEP_EN" ] && grep -q 'removes its stale runtime labels' "$KEP_EN" \
+  && grep -q 'removes stale runtime labels owned by the protocol' "$KEP_EN" \
+  && grep -q 'without migrating or removing the old marker' "$KEP_EN" \
+  && grep -q '清理遗留 runtime labels，并按已放行' "$KEP_ZH" \
+  && grep -q '不迁移或清理旧 marker' "$KEP_ZH"; then
+  ok CheckStaleLabelDispositionSingle; else bad CheckStaleLabelDispositionSingle; fi
+
+# F24 (F-TESTPLAN-PREFIX-COVERAGE, NEW round-5 nit; contract FAILS while open).
+#     Round 5 strengthened the design rule: handler keys are rejected when they
+#     equal the exact hook-state key OR use the reserved rbg.workloads.x-k8s.io/
+#     prefix. The integration-test bullet still covers only the exact-key
+#     collision (EN+zh). Vacuous pass on refs without the strengthened rule.
+prefix_rule_present=0
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'use the reserved .rbg.workloads.x-k8s.io/. prefix'; then
+  prefix_rule_present=1
+fi
+if [ "$prefix_rule_present" -eq 0 ]; then
+  ok CheckTestplanPrefixCoverage   # rule absent on this ref: nothing to cover
+elif sed -n '/#### Integration Tests/,/### Graduation/p' "$KEP_EN" | grep -q 'prefix' \
+  && sed -n '/#### 集成测试/,/### 成熟度晋级/p' "$KEP_ZH" | grep -q '前缀'; then
+  ok CheckTestplanPrefixCoverage; else bad CheckTestplanPrefixCoverage; fi
+
+# F25 (F-CONFIG-REMOVAL-SKIPS-HOOK, round-4 question; still OPEN in round 5).
+#     Contract FAILS while open: Risks or Troubleshooting must acknowledge that
+#     removing/disabling a hook's CONFIGURATION skips the executor (and, for
+#     preDelete mid-deletion, force-releases the barrier). Marker-level
+#     break-glass guidance does not count. A pass is a change signal: a human
+#     must then confirm the added wording actually covers the risk.
+ack_en=1; ack_zh=1
+if [ -f "$KEP_EN" ]; then
+  { sed -n '/### Risks and Mitigations/,/## Design Details/p' "$KEP_EN"
+    sed -n '/### Troubleshooting/,/## Implementation History/p' "$KEP_EN"
+  } | grep -iE 'remov|disabl' | grep -i 'hook' | grep -qvi 'marker' || ack_en=0
+fi
+if [ -f "$KEP_ZH" ]; then
+  { sed -n '/### 风险与缓解措施/,/### 挂载点与触发边界/p' "$KEP_ZH"
+    sed -n '/### 故障排查/,/^## /p' "$KEP_ZH"
+  } | grep -E '删除|禁用|移除' | grep 'hook' | grep -qv 'marker' || ack_zh=0
+fi
+if [ "$ack_en" -eq 1 ] && [ "$ack_zh" -eq 1 ]; then
+  ok CheckRemovalRiskAcknowledged; else bad CheckRemovalRiskAcknowledged; fi
+
+# F26 (round-5 content guard). preDelete executor must be independently
+#     deployed and available before the application Pod is deleted (EN+zh).
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'preDelete. executor must be independently deployed' \
+  && grep -q '必须独立部署' "$KEP_ZH"; then
+  ok CheckPreDeleteExecutorIndependent; else bad CheckPreDeleteExecutorIndependent; fi
+
+# F27 (round-5 content guard). An RI that already has a deletionTimestamp never
+#     exposes preDelete; that deletion continues without the hook (EN+zh).
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'the hook is never exposed on that RI and its deletion continues without' \
+  && grep -q '该 RI 不暴露 preDelete' "$KEP_ZH"; then
+  ok CheckDeletingRINeverExposesHook; else bad CheckDeletingRINeverExposesHook; fi
+
+# F28 (round-5 content guard). The strengthened marker-key admission rule:
+#     reject keys equal to the exact hook-state key or using the reserved
+#     rbg.workloads.x-k8s.io/ prefix (EN+zh).
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'use the reserved .rbg.workloads.x-k8s.io/. prefix' \
+  && flat "$KEP_ZH" | grep -q '使用保留的 .rbg.workloads.x-k8s.io/. 前缀'; then
+  ok CheckReservedPrefixRejected; else bad CheckReservedPrefixRejected; fi
+
+# F29 (round-5 content guard). Field ownership is explicit: users own the
+#     authoritative configuration; the controller owns phase, hook-state, the
+#     effective RI snapshot, and the reserved finalizer (EN+zh).
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'users own the authoritative lifecycle configuration' \
+  && grep -q '字段所有权明确' "$KEP_ZH"; then
+  ok CheckFieldOwnershipExplicit; else bad CheckFieldOwnershipExplicit; fi
+
+# F30 (round-5 content guard). The mutual-exclusion check defines
+#     "user-configured" for the legacy field on an RBG-managed RIS: any
+#     non-empty legacy spec.lifecycle the RBG controller does not own is
+#     treated as user configuration (EN+zh).
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'treated as user configuration' \
+  && grep -q '视为用户配置' "$KEP_ZH"; then
+  ok CheckUserConfiguredClarified; else bad CheckUserConfiguredClarified; fi
 
 # --- group 3: document hygiene (regression guards for future revisions) ---
 
