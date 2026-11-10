@@ -1,0 +1,30 @@
+Harness-bites check (Step 4 of review-finding-verifier), PR #558 head 4d82f84.
+
+Probe fixes applied temporarily (then reverted; production diff confirmed empty):
+
+1. pkg/inplace/instance/lifecycle/lifecycle_utils.go
+   - executeRoleInstanceNotReadyPolicy: Normal now also removes the
+     preDeleteHook readiness key (previously only preparingUpdateHook).
+   - UpdateRoleInstanceLifecycle: re-read the object after the markPodNotReady
+     status write so the optimistic-lock label patch is preconditioned on the
+     current resourceVersion.
+2. pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go
+   - updateInstances: revert PreparingDelete -> Normal for in-range instances
+     at updateRev that are no longer pending deletion (mirrors statelessmode
+     managePreparingDelete), scoped to instances at updateRev so mid-rollout
+     announcements are not clobbered.
+
+Results with probes applied (go test -run TestVerify558 ./pkg/reconciler/roleinstanceset/statefulmode/ ./pkg/inplace/instance/lifecycle/):
+
+  CONTRACT TestVerify558RegretRevertsPreparingDeleteState   FAIL -> PASS  (bites: F1 reproduced by the test)
+  CONTRACT TestVerify558MarkNotReadyAnnounceSingleCall      FAIL -> PASS  (bites: F2 reproduced by the test)
+  CANARY   TestVerify558RegretLeavesInstanceUnavailableCanary PASS -> FAIL (flips as required when fixed)
+  CANARY   TestVerify558RegretOrderedReadyFreezesScaleUpCanary  PASS -> PASS (see README: only the gate key
+           is cleared at this layer; the RoleInstanceReady condition is recomputed by the RoleInstance
+           controller in a real cluster, which this unit harness does not run)
+  CONTRACT TestVerify558OrderedReadyMarkNotReadyReleaseResumes  PASS -> PASS (probe does not break the
+           intended wait-then-release flow)
+
+Probe fixes reverted afterwards; `git diff 4d82f84` shows only the additive
+harness files. The probe code above is NOT a complete production fix - see
+README.md "Proposed fixes" for what a real fix must additionally cover.

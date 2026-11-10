@@ -1,0 +1,85 @@
+{
+  "_comment": "Reviewer A (Claude) verification harness for sgl-project/rbg PR #558. Production code on this branch is identical to the PR head; only the harness is additive. See README.md for the observed-vs-expected table.",
+  "topic": "stateful-predelete-558",
+  "pr": "https://github.com/sgl-project/rbg/pull/558",
+  "harnessPaths": [
+    "docs/verification/stateful-predelete-558",
+    "pkg/reconciler/roleinstanceset/statefulmode/verify_predelete_558_test.go",
+    "pkg/inplace/instance/lifecycle/lifecycle_announce_conflict_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "PR body: 'Stateful RoleInstanceSet rolling updates and scale-down can delete a RoleInstance without waiting for its existing spec.lifecycle.preDelete hook.'",
+    "reportedComponent": "pkg/reconciler/roleinstanceset/statefulmode (processCondemned / applyTargetUpdate delete paths)",
+    "patchedComponent": "pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go (deleteInstance + progressUpdate) and pkg/inplace/instance/lifecycle/lifecycle_utils.go",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "PR's own lifecycle_test.go grafted onto base fd160cc: both subtests FAIL (deletion proceeds immediately while the consumer hold label is present); same tests pass on head 4d82f84. See results/premise-base-differential.txt",
+    "match": [
+      "TestStatefulRollingUpdateAndScaleDownWaitForPreDeleteHook"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -mod=vendor ./pkg/reconciler/roleinstanceset/statefulmode/ ./pkg/inplace/instance/lifecycle/ -run 'TestVerify558|TestStatefulRollingUpdateAndScaleDownWaitForPreDeleteHook' -count=1 -timeout 10m"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify558RegretRevertsPreparingDeleteState"
+      ]
+    },
+    {
+      "id": "F1-impact-unavailable",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerify558RegretLeavesInstanceUnavailableCanary"
+      ]
+    },
+    {
+      "id": "F1-impact-orderedready",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerify558RegretOrderedReadyFreezesScaleUpCanary"
+      ]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify558MarkNotReadyAnnounceSingleCall"
+      ]
+    },
+    {
+      "id": "P0",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestStatefulRollingUpdateAndScaleDownWaitForPreDeleteHook"
+      ]
+    },
+    {
+      "id": "F4-guard-release-resumes",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerify558OrderedReadyMarkNotReadyReleaseResumes"
+      ]
+    }
+  ],
+  "liveNote": "L3 (live cluster) not run per round policy: unit + integration layers only. A live check would scale a stateful RoleInstanceSet with a held drain label and observe the RoleInstance entering PreparingDelete without a deletionTimestamp, then repeat the regret scenario (scale back up) and watch ReadyReplicas/availability fail to recover.",
+  "reviewer": "claude",
+  "headSha": "4d82f841585459509f0d5d68e545678e38747864",
+  "baseSha": "fd160cc964b0e1438bead4ad7324d0a8f0bf5eac",
+  "previousHeadSha": null
+}

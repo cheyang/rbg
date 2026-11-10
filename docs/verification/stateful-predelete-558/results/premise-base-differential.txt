@@ -1,0 +1,4 @@
+--- FAIL: TestStatefulRollingUpdateAndScaleDownWaitForPreDeleteHook (0.04s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.056s
+FAIL

@@ -1,0 +1,7 @@
+--- FAIL: TestVerify558RegretRevertsPreparingDeleteState (0.05s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.065s
+--- FAIL: TestVerify558MarkNotReadyAnnounceSingleCall (0.04s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	0.056s
+FAIL
