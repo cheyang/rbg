@@ -1,0 +1,25 @@
+re-verify: manifest = docs/verification/v1alpha1-deprecation-removal/verify-manifest.json
+re-verify: resolving PR head via 'git fetch https://github.com/sgl-project/rbg.git pull/556/head' (machine-independent)
+re-verify: current head = 91d244f5abe71543b74e11db12db67225b92a51e
+re-verify: last-reviewed = 22b2212b5b7a141c61fcb7fb76907a71964143d6  (review delta = 22b2212b5b7a141c61fcb7fb76907a71964143d6..91d244f5abe71543b74e11db12db67225b92a51e)
+re-verify: fixed-ref=91d244f5abe71543b74e11db12db67225b92a51e  harness-from=verify/v1alpha1-deprecation-removal-claude
+re-verify: running layer 'unit' (gotest)
+re-verify: running layer 'integration' (ginkgo)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+V1-gate-reaches-v1alpha1 contract  integration  FIXED          pass=3 fail=0 miss=0
+V2-single-warning contract  integration  FIXED          pass=1 fail=0 miss=0
+V3-grandfathering contract  integration  FIXED          pass=3 fail=0 miss=0
+V4-manifests-and-warning-text contract  unit         FIXED          pass=2 fail=0 miss=0
+claude-v1a1-coverage-gap contract  integration  FIXED          pass=2 fail=0 miss=0
+
+Live layer (manual): L3 not applicable per round policy (unit + integration only). If ever run live: install the shipped manifests with a real controller and check `kubectl apply` of a v1alpha1 object prints exactly one deprecation warning (kubectl surfaces Warning headers) and a new deprecated use is rejected with the RoleInstanceSet migration hint.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/v1alpha1-deprecation-removal/results/reverify
+
+Review delta this round: 22b2212b5b7a141c61fcb7fb76907a71964143d6..91d244f5abe71543b74e11db12db67225b92a51e
+After reviewing that delta, advance the marker for the next round:
+  echo 91d244f5abe71543b74e11db12db67225b92a51e > docs/verification/v1alpha1-deprecation-removal/.last-reviewed && git add docs/verification/v1alpha1-deprecation-removal/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: all findings fixed.

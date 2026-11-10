@@ -1,0 +1,5 @@
+flake-canary: testing ref 91d244f5abe71543b74e11db12db67225b92a51e
+flake-canary: seed 7 FAILED (wire-first order -> namespace AlreadyExists)
+flake-canary: seed 1794329328 FAILED (wire-first order -> namespace AlreadyExists)
+flake-canary: control seed 42 PASSED (order-dependent, not a hard failure)
+flake-canary: CANARY GREEN — order-flake reproduced (bug present).

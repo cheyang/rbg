@@ -1,0 +1,770 @@
+[
+  {
+    "SuitePath": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate",
+    "SuiteDescription": "v1alpha1 Request Path Gate Suite",
+    "SuiteLabels": [],
+    "SuiteSemVerConstraints": [],
+    "SuiteSucceeded": false,
+    "SuiteHasProgrammaticFocus": false,
+    "SpecialSuiteFailureReasons": null,
+    "PreRunStats": {
+      "TotalSpecs": 7,
+      "SpecsThatWillRun": 7
+    },
+    "StartTime": "2026-11-11T00:50:07.167895284+08:00",
+    "EndTime": "2026-11-11T00:50:13.529734178+08:00",
+    "RunTime": 6361838894,
+    "SuiteConfig": {
+      "RandomSeed": 7,
+      "RandomizeAllSpecs": false,
+      "FocusStrings": null,
+      "SkipStrings": null,
+      "FocusFiles": null,
+      "SkipFiles": null,
+      "LabelFilter": "",
+      "SemVerFilter": "",
+      "FailOnPending": false,
+      "FailOnEmpty": false,
+      "FailFast": false,
+      "FlakeAttempts": 0,
+      "MustPassRepeatedly": 0,
+      "DryRun": false,
+      "PollProgressAfter": 0,
+      "PollProgressInterval": 0,
+      "Timeout": 3600000000000,
+      "EmitSpecProgress": false,
+      "OutputInterceptorMode": "",
+      "SourceRoots": null,
+      "GracePeriod": 30000000000,
+      "ParallelProcess": 1,
+      "ParallelTotal": 1,
+      "ParallelHost": ""
+    },
+    "SpecReports": [
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "BeforeSuite",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/suite_test.go",
+          "LineNumber": 36
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-11-11T00:50:07.167921825+08:00",
+        "EndTime": "2026-11-11T00:50:13.489855018+08:00",
+        "RunTime": 6321933194,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-11-11T00:50:07+08:00\tDEBUG\tcontroller-runtime.test-env\tstarting control plane\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRDs\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\treading CRDs from path\t{\"path\": \"/tmp/rbg-head-556/config/crd/bases\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_clusterengineruntimeprofiles.yaml\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_coordinatedpolicies.yaml\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instances.yaml\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_instancesets.yaml\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroups.yaml\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupscalingadapters.yaml\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupsets.yaml\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_rolebasedgroupwarmups.yaml\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstances.yaml\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tread CRDs from file\t{\"file\": \"workloads.x-k8s.io_roleinstancesets.yaml\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"clusterengineruntimeprofiles.workloads.x-k8s.io\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"coordinatedpolicies.workloads.x-k8s.io\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instances.workloads.x-k8s.io\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"instancesets.workloads.x-k8s.io\"}\n2026-11-11T00:50:09+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroups.workloads.x-k8s.io\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupscalingadapters.workloads.x-k8s.io\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstancesets.workloads.x-k8s.io\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupsets.workloads.x-k8s.io\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"rolebasedgroupwarmups.workloads.x-k8s.io\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling CRD\t{\"crd\": \"roleinstances.workloads.x-k8s.io\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha1\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-11T00:50:10+08:00\tDEBUG\tcontroller-runtime.test-env\tadding API in waitlist\t{\"GV\": \"workloads.x-k8s.io/v1alpha2\"}\n2026-11-11T00:50:11+08:00\tDEBUG\tcontroller-runtime.test-env\tinstalling webhooks\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup\"}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/convert\"}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroup\"}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.builder\tRegistering a validating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\", \"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset\"}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.builder\tConversion webhook enabled\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleBasedGroupSet\"}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.builder\tRegistering a mutating webhook\t{\"GVK\": \"workloads.x-k8s.io/v1alpha2, Kind=RoleInstanceSet\", \"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.webhook\tRegistering webhook\t{\"path\": \"/mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset\"}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.webhook\tStarting webhook server\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.certwatcher\tUpdated current TLS certificate\t{\"cert\": \"/tmp/envtest-serving-certs-3300354837/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-3300354837/tls.key\"}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.webhook\tServing webhook server\t{\"host\": \"127.0.0.1\", \"port\": 45919}\n2026-11-11T00:50:11+08:00\tINFO\tcontroller-runtime.certwatcher\tStarting certificate poll+watcher\t{\"cert\": \"/tmp/envtest-serving-certs-3300354837/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-3300354837/tls.key\", \"interval\": \"10s\"}\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/suite_test.go",
+              "LineNumber": 36
+            },
+            "TimelineLocation": {
+              "Order": 1,
+              "Time": "2026-11-11T00:50:07.167930755+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "BeforeSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testutil/v1a1gate_setup.go",
+              "LineNumber": 56
+            },
+            "TimelineLocation": {
+              "Order": 2,
+              "Time": "2026-11-11T00:50:07.167976396+08:00"
+            },
+            "Message": "bootstrapping v1alpha1 gate test environment with conversion webhooks"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testutil/v1a1gate_setup.go",
+              "LineNumber": 93
+            },
+            "TimelineLocation": {
+              "Offset": 4653,
+              "Order": 3,
+              "Time": "2026-11-11T00:50:11.31016553+08:00"
+            },
+            "Message": "registering the production v1alpha2 webhooks (validators + conversion)"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testutil/v1a1gate_setup.go",
+              "LineNumber": 144
+            },
+            "TimelineLocation": {
+              "Offset": 7475,
+              "Order": 4,
+              "Time": "2026-11-11T00:50:11.410984109+08:00"
+            },
+            "Message": "installing the v1alpha2 validating webhook configuration"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/suite_test.go",
+              "LineNumber": 36
+            },
+            "TimelineLocation": {
+              "Offset": 7475,
+              "Order": 6,
+              "Time": "2026-11-11T00:50:13.489853138+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 6321922383,
+            "NodeType": "BeforeSuite"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 wire contract"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 114
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+          "LineNumber": 126
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "returns exactly one v1alpha1 deprecation warning carrying the 0.10.0 timeline",
+        "State": "passed",
+        "StartTime": "2026-11-11T00:50:13.48990827+08:00",
+        "EndTime": "2026-11-11T00:50:13.4960921+08:00",
+        "RunTime": 6183830,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 115
+            },
+            "TimelineLocation": {
+              "Order": 7,
+              "Time": "2026-11-11T00:50:13.48991312+08:00"
+            },
+            "Message": "v1alpha1 wire contract",
+            "NodeType": "BeforeAll"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 115
+            },
+            "TimelineLocation": {
+              "Order": 9,
+              "Time": "2026-11-11T00:50:13.49159649+08:00"
+            },
+            "Message": "v1alpha1 wire contract",
+            "Duration": 1683370,
+            "NodeType": "BeforeAll"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 122
+            },
+            "TimelineLocation": {
+              "Order": 10,
+              "Time": "2026-11-11T00:50:13.49159959+08:00"
+            },
+            "Message": "v1alpha1 wire contract",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 122
+            },
+            "TimelineLocation": {
+              "Order": 12,
+              "Time": "2026-11-11T00:50:13.49160976+08:00"
+            },
+            "Message": "v1alpha1 wire contract",
+            "Duration": 10170,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 126
+            },
+            "TimelineLocation": {
+              "Order": 13,
+              "Time": "2026-11-11T00:50:13.49161032+08:00"
+            },
+            "Message": "returns exactly one v1alpha1 deprecation warning carrying the 0.10.0 timeline",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 126
+            },
+            "TimelineLocation": {
+              "Order": 15,
+              "Time": "2026-11-11T00:50:13.49608661+08:00"
+            },
+            "Message": "returns exactly one v1alpha1 deprecation warning carrying the 0.10.0 timeline",
+            "Duration": 4476290,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 wire contract"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 114
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+          "LineNumber": 138
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "does not warn on v1alpha2 writes",
+        "State": "passed",
+        "StartTime": "2026-11-11T00:50:13.496115411+08:00",
+        "EndTime": "2026-11-11T00:50:13.49807397+08:00",
+        "RunTime": 1958560,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 122
+            },
+            "TimelineLocation": {
+              "Order": 16,
+              "Time": "2026-11-11T00:50:13.496119931+08:00"
+            },
+            "Message": "v1alpha1 wire contract",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 122
+            },
+            "TimelineLocation": {
+              "Order": 18,
+              "Time": "2026-11-11T00:50:13.496131801+08:00"
+            },
+            "Message": "v1alpha1 wire contract",
+            "Duration": 11870,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 138
+            },
+            "TimelineLocation": {
+              "Order": 19,
+              "Time": "2026-11-11T00:50:13.496133412+08:00"
+            },
+            "Message": "does not warn on v1alpha2 writes",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 138
+            },
+            "TimelineLocation": {
+              "Order": 21,
+              "Time": "2026-11-11T00:50:13.49806932+08:00"
+            },
+            "Message": "does not warn on v1alpha2 writes",
+            "Duration": 1935908,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 wire contract"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 114
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+          "LineNumber": 158
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a v1alpha1 create that omits the workload field",
+        "State": "passed",
+        "StartTime": "2026-11-11T00:50:13.498094371+08:00",
+        "EndTime": "2026-11-11T00:50:13.499299224+08:00",
+        "RunTime": 1204853,
+        "ParallelProcess": 1,
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 122
+            },
+            "TimelineLocation": {
+              "Order": 22,
+              "Time": "2026-11-11T00:50:13.498099071+08:00"
+            },
+            "Message": "v1alpha1 wire contract",
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 122
+            },
+            "TimelineLocation": {
+              "Order": 24,
+              "Time": "2026-11-11T00:50:13.498108892+08:00"
+            },
+            "Message": "v1alpha1 wire contract",
+            "Duration": 9821,
+            "NodeType": "BeforeEach"
+          },
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 158
+            },
+            "TimelineLocation": {
+              "Order": 25,
+              "Time": "2026-11-11T00:50:13.498109682+08:00"
+            },
+            "Message": "rejects a v1alpha1 create that omits the workload field",
+            "NodeType": "It"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 158
+            },
+            "TimelineLocation": {
+              "Order": 27,
+              "Time": "2026-11-11T00:50:13.499297074+08:00"
+            },
+            "Message": "rejects a v1alpha1 create that omits the workload field",
+            "Duration": 1187392,
+            "NodeType": "It"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 request path through the conversion chain"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 53
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+          "LineNumber": 58
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a new deprecated use submitted via v1alpha1 (conversion -\u003e v1alpha2 gate)",
+        "State": "failed",
+        "StartTime": "2026-11-11T00:50:13.499316375+08:00",
+        "EndTime": "2026-11-11T00:50:13.500771326+08:00",
+        "RunTime": 1454962,
+        "ParallelProcess": 1,
+        "Failure": {
+          "Message": "Expected success, but got an error:\n    \u003c*errors.StatusError | 0x8dbf792c3c0\u003e: \n    namespaces \"v1a1-gate-test\" already exists\n    {\n        ErrStatus: {\n            TypeMeta: {Kind: \"\", APIVersion: \"\"},\n            ListMeta: {\n                SelfLink: \"\",\n                ResourceVersion: \"\",\n                Continue: \"\",\n                RemainingItemCount: nil,\n            },\n            Status: \"Failure\",\n            Message: \"namespaces \\\"v1a1-gate-test\\\" already exists\",\n            Reason: \"AlreadyExists\",\n            Details: {\n                Name: \"v1a1-gate-test\",\n                Group: \"\",\n                Kind: \"namespaces\",\n                UID: \"\",\n                Causes: nil,\n                RetryAfterSeconds: 0,\n            },\n            Code: 409,\n        },\n    }",
+          "Location": {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testutil/setup.go",
+            "LineNumber": 152,
+            "FullStackTrace": "sigs.k8s.io/rbgs/test/envtest/testutil.CreateNamespace({0x1b48c4d, 0xe})\n\t/tmp/rbg-head-556/test/envtest/testutil/setup.go:152 +0xc3\nsigs.k8s.io/rbgs/test/envtest/testcase/v1a1gate.init.func1.1()\n\t/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go:55 +0x1f"
+          },
+          "TimelineLocation": {
+            "Order": 29,
+            "Time": "2026-11-11T00:50:13.500762316+08:00"
+          },
+          "FailureNodeContext": "in-container",
+          "FailureNodeType": "BeforeAll",
+          "FailureNodeLocation": {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 54
+          },
+          "ProgressReport": {
+            "LeafNodeLocation": {},
+            "SpecStartTime": "0001-01-01T00:00:00Z",
+            "CurrentNodeLocation": {},
+            "CurrentNodeStartTime": "0001-01-01T00:00:00Z",
+            "CurrentStepLocation": {},
+            "CurrentStepStartTime": "0001-01-01T00:00:00Z",
+            "TimelineLocation": {
+              "Time": "0001-01-01T00:00:00Z"
+            }
+          }
+        },
+        "NumAttempts": 1,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 54
+            },
+            "TimelineLocation": {
+              "Order": 28,
+              "Time": "2026-11-11T00:50:13.499325315+08:00"
+            },
+            "Message": "v1alpha1 request path through the conversion chain",
+            "NodeType": "BeforeAll"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+              "LineNumber": 54
+            },
+            "TimelineLocation": {
+              "Order": 30,
+              "Time": "2026-11-11T00:50:13.500767346+08:00"
+            },
+            "Message": "v1alpha1 request path through the conversion chain",
+            "Duration": 1442031,
+            "NodeType": "BeforeAll"
+          }
+        ]
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 request path through the conversion chain"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 53
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+          "LineNumber": 71
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "accepts a v1alpha1 create with explicit RoleInstanceSet",
+        "State": "skipped",
+        "StartTime": "2026-11-11T00:50:13.500826628+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "Failure": {
+          "Message": "Spec skipped because an earlier spec in an ordered container failed",
+          "Location": {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 71
+          },
+          "TimelineLocation": {
+            "Order": 31,
+            "Time": "2026-11-11T00:50:13.500825899+08:00"
+          },
+          "FailureNodeContext": "leaf-node",
+          "FailureNodeType": "It",
+          "FailureNodeLocation": {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 71
+          },
+          "ProgressReport": {
+            "LeafNodeLocation": {},
+            "SpecStartTime": "0001-01-01T00:00:00Z",
+            "CurrentNodeLocation": {},
+            "CurrentNodeStartTime": "0001-01-01T00:00:00Z",
+            "CurrentStepLocation": {},
+            "CurrentStepStartTime": "0001-01-01T00:00:00Z",
+            "TimelineLocation": {
+              "Time": "0001-01-01T00:00:00Z"
+            }
+          }
+        },
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 request path through the conversion chain"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 53
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+          "LineNumber": 76
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "rejects a v1alpha1 RBGSet whose template uses a deprecated type",
+        "State": "skipped",
+        "StartTime": "2026-11-11T00:50:13.500831529+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "Failure": {
+          "Message": "Spec skipped because an earlier spec in an ordered container failed",
+          "Location": {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 76
+          },
+          "TimelineLocation": {
+            "Order": 32,
+            "Time": "2026-11-11T00:50:13.500831109+08:00"
+          },
+          "FailureNodeContext": "leaf-node",
+          "FailureNodeType": "It",
+          "FailureNodeLocation": {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 76
+          },
+          "ProgressReport": {
+            "LeafNodeLocation": {},
+            "SpecStartTime": "0001-01-01T00:00:00Z",
+            "CurrentNodeLocation": {},
+            "CurrentNodeStartTime": "0001-01-01T00:00:00Z",
+            "CurrentStepLocation": {},
+            "CurrentStepStartTime": "0001-01-01T00:00:00Z",
+            "TimelineLocation": {
+              "Time": "0001-01-01T00:00:00Z"
+            }
+          }
+        },
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": [
+          "v1alpha1 request path through the conversion chain"
+        ],
+        "ContainerHierarchyLocations": [
+          {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 53
+          }
+        ],
+        "ContainerHierarchyLabels": [
+          []
+        ],
+        "ContainerHierarchySemVerConstraints": [
+          []
+        ],
+        "LeafNodeType": "It",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+          "LineNumber": 105
+        },
+        "LeafNodeLabels": [],
+        "LeafNodeSemVerConstraints": [],
+        "LeafNodeText": "leaves v1alpha1 deletes ungated",
+        "State": "skipped",
+        "StartTime": "2026-11-11T00:50:13.500834329+08:00",
+        "EndTime": "0001-01-01T00:00:00Z",
+        "RunTime": 0,
+        "ParallelProcess": 1,
+        "Failure": {
+          "Message": "Spec skipped because an earlier spec in an ordered container failed",
+          "Location": {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 105
+          },
+          "TimelineLocation": {
+            "Order": 33,
+            "Time": "2026-11-11T00:50:13.500834039+08:00"
+          },
+          "FailureNodeContext": "leaf-node",
+          "FailureNodeType": "It",
+          "FailureNodeLocation": {
+            "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/gate_test.go",
+            "LineNumber": 105
+          },
+          "ProgressReport": {
+            "LeafNodeLocation": {},
+            "SpecStartTime": "0001-01-01T00:00:00Z",
+            "CurrentNodeLocation": {},
+            "CurrentNodeStartTime": "0001-01-01T00:00:00Z",
+            "CurrentStepLocation": {},
+            "CurrentStepStartTime": "0001-01-01T00:00:00Z",
+            "TimelineLocation": {
+              "Time": "0001-01-01T00:00:00Z"
+            }
+          }
+        },
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0
+      },
+      {
+        "ContainerHierarchyTexts": null,
+        "ContainerHierarchyLocations": null,
+        "ContainerHierarchyLabels": null,
+        "ContainerHierarchySemVerConstraints": null,
+        "LeafNodeType": "AfterSuite",
+        "LeafNodeLocation": {
+          "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/suite_test.go",
+          "LineNumber": 40
+        },
+        "LeafNodeLabels": null,
+        "LeafNodeSemVerConstraints": null,
+        "LeafNodeText": "",
+        "State": "passed",
+        "StartTime": "2026-11-11T00:50:13.500836709+08:00",
+        "EndTime": "2026-11-11T00:50:13.529724717+08:00",
+        "RunTime": 28888019,
+        "ParallelProcess": 1,
+        "NumAttempts": 0,
+        "MaxFlakeAttempts": 0,
+        "MaxMustPassRepeatedly": 0,
+        "CapturedGinkgoWriterOutput": "2026-11-11T00:50:13+08:00\tINFO\tStopping and waiting for non leader election runnables\n2026-11-11T00:50:13+08:00\tINFO\tStopping and waiting for leader election runnables\n2026-11-11T00:50:13+08:00\tINFO\tStopping and waiting for caches\n2026-11-11T00:50:13+08:00\tINFO\tStopping and waiting for warmup runnables\n2026-11-11T00:50:13+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-watching file\t{\"cert\": \"/tmp/envtest-serving-certs-3300354837/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-3300354837/tls.key\", \"error\": \"no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/tmp/rbg-head-556/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:235\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/tmp/rbg-head-556/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-11-11T00:50:13+08:00\tINFO\tStopping and waiting for webhooks\n2026-11-11T00:50:13+08:00\tDEBUG\tcontroller-runtime.certwatcher\tcertificate event\t{\"cert\": \"/tmp/envtest-serving-certs-3300354837/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-3300354837/tls.key\", \"event\": \"CHMOD         \\\"/tmp/envtest-serving-certs-3300354837/tls.key\\\"\"}\n2026-11-11T00:50:13+08:00\tERROR\tcontroller-runtime.certwatcher\terror re-reading certificate\t{\"cert\": \"/tmp/envtest-serving-certs-3300354837/tls.crt\", \"key\": \"/tmp/envtest-serving-certs-3300354837/tls.key\", \"error\": \"open /tmp/envtest-serving-certs-3300354837/tls.crt: no such file or directory\"}\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).handleEvent\n\t/tmp/rbg-head-556/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:243\nsigs.k8s.io/controller-runtime/pkg/certwatcher.(*CertWatcher).Watch\n\t/tmp/rbg-head-556/vendor/sigs.k8s.io/controller-runtime/pkg/certwatcher/certwatcher.go:159\n2026-11-11T00:50:13+08:00\tINFO\tcontroller-runtime.webhook\tShutting down webhook server with timeout of 1 minute\n2026-11-11T00:50:13+08:00\tINFO\tStopping and waiting for HTTP servers\n2026-11-11T00:50:13+08:00\tINFO\tWait completed, proceeding to shutdown the manager\n",
+        "SpecEvents": [
+          {
+            "SpecEventType": "Node",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/suite_test.go",
+              "LineNumber": 40
+            },
+            "TimelineLocation": {
+              "Order": 34,
+              "Time": "2026-11-11T00:50:13.500837989+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "NodeType": "AfterSuite"
+          },
+          {
+            "SpecEventType": "By",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testutil/setup.go",
+              "LineNumber": 140
+            },
+            "TimelineLocation": {
+              "Order": 35,
+              "Time": "2026-11-11T00:50:13.500850649+08:00"
+            },
+            "Message": "tearing down the test environment"
+          },
+          {
+            "SpecEventType": "Node (End)",
+            "CodeLocation": {
+              "FileName": "/tmp/rbg-head-556/test/envtest/testcase/v1a1gate/suite_test.go",
+              "LineNumber": 40
+            },
+            "TimelineLocation": {
+              "Offset": 2089,
+              "Order": 37,
+              "Time": "2026-11-11T00:50:13.529723008+08:00"
+            },
+            "Message": "TOP-LEVEL",
+            "Duration": 28885018,
+            "NodeType": "AfterSuite"
+          }
+        ]
+      }
+    ]
+  }
+]

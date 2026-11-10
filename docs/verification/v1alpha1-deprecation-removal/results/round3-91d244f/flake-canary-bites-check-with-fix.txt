@@ -1,0 +1,5 @@
+flake-canary: testing ref flake-fix-556
+flake-canary: seed 7 PASSED (chain-first or flake fixed)
+flake-canary: seed 1794329328 PASSED (chain-first or flake fixed)
+flake-canary: control seed 42 PASSED (order-dependent, not a hard failure)
+flake-canary: CANARY FLIPPED — suite passed at the previously-failing seeds: the flake is fixed. Invert this canary.

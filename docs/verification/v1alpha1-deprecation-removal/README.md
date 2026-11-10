@@ -192,6 +192,103 @@ Two notes on the new suite's setup (both verified empirically):
 
 `.last-reviewed` advanced to `22b2212b`.
 
+## Round 3 — head `91d244f5abe71543b74e11db12db67225b92a51e` (incremental)
+
+Delta `22b2212b..91d244f` (commit `91d244f`, "test(v1a1gate): cover the warning
+contract and schema-defaulted rejection"): +141/−6, test-only, touching only
+`test/envtest/testcase/v1a1gate/gate_test.go` and
+`test/envtest/testutil/v1a1gate_setup.go`. No production code, manifests, CRDs,
+or Helm changed; base unchanged (`73e05db4`).
+
+Re-verify on the new head (`results/round3-91d244f/`):
+
+- This harness, all 11 contract specs **green** (V1 gate ×3 incl. the
+  schema-defaulted rejection, V2 single warning, V3 grandfathering ×3, V5
+  repo-suites, V4 unit ×2) — `reverify-harness-head.txt`: behavior at
+  `91d244f` is unchanged from the previously verified heads.
+- `go build ./...`, `go vet`, unit tests green (`head-build-unit.log`);
+  full envtest sweep green this run (`flake-canary.txt` context; see the
+  flake below for why "green this run" is seed luck for one package).
+- All 22 GitHub checks SUCCESS on this head (rollup observed read-only).
+
+### NEW (V5): the author's v1a1gate suite is now order-flaky — blocker
+
+`91d244f` adds a second top-level `Describe` ("v1alpha1 wire contract") whose
+`BeforeAll` creates the shared namespace `v1a1-gate-test` and **ignores the
+error**, while the original container's `BeforeAll` uses the fatal
+`testutil.CreateNamespace`. Ginkgo v2 **randomizes the order of top-level
+containers by default** (`--randomize-all` only extends this to individual
+specs; ginkgo v2.25.3 `types/config.go`: "By default, ginkgo only randomizes
+the top level Describe, Context and When containers"), with a time-based seed
+per run. When the wire-contract container is ordered first, the original
+container's `BeforeAll` fails `namespaces "v1a1-gate-test" already exists` and
+its 4 enforcement specs are skipped — the suite is red and the PR's own
+enforcement coverage does not run.
+
+Deterministic per seed (`results/round3-91d244f/flake-seed*.json`):
+
+| seed | container order | suite |
+|------|-----------------|-------|
+| 7, 1794329300, 1794329328 (+ first random run) | wire first | **FAIL** |
+| 42, 1794329336 (+ 2 random runs) | chain first | PASS |
+
+6 of 9 runs failed. Differential: previous head `22b2212b` passes at the
+failing seed `1794329328` (single container — the flake is mechanically
+impossible there), so this is a revision regression introduced by `91d244f`.
+CI's envtest job (`.github/workflows/envtest.yml:119`) runs
+`go test -v ./test/envtest/testcase/...` with no pinned seed, so the green
+envtest check on this head is seed luck; every future CI run on any PR
+re-rolls a ~2-in-3 failure.
+
+Repro (bug-canary, on this branch):
+`bash docs/verification/v1alpha1-deprecation-removal/scripts/check-v1a1gate-order-flake.sh [ref]`
+— exits 0 while the bug is present (suite fails at the wire-first seeds,
+passes at control seed 42); flips when fixed. Harness-bites: applying the
+proposed one-line fix (make the conversion-chain container's `BeforeAll`
+idempotent, mirroring the wire container's error-ignoring create) makes all
+seeds pass and the canary report FIXED-flip
+(`results/round3-91d244f/flake-canary-bites-check-with-fix.txt`). The fix was
+reverted; production/test code on this branch is untouched.
+
+### F1 coverage verdict: warning leg landed; two legs remain, now mis-claimed
+
+The new specs that genuinely land: **warning count/text** — asserts exactly
+one warning containing v1alpha1/deprecated/0.10.0 on an accepted v1alpha1
+create, plus a v1alpha2 no-warn control (the recorder rides the suite client
+via `rest.CopyConfig` + `WarningHandler`). Leg 1 of F1 is fixed in-repo.
+
+Still not covered in-repo, and now *mis-claimed as covered*:
+
+1. **Grandfathering through v1alpha1** — no UPDATE spec anywhere in the repo
+   on the v1alpha1 API; the new comment (gate_test.go:187-193) and the PR body
+   say it is covered by `test/envtest/testcase/deprecation/`, but that suite
+   imports **only** `workloadsv1alpha2`, submits only v1alpha2 objects, and
+   contains no type-exact-switch spec at all (its five specs: controller-child
+   admission, unrelated new use, forged owner ref, new set, seeded-set update
+   — all v1alpha2). The "through the v1alpha1 conversion chain" wording is
+   wrong; the v1alpha1-through-conversion grandfathering remains covered only
+   by this harness (V3).
+2. **Schema-defaulted rejection** — the new spec "rejects a v1alpha1 create
+   that omits the workload field" does not omit the field: a zero Go
+   `WorkloadSpec` marshals as `workload:{"apiVersion":"","kind":""}` (verified
+   by marshaling), which fails the apiVersion **pattern** before any
+   defaulting runs. The genuine defaulting case — `workload` key absent,
+   kubectl-style YAML, CRD default `{apiVersion: apps/v1, kind: StatefulSet}`
+   (`config/crd/bases/workloads.x-k8s.io_rolebasedgroups.yaml:16411`) — is
+   still exercised only by this harness (V1 defaults spec). The spec's own
+   comment ("pins that the v1alpha1 path cannot silently default to a
+   deprecated workload type") describes a contract it does not test. The PR
+   body's "UPDATE coverage" claim for the suite is likewise false (no
+   `Update` call exists in it).
+
+Also fixed this round: round-2 F2 (the "restore the coverage" PR-body
+sentence is gone — replaced by a per-suite enumeration) and round-2 F3 (the
+`PrepWithoutInstalling()` comment now states the correct mechanism:
+"controller-runtime's Start() itself calls PrepWithoutInstalling() ... The
+explicit call is harmless").
+
+`.last-reviewed` advanced to `91d244f5abe71543b74e11db12db67225b92a51e`.
+
 ### Kickoff prompt for a fresh agent
 
 ```text
