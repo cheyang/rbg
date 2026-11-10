@@ -317,16 +317,19 @@ if [ -f "$KEP_EN" ] && grep -q 'removes its stale runtime labels' "$KEP_EN" \
 # F24 (F-TESTPLAN-PREFIX-COVERAGE, NEW round-5 nit; contract FAILS while open).
 #     Round 5 strengthened the design rule: handler keys are rejected when they
 #     equal the exact hook-state key OR use the reserved rbg.workloads.x-k8s.io/
-#     prefix. The integration-test bullet still covers only the exact-key
-#     collision (EN+zh). Vacuous pass on refs without the strengthened rule.
+#     prefix. The unit-test bullet covering marker-key admission still tests
+#     only the exact-key collision (EN :938-940, zh :696-698). Vacuous pass on
+#     refs without the strengthened rule.
 prefix_rule_present=0
 if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'use the reserved .rbg.workloads.x-k8s.io/. prefix'; then
   prefix_rule_present=1
 fi
 if [ "$prefix_rule_present" -eq 0 ]; then
   ok CheckTestplanPrefixCoverage   # rule absent on this ref: nothing to cover
-elif sed -n '/#### Integration Tests/,/### Graduation/p' "$KEP_EN" | grep -q 'prefix' \
-  && sed -n '/#### 集成测试/,/### 成熟度晋级/p' "$KEP_ZH" | grep -q '前缀'; then
+elif sed -n '/#### Unit Tests/,/#### Integration Tests/p' "$KEP_EN" | tr '\n' ' ' | tr -s ' ' \
+    | grep -q 'controller state key[^.]*prefix' \
+  && sed -n '/#### 单元测试/,/#### 集成测试/p' "$KEP_ZH" | tr '\n' ' ' | tr -s ' ' \
+    | grep -q 'controller 状态 key[^。]*前缀'; then
   ok CheckTestplanPrefixCoverage; else bad CheckTestplanPrefixCoverage; fi
 
 # F25 (F-CONFIG-REMOVAL-SKIPS-HOOK, round-4 question; still OPEN in round 5).

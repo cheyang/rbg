@@ -30,6 +30,16 @@ CheckInterruptConditionalityClear	pass
 CheckSnapshotOwnershipStated	pass
 CheckZhTermsTranslated	pass
 CheckMarkNotReadyNaming	pass
+CheckGateOffBehaviorStated	pass
+CheckAbsenceTestplanConsistent	pass
+CheckStaleLabelDispositionSingle	pass
+CheckTestplanPrefixCoverage	fail
+CheckRemovalRiskAcknowledged	fail
+CheckPreDeleteExecutorIndependent	pass
+CheckDeletingRINeverExposesHook	pass
+CheckReservedPrefixRejected	pass
+CheckFieldOwnershipExplicit	pass
+CheckUserConfiguredClarified	pass
 CheckMarkdownlint	pass
 CheckEnZhSectionParity	pass
 CheckWhitespace	pass
