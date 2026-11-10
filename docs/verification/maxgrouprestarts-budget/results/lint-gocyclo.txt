@@ -1,0 +1,6 @@
+== head gocyclo -over 30 (threshold from .golangci.yml) ==
+33 sync (*realControl).calculateDiffsWithExpectation pkg/reconciler/roleinstance/sync/instance_scale.go:89:1
+exit=1
+
+== base ==
+exit=0 (no output = all funcs <= 30)

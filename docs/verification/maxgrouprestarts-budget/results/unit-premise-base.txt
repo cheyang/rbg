@@ -1,0 +1,8 @@
+=== RUN   TestVerifyP0EveryReadyFaultCycleTriggersRecreate
+    verify_pr560_premise_test.go:85: premise mechanism confirmed: 50 consecutive Ready->fault cycles each trigger a group recreate; no bound exists in the decision path
+--- PASS: TestVerifyP0EveryReadyFaultCycleTriggersRecreate (0.00s)
+=== RUN   TestVerifyP0BackoffCounterSelfResets
+    verify_pr560_premise_test.go:100: premise mechanism confirmed: RestartCount=1 after a 1h quiet period — backoff resets and never bounds total group rebuilds
+--- PASS: TestVerifyP0BackoffCounterSelfResets (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.013s

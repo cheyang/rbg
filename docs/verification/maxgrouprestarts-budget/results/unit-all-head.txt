@@ -1,0 +1,70 @@
+=== RUN   TestVerifyBudgetExactAccountingContract
+--- PASS: TestVerifyBudgetExactAccountingContract (0.05s)
+=== RUN   TestVerifyBudgetRevisionIdentityContract
+--- PASS: TestVerifyBudgetRevisionIdentityContract (0.00s)
+=== RUN   TestVerifyFailedDrainBurnsBudgetAttempt
+--- PASS: TestVerifyFailedDrainBurnsBudgetAttempt (0.00s)
+=== RUN   TestVerifyResizeMustNotResetBudget
+    verify_pr560_budget_test.go:358: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-11/pr-560/work/verify/pkg/reconciler/roleinstance/sync/verify_pr560_budget_test.go:358
+        	Error:      	Not equal: 
+        	            	expected: "4ca226076309e5264b2d97d7ec92517a8d954772d439bcd629d4e470fd7c9c1c"
+        	            	actual  : "cc5a1f8cf643e487cd1a31f20cdd383e00195042130dae883e7e7617360ef290"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-4ca226076309e5264b2d97d7ec92517a8d954772d439bcd629d4e470fd7c9c1c
+        	            	+cc5a1f8cf643e487cd1a31f20cdd383e00195042130dae883e7e7617360ef290
+        	Test:       	TestVerifyResizeMustNotResetBudget
+        	Messages:   	CONTRACT VIOLATION: an RIS-propagated resize must not change the budget revision — otherwise resizing bypasses exhaustion
+--- FAIL: TestVerifyResizeMustNotResetBudget (0.00s)
+=== RUN   TestVerifyNeverReadyCrashloopNeverExhausts
+--- PASS: TestVerifyNeverReadyCrashloopNeverExhausts (0.00s)
+=== RUN   TestVerifyRecoveryDuringDrainRetriggers
+--- PASS: TestVerifyRecoveryDuringDrainRetriggers (0.01s)
+=== RUN   TestVerifyP0EveryReadyFaultCycleTriggersRecreate
+    verify_pr560_premise_test.go:85: premise mechanism confirmed: 50 consecutive Ready->fault cycles each trigger a group recreate; no bound exists in the decision path
+--- PASS: TestVerifyP0EveryReadyFaultCycleTriggersRecreate (0.00s)
+=== RUN   TestVerifyP0BackoffCounterSelfResets
+    verify_pr560_premise_test.go:100: premise mechanism confirmed: RestartCount=1 after a 1h quiet period — backoff resets and never bounds total group rebuilds
+--- PASS: TestVerifyP0BackoffCounterSelfResets (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.076s
+FAIL
+=== roleinstance pkg ===
+=== RUN   TestStaleStatusPreservesLiveRestartBudget
+    instance_status_test.go:268: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-11/pr-560/work/verify/pkg/reconciler/roleinstance/instance_status_test.go:268
+        	Error:      	Not equal: 
+        	            	expected: "LiveExternal"
+        	            	actual  : "StaleExternal"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-LiveExternal
+        	            	+StaleExternal
+        	Test:       	TestStaleStatusPreservesLiveRestartBudget
+--- FAIL: TestStaleStatusPreservesLiveRestartBudget (0.04s)
+=== RUN   TestVerifyStaleStatusCannotRollbackLiveExternalCondition
+    verify_pr560_status_test.go:95: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-11/pr-560/work/verify/pkg/reconciler/roleinstance/verify_pr560_status_test.go:95
+        	Error:      	Not equal: 
+        	            	expected: "LiveExternal"
+        	            	actual  : "StaleExternal"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-LiveExternal
+        	            	+StaleExternal
+        	Test:       	TestVerifyStaleStatusCannotRollbackLiveExternalCondition
+        	Messages:   	a stale status write must not roll back a live externally-owned condition
+--- FAIL: TestVerifyStaleStatusCannotRollbackLiveExternalCondition (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.059s
+FAIL

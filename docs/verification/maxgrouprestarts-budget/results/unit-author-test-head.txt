@@ -1,0 +1,17 @@
+--- FAIL: TestStaleStatusPreservesLiveRestartBudget (0.04s)
+    instance_status_test.go:268: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-11/pr-560/work/verify/pkg/reconciler/roleinstance/instance_status_test.go:268
+        	Error:      	Not equal: 
+        	            	expected: "LiveExternal"
+        	            	actual  : "StaleExternal"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-LiveExternal
+        	            	+StaleExternal
+        	Test:       	TestStaleStatusPreservesLiveRestartBudget
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.058s
+FAIL

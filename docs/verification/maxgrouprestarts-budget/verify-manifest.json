@@ -1,0 +1,96 @@
+{
+  "topic": "maxgrouprestarts-budget",
+  "pr": "https://github.com/sgl-project/rbg/pull/560",
+  "harnessPaths": [
+    "docs/verification/maxgrouprestarts-budget",
+    "pkg/reconciler/roleinstance/sync/verify_pr560_premise_test.go",
+    "pkg/reconciler/roleinstance/sync/verify_pr560_budget_test.go",
+    "pkg/reconciler/roleinstance/verify_pr560_status_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "RBG may automatically rebuild a RoleInstance an unbounded number of times for one Pod-template revision; the backoff counter may reset after a quiet period (PR body). Linked context: issue #542 documents member-deletion / pre-Ready faults never triggering group recovery.",
+    "reportedComponent": "pkg/reconciler/roleinstance/sync (restart-policy recreate path)",
+    "patchedComponent": "pkg/reconciler/roleinstance/sync + api/workloads/* + roleinstanceset reconciler",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "On base fd160cc: 50 consecutive Ready->fault cycles each return shouldRecreateInstance=true (no bound exists), and updateRestartTracking resets RestartCount to 0 after a quiet period (backoff never becomes a bound). results/unit-premise-base.txt",
+    "match": [
+      "TestVerifyP0EveryReadyFaultCycleTriggersRecreate",
+      "TestVerifyP0BackoffCounterSelfResets"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/roleinstance/ ./pkg/reconciler/roleinstance/sync/ -run 'TestVerify|TestStaleStatusPreservesLiveRestartBudget' -count=1"
+    },
+    "integration": {
+      "kind": "gotest-envtest",
+      "cmd": "KUBEBUILDER_ASSETS=$(setup-envtest use 1.31.0 --bin-dir bin -p path 2>/dev/null || echo $HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64) go test ./test/envtest/testcase/restart_policy/... -count=1 -timeout 15m"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyStaleStatusCannotRollbackLiveExternalCondition",
+        "TestStaleStatusPreservesLiveRestartBudget"
+      ]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "scripts/check-gocyclo.sh"
+      ]
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyResizeMustNotResetBudget"
+      ]
+    },
+    {
+      "id": "F4",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyNeverReadyCrashloopNeverExhausts"
+      ]
+    },
+    {
+      "id": "F5",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyRecoveryDuringDrainRetriggers"
+      ]
+    },
+    {
+      "id": "F5b",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyFailedDrainBurnsBudgetAttempt"
+      ]
+    },
+    {
+      "id": "ACC-core",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyBudgetExactAccountingContract",
+        "TestVerifyBudgetRevisionIdentityContract"
+      ]
+    }
+  ],
+  "liveNote": "L3 (skipped per review constraints): on a real cluster, exhaust a budgeted RI and verify kubelet releases GPU resources while Pod API objects are retained, then recover via annotation."
+}
