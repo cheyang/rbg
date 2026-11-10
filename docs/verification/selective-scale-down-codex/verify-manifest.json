@@ -3,7 +3,8 @@
   "pr": "https://github.com/sgl-project/rbg/pull/538",
   "harnessPaths": [
     "docs/verification/selective-scale-down-codex",
-    "internal/controller/workloads/selective_membership_verify_test.go"
+    "internal/controller/workloads/selective_membership_verify_test.go",
+    "pkg/reconciler/roleinstanceset/statefulmode/selective_surge_verify_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -38,6 +39,15 @@
         "TestVerifyF2FailedScaleConditionsReplacedOnInvalidRecord"
       ],
       "note": "Documents current replace semantics: an invalid committed record causes validateCommittedMembership to drop ALL FailedScale conditions (any reason) and install InvalidCommittedOrdinals. If the authors scope the filter to the InvalidCommittedOrdinals reason (the proposed fix), this canary flips red and must be inverted to a contract test."
+    },
+    {
+      "id": "F3",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyF3SurgeLandsOnUserExcludedOrdinal"
+      ],
+      "note": "Documents current behavior: with committed members [0,2,4] (record '1,3') and maxSurge=1, surge lands on ordinal 5 even when the role exclusion input is '1,3,5' (surge allocation sees only the committed record, never E). If the authors make surge allocation consult the exclusion input, this canary flips red and must be inverted to a contract test."
     }
   ],
   "liveNote": "L3 skipped per debate policy. F1 (CI lint gate red on PR-added code: gocyclo 45>30 on reconcileSelectiveMembership, goconst on InvalidCommittedOrdinals x4, prealloc in two new test files) is evidenced in results/lint-repro.txt and reproduced by 'make lint' / CI job 124766651800; it is a CI gate, not a runtime contract.",
