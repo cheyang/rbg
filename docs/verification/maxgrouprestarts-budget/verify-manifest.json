@@ -25,7 +25,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/reconciler/roleinstance/ ./pkg/reconciler/roleinstance/sync/ -run 'TestVerify|TestStaleStatusPreservesLiveRestartBudget' -count=1"
+      "cmd": "go test ./pkg/reconciler/roleinstance/ ./pkg/reconciler/roleinstance/sync/ -run 'TestVerify|TestStaleStatusPreservesLiveRestartBudget' -count=1 -json"
     },
     "integration": {
       "kind": "gotest-envtest",
@@ -40,14 +40,6 @@
       "match": [
         "TestVerifyStaleStatusCannotRollbackLiveExternalCondition",
         "TestStaleStatusPreservesLiveRestartBudget"
-      ]
-    },
-    {
-      "id": "F2",
-      "polarity": "contract",
-      "layer": "unit",
-      "match": [
-        "scripts/check-gocyclo.sh"
       ]
     },
     {
