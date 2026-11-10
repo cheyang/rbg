@@ -5,18 +5,19 @@ Reproducible evidence for the findings raised while reviewing
 Lifecycle Hooks — a **documentation-only** PR: `keps/527-roleinstance-lifecycle/{README.md,README.zh-CN.md,kep.yaml}`).
 
 Harness branch: `verify/pr546-kep-roleinstance-lifecycle-claude`, rebased on the
-reviewed PR head `43dab57b` (round 1 reviewed `6e8419ab`, round 2 `71dd5e87`,
-round 3 `fb6c2b36`).
+reviewed PR head `6c15cc92` (round 1 reviewed `6e8419ab`, round 2 `71dd5e87`,
+round 3 `fb6c2b36`, round 4 `43dab57b`).
 **Production code is touched only by the PR itself** — the branch adds only test
 files and this harness on top of the PR head.
 
-Layers run against the code under review (PR head `43dab57b`):
+Layers run against the code under review (PR head `6c15cc92`):
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
 | 1. Unit (Go) | pins the KEP's factual claims about *existing* code (premise + Ready-Gating prerequisite) | `go test ./pkg/inplace/instance/readiness/ ./pkg/inplace/instance/lifecycle/ -run 'TestKep527' -v` |
 | 2. Docs | markdownlint (CI config + default), whitespace, kep.yaml see-also resolution, en/zh parity | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_kep_docs.sh` |
-| 2b. Round-4 contracts (**gating**) | pins every round-3 open/nit finding the head claims fixed, the round-4 pivot contracts (mutual exclusion, independent type, absence semantics, label syntax), and substance carry-pins proving prior fixes survived the rewrite (required/forbidden text, both languages) | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round4_contracts.sh <repo-root>` |
+| 2b. Round-5 contracts (**gating**) | pins the round-5 wording of the reworded round-4 contracts (mutual exclusion, snapshot ownership, removal semantics, enablement-during-deletion), the round-5 fixes (test-plan bullet, stale-label disposition, gate-off rule), the new round-5 normative content (foreground webhook mechanism, reserved prefix, field ownership, hook-state overlap), and re-runs the round-4 script failing on any carry pin outside the disclosed supersession list | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh <repo-root>` |
+| 2b'. Round-4 contracts (carry, via round-5) | round-4 wording pins; 10 patterns are disclosed as superseded by the round-5 rewrite (substance re-pinned in 2b); any other round-4 failure is a carry regression | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round4_contracts.sh <repo-root>` |
 | 2c. Round-3 contracts (reference) | round-3 wording pins — fail on head **by design** (the round-4 coexistence pivot restored what the removal pivot had deleted); kept for history, not gating | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh <repo-root>` |
 | 2d. Round-2 contracts (reference) | round-2 wording pins; kept for history, not gating | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh <repo-root>` |
 | 3. Live | **not run this round** (round policy: unit + integration only) | see `verify-manifest.json` `liveNote` |
@@ -47,6 +48,65 @@ proposes **four** (`preUpdate`, `preRecover`, `postReady`, `preDelete`),
 dropping `preCreate`/`postDelete` without an explicit rationale and adding
 `preRecover`. See finding F-SCOPE-PRECREATE.
 
+
+## Round 5 (head 6c15cc92) — delta reviewed: 43dab57b..6c15cc92 (8 docs commits, +276/−219)
+
+A wording-only rewrite; **no design pivot this round**. What it does:
+
+1. **Fixes two of the five round-4 open items**:
+   - *F-TESTPLAN-ABSENCE-CONTRADICTION (nit)* — the integration-test bullet at
+     README.md:1033-1035 / zh :754-756 now states the absence semantics
+     ("stops marker matching on the next reconciliation and cleans stale
+     runtime labels and the reserved RI finalizer, even when another lifecycle
+     operation is unfinished"); the old round-3 bullet is gone in both
+     languages (pinned forbidden). Pinned by R5-TESTPLAN-DISABLE.
+   - *F-STALE-LABEL-DISPOSITION (nit)* — the removed-hook disposition is
+     unified to one normative strength ("removes its stale runtime labels, and
+     follows the same transition as a released hook; for example, `PreUpdate`
+     advances to `Updating`") in the config paragraph, the disable paragraph,
+     and the unit-test bullet, both languages. The markerA→markerB case
+     (reconfigured hook, old marker left in place) is now clearly a distinct
+     event. Pinned by R5-STALE-LABEL-DISPOSITION / R5-REMOVAL-SEMANTICS.
+2. **Partially fixes F-COEXIST-GATE-EDGE (question)**: the gate-off rule is
+   now stated — "The gate defaults to false. While it is disabled, the new
+   protocol fields are rejected and the legacy RIS lifecycle protocol retains
+   its existing behavior" (EN :1128-1130, zh :813-815). Still unstated:
+   gate-on for an existing object carrying both new and legacy config, and
+   the legacy `inPlaceUpdate` deprecation timeline. Pinned by R5-GATE-OFF-RULE.
+3. **Resolves F-KEP502-RECOVERING-GATE-CIRCULARITY on the dependency side**:
+   PR #528 (KEP-502, still OPEN) head moved 39e2ecdf → 0580735 and now states
+   that phase completion uses controller-observed workload readiness only,
+   externally owned readiness gates (`RoleInstanceCustomReady`) do not gate
+   phase transitions, and explicitly "removes the circular wait with KEP-527"
+   (keps/502 README at 0580735, phase-transition section). External evidence —
+   holds as long as that wording lands; re-fetch #528 each round.
+4. **Leaves open**: F-CONFIG-REMOVAL-SKIPS-HOOK (no admission guard, no
+   Risks/Troubleshooting acknowledgment of the mid-deletion skip path; the
+   ownership sentence "This is the direct result of the user removing the
+   hook" was *deleted* this round) and F-SEEALSO-502 (kep.yaml untouched;
+   PR #528 still OPEN — 5th consecutive round).
+5. **Rewords 12 round-4 pins with substance preserved** (disclosed
+   Harness-update, re-pinned under the round-5 wording in
+   check_round5_contracts.sh): mutual exclusion ("admission prevents both
+   from being active on the same RIS" + a new clarification that any
+   non-empty legacy `spec.lifecycle` on an RBG-managed RIS counts as
+   user-configured), snapshot ownership (strengthened: direct edits are
+   "unsupported and are overwritten on the next RBG reconcile"), removal
+   semantics (adds the phase-advance rule), enablement-during-deletion
+   (mechanism stated: the controller cannot add the finalizer, so the hook is
+   never exposed), and the zh term for "source of truth" (用户拥有的期望配置).
+   New normative content pinned: the foreground-delete webhook mechanism
+   (checks `DeleteOptions.propagationPolicy`, resolves reachable RIs via
+   owner references and informers), rejection of handler keys using the
+   reserved `rbg.workloads.x-k8s.io/` prefix, an explicit field-ownership
+   paragraph, the hook-state value-overlap clarification, and the
+   preDelete-executor independent-deployment requirement.
+
+Differential: round-5 pins green on head 6c15cc92, red on previous head
+43dab57b (46 FAIL) and base 09accf63 (126 FAIL) —
+`results/round5-contracts-{09accf63,43dab57b,6c15cc92}.txt`. Bites-verified by
+deleting the gate-off sentence, the fixed integration bullet, and a zh
+fragment in a scratch worktree (`results/round5-contracts-bites.txt`).
 
 ## Round 4 (head 43dab57b) — delta reviewed: df110cf0, 8583c011, 10f48e8d, 43dab57b
 

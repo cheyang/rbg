@@ -17,6 +17,15 @@
 # means "superseded wording, substance re-pinned" — a disclosed Harness-update,
 # not evidence of a fix or of a regression.
 #
+# Round 5 (head 6c15cc92): a wording-only rewrite (+276/-219) that rewords 12
+# round-4 pins (substance preserved; re-pinned in check_round5_contracts.sh
+# under the round-5 wording, with the superseded round-4 wordings disclosed)
+# and fixes F-TESTPLAN-ABSENCE-CONTRADICTION + F-STALE-LABEL-DISPOSITION,
+# partially fixes F-COEXIST-GATE-EDGE (gate-off rule stated), and leaves
+# F-CONFIG-REMOVAL-SKIPS-HOOK and F-SEEALSO-502 open. The round-5 script is
+# the gating contract set; it internally re-runs the round-4 script and fails
+# on any round-4 carry pin that is NOT in the disclosed supersession list.
+#
 # Usage: bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/re-verify.sh [<ref>]
 #   <ref> defaults to the current PR head fetched from manifest.pr
 set -u
@@ -58,7 +67,14 @@ bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check
 DOC_STATUS="${PIPESTATUS[0]}"
 
 echo
-echo "== Round-4 contracts (gating; fixed-findings regression pins, red = regression) =="
+echo "== Round-5 contracts (gating; round-5 pins + round-4 carry, red = regression) =="
+CHECK_ROUND5_OUT="$TOPIC_DIR/results" \
+  bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh" "$WORKTREE" \
+  2>&1 | tee "$TOPIC_DIR/results/round5-contracts-rerun.txt" | grep -E '^(FAIL|OPEN|SUPERSEDED|PASS  R5-CARRY|ROUND5)'
+R5_STATUS="${PIPESTATUS[0]}"
+
+echo
+echo "== Round-4 contracts (reference; its reworded pins are superseded by round-5 — see check_round5_contracts.sh) =="
 CHECK_ROUND4_OUT="$TOPIC_DIR/results" \
   bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round4_contracts.sh" "$WORKTREE" \
   2>&1 | tee "$TOPIC_DIR/results/round4-contracts-rerun.txt" | grep -E '^(FAIL|OPEN|ROUND4)'
@@ -116,8 +132,9 @@ else
   echo "F-CUSTOMREADY-STATUS-EMPTY: Harness-update (test missing or did not run)"
 fi
 
-# Round-4 fixed findings: verdicts come from the round-4 contract pins.
-if [ "$R4_STATUS" -eq 0 ]; then
+# Round-4 fixed findings: verdicts come from the round-5 contract pins
+# (re-pinned wording) — the round-4 script is invoked inside check_round5.
+if [ "$R5_STATUS" -eq 0 ]; then
   for f in F-OLDNEW-COEXIST F-INDEPENDENT-TYPE F-LATEST-CONFIG-SEMANTICS \
            F-LABEL-SYNTAX F-INTERRUPT-WHEN-DEAD-AMBIGUITY F-KEPYAML-GATE-SHAPE \
            F-PROPAGATED-SNAPSHOT-EDIT F-ZH-ENGLISH-TERMS \
@@ -129,14 +146,19 @@ if [ "$R4_STATUS" -eq 0 ]; then
     echo "$f: Fixed (round-4 contract pin green on this ref)"
   done
 else
-  echo "Round-4 fixed findings: one or more MISSING (see results/round4-contracts-rerun.txt)"
+  echo "Round-4/5 fixed findings: one or more MISSING (see results/round5-contracts-rerun.txt)"
 fi
+echo "F-TESTPLAN-ABSENCE-CONTRADICTION: verdict from R5-TESTPLAN-DISABLE pins (new bullet present, old bullet absent, EN+ZH)"
+echo "F-STALE-LABEL-DISPOSITION: verdict from R5-STALE-LABEL-DISPOSITION / R5-REMOVAL-SEMANTICS pins (single disposition rule, EN+ZH)"
+echo "F-COEXIST-GATE-EDGE: PARTIAL — gate-off rule stated (R5-GATE-OFF-RULE pins); gate-on for dual-configured objects and the deprecation timeline still unstated"
+echo "F-CONFIG-REMOVAL-SKIPS-HOOK: Still-open — no admission guard, no Risks/Troubleshooting acknowledgment of the mid-deletion skip path"
+echo "F-KEP502-RECOVERING-GATE-CIRCULARITY: Fixed on the dependency side (PR #528 head 0580735 states phase completion uses controller-observed readiness only and explicitly removes the KEP-527 circular wait) — re-fetch PR #528 to confirm"
 echo "F-INFLIGHT-CONFIG-ADMISSION / F-INFLIGHT-ADMISSION-MUST: Disputed (author reversed the rule by design in round 4 — see F-PREDELETE-REMOVAL-ONE-WAY; reversed rule pinned absent)"
 echo "F-LEGACY-REMOVAL-TRANSITION: Resolved by the round-4 reversal (coexistence satisfies issue #527 compatibility; narrowed residue tracked as F-COEXIST-GATE-EDGE)"
 echo "F-KEP502-CREATING-PHASE-CONFLICT: Fixed in the dependency PR (PR #528 amended to fold Creating-target changes, citing KEP-527 consistency) — external evidence, re-fetch to confirm"
 
 echo
-if [ "$premise_ok" -eq 1 ] && [ "$GO_STATUS" -eq 0 ] && [ "$R4_STATUS" -eq 0 ] \
+if [ "$premise_ok" -eq 1 ] && [ "$GO_STATUS" -eq 0 ] && [ "$R5_STATUS" -eq 0 ] \
    && ! grep -q 'see-also: FAIL' "$TOPIC_DIR/results/docchecks-rerun.txt"; then
   echo "RESULT: all machine-checkable gating findings fixed (F-SEEALSO-502 aside)"
   exit 0

@@ -2,13 +2,14 @@
   "topic": "pr546-kep-roleinstance-lifecycle",
   "pr": "https://github.com/sgl-project/rbg/pull/546",
   "reviewer": "claude",
-  "round": 4,
+  "round": 5,
   "harnessPaths": [
     "docs/verification/pr546-kep-roleinstance-lifecycle",
     "pkg/inplace/instance/readiness/kep527_claims_test.go",
     "pkg/inplace/instance/lifecycle/kep527_claims_test.go",
     "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh",
-    "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh"
+    "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh",
+    "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh"
   ],
   "premise": {
     "id": "P0",
@@ -45,6 +46,10 @@
     "round4-contracts": {
       "kind": "script",
       "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round4_contracts.sh <repo-root-of-ref>"
+    },
+    "round5-contracts": {
+      "kind": "script",
+      "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh <repo-root-of-ref>"
     }
   },
   "findings": [
@@ -57,7 +62,7 @@
         "TestKep527ExistingCoordinationModel",
         "TestKep527ReadinessGatePrerequisite"
       ],
-      "note": "Re-verified on head 71dd5e87 (round 2): contract pins green (results/gotest-rerun.txt)."
+      "note": "Re-verified on head 6c15cc92 (round 5): contract pins green (results/gotest-rerun.txt); docs-only PR, code paths unchanged since base."
     },
     {
       "id": "F-SEEALSO-502",
@@ -68,7 +73,7 @@
         "check_round4_contracts.sh (F-SEEALSO-502 OPEN check)",
         "check_kep_docs.sh (see-also)"
       ],
-      "note": "Open on head 43dab57b (4th consecutive round): kep.yaml see-also lists /keps/502-workload-status-model, absent from the head tree and origin/main (re-checked 2026-11-10); PR #528 (KEP-502) still OPEN. Auto-resolves if #528 merges first."
+      "note": "Open on head 6c15cc92 (5th consecutive round): kep.yaml untouched by the round-5 diff (only the two READMEs changed); /keps/502-workload-status-model still absent from the repo; PR #528 re-fetched 2026-11-11: still OPEN, head 0580735. Auto-resolves if #528 merges first."
     },
     {
       "id": "F-PREDELETE-LIVENESS",
@@ -400,9 +405,9 @@
       "layer": "docs",
       "status": "open",
       "match": [
-        "check_round4_contracts.sh (F-LATEST-CONFIG-SEMANTICS pins — the new semantics are pinned so they cannot silently flip back)"
+        "check_round5_contracts.sh (R5-REMOVAL-SEMANTICS pins — absence semantics and mid-deletion release pinned)"
       ],
-      "note": "Question (new this round): the round-4 absence semantics makes preDelete removal while deletion is in progress an immediate, one-way barrier release (finalizer removed, deletion proceeds without executor release), and it cannot be re-established (no finalizer re-add after deletionTimestamp). Accidental config removal (GitOps revert, partial apply) now force-completes deletion where round 3 explicitly called this an unsupported hook-skip. Ask for either an admission guard for preDelete removal during deletion, or an explicit risk acknowledgment + operator guidance; also reconcile the enablement asymmetry (enablement during deletion is rejected, removal proceeds)."
+      "note": "Still open (2nd round; merged ledger id F-CONFIG-REMOVAL-SKIPS-HOOK): round 5 neither adds an admission guard for preDelete removal during deletion nor acknowledges the skip path in Risks/Troubleshooting; the ownership sentence 'This is the direct result of the user removing the hook' was deleted this round. The removal semantics are now stronger (phase-advance rule: removing preUpdate mid-flight advances PreUpdate->Updating), which makes the skip path more explicit, not safer."
     },
     {
       "id": "F-COEXIST-GATE-EDGE",
@@ -410,9 +415,9 @@
       "layer": "docs",
       "status": "open",
       "match": [
-        "grep (no gate-off rule for the new protocol fields at head; reasoning only — no runnable layer for a docs-only PR)"
+        "check_round5_contracts.sh (R5-GATE-OFF-RULE pins, EN+ZH)"
       ],
-      "note": "Question (narrowed residue of F-LEGACY-REMOVAL-TRANSITION): with coexistence restored, the gate-off behavior of the NEW protocol fields is unspecified — with RoleInstanceLifecycleHooks=false, does the RBG controller still propagate roles[].lifecycle, does admission still enforce mutual exclusion, and what happens on gate-on for an existing object carrying both new and legacy config (admission rejects writes but does not re-validate existing objects)? Plus the legacy inPlaceUpdate deprecation timeline (disclosed as post-Alpha migration path, pre-implementable item #1)."
+      "note": "PARTIALLY fixed in round 5: the gate-off rule is now stated (gate defaults to false; while disabled the new protocol fields are rejected and legacy retains existing behavior, EN :1128-1130, zh :813-815, pinned green on head, red on previous head). Still open: gate-on for an existing object carrying both new and legacy config (admission validates writes only), controller behavior for already-configured objects under gate-off, and the legacy inPlaceUpdate deprecation timeline (still only 'post-Alpha migration path')."
     },
     {
       "id": "F-STALE-LABEL-DISPOSITION",
@@ -432,14 +437,42 @@
       "match": [
         "external: PR #528 diff (re-fetched 2026-11-10)"
       ],
-      "note": "Round-3 question, resolved OUTSIDE this PR: PR #528 (KEP-502, still OPEN) amended its transition table to 'Creating | An update or recovery target is identified before initial creation completes | Remain Creating; fold the new target into Create convergence without invoking hooks' and states 'consistent with the KEP-527 hook rules' (PR #528 diff lines 433/444/254). The cross-proposal conflict is reconciled on #528's branch; holds as long as that wording lands. Not machine-pinnable in this repo (the KEP-502 file is not in PR #546).",
+      "note": "Round-3 question, resolved OUTSIDE this PR: PR #528 amended its transition table to fold Creating-target changes into Create convergence, citing KEP-527 consistency. Re-confirmed at the round-5 re-fetch (PR #528 head 0580735, still OPEN): the wording is retained. Holds as long as that wording lands.",
       "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
+    },
+    {
+      "id": "F-TESTPLAN-ABSENCE-CONTRADICTION",
+      "polarity": "contract",
+      "layer": "docs",
+      "status": "fixed",
+      "origin": "revision-regression",
+      "introducedByPR": true,
+      "firstSeenSha": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948",
+      "fixedIn": "6c15cc92bcc8ecb2cc149ed54f7e5b9056199f2e",
+      "match": [
+        "check_round5_contracts.sh (R5-TESTPLAN-DISABLE: new bullet required EN+ZH, old round-3 bullet forbidden EN+ZH)"
+      ],
+      "note": "Fixed in round 5: the integration-test bullet now states the absence semantics in both languages (README.md:1033-1035, zh :754-756); the stale round-3 bullet is pinned forbidden and absent. Differential: new bullet red on 43dab57b and 09accf63, green on 6c15cc92; old bullet present on 43dab57b (forbidden pin red), absent on 6c15cc92."
+    },
+    {
+      "id": "F-KEP502-RECOVERING-GATE-CIRCULARITY",
+      "polarity": "contract",
+      "layer": "docs",
+      "status": "fixed",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948",
+      "fixedIn": "6c15cc92bcc8ecb2cc149ed54f7e5b9056199f2e",
+      "match": [
+        "external: PR #528 head 0580735 (re-fetched 2026-11-11)"
+      ],
+      "note": "Fixed OUTSIDE this PR (dependency side), round 5: PR #528 (KEP-502) head moved 39e2ecdf -> 0580735 and now states phase completion uses controller-observed workload readiness only, RoleInstanceCustomReady and other externally owned gates do not gate phase transitions, and explicitly 'removes the circular wait with KEP-527: the lifecycle-owned RoleInstanceCustomReady contribution ... does not prevent the RI from entering Running'. PR #528 is still OPEN; holds as long as that wording lands. Not machine-pinnable in this repo (keps/502 absent from PR #546's tree)."
     }
   ],
   "gatingFindings": [
     "F-SEEALSO-502"
   ],
   "liveNote": "L3 (not run, per round policy: unit+integration only): the deletion-design claims are pinned textually and re-verified against upstream GC source; a live cluster remains the final authority for the namespace-teardown scoping and foreground-rejection enforcement once a webhook exists. The round-4 absence-semantics reversal (F-PREDELETE-REMOVAL-ONE-WAY) is a design question for KEP review, not a runtime claim.",
-  "headSha": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948",
-  "previousHeadSha": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
+  "headSha": "6c15cc92bcc8ecb2cc149ed54f7e5b9056199f2e",
+  "previousHeadSha": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
 }

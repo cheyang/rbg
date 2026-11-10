@@ -1,4 +1,4 @@
-== Round-3 contracts on /tmp/tmp.0fqVK29Yo5/pr546-reverify ==
+== Round-3 contracts on /tmp/tmp.MPk0ymMJyd/pr546-reverify ==
 PASS  F-SCOPE-PRECREATE [EN] (required present: Adding `preCreate` or `postDelete`\. `preCreate` has no established workload or executor to coordinate before Pod creation)
 PASS  F-SCOPE-PRECREATE [EN] (required present: concerns external cleanup after the live instance is gone and needs a separate protocol)
 PASS  F-SCOPE-PRECREATE [ZH] (required present: 不新增 preCreate 或 postDelete。preCreate 发生在 Pod 创建前，尚无已建立的)
@@ -12,7 +12,7 @@ PASS  F-PROPAGATED-VS-LEGACY [ZH] (required present: RoleInstanceSet\.spec\.role
 FAIL  F-PROPAGATED-VS-LEGACY [EN] (forbidden PRESENT: The two runtime protocols must not be active on the same RIS)
 PASS  F-PROPAGATED-VS-LEGACY [ZH] (forbidden absent: 同一 RI 上同时生效)
 PASS  F-FINALIZER-BOOTSTRAP-RACE [EN] (required present: New RIs are created with the reserved finalizer when their effective configuration includes `preDelete`)
-PASS  F-FINALIZER-BOOTSTRAP-RACE [EN] (required present: Enablement is rejected or deferred if the RI already has a deletionTimestamp)
+FAIL  F-FINALIZER-BOOTSTRAP-RACE [EN] (required MISSING: Enablement is rejected or deferred if the RI already has a deletionTimestamp)
 PASS  F-FINALIZER-BOOTSTRAP-RACE [EN] (required present: Kubernetes does not allow a new finalizer to be added after deletion has begun)
 PASS  F-FINALIZER-BOOTSTRAP-RACE [ZH] (required present: 新建 RI 在生效配置包含 preDelete 时，创建请求即带保留 finalizer)
 PASS  F-FINALIZER-BOOTSTRAP-RACE [ZH] (required present: 如果 RI 已有 deletionTimestamp)

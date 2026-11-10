@@ -1,0 +1,8 @@
+6c15cc92 docs: align KEP-527 non-goal wording with English version
+3a95f42c docs: fix KEP-527 remaining wording nits
+02e82de8 docs: clarify KEP-527 trigger table and marker wording
+3c42447b docs: polish KEP-527 wording and ownership terms
+ba79084e docs: resolve KEP-527 wording conflicts and ambiguities
+472a672e docs: refine lifecycle protocol wording
+271464d2 docs: clarify lifecycle configuration authority
+f0cc3c54 docs: resolve KEP-527 consistency issues
