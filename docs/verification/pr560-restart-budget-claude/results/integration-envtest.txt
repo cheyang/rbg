@@ -1,0 +1,2 @@
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy	(cached)
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/deprecationv1a1	(cached)

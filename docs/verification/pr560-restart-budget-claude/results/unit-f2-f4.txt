@@ -1,0 +1,7 @@
+=== RUN   TestR560F4BudgetGenerationMismatchSurfacesAsBlockingError
+--- PASS: TestR560F4BudgetGenerationMismatchSurfacesAsBlockingError (0.04s)
+=== RUN   TestR560F2UncachedReadAmplificationPerScale
+    review560_harness_test.go:136: F2 evidence: one Scale call on a budgeted instance issued 4 uncached GETs and 1 uncached LISTs
+--- PASS: TestR560F2UncachedReadAmplificationPerScale (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	(cached)

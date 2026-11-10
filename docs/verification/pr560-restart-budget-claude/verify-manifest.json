@@ -1,0 +1,52 @@
+{
+  "topic": "pr560-restart-budget",
+  "pr": "https://github.com/sgl-project/rbg/pull/560",
+  "harnessPaths": [
+    "docs/verification/pr560-restart-budget-claude",
+    "pkg/reconciler/roleinstance/review560_harness_test.go",
+    "pkg/reconciler/roleinstance/sync/review560_harness_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Unbounded automatic group recovery: RecreateRoleInstanceOnPodRestart rebuilds the RoleInstance forever; the backoff counter 'may reset after a quiet period'.",
+    "reportedComponent": "RoleInstance restart-policy recreation path (pkg/reconciler/roleinstance/sync)",
+    "patchedComponent": "same component (restart_budget.go, instance_scale.go, instance_status.go)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "At base fd160cc calculateRestartDelay caps delay at maxDelaySeconds (600s default) but never refuses a restart, updateRestartTracking resets RestartCount after stableThreshold, and no budget field exists. results/premise-base.txt"
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/roleinstance/ ./pkg/reconciler/roleinstance/sync/ -run 'TestR560|TestStaleStatusPreservesLiveRestartBudget' -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=/home/ecs-user/.local/share/kubebuilder-envtest/k8s/1.36.2-linux-amd64 go test -count=1 ./test/envtest/testcase/restart_policy/... -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestR560F1StaleWriteMustNotClobberLiveExternalCondition",
+        "TestStaleStatusPreservesLiveRestartBudget"
+      ]
+    },
+    { "id": "F2", "polarity": "canary", "layer": "unit", "match": ["TestR560F2UncachedReadAmplificationPerScale"] },
+    { "id": "F3", "polarity": "canary", "layer": "unit", "match": ["TestR560F3StatusWriteSilentlyDroppedWhenGenerationAdvances"] },
+    { "id": "F4", "polarity": "canary", "layer": "unit", "match": ["TestR560F4BudgetGenerationMismatchSurfacesAsBlockingError"] },
+    {
+      "id": "AC-budget",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["restart-budget"]
+    }
+  ],
+  "liveNote": "L3 skipped per review instructions. The only live-unverifiable claim: kubelet releases container resources while retained Pod API objects stay Terminating."
+}

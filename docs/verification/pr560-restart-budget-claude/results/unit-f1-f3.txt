@@ -1,0 +1,36 @@
+=== RUN   TestStaleStatusPreservesLiveRestartBudget
+    instance_status_test.go:268: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-11/pr-560/wt-verify/pkg/reconciler/roleinstance/instance_status_test.go:268
+        	Error:      	Not equal: 
+        	            	expected: "LiveExternal"
+        	            	actual  : "StaleExternal"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-LiveExternal
+        	            	+StaleExternal
+        	Test:       	TestStaleStatusPreservesLiveRestartBudget
+--- FAIL: TestStaleStatusPreservesLiveRestartBudget (0.04s)
+=== RUN   TestR560F1StaleWriteMustNotClobberLiveExternalCondition
+    review560_harness_test.go:103: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-11/pr-560/wt-verify/pkg/reconciler/roleinstance/review560_harness_test.go:103
+        	Error:      	Not equal: 
+        	            	expected: "LiveExternal"
+        	            	actual  : "StaleExternal"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-LiveExternal
+        	            	+StaleExternal
+        	Test:       	TestR560F1StaleWriteMustNotClobberLiveExternalCondition
+        	Messages:   	F1: a stale status write rolled back the live externally-written CustomReady condition
+--- FAIL: TestR560F1StaleWriteMustNotClobberLiveExternalCondition (0.00s)
+=== RUN   TestR560F3StatusWriteSilentlyDroppedWhenGenerationAdvances
+--- PASS: TestR560F3StatusWriteSilentlyDroppedWhenGenerationAdvances (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.060s
+FAIL

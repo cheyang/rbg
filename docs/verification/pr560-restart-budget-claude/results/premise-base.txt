@@ -1,0 +1,4 @@
+=== RUN   TestP0BaseRestartRecoveryIsUnbounded
+--- PASS: TestP0BaseRestartRecoveryIsUnbounded (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	(cached)
