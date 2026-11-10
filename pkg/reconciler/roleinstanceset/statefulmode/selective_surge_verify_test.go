@@ -55,7 +55,7 @@ func TestVerifyF3SurgeLandsOnUserExcludedOrdinal(t *testing.T) {
 
 	surgeOrdinal := topo.ordinal(3)
 	t.Logf("committed members [0,2,4], user excluded %q, surge ordinal = %d", "1,3,5", surgeOrdinal)
-	require.True(t, userExcluded.Contains(surgeOrdinal),
+	require.True(t, userExclusions.Contains(surgeOrdinal),
 		"F3 appears fixed: surge ordinal %d no longer falls on a user-excluded ordinal; invert this canary", surgeOrdinal)
 	require.Equal(t, 5, surgeOrdinal)
 }
