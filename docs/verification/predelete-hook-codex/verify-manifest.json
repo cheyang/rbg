@@ -1,0 +1,75 @@
+{
+  "topic": "predelete-hook-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/558",
+  "headSha": "4d82f841585459509f0d5d68e545678e38747864",
+  "baseSha": "fd160cc964b0e1438bead4ad7324d0a8f0bf5eac",
+  "harnessPaths": [
+    "docs/verification/predelete-hook-codex",
+    "pkg/inplace/instance/lifecycle/zz_verify_predelete_conflict_test.go",
+    "pkg/inplace/instance/lifecycle/zz_verify_predelete_envtest_test.go",
+    "pkg/reconciler/roleinstanceset/statefulmode/zz_verify_foreground_envtest_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Stateful RoleInstanceSet rolling updates and scale-down can delete a RoleInstance without waiting for its existing spec.lifecycle.preDelete hook; a consumer cannot finish draining the instance before its Pods are removed.",
+    "reportedComponent": "pkg/reconciler/roleinstanceset/statefulmode (stateful RoleInstanceSet controller)",
+    "patchedComponent": "pkg/reconciler/roleinstanceset/statefulmode + pkg/inplace/instance/lifecycle",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "The PR's own new test (lifecycle_test.go) grafted unchanged onto base fd160cc FAILS: both rolling-update and scale-down delete the hooked instance on the first reconcile ('deleted = [hook-rolling-update-0], want []'). See README.",
+    "match": [
+      "TestStatefulRollingUpdateAndScaleDownWaitForPreDeleteHook"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -mod=vendor -count=1 -json ./pkg/inplace/instance/lifecycle/ ./pkg/reconciler/roleinstanceset/statefulmode/ -run 'TestVerify|TestStatefulRollingUpdateAndScaleDownWaitForPreDeleteHook'"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64} go test -mod=vendor -count=1 -timeout 12m -json ./pkg/inplace/instance/lifecycle/ ./pkg/reconciler/roleinstanceset/statefulmode/ ./test/envtest/testcase/stateful/ -run 'TestVerify|TestStatefulRoleInstanceSetController'"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestStatefulRoleInstanceSetController"
+      ],
+      "note": "Decided by the pre-existing envtest suite test/envtest/testcase/stateful (3 rollout-recovery specs fail at head, all pass at base). Mechanism canary: TestVerifyForegroundDeletePinsInstanceWithoutGC passes on the PR head (object pinned with foregroundDeletion finalizer, no GC in envtest) and flips on base/background-delete."
+    },
+    {
+      "id": "F1-mechanism",
+      "polarity": "canary",
+      "layer": "integration",
+      "match": [
+        "TestVerifyForegroundDeletePinsInstanceWithoutGC"
+      ],
+      "note": "Canary asserting the observed head behavior (foreground delete pins the object when no GC runs). Flips to fail if deletion stops pinning (e.g. background propagation restored)."
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPreDeleteMarkNotReadySingleCallSucceeds$"
+      ],
+      "note": "Fake-client layer. Fails at head with 'object was modified' on the first MarkNotReady=true PreparingDelete transition; passes on base."
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestVerifyPreDeleteMarkNotReadySingleCallSucceedsEnvtest"
+      ],
+      "note": "Same contract against a real apiserver (envtest). Fails at head with a genuine 409 Conflict."
+    }
+  ],
+  "liveNote": "L3 skipped per debate setup (no KUBECONFIG layer)."
+}

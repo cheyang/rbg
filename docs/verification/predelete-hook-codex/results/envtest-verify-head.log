@@ -1,0 +1,19 @@
+=== RUN   TestVerifyPreDeleteMarkNotReadySingleCallSucceeds
+    zz_verify_predelete_conflict_test.go:100: first UpdateRoleInstanceLifecycle(markNotReady=true) returned error: Operation cannot be fulfilled on roleinstances.workloads.x-k8s.io "hooked-0": object was modified
+--- FAIL: TestVerifyPreDeleteMarkNotReadySingleCallSucceeds (0.04s)
+=== RUN   TestVerifyPreDeleteMarkNotReadyHealsWithinTwoAttempts
+    zz_verify_predelete_conflict_test.go:119: attempt 1 failed (transient conflict expected on PR head): Operation cannot be fulfilled on roleinstances.workloads.x-k8s.io "hooked-1": object was modified
+--- PASS: TestVerifyPreDeleteMarkNotReadyHealsWithinTwoAttempts (0.00s)
+=== RUN   TestVerifyOptimisticPatchConflictsAfterConsumerUpdate
+--- PASS: TestVerifyOptimisticPatchConflictsAfterConsumerUpdate (0.00s)
+=== RUN   TestVerifyPreDeleteMarkNotReadySingleCallSucceedsEnvtest
+    zz_verify_predelete_envtest_test.go:113: first UpdateRoleInstanceLifecycle(markNotReady=true) returned error: Operation cannot be fulfilled on roleinstances.workloads.x-k8s.io "hooked-0": the object has been modified; please apply your changes to the latest version and try again
+--- FAIL: TestVerifyPreDeleteMarkNotReadySingleCallSucceedsEnvtest (6.07s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	6.131s
+=== RUN   TestVerifyForegroundDeletePinsInstanceWithoutGC
+    zz_verify_foreground_envtest_test.go:148: instance pinned: deletionTimestamp=2026-11-11 06:38:58 +0800 CST finalizers=[foregroundDeletion]
+--- PASS: TestVerifyForegroundDeletePinsInstanceWithoutGC (9.24s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	9.251s
+FAIL

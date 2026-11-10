@@ -1,0 +1,14 @@
+=== RUN   TestVerifyPreDeleteMarkNotReadySingleCallSucceeds
+    zz_verify_predelete_conflict_test.go:100: first UpdateRoleInstanceLifecycle(markNotReady=true) returned error: Operation cannot be fulfilled on roleinstances.workloads.x-k8s.io "hooked-0": object was modified
+--- FAIL: TestVerifyPreDeleteMarkNotReadySingleCallSucceeds (0.04s)
+=== RUN   TestVerifyPreDeleteMarkNotReadyHealsWithinTwoAttempts
+    zz_verify_predelete_conflict_test.go:119: attempt 1 failed (transient conflict expected on PR head): Operation cannot be fulfilled on roleinstances.workloads.x-k8s.io "hooked-1": object was modified
+--- PASS: TestVerifyPreDeleteMarkNotReadyHealsWithinTwoAttempts (0.00s)
+=== RUN   TestVerifyOptimisticPatchConflictsAfterConsumerUpdate
+--- PASS: TestVerifyOptimisticPatchConflictsAfterConsumerUpdate (0.00s)
+=== RUN   TestVerifyPreDeleteMarkNotReadySingleCallSucceedsEnvtest
+    zz_verify_predelete_envtest_test.go:51: KUBEBUILDER_ASSETS not set; skipping envtest layer
+--- SKIP: TestVerifyPreDeleteMarkNotReadySingleCallSucceedsEnvtest (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	0.058s
+FAIL

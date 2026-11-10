@@ -1,0 +1,13 @@
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	[no test files]
+=== RUN   TestStatefulRollingUpdateAndScaleDownWaitForPreDeleteHook
+=== RUN   TestStatefulRollingUpdateAndScaleDownWaitForPreDeleteHook/rolling-update
+I1111 06:38:40.582300 4039000 stateful_instance_set_control.go:735] "Progress rolling update" instanceSet="default/hook-rolling-update" targets=[0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1111 06:38:40.583748 4039000 stateful_instance_set_control.go:735] "Progress rolling update" instanceSet="default/hook-rolling-update" targets=[0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1111 06:38:40.583913 4039000 stateful_instance_set_control.go:735] "Progress rolling update" instanceSet="default/hook-rolling-update" targets=[0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1111 06:38:40.583923 4039000 stateful_instance_set_control.go:924] "Updating instance" instanceSet="default/hook-rolling-update" instance="default/hook-rolling-update-0" from="hook-rolling-update-c4775b4fd" to="hook-rolling-update-594cc8f647" isSurge=false free=false
+=== RUN   TestStatefulRollingUpdateAndScaleDownWaitForPreDeleteHook/scale-down
+--- PASS: TestStatefulRollingUpdateAndScaleDownWaitForPreDeleteHook (0.05s)
+    --- PASS: TestStatefulRollingUpdateAndScaleDownWaitForPreDeleteHook/rolling-update (0.04s)
+    --- PASS: TestStatefulRollingUpdateAndScaleDownWaitForPreDeleteHook/scale-down (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.061s
