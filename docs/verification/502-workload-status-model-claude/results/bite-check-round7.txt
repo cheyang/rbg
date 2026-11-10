@@ -1,0 +1,19 @@
+# bite-check-round7.txt — round-7 re-anchored/new guards bite evidence
+# Method: defect simulation (introduce the defect at head 05807351) must be RED;
+# fix simulation (apply the proposed fix at head) must be GREEN.
+
+defect-c4 (expect RED): C4 fail
+defect-c12 (expect RED): C12 fail
+defect-c13 (expect RED): C13 fail
+defect-c15 (expect RED): C15 fail
+defect-c20 (expect RED): C20 fail
+fix-c26 (expect GREEN): C26 pass
+fix-c27 (expect GREEN): C27 pass
+
+# defect-c4: 'RoleInstanceReady reasons' prose PodsNotReady -> PodNotReady (casing mismatch vs code)
+# defect-c12: RIS activity-precedence sentence removed
+# defect-c13: RBG replacement/scale-up classification mapping removed
+# defect-c15: old 'When Accepted=False, Progressing=False uses the matching...' mapping reintroduced
+# defect-c20: config-family reasons dropped from the 'Progressing=True, blocked or waiting' row (dead disjunct)
+# fix-c26: categorical sentence scoped to 'matching family reason when classifiable, UnclassifiedBlocker otherwise'
+# fix-c27: 'Readiness gates only Creating -> Running' reworded to readyPolicy + in-place update gate

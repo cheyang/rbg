@@ -183,18 +183,27 @@ def check_c3(kep_text):
 
 
 def check_c4(kep_text, repo):
-    """F4: the KEP's candidate reasons for aggregated RI readiness must match,
-    case-sensitively, the reason strings the current RI controller writes for
-    the RoleInstanceReady condition."""
-    m = re.search(r"aggregated RI readiness are (.*?)\.", kep_text)
+    """F4 (round-7 re-anchor after 05807351 rewrote the sentence): the KEP's
+    stated reasons for the RoleInstanceReady condition must match,
+    case-sensitively, the reason strings the current RI controller writes
+    for that condition. Old anchor: 'Candidate reasons for aggregated RI
+    readiness are ...'. New anchor (head :451): 'RoleInstanceReady reasons
+    are Ready, PodsNotReady, InplaceUpdateNotReady, and
+    ReadinessGatesNotReady when a configured gate condition is missing.'
+    Polarity: contract (fail == KEP list differs from code)."""
+    m = re.search(r"`RoleInstanceReady` reasons are (.*?)\.", kep_text)
     if not m:
         emit("C4-ri-readiness-reasons-match-code", False,
-             "'Candidate reasons for aggregated RI readiness' sentence not found")
+             "'RoleInstanceReady reasons are ...' sentence not found")
         return
     kep_reasons = set()
-    for part in re.split(r",|\band\b", m.group(1)):
+    raw = re.split(r",|\band\b", m.group(1))
+    for part in raw:
         p = part.strip()
-        if p:
+        # drop a trailing qualifier clause ("ReadinessGatesNotReady when a
+        # configured gate condition is missing" -> "ReadinessGatesNotReady")
+        p = re.split(r"\s+when\b", p)[0].strip()
+        if p and p[0].isupper():
             kep_reasons.add(p)
     p = os.path.join(repo, "pkg/reconciler/roleinstance/instance_status.go")
     code_reasons = set()
@@ -625,15 +634,19 @@ def check_c11(kep_text, repo):
 
 
 def check_c12(kep_text):
-    """F11 guard (round-4 open item, fixed at 0b7285b7): the RIS-layer
+    """F11 guard (round-4 open item, fixed at 0b7285b7; round-7 re-anchor
+    after 8ce83ba7 renamed the RIS update reason): the RIS-layer
     within-Activity tie-break for Progressing must be stated — the RIS
     activity precedence with recovery outranking active update and scaling —
     plus the recovery-overlaps-workflow unit-test bullet.
     Polarity: contract (fail == RIS tie-break unstated).
     """
     problems = []
+    # round-7 re-anchor: 8ce83ba7/4726de68 renamed RollingUpdate ->
+    # RoleInstanceUpdated (strategy-agnostic). The precedence statement is
+    # unchanged in substance; only the reason token moved.
     if not re.search(r"Activity precedence for RIS `Progressing` is "
-                     r"`Creating`, `Recovering`, `RollingUpdate`, and "
+                     r"`Creating`, `Recovering`, `RoleInstanceUpdated`, and "
                      r"`ScalingUp` / `ScalingDown`", kep_text):
         problems.append("RIS activity-precedence statement not found")
     if not re.search(r"Recovery outranks active update and scaling",
@@ -662,10 +675,14 @@ def check_c13(kep_text):
     over-capture, pinned by the 2 -> 3 test bullet).
     Polarity: contract (fail == scoping or classification unstated at
     either layer). Fails at 0b7285b7 (round-5 definitional wording only),
-    passes at 39e2ecdf.
+    passes at 39e2ecdf. Round-7 re-anchor: reason tokens renamed
+    (ScalingOrUpdating -> RoleInstanceSetUpdated, RollingUpdate ->
+    RoleInstanceUpdated); substance unchanged at 05807351.
     """
     problems = []
     # RBG layer: establishment scoping + post-establishment classification
+    # (round-7 re-anchor: ScalingOrUpdating -> RoleInstanceSetUpdated,
+    # RollingUpdate -> RoleInstanceUpdated; substance unchanged)
     if not re.search(r"`Creating` is used only during initial RBG "
                      r"establishment", kep_text):
         problems.append("RBG Creating not scoped to initial establishment")
@@ -674,10 +691,10 @@ def check_c13(kep_text):
         problems.append("RBG post-establishment missing-child classification "
                         "not stated")
     if not re.search(r"such as `Recovering` for replacing an established "
-                     r"child or `ScalingOrUpdating` for a target that adds "
-                     r"one", kep_text):
+                     r"child or `RoleInstanceSetUpdated` for a target that "
+                     r"adds one", kep_text):
         problems.append("RBG replacement->Recovering / scale-up->"
-                        "ScalingOrUpdating mapping not stated")
+                        "RoleInstanceSetUpdated mapping not stated")
     # RIS layer
     if not re.search(r"`Creating` is used only during initial set "
                      r"establishment", kep_text):
@@ -687,8 +704,8 @@ def check_c13(kep_text):
         problems.append("RIS post-establishment missing-RI classification "
                         "not stated")
     if not re.search(r"`ScalingUp` when scaling adds instances, "
-                     r"`RollingUpdate` when update work creates or replaces "
-                     r"instances", kep_text):
+                     r"`RoleInstanceUpdated` when update work creates, "
+                     r"replaces, or updates instances in place", kep_text):
         problems.append("RIS scale-up / update classification not stated")
     # test-plan bullet pinning the scale-up case (C4495569498)
     if not (re.search(r"reports `ScalingUp`", kep_text)
@@ -728,37 +745,51 @@ def check_c14(kep_text):
 
 
 def check_c15(kep_text):
-    """F15 repro (round-5 open, minor): the preCheck-failure status-write
-    rule contradicts the Accepted=False -> Progressing=False mapping.
-    The test plan says the parent writes observedGeneration=N together with
-    Progressing=True 'including preCheck failures', while the Accepted
-    semantics require Progressing=False with the matching incompatibility
-    reason when Accepted=False. Both are normative; nothing reconciles them.
-    Polarity: contract (fail == the contradiction is present; passes once
-    the clause is scoped/reworded or a sequencing statement is added).
+    """F15 guard (round-5 open minor; round-7 Harness-update + re-anchor
+    after 65b92ea1 dropped the Accepted condition and moved configuration
+    blockers to Progressing=True). The old contradiction (preCheck failures
+    prescribed Progressing=True at :140/:510 but Progressing=False via the
+    Accepted mapping at :234) is resolved by the redesign only if the new
+    model is stated consistently. Re-anchored contract: (a) the common-rules
+    pre-dispatch write must prescribe Progressing=True for a confirmed
+    configuration-family blocker; (b) the validation-ownership section must
+    prescribe Progressing=True with InvalidSpec for persisted invalid specs;
+    (c) the unit-test plan must prescribe Progressing=True with a
+    configuration-family reason; and (d) no surviving normative statement
+    may still map a compatibility / configuration failure to
+    Progressing=False.
+    Polarity: contract (fail == the new model is stated inconsistently).
+    Fails at 39e2ecdf under this anchor (old model); passes at 05807351.
     """
     problems = []
-    precheck_true = re.search(r"including pre[Cc]heck failures[^.;]*"
-                              r"`Progressing=True`", kep_text)
-    accepted_false_map = re.search(r"When `Accepted=False`, "
-                                   r"`Progressing=False` uses the matching",
-                                   kep_text)
-    if precheck_true and accepted_false_map:
-        # look for an explicit reconciliation (sequencing / scoping)
-        reconciled = re.search(r"pre[Cc]heck[^.;]*(?:then|before the "
-                               r"compatibility|intermediate|flip)", kep_text)
-        if not reconciled:
-            problems.append("preCheck-failure clause prescribes "
-                            "Progressing=True while Accepted=False "
-                            "prescribes Progressing=False; no sequencing "
-                            "statement reconciles them")
-    elif not accepted_false_map:
-        problems.append("Accepted=False -> Progressing=False mapping not "
-                        "found (harness anchor may be stale)")
+    rule_common = re.search(r"a confirmed configuration-family blocker "
+                            r"writes `Progressing=True` with the "
+                            r"configuration-family reason", kep_text)
+    rule_vo = re.search(r"the controller reports `Progressing=True` with "
+                        r"`InvalidSpec`", kep_text)
+    rule_plan = re.search(r"Persisted invalid specs and runtime "
+                          r"incompatibility report `Progressing=True` with "
+                          r"a configuration-family reason", kep_text)
+    if not rule_common:
+        problems.append("common-rules config-blocker -> Progressing=True "
+                        "statement not found")
+    if not rule_vo:
+        problems.append("validation-ownership InvalidSpec -> "
+                        "Progressing=True statement not found")
+    if not rule_plan:
+        problems.append("test-plan config-blocker -> Progressing=True "
+                        "statement not found")
+    # (d) no surviving mapping of compatibility failure to Progressing=False
+    stale = re.search(r"(?:incompatib|configuration|Accepted=False)[^.;]{0,120}"
+                      r"`?Progressing=False`?", kep_text)
+    if stale:
+        problems.append("statement still maps a compatibility/configuration "
+                        "failure to Progressing=False: %r" % stale.group(0))
     emit("C15-precheck-write-consistency", not problems,
          "; ".join(problems) if problems
-         else "preCheck-failure status-write rule consistent with "
-              "Accepted=False semantics")
+         else "configuration blockers consistently written as "
+              "Progressing=True (common rules, validation ownership, test "
+              "plan) with no surviving Progressing=False mapping")
 
 
 def check_c16(kep_text):
@@ -962,32 +993,61 @@ def check_c19(kep_text):
 
 
 def check_c20(kep_text):
-    """F14 repro (round-5 open, nit): the Consuming-the-Status decision
-    table's needs-attention row lists configuration-compatibility families
-    under `Progressing=True`, but every config-incompatibility reason maps
-    to `Progressing=False` (:140 round-6 rule + :234 mapping) — a dead
-    disjunct in the very table Flux CEL / Argo CD Lua implementers are told
-    to codify. The `Accepted=False` disjunct already covers the family.
-    Polarity: contract (fail == dead disjunct present). Fails at head;
-    dropping 'or configuration-compatibility' from the Progressing=True
-    list flips it green.
+    """F14 guard (round-5 open nit; round-7 Harness-update + re-anchor
+    after 65b92ea1 made configuration blockers Progressing=True). Under the
+    old model the needs-attention row's 'configuration-compatibility under
+    Progressing=True' disjunct was dead (those reasons only occurred with
+    Progressing=False). Under the new model the disjunct is live, so the
+    re-anchored contract is liveness: every family the needs-attention row
+    names under Progressing=True must have its reasons listed in the RBG
+    'Progressing=True, blocked or waiting' candidate row, and the row must
+    not cite the removed `Accepted=False` disjunct.
+    Polarity: contract (fail == a dead disjunct or a stale citation).
+    Fails at 39e2ecdf under this anchor; passes at 05807351.
     """
     problems = []
     m = re.search(r"\| Does it need attention\? \|([^\n]*)\|", kep_text)
+    b = re.search(r"\| Progressing=True, blocked or waiting \|([^\n]*)\|",
+                  kep_text)
     if m is None:
         problems.append("decision-table needs-attention row not found")
     else:
         row = m.group(1)
-        if "configuration-compatibility" in row and \
-                "Progressing=True" in row:
-            problems.append("needs-attention row lists configuration-"
-                            "compatibility under Progressing=True (dead "
-                            "disjunct: config-incompatibility reasons only "
-                            "occur with Progressing=False)")
+        blocked = b.group(1) if b else ""
+        fams = [f for f in ("configuration-compatibility", "permission",
+                            "admission", "quota", "resources", "gang",
+                            "dependencies", "unclassified")
+                if f in row]
+        reasons = {
+            "configuration-compatibility":
+                ("InvalidSpec", "IncompatibleGangConfig",
+                 "SchedulerUnsupported"),
+            "permission": ("PermissionDenied",),
+            "admission": ("AdmissionDenied",),
+            "quota": ("WaitingForQuota",),
+            "resources": ("WaitingForResources",),
+            "gang": ("WaitingForGang",),
+            "dependencies": ("WaitingForDependencies",),
+            "unclassified": ("UnclassifiedBlocker",),
+        }
+        for f in fams:
+            missing = [r for r in reasons[f]
+                       if ("`%s`" % r) not in blocked]
+            if missing:
+                problems.append(
+                    "needs-attention family '%s' reasons {%s} absent from "
+                    "the 'Progressing=True, blocked or waiting' candidate "
+                    "row (dead disjunct)" % (f, ", ".join(missing)))
+        if "Accepted=False" in row:
+            problems.append("needs-attention row still cites the removed "
+                            "Accepted=False disjunct")
+        if "Progressing=True" not in row:
+            problems.append("needs-attention row does not state "
+                            "Progressing=True")
     emit("C20-consuming-table-attention-row", not problems,
          "; ".join(problems) if problems
-         else "needs-attention row consistent with the "
-              "Accepted=False -> Progressing=False mapping")
+         else "needs-attention row families all live under "
+              "Progressing=True in the new blocker model")
 
 
 def check_c21(kep_text):
@@ -1133,6 +1193,135 @@ def check_c25(kep_text):
               "section")
 
 
+# ---------------------------------------------------------------- C26 (F22)
+
+
+def check_c26(kep_text):
+    """F22 repro (round-7 new, minor; introduced by fc85dad1's reason-
+    provenance prose): the taxonomy paragraph prescribes that each
+    controller's OWN CR-operation errors are reported 'directly as
+    `UnclassifiedBlocker`' (categorical), while the provenance table lists
+    'RI (or RIS / RBG for their own CR operations)' as the lowest observer
+    for the four specific families (PermissionDenied, AdmissionDenied,
+    WaitingForQuota, WaitingForResources) — implying a controller's own
+    classifiable CR-operation error reports the family reason. The RIS
+    section hedges with 'normally `UnclassifiedBlocker`'. An implementer
+    deciding the reason for, e.g., a quota-blocked RIS-create gets two
+    different answers from the same document.
+    Polarity: contract (fail == both prescriptions coexist unreconciled).
+    Passes once either the categorical sentence is scoped ('with the
+    matching family reason when classifiable, UnclassifiedBlocker
+    otherwise') or the table's parenthetical is restricted.
+    """
+    problems = []
+    categorical = re.search(
+        r"Each controller reports its own CR-operation errors directly as "
+        r"`UnclassifiedBlocker`", kep_text)
+    fam_row = re.search(
+        r"\| `PermissionDenied`, `AdmissionDenied`, `WaitingForQuota`, "
+        r"`WaitingForResources`, `UnclassifiedBlocker` \| RI \(or RIS / RBG "
+        r"for their own CR operations\)", kep_text)
+    if categorical and fam_row:
+        problems.append(
+            "taxonomy prescribes own CR-operation errors -> "
+            "UnclassifiedBlocker while the provenance table names RIS / RBG "
+            "as lowest observer for the specific family reasons "
+            "(PermissionDenied / WaitingForQuota / ...); no reconciliation "
+            "for the classifiable own-operation case")
+    elif not categorical and not fam_row:
+        problems.append("both anchors missing (harness may be stale)")
+    emit("C26-own-crop-reason-consistency", not problems,
+         "; ".join(problems) if problems
+         else "own CR-operation blocker reason consistently prescribed")
+
+
+# ---------------------------------------------------------------- C27 (F23)
+
+
+def check_c27(kep_text):
+    """F23 repro (round-7 new, nit; introduced by d0c9266e's phase/gate
+    separation leaving the old sentence in place): the RI edge-table prose
+    still reads 'Readiness gates only `Creating → Running` and completion
+    decisions' — under the doc's own vocabulary 'readiness gates' means
+    spec.readinessGates / externally owned gates, which :244/:411 and the
+    phase table explicitly exclude from gating phase transitions
+    ('external readiness gates do not gate phase transitions', phase rows
+    require 'controller-observed readiness requirements'). The leftover
+    sentence contradicts the new rule under its natural reading.
+    Polarity: contract (fail == the unqualified sentence coexists with the
+    external-gates-do-not-gate rule). Passes once the sentence is reworded
+    (e.g. 'readyPolicy and the in-place update readiness gate only gate
+    Creating → Running ...').
+    """
+    problems = []
+    unqualified = re.search(
+        r"Readiness gates only `Creating → Running` and completion "
+        r"decisions", kep_text)
+    separation = re.search(
+        r"external readiness gates do not gate (?:this phase|phase "
+        r"transitions)", kep_text)
+    if unqualified and separation:
+        problems.append(
+            "'Readiness gates only Creating → Running' contradicts the "
+            "phase/gate separation ('external readiness gates do not gate "
+            "phase transitions'); the unqualified 'readiness gates' must "
+            "be reworded to the controller-observed inputs (readyPolicy + "
+            "in-place update gate)")
+    emit("C27-phase-gate-terminology-consistency", not problems,
+         "; ".join(problems) if problems
+         else "phase-gating terminology consistent with the "
+              "phase/gate separation")
+
+
+# ------------------------------------------------- C28 (advisory pins)
+
+
+def check_c28(kep_text):
+    """Round-7 advisory-resolution pin: two round-6 Copilot advisories are
+    resolved by this round's redesign; this check pins the resolutions so
+    they cannot silently regress.
+    (a) C4515734270 (example made RoleInstanceCustomReady determine
+        RoleInstanceReady): the RI example must keep the custom gate on its
+        own condition with its own reason, and RoleInstanceReady's reason
+        must be one the code actually writes.
+    (b) C4515733997 (readiness-gate circular wait with KEP-527
+        markPodNotReady): phase completion must be stated as
+        controller-observed only, with external gates not gating phase.
+    Polarity: contract (fail == either resolution regressed).
+    """
+    problems = []
+    m = re.search(r"```yaml\napiVersion: workloads\.x-k8s\.io/v1alpha2\n"
+                  r"kind: RoleInstance\n(.*?)```", kep_text, re.S)
+    ex = m.group(1) if m else ""
+    rir = re.search(r"type: RoleInstanceReady\n\s*status: \"\w+\"\n\s*"
+                    r"reason: (\w+)", ex)
+    if rir is None:
+        problems.append("RI example RoleInstanceReady reason not found")
+    elif rir.group(1) not in ("Ready", "PodsNotReady",
+                              "InplaceUpdateNotReady",
+                              "ReadinessGatesNotReady"):
+        problems.append("RI example RoleInstanceReady reason %r is not a "
+                        "code reason" % rir.group(1))
+    crc = re.search(r"type: RoleInstanceCustomReady\n\s*status: \"\w+\"\n"
+                    r"\s*reason: (\w+)", ex)
+    if not crc:
+        problems.append("RI example RoleInstanceCustomReady reason not "
+                        "found (gate must carry its own reason)")
+    if not re.search(r"external gates are not folded into it", kep_text):
+        problems.append("'external gates are not folded into it' "
+                        "statement missing")
+    if not re.search(r"do not gate phase transitions", kep_text):
+        problems.append("'do not gate phase transitions' statement missing")
+    if not re.search(r"does not prevent the RI from entering `Running`",
+                     kep_text):
+        problems.append("markPodNotReady circular-wait removal statement "
+                        "missing")
+    emit("C28-advisory-resolution-pins", not problems,
+         "; ".join(problems) if problems
+         else "C4515734270 (custom gate separate) and C4515733997 "
+              "(phase not gated by external gates) pinned at head")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default=".")
@@ -1172,6 +1361,9 @@ def main():
     check_c23(kep_text)
     check_c24(kep_text)
     check_c25(kep_text)
+    check_c26(kep_text)
+    check_c27(kep_text)
+    check_c28(kep_text)
 
     for cid, ok, detail in RESULTS:
         print("%s\t%s" % (cid, "pass" if ok else "fail"))

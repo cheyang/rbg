@@ -2,21 +2,21 @@
   "topic": "502-workload-status-model-claude",
   "pr": "https://github.com/sgl-project/rbg/pull/528",
   "reviewer": "claude",
-  "headSha": "39e2ecdf0d8f6a3656923ab33b8391dd7ab88fd1",
+  "headSha": "058073514731f8d2ebfeffe68a51b587102ab110",
   "baseSha": "885d655bd1b4c26e6d14837709eeda675f3ae886",
   "harnessPaths": [
     "docs/verification/502-workload-status-model-claude"
   ],
   "premise": {
     "id": "P0",
-    "claim": "KEP-502 motivation (docs-only PR, premise check run as motivation-claims verification): RBG/RIS/RI lack status.phase today; RBG declares Progressing and RollingUpdateInProgress but the built-in controllers never write them; RBG Ready reflects all-replicas readiness without revision convergence; RIS/RI record operation failures as FailedScale/FailedUpdate conditions.",
+    "claim": "KEP-502 motivation (docs-only PR, premise check run as motivation-claims verification): RBG/RIS/RI lack status.phase today; RBG declares Progressing and RollingUpdateInProgress but the built-in controllers never write them; RBG Ready reflects all-replicas readiness without revision convergence; RIS/RI record operation failures as FailedScale/FailedUpdate conditions. Round-7 model note: the KEP now drops Accepted, deprecates RBG Ready, and renames RBG/RIS update reasons (RoleInstanceSetUpdated / RoleInstanceUpdated); premise (the limitations the KEP solves exist in today's code) still confirmed.",
     "reportedComponent": "api/workloads/v1alpha2/{rolebasedgroup,roleinstanceset,roleinstance}_types.go + internal/controller/workloads + pkg/reconciler",
     "patchedComponent": "keps/502-workload-status-model/ (design document only; no API/controller changes in this PR)",
     "componentMatch": true,
     "runsAgainst": "base",
     "layer": "unit",
     "verdict": "confirmed",
-    "evidence": "C5 green at head (results/unit-l1-at-head.txt): no json:\"phase\" tag in any of the three v1alpha2 status types; zero writes of RoleBasedGroupProgressing / RoleBasedGroupRollingUpdateInProgress / \"Progressing\" / \"RollingUpdateInProgress\" in internal/ and pkg/ non-test Go; FailedScale/FailedUpdate declared in v1alpha2 RIS and RI condition enums and written by statelessmode/reconciler.go:237,251 and instance_reconciler.go:191,235; RBG Ready computed purely from role.Replicas == rs.Replicas == rs.ReadyReplicas (rolebasedgroup_controller.go:783-793) with no revision check, reasons AllRolesReady/RoleNotReady at :796/:804.",
+    "evidence": "C5 green at head (results/unit-l1-at-head.txt): no json:\"phase\" tag in any of the three v1alpha2 status types; zero writes of RoleBasedGroupProgressing / RoleBasedGroupRollingUpdateInProgress / \"Progressing\" / \"RollingUpdateInProgress\" in internal/ and pkg/ non-test Go; FailedScale/FailedUpdate declared in v1alpha2 RIS and RI condition enums and written by statelessmode/reconciler.go:237,251 and instance_reconciler.go:191,235; RBG Ready computed purely from role.Replicas == rs.Replicas == rs.ReadyReplicas (rolebasedgroup_controller.go:783-793) with no revision check, reasons AllRolesReady/RoleNotReady at :796/:804. Round 7 @05807351: C5 re-run green at head; the motivation's rewritten RBG-Ready limitation claim ('verdict is not well-defined ... Deployment and StatefulSet define no Ready condition') verified against k8s.io/api v0.34.2 (StatefulSetConditionType defines no Ready/Available constants; Deployment has no Ready condition type) and ReplicaSetUpdatedReason='ReplicaSetUpdated' confirmed as a Deployment Progressing-condition reason in k8s.io/kubernetes@v1.34.2 (pkg/controller/deployment/util) \u2014 the new analogy claims are factually accurate.",
     "match": [
       "C5-premise-motivation-claims"
     ]
@@ -54,7 +54,8 @@
       "polarity": "contract",
       "match": [
         "C4-ri-readiness-reasons-match-code"
-      ]
+      ],
+      "note": "round-7 Harness-update: 05807351 rewrote the guarded sentence; re-anchored to \"RoleInstanceReady reasons are ...\" and re-run green at head (reasons match code exactly)."
     },
     {
       "id": "F9-rbg-transition-input-inconsistent",
@@ -86,7 +87,8 @@
       "polarity": "contract",
       "match": [
         "C12-ris-activity-precedence"
-      ]
+      ],
+      "note": "round-7 Harness-update: 8ce83ba7 renamed RollingUpdate -> RoleInstanceUpdated; guard re-anchored, green at head."
     },
     {
       "id": "F12-rbg-replacement-creation-reason-mapping",
@@ -96,7 +98,7 @@
         "C13-replacement-mapping-stated",
         "C16-replacement-discriminator"
       ],
-      "note": "round-6 Harness-update: C13/C16 re-anchored to the establishment-scoped fix at 39e2ecdf (old definitional anchors removed by the fix); polarity re-proven fail@all prior heads / pass@head (results/polarity-round6.txt)"
+      "note": "round-7 Harness-update: reason renames (ScalingOrUpdating -> RoleInstanceSetUpdated, RollingUpdate -> RoleInstanceUpdated); C13/C16 re-anchored, both green at head."
     },
     {
       "id": "F13-concurrent-activity-coverage-regression",
@@ -112,7 +114,8 @@
       "polarity": "contract",
       "match": [
         "C20-consuming-table-attention-row"
-      ]
+      ],
+      "note": "round-7 fixed-by-redesign: under the no-Accepted model, configuration-family blockers occur with Progressing=True, so the attention row disjunct is live. C20 re-anchored to a liveness contract, green at head."
     },
     {
       "id": "F15-precheck-write-contradiction",
@@ -120,7 +123,8 @@
       "polarity": "contract",
       "match": [
         "C15-precheck-write-consistency"
-      ]
+      ],
+      "note": "round-7 Harness-update + fixed-by-redesign: 65b92ea1 dropped Accepted; config blockers now Progressing=True consistently (common rules, validation ownership, test plan) with no surviving Progressing=False mapping. C15 re-anchored, green at head."
     },
     {
       "id": "F16-minready-timestamp-scope-stateful-too",
@@ -173,6 +177,33 @@
         "C18-create-fold-consistency"
       ],
       "note": "Copilot round-5 advisory, fixed by the round-6 Create-convergence fold + the Updating-yields-to-blockers qualifier"
+    },
+    {
+      "id": "F22-own-crop-blocker-reason-contradiction",
+      "layer": "unit",
+      "polarity": "contract",
+      "match": [
+        "C26-own-crop-reason-consistency"
+      ],
+      "note": "round-7 new (minor, introduced by fc85dad1): the taxonomy prescribes own CR-operation errors 'directly as UnclassifiedBlocker' while the provenance table names RIS/RBG as lowest observer for the specific family reasons; the RIS section hedges 'normally UnclassifiedBlocker'. Fix simulation (scoping the categorical sentence) flips C26 green."
+    },
+    {
+      "id": "F23-phase-gate-terminology-contradiction",
+      "layer": "unit",
+      "polarity": "contract",
+      "match": [
+        "C27-phase-gate-terminology-consistency"
+      ],
+      "note": "round-7 new (nit, introduced by d0c9266e leaving the old sentence): 'Readiness gates only Creating -> Running and completion decisions' contradicts the new 'external readiness gates do not gate phase transitions' rule under the doc's own vocabulary. Clean introduction differential: C27 green at 39e2ecdf, red only at 05807351. Fix simulation (rewording to readyPolicy + in-place gate) flips green."
+    },
+    {
+      "id": "ADV-pins-round7",
+      "layer": "unit",
+      "polarity": "contract",
+      "match": [
+        "C28-advisory-resolution-pins"
+      ],
+      "note": "round-7: pins the resolution of round-6 Copilot advisories C4515734270 (RI example now keeps RoleInstanceCustomReady separate with reason ExternalCheckPending; RoleInstanceReady reason PodsNotReady is a code reason) and C4515733997 (phase completion is controller-observed only; markPodNotReady gate does not prevent entering Running). Both resolved by this round's redesign; C28 green at head, red at all earlier heads."
     }
   ],
   "refutedHypotheses": [
@@ -194,12 +225,13 @@
     "AC-ris-reason-enumeration": "C9 (unit)",
     "AC-premise-factual": "C5 (motivation claims) + C11-round5-code-claims (round-6 Harness-update: claim 3 re-anchored to the KEP-527 hook-protocol delegation; code constants still verified) + out-of-band KEP-527 reference verification (results/kep527-reference-check.txt)",
     "AC-phase-scope": "C14-phase-scope-consistency (unit)",
-    "AC-activity-tie-coverage-all-layers": "C12 (F11) + C13/C16 (F12) — all green at 39e2ecdf: PASSED",
-    "AC-rbg-activity-precedence": "C10 (unit) — still FAILED on the test-plan coverage clause only (F13, nit)",
-    "AC-decision-table-consistency": "C20 (unit) — FAILED (F14, nit)",
-    "AC-create-convergence-fold": "C18 (unit) — new round-6: edge/situation/prose/test-plan fold + Updating-yields-to-blockers; PASSED (fail@0b7285b7)",
-    "AC-completion-observedGeneration": "C23 (unit) — new round-6: completion requires the Progressing condition's own observedGeneration (rollback-safe); PASSED (fail@0b7285b7)"
+    "AC-activity-tie-coverage-all-layers": "C12 (F11) + C13/C16 (F12) \u2014 all green at 39e2ecdf: PASSED",
+    "AC-rbg-activity-precedence": "C10 (unit) \u2014 still FAILED on the test-plan coverage clause only (F13, nit)",
+    "AC-decision-table-consistency": "C20 (unit) \u2014 FAILED (F14, nit)",
+    "AC-create-convergence-fold": "C18 (unit) \u2014 new round-6: edge/situation/prose/test-plan fold + Updating-yields-to-blockers; PASSED (fail@0b7285b7)",
+    "AC-completion-observedGeneration": "C23 (unit) \u2014 new round-6: completion requires the Progressing condition's own observedGeneration (rollback-safe); PASSED (fail@0b7285b7)"
   },
   "liveNote": "L3 skipped (debate setup: unit + integration layers only). Docs-only KEP PR; no live runtime signal.",
-  "previousHeadSha": "0b7285b7c2ad23f139f0edb8549a316129e9b4a2"
+  "previousHeadSha": "0b7285b7c2ad23f139f0edb8549a316129e9b4a2",
+  "harnessNotes": " Round 7: re-anchored C4/C12/C13/C15/C20 to the redesigned model (Accepted dropped, RBG Ready deprecated, reason renames); added C26 (F22), C27 (F23), C28 (advisory pins). Bite evidence: defect simulations red / fix simulations green (results/bite-check-round7.txt); polarity sweep across f05e1dd..05807351 in results/polarity-round7-full.txt."
 }
