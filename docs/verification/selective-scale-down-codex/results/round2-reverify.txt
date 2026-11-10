@@ -1,0 +1,24 @@
+Round 2 re-verify against head f3d448746b02a10ebff161885e98d352d19d393f (base fd160cc9)
+=========================================================================================
+re-verify.sh f3d448746b02a10ebff161885e98d352d19d393f (unit + integration):
+
+  F2  canary  unit  STILL-PRESENT (pass=1 fail=0 miss=0)
+      -> validateCommittedMembership still drops ALL FailedScale conditions on an
+         invalid committed record; reason constant extracted but predicate unscoped.
+  F3  canary  unit  STILL-PRESENT (pass=1 fail=0 miss=0)
+      -> new canary: committed [0,2,4] record "1,3", maxSurge=1 -> surge ordinal 5
+         while role exclusion input "1,3,5" (test log: 'surge ordinal = 5').
+         ce03814f reworked surge to on-demand allocation but still consults only the
+         committed record (skips.Next), never the role's E.
+
+  integration: ok selective_commit 23.8s, ok webhook 40.0s, ok rbg 82.6s
+      (includes new PR tests: TestOrdinaryRISRemovesMetadataAfterManagedFieldsHandoff,
+       TestSelectiveDenseOrphanReapply, TestSelectiveMembershipPreservesSharedMetadata,
+       webhook owner-transition admission cases)
+
+F1 lint gate: FIXED. Pinned golangci-lint v2.13.1 run on f3d44874 reports "0 issues"
+  (round 1: 6 issues on 07ae1194, 0 on base 4a0765f). CI lint job green on head
+  (run 42826773243). reconcileSelectiveMembership split into read/plan/build/merge/
+  patch helpers; goconst reason extracted; prealloc findings fixed.
+
+CI rollup at f3d44874: all checks SUCCESS (build, lint, envtest, markdown, all E2E jobs).

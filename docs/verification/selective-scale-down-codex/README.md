@@ -50,3 +50,21 @@ filter). The PR's own suites (ordinals property tests, selective_commit envtest,
 webhook admission envtest, rbg selective scale-down envtest) are all contract tests
 and must stay green; `re-verify.sh` runs the unit layer plus the harness canary and
 reports per-finding Fixed/Still-broken.
+
+## Round 2 (head f3d44874, base fd160cc9)
+
+Re-ran the full harness via `scripts/re-verify.sh f3d448746b02a10ebff161885e98d352d19d393f`
+(unit + integration). Raw summary: `results/round2-reverify.txt`; machine output under
+`results/reverify/`.
+
+| Finding | Round-2 verdict | Evidence |
+|---|---|---|
+| F1 lint gate | **FIXED** — pinned golangci-lint v2.13.1 reports 0 issues on f3d44874; CI lint green | `results/round2-reverify.txt` |
+| F2 FailedScale erasure | **STILL PRESENT** — canary still passes; predicate unscoped (constant extracted only) | re-verify unit |
+| F3 surge on user-excluded ordinal | **STILL PRESENT** — new canary `TestVerifyF3SurgeLandsOnUserExcludedOrdinal` passes on head: committed [0,2,4] + E "1,3,5" + maxSurge=1 → surge ordinal 5. The ce03814f on-demand surge rework still consults only the committed record | re-verify unit |
+
+Also green on head: PR's new envtest coverage for the managed-fields ownership fold
+(`TestOrdinaryRISRemovesMetadataAfterManagedFieldsHandoff`), dense-orphan adoption
+(`TestSelectiveDenseOrphanReapply`) and shared-metadata preservation
+(`TestSelectiveMembershipPreservesSharedMetadata`); webhook owner-transition admission
+tests; full unit sweep. `.last-reviewed` advanced to f3d44874.
