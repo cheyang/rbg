@@ -57,7 +57,7 @@
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerifyPreDeleteMarkNotReadySingleCallSucceeds$"
+        "TestVerifyPreDeleteMarkNotReadySingleCallSucceeds"
       ],
       "note": "Fake-client layer. Fails at head with 'object was modified' on the first MarkNotReady=true PreparingDelete transition; passes on base."
     },
