@@ -1,0 +1,34 @@
+PR #538 round 3 re-verify — Reviewer B (Codex)
+head = 2c347c471633b8ecee2c4d59079749b139632359   previous = f3d448746b02a10ebff161885e98d352d19d393f
+base  = fd160cc964b0e1438bead4ad7324d0a8f0bf5eac (unchanged; feature absent on base, base stays not-run)
+
+Round-3 delta: 5 commits targeting the round-2 open findings
+  eec29c95 fix: allow discovery of claimable dense orphan children   (F-new/discovery-gates-adoption)
+  def9bf63 fix: preserve unrelated scale failure conditions          (F4/F2 canary)
+  e340f9f7 fix: isolate invalid selective scaling roles              (F5)
+  5fc8c972 fix: exclude requested ordinals from new rollout surge    (F3)
+  2c347c47 docs: clarify membership recovery and discovery timing    (F6 runbook + Q2 contract + recovery envtest)
+
+Run 1 (round start, canaries still in round-2 polarity), unit+integration on head 2c347c47:
+  F2 canary  TestVerifyF2FailedScaleConditionsReplacedOnInvalidRecord  FAILED  -> FIXED(flipped)
+  F3 canary  TestVerifyF3SurgeLandsOnUserExcludedOrdinal               PASSED  -> Harness-update:
+             the fix mirrors E onto the child RIS; the canary modeled the pre-mirror child
+             (record only, no E), a shape the conditional writer no longer produces.
+  integration: ok selective_commit 24.3s, ok webhook 39.6s, ok rbg 100.5s (all three suites green,
+             incl. the new isolation / orphan-adoption / corrupt-record-recovery / surge-at-6 envtests)
+
+Harness update (round 3): canaries inverted to contract tests.
+  TestVerifyF2FailedScaleConditionsPreservedOnInvalidRecord  (contract)
+  TestVerifyF3SurgeSkipsMirroredExclusions                   (contract, mirrored child shape)
+  TestVerifyF3LegacyChildWithoutMirror                       (characterization: transient pre-mirror
+             upgrade window — child with record but no mirrored E still allocates surge at 5)
+
+Run 2 (updated harness), unit on head 2c347c47:
+  F2 contract  pass=1 fail=0 miss=0  -> FIXED
+  F3 contract  pass=2 fail=0 miss=0  -> FIXED
+
+Run 3 (updated harness, harness-bites check), unit on previous head f3d44874:
+  F2 contract  STILL-BROKEN (pass=0 fail=1)  -> test bites: old head drops the unrelated condition
+  F3           PARTIAL (pass=1 fail=1): TestVerifyF3SurgeSkipsMirroredExclusions FAILS on the old
+               head (surge lands on excluded 5 despite the mirror annotation -> bug present there),
+               TestVerifyF3LegacyChildWithoutMirror passes (pins the old/legacy behavior).

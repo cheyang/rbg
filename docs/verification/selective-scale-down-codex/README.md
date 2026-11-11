@@ -1,7 +1,7 @@
 # Verification — PR #538 "feat: implement stateful selective scale-down" (Reviewer B / Codex)
 
 - PR: https://github.com/sgl-project/rbg/pull/538
-- Reviewed head: `07ae1194c0481b2f39db2d41c32c08a6b2123b1d` (base `4a0765f78b0930114a4b73a64433ee8f27c34372`)
+- Reviewed head: `2c347c471633b8ecee2c4d59079749b139632359` (base `fd160cc964b0e1438bead4ad7324d0a8f0bf5eac`)
 - Harness branch: `verify/selective-scale-down-codex` (additive only; production code untouched — `git diff 07ae1194 -- ':(exclude)docs/verification/**' ':(exclude)*_verify_test.go'` is empty)
 
 ## P0 — Premise (runs against BASE, not the patch)
@@ -68,3 +68,35 @@ Also green on head: PR's new envtest coverage for the managed-fields ownership f
 (`TestSelectiveDenseOrphanReapply`) and shared-metadata preservation
 (`TestSelectiveMembershipPreservesSharedMetadata`); webhook owner-transition admission
 tests; full unit sweep. `.last-reviewed` advanced to f3d44874.
+
+## Round 3 (head 2c347c47, base fd160cc9 unchanged)
+
+Delta `f3d44874..2c347c47`: five commits, each targeting a round-2 open finding
+(eec29c95 discovery dense-orphan allowance, def9bf63 FailedScale predicate scoping,
+e340f9f7 per-role invalid-input isolation, 5fc8c972 surge avoids mirrored exclusions,
+2c347c47 recovery runbook + early-drain contract + recovery envtest).
+
+Re-ran `scripts/re-verify.sh` (unit + integration). Raw summary: `results/round3-reverify.txt`;
+machine output under `results/reverify/`.
+
+| Finding | Round-3 verdict | Evidence |
+|---|---|---|
+| F2 FailedScale erasure | **FIXED** — canary flipped red on 2c347c47 (predicate now scoped to `InvalidCommittedOrdinals`); inverted to contract test `TestVerifyF2FailedScaleConditionsPreservedOnInvalidRecord`; bites check: FAILS on f3d44874 | `results/round3-reverify.txt` |
+| F3 surge on user-excluded ordinal | **FIXED** — 5fc8c972 mirrors E onto the child RIS (allocation only) and `nextSurgeOrdinal` jumps exclusion ranges. Round-2 canary kept passing because it modeled the pre-mirror child (record only) — a shape the writer no longer produces (Harness-update); inverted to contract test `TestVerifyF3SurgeSkipsMirroredExclusions` (surge = 6, not excluded 5) + characterization `TestVerifyF3LegacyChildWithoutMirror` (pre-mirror upgrade window). Bites check: contract test FAILS on f3d44874 | `results/round3-reverify.txt` |
+| F5 preCheck blocks whole RBG | **FIXED** — per-role validation + skip; cleanup now always runs (Step 8/9 `errors.Join`); Ready=False/event moved into `updateRBGStatus`. Author envtest `isolates invalid bypassed input while reconciling other roles and cleaning removed roles` green in my integration layer | `results/reverify/integration.out` |
+| F6 corrupt record wedge | **FIXED (runbook route)** — guarded UID/resourceVersion/replicas repair runbook documented (EN + zh-CN); both recovery paths envtested through the full RBG controller incl. failed-guard cases | `results/reverify/integration.out` |
+| F8 discovery gates dense-orphan adoption | **FIXED** — ownerless dense child with matching group-name label is readable by discovery (sparse/foreign still rejected); full-controller envtest (delete + recreate with exclusions, UID preservation, sparse ConfigMap addresses) green | `results/reverify/integration.out` |
+| Q2 discovery early-drain contract | **ANSWERED** — docs now state commit-time shrinking is an intentional early-drain signal | doc/features/selective-scale-down.md |
+
+Full sweep on head: unit 47,477 test results, 0 failures; integration `ok` for
+selective_commit (24s), webhook (40s), rbg (100s) — includes the author's new
+isolation / orphan-adoption / recovery / surge-at-6 envtests. Pinned golangci-lint
+v2.13.1 on a pristine 2c347c47 checkout: 0 issues (CI lint also green).
+
+Known residual (nit, documented): a child RIS last written by a pre-mirror
+controller carries the committed record but no mirrored E; if a surged rollout is
+already pending across the upgrade, one surge allocation can still land on an
+excluded ordinal before the first post-upgrade sync mirrors E. Transient and
+self-limiting; pinned by `TestVerifyF3LegacyChildWithoutMirror`.
+
+`.last-reviewed` advanced to 2c347c47.
