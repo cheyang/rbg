@@ -1,0 +1,12 @@
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+F1     contract  lint         FIXED          pass=1 fail=0 miss=0
+F3     contract  unit         FIXED          pass=1 fail=0 miss=0
+F3-LEGACY contract  unit         FIXED          pass=1 fail=0 miss=0
+F4     contract  unit         FIXED          pass=1 fail=0 miss=0
+F5     contract  unit         FIXED          pass=1 fail=0 miss=0
+MIRROR contract  unit         FIXED          pass=2 fail=0 miss=0
+F7     contract  unit         FIXED          pass=1 fail=0 miss=0
+REG-COMMIT contract  integration  FIXED          pass=2 fail=0 miss=0
+
+Live layer (manual): L3 (kind cluster) not configured for this review round: the author's envtest suites run the real controllers against a real API server, which is the integration ceiling here. If a live layer is added, check that a kind rollout with E="1,3,5" never schedules a surge Pod on ordinal 5.
