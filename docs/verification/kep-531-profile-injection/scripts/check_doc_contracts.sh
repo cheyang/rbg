@@ -69,10 +69,16 @@ lacks() { ! has "$1"; }
 # (Round-3 update d84004a2: the condense reworded the fixed-state sentences;
 #  phrases re-pinned to the new wording, substance unchanged. See
 #  results/doc-bites-r3.txt for the bite check on the new phrases.)
+# (Round-6 update 31466993: prose-style rewrite; the role-owned-append error
+#  sentence reworded ("Legacy-merge output is role content, so a profile
+#  append onto such a name is the same render error…" + the envFrom-defense
+#  "a profile-side append onto it is a render error"). Semantics unchanged;
+#  see results/doc-bites-r6.txt.)
 if lacks "spanning all three passes" && lacks "still guarding the result" \
    && lacks "check spans both passes" \
    && has "legacy-only duplicates never error" \
-   && has "append onto a role-owned name is a render error" \
+   && has "Legacy-merge output is role content, so a profile append onto such a name is the same render error" \
+   && has "a profile-side append onto it is a render error" \
    && has "remains per-reference additive, exactly as on main"; then
   emit "F-ENV-CONFLICT-CONTRACT" pass "one positional env rule set; legacy merge unchecked as on main"
 else
@@ -122,7 +128,8 @@ else
 fi
 
 # F-UNKNOWN-TARGET-PROSE (round-1 nit, fixed): unknown-name semantics stated.
-if has "anything else — a name injected only by a different reference or profile — is a render error"; then
+# (Round-6 re-pin 31466993: em-dashes became commas in the rewrite.)
+if has "anything else, a name injected only by a different reference or profile, is a render error"; then
   emit "F-UNKNOWN-TARGET-PROSE-CONTRACT" pass "unknown targetContainers name is a stated render error"
 else
   emit "F-UNKNOWN-TARGET-PROSE-CONTRACT" fail "unknown-target semantics missing from the prose"
@@ -140,8 +147,8 @@ fi
 # F-COPILOT-VOLUMEMOUNT-EQUALITY (round-1 nit, fixed): full-field equality.
 # (Round-3 re-pin: the field list was condensed into "full semantic equality
 #  of the unmarshalled structs — an absent field and an explicit zero value
-#  counting as equal".)
-if has "full semantic equality" && has "an absent field and an explicit zero value counting as equal"; then
+#  counting as equal". Round-6 re-pin 31466993: "counting" → "count".)
+if has "full semantic equality" && has "an absent field and an explicit zero value count as equal"; then
   emit "F-COPILOT-VOLUMEMOUNT-EQUALITY-CONTRACT" pass "volumeMount no-op requires full semantic equality"
 else
   emit "F-COPILOT-VOLUMEMOUNT-EQUALITY-CONTRACT" fail "volumeMount equality dropped full-field comparison"
@@ -196,9 +203,14 @@ fi
 # the fixed wording: "two to four passes by chain" with the two reasons
 # (config injector stateful-only — verified against pkg/discovery/injector.go:
 # InjectConfig returns nil for !IsStatefulRole; worker chain omits sidecar).
+# (Round-6 re-pin 31466993: the rationale now cites chain composition —
+#  worker chains omit the sidecar injector; LWP env injector RIS-only — both
+#  verified against the SetInjectors call sites: RIS leader 4, RIS worker 3,
+#  LWS worker 2 passes; LWS roles are always stateful so the floor is 2.)
 if lacks "the four built-in injector passes" \
    && has "two to four passes by chain" \
-   && has "the config injector runs for stateful roles only"; then
+   && has "the worker chains omit the sidecar injector" \
+   && has "the LWP env injector runs on the RoleInstanceSet chains only"; then
   emit "F-INJECTOR-COUNT-WORDING-CONTRACT" pass "injector chain count states the 2-4 per-chain variation"
 else
   emit "F-INJECTOR-COUNT-WORDING-CONTRACT" fail "'the four built-in injector passes' overgeneralization is back (or the 2-4 variation clause was removed)"
@@ -208,10 +220,11 @@ fi
 # to minor at r3; FIXED at 0c51bc0e — canary flipped and inverted): the stage-3
 # role-owned env check now counts BOTH static sources — the pre-injection
 # snapshot AND the referencing role's own legacy engineRuntimes[].containers[].env
-# names ("legacy-merge output being role content"), so the promised render
+# names ("Legacy-merge output is role content" — round-6 re-pin of the r5
+# wording "legacy-merge output being role content"), so the promised render
 # error for a profile append onto a legacy-declared name can fire. The old
 # "content of earlier references only" clause is gone.
-if has "two static sources" && has "legacy-merge output being role content" \
+if has "two static sources" && has "Legacy-merge output is role content" \
    && lacks "content of earlier references only"; then
   emit "F-STAGE3-CHECK-TIMING-CONTRACT" pass "stage-3 check sees snapshot + own-role legacy env names"
 else
@@ -224,7 +237,8 @@ fi
 # legitimately keeps the substring "the later reference's entry lands later
 # and wins" — scoped to "appended entries land in reference order, so ..." —
 # so the contract pins the qualification and the inversion clause instead.
-if has "resolve by reference order, by spelling" \
+# (Round-6 re-pin 31466993: "by spelling" → "and spelling".)
+if has "resolve by reference order and spelling" \
    && has "two \`/env/0\` head inserts invert it" \
    && has "resolving positionally by spelling"; then
   emit "F-ROLE-INSERT-ORDER-CONTRACT" pass "role-side two-reference winner qualified by spelling; Test Plan covers both spellings"
@@ -239,11 +253,13 @@ fi
 # longer exist by design. The equivalent lifecycle coverage under the new
 # design: the bypassed-mutation watch event, the reference-bookkeeping drift
 # cases, and the accepted deletion race. Phrases re-pinned to that coverage.)
+# (Round-6 re-pin 31466993: "deletion race" → "deletion interleaving" in the
+#  rewrite; same test coverage.)
 testplan="$(awk '/^## Test Plan/{f=1;next} /^## /{f=0} f' "$README" | tr '\n' ' ' | tr -s ' ')"
 if printf '%s' "$testplan" | grep -qF "emitting the mutation-while-referenced warning event when the webhook is bypassed" \
    && printf '%s' "$testplan" | grep -qF "the drift baseline surviving a controller restart" \
    && printf '%s' "$testplan" | grep -qF "\`referencedGeneration\` recorded on the none-to-referenced transition" \
-   && printf '%s' "$testplan" | grep -qF "the accepted deletion race"; then
+   && printf '%s' "$testplan" | grep -qF "the accepted deletion interleaving"; then
   emit "F-PROFILE-EVOLUTION-TEST-CONTRACT" pass "new-design lifecycle coverage in the Test Plan (watch event, bookkeeping drift, deletion race)"
 else
   emit "F-PROFILE-EVOLUTION-TEST-CONTRACT" fail "new-design lifecycle coverage (watch event / bookkeeping drift / deletion race) removed from the Test Plan"
@@ -256,9 +272,10 @@ fi
 # deduplicated, matching the unit pin TestKEP531_Verify_RISTemplateEnvIsNotMapKeyed:
 # the served RIS CRD carries no map-keyed env list, so SSA never rejects env
 # duplicates). Contract: the false premise stays out and the verbatim-position
-# statement stays in.
+# statement stays in. (Round-6 re-pin 31466993: "adds no winner rule of its
+#  own" → "adds no winner rule".)
 if lacks "keyed by name and rejects duplicates" \
-   && has "the render adds no winner rule of its own" \
+   && has "the render adds no winner rule" \
    && has "never reordered or deduplicated"; then
   emit "F-SSA-ENV-PREMISE-CONTRACT" pass "env model is verbatim-positional; false SSA premise absent"
 else
@@ -288,8 +305,11 @@ fi
 # time via the shared role-side validation function riding the existing
 # webhooks (the role-side fourth invariant), render as the annotation-flip
 # backstop — in Non-Goals, the Design table, the Validation Model, and the
-# Test Plan.
-if has "at write time, by the shared role-side validation function riding the existing webhooks" \
+# Test Plan. (Round-6 re-pin 31466993: "at write time, by" → "at write time
+#  via", Non-Goals now also carries "the workload-type-annotation flip
+#  included".)
+if has "at write time via the shared role-side validation function riding the existing webhooks" \
+   && has "the workload-type-annotation flip included" \
    && has "role-side four" \
    && printf '%s' "$testplan" | grep -qF "at write time by the shared validation function"; then
   emit "F-DEPRECATED-PATH-MECHANISM-CONTRACT" pass "deprecated-path rejection names its mechanism at all three layers"
@@ -300,9 +320,13 @@ fi
 # F-WEBHOOK-ROLLBACK (round-4 minor; FIXED at b4637b51): the Downgrade story
 # now leads with removing the CERP webhook entry BEFORE the image rollback,
 # the alpha failurePolicy is stated (Fail from the alpha), and the Test Plan
-# gains the admission-enabled rollback drill.
+# gains the admission-enabled rollback drill. (Round-6 re-pin 31466993: the
+#  rollback drill now names the honest re-upgrade mechanism — the entry is
+#  re-applied from the release artifacts as its own step; the controller
+#  cannot reinstall it.)
 if has "remove the CERP webhook entry" \
-   && has "reinstalls the entry" \
+   && has "cannot reinstall the entry" \
+   && has "re-applies the ValidatingWebhookConfiguration from the release artifacts" \
    && printf '%s' "$testplan" | grep -qF "The admission-enabled rollback drill"; then
   emit "F-WEBHOOK-ROLLBACK-CONTRACT" pass "rollback removes the webhook entry first; drill in the Test Plan"
 else
@@ -312,7 +336,9 @@ fi
 # F-CAPABILITY-FORM-REGEX (round-4 minor; FIXED at b4637b51): the form warning
 # now fires on names matching the canonical uppercase form while carrying the
 # CAP_ prefix (checked case-insensitively) — the form the Test Plan promises.
-if has "or matching it while carrying the \`CAP_\` prefix, checked case-insensitively" \
+# (Round-6 re-pin 31466993: ", checked case-insensitively" → "(checked
+#  case-insensitively:".)
+if has "or matching it while carrying the \`CAP_\` prefix (checked case-insensitively" \
    && printf '%s' "$testplan" | grep -qF "the form warning on lowercase and \`CAP_\`-prefixed names"; then
   emit "F-CAPABILITY-FORM-REGEX-CONTRACT" pass "form warning fires on the CAP_-prefixed hazard the Test Plan promises"
 else
@@ -351,9 +377,12 @@ fi
 
 # F-PODRECONCILER-TERMINOLOGY (round-4 nit; FIXED at b4637b51): the doc drops
 # the PodReconciler shorthand entirely (zero occurrences at head) and says
-# "the Deployment/StatefulSet/LWS surfaces are deprecated".
+# "the Deployment/StatefulSet/LWS surfaces are deprecated". (Round-6 re-pin
+#  31466993: the deprecated-surfaces sentence is now the Non-Goals bullet
+#  "The deprecated workload surfaces: roles rendered as Deployment, StatefulSet
+#  or LWS".)
 if ! grep -q "PodReconciler" "$README" \
-   && has "the Deployment/StatefulSet/LWS surfaces are deprecated"; then
+   && has "The deprecated workload surfaces: roles rendered as Deployment, StatefulSet or LWS"; then
   emit "F-PODRECONCILER-TERMINOLOGY-CONTRACT" pass "deprecated surfaces named without the PodReconciler shorthand"
 else
   emit "F-PODRECONCILER-TERMINOLOGY-CONTRACT" fail "PodReconciler shorthand is back (or the deprecated-surfaces sentence changed)"
@@ -370,110 +399,201 @@ else
   emit "F-FINALIZER-REMOVAL-OVERCLAIM-CONTRACT" fail "finalizer-related overclaim returned"
 fi
 
-# ---------- Round-5 (head b4637b51) NEW findings — canaries ----------
-# Pass = the defective claim is present at head; flips to fail when reworded.
+# ---------- Round-5 canaries — FIXED at 31466993 (round 6), inverted ----------
+# The seven round-5 canaries flipped this round: the defective claims are gone
+# and the corrected wording landed. Inverted into contracts per polarity
+# policy (a canary is fixed only when it flips; then it is inverted).
 
 # F-RACE-OUTCOME-OVERCLAIM (round-5 NEW minor — Claude, Copilot comment
-# 4517519175 independently raised the update-race interleaving): the
-# accepted-race paragraph and the risk table claim all race outcomes are
-# "never silent miscontent" / "all ending in visible render failure", but the
-# window's interleavings include (a) an update committing after the referencing
-# role already rendered — later renders consume the changed content on a live
-# reference (silent content drift; the CERP watch event is the only signal),
-# and (b) the doc's own race-#1 description (a successful first render with
-# post-update content) is itself not a render failure.
-if has "never silent miscontent" && has "all ending in visible render failure"; then
-  emit "F-RACE-OUTCOME-OVERCLAIM-CANARY" pass "accepted-race outcome claims are overbroad (update-race content drift unnamed)"
+#  4517519175 independently raised the update-race interleaving; FIXED at
+#  31466993): the risk table now names every interleaving outcome, including
+#  the silent ones ("silently consumes the recreated content", "one drifts
+#  content on later re-renders, with the controller's watch warning event as
+#  the signal"), and the overbroad "never silent miscontent" / "all ending in
+#  visible render failure" claims are gone.
+if lacks "never silent miscontent" && lacks "all ending in visible render failure" \
+   && has "silently consumes the recreated content" \
+   && has "one drifts content on later re-renders, with the controller's watch warning event as the signal"; then
+  emit "F-RACE-OUTCOME-OVERCLAIM-CONTRACT" pass "all three interleaving outcomes named, silent legs included"
 else
-  emit "F-RACE-OUTCOME-OVERCLAIM-CANARY" fail "FIXED? race-outcome claims corrected — invert into a contract"
+  emit "F-RACE-OUTCOME-OVERCLAIM-CONTRACT" fail "race-outcome claims regressed to the overbroad all-visible form"
 fi
 
-# F-DELETE-RECREATE-OUTCOME (round-5 NEW minor — Claude): within accepted race
-# #2, the DELETE is admitted against a reference-less cluster, the referencing
-# role is stored, and a CREATE under the same name is unrestricted ("a new
-# profile has no references by construction" — false for the dangling
-# reference shape; the webhook intercepts UPDATE/DELETE only) — the dangling
-# reference then renders the recreated content silently: no render failure, no
-# watch event (CREATE is not a spec change on a referenced profile), fresh
-# bookkeeping baseline. The round-4 finalizer pair closed exactly this bypass.
-if has "recreate-under-same-name bypass at its first write" \
-   && has "create is unrestricted (a new profile has no references by construction)"; then
-  emit "F-DELETE-RECREATE-OUTCOME-CANARY" pass "delete+recreate closure claim overreaches the accepted race window"
+# F-DELETE-RECREATE-OUTCOME (round-5 NEW minor — Claude; FIXED at 31466993):
+# the closure claim is now scoped ("Outside the accepted interleavings, this
+# closes the delete + recreate-under-same-name bypass at its first write"),
+# the same-name-recreate sub-case is considered (CREATE-interception rejected
+# for the GitOps recovery order), and the dangling-reference outcome is named
+# ("the role silently consumes its content, with no render failure … and no
+# drift signal").
+if has "Outside the accepted interleavings, this closes the delete + recreate-under-same-name bypass at its first write" \
+   && has "the recreate lands on a dangling reference; that outcome is named below" \
+   && has "the role silently consumes its content"; then
+  emit "F-DELETE-RECREATE-OUTCOME-CONTRACT" pass "delete+recreate closure scoped; dangling-reference silent outcome named"
 else
-  emit "F-DELETE-RECREATE-OUTCOME-CANARY" fail "FIXED? delete+recreate outcome named or create intercepted — invert into a contract"
+  emit "F-DELETE-RECREATE-OUTCOME-CONTRACT" fail "delete+recreate closure claim regressed to the unscoped form (or the outcome naming was removed)"
 fi
 
-# F-ANNOTATION-FLIP-DODGE (round-5 NEW minor — Claude): the Validation Model
-# claims a role "flipped to a deprecated surface afterwards dodges write-time
-# rejection" — false against the repo's own admission shape: the RBG/RBGSet
-# validating webhooks intercept CREATE and UPDATE (config/webhook/manifests.yaml),
-# and the repo's existing shared validation is documented "The whole object is
-# checked on both create and update" (rolebasedgroup_validation.go) — so the
-# annotation-flip write itself is rejected at admission; the render leg is
-# needed for the uninstalled/outdated-webhook window only.
-if has "dodges write-time rejection"; then
-  emit "F-ANNOTATION-FLIP-DODGE-CANARY" pass "annotation-flip 'dodges write-time rejection' premise is false"
+# F-ANNOTATION-FLIP-DODGE (round-5 NEW minor — Claude; FIXED at 31466993):
+# the Validation Model now states both webhooks intercept CREATE and UPDATE
+# checking the whole object, so the flip "is itself a rejected spec update";
+# the render leg is scoped to the webhook-absent window.
+if has "so flipping a written role to a deprecated surface is itself a rejected spec update" \
+   && lacks "dodges write-time rejection"; then
+  emit "F-ANNOTATION-FLIP-DODGE-CONTRACT" pass "annotation flip rejected at admission; render leg scoped to the absent-webhook window"
 else
-  emit "F-ANNOTATION-FLIP-DODGE-CANARY" fail "FIXED? flip premise corrected — invert into a contract"
+  emit "F-ANNOTATION-FLIP-DODGE-CONTRACT" fail "annotation-flip 'dodges write-time rejection' premise is back"
 fi
 
 # F-REUPGRADE-WEBHOOK-REINSTALL (round-5 NEW minor — Copilot comment
-# 4517519250, code-verified by Claude): the rollback drill claims re-upgrading
-# the controller "reinstalls the entry (it deploys with the image)" — but the
-# controller never creates webhook configurations: startup only patches caBundle
-# on existing ones (cmd/rbgs/main.go, pkg/webhook/certmanager.go —
-# patchOneWebhookConfiguration Get()s and errors if the configuration is
-# missing). Reinstalling the entry is a release/manifest action, not an
-# image-swap side effect.
-if has "reinstalls the entry (it deploys with the image)"; then
-  emit "F-REUPGRADE-WEBHOOK-REINSTALL-CANARY" pass "re-upgrade 'reinstalls the entry (it deploys with the image)' misattributes config creation"
+#  4517519250, code-verified by Claude; FIXED at 31466993): the drill now
+# says the image re-upgrade "cannot reinstall the entry (the controller
+# patches existing webhook configurations and never creates them)" and the
+# configuration is re-applied from the release artifacts as its own step.
+if has "cannot reinstall the entry (the controller patches existing webhook configurations and never creates them)" \
+   && has "reapplied from the release artifacts as its own step"; then
+  emit "F-REUPGRADE-WEBHOOK-REINSTALL-CONTRACT" pass "re-upgrade mechanism honest: entry re-applied from release artifacts, not by the image"
 else
-  emit "F-REUPGRADE-WEBHOOK-REINSTALL-CANARY" fail "FIXED? reinstall mechanism corrected — invert into a contract"
+  emit "F-REUPGRADE-WEBHOOK-REINSTALL-CONTRACT" fail "re-upgrade 'reinstalls the entry (it deploys with the image)' misattribution is back"
 fi
 
 # F-DOWNGRADE-UNSCOPED-SAFETY (round-5 NEW minor — Copilot comment
-# 4517519293, doc-verified by Claude): "A cluster whose references are all
-# unscoped can downgrade at any depth, always safely" — but scenario 4
-# (component absent + targetContainers present, standalonePattern) is an
-# unscoped reference whose patches silently stop firing under the old
-# controller; the doc's own downgrade step 2 requires removing references
-# "that use the new fields". The safety condition should be "using neither
-# new field".
-if has "references are all unscoped can downgrade at any depth, always safely"; then
-  emit "F-DOWNGRADE-UNSCOPED-SAFETY-CANARY" pass "downgrade safety condition overclaims for unscoped targetContainers references"
+#  4517519293, doc-verified by Claude; FIXED at 31466993): the safety
+# condition is now "A cluster whose references set only `profileName`" —
+# neither new field — and a downgrade drill pins the silent-loss shape of the
+# scenario-4 reference under the old controller.
+if has "A cluster whose references set only \`profileName\` can downgrade at any depth, always safely" \
+   && lacks "references are all unscoped can downgrade" \
+   && printf '%s' "$testplan" | grep -qF "A standalonePattern reference with \`targetContainers\` but no \`component\` under the old controller"; then
+  emit "F-DOWNGRADE-UNSCOPED-SAFETY-CONTRACT" pass "downgrade safety scoped to neither-new-field; scenario-4 drill present"
 else
-  emit "F-DOWNGRADE-UNSCOPED-SAFETY-CANARY" fail "FIXED? safety condition restricted to neither-new-field — invert into a contract"
+  emit "F-DOWNGRADE-UNSCOPED-SAFETY-CONTRACT" fail "downgrade safety condition regressed to unscoped-references"
 fi
 
-# Q-CERP-NO-ADOPTION (round-5 NEW question, non-gating): 'ClusterEngineRuntimeProfile
-# has no live adoption' is an empirical claim about deployments, unverifiable from
-# the repo (the CRD has shipped since 2025-05 through v0.8.0-alpha releases).
-# Canary: pass while the claim stands ungrounded; flips when the author grounds
-# it or names it as a premise the alpha implementation must confirm.
-if has "ClusterEngineRuntimeProfile has no live adoption"; then
-  emit "Q-CERP-NO-ADOPTION-CANARY" pass "no-live-adoption premise stands ungrounded (question open)"
+# Q-CERP-NO-ADOPTION (round-5 NEW question; ADDRESSED at 31466993): the
+# premise is grounded on the API stage ("rests on the API stage rather than
+# on a field survey") — both served versions alpha, breaking changes
+# permitted without staging — instead of an unverifiable adoption survey.
+if has "rests on the API stage rather than on a field survey" \
+   && lacks "ClusterEngineRuntimeProfile has no live adoption"; then
+  emit "Q-CERP-NO-ADOPTION-CONTRACT" pass "no-adoption premise grounded on the API stage, not a field survey"
 else
-  emit "Q-CERP-NO-ADOPTION-CANARY" fail "FIXED? no-adoption premise grounded/softened — invert or drop"
+  emit "Q-CERP-NO-ADOPTION-CONTRACT" fail "ungrounded no-live-adoption claim is back"
 fi
 
-# F-STALE-PR-BODY (round-3 minor, fixed r4, REOPENED at b4637b51): the PR body
-# still describes the round-4 immutability design (in-use finalizer, warning
-# window, --disable-profile-immutability) that the head removed. The defect
-# lives in the PR body, not the README, so this check reads it live (read-only
-# gh; emits nothing when gh is unavailable — re-verify then reports
+# F-STALE-PR-BODY (round-3 minor, fixed r4, REOPENED r5, FIXED at 31466993):
+# the PR body now describes the head design — webhook-only enforcement with
+# "deliberately no in-use finalizer and no opt-out flag" — and no longer
+# carries the removed --disable-profile-immutability flag. Read live via gh
+# (read-only); emits nothing when gh is unavailable (re-verify then reports
 # HARNESS-UPDATE, the honest verdict for an uncheckable external surface).
 PRBODY=""
 if command -v gh >/dev/null 2>&1; then
   PRBODY="$(gh pr view 548 --repo sgl-project/rbg --json body -q .body 2>/dev/null || true)"
 fi
 if [ -n "$PRBODY" ]; then
-  if printf '%s' "$PRBODY" | grep -qF "in-use finalizer" \
-     && printf '%s' "$PRBODY" | grep -qF "disable-profile-immutability"; then
-    emit "F-STALE-PR-BODY-CANARY" pass "PR body still describes the removed finalizer/flag design"
+  if printf '%s' "$PRBODY" | grep -qF "no in-use finalizer and no opt-out flag" \
+     && ! printf '%s' "$PRBODY" | grep -qF "disable-profile-immutability"; then
+    emit "F-STALE-PR-BODY-CONTRACT" pass "PR body matches the head design (webhook-only enforcement, no finalizer/flag)"
   else
-    emit "F-STALE-PR-BODY-CANARY" fail "FIXED? PR body refreshed to the head design — invert into a contract"
+    emit "F-STALE-PR-BODY-CONTRACT" fail "PR body stale again — describes a design the head no longer carries"
   fi
 fi
 
-# Overall exit: 0 iff no CONTRACT regression and no CANARY flip (ledger steady).
+# ---------- Round-6 (head 31466993) additions ----------
+# Round-5 open nits the author fixed this round — pinned as contracts (they
+# were ledger findings without harness entries last round).
+
+# F-INJECTOR-CHAIN-ATTRIBUTION (round-5 NEW nit, open at b4637b51; FIXED at
+# 31466993): the 2-4 injector-pass variation is now attributed to chain
+# composition — worker chains omit the sidecar injector, LWP env injector
+# RIS-only — not to config statefulness (an internal no-op). Verified against
+# the SetInjectors call sites: RIS leader [config,sidecar,env,lwpEnv]=4,
+# RIS worker [config,env,lwpEnv]=3, LWS worker [config,env]=2; LWS roles are
+# always stateful (helper.go: LeaderWorkerSetWorkloadType → true) so the
+# floor is 2; InjectConfig no-ops for non-stateful (injector.go).
+if has "two to four passes by chain: the worker chains omit the sidecar injector and the LWP env injector runs on the RoleInstanceSet chains only"; then
+  emit "F-INJECTOR-CHAIN-ATTRIBUTION-CONTRACT" pass "2-4 injector-pass variation attributed to chain composition (verified against SetInjectors call sites)"
+else
+  emit "F-INJECTOR-CHAIN-ATTRIBUTION-CONTRACT" fail "injector-pass variation re-attributed to config statefulness (or the chain-composition rationale was removed)"
+fi
+
+# F-BOOKKEEPING-OLD-CRD-PRUNING (round-5 NEW nit, open at b4637b51; FIXED at
+# 31466993): the version-skew paragraph now states the persisted reference
+# tracking lands with the new CRD and the old CRD's status schema (a bare
+# `type: object` — verified against the published
+# config/crd/bases/workloads.x-k8s.io_clusterengineruntimeprofiles.yaml, both
+# versions) prunes the new status fields on write, while the watch event
+# fires on either row.
+if has "prunes the new status fields on write" \
+   && has "the in-memory watch event fires on either row"; then
+  emit "F-BOOKKEEPING-OLD-CRD-PRUNING-CONTRACT" pass "old-CRD status pruning of the tracking fields stated in Version skew"
+else
+  emit "F-BOOKKEEPING-OLD-CRD-PRUNING-CONTRACT" fail "version-skew claim again says tracking binds regardless of CRD version"
+fi
+
+# F-DRIFT-BASELINE-UNOBSERVED-DRAIN (round-5 NEW nit, open at b4637b51; FIXED
+# at 31466993): the referencedGeneration drift evidence sentence now names the
+# unobserved-drain leg — "a bypassed write, or a legal edit in a zero-reference
+# window the controller never observed".
+if has "a bypassed write, or a legal edit in a zero-reference window the controller never observed"; then
+  emit "F-DRIFT-BASELINE-UNOBSERVED-DRAIN-CONTRACT" pass "drift-baseline evidence names the unobserved zero-reference-window leg"
+else
+  emit "F-DRIFT-BASELINE-UNOBSERVED-DRAIN-CONTRACT" fail "drift evidence again claims precise webhook-bypass evidence only"
+fi
+
+# F-CONVERSION-STATUS-PIN (round-5 NEW nit, open at b4637b51; FIXED at
+# 31466993): the conversion round-trip envtest pin now covers the new CERP
+# status fields, not just containerPatches.
+if printf '%s' "$testplan" | grep -qF "keeping \`containerPatches\` and the tracking status fields" \
+   && printf '%s' "$testplan" | grep -qF "including the v1alpha1 \`components: []\` edge"; then
+  emit "F-CONVERSION-STATUS-PIN-CONTRACT" pass "conversion round-trip pin covers the tracking status fields"
+else
+  emit "F-CONVERSION-STATUS-PIN-CONTRACT" fail "conversion round-trip pin lost the status-field coverage"
+fi
+
+# F-PROFILENAME-LENGTH-CLAIM (pre-existing inaccuracy, unnoticed r1-r5, FIXED
+# at 31466993): the old text said the reference keeps profileName "required,
+# MinLength=1" — the published schemas carry no MinLength marker
+# (api/workloads/v1alpha2/rolebasedgroup_types.go: ProfileName string
+# `json:"profileName"` — no +kubebuilder:validation:MinLength). The round-6
+# rewrite corrected it to "required in the published schemas, with no
+# minLength".
+if has "\`profileName\` is required in the published schemas, with no \`minLength\`" \
+   && lacks "(required, \`MinLength=1\`)"; then
+  emit "F-PROFILENAME-LENGTH-CLAIM-CONTRACT" pass "profileName published-shape claim accurate (required, no minLength)"
+else
+  emit "F-PROFILENAME-LENGTH-CLAIM-CONTRACT" fail "profileName MinLength=1 claim is back (or the accurate claim was removed)"
+fi
+
+# F-R6-NEW-CONTENT (round-6 verified additions — not findings; pins the new
+# substantive content the rewrite added, each verified against code/docs):
+#  - envFrom priority rules (direct env beats envFrom by priority — matches
+#    Kubernetes documented behavior; new Patch Grammar bullet + Test Plan);
+#  - volumeMount naming a volume absent from the final rendered volume list
+#    is a render error (apiserver would reject at admission);
+#  - the /command/0 precondition (args-only / bare target is a
+#    profile-attributed render error), consistent with the entrypoint-merge
+#    rule;
+#  - upgrade order: controller first, CRD second, so the documented dangerous
+#    row (old controller + new CRD) is never traversed on the way up;
+#  - controller-gen does not emit the schema-level `deprecated: true` flag
+#    from field comments (verified against controller-tools v0.17.2 — the
+#    repo's pinned CONTROLLER_TOOLS_VERSION — whose only deprecated emission
+#    is the version-level +kubebuilder:deprecatedversion marker);
+#  - the CERP webhook entry "ships as a release artifact (chart /
+#    config/webhook/manifests.yaml)" — the file exists with one
+#    ValidatingWebhookConfiguration.
+if has "by **priority, not by position**" \
+   && has "resolves against no volume in the final rendered pod's volume list" \
+   && has "Neither shape has an authored \`command\` for \`/command/0\` to prepend to" \
+   && has "Upgrade: controller first, CRD second" \
+   && has "controller-gen does not emit" \
+   && has "ships as a release artifact (chart / \`config/webhook/manifests.yaml\`)"; then
+  emit "F-R6-NEW-CONTENT-CONTRACT" pass "round-6 verified additions present (envFrom rules, mount-volume resolution, wrap precondition, upgrade order, controller-gen, release-artifact webhook)"
+else
+  emit "F-R6-NEW-CONTENT-CONTRACT" fail "one or more round-6 verified additions were removed or reversed"
+fi
+
+# Overall exit: 0 iff no CONTRACT regression (ledger steady).
 exit 0

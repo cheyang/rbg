@@ -1,0 +1,86 @@
+# Round-6 doc bites (head 31466993) — harness-bites check
+# bite 1: updated checks vs the ROUND-5 text (README b4637b51) — re-pins and
+# inversions must FAIL there (they track the round-6 wording, not vacuously pass):
+F-ENV-CONFLICT-CONTRACT                    fail contradictory conflict-check scope statements present (or fixed-state wording removed)
+F-COVERAGE-UPDATESTRATEGY-CONTRACT         pass updateStrategy dispositioned (Non-Goals + deprecation + Profile Mutability)
+F-CAPS-MAXITEMS-CONTRACT                   pass published lists carry no new caps; stored-object rationale stated
+F-COMPONENT-VOCAB-CONTRACT                 pass component validation mirrors the unmarked source vocabulary
+F-ENABLEMENT-ROLLBACK-CONTRACT             pass Feature Enablement and Rollback + Upgrade/Downgrade sections present
+F-CONVERSION-ROUNDTRIP-CONTRACT            pass conversion round-trip coverage in the Test Plan (incl. CERP mirror)
+F-UNKNOWN-TARGET-PROSE-CONTRACT            fail unknown-target semantics missing from the prose
+F-COPILOT-SECRET-CHANNEL-CONTRACT          pass role→profile channels documented as a role-authored decision
+F-COPILOT-VOLUMEMOUNT-EQUALITY-CONTRACT    fail volumeMount equality dropped full-field comparison
+F-INFERENCE-KIT-404-CONTRACT               pass no dead inference-kit see-also link
+F-MOUNTPATH-MECHANISM-CONTRACT             pass duplicate-mountPath rule cites the apiserver admission check
+F-PODSECURITY-STAGE-CONTRACT               pass PodSecurity stage claim says pod admission/creation
+F-ENV-VAR-DIRECTION-CONTRACT               pass $(VAR) direction stated positionally
+F-INJECTOR-COUNT-WORDING-CONTRACT          fail 'the four built-in injector passes' overgeneralization is back (or the 2-4 variation clause was removed)
+F-STAGE3-CHECK-TIMING-CONTRACT             fail stage-3 role-owned visibility regressed (legacy env names no longer counted)
+F-ROLE-INSERT-ORDER-CONTRACT               fail role-side winner claim lost its by-spelling qualification (or the Test Plan head-insert case was removed)
+F-PROFILE-EVOLUTION-TEST-CONTRACT          fail new-design lifecycle coverage (watch event / bookkeeping drift / deletion race) removed from the Test Plan
+F-SSA-ENV-PREMISE-CONTRACT                 pass env model is verbatim-positional; false SSA premise absent
+F-GRADUATION-EVENT-INVENTORY-CONTRACT      pass Graduation warning-events checklist names the full event inventory
+F-DEPRECATED-PATH-MECHANISM-CONTRACT       fail deprecated-path rejection lost its named mechanism (or the Test Plan case was removed)
+F-WEBHOOK-ROLLBACK-CONTRACT                fail webhook-entry-first rollback step removed (or the drill was dropped)
+F-CAPABILITY-FORM-REGEX-CONTRACT           fail CAP_-prefix warning leg removed (or the Test Plan promise was dropped)
+F-PROFILE-DEFAULT-GEOMETRY-CONTRACT        pass index-0 rationale states the real insert geometry
+F-SNAPSHOT-ENV-SOURCE-CONTRACT             pass stage-3 first source named as the role template's own env entries
+F-V1ALPHA1-CEL-EMPTY-COMPONENTS-CONTRACT   pass v1alpha1 predicate guards the empty-components edge, pinned by envtest
+F-PODRECONCILER-TERMINOLOGY-CONTRACT       pass deprecated surfaces named without the PodReconciler shorthand
+F-FINALIZER-REMOVAL-OVERCLAIM-CONTRACT     pass finalizer removed by design; no check-then-act closure claim remains
+F-RACE-OUTCOME-OVERCLAIM-CONTRACT          fail race-outcome claims regressed to the overbroad all-visible form
+F-DELETE-RECREATE-OUTCOME-CONTRACT         fail delete+recreate closure claim regressed to the unscoped form (or the outcome naming was removed)
+F-ANNOTATION-FLIP-DODGE-CONTRACT           fail annotation-flip 'dodges write-time rejection' premise is back
+F-REUPGRADE-WEBHOOK-REINSTALL-CONTRACT     fail re-upgrade 'reinstalls the entry (it deploys with the image)' misattribution is back
+F-DOWNGRADE-UNSCOPED-SAFETY-CONTRACT       fail downgrade safety condition regressed to unscoped-references
+Q-CERP-NO-ADOPTION-CONTRACT                fail ungrounded no-live-adoption claim is back
+F-STALE-PR-BODY-CONTRACT                   pass PR body matches the head design (webhook-only enforcement, no finalizer/flag)
+F-INJECTOR-CHAIN-ATTRIBUTION-CONTRACT      fail injector-pass variation re-attributed to config statefulness (or the chain-composition rationale was removed)
+F-BOOKKEEPING-OLD-CRD-PRUNING-CONTRACT     fail version-skew claim again says tracking binds regardless of CRD version
+F-DRIFT-BASELINE-UNOBSERVED-DRAIN-CONTRACT fail drift evidence again claims precise webhook-bypass evidence only
+F-CONVERSION-STATUS-PIN-CONTRACT           fail conversion round-trip pin lost the status-field coverage
+F-PROFILENAME-LENGTH-CLAIM-CONTRACT        fail profileName MinLength=1 claim is back (or the accurate claim was removed)
+F-R6-NEW-CONTENT-CONTRACT                  fail one or more round-6 verified additions were removed or reversed
+
+# bite 2: mutation (revert downgrade-safety sentence; remove silent-outcome naming)
+# — exactly the targeted checks must fail:
+F-ENV-CONFLICT-CONTRACT                    pass one positional env rule set; legacy merge unchecked as on main
+F-COVERAGE-UPDATESTRATEGY-CONTRACT         pass updateStrategy dispositioned (Non-Goals + deprecation + Profile Mutability)
+F-CAPS-MAXITEMS-CONTRACT                   pass published lists carry no new caps; stored-object rationale stated
+F-COMPONENT-VOCAB-CONTRACT                 pass component validation mirrors the unmarked source vocabulary
+F-ENABLEMENT-ROLLBACK-CONTRACT             pass Feature Enablement and Rollback + Upgrade/Downgrade sections present
+F-CONVERSION-ROUNDTRIP-CONTRACT            pass conversion round-trip coverage in the Test Plan (incl. CERP mirror)
+F-UNKNOWN-TARGET-PROSE-CONTRACT            pass unknown targetContainers name is a stated render error
+F-COPILOT-SECRET-CHANNEL-CONTRACT          pass role→profile channels documented as a role-authored decision
+F-COPILOT-VOLUMEMOUNT-EQUALITY-CONTRACT    pass volumeMount no-op requires full semantic equality
+F-INFERENCE-KIT-404-CONTRACT               pass no dead inference-kit see-also link
+F-MOUNTPATH-MECHANISM-CONTRACT             pass duplicate-mountPath rule cites the apiserver admission check
+F-PODSECURITY-STAGE-CONTRACT               pass PodSecurity stage claim says pod admission/creation
+F-ENV-VAR-DIRECTION-CONTRACT               pass $(VAR) direction stated positionally
+F-INJECTOR-COUNT-WORDING-CONTRACT          pass injector chain count states the 2-4 per-chain variation
+F-STAGE3-CHECK-TIMING-CONTRACT             pass stage-3 check sees snapshot + own-role legacy env names
+F-ROLE-INSERT-ORDER-CONTRACT               pass role-side two-reference winner qualified by spelling; Test Plan covers both spellings
+F-PROFILE-EVOLUTION-TEST-CONTRACT          pass new-design lifecycle coverage in the Test Plan (watch event, bookkeeping drift, deletion race)
+F-SSA-ENV-PREMISE-CONTRACT                 pass env model is verbatim-positional; false SSA premise absent
+F-GRADUATION-EVENT-INVENTORY-CONTRACT      pass Graduation warning-events checklist names the full event inventory
+F-DEPRECATED-PATH-MECHANISM-CONTRACT       pass deprecated-path rejection names its mechanism at all three layers
+F-WEBHOOK-ROLLBACK-CONTRACT                pass rollback removes the webhook entry first; drill in the Test Plan
+F-CAPABILITY-FORM-REGEX-CONTRACT           pass form warning fires on the CAP_-prefixed hazard the Test Plan promises
+F-PROFILE-DEFAULT-GEOMETRY-CONTRACT        pass index-0 rationale states the real insert geometry
+F-SNAPSHOT-ENV-SOURCE-CONTRACT             pass stage-3 first source named as the role template's own env entries
+F-V1ALPHA1-CEL-EMPTY-COMPONENTS-CONTRACT   pass v1alpha1 predicate guards the empty-components edge, pinned by envtest
+F-PODRECONCILER-TERMINOLOGY-CONTRACT       pass deprecated surfaces named without the PodReconciler shorthand
+F-FINALIZER-REMOVAL-OVERCLAIM-CONTRACT     pass finalizer removed by design; no check-then-act closure claim remains
+F-RACE-OUTCOME-OVERCLAIM-CONTRACT          pass all three interleaving outcomes named, silent legs included
+F-DELETE-RECREATE-OUTCOME-CONTRACT         fail delete+recreate closure claim regressed to the unscoped form (or the outcome naming was removed)
+F-ANNOTATION-FLIP-DODGE-CONTRACT           pass annotation flip rejected at admission; render leg scoped to the absent-webhook window
+F-REUPGRADE-WEBHOOK-REINSTALL-CONTRACT     pass re-upgrade mechanism honest: entry re-applied from release artifacts, not by the image
+F-DOWNGRADE-UNSCOPED-SAFETY-CONTRACT       fail downgrade safety condition regressed to unscoped-references
+Q-CERP-NO-ADOPTION-CONTRACT                pass no-adoption premise grounded on the API stage, not a field survey
+F-STALE-PR-BODY-CONTRACT                   pass PR body matches the head design (webhook-only enforcement, no finalizer/flag)
+F-INJECTOR-CHAIN-ATTRIBUTION-CONTRACT      pass 2-4 injector-pass variation attributed to chain composition (verified against SetInjectors call sites)
+F-BOOKKEEPING-OLD-CRD-PRUNING-CONTRACT     pass old-CRD status pruning of the tracking fields stated in Version skew
+F-DRIFT-BASELINE-UNOBSERVED-DRAIN-CONTRACT pass drift-baseline evidence names the unobserved zero-reference-window leg
+F-CONVERSION-STATUS-PIN-CONTRACT           pass conversion round-trip pin covers the tracking status fields
+F-PROFILENAME-LENGTH-CLAIM-CONTRACT        pass profileName published-shape claim accurate (required, no minLength)
+F-R6-NEW-CONTENT-CONTRACT                  pass round-6 verified additions present (envFrom rules, mount-volume resolution, wrap precondition, upgrade order, controller-gen, release-artifact webhook)
