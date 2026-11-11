@@ -2152,3 +2152,164 @@ func TestProgressingDuringDeletionSpecified(t *testing.T) {
 		"stale; say so (e.g. '`Progressing` retains its last value during deletion; consumers must " +
 		"check deletionTimestamp first')")
 }
+
+// ---------------------------------------------------------------------------
+// F22-own-crop (round 7, minor; FIXED at 9862499f): the reason a controller
+// reports for its OWN CR-operation errors was prescribed two ways — the
+// provenance table routed classifiable own-operation errors (a quota-rejected
+// RIS create) to the family reasons while the taxonomy paragraph said
+// categorically "directly as `UnclassifiedBlocker`" and the RIS section hedged
+// "(normally `UnclassifiedBlocker`)". Contract (corroborated by Copilot
+// C4528984348): one prescription — classify own CR-operation errors with the
+// same rules, `UnclassifiedBlocker` reserved for errors whose family cannot be
+// determined — stated consistently in the taxonomy paragraph and the RIS
+// section. Red at 05807351, green at 9862499f.
+// ---------------------------------------------------------------------------
+
+func TestOwnCROperationErrorsClassified(t *testing.T) {
+	doc := stripFences(kepDoc(t))
+	if !strings.Contains(doc, "own CR-operation errors") {
+		return // taxonomy redesigned away; guard retired by harness-update
+	}
+	if strings.Contains(doc, "reports its own CR-operation errors directly as `UnclassifiedBlocker`") {
+		t.Errorf("F22-own-crop: the taxonomy paragraph again prescribes own CR-operation " +
+			"errors categorically as `UnclassifiedBlocker`, contradicting the provenance table, " +
+			"which routes classifiable own-operation errors to the family reasons")
+	}
+	if strings.Contains(doc, "directly as blockers (normally `UnclassifiedBlocker`)") {
+		t.Errorf("F22-own-crop: the RIS section again hedges own-operation errors as " +
+			"'normally `UnclassifiedBlocker`' instead of the same classification rules")
+	}
+	taxonomy := strings.Contains(doc, "classifies its own CR-operation errors with the same rules") &&
+		strings.Contains(doc, "`UnclassifiedBlocker` is reserved for errors whose family cannot be determined")
+	ris := strings.Contains(doc, "through the same classification rules") &&
+		strings.Contains(doc, "whose family cannot be determined use `UnclassifiedBlocker`")
+	if !taxonomy || !ris {
+		t.Errorf("F22-own-crop: own CR-operation error prescription incomplete — want one rule "+
+			"('classifies its own CR-operation errors with the same rules' + 'UnclassifiedBlocker "+
+			"reserved for errors whose family cannot be determined') in the taxonomy paragraph AND "+
+			"the RIS section (taxonomy-ok=%v ris-ok=%v)", taxonomy, ris)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// C4528984285 (round-7 Copilot advisory, carried open; FIXED at 9862499f):
+// `GangConfigured` reports configuration compatibility only — it is True when
+// gang configuration reconciliation succeeds even while Pods remain
+// unscheduled — so it cannot distinguish a waiting gang from a released one
+// and must not be the observation source for `WaitingForGang`. Contract: the
+// waiting observation is sourced from runtime gang-scheduling state (PodGroup
+// phase / member scheduling status) and the doc states GangConfigured never
+// implies waiting. Red at 05807351 ("today the `GangConfigured` condition"),
+// green at 9862499f.
+// ---------------------------------------------------------------------------
+
+func TestWaitingForGangSourcedFromRuntimeState(t *testing.T) {
+	doc := stripFences(kepDoc(t))
+	if !strings.Contains(doc, "`WaitingForGang`") {
+		return // gang-waiting reason absent (pre-round-5 heads)
+	}
+	if strings.Contains(doc, "gang state owned at RBG scope (today the `GangConfigured` condition)") {
+		t.Errorf("C4528984285: `WaitingForGang` is again observed from the `GangConfigured` " +
+			"condition, which reports only configuration compatibility and cannot distinguish " +
+			"a waiting gang from a released one")
+	}
+	runtime := strings.Contains(doc, "runtime gang-scheduling state") ||
+		strings.Contains(doc, "runtime gang-scheduling facts")
+	disclaim := strings.Contains(doc, "never used as the waiting observation") ||
+		strings.Contains(doc, "never implies whether the gang is waiting") ||
+		strings.Contains(doc, "never implies waiting")
+	if !runtime || !disclaim {
+		t.Errorf("C4528984285: `WaitingForGang` observation must come from runtime "+
+			"gang-scheduling state (PodGroup phase / member scheduling status) and the doc must "+
+			"state `GangConfigured` never implies waiting (runtime-ok=%v disclaimer-ok=%v)",
+			runtime, disclaim)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// C4528984415 (round-7 Copilot advisory, carried open; FIXED at 9862499f):
+// after a controller restart, retained fields could not distinguish a
+// never-established child from a replaced one, so `Creating` vs `Recovering`
+// was underdetermined (e.g. blocked creation of a never-established
+// zero-replica RIS vs blocked replacement of a deleted, established one).
+// Contract: the doc resolves the ambiguity — `Recovering` requires durable
+// evidence of prior establishment; without it the child is `Creating` and
+// message notes replacement is unconfirmed — and the restart test bullet
+// covers it. Red at 05807351, green at 9862499f.
+// ---------------------------------------------------------------------------
+
+func TestRestartAmbiguityResolved(t *testing.T) {
+	doc := stripFences(kepDoc(t))
+	if !strings.Contains(doc, "controller restart") {
+		return // restart rule absent entirely (early heads)
+	}
+	prose := strings.Contains(doc, "no durable evidence distinguishes") &&
+		strings.Contains(doc, "durable evidence of prior establishment") &&
+		strings.Contains(doc, "replacement is unconfirmed")
+	plan := strings.Contains(doc, "zero-replica ambiguity")
+	if !prose || !plan {
+		t.Errorf("C4528984415: post-restart establishment ambiguity unresolved — "+
+			"'Recovering' must require durable evidence of prior establishment, the "+
+			"evidence-less case must fall back to 'Creating' with a message note that "+
+			"replacement is unconfirmed, and the restart test bullet must cover it "+
+			"(prose-ok=%v test-plan-ok=%v)", prose, plan)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// C4528984469 (round-7 Copilot advisory, carried open; FIXED at 9862499f):
+// the test-plan bullet "Individual RIS / RI scaling or update failures produce
+// Warning Events ... and do not directly change the aggregated `Progressing`
+// reason" conflated a single failed operation with a confirmed current
+// blocker — a confirmed blocker DOES change the reason via the classification
+// and propagation rules. Contract: the bullet scopes the no-change clause to a
+// single failure and states that a confirmed current blocker changes the
+// reason. Red at 05807351, green at 9862499f.
+// ---------------------------------------------------------------------------
+
+func TestSingleFailureVsConfirmedBlocker(t *testing.T) {
+	doc := stripFences(kepDoc(t))
+	if !strings.Contains(doc, "Warning Event") {
+		return // events discussion absent (early heads)
+	}
+	if strings.Contains(doc, "Individual RIS / RI scaling or update failures produce Warning Events") {
+		t.Errorf("C4528984469: the events bullet again describes repeated/individual failures " +
+			"as never changing the aggregated `Progressing` reason, conflating a single failed " +
+			"operation with a confirmed current blocker")
+	}
+	scoped := strings.Contains(doc, "does not by itself")
+	confirmed := strings.Contains(doc, "A confirmed current blocker changes the reason")
+	if !scoped || !confirmed {
+		t.Errorf("C4528984469: the events bullet must scope the no-reason-change clause to a "+
+			"single failure ('does not by itself') and state that a confirmed current blocker "+
+			"changes the reason through the classification and propagation rules "+
+			"(scoped-ok=%v confirmed-ok=%v)", scoped, confirmed)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// F23 (round 7, nit; still open at 9862499f): the leftover sentence "Readiness
+// gates only `Creating → Running` and completion decisions" assigns readiness
+// gates — unqualified, so including externally owned ones — a phase-transition
+// gating role, contradicting the separation rule ("externally owned readiness
+// gates do not gate phase transitions", :413) that resolved the KEP-527
+// markPodNotReady circular wait. Contract: once the separation rule exists, no
+// sentence may give (external) readiness gates a phase-gating role; the
+// sentence must be scoped to the controller-observed inputs (readyPolicy plus
+// the configured in-place update gate). Red at 05807351 and at 9862499f.
+// ---------------------------------------------------------------------------
+
+func TestPhaseGateTerminologyConsistent(t *testing.T) {
+	doc := stripFences(kepDoc(t))
+	ri := section(doc, "RI Phase Transition Principles") + "\n" + sectionExact(doc, "RoleInstance")
+	if !strings.Contains(ri, "do not gate phase transitions") {
+		return // separation rule absent (pre-round-7 heads); nothing to contradict
+	}
+	if strings.Contains(ri, "Readiness gates only `Creating → Running`") {
+		t.Errorf("F23: 'Readiness gates only `Creating → Running`' assigns (external) readiness " +
+			"gates a phase-transition gating role, contradicting the separation rule that " +
+			"externally owned readiness gates do not gate phase transitions — scope the sentence " +
+			"to the controller-observed inputs (readyPolicy + the configured in-place gate)")
+	}
+}

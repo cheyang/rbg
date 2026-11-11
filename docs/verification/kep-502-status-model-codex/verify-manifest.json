@@ -282,6 +282,46 @@
       "match": [
         "TestCustomReadyDoesNotDetermineInstanceReady"
       ]
+    },
+    {
+      "id": "F22-own-crop-blocker-reason-contradiction",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestOwnCROperationErrorsClassified"
+      ]
+    },
+    {
+      "id": "F23-phase-gate-terminology-contradiction",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestPhaseGateTerminologyConsistent"
+      ]
+    },
+    {
+      "id": "C4528984285-gangconfigured-gang-wait",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestWaitingForGangSourcedFromRuntimeState"
+      ]
+    },
+    {
+      "id": "C4528984415-restart-establishment-evidence",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestRestartAmbiguityResolved"
+      ]
+    },
+    {
+      "id": "C4528984469-events-vs-blocker-distinction",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestSingleFailureVsConfirmedBlocker"
+      ]
     }
   ],
   "liveNote": "Docs-only KEP PR: no live layer. Integration replay (markdownlint-cli2 with .github/.markdownlint.json, YAML parsing of kep.yaml and the 3 examples) is recorded in results/markdownlint.txt and embedded as Go guards (TestKepYAMLWellFormed, TestYAMLExamplesParse).",
