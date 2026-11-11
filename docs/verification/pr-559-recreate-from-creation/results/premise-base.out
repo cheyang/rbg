@@ -1,0 +1,10 @@
+=== RUN   TestVerify559Base_DeletedMemberIsNotATrigger
+--- PASS: TestVerify559Base_DeletedMemberIsNotATrigger (0.00s)
+=== RUN   TestVerify559Base_ReadyGateClosedAfterNotReady
+--- PASS: TestVerify559Base_ReadyGateClosedAfterNotReady (0.00s)
+=== RUN   TestVerify559Base_GateStaysClosed
+--- PASS: TestVerify559Base_GateStaysClosed (0.00s)
+=== RUN   TestVerify559Base_IgnorePodHoldsBackoffOpen
+--- PASS: TestVerify559Base_IgnorePodHoldsBackoffOpen (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	(cached)

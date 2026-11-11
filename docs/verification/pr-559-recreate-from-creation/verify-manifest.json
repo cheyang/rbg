@@ -1,0 +1,109 @@
+{
+  "topic": "pr-559-recreate-from-creation",
+  "pr": "https://github.com/sgl-project/rbg/pull/559",
+  "reviewer": "codex",
+  "headSha": "8d190d0ddebaab43bbcc2ae996489165806af45b",
+  "baseSha": "fd160cc964b0e1438bead4ad7324d0a8f0bf5eac",
+  "harnessPaths": [
+    "docs/verification/pr-559-recreate-from-creation",
+    "pkg/reconciler/roleinstance/sync/verify_pr559_fromcreation_test.go",
+    "test/envtest/testcase/restart_policy/fromcreation_verification_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #542: when a member Pod of a Ready RoleInstance goes away because its node failed, the controller only creates a same-name replacement pod; it never recreates the RoleInstance, and because wasInstanceReady() reads the current (now False) condition while hasRecentRestart() requires a previous policy rebuild, shouldRecreateInstance() is permanently disabled for that instance.",
+    "reportedComponent": "pkg/reconciler/roleinstance/sync/instance_scale.go (RoleInstance controller restart-policy path)",
+    "patchedComponent": "pkg/reconciler/roleinstance/sync/instance_scale.go + api/workloads/* (opt-in policy value)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "results/premise-base.out — on base fd160cc: deleted member pod is not a trigger (P0-1), Ready gate closed once NotReady (P0-2), stays closed (P0-3). All PASS, i.e. the reported mechanism exists on base.",
+    "match": ["TestVerify559Base_"],
+    "note": "premise tests live in scripts/premise_base_test.go and must be copied into pkg/reconciler/roleinstance/sync/ on a BASE checkout; they also pass on head for the legacy policy (regression guard for 'legacy unchanged')."
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/roleinstance/sync/ -run 'TestVerify559_' -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$(ls -d $HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64 2>/dev/null || bin/setup-envtest use 1.31.0 --bin-dir bin -p path)}\" go test ./test/envtest/testcase/restart_policy/ -run TestRestartPolicy -args -ginkgo.focus 'verify559' -ginkgo.json-report=\"$GINKGO_REPORT\"",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerify559_FromCreation_SecondPreReadyFailure_InMemoryGuard", "TestVerify559_FromCreation_SecondPreReadyFailure_PersistedCondition"],
+      "claim": "After a first FromCreation recreation, the Restarting state (in-memory cache + persisted condition) is cleared only when the instance becomes Ready; a second pre-Ready failure must still trigger recreation but is suppressed."
+    },
+    {
+      "id": "F1-E2E",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["verify559 TL3"],
+      "claim": "Same as F1, end-to-end against envtest: second pre-Ready failure must recreate the whole group again."
+    },
+    {
+      "id": "F1-CANARY",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestVerify559_FromCreation_StuckRestartingSkipsBackoff"],
+      "claim": "Documents the current broken interplay: stuck Restarting skips backoff AND suppresses recreation. Flip (to fail) means fixed; invert assertions afterwards."
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerify559_LegacyBackoff_IgnorePodNoLongerHoldsBackoff"],
+      "claim": "Ignore-annotated Failed pods no longer hold the legacy backoff slow path open (unannounced legacy-policy behavior delta; base counterpart TestVerify559Base_IgnorePodHoldsBackoffOpen passes on base)."
+    },
+    {
+      "id": "F4",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestVerify559_FromCreation_SucceededPodDeletion_Canary"],
+      "claim": "A Succeeded pod being deleted currently triggers whole-instance recreation under FromCreation although the KEP lists Succeeded as a non-goal."
+    },
+    {
+      "id": "CTRL-TL1",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["verify559 TL1"],
+      "claim": "Control: pre-Ready Failed pod triggers whole-instance recreation under FromCreation (feature works)."
+    },
+    {
+      "id": "CTRL-TL2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["verify559 TL2"],
+      "claim": "Control: observed desired-member deletion triggers whole-instance recreation under FromCreation (feature works)."
+    },
+    {
+      "id": "CTRL-TL2C",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["verify559 TL2c"],
+      "claim": "Control: legacy policy pre-Ready member deletion only replaces the member (compatibility invariant)."
+    },
+    {
+      "id": "CTRL-FIRST",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerify559_FromCreation_FirstPreReadyFailureTriggers"],
+      "claim": "Control: first pre-Ready failure triggers recreation under FromCreation."
+    },
+    {
+      "id": "CTRL-LEGACY",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerify559_Premise_Legacy"],
+      "claim": "Control: legacy policy keeps no-deletion-trigger and Ready-gate behavior on head."
+    }
+  ],
+  "liveNote": "L3 (skipped in this review): on a real cluster, kill a node hosting one member of a Ready FromCreation group; verify whole-instance recreation fires; then fail a recreated member before Ready and confirm whether a second recreation fires (F1 says it will not)."
+}

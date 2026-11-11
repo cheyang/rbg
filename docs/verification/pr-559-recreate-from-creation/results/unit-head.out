@@ -1,0 +1,29 @@
+=== RUN   TestVerify559_Premise_LegacyIgnoresMemberDeletion
+--- PASS: TestVerify559_Premise_LegacyIgnoresMemberDeletion (0.00s)
+=== RUN   TestVerify559_Premise_LegacyReadyGatePermanentlyClosed
+--- PASS: TestVerify559_Premise_LegacyReadyGatePermanentlyClosed (0.00s)
+=== RUN   TestVerify559_FromCreation_FirstPreReadyFailureTriggers
+--- PASS: TestVerify559_FromCreation_FirstPreReadyFailureTriggers (0.00s)
+=== RUN   TestVerify559_FromCreation_SecondPreReadyFailure_InMemoryGuard
+    verify_pr559_fromcreation_test.go:152: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/pkg/reconciler/roleinstance/sync/verify_pr559_fromcreation_test.go:152
+        	Error:      	Should be true
+        	Test:       	TestVerify559_FromCreation_SecondPreReadyFailure_InMemoryGuard
+        	Messages:   	second pre-Ready failure must trigger another recreation; isAlreadyRestarting pins the policy after a single use
+--- FAIL: TestVerify559_FromCreation_SecondPreReadyFailure_InMemoryGuard (0.00s)
+=== RUN   TestVerify559_FromCreation_SecondPreReadyFailure_PersistedCondition
+    verify_pr559_fromcreation_test.go:180: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/pkg/reconciler/roleinstance/sync/verify_pr559_fromcreation_test.go:180
+        	Error:      	Should be true
+        	Test:       	TestVerify559_FromCreation_SecondPreReadyFailure_PersistedCondition
+        	Messages:   	persisted Restarting=True (cleared only on Ready) suppresses the second pre-Ready recreation even after a controller restart
+--- FAIL: TestVerify559_FromCreation_SecondPreReadyFailure_PersistedCondition (0.05s)
+=== RUN   TestVerify559_FromCreation_StuckRestartingSkipsBackoff
+--- PASS: TestVerify559_FromCreation_StuckRestartingSkipsBackoff (0.00s)
+=== RUN   TestVerify559_LegacyBackoff_IgnorePodNoLongerHoldsBackoff
+--- PASS: TestVerify559_LegacyBackoff_IgnorePodNoLongerHoldsBackoff (0.00s)
+=== RUN   TestVerify559_FromCreation_SucceededPodDeletion_Canary
+--- PASS: TestVerify559_FromCreation_SucceededPodDeletion_Canary (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.060s
+FAIL
