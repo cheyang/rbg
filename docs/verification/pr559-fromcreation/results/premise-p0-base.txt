@@ -1,0 +1,8 @@
+=== RUN   TestP0_LegacyPolicy_IgnoresObservedMemberDeletion
+--- PASS: TestP0_LegacyPolicy_IgnoresObservedMemberDeletion (0.00s)
+=== RUN   TestP0_LegacyPolicy_RestartGateClosedOnceNotReady
+--- PASS: TestP0_LegacyPolicy_RestartGateClosedOnceNotReady (0.00s)
+=== RUN   TestP0_LegacyPolicy_BypassRequiresPriorRebuild
+--- PASS: TestP0_LegacyPolicy_BypassRequiresPriorRebuild (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	(cached)

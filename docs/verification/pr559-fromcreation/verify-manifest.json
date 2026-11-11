@@ -1,0 +1,47 @@
+{
+  "topic": "pr559-fromcreation",
+  "pr": "https://github.com/sgl-project/rbg/pull/559",
+  "harnessPaths": [
+    "docs/verification/pr559-fromcreation",
+    "pkg/reconciler/roleinstance/sync/pr559_premise_test.go",
+    "pkg/reconciler/roleinstance/sync/pr559_unit_test.go",
+    "test/envtest/testcase/restart_policy/pr559_fromcreation_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #542: \"the same reconcile flips RoleInstanceReady to False, and shouldRecreateInstance() gates on that current condition, so from then on the restart policy is permanently disabled for that instance\" and \"A member lost this way is only replaced individually, the replacement cannot re-join an established process group, and the instance stays NotReady until the RoleInstance is deleted by hand.\"",
+    "reportedComponent": "pkg/reconciler/roleinstance/sync/instance_scale.go (shouldRecreateInstance / wasInstanceReady gate) + RoleInstance status ordering",
+    "patchedComponent": "same file (new opt-in policy RecreateRoleInstanceOnPodRestartFromCreation bypassing the Ready gate and adding a deletion trigger), plus api types/admission/conversion",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "TestP0_* canaries pass on merge-base fd160cc9: legacy policy ignores an observed member deletion and closes the restart gate once NotReady without a prior rebuild; see results/premise-p0-base.txt",
+    "match": ["TestP0_LegacyPolicy_IgnoresObservedMemberDeletion", "TestP0_LegacyPolicy_RestartGateClosedOnceNotReady", "TestP0_LegacyPolicy_BypassRequiresPriorRebuild"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/roleinstance/sync/ -run 'TestP0|TestFromCreation' -v"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64 go test ./test/envtest/testcase/restart_policy/... -timeout 25m -run TestRestartPolicy -v -args -ginkgo.focus='PR #559'",
+      "report": "docs/verification/pr559-fromcreation/results/envtest-l2-fromcreation.txt"
+    }
+  },
+  "findings": [
+    { "id": "P0", "polarity": "canary", "layer": "unit", "match": ["TestP0_LegacyPolicy_IgnoresObservedMemberDeletion", "TestP0_LegacyPolicy_RestartGateClosedOnceNotReady", "TestP0_LegacyPolicy_BypassRequiresPriorRebuild"] },
+    { "id": "F1", "polarity": "contract", "layer": "integration", "match": ["A: observed member deletion after Ready rebuilds the whole instance"] },
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestFromCreation_DeletionTriggerPreReady_Contract"] },
+    { "id": "F2", "polarity": "contract", "layer": "integration", "match": ["B: pre-Ready container crash rebuilds the whole instance"] },
+    { "id": "F2", "polarity": "contract", "layer": "unit", "match": ["TestFromCreation_ContainerCrashPreReady_Contract"] },
+    { "id": "F3", "polarity": "canary", "layer": "integration", "match": ["C: mid-recovery member loss is suppressed until Ready"] },
+    { "id": "F3", "polarity": "canary", "layer": "unit", "match": ["TestFromCreation_RestartingGuardSuppressesMemberLossDuringRecovery_Canary"] },
+    { "id": "F4", "polarity": "canary", "layer": "unit", "match": ["TestFromCreation_MissedDeletionWindow_Canary"] },
+    { "id": "F4", "polarity": "contract", "layer": "integration", "match": ["D: force-deleted member still triggers a whole-instance rebuild"] },
+    { "id": "F5", "polarity": "contract", "layer": "unit", "match": ["TestFromCreation_ScaleInRemovalNotMemberLoss_Contract"] },
+    { "id": "F6", "polarity": "contract", "layer": "unit", "match": ["TestFromCreation_FailedPodDuringInPlaceUpdate_Contract"] }
+  ],
+  "liveNote": "L3 (live cluster) not run per this round's instructions (unit + integration only). If run later: with a real node failure, check the controller emits ReCreateInstance within the eviction window and the instance returns to Ready without manual RoleInstance deletion."
+}

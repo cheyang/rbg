@@ -1,0 +1,20 @@
+Harness-bites check (review-finding-verifier Step 4)
+====================================================
+Method: temporarily replaced pkg/reconciler/roleinstance/sync/instance_scale.go
+with the MERGE-BASE version (fd160cc9) — i.e. the PR's production change removed —
+and re-ran the harness scenarios. Then restored the head version and confirmed
+`git diff 8d190d0d -- pkg/` is empty (production code untouched).
+
+With base instance_scale.go (PR change reverted):
+  $ KUBEBUILDER_ASSETS=... go test ./test/envtest/testcase/restart_policy/... \
+      -run TestRestartPolicy -args -ginkgo.focus='PR #559'
+  --- FAIL: TestRestartPolicy (380.24s)
+  FAIL  sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy  380.254s
+  (scenarios A/B/D time out: the FromCreation rebuild never triggers without
+  the PR's predicate change — the tests bite.)
+
+With PR head instance_scale.go (restored):
+  Ran 4 of 28 Specs — SUCCESS! 4 Passed | 0 Failed
+  ok    sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy  37.062s
+
+Production diff after restore: empty (`git diff 8d190d0d --stat` = no output).

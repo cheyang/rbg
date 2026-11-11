@@ -1,0 +1,16 @@
+Regression sweep on PR head 8d190d0d (harness branch, production code untouched)
+=================================================================================
+Unit:
+  go test ./api/workloads/... ./pkg/reconciler/roleinstance/... ./pkg/reconciler/
+  -> all ok (including PR's own new tests)
+
+envtest, full restart_policy suite (28 specs incl. all legacy-policy cases):
+  ok  sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy  231.739s
+
+envtest, admission-related suites (PR touches v1alpha1 deprecation webhook and
+v1alpha2 admission validators):
+  ok  sigs.k8s.io/rbgs/test/envtest/testcase/deprecationv1a1   6.414s
+  ok  sigs.k8s.io/rbgs/test/envtest/testcase/webhook          29.888s
+  ok  sigs.k8s.io/rbgs/test/envtest/testcase/deprecation       6.185s
+
+KUBEBUILDER_ASSETS=~/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64
