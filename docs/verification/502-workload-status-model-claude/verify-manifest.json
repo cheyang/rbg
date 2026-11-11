@@ -204,6 +204,70 @@
         "C28-advisory-resolution-pins"
       ],
       "note": "round-7: pins the resolution of round-6 Copilot advisories C4515734270 (RI example now keeps RoleInstanceCustomReady separate with reason ExternalCheckPending; RoleInstanceReady reason PodsNotReady is a code reason) and C4515733997 (phase completion is controller-observed only; markPodNotReady gate does not prevent entering Running). Both resolved by this round's redesign; C28 green at head, red at all earlier heads."
+    },
+    {
+      "id": "F19-ris-establishment-boundary-existential",
+      "layer": "unit",
+      "polarity": "contract",
+      "match": [
+        "C13-replacement-mapping-stated",
+        "C16-replacement-discriminator"
+      ],
+      "note": "round-8: fixed by 9862499's per-child durable-evidence discriminator; C13/C16 re-anchored to the new prose (substance preserved: target-added child -> RoleInstanceSetUpdated, established replaced -> Recovering, evidence-free -> Creating)."
+    },
+    {
+      "id": "C4528984285-gangconfigured-gang-wait",
+      "layer": "unit",
+      "polarity": "contract",
+      "match": [
+        "C29-gang-wait-observation"
+      ],
+      "note": "round-8: WaitingForGang now derived from runtime gang-scheduling facts; GangConfigured scoped to configuration compatibility; code claims verified (setGangConfiguredCondition)."
+    },
+    {
+      "id": "C4528984415-restart-establishment-evidence",
+      "layer": "unit",
+      "polarity": "contract",
+      "match": [
+        "C30-restart-establishment-tiebreak"
+      ],
+      "note": "round-8: determinism half fixed (no-evidence -> Creating + unconfirmed message, test bullet); evidence-base half is F24."
+    },
+    {
+      "id": "C4528984469-events-vs-blocker-distinction",
+      "layer": "unit",
+      "polarity": "contract",
+      "match": [
+        "C31-events-blocker-distinction"
+      ],
+      "note": "round-8: 'by itself' qualifier + confirmed-blocker clause resolve the conflict."
+    },
+    {
+      "id": "F24-durable-evidence-not-derivable",
+      "layer": "unit",
+      "polarity": "contract",
+      "match": [
+        "C32-durable-evidence-derivable"
+      ],
+      "note": "round-8 NEW (minor): Recovering discriminator cites 'revision history in the RBG status' (no such field) and 'persisted role status' (zeroed on child deletion by ConstructRoleStatus/updateRBGStatus), so the with-evidence -> Recovering arm is unreachable."
+    },
+    {
+      "id": "F22-ris-readiness-code-claim-overbroad",
+      "layer": "unit",
+      "polarity": "contract",
+      "match": [
+        "C33-ris-readiness-claim-scoped"
+      ],
+      "note": "ledger-open nit since round 7; now guarded (unscoped 'Today's RIS code reads only RoleInstanceReady' still present at :338)."
+    },
+    {
+      "id": "F18-kep527-reference-dangling",
+      "layer": "unit",
+      "polarity": "contract",
+      "match": [
+        "C34-kep527-references-resolve"
+      ],
+      "note": "ledger-open nit since round 6; now guarded (KEP-527 = upstream PR #546 still open, no keps/527-* in tree, no pending markers)."
     }
   ],
   "refutedHypotheses": [
@@ -233,5 +297,5 @@
   },
   "liveNote": "L3 skipped (debate setup: unit + integration layers only). Docs-only KEP PR; no live runtime signal.",
   "previousHeadSha": "0b7285b7c2ad23f139f0edb8549a316129e9b4a2",
-  "harnessNotes": " Round 7: re-anchored C4/C12/C13/C15/C20 to the redesigned model (Accepted dropped, RBG Ready deprecated, reason renames); added C26 (F22), C27 (F23), C28 (advisory pins). Bite evidence: defect simulations red / fix simulations green (results/bite-check-round7.txt); polarity sweep across f05e1dd..05807351 in results/polarity-round7-full.txt."
+  "harnessNotes": " Round 7: re-anchored C4/C12/C13/C15/C20 to the redesigned model (Accepted dropped, RBG Ready deprecated, reason renames); added C26 (F22), C27 (F23), C28 (advisory pins). Bite evidence: defect simulations red / fix simulations green (results/bite-check-round7.txt); polarity sweep across f05e1dd..05807351 in results/polarity-round7-full.txt. Round-8 (9862499): re-anchored C13/C16 to the per-child durable-evidence framing; added C29-C34 (gang-wait pin, restart tie-break pin, events-vs-blocker pin, F24 repro, F22-ris-readiness repro, F18-kep527 repro)."
 }

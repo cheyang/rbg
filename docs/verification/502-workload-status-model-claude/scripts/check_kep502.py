@@ -683,16 +683,39 @@ def check_c13(kep_text):
     # RBG layer: establishment scoping + post-establishment classification
     # (round-7 re-anchor: ScalingOrUpdating -> RoleInstanceSetUpdated,
     # RollingUpdate -> RoleInstanceUpdated; substance unchanged)
-    if not re.search(r"`Creating` is used only during initial RBG "
-                     r"establishment", kep_text):
-        problems.append("RBG Creating not scoped to initial establishment")
-    if not re.search(r"Once the RBG is established, a missing child is not "
-                     r"`Creating`", kep_text):
+    # Round-8 re-anchor (9862499): the collective RBG framing
+    # ("only during initial RBG establishment") was replaced by a per-child
+    # durable-evidence discriminator. Contract substance unchanged: a
+    # target-added child maps away from Creating; an established child
+    # being replaced maps to Recovering; only evidence-free establishment
+    # stays Creating.
+    rbg_collective = re.search(r"`Creating` is used only during initial RBG "
+                               r"establishment", kep_text)
+    rbg_evidence = re.search(r"`Creating` is used while a required child is "
+                             r"being established, when the current target "
+                             r"did not add the child and no durable evidence "
+                             r"shows that it was previously established",
+                             kep_text)
+    if not (rbg_collective or rbg_evidence):
+        problems.append("RBG Creating not scoped to child establishment "
+                        "(neither the collective round-7 framing nor the "
+                        "round-8 durable-evidence framing found)")
+    if rbg_collective and not re.search(
+            r"Once the RBG is established, a missing child is not "
+            r"`Creating`", kep_text):
         problems.append("RBG post-establishment missing-child classification "
                         "not stated")
-    if not re.search(r"such as `Recovering` for replacing an established "
-                     r"child or `RoleInstanceSetUpdated` for a target that "
-                     r"adds one", kep_text):
+    if rbg_evidence and not re.search(
+            r"`Recovering` is used when an established child is being "
+            r"repaired or replaced, and requires durable evidence of prior "
+            r"establishment", kep_text):
+        problems.append("RBG replacement->Recovering evidence rule not "
+                        "stated")
+    if not (re.search(r"such as `Recovering` for replacing an established "
+                      r"child or `RoleInstanceSetUpdated` for a target that "
+                      r"adds one", kep_text)
+            or re.search(r"A target that adds a new child uses "
+                         r"`RoleInstanceSetUpdated`", kep_text)):
         problems.append("RBG replacement->Recovering / scale-up->"
                         "RoleInstanceSetUpdated mapping not stated")
     # RIS layer
@@ -805,14 +828,22 @@ def check_c16(kep_text):
     problems = []
     has_scoping = re.search(r"`Creating` is used only during initial "
                             r"(?:RBG|set) establishment", kep_text)
-    if not has_scoping:
+    # Round-8 re-anchor (9862499): the RBG layer moved to the per-child
+    # durable-evidence discriminator; the RIS layer keeps its persisted-fact
+    # clause. Either framing satisfies the contract, and the round-8 text
+    # must name persisted facts at BOTH layers.
+    rbg_evidence = re.search(r"durable evidence of prior establishment, "
+                             r"such as persisted role status or revision "
+                             r"history in the RBG status", kep_text)
+    if not (has_scoping or rbg_evidence):
         problems.append("establishment scoping not found (harness anchor "
                         "may be stale — see C13)")
     else:
         disc = (re.search(r"established revision or established RIs for "
                           r"its target", kep_text)
-                and re.search(r"required roles have been established",
-                              kep_text))
+                and (re.search(r"required roles have been established",
+                               kep_text)
+                     or rbg_evidence))
         if not disc:
             problems.append("establishment discriminator not tied to "
                             "persisted facts (established revision / "
@@ -1322,6 +1353,257 @@ def check_c28(kep_text):
               "(phase not gated by external gates) pinned at head")
 
 
+# ------------------------------------------------------- C29 (round-8 gang)
+
+def check_c29(kep_text):
+    """Round-8 advisory-resolution pin (C4528984285, Copilot round-7:
+    `GangConfigured` cannot distinguish a waiting gang from a released
+    one). The 9862499 delta resolves it: `WaitingForGang` is derived from
+    runtime gang-scheduling facts (PodGroup phase / member scheduling
+    status), and `GangConfigured` is scoped to configuration
+    compatibility only (True even while Pods remain unscheduled; False
+    denotes incompatibility; never the waiting observation). Code-side
+    verification of the GangConfigured claim (setGangConfiguredCondition:
+    True + Reason GangConfigured on success, False + IncompatibleGangConfig
+    on error, removed when gang is off) is recorded in
+    results/round8-code-claims.txt; this guard pins the doc statements.
+    Polarity: contract (fail == the resolution regressed).
+    """
+    problems = []
+    if not re.search(r"`WaitingForGang` is established from runtime "
+                     r"gang-scheduling facts", kep_text):
+        problems.append("WaitingForGang runtime-derivation statement "
+                        "missing")
+    if not re.search(r"cleared when the group is scheduled or gang "
+                     r"scheduling is disabled", kep_text):
+        problems.append("WaitingForGang clearing rule missing")
+    if not re.search(r"`GangConfigured` reports only configuration "
+                     r"compatibility", kep_text):
+        problems.append("GangConfigured compatibility-only scoping missing")
+    if not re.search(r"It is never used as the waiting observation", kep_text):
+        problems.append("GangConfigured never-the-waiting-observation "
+                        "statement missing")
+    if not re.search(r"\| `WaitingForGang` \| RBG \| Observed from runtime "
+                     r"gang-scheduling state", kep_text):
+        problems.append("provenance row still derives WaitingForGang from "
+                        "gang state owned at RBG scope / GangConfigured")
+    emit("C29-gang-wait-observation", not problems,
+         "; ".join(problems) if problems
+         else "C4528984285 resolved: WaitingForGang from runtime gang "
+              "facts; GangConfigured scoped to configuration "
+              "compatibility, never the waiting observation")
+
+
+# -------------------------------------------------- C30 (round-8 restart tie)
+
+def check_c30(kep_text):
+    """Round-8 advisory-resolution pin (C4528984415, Copilot round-7: after
+    a controller restart, retained fields cannot distinguish initial
+    establishment from recovery). The 9862499 delta resolves the
+    determinism half: when no durable evidence distinguishes a
+    never-established child from a replaced one, the missing child is
+    reported `Creating` (creation is the observable fact) and message
+    notes replacement is unconfirmed; the test plan pins both arms.
+    The evidence-base half (whether the cited durable evidence actually
+    exists / survives deletion) is tracked as F24 / C32.
+    Polarity: contract (fail == the tie-break or its test pin regressed).
+    """
+    problems = []
+    if not re.search(r"After a controller restart, when no durable evidence "
+                     r"distinguishes a never-established child from a "
+                     r"replaced one", kep_text):
+        problems.append("restart no-evidence tie-break paragraph missing")
+    if not re.search(r"the missing child is reported as `Creating`, because "
+                     r"creation is the observable fact", kep_text):
+        problems.append("no-evidence -> Creating rule missing")
+    if not re.search(r"message notes that replacement is unconfirmed",
+                     kep_text):
+        problems.append("unconfirmed-replacement message clause missing")
+    if not re.search(r"Cover the zero-replica ambiguity: with durable "
+                     r"evidence of prior establishment, a missing child is "
+                     r"`Recovering`; without it, the child is `Creating`",
+                     kep_text):
+        problems.append("zero-replica-ambiguity test bullet missing")
+    emit("C30-restart-establishment-tiebreak", not problems,
+         "; ".join(problems) if problems
+         else "C4528984415 determinism resolved: no-evidence -> Creating "
+              "(replacement unconfirmed) with a test-plan pin")
+
+
+# ------------------------------------------------- C31 (round-8 events rule)
+
+def check_c31(kep_text):
+    """Round-8 advisory-resolution pin (C4528984469, Copilot round-7: the
+    test bullet 'operation failures do not directly change the aggregated
+    Progressing reason' may conflict with the blocker propagation rules).
+    The 9862499 delta resolves it: a *single* failure emits a Warning
+    Event and does not *by itself* change the aggregated reason, while a
+    *confirmed current blocker* changes the reason through the documented
+    classification and propagation rules.
+    Polarity: contract (fail == the unconditional no-reason-change
+    wording returns, or the confirmed-blocker clause is dropped).
+    """
+    problems = []
+    if not re.search(r"A single RIS / RI scaling or update failure emits a "
+                     r"Warning Event", kep_text):
+        problems.append("single-failure event bullet missing")
+    if not re.search(r"does not by itself create a new failure condition or "
+                     r"change the aggregated `Progressing` reason", kep_text):
+        problems.append("'by itself' qualifier missing (the unconditional "
+                        "wording was the C4528984469 conflict)")
+    if not re.search(r"A confirmed current blocker changes the reason "
+                     r"through the documented classification and "
+                     r"propagation rules", kep_text):
+        problems.append("confirmed-blocker clause missing")
+    emit("C31-events-blocker-distinction", not problems,
+         "; ".join(problems) if problems
+         else "C4528984469 resolved: single failure -> event only; "
+              "confirmed blocker -> documented classification rules")
+
+
+# ------------------------------------------- C32 (round-8 F24 repro, minor)
+
+def check_c32(kep_text, repo):
+    """F24 repro (round-8 new, minor; introduced by 9862499's
+    durable-evidence discriminator): the Recovering rule cites "durable
+    evidence of prior establishment, such as persisted role status or
+    revision history in the RBG status". Cross-checked against the head
+    tree:
+      (a) RoleBasedGroupStatus (api/workloads/v1alpha2/
+          rolebasedgroup_types.go) has no revision-history field — only
+          observedGeneration, conditions, roleStatuses.
+      (b) "persisted role status" is not durable across child deletion in
+          the current aggregation path: ConstructRoleStatus returns a
+          zero-counter RoleStatus when the child RIS is NotFound
+          (pkg/reconciler/roleinstanceset_reconciler.go), and
+          updateRBGStatus overwrites the persisted entry whenever the
+          counters change (internal/controller/workloads/
+          rolebasedgroup_controller.go), so the evidence is wiped on the
+          first reconcile after deletion — exactly the replaced-child
+          scenario the rule targets. Zero-replica entries are 0/0 either
+          way, so they never distinguish the doc's own canonical example.
+    The KEP neither specifies preserving roleStatuses entries for missing
+    children nor defines the new status content, so the "with durable
+    evidence -> Recovering" arm of the new test bullet is unreachable
+    with current fields.
+    Polarity: contract (fail == the discriminator cites evidence that
+    neither exists as an RBG status field nor is specified as new
+    content; passes once the citation is scoped to existing durable
+    fields or the new status content / preservation rule is specified).
+    """
+    problems = []
+    rbg_status_fields = set()
+    p = os.path.join(repo,
+                     "api/workloads/v1alpha2/rolebasedgroup_types.go")
+    if os.path.exists(p):
+        src = read(p)
+        m = re.search(r"type RoleBasedGroupStatus struct \{(.*?)\n\}",
+                      src, re.S)
+        if m:
+            rbg_status_fields = json_tags(m.group(1))
+    cites_revision_history = re.search(
+        r"durable evidence of prior establishment, such as persisted role "
+        r"status or revision history in the RBG status", kep_text)
+    if not cites_revision_history:
+        # anchor moved — flag as harness-stale rather than silently pass
+        problems.append("durable-evidence sentence not found (harness "
+                        "anchor may be stale)")
+    else:
+        if rbg_status_fields and not any(
+                "revision" in f.lower() or "history" in f.lower()
+                for f in rbg_status_fields):
+            problems.append(
+                "KEP cites 'revision history in the RBG status' but "
+                "RoleBasedGroupStatus has no revision-history field "
+                "(fields: %s)" % ", ".join(sorted(rbg_status_fields)))
+        # A preservation rule for roleStatuses of missing children, or an
+        # explicit statement that new status content is required, would
+        # make the roleStatuses arm usable as durable evidence.
+        specifies = (re.search(r"roleStatuses entries .* (?:retained|"
+                               r"preserved|not (?:reset|removed))",
+                               kep_text, re.I)
+                     or re.search(r"(?:preserve|retain) the role status .*"
+                                  r"missing child", kep_text, re.I)
+                     or re.search(r"new status (?:field|content).*"
+                                  r"(?:revision history|establishment)",
+                                  kep_text, re.I))
+        if not specifies:
+            problems.append(
+                "no statement preserves roleStatuses for missing children "
+                "or specifies the new status content, so 'persisted role "
+                "status' is zeroed on child deletion (ConstructRoleStatus "
+                "NotFound -> zero counters) and cannot be the durable "
+                "evidence the Recovering rule requires")
+    emit("C32-durable-evidence-derivable", not problems,
+         "; ".join(problems) if problems
+         else "Recovering discriminator cites durable evidence that exists "
+              "in the RBG status (or the required new content is "
+              "specified)")
+
+
+# --------------------------------- C33 (F22-ris-readiness, open since r7)
+
+def check_c33(kep_text):
+    """F22-ris-readiness repro (round-7, nit; ledger-open at head):
+    "Today's RIS code reads only `RoleInstanceReady`" is absolute-worded
+    and false for stateless mode, whose IsRunningAndReady also reads
+    every spec.readinessGates condition
+    (pkg/reconciler/roleinstanceset/statelessmode/utils/utils.go) — the
+    doc's own stateless-mode paragraph says so. Passes once the sentence
+    is scoped (e.g. "in stateful mode" / "for blocker propagation RIS
+    reads only ...") or reworded to name both facts.
+    Polarity: contract (fail == the unscoped absolute claim is present).
+    """
+    problems = []
+    m = re.search(r"Today's RIS code reads only `RoleInstanceReady`",
+                  kep_text)
+    if m:
+        # unscoped: no stateful-mode / propagation qualifier in the same
+        # sentence
+        sentence = re.search(r"[^.\n]*Today's RIS code reads only "
+                             r"`RoleInstanceReady`[^.\n]*\.", kep_text)
+        ctx = sentence.group(0) if sentence else m.group(0)
+        if not re.search(r"stateful|blocker propagation|except|while "
+                         r"stateless", ctx, re.I):
+            problems.append("unscoped absolute claim 'Today's RIS code "
+                            "reads only RoleInstanceReady' still present "
+                            "(stateless mode also reads readinessGates)")
+    emit("C33-ris-readiness-claim-scoped", not problems,
+         "; ".join(problems) if problems
+         else "RIS reads-only-RoleInstanceReady claim scoped or absent")
+
+
+# ----------------------------- C34 (F18-kep527 dangling, open since r6)
+
+def check_c34(kep_text, repo):
+    """F18-kep527 repro (round-6, nit; ledger-open at head): normative
+    hook-protocol references to KEP-527 dangle — no keps/527-* exists in
+    this tree (KEP-527 is upstream PR #546, still open at round-8
+    review time). Passes once every KEP-527 reference resolves in-tree
+    (keps/527-* present) or is explicitly marked pending/anticipated
+    (e.g. "KEP-527 (pending, #546)").
+    Polarity: contract (fail == a bare normative KEP-527 reference with
+    neither in-tree resolution nor a pending marker).
+    """
+    problems = []
+    refs = [m.start() for m in re.finditer(r"KEP-527", kep_text)]
+    keps_dir = os.path.join(repo, "keps")
+    in_tree = os.path.isdir(keps_dir) and any(
+        d.startswith("527-") for d in os.listdir(keps_dir))
+    for pos in refs:
+        window = kep_text[max(0, pos - 120):pos + 160]
+        if not re.search(r"pending|anticipated|#[0-9]{3}|follow-up|not yet "
+                         r"landed|proposed", window, re.I):
+            problems.append("bare normative KEP-527 reference at offset %d "
+                            "(no in-tree keps/527-* and no pending marker)"
+                            % pos)
+            break
+    emit("C34-kep527-references-resolve", not problems,
+         "; ".join(problems) if problems
+         else "every KEP-527 reference resolves in-tree or is marked "
+              "pending")
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default=".")
@@ -1364,6 +1646,12 @@ def main():
     check_c26(kep_text)
     check_c27(kep_text)
     check_c28(kep_text)
+    check_c29(kep_text)
+    check_c30(kep_text)
+    check_c31(kep_text)
+    check_c32(kep_text, repo)
+    check_c33(kep_text)
+    check_c34(kep_text, repo)
 
     for cid, ok, detail in RESULTS:
         print("%s\t%s" % (cid, "pass" if ok else "fail"))
