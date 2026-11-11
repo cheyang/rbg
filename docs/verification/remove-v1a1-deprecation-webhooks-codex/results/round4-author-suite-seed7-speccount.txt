@@ -1,0 +1,2 @@
+Ran 7 of 7 Specs in 6.080 seconds
+SUCCESS! -- 7 Passed | 0 Failed | 0 Pending | 0 Skipped

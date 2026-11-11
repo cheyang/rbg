@@ -1,6 +1,6 @@
 # Verification — PR #556: remove v1alpha1 admission webhooks
 
-Reviewer: Codex (Reviewer B). Round: 3 (incremental). Reviewed head: `91d244f5abe71543b74e11db12db67225b92a51e` (base `73e05db4`).
+Reviewer: Codex (Reviewer B). Round: 4 (incremental). Reviewed head: `15386660954fe1216af9610e8c7e258a1de38e5c` (base `73e05db4`).
 Harness: additive only — `test/envtest/testutil/v1a1gate_setup.go` + `test/envtest/testcase/v1a1gate/`. No production code touched.
 
 ## Premise (P0) — CONFIRMED
@@ -128,3 +128,38 @@ surviving `deprecation` suite only writes v1alpha2. The
 v1alpha1→conversion→v1alpha2-gate path this PR makes sole is exercised only by
 this reviewer harness. Upstreaming a trimmed version of it would close that
 regression window.
+
+## Round 4 (incremental, head 15386660954f)
+
+Delta 91d244f5..15386660 is a single test-only commit (+24/-37):
+`test(v1a1gate): fix order flake and correct coverage claims`.
+
+- **F4 (round-3 blocker) FIXED**: namespace creation hoisted from the two
+  per-Describe `BeforeAll`s into `BeforeSuite`
+  (`suite_test.go`: `testutil.CreateNamespace("v1a1-gate-test")` once, before
+  Ginkgo randomizes container order). Verified on a pristine head worktree:
+  `results/round4-flake-fixcheck-1538666.txt` — 0/10 seeds fail, including all
+  eight previously-failing seeds (7, 1794329300, 1794329328, 1794329513, 2, 4,
+  5, 8) and both previously-passing controls (42, 1794329336). At wire-first
+  seed 7 the suite now runs 7 of 7 specs, 0 skipped
+  (`results/round4-author-suite-seed7-speccount.txt`; round-3 failure mode was
+  "Ran 4 of 7, 1 Failed | 3 Skipped"). Same runnable check:
+  `scripts/flake-repro.sh`.
+- **F5 (false coverage attribution) FIXED**: the trailing comment now states
+  v1alpha1-path grandfathering / type-exact switch have *no* in-repo coverage
+  (previously credited to the v1alpha2-only deprecation suite); the spec is
+  retitled "rejects a v1alpha1 create with a present-but-empty workload" with
+  an accurate comment and an explicit zero-value `WorkloadSpec{}` (wire-identical
+  to before); the PR body no longer claims "UPDATE coverage" and now discloses
+  both residual legs as not covered in-repo.
+- **F6 (dead code) FIXED**: `GateWarningRecorder.Containing` removed; zero
+  callers remain (`grep -rn '\.Containing(' --include='*.go' .` clean), package
+  still compiles (`strings` still used at v1a1gate_setup.go:242).
+- **Re-verify of this harness on 15386660**: 7/7 contract specs green
+  (`results/reverify/`, run via `scripts/re-verify.sh`). Behavior unchanged
+  (test-only delta). Unit layer + build/vet clean at head; envtest
+  `deprecation` and `webhook` suites green at head.
+- **F1 stays open (minor)**: the two residual legs — v1alpha1-path
+  grandfathering UPDATE and genuine key-absent workload defaulting — remain
+  covered only by this harness (A2/A4/A5, green at head). Now honestly
+  disclosed in the PR body and code comments, but no tracked issue exists yet.
