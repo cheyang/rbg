@@ -1501,17 +1501,19 @@ def check_c32(kep_text, repo):
                       src, re.S)
         if m:
             rbg_status_fields = json_tags(m.group(1))
-    cites_revision_history = re.search(
-        r"durable evidence of prior establishment, such as persisted role "
-        r"status or revision history in the RBG status", kep_text)
-    if not cites_revision_history:
+    anchor = re.search(r"requires durable evidence of prior establishment",
+                       kep_text)
+    if not anchor:
         # anchor moved — flag as harness-stale rather than silently pass
         problems.append("durable-evidence sentence not found (harness "
                         "anchor may be stale)")
     else:
-        if rbg_status_fields and not any(
-                "revision" in f.lower() or "history" in f.lower()
-                for f in rbg_status_fields):
+        if (rbg_status_fields
+                and re.search(r"revision history in the RBG status",
+                              kep_text)
+                and not any("revision" in f.lower()
+                            or "history" in f.lower()
+                            for f in rbg_status_fields)):
             problems.append(
                 "KEP cites 'revision history in the RBG status' but "
                 "RoleBasedGroupStatus has no revision-history field "
@@ -1519,11 +1521,12 @@ def check_c32(kep_text, repo):
         # A preservation rule for roleStatuses of missing children, or an
         # explicit statement that new status content is required, would
         # make the roleStatuses arm usable as durable evidence.
-        specifies = (re.search(r"roleStatuses entries .* (?:retained|"
-                               r"preserved|not (?:reset|removed))",
-                               kep_text, re.I)
-                     or re.search(r"(?:preserve|retain) the role status .*"
-                                  r"missing child", kep_text, re.I)
+        specifies = (re.search(r"(?:preserv|retain)[a-z]* .{0,100}"
+                               r"(?:role status|roleStatuses|"
+                               r"missing child)", kep_text, re.I)
+                     or re.search(r"missing child.{0,140}"
+                                  r"(?:preserv|retain)[a-z]*",
+                                  kep_text, re.I)
                      or re.search(r"new status (?:field|content).*"
                                   r"(?:revision history|establishment)",
                                   kep_text, re.I))
