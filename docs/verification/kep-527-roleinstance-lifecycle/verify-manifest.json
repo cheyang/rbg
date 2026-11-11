@@ -70,8 +70,10 @@
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "CheckPreDeleteGateLifetime"
-      ]
+        "CheckReadyGatingRemoved"
+      ],
+      "ledgerId": "F-PREDELETE-GATE-LIFETIME",
+      "summary": "F-PREDELETE-GATE-LIFETIME (round-6 form): RESOLVED BY DESIGN REMOVAL — round 6 deleted markNotReady and the whole Ready Gating section; there is no gate whose lifetime needs stating. Harness-update: CheckPreDeleteGateLifetime superseded by CheckReadyGatingRemoved (disclosed, not masked). Also dissolves advisory F-C4528290945 (no gate => no stateful-readiness-vs-gate divergence)."
     },
     {
       "id": "F6",
@@ -209,9 +211,9 @@
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "CheckMarkNotReadyNaming"
+        "CheckSignalLabelsOnlyHookField"
       ],
-      "summary": "Round-4 naming split: new protocol uses markNotReady (independent type); legacy markPodNotReady only in legacy-context sentences."
+      "summary": "F-MARKNOTREADY-NAME (round-6 form): RESOLVED BY DESIGN REMOVAL — markNotReady no longer exists; the new contract pins signalLabels as the only hook field (EN+zh) and markPodNotReady confined to legacy-context sentences. Harness-update: CheckMarkNotReadyNaming superseded by CheckSignalLabelsOnlyHookField (disclosed)."
     },
     {
       "id": "F21",
@@ -241,7 +243,7 @@
       "match": [
         "CheckStaleLabelDispositionSingle"
       ],
-      "summary": "FIXED in round 5: hook removal cleans at a single normative strength (EN :454/:701/:993, zh mirrors); markerA->markerB reconfiguration deliberately leaves the old marker — the distinction the finding suggested."
+      "summary": "FIXED in round 5: hook removal cleans at a single normative strength (EN :454/:701/:993, zh mirrors); markerA->markerB reconfiguration deliberately leaves the old marker — the distinction the finding suggested. Round-6 harness-update: disable-flow sub-pin reworded to the marker-key-record form (substance unchanged: removal cleans, reconfiguration retains)."
     },
     {
       "id": "F24",
@@ -307,6 +309,95 @@
         "CheckUserConfiguredClarified"
       ],
       "summary": "Round-5 content guard: 'user-configured' defined for the mutual-exclusion check — any non-empty legacy spec.lifecycle on an RBG-managed RIS is treated as user configuration, EN+zh."
+    },
+    {
+      "id": "F31",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckPodPropagationSpecified"
+      ],
+      "summary": "Round-6 content guard: RI->Pod signal-label propagation specified (unidirectional, metadata-only, hook-state excluded, template-label collision admission), EN+zh."
+    },
+    {
+      "id": "F32",
+      "ledgerId": "F-C4528291076",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckMarkerKeyRecordPinned"
+      ],
+      "summary": "Fix evidence for advisory F-C4528291076: durable marker-key record annotation pinned (wire name + Go constant, atomic write with the marker, key removed only after RI label + Pod mirrors confirmed absent, feeds rollback precondition), EN+zh."
+    },
+    {
+      "id": "F33",
+      "ledgerId": "F-C4528290874",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckSelectorAdmissionStated"
+      ],
+      "summary": "Fix evidence for advisory F-C4528290874: admission rejects marker keys used by the owning RIS spec.selector (matchLabels / any matchExpressions entry, incl. DoesNotExist-only), with the owner-reference-release rationale, EN+zh."
+    },
+    {
+      "id": "F34",
+      "ledgerId": "F-C4528291011",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckFailClosedCacheMiss"
+      ],
+      "summary": "Fix evidence for advisory F-C4528291011: foreground-deletion webhook resolution is fail-closed on cache miss, EN+zh."
+    },
+    {
+      "id": "F35",
+      "ledgerId": "F-ZH-EN-ROLLOUT-RISK-PARITY",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckZhEnRolloutRiskParity"
+      ],
+      "summary": "NEW round-6 minor: zh rollout-risk list still contains 'Ready 循环等待' after EN dropped 'circular waits involving Ready' with the gate removal."
+    },
+    {
+      "id": "F36",
+      "ledgerId": "F-MARKERKEY-RECORD-OWNERSHIP",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckMarkerKeyRecordOwnership"
+      ],
+      "summary": "NEW round-6 minor: the field-ownership enumeration omits the marker-key record annotation (controller-owned / edit-protected), EN+zh."
+    },
+    {
+      "id": "F37",
+      "ledgerId": "F-SCALABILITY-POD-MIRROR",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckScalabilityPodMirrorCost"
+      ],
+      "summary": "NEW round-6 nit: Scalability section omits the Pod-mirror fan-out write cost, EN+zh."
+    },
+    {
+      "id": "F38",
+      "ledgerId": "F-ROLLBACK-PRECONDITION-SHORTHAND",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckRollbackPreconditionComplete"
+      ],
+      "summary": "NEW round-6 nit: the record paragraph's rollback-precondition sentence reads complete but omits the reserved-finalizer condition stated in Upgrade/Downgrade, EN+zh."
+    },
+    {
+      "id": "F39",
+      "ledgerId": "F-WEBHOOK-DEFER-WORDING",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckWebhookDeferralNotClaimed"
+      ],
+      "summary": "NEW round-6 nit: fail-closed rule claims the webhook 'rejects or defers the request'; admission webhooks cannot defer, EN+zh."
     }
   ],
   "liveNote": "Docs-only PR: no live layer. Design-level findings F1-F3 are verified by codebase inspection and their checks are text proxies that confirm the KEP ADDRESSES the topic; design correctness of the added text still requires human review.",

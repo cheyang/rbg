@@ -128,6 +128,9 @@ if [ -f "$KEP_EN" ] && grep -qiE 'mutual(ly)? exclusive|mutual exclusion|depreca
 
 # F5. Ready Gating must define the lifetime of a preDelete NotReady gate, not only
 #     the Update/Recovery one.
+#     SUPERSEDED round 6: the markNotReady gate / Ready Gating section was removed
+#     wholesale; the finding is resolved by design removal. This pin now FAILS BY
+#     DESIGN at head; the active contract is CheckReadyGatingRemoved (group 2e).
 if [ -f "$KEP_EN" ] && sed -n '/### Ready Gating/,/### Hook Executor Service/p' "$KEP_EN" \
     | grep -qiE 'preDelete.*(gate|NotReady).*(until|remain|lift|delet)|gate.*preDelete.*(until|remain|lift)'; then
   ok CheckPreDeleteGateLifetime; else bad CheckPreDeleteGateLifetime; fi
@@ -259,7 +262,10 @@ if [ -f "$KEP_EN" ] && tr '\n' ' ' < "$KEP_EN" | tr -s ' ' \
 if [ -f "$KEP_ZH" ] && ! grep -qE 'source of truth|desired snapshot' "$KEP_ZH"; then
   ok CheckZhTermsTranslated; else bad CheckZhTermsTranslated; fi
 
-# F20 (F-MARKNOTREADY-NAME, round-4 form). The new protocol's field is
+# F20 (F-MARKNOTREADY-NAME, round-4 form). SUPERSEDED round 6: markNotReady no
+#     longer exists; this pin FAILS BY DESIGN at head. The active contract is
+#     CheckSignalLabelsOnlyHookField (group 2e). Original round-4 comment: the
+#     new protocol's field is
 #     markNotReady on an independent hook type; the legacy wire name
 #     markPodNotReady must survive only in legacy-context sentences (EN+zh),
 #     and the new-protocol examples must use markNotReady.
@@ -308,9 +314,10 @@ if [ -f "$KEP_EN" ] \
 #     while RECONFIGURATION (markerA->markerB) deliberately keeps the old
 #     marker in place — the distinction the finding suggested (EN+zh).
 if [ -f "$KEP_EN" ] && grep -q 'removes its stale runtime labels' "$KEP_EN" \
-  && grep -q 'removes stale runtime labels owned by the protocol' "$KEP_EN" \
+  && flat "$KEP_EN" | grep -q 'removes stale runtime labels and their Pod mirrors identified through the marker-key record' \
   && grep -q 'without migrating or removing the old marker' "$KEP_EN" \
   && grep -q '清理遗留 runtime labels，并按已放行' "$KEP_ZH" \
+  && grep -q '按 marker key 记录清理遗留运行时 labels' "$KEP_ZH" \
   && grep -q '不迁移或清理旧 marker' "$KEP_ZH"; then
   ok CheckStaleLabelDispositionSingle; else bad CheckStaleLabelDispositionSingle; fi
 
@@ -385,6 +392,167 @@ if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'users own the authoritative lif
 if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'treated as user configuration' \
   && grep -q '视为用户配置' "$KEP_ZH"; then
   ok CheckUserConfiguredClarified; else bad CheckUserConfiguredClarified; fi
+
+# --- group 2e: round-6 checks (delta 6c15cc92..c3ea6547) ---
+# Round 6 is a design revision: labelsHandler renamed to signalLabels;
+# markNotReady / the Ready Gating section removed wholesale (hooks never gate
+# RI Ready); signal labels are mirrored from the RI onto member Pods; a durable
+# marker-key record annotation was added; marker keys colliding with the owning
+# RIS spec.selector are admission-rejected; the foreground-delete webhook
+# resolution is fail-closed.
+
+# F5' (supersedes CheckPreDeleteGateLifetime; F-PREDELETE-GATE-LIFETIME resolved
+#     by design removal; also dissolves advisory F-C4528290945 — with no gate
+#     there is no stateful-readiness-vs-gate divergence). Contract: markNotReady
+#     absent (EN+zh) and the never-gate-Ready rule stated in both languages.
+if [ -f "$KEP_EN" ] && ! grep -q 'markNotReady' "$KEP_EN" && ! grep -q 'markNotReady' "$KEP_ZH" \
+  && flat "$KEP_EN" | grep -q 'no hook changes RI Ready' \
+  && flat "$KEP_EN" | grep -q 'Hook markers never participate in RI Ready computation' \
+  && grep -q 'hook marker 不参与 RI Ready 计算' "$KEP_ZH"; then
+  ok CheckReadyGatingRemoved; else bad CheckReadyGatingRemoved; fi
+
+# F20' (supersedes CheckMarkNotReadyNaming; F-MARKNOTREADY-NAME resolved by
+#     design removal). Contract: signalLabels is the only hook field (EN+zh),
+#     examples use signalLabels, and markPodNotReady survives only in
+#     legacy-context sentences (EN+zh).
+r6naming=1
+if [ -f "$KEP_EN" ] && [ -f "$KEP_ZH" ]; then
+  flat "$KEP_EN" | grep -q 'every hook contains only `signalLabels`' || r6naming=0
+  grep -q '每个 hook 只包含' "$KEP_ZH" || r6naming=0
+  grep -q '          signalLabels:' "$KEP_EN" || r6naming=0
+  grep -q 'signalLabels' "$KEP_ZH" || r6naming=0
+  while IFS= read -r hit; do
+    ln="${hit%%:*}"
+    sed -n "$(( ln > 2 ? ln - 2 : 1 )),$(( ln + 2 ))p" "$KEP_EN" | grep -qiE 'legacy' || r6naming=0
+  done < <(grep -n 'markPodNotReady' "$KEP_EN")
+  while IFS= read -r hit; do
+    ln="${hit%%:*}"
+    sed -n "$(( ln > 2 ? ln - 2 : 1 )),$(( ln + 2 ))p" "$KEP_ZH" | grep -qE 'legacy|旧' || r6naming=0
+  done < <(grep -n 'markPodNotReady' "$KEP_ZH")
+else
+  r6naming=0
+fi
+if [ "$r6naming" -eq 1 ]; then ok CheckSignalLabelsOnlyHookField; else bad CheckSignalLabelsOnlyHookField; fi
+
+# F31 (round-6 content guard). Signal Label Propagation to Pods section:
+#     unidirectional RI->Pod mirroring, metadata-only (no Pod recreate),
+#     hook-state excluded, template-label collision rejected (EN+zh).
+if [ -f "$KEP_EN" ] && grep -q '### Signal Label Propagation to Pods' "$KEP_EN" \
+  && flat "$KEP_EN" | grep -q 'Propagation is unidirectional from RI to Pod' \
+  && flat "$KEP_EN" | grep -q 'metadata-only Pod update' \
+  && flat "$KEP_EN" | grep -q 'Only `signalLabels` keys are mirrored' \
+  && flat "$KEP_EN" | grep -q 'Declaring the same key in the Pod template labels is a configuration error' \
+  && grep -q '### 信号标签向 Pod 传递' "$KEP_ZH" \
+  && flat "$KEP_ZH" | grep -q '传递是单向的' \
+  && flat "$KEP_ZH" | grep -q '仅修改 metadata' \
+  && flat "$KEP_ZH" | grep -q '在 Pod template labels 中声明相同 key'; then
+  ok CheckPodPropagationSpecified; else bad CheckPodPropagationSpecified; fi
+
+# F32 (round-6 content guard; also the fix evidence for advisory
+#     F-C4528291076, retired marker keys now durably tracked). The marker-key
+#     record: wire name + Go constant pinned, written in the same metadata
+#     write as the marker, a key removed only after the RI label and its Pod
+#     mirrors are confirmed absent, and the record feeds the rollback
+#     precondition (EN+zh).
+if [ -f "$KEP_EN" ] && grep -q 'rbg.workloads.x-k8s.io/role-instance-hook-marker-keys' "$KEP_EN" \
+  && grep -q 'RoleInstanceHookMarkerKeysAnnotation' "$KEP_EN" \
+  && flat "$KEP_EN" | grep -q 'records the marker keys owned by the protocol in the annotation' \
+  && flat "$KEP_EN" | grep -q 'updated in the same metadata write as the marker' \
+  && flat "$KEP_EN" | grep -q 'a key is removed only after the corresponding RI label and its Pod mirrors are confirmed absent' \
+  && grep -q 'role-instance-hook-marker-keys' "$KEP_ZH" \
+  && grep -q 'marker key 记录' "$KEP_ZH"; then
+  ok CheckMarkerKeyRecordPinned; else bad CheckMarkerKeyRecordPinned; fi
+
+# F33 (fix evidence for advisory F-C4528290874). Admission rejects marker keys
+#     used by the owning RIS spec.selector (matchLabels or any matchExpressions
+#     entry, incl. DoesNotExist-only), with the owner-reference-release
+#     rationale (EN+zh).
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'Admission also rejects a marker key used by the owning RIS `spec.selector`' \
+  && flat "$KEP_EN" | grep -q 'whether in `matchLabels` or in any `matchExpressions` entry' \
+  && flat "$KEP_EN" | grep -q 'releases the RI.s owner reference' \
+  && grep -q '准入还拒绝与所属 RIS `spec.selector` 相关的 marker key' "$KEP_ZH" \
+  && grep -q 'owner reference' "$KEP_ZH"; then
+  ok CheckSelectorAdmissionStated; else bad CheckSelectorAdmissionStated; fi
+
+# F34 (fix evidence for advisory F-C4528291011). Foreground-deletion webhook
+#     resolution is fail-closed on cache miss (EN+zh).
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'Resolution is fail-closed' \
+  && flat "$KEP_EN" | grep -q 'cache miss must not establish that deletion is safe' \
+  && grep -q '解析采用 fail-closed 语义' "$KEP_ZH" \
+  && grep -q 'cache miss 不能证明删除安全' "$KEP_ZH"; then
+  ok CheckFailClosedCacheMiss; else bad CheckFailClosedCacheMiss; fi
+
+# F35 (F-ZH-EN-ROLLOUT-RISK-PARITY, NEW round-6 minor; contract FAILS while
+#     open). Round 6 dropped "circular waits involving Ready" from the EN
+#     rollout-risk list when Ready gating was removed; the zh list still
+#     contains "Ready 循环等待". Pass requires parity restored (either side
+#     may change; a flip needs a human re-read).
+if [ -f "$KEP_EN" ] && [ -f "$KEP_ZH" ]; then
+  en_has=0; zh_has=0
+  grep -q 'circular wait' "$KEP_EN" && en_has=1
+  grep -q 'Ready 循环等待' "$KEP_ZH" && zh_has=1
+  if [ "$en_has" -eq "$zh_has" ]; then
+    ok CheckZhEnRolloutRiskParity; else bad CheckZhEnRolloutRiskParity; fi
+else
+  ok CheckZhEnRolloutRiskParity   # no KEP on this ref: vacuous pass
+fi
+
+# F36 (F-MARKERKEY-RECORD-OWNERSHIP, NEW round-6 minor; contract FAILS while
+#     open). The field-ownership enumeration must cover the marker-key record
+#     annotation (controller-owned / edit-protected), in both languages: the
+#     rollback precondition and stale-label attribution depend on its
+#     integrity, but only markers are protected today.
+if [ -f "$KEP_EN" ] && grep -q 'role-instance-hook-marker-keys' "$KEP_EN"; then
+  own_en=1; own_zh=1
+  awk '/^Field ownership is explicit/{f=1} f{print} f&&NF==0{exit}' "$KEP_EN" \
+    | grep -q 'marker-key record' || own_en=0
+  awk '/^字段所有权明确/{f=1} f{print} f&&NF==0{exit}' "$KEP_ZH" \
+    | grep -q 'marker key 记录' || own_zh=0
+  if [ "$own_en" -eq 1 ] && [ "$own_zh" -eq 1 ]; then
+    ok CheckMarkerKeyRecordOwnership; else bad CheckMarkerKeyRecordOwnership; fi
+else
+  ok CheckMarkerKeyRecordOwnership   # record absent on this ref: vacuous pass
+fi
+
+# F37 (F-SCALABILITY-POD-MIRROR, NEW round-6 nit; contract FAILS while open).
+#     The Scalability section must account for the Pod-mirror fan-out write
+#     cost (1 RI write + N Pod writes per signal transition, re-synced every
+#     RI reconcile) — the dominant new write cost for multi-Pod RIs (EN+zh).
+if [ -f "$KEP_EN" ] && grep -q '### Signal Label Propagation to Pods' "$KEP_EN"; then
+  if sed -n '/### Scalability/,/### Troubleshooting/p' "$KEP_EN" | grep -qiE 'mirror|propagat' \
+    && sed -n '/### 可扩展性/,/### 故障排查/p' "$KEP_ZH" | grep -q '镜像'; then
+    ok CheckScalabilityPodMirrorCost; else bad CheckScalabilityPodMirrorCost; fi
+else
+  ok CheckScalabilityPodMirrorCost   # no propagation on this ref: vacuous pass
+fi
+
+# F38 (F-ROLLBACK-PRECONDITION-SHORTHAND, NEW round-6 nit; contract FAILS while
+#     open). The marker-key-record paragraph states "The rollback precondition
+#     is an absent hook-state label together with an empty or absent marker-key
+#     record" and reads as complete, but omits the reserved-finalizer condition
+#     stated in Upgrade/Downgrade. Pass requires the sentence to carry (or
+#     reference) the finalizer condition; a scoping reword instead is a
+#     Harness-update (human re-read on flip).
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'The rollback precondition is an absent'; then
+  if flat "$KEP_EN" | grep -oE 'The rollback precondition is an absent[^.]*\.' | grep -qi 'finalizer' \
+    && flat "$KEP_ZH" | grep -oE '回滚前置条件是[^。]*。' | grep -q 'finalizer'; then
+    ok CheckRollbackPreconditionComplete; else bad CheckRollbackPreconditionComplete; fi
+else
+  ok CheckRollbackPreconditionComplete   # no shorthand sentence on this ref: vacuous pass
+fi
+
+# F39 (F-WEBHOOK-DEFER-WORDING, NEW round-6 nit; contract FAILS while open).
+#     The fail-closed rule says the webhook "rejects or defers the request";
+#     an admission webhook cannot defer — denial is the only fail-closed
+#     mechanism (clients retry). Pass when the mechanics are stated as
+#     rejection-only (EN+zh).
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'Resolution is fail-closed'; then
+  if ! flat "$KEP_EN" | grep -q 'rejects or defers the request' \
+    && ! grep -q '拒绝或暂缓' "$KEP_ZH"; then
+    ok CheckWebhookDeferralNotClaimed; else bad CheckWebhookDeferralNotClaimed; fi
+else
+  ok CheckWebhookDeferralNotClaimed   # no fail-closed rule on this ref: vacuous pass
+fi
 
 # --- group 3: document hygiene (regression guards for future revisions) ---
 
