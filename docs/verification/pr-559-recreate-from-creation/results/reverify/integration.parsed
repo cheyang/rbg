@@ -1,0 +1,28 @@
+verify559 TL1: FromCreation recreates pre-Ready instance on Failed pod	pass
+verify559 TL2: FromCreation recreates pre-Ready instance on observed member deletion	pass
+verify559 TL2c: legacy policy does NOT recreate pre-Ready instance on member deletion	pass
+verify559 TL3: FromCreation recreates again on a second pre-Ready failure	fail
+should verify the full controller chain creates all objects	skipped
+should recreate pod when it fails with single-pod LeaderWorker pattern	skipped
+should recreate all component pods when worker fails in LeaderWorker pattern	skipped
+should set and clear Restarting condition during recreation cycle	skipped
+should not recreate when container restart is on Ignore-annotated pod	skipped
+should only replace the failed pod, not recreate all pods	skipped
+should resolve both-unset-defaults-to-recreate on leaderWorkerPattern	skipped
+should resolve config-none on leaderWorkerPattern	skipped
+should resolve conflict-config-none-wins on leaderWorkerPattern	skipped
+should resolve conflict-config-recreate-wins on leaderWorkerPattern	skipped
+should resolve legacy-none on leaderWorkerPattern	skipped
+should resolve legacy-recreate on leaderWorkerPattern	skipped
+should resolve the deprecated field on customComponentsPattern	skipped
+should not trigger instance recreation when pod fails	skipped
+should recreate all pods when container RestartCount > 0	skipped
+should not recreate during initial creation (instance not yet Ready)	skipped
+should only recreate the affected role's instance, not other roles	skipped
+should not trigger recreation again during an active restart cycle	skipped
+should track RestartCount and LastRestartTime after recreation	skipped
+should delay second recreation due to backoff	skipped
+should propagate BaseDelaySeconds and MaxDelaySeconds from RBG to RoleInstance	skipped
+should reset RestartCount after stable period	skipped
+should not bypass wasInstanceReady check after stable threshold	skipped
+should not freeze rolling update when revision mismatch occurs during backoff	skipped
