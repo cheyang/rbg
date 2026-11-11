@@ -1,0 +1,47 @@
+re-verify: manifest = docs/verification/502-workload-status-model-claude/verify-manifest.json
+re-verify: resolving PR head via 'git fetch https://github.com/sgl-project/rbg.git pull/528/head' (machine-independent)
+re-verify: current head = 9862499f722089a3e72f2326e65db5e872bfeee9
+re-verify: last-reviewed = 058073514731f8d2ebfeffe68a51b587102ab110  (review delta = 058073514731f8d2ebfeffe68a51b587102ab110..9862499f722089a3e72f2326e65db5e872bfeee9)
+re-verify: fixed-ref=9862499f722089a3e72f2326e65db5e872bfeee9  harness-from=610af932ae34b3703c7daa5602e7ddd58a69bc03
+re-verify: running layer 'unit' (script)
+re-verify: running layer 'integration' (script)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+F2-undefined-reason-preparing contract  unit         FIXED          pass=1 fail=0 miss=0
+F3-reason-collision-role-not-ready contract  unit         FIXED          pass=1 fail=0 miss=0
+F4-inplace-reason-casing contract  unit         FIXED          pass=1 fail=0 miss=0
+F9-rbg-transition-input-inconsistent contract  unit         FIXED          pass=1 fail=0 miss=0
+F10-ris-activity-reasons-unenumerated contract  unit         FIXED          pass=1 fail=0 miss=0
+C4457744212-activity-family-tie-break contract  unit         FIXED          pass=1 fail=0 miss=0
+F11-ris-activity-tie-break-unstated contract  unit         FIXED          pass=1 fail=0 miss=0
+F12-rbg-replacement-creation-reason-mapping contract  unit         FIXED          pass=2 fail=0 miss=0
+F13-concurrent-activity-coverage-regression contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+F14-consuming-table-config-compat-dead-branch contract  unit         FIXED          pass=1 fail=0 miss=0
+F15-precheck-write-contradiction contract  unit         FIXED          pass=1 fail=0 miss=0
+F16-minready-timestamp-scope-stateful-too contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+Q5-converged-undefined-at-ri-layer contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+Q6-progressing-during-deletion-unspecified contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+F18-ri-prose-vs-edge-table contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+F19-display-priority-dangling-ref contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+C4495569567-ri-updating-vs-blocker-precedence contract  unit         FIXED          pass=1 fail=0 miss=0
+F22-own-crop-blocker-reason-contradiction contract  unit         FIXED          pass=1 fail=0 miss=0
+F23-phase-gate-terminology-contradiction contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+ADV-pins-round7 contract  unit         FIXED          pass=1 fail=0 miss=0
+F19-ris-establishment-boundary-existential contract  unit         FIXED          pass=2 fail=0 miss=0
+C4528984285-gangconfigured-gang-wait contract  unit         FIXED          pass=1 fail=0 miss=0
+C4528984415-restart-establishment-evidence contract  unit         FIXED          pass=1 fail=0 miss=0
+C4528984469-events-vs-blocker-distinction contract  unit         FIXED          pass=1 fail=0 miss=0
+F24-durable-evidence-not-derivable contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+F22-ris-readiness-code-claim-overbroad contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+F18-kep527-reference-dangling contract  unit         STILL-BROKEN   pass=0 fail=1 miss=0
+
+Live layer (manual): L3 skipped (debate setup: unit + integration layers only). Docs-only KEP PR; no live runtime signal.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/502-workload-status-model-claude/results/reverify
+
+Review delta this round: 058073514731f8d2ebfeffe68a51b587102ab110..9862499f722089a3e72f2326e65db5e872bfeee9
+After reviewing that delta, advance the marker for the next round:
+  echo 9862499f722089a3e72f2326e65db5e872bfeee9 > docs/verification/502-workload-status-model-claude/.last-reviewed && git add docs/verification/502-workload-status-model-claude/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.

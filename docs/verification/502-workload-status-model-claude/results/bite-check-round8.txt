@@ -1,0 +1,40 @@
+Round-8 harness-bites check (head 9862499)
+=========================================
+Skill step 4: a green guard must be able to go red, and a red guard must
+go green under the proposed fix. Production code (keps/.../README.md at
+the PR head) restored with `git checkout -f 9862499 -- <path>` after each
+mutation; tree confirmed clean afterward.
+
+1. C32 (F24 repro, red at head):
+   - proposed fix applied (sentence reworded to a preservation rule +
+     "no revision history today"): C32 PASS.
+   - head text restored: C32 FAIL (revision-history field absent;
+     roleStatuses zeroed on child deletion).
+   => bites.
+
+2. C29/C30/C31 (round-8 resolution pins, green at head):
+   - previous-head text (05807351) substituted: C29/C30/C31 all FAIL
+     (pre-fix state detected), C26 also FAIL (own-crop contradiction was
+     live at 05807351).
+   => bite.
+
+3. C13/C16 (F12/F19 guards, green at head after re-anchor):
+   - dual-anchored (collective round-7 framing OR round-8
+     durable-evidence framing); at 05807351 they pass via the old arm, at
+     9862499 via the new arm — the contract substance (target-added child
+     -> RoleInstanceSetUpdated; established replaced -> Recovering;
+     evidence-free -> Creating) holds at both heads, so the apparent
+     round-8 "STILL-BROKEN" on first run was anchor staleness
+     (Harness-update), NOT a revision regression. Recorded verification:
+     F12 {base: not-run, previous: pass, head: pass}.
+
+4. C33 (F22-ris-readiness repro, red at head): red requires the unscoped
+   "Today's RIS code reads only RoleInstanceReady" sentence; a first
+   guard draft wrongly passed via the incidental "blocker propagation"
+   phrase in the same sentence — fixed to require a real scope
+   (stateful/readinessGates). Commit da864ea5.
+
+5. C34 (F18-kep527 repro, red at head): red requires a bare KEP-527
+   reference with no in-tree keps/527-* and no pending marker; passes
+   once references are marked pending or KEP-527 (upstream PR #546,
+   still OPEN at 2026-11-12) lands.

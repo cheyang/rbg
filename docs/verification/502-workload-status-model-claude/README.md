@@ -1,12 +1,70 @@
 # Verification — KEP-502 workload status model (PR #528) — Reviewer A (Claude)
 
 - PR: https://github.com/sgl-project/rbg/pull/528
-- Round 7 reviewed head: `058073514731f8d2ebfeffe68a51b587102ab110` (round 6: `39e2ecdf0d8f6a3656923ab33b8391dd7ab88fd1`; round 5: `0b7285b7c2ad23f139f0edb8549a316129e9b4a2`; round 4: `da818779ef984be98467d4ad65d0818bb17aa0e6`; round 3: `f622d642ac10326f66554b590e0513734aa9249a`; round 2: `6335eac61b7ef71d7479a8b2686829d7e59ce3e1`; round 1: `f05e1dd83d2691e4157bf1bd3548fe405b2a49d5`; base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
+- Round 8 reviewed head: `9862499f722089a3e72f2326e65db5e872bfeee9` (round 7: `058073514731f8d2ebfeffe68a51b587102ab110`; round 6: `39e2ecdf0d8f6a3656923ab33b8391dd7ab88fd1`; round 5: `0b7285b7c2ad23f139f0edb8549a316129e9b4a2`; round 4: `da818779ef984be98467d4ad65d0818bb17aa0e6`; round 3: `f622d642ac10326f66554b590e0513734aa9249a`; round 2: `6335eac61b7ef71d7479a8b2686829d7e59ce3e1`; round 1: `f05e1dd83d2691e4157bf1bd3548fe405b2a49d5`; base `885d655bd1b4c26e6d14837709eeda675f3ae886`)
 - Harness branch: `verify/502-workload-status-model-claude` (pushed to the reviewer's fork `cheyang/rbg`)
 - This is a **docs-only PR** (adds `keps/502-workload-status-model/{README.md,kep.yaml}`); the code
   under review is a design document, so the harness checks the *document's* contract: its factual
   claims about the current API, and the internal consistency of its machine-readable reason taxonomy.
 - Live layer (L3): skipped — debate setup runs unit + integration only, and a KEP has no runtime.
+
+## Round 8 (delta `0580735..9862499`) — gang + creation-reason observations; 5 ledger items fixed, 1 new minor (F24), 10 open
+
+The author pushed one docs commit (+9/−7, README only): `9862499f "docs: define gang and
+creation reason observations"`. Design changes: (a) `WaitingForGang` is re-derived from **runtime
+gang-scheduling state** (PodGroup phase, member scheduling status) instead of "gang state owned at
+RBG scope (today the `GangConfigured` condition)", with a new paragraph scoping `GangConfigured`
+to configuration compatibility only; (b) own CR-operation errors are classified **with the same
+family rules** (`UnclassifiedBlocker` reserved for unclassifiable errors) instead of "directly as
+`UnclassifiedBlocker`"; (c) the RBG `Creating` boundary moves from the collective "initial RBG
+establishment" to a **per-child durable-evidence discriminator**, with a restart tie-break
+(no evidence → `Creating` + "replacement unconfirmed" message) and a test-plan bullet; (d) the
+events test bullet gains the "by itself" qualifier plus a confirmed-blocker clause.
+
+Fixed this round (all guarded, all bite-checked — `results/bite-check-round8.txt`):
+
+| Finding | Check | At 0580735 (prev) | At 9862499 (head) | Verdict |
+| --- | --- | --- | --- | --- |
+| F22 own-CR blocker reason contradiction (minor) | **C26** | fail | **pass** | **FIXED** — the categorical "directly as `UnclassifiedBlocker`" sentence is gone; taxonomy paragraph, provenance table, and RIS section now all prescribe "classifies with the same rules; `UnclassifiedBlocker` when the family cannot be determined" |
+| F19 RIS `Creating` boundary existential vs RBG collective (minor) | **C13/C16 (re-anchored, dual-anchor)** | pass | **pass / pass** | **FIXED** — the RBG boundary is now the same *kind* of evidence-based discriminator as RIS (per-child durable evidence vs established revision/RIs), and the restart tie-break defines the previously underdetermined zero-replica case. First-run "STILL-BROKEN" was anchor staleness (Harness-update), not a regression: substance holds at both heads (F12 verification: base not-run, previous pass, head pass) |
+| C4528984285 `GangConfigured` cannot distinguish waiting (Copilot, nit) | **C29 (new)** | fail | **pass** | **FIXED** — `WaitingForGang` derived from runtime gang facts; code claim verified: `setGangConfiguredCondition` sets True (Reason `GangConfigured`) on config success regardless of Pod scheduling, False (`IncompatibleGangConfig`) on error, removed when gang is off (`results/round8-code-claims.txt`) |
+| C4528984415 restart establishment evidence (Copilot, nit) | **C30 (new)** | fail | **pass** | **FIXED (determinism half)** — no-evidence → `Creating`, message notes replacement unconfirmed, test bullet pins both arms; the evidence-base half is the new F24 |
+| C4528984469 events-vs-blockers conflict (Copilot, nit) | **C31 (new)** | fail | **pass** | **FIXED** — "a *single* failure ... does not *by itself* change the aggregated reason" + "a confirmed current blocker changes the reason through the documented classification and propagation rules" |
+
+New open item this round:
+
+1. **F24 [minor, introduced by 9862499], README.md:217 area** — the new `Recovering` rule
+   "requires durable evidence of prior establishment, such as persisted role status or revision
+   history in the RBG status", but (a) `RoleBasedGroupStatus` has **no revision-history field**
+   (observedGeneration, conditions, roleStatuses only — `rolebasedgroup_types.go:522-534`), and
+   (b) "persisted role status" is **zeroed on child deletion**: `ConstructRoleStatus` returns a
+   zero-counter `RoleStatus` on NotFound (`roleinstanceset_reconciler.go:510-513`) and
+   `updateRBGStatus` overwrites the entry when counters change
+   (`rolebasedgroup_controller.go:814-824`), so a 3/3 entry becomes 0/0 on the first reconcile
+   after deletion — and 0/0 is exactly what a never-established child shows, so the doc's own
+   canonical example cannot be distinguished. The KEP neither states a preservation rule for
+   roleStatuses entries of missing children nor specifies the new status content, so the
+   "with durable evidence → `Recovering`" arm of the new test bullet is unreachable with current
+   fields. C32 (new): red at head, green under the proposed fix.
+
+Carried open (all nit except F24): F13 (C10 part 4 — the Creating-branch concurrency bullet is
+still absent), F16 (C21 — minReadySeconds migration row still stateless-only), F17 (PR body still
+promises "persisted phase transitions for RBG, RIS, and RI" — re-confirmed stale at the live PR
+body this round), F18-kep527 (C34, new guard — five KEP-527 references, no `keps/527-*` in tree,
+upstream PR #546 still OPEN at 2026-11-12, no pending markers), F20 (C19 — RI summary prose still
+unscoped), F21 (C25 — display-priority reference still dangling), F22-ris-readiness (C33, new
+guard — the unscoped "Today's RIS code reads only `RoleInstanceReady`" is still present at :338;
+stateless `IsRunningAndReady` also reads `spec.readinessGates`), F23 (C27 — the :430
+"Readiness gates only `Creating → Running`" sentence still contradicts the phase/gate separation),
+Q5 (C22), Q6 (C24).
+
+Full re-verify at head (`results/reverify-head-9862499.txt`): 17 FIXED, 10 open (F13, F16, F20,
+F21, F23, F24, F22-ris-readiness, F18-kep527, Q5, Q6 — plus unguarded F17 confirmed open by
+direct PR-body read). F24 is the only minor; everything else is nit. No blockers, no majors.
+Code-claim verification for the delta: `results/round8-code-claims.txt` (PodGroup + GangConfigured
+claims accurate; durable-evidence claim inaccurate → F24; RIS reads-only claim unchanged-inaccurate).
+markdownlint: 0 issues at head (C7 green). CI at head: 9 SUCCESS / 6 SKIPPED / 0 failure
+(e2e groups legitimately skip for the docs-only diff), observed live 2026-11-12.
 
 ## Round 7 (delta `39e2ecd..0580735`) — second redesign (drop Accepted, deprecate RBG Ready, rename reasons); 4 flips were Harness-updates, all now fixed; 2 new open items
 

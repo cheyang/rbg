@@ -2,7 +2,7 @@
   "topic": "502-workload-status-model-claude",
   "pr": "https://github.com/sgl-project/rbg/pull/528",
   "reviewer": "claude",
-  "headSha": "058073514731f8d2ebfeffe68a51b587102ab110",
+  "headSha": "9862499f722089a3e72f2326e65db5e872bfeee9",
   "baseSha": "885d655bd1b4c26e6d14837709eeda675f3ae886",
   "harnessPaths": [
     "docs/verification/502-workload-status-model-claude"
@@ -296,6 +296,6 @@
     "AC-completion-observedGeneration": "C23 (unit) \u2014 new round-6: completion requires the Progressing condition's own observedGeneration (rollback-safe); PASSED (fail@0b7285b7)"
   },
   "liveNote": "L3 skipped (debate setup: unit + integration layers only). Docs-only KEP PR; no live runtime signal.",
-  "previousHeadSha": "0b7285b7c2ad23f139f0edb8549a316129e9b4a2",
+  "previousHeadSha": "058073514731f8d2ebfeffe68a51b587102ab110",
   "harnessNotes": " Round 7: re-anchored C4/C12/C13/C15/C20 to the redesigned model (Accepted dropped, RBG Ready deprecated, reason renames); added C26 (F22), C27 (F23), C28 (advisory pins). Bite evidence: defect simulations red / fix simulations green (results/bite-check-round7.txt); polarity sweep across f05e1dd..05807351 in results/polarity-round7-full.txt. Round-8 (9862499): re-anchored C13/C16 to the per-child durable-evidence framing; added C29-C34 (gang-wait pin, restart tie-break pin, events-vs-blocker pin, F24 repro, F22-ris-readiness repro, F18-kep527 repro)."
 }

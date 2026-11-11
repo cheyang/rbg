@@ -1,0 +1,65 @@
+Round-8 code-claim verification (head 9862499, delta 05807351..9862499)
+======================================================================
+Method: direct reads of the head tree via `git show 9862499:<path>` in the
+review clone (PR is docs-only, so pkg/ and api/ at head == base 885d655).
+
+CLAIM 1 (new, :173-174 + provenance row :169): "WaitingForGang is
+established from runtime gang-scheduling facts ... such as a pending
+PodGroup or members unschedulable", "Observed from runtime gang-scheduling
+state, such as the PodGroup phase and member scheduling status".
+  VERIFIED ACCURATE:
+  - PodGroup is a real, watched object in this codebase:
+    internal/controller/workloads/rolebasedgroup_controller.go:240-260
+    (reconcilePodGroup), :1199-1206 (CheckCrdExists + runtimeController.Owns
+    for both scheduler.KubePodGroupCrdName and VolcanoPodGroupCrdName).
+  - PodGroup status has a phase field:
+    vendor/volcano.sh/apis/pkg/apis/scheduling/v1beta1/types.go:38-52
+    (PodGroupPhase Pending/Running/...) and the scheduler-plugins
+    vendored API equivalents.
+
+CLAIM 2 (new, :174): "GangConfigured reports only configuration
+compatibility: it is True when gang configuration reconciliation succeeds
+even while Pods remain unscheduled, and False denotes incompatibility. It
+is never used as the waiting observation".
+  VERIFIED ACCURATE against setGangConfiguredCondition
+  (internal/controller/workloads/rolebasedgroup_controller.go:848-881):
+  - cause != nil            -> False, Reason=IncompatibleGangConfig
+  - gangStrategy == nil     -> condition REMOVED (gang disabled)
+  - default (success)       -> True, Reason="GangConfigured", message
+                               "Gang scheduling configuration is
+                               satisfiable" — independent of Pod
+                               scheduling state.
+  No code path uses GangConfigured as a waiting signal. Resolves Copilot
+  advisory C4528984285.
+
+CLAIM 3 (new, :217 + :219): "Recovering ... requires durable evidence of
+prior establishment, such as persisted role status or revision history in
+the RBG status".
+  VERIFIED INACCURATE / UNDER-SPECIFIED (new finding F24, minor):
+  - RoleBasedGroupStatus (api/workloads/v1alpha2/
+    rolebasedgroup_types.go:522-534) = observedGeneration, conditions,
+    roleStatuses — NO revision-history field exists.
+  - "persisted role status" is not durable across child deletion:
+    pkg/reconciler/roleinstanceset_reconciler.go:510-513 — ConstructRoleStatus
+    returns RoleStatus{Name: role.Name} (all counters zero) when the child
+    RIS is NotFound;
+    internal/controller/workloads/rolebasedgroup_controller.go:814-824 —
+    updateRBGStatus OVERWRITES the persisted entry whenever counters change,
+    so a 3/3 entry becomes 0/0 on the first reconcile after child deletion.
+    Zero-replica entries are 0/0 either way (never-established vs
+    deleted-established are indistinguishable — the doc's own canonical
+    example), so roleStatuses cannot be the discriminator the rule needs.
+  - The KEP neither states a preservation rule for roleStatuses entries of
+    missing children nor specifies new status content.
+  Guard: C32-durable-evidence-derivable (red at head, green with proposed
+  fix — see bite-check-round8.txt).
+
+CLAIM 4 (carried, :338): "Today's RIS code reads only RoleInstanceReady".
+  STILL INACCURATE for stateless mode (unchanged this round):
+  pkg/reconciler/roleinstanceset/statelessmode/utils/utils.go:117-122 —
+  IsRunningAndReady iterates instance.Spec.ReadinessGates in addition to
+  RoleInstanceReady. Open nit F22-ris-readiness; guard C33 (red at head).
+
+CLAIM 5 (delta-relevant, unchanged code): own CR-operation classification
+rules and the events-vs-blockers test bullet are doc-level prescriptions
+(no code claims); RIS establishment boundary text unchanged at :340.
