@@ -1,6 +1,6 @@
 # Verification harness — KEP-527 RoleInstance Lifecycle Hooks (PR #546)
 
-Reviewer: Codex (Reviewer B). Round: incremental #5. Reviewed head: `6c15cc92bcc8ecb2cc149ed54f7e5b9056199f2e`, base: `3612013e6f779401831f5947dc124cc4313faddb` (merge-base `09accf63`). Previous round heads: `6e8419ab` (r1), `71dd5e87` (r2), `fb6c2b36` (r3), `43dab57b` (r4).
+Reviewer: Codex (Reviewer B). Round: incremental #6. Reviewed head: `c3ea6547cba7af45fe5826e162b4c5f4d112ca4b`, base: `3612013e6f779401831f5947dc124cc4313faddb` (merge-base `09accf63`). Previous round heads: `6e8419ab` (r1), `71dd5e87` (r2), `fb6c2b36` (r3), `43dab57b` (r4), `6c15cc92` (r5).
 
 ## What kind of PR this is
 
@@ -169,3 +169,39 @@ Kickoff prompt for a fresh agent: "Check out verify/kep-527-roleinstance-lifecyc
 - F3: state the coexistence rule between `RoleInstanceSetSpec.lifecycle` (existing) and the proposed Role-level lifecycle (mutual exclusion / precedence / deprecation plan) — Open Question 1 made concrete.
 - F4: remove the "Segment" comment from kep.yaml, fill authors/reviewers, fix or drop the dangling `/keps/502-workload-status-model` see-also.
 - F5: define the lifetime of the `preDelete.markNotReady` gate.
+
+## Observed vs expected (head c3ea6547 — round 6, incremental)
+
+Delta `6c15cc92..c3ea6547` (docs-only, +322/-256, EN+zh only; kep.yaml untouched): a **design revision**, not a wording pass —
+
+- `labelsHandler` renamed to `signalLabels` across API text, examples, wire table, and test plan (EN+zh).
+- **`markNotReady` and the entire Ready Gating section removed**: hooks never participate in RI Ready computation; new Non-Goal ("Providing a readiness-gating field or changing RI Ready"); all four sequence diagrams drop the NotReady-gate steps; the `RoleInstanceCustomReady` wire-table row is gone.
+- **New "Signal Label Propagation to Pods"**: the RI controller mirrors `signalLabels` keys onto member Pods (unidirectional, metadata-only, no revision/recreate, batched per RI reconcile); declaring a signal key in Pod template labels is admission-rejected.
+- **New marker-key record**: annotation `rbg.workloads.x-k8s.io/role-instance-hook-marker-keys` (Go const `RoleInstanceHookMarkerKeysAnnotation`), written atomically with the marker, a key removed only after the RI label AND its Pod mirrors are confirmed absent; rollback precondition now includes the record.
+- **New admission rule**: marker keys used by the owning RIS `spec.selector` (`matchLabels` or any `matchExpressions` entry, incl. `DoesNotExist`-only) are rejected — rationale: a marker write can unmatch the selector and the stateful RIS instance-reference logic then releases the RI's owner reference (resolves advisory F-C4528290874).
+- **Foreground-delete webhook resolution is now fail-closed** on cache miss (resolves advisory F-C4528291011).
+- Advisory F-C4528290945 dissolved by the gate removal (no gate => no stateful-readiness divergence).
+- Stale-label cleanup now routes through the record and also cleans Pod mirrors (F23 sub-pin re-worded, substance unchanged).
+
+| Finding | Check | base 3612013e | previous 6c15cc92 | head c3ea6547 | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| F1-F3, F6-F19, F21-F22, F26-F30 (carried fixes) | carried pins | fail | pass | pass | still FIXED (regression guard) |
+| F5 gate lifetime (F-PREDELETE-GATE-LIFETIME) | CheckReadyGatingRemoved | fail | pass* | pass | still FIXED — RESOLVED BY DESIGN REMOVAL: markNotReady / Ready Gating deleted wholesale; no gate whose lifetime needs stating. *previous=pass under the round-5 contract; Harness-update: CheckPreDeleteGateLifetime superseded (kept, fails by design) |
+| F20 field naming (F-MARKNOTREADY-NAME) | CheckSignalLabelsOnlyHookField | fail | pass* | pass | still FIXED — RESOLVED BY DESIGN REMOVAL: markNotReady gone; contract now pins `signalLabels` as the only hook field (EN+zh) and markPodNotReady confined to legacy contexts. *previous=pass under the round-5 contract; Harness-update: CheckMarkNotReadyNaming superseded |
+| F23 stale-label disposition (F-STALE-LABEL-DISPOSITION) | CheckStaleLabelDispositionSingle | fail | fail* | pass | still FIXED — Harness-update: disable-flow sub-pin re-worded to the marker-key-record form ("removes stale runtime labels and their Pod mirrors identified through the marker-key record" + zh); *previous-head red is the re-pin, not a reopened finding (round-5 wording passed its own pin) |
+| F24 prefix-rule test coverage (F-TESTPLAN-PREFIX-COVERAGE) | CheckTestplanPrefixCoverage | vacuous pass | vacuous pass | **fail** | STILL OPEN (2nd round) — unit-test bullet still covers only the exact-key collision, not the reserved prefix (EN unit-test bullets, zh mirror) |
+| F25 removal-risk acknowledgment (F-CONFIG-REMOVAL-SKIPS-HOOK) | CheckRemovalRiskAcknowledged | fail | fail | **fail** | STILL OPEN (3rd round) — Risks/Troubleshooting still carry no row for config-removal-as-skip (mid-deletion preDelete removal force-releases the barrier); the round-6 text keeps the released-hook transition |
+| F31 Pod propagation guard | CheckPodPropagationSpecified | fail | fail | pass | new normative content pinned (EN+zh) |
+| F32 marker-key record (F-C4528291076) | CheckMarkerKeyRecordPinned | fail | fail | pass | advisory FIXED — durable record specified and pinned (EN+zh) |
+| F33 selector admission (F-C4528290874) | CheckSelectorAdmissionStated | fail | fail | pass | advisory FIXED — selector-collision rejection incl. DoesNotExist + owner-reference-release rationale (EN+zh) |
+| F34 fail-closed webhook (F-C4528291011) | CheckFailClosedCacheMiss | fail | fail | pass | advisory FIXED — "Resolution is fail-closed … A cache miss must not establish that deletion is safe" (EN+zh) |
+| F35 zh rollout-risk parity (NEW minor F-ZH-EN-ROLLOUT-RISK-PARITY) | CheckZhEnRolloutRiskParity | vacuous pass | pass | **fail** | OPEN — EN dropped "circular waits involving Ready" from the rollout-risk list with the gate removal; zh still lists "Ready 循环等待" (:865). Bites-verified: deleting the zh clause flips fail→pass |
+| F36 record ownership (NEW minor F-MARKERKEY-RECORD-OWNERSHIP) | CheckMarkerKeyRecordOwnership | vacuous pass | vacuous pass | **fail** | OPEN — the field-ownership enumeration (EN :849-853, zh :647-649) lists phase/hook-state/snapshot/finalizer/Pod mirrors but NOT the marker-key record annotation, and no rule bars users/metadata-sync/executors from editing it; rollback verification + stale-label attribution depend on its integrity. Bites-verified |
+| F37 scalability mirror cost (NEW nit F-SCALABILITY-POD-MIRROR) | CheckScalabilityPodMirrorCost | vacuous pass | vacuous pass | **fail** | OPEN — Scalability (:1221 EN, :888 zh) omits the Pod-mirror fan-out (1 RI write + N Pod writes per signal transition, re-synced every RI reconcile), the dominant new write cost for the multi-Pod RIs the KEP targets. Bites-verified |
+| F38 rollback-precondition shorthand (NEW nit F-ROLLBACK-PRECONDITION-SHORTHAND) | CheckRollbackPreconditionComplete | vacuous pass | vacuous pass | **fail** | OPEN — "The rollback precondition is an absent hook-state label together with an empty or absent marker-key record" (:474-476 EN, :357 zh) reads complete but omits the reserved-finalizer condition that Upgrade/Downgrade (:1134-1141) carries. Bites-verified |
+| F39 webhook defer wording (NEW nit F-WEBHOOK-DEFER-WORDING) | CheckWebhookDeferralNotClaimed | vacuous pass | vacuous pass | **fail** | OPEN — "rejects or defers the request" (:732-735 EN; "应拒绝或暂缓" zh :568-570 + test-plan :774): admission webhooks cannot defer, denial is the only fail-closed mechanism. Bites-verified |
+| F4 see-also residue (F-SEEALSO-502) | CheckSeeAlsoDirsExist | fail | fail | **fail** | STILL OPEN (6th round) — kep.yaml untouched; `/keps/502-workload-status-model` absent from head tree and origin/main; PR #528 still OPEN (re-fetched 2026-11-12, NEW head `9862499f`, retains the KEP-527 circular-wait carve-out and the keps/502 directory) |
+| Codebase-truth claims (10) | group 1 | pass ×10 | pass ×10 | pass ×10 | KEP accurate on head |
+| Hygiene (3) | group 3 | pass ×3 | pass ×3 | pass ×3 | clean (markdownlint repo config 0 issues on both files, section parity 29/29, `git diff --check` clean) |
+
+Raw output: `results/reverify/unit.tsv` (head, persisted by re-verify.sh), `results/reverify/unit-c3ea6547-round6.tsv` (head), `unit-6c15cc92-round6.tsv` (previous head, updated harness), `unit-3612013e-round6.tsv` (base control).
