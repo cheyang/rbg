@@ -1,0 +1,29 @@
+referenced images (pod specs, resolved consts):
+  busybox:1.36
+  nginx:1.25
+  nginx:latest
+  nonexistent-registry.example.com/fake-image:v999
+  python:3.11-slim
+  registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0
+  registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest
+  registry.invalid/rbg/missing:issue-486
+  registry.k8s.io/pause:3.10
+F1: DefaultImage=registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest loaded=busybox:1.36 nginx:1.25 nginx:latest python:3.11-slim registry.k8s.io/pause:3.10
+F2: patio=registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0 loaded=busybox:1.36 nginx:1.25 nginx:latest python:3.11-slim registry.k8s.io/pause:3.10
+COVERAGE GAP: referenced but not loaded: registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0
+COVERAGE GAP: referenced but not loaded: registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest
+referenced images (pod specs, resolved consts):
+  busybox:1.36
+  nginx:1.25
+  nginx:latest
+  nonexistent-registry.example.com/fake-image:v999
+  python:3.11-slim
+  registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0
+  registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest
+  registry.invalid/rbg/missing:issue-486
+  registry.k8s.io/pause:3.10
+F1: DefaultImage=registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest loaded=busybox:1.36 nginx:1.25 nginx:latest python:3.11-slim registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0 registry.k8s.io/pause:3.10
+F2: patio=registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0 loaded=busybox:1.36 nginx:1.25 nginx:latest python:3.11-slim registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0 registry.k8s.io/pause:3.10
+COVERAGE GAP: referenced but not loaded: registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest
+F3: nginx:1.25 tagged from 'registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest', nginx:latest from 'registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest'
+aliyun-mode loaded set: busybox:1.36 nginx:1.25 nginx:latest python:3.11-slim registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0 registry.k8s.io/pause:3.10 
