@@ -289,6 +289,89 @@ explicit call is harmless").
 
 `.last-reviewed` advanced to `91d244f5abe71543b74e11db12db67225b92a51e`.
 
+## Round 4 — head `15386660954fe1216af9610e8c7e258a1de38e5c` (incremental)
+
+Delta `91d244f..15386660` (commit `15386660`, "test(v1a1gate): fix order flake
+and correct coverage claims"): +24/−37, test-only, touching only
+`test/envtest/testcase/v1a1gate/{gate_test.go,suite_test.go}` and
+`test/envtest/testutil/v1a1gate_setup.go`. No production code, manifests, CRDs,
+or Helm templates changed; base unchanged (`73e05db4`).
+
+### Round-3 blocker F4 (order flake): FIXED
+
+The author hoisted the shared-namespace creation into `BeforeSuite`
+(`suite_test.go`: `testutil.CreateNamespace("v1a1-gate-test")` after
+`SetupV1alpha1GateTestEnv()`) and deleted both per-`Describe` `BeforeAll`
+hooks — one of the three fixes proposed in round 3. Verification
+(`results/round4-15386660/`):
+
+- **Canary flip**: `scripts/check-v1a1gate-order-flake.sh 15386660` — the
+  round-3 bug-canary flipped (suite now passes at the previously-failing
+  wire-first seeds 7 and 1794329328; `flake-canary-r4.txt`).
+- **10/10 seed sweep** (`seed-sweep-r4.txt`): seeds 2, 4, 5, 7, 8, 42,
+  1794329300, 1794329328, 1794329336, 1794329513 (the union of both
+  reviewers' round-3 failing and control seeds) — all PASS. The suite is
+  order-independent at this head.
+- **Canary inverted → contract** (per the polarity rule): the script now
+  asserts order-independence — exit 0 iff the suite passes at four wire-first
+  seeds + two chain-first controls. Bite-checked: run against the previous
+  head `91d244f` it goes RED (exit 1, all four wire-first seeds fail)
+  (`order-contract-bites-prev-head.txt`); at `15386660` the identical seed set
+  is green. A future regression of this flake fails the script.
+- Full repo sweep at head (`head-full-sweep.txt`): `go build ./...` +
+  `go vet` clean, unit tests green, all 6 envtest packages ok including
+  `v1a1gate` (8.7 s) — AC5 green.
+
+### F5/F6/F2/F3: fixed
+
+- The false attribution comment (round-3 F5 leg 1) is rewritten: it now says
+  v1alpha1-path grandfathering and type-exact switch "have no in-repo
+  coverage" and that the deprecation suite covers them "only through the
+  v1alpha2 API". Leg 2's spec is retitled "rejects a v1alpha1 create with a
+  present-but-empty workload" with a comment that says plainly the key-absent
+  defaulting path "is not covered in-repo". Leg 3: the PR body's Testing
+  section now discloses the same ("v1alpha1-path grandfathering ... and
+  genuine key-absent workload defaulting are not covered in-repo — track as a
+  follow-up before 0.10.0 if needed") and the false "UPDATE coverage" claim
+  is gone. Residual inaccuracies are nits (see below).
+- Dead `GateWarningRecorder.Containing` (F6) removed; `strings` is still used
+  by the file's other helper (compile/vet clean).
+
+Residual nits found this round (ledger F7/F8/F9, all non-blocking):
+
+- **F7** — the rewritten comment (gate_test.go:183-190) still overstates on
+  two points: (a) the v1alpha2 deprecation suite has no type-exact-switch
+  spec at all (five specs enumerated; the single Update is a same-type
+  v1alpha2 update), so "covers them" is only true for the grandfathering leg;
+  (b) "the mutating webhook defaults every create to RoleInstanceSet" — no
+  mutating webhook does this; the v1alpha2 defaulters only normalize
+  rollout-strategy types, and the RoleInstanceSet fallback comes from
+  `RoleSpec.GetWorkloadType()` (rolebasedgroup_types.go:306-319) when
+  conversion leaves the workload-type annotation unset. The comment's
+  conclusion (can't seed grandfathered objects with the gate active) is
+  right; the mechanism it names is wrong.
+- **F8** — the PR body still says "Net: −1,233 lines, +22 lines"; the actual
+  diff is +500/−1221 (22 files).
+- **F9** — `suite_test.go` hardcodes `"v1a1-gate-test"` instead of the
+  package-level `gateNamespace` constant (gate_test.go:111).
+
+### F1: still open, now honestly disclosed
+
+No UPDATE/Unstructured-Patch spec exists in `v1a1gate` at this head (grep: no
+`Update(`/`Patch(` calls, no unstructured create); the grandfathering and
+key-absent-defaulting legs remain harness-only. The PR body now discloses
+this, but there is still no tracked issue (the contract asks "landed or
+tracked in an issue with a timeline"); "track as a follow-up before 0.10.0 if
+needed" is a sentence, not a tracker. Reference implementations for both
+specs remain on this branch (`test/envtest/testcase/verifyv1a1/`).
+
+Harness re-verify on the new head: **all 11 contract specs green**
+(`reverify-r4.log` — V1 ×3, V2, V3 ×3, V4 ×2, coverage-gap ×2). CI observed
+read-only: 22/22 checks SUCCESS on this head; the envtest check is now
+meaningful (determinism fixed), though still one unpinned-seed sample.
+
+`.last-reviewed` advanced to `15386660954fe1216af9610e8c7e258a1de38e5c`.
+
 ### Kickoff prompt for a fresh agent
 
 ```text

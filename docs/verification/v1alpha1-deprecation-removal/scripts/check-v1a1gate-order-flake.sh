@@ -1,30 +1,26 @@
 #!/usr/bin/env bash
-# check-v1a1gate-order-flake.sh — BUG-CANARY for finding V5-v1a1gate-order-flake
-# (introduced by PR #556 head 91d244f).
+# check-v1a1gate-order-flake.sh — CONTRACT test for finding V5-v1a1gate-order-flake
+# (round-3 blocker, introduced by PR #556 head 91d244f, FIXED in head 15386660).
 #
-# Claim: the author's test/envtest/testcase/v1a1gate suite is order-flaky.
-# Ginkgo v2 randomizes the order of top-level Describe containers per run
-# (time-based seed). The suite has two Ordered containers sharing one
-# namespace:
-#   - "v1alpha1 request path through the conversion chain" (gate_test.go:53)
-#     whose BeforeAll uses testutil.CreateNamespace -> Expect(...).To(Succeed())
-#   - "v1alpha1 wire contract" (gate_test.go:114, new in 91d244f)
-#     whose BeforeAll creates the same namespace and IGNORES the error.
-# When the wire-contract container is ordered FIRST it creates the namespace,
-# and the conversion-chain container's BeforeAll then fails
-# "namespaces \"v1a1-gate-test\" already exists", skipping its 4 enforcement
-# specs. Deterministic per seed.
+# History: this script started life (round 3) as a BUG-CANARY asserting the
+# observed order-flake — it exited 0 while the suite failed at wire-first seeds.
+# Head 15386660 ("test(v1a1gate): fix order flake...") hoisted the shared
+# namespace creation into BeforeSuite and removed both per-Describe BeforeAll
+# hooks; the canary flipped (all seeds pass), so per the polarity rule it is
+# now INVERTED/promoted to this CONTRACT test: the v1a1gate suite must pass
+# deterministically regardless of Ginkgo's randomized top-level container
+# order.
 #
-# POLARITY: bug-canary.
-#   On the buggy head: the suite FAILS at the wire-first seeds below and this
-#   script exits 0 (asserting the observed wrong behavior).
-#   When the flake is FIXED (idempotent namespace setup), the suite PASSES at
-#   those seeds, this script exits 1 — INVERT it (or promote to a contract
-#   test: "suite passes deterministically at both seeds").
+# POLARITY: contract (inverted from canary at round 4).
+#   On fixed code (>= 15386660): suite passes at every seed below, exit 0.
+#   On a regression (order-dependent shared state reintroduced — e.g. a
+#   per-Describe BeforeAll creating a shared namespace or other cross-Describe
+#   state): the suite fails at the wire-first seeds, exit 1.
 #
-# Control seed 42 orders the containers chain-first; the suite passes there
-# both before and after the fix, proving the failure is order-dependent, not a
-# hard failure.
+# Seeds: 7, 1794329300, 1794329328, 1794329513 were wire-first FAILING seeds
+# at 91d244f (round 3, both reviewers); 42, 1794329336 were chain-first
+# PASSING controls. Round-4 sweep (results/round4-15386660/seed-sweep-r4.txt):
+# 10/10 pass at head 15386660.
 #
 # Usage: KUBEBUILDER_ASSETS=... bash scripts/check-v1a1gate-order-flake.sh <ref>
 #        <ref> defaults to the PR head (fetched via the manifest's pr URL).
@@ -42,7 +38,7 @@ if [ -z "$REF" ]; then
   git fetch "$REPO_URL" "pull/$N/head" 2>/dev/null
   REF="$(git rev-parse FETCH_HEAD)"
 fi
-echo "flake-canary: testing ref $REF"
+echo "order-contract: testing ref $REF"
 
 run_suite_at_seed() {
   local seed="$1" workdir="$2"
@@ -57,29 +53,31 @@ run_suite_at_seed() {
 # Graft the head into a temp worktree (author code, no harness needed: the
 # suite under test is the author's own).
 WORK="$(mktemp -d)"
-git worktree add --detach "$WORK" "$REF" >/dev/null 2>&1 || { echo "flake-canary: cannot check out $REF"; exit 2; }
+git worktree add --detach "$WORK" "$REF" >/dev/null 2>&1 || { echo "order-contract: cannot check out $REF"; exit 2; }
 trap 'git worktree remove --force "$WORK" >/dev/null 2>&1' EXIT
 
-BUGGY=0
-for seed in 7 1794329328; do
+FAILED=0
+for seed in 7 1794329300 1794329328 1794329513; do
   if run_suite_at_seed "$seed" "$WORK"; then
-    echo "flake-canary: seed $seed PASSED (chain-first or flake fixed)"
+    echo "order-contract: wire-first seed $seed PASSED"
   else
-    echo "flake-canary: seed $seed FAILED (wire-first order -> namespace AlreadyExists)"
-    BUGGY=1
+    echo "order-contract: wire-first seed $seed FAILED — order-dependent shared state is back (V5 regression)"
+    FAILED=1
   fi
 done
-if run_suite_at_seed 42 "$WORK"; then
-  echo "flake-canary: control seed 42 PASSED (order-dependent, not a hard failure)"
-else
-  echo "flake-canary: control seed 42 ALSO FAILED — suite is broken outright, not just order-flaky"
-  exit 2
-fi
+for seed in 42 1794329336; do
+  if run_suite_at_seed "$seed" "$WORK"; then
+    echo "order-contract: chain-first control seed $seed PASSED"
+  else
+    echo "order-contract: chain-first control seed $seed FAILED — suite is broken outright, not just order-flaky"
+    exit 2
+  fi
+done
 
-if [ "$BUGGY" -eq 1 ]; then
-  echo "flake-canary: CANARY GREEN — order-flake reproduced (bug present)."
+if [ "$FAILED" -eq 0 ]; then
+  echo "order-contract: GREEN — suite is order-independent at all tested seeds."
   exit 0
 else
-  echo "flake-canary: CANARY FLIPPED — suite passed at the previously-failing seeds: the flake is fixed. Invert this canary."
+  echo "order-contract: RED — the v1a1gate suite is order-flaky again."
   exit 1
 fi

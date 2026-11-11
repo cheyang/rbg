@@ -14,7 +14,7 @@
     "runsAgainst": "base",
     "layer": "integration",
     "verdict": "confirmed",
-    "evidence": "base premise suite (premise-base.patch on 73e05db): accepted v1alpha1 create returns exactly 2 warnings \u2014 CRD 'is deprecated; use v1alpha2' (no timeline) + webhook 'will be removed in 0.10.0; migrate to v1alpha2 using the migration guide'; results/base-premise-envtest.txt. Head: exactly 1 warning (results/head-envtest.txt).",
+    "evidence": "base premise suite (premise-base.patch on 73e05db): accepted v1alpha1 create returns exactly 2 warnings — CRD 'is deprecated; use v1alpha2' (no timeline) + webhook 'will be removed in 0.10.0; migrate to v1alpha2 using the migration guide'; results/base-premise-envtest.txt. Head: exactly 1 warning (results/head-envtest.txt).",
     "match": [
       "returns two overlapping deprecation warnings on an accepted v1alpha1 create"
     ]
@@ -86,10 +86,14 @@
       "introducedByPR": true,
       "firstSeenSha": "91d244f5abe71543b74e11db12db67225b92a51e",
       "script": "scripts/check-v1a1gate-order-flake.sh",
-      "polarity": "canary",
+      "polarity": "contract",
       "claim": "The author's test/envtest/testcase/v1a1gate suite (as of PR head 91d244f) fails whenever Ginkgo's default top-level-container randomization orders the new 'v1alpha1 wire contract' container before 'v1alpha1 request path through the conversion chain': the wire container's BeforeAll creates the shared namespace v1a1-gate-test ignoring errors, and the conversion-chain container's BeforeAll then fails 'namespaces \"v1a1-gate-test\" already exists' (testutil.CreateNamespace is fatal), skipping its 4 enforcement specs. Deterministic per seed: 7, 1794329300, 1794329328 FAIL; 42, 1794329336 PASS. 6 of 9 local runs failed. Previous head 22b2212b passes at the failing seed (only one container existed).",
-      "invertWhenFlipped": "When the author makes the namespace setup idempotent, the suite passes at the previously-failing seeds and this canary exits 1 \u2014 invert it or promote it to a contract test (suite passes deterministically at both orderings).",
-      "verifiedWithProposedFix": "results/round3-91d244f/flake-canary-bites-check-with-fix.txt (one-line idempotent BeforeAll -> all seeds pass, canary flips)"
+      "invertWhenFlipped": "When the author makes the namespace setup idempotent, the suite passes at the previously-failing seeds and this canary exits 1 — invert it or promote it to a contract test (suite passes deterministically at both orderings).",
+      "verifiedWithProposedFix": "results/round3-91d244f/flake-canary-bites-check-with-fix.txt (one-line idempotent BeforeAll -> all seeds pass, canary flips)",
+      "status": "fixed-at-15386660",
+      "fixedAtSha": "15386660954fe1216af9610e8c7e258a1de38e5c",
+      "inverted": "Round 4: canary flipped at head 15386660 (all seeds pass — namespace creation hoisted into BeforeSuite, both per-Describe BeforeAll hooks removed). Promoted to contract test: script now exits 0 iff the suite passes at the four wire-first seeds plus two chain-first controls, so a reintroduced order dependence fails it.",
+      "round4Evidence": "results/round4-15386660/flake-canary-r4.txt (canary flip), results/round4-15386660/seed-sweep-r4.txt (10/10 seeds pass: 2,4,5,7,8,42,1794329300,1794329328,1794329336,1794329513)"
     }
   ]
 }

@@ -1,0 +1,9 @@
+order-contract: testing ref 91d244f5abe71543b74e11db12db67225b92a51e
+order-contract: wire-first seed 7 FAILED — order-dependent shared state is back (V5 regression)
+order-contract: wire-first seed 1794329300 FAILED — order-dependent shared state is back (V5 regression)
+order-contract: wire-first seed 1794329328 FAILED — order-dependent shared state is back (V5 regression)
+order-contract: wire-first seed 1794329513 FAILED — order-dependent shared state is back (V5 regression)
+order-contract: chain-first control seed 42 PASSED
+order-contract: chain-first control seed 1794329336 PASSED
+order-contract: RED — the v1a1gate suite is order-flaky again.
+SCRIPT_EXIT=1
