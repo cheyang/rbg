@@ -1,0 +1,49 @@
+# CI differential evidence for F1 (captured 2026-11-12, Asia/Shanghai)
+
+## PR head run (workflow 'E2E Test', run 43031453847, PR #567 head ec9c88cf)
+## job 130561081175 'E2E rollout': conclusion=FAILURE, started 2026-11-11T13:45:20Z, completed 14:29:04Z
+
+-- preload step (new script, E2E_IMAGE_REGISTRY=docker.io) pulled ONLY docker.io names:
+  Status: Downloaded newer image for registry.k8s.io/lws/lws:0.7.0
+  latest: Pulling from library/nginx
+  Status: Downloaded newer image for nginx:latest
+  1.25: Pulling from library/nginx
+  Status: Downloaded newer image for nginx:1.25
+  1.36: Pulling from library/busybox
+  Status: Downloaded newer image for busybox:1.36
+  3.11-slim: Pulling from library/python
+  Status: Downloaded newer image for python:3.11-slim
+  Status: Downloaded newer image for registry.k8s.io/pause:3.10
+
+-- pods of the first failing test stuck in ContainerCreating (created 13:48:54, still Pending at 13:51:24 and 13:56:24):
+        Waiting: Reason=ContainerCreating, Message=
+        Waiting: Reason=ContainerCreating, Message=
+        Waiting: Reason=ContainerCreating, Message=
+    - component-ordering-test-prefill-0-leader-0 (component=leader) createdAt=2026-11-11 13:48:54 +0000 UTC phase=Pending
+    - component-ordering-test-prefill-0-worker-0 (component=worker) createdAt=2026-11-11 13:48:54 +0000 UTC phase=Pending
+    - component-ordering-test-prefill-0-worker-1 (component=worker) createdAt=2026-11-11 13:48:54 +0000 UTC phase=Pending
+        Waiting: Reason=ContainerCreating, Message=
+        Waiting: Reason=ContainerCreating, Message=
+
+-- the image those pods reference (utils.DefaultImage, PullIfNotPresent) is
+   registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest — NOT in the preload list.
+   Later in the run it appears via a kubelet runtime pull (intermittent window opened):
+  test-ns-69784        95s         Normal    Pulled                       pod/e2e-test-role-1-1                             Container image "registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest" already present on machine
+  test-ns-69784        95s         Normal    Pulled                       pod/e2e-test-role-1-0                             Container image "registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest" already present on machine
+  test-ns-69784        91s         Normal    Pulled                       pod/e2e-test-role-1-1                             Container image "registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest" already present on machine
+
+-- suite died at the 40m go-test timeout after repeated 150s pod-readiness timeouts:
+  FAIL	sigs.k8s.io/rbgs/test/e2e	2400.023s
+
+## Base run on main @ 7e377a06 (same day): workflow 'E2E Test' run 43028395429
+## job 130550740200 'E2E rollout': conclusion=SUCCESS, 13:25:20Z -> 13:38:16Z (12m56s)
+-- old inline preload pulled the acs-sample image under its referenced name:
+  latest: Pulling from acs-sample/nginx
+  Status: Downloaded newer image for registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest
+  Status: Downloaded newer image for registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0
+
+## e2e-test.yml on main, recent history (all green):
+  43028395429 success 2026-11-11T13:21:31Z 7e377a06   <- PR base
+  42985859419 success 2026-11-11T08:17:28Z 229b4954
+  42382707632 success 2026-11-07T14:40:34Z fd160cc9
+  41822469985 success 2026-11-04T11:37:48Z 73e05db4

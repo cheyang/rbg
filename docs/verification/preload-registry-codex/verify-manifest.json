@@ -1,0 +1,47 @@
+{
+  "topic": "preload-registry-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/567",
+  "harnessPaths": [
+    "docs/verification/preload-registry-codex",
+    "test/verification/preload"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Release Test run 42213206716 failed in e2e-test-helm at the 'Pre-load e2e test images' step: docker pull registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest -> connection reset by peer; the three inline copies in release-test.yml had no retry, so a single transient reset failed the whole job.",
+    "reportedComponent": "CI: .github/workflows/release-test.yml inline pre-load steps + setup-e2e-cluster composite action",
+    "patchedComponent": "hack/preload-e2e-images.sh (new) + wiring in release-test.yml and setup-e2e-cluster/action.yaml",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "fixtures/base-release-test-preload.sh (verbatim from base 73e05db4) fails after exactly 1 pull attempt when pulls fail transiently; the PR head script survives the same failure (TestNewScriptSurvivesTransientPullFailure). A second premise sub-claim is REFUTED, see README (pods do NOT reference short 'nginx:latest'; the dominant DefaultImage is registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest).",
+    "match": ["TestBaseInlinePreloadFailsOnFirstTransientPull"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/verification/preload/ -run 'TestPreload|TestAliyun|TestBaseInline|TestNewScript|TestPullRetry|TestInvalid' -count=1 -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestPreloadCoversE2EReferencedImages_DockerIO", "TestPreloadCoversDefaultImage_Aliyun"]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestPreloadCoversPatioRuntime_DockerIO"]
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestAliyunMirrorCarriesSameTag"]
+    }
+  ],
+  "liveNote": "No live layer: the CI run itself is the live environment. Differential CI evidence captured in results/ci-differential-evidence.txt (PR run 43031453847 E2E rollout FAILURE vs same-day base run 43028395429 SUCCESS in 13m)."
+}

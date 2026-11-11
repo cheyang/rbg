@@ -1,0 +1,60 @@
+=== RUN   TestPreloadCoversE2EReferencedImages_DockerIO
+    preload_verify_test.go:247: script exit=0 output:
+        All e2e test images loaded into Kind cluster 'verify-cluster' (registry mode: docker.io)
+    preload_verify_test.go:254: e2e-referenced image "registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest" is NOT loaded into kind in docker.io mode
+--- FAIL: TestPreloadCoversE2EReferencedImages_DockerIO (0.02s)
+=== RUN   TestPreloadCoversPatioRuntime_DockerIO
+    preload_verify_test.go:266: script exit=0 output:
+        All e2e test images loaded into Kind cluster 'verify-cluster' (registry mode: docker.io)
+    preload_verify_test.go:279: patio-runtime image "registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0" is NOT loaded into kind in docker.io mode
+--- FAIL: TestPreloadCoversPatioRuntime_DockerIO (0.02s)
+=== RUN   TestPreloadCoversDefaultImage_Aliyun
+    preload_verify_test.go:290: script exit=0 output:
+        no Aliyun mirror for busybox:1.36; pulling it from its upstream registry
+        no Aliyun mirror for python:3.11-slim; pulling it from its upstream registry
+        All e2e test images loaded into Kind cluster 'verify-cluster' (registry mode: aliyun)
+    preload_verify_test.go:304: aliyun mode: pods reference "registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest" but only these names are loaded: map[busybox:1.36:true nginx:1.25:true nginx:latest:true python:3.11-slim:true registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0:true registry.k8s.io/pause:3.10:true]
+--- FAIL: TestPreloadCoversDefaultImage_Aliyun (0.03s)
+=== RUN   TestAliyunMirrorCarriesSameTag
+    preload_verify_test.go:314: script exit=0 output:
+        no Aliyun mirror for busybox:1.36; pulling it from its upstream registry
+        no Aliyun mirror for python:3.11-slim; pulling it from its upstream registry
+        All e2e test images loaded into Kind cluster 'verify-cluster' (registry mode: aliyun)
+    preload_verify_test.go:323: aliyun retag mismatches content: registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest (tag "latest") tagged as nginx:1.25 (tag "1.25")
+--- FAIL: TestAliyunMirrorCarriesSameTag (0.03s)
+=== RUN   TestBaseInlinePreloadFailsOnFirstTransientPull
+    preload_verify_test.go:356: base behavior confirmed: first transient pull failure fails the step (pulls=[registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest])
+--- PASS: TestBaseInlinePreloadFailsOnFirstTransientPull (0.00s)
+=== RUN   TestNewScriptSurvivesTransientPullFailure
+    preload_verify_test.go:363: script exit=0 output:
+        stub: simulated pull failure for nginx:latest
+        pull attempt 1/3 failed for nginx:latest; retrying in 0s
+        stub: simulated pull failure for nginx:1.25
+        pull attempt 1/3 failed for nginx:1.25; retrying in 0s
+        stub: simulated pull failure for busybox:1.36
+        pull attempt 1/3 failed for busybox:1.36; retrying in 0s
+        stub: simulated pull failure for python:3.11-slim
+        pull attempt 1/3 failed for python:3.11-slim; retrying in 0s
+        stub: simulated pull failure for registry.k8s.io/pause:3.10
+        pull attempt 1/3 failed for registry.k8s.io/pause:3.10; retrying in 0s
+        All e2e test images loaded into Kind cluster 'verify-cluster' (registry mode: docker.io)
+--- PASS: TestNewScriptSurvivesTransientPullFailure (0.04s)
+=== RUN   TestPullRetryExhaustionFailsJob
+    preload_verify_test.go:386: script exit=1 output:
+        stub: simulated pull failure for nginx:latest
+        pull attempt 1/3 failed for nginx:latest; retrying in 0s
+        stub: simulated pull failure for nginx:latest
+        pull attempt 2/3 failed for nginx:latest; retrying in 0s
+        stub: simulated pull failure for nginx:latest
+        pull attempt 3/3 failed for nginx:latest; retrying in 0s
+        ::error::failed to pull nginx:latest after 3 attempts
+--- PASS: TestPullRetryExhaustionFailsJob (0.01s)
+=== RUN   TestInvalidRegistryModeRejected
+    preload_verify_test.go:403: script exit=1 output:
+        ::error::E2E_IMAGE_REGISTRY must be 'docker.io' or 'aliyun' (got 'quay.io')
+--- PASS: TestInvalidRegistryModeRejected (0.00s)
+=== RUN   TestBaseInlinePreloadCoversChinaRegistryImages
+--- PASS: TestBaseInlinePreloadCoversChinaRegistryImages (0.01s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/verification/preload	0.161s
+FAIL

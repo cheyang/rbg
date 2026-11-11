@@ -1,0 +1,12 @@
+# Harness-bites check 2026-11-11T20:28:54Z
+# Applied candidate fix (add acs-sample+patio entries, map nginx:1.25 -> '-') to hack/preload-e2e-images.sh:
+
+## with fix:
+ok  	sigs.k8s.io/rbgs/test/verification/preload	0.182s
+
+## reverted; git diff lines on production script:
+0
+
+## after revert:
+FAIL	sigs.k8s.io/rbgs/test/verification/preload	0.143s
+FAIL
