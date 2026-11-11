@@ -1563,8 +1563,8 @@ def check_c33(kep_text):
         sentence = re.search(r"[^.\n]*Today's RIS code reads only "
                              r"`RoleInstanceReady`[^.\n]*\.", kep_text)
         ctx = sentence.group(0) if sentence else m.group(0)
-        if not re.search(r"stateful|blocker propagation|except|while "
-                         r"stateless", ctx, re.I):
+        if not re.search(r"stateful mode|readinessGates|except|while "
+                         r"stateless|in stateful", ctx, re.I):
             problems.append("unscoped absolute claim 'Today's RIS code "
                             "reads only RoleInstanceReady' still present "
                             "(stateless mode also reads readinessGates)")
