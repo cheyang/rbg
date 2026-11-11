@@ -37,7 +37,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/reconciler/roleinstanceset/statefulmode/ ./pkg/discovery/ ./internal/controller/workloads/ -run 'TestClaude' -json"
+      "cmd": "go test ./pkg/reconciler/ ./pkg/reconciler/roleinstanceset/statefulmode/ ./pkg/discovery/ ./internal/controller/workloads/ -run 'TestClaude' -json"
     },
     "integration": {
       "kind": "gotest",
