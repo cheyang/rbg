@@ -1,0 +1,18 @@
+Round-6 harness-bites check (head 31466993): each new/re-pinned contract was
+bitten on a scratch copy of the head README and confirmed to flip. Bites are
+text-level: the reverting edit is applied to a scratch copy, the pin
+predicates re-evaluated (same greps the script runs).
+
+DOC-RACE-OUTCOME-HONESTY   BITE-OK   restoring 'all ending in visible render failure' into the risk-table row flips the contract to FAIL
+DOC-DELETE-RECREATE-OUTCOME BITE-OK  dropping the 'Outside the accepted interleavings,' scoping clause flips to FAIL
+DOC-ANNOTATION-FLIP-DODGE  BITE-OK   re-scoping the resolver leg to 'the annotation flip' flips to FAIL
+DOC-REUPGRADE-WEBHOOK      BITE-OK   replacing 'patches existing webhook configurations and never creates them' at BOTH sites (drill + downgrade step) flips to FAIL; single-site revert does not flip (the real teeth are the hasnt('reinstalls the entry (it deploys with the image)') leg)
+DOC-DOWNGRADE-SAFETY       BITE-OK   restoring 'references are all unscoped can downgrade' flips to FAIL
+DOC-ROLE-INSERT-ORDER(re-pin) BITE-OK dropping the Test Plan echo ('two /env/0 head inserts leaving the earlier...') flips to FAIL
+DOC-WRAP-CHANNEL           BITE-OK   applying the proposed fix (dropping 'Such consumers take their wrap, if any, from role-side patches') flips the currently-FAILing contract to PASS; the sentence is absent at prev b4637b51 (PASS there), so the finding is introduced this round
+
+Polarity baseline: base 3612013e — KEP absent, all doc contracts vacuously PASS.
+prev b4637b51 — the six round-5-finding contracts FAIL (findings present there);
+the three re-pins calibrated to the round-6 wording FAIL there by construction
+(the r5 wording they replace was verified correct in round 5 with the old pins);
+DOC-WRAP-CHANNEL PASSes there (sentence absent).

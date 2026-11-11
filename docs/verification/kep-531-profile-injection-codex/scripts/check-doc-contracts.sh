@@ -20,6 +20,14 @@
 # findings: each check is a contract test over the KEP text at a given git ref.
 # PASS = the criterion is met; FAIL = the finding reproduces.
 #
+# Round 6 (head 31466993): the author fixed all seven round-5 findings plus
+# the four nits and refreshed the PR body; the race inventory was rewritten as
+# three interleavings with honest outcomes, the /command/0 wrap's shape
+# precondition landed (B1), and the prose was tightened repo-wide. Four
+# contracts re-pinned for rewording (Harness-update, semantics re-verified by
+# direct read); six new contracts pin the round-5 fixes; one NEW finding
+# (DOC-WRAP-CHANNEL, FAIL at head): the B1 wrap-channel sentence contradicts
+# the shared command-creation error rule.
 # Usage: check-doc-contracts.sh [ref]   (default: HEAD; run from inside the repo)
 set -uo pipefail
 REF="${1:-HEAD}"
@@ -105,7 +113,10 @@ chk DOC-NO-404-LINK 'kep.yaml carries no dead see-also link' $c
 # two-static-sources rule): role-owned env names must include the referencing
 # role's own legacy engineRuntimes[].containers[].env names, and the
 # 'earlier references only' visibility clause must be gone.
-if has "$F" 'role-owned names come from two static sources' \
+# Re-pinned r6 (Harness-update): the r5 lead-in was sentence-initial lowercase;
+# the r6 prose-tightening moved it to sentence start (capital R). Semantics
+# unchanged and verified by direct read at 31466993.
+if hasE "$F" '(R|r)ole-owned names come from two static sources' \
    && has "$F" 'legacy `engineRuntimes[].containers[].env` names' \
    && hasnt "$F" 'earlier references only'; then c=0; else c=1; fi
 chk DOC-STAGE3-LEGACY "stage-3 ownership counts the role's own legacy-merge env names; 'earlier references only' gone" $c
@@ -147,9 +158,12 @@ chk DOC-IMMUTABILITY-REDESIGN 'r5 immutability redesign consistent: flag/finaliz
 # Contract (strengthened r4; re-pinned r5 — Harness-update: the finalizer is
 # gone, so the delete-side window is now reference-storage vs delete-admission):
 # exhaustiveness claim gone AND the delete-side window named with its outcome.
+# Re-pinned r6 (Harness-update): the round-6 rewrite splits the inventory into
+# three interleavings with per-case outcomes; the delete window and its outcome
+# are unchanged, so the pins move to the new wording.
 if hasnt "$F" 'One race exists' \
-   && has "$F" 'Two races of the same shape' \
-   && hasE "$F" 'profile DELETE[^.]{0,300}before the[^.]{0,160}(finalizer|referencing role is stored)' \
+   && has "$F" 'Three interleavings' \
+   && hasE "$F" 'profile DELETE[^.]{0,300}before the[^.]{0,160}referencing role is stored' \
    && has "$F" 'the dangling reference fails its next render'; then c=0; else c=1; fi
 chk DOC-DELETE-RACE 'accepted-race inventory names the delete-side window and outcome; no exhaustiveness claim' $c
 
@@ -157,8 +171,12 @@ chk DOC-DELETE-RACE 'accepted-race inventory names the delete-side window and ou
 # Re-pinned r5 (Harness-update): the staging was removed; the Compatibility
 # section must still carry the CERP lifecycle item and #2 must state how the
 # guarantee is enforced (admission rejection, fail-closed).
-if has "$F" 'The CERP lifecycle change applies to an empty set' \
-   && has "$F" 'enforced from the alpha by admission rejection, fail-closed' \
+# Re-pinned r6 (Harness-update): item 6 was rewritten for F-NO-LIVE-ADOPTION
+# ('binds an alpha surface with no known adoption'); item 2 still states the
+# enforcement ('Admission rejection enforces this fail-closed from the alpha').
+if has "$F" 'The CERP lifecycle change binds an alpha surface' \
+   && has "$F" 'Admission rejection enforces this' \
+   && has "$F" 'fail-closed from the alpha' \
    && has "$F" 'is still accepted'; then c=0; else c=1; fi
 chk DOC-COMPAT-CERP-LIFECYCLE 'Compatibility carries the CERP lifecycle item; #2 states the enforcement; updateStrategy accepted' $c
 
@@ -243,8 +261,11 @@ chk DOC-WEBHOOK-ROLLBACK 'Downgrade path addresses the retained CERP webhook con
 # Contract: the role-side two-reference winner rule is qualified by spelling
 # (append: later reference wins; two head inserts: inverted, earlier wins) and
 # the Test Plan echo carries the same split.
-if has "$F" 'resolve by reference order, by spelling' \
-   && has "$F" 'pushes the earlier reference' \
+# Re-pinned r6 (Harness-update): comma -> 'and', 'pushes the earlier' ->
+# 'invert it, the same head-insert geometry as the cross-profile rule below'.
+# Semantics verified unchanged at 31466993 by direct read (grammar + Test Plan).
+if has "$F" 'resolve by reference order and spelling' \
+   && has "$F" 'the same head-insert geometry as the cross-profile' \
    && has "$F" 'two `/env/0` head inserts leaving the earlier'; then c=0; else c=1; fi
 chk DOC-ROLE-INSERT-ORDER 'role-side two-reference winner rule qualified by spelling (grammar + Test Plan)' $c
 
@@ -315,6 +336,68 @@ chk DOC-BOOKKEEPING-OLD-CRD 'version-skew claim scoped: bookkeeping needs the ne
 # unobserved-drain case.
 if has "$F" 'is precise evidence that the spec changed while referenced'; then c=1; else c=0; fi
 chk DOC-DRIFT-BASELINE-EDGE 'referencedGeneration drift claim admits the unobserved-drain false-positive window' $c
+
+
+# --- F-RACE-OUTCOME-OVERCLAIM (round-5 minor; FIXED at 31466993) -------------
+# Contract: the accepted-race inventory names each interleaving's actual
+# outcome (update race: successful first render / silent drift with the watch
+# event the only signal; delete race: render failure, or silent consumption on
+# same-name recreate) and the risk-table echo no longer claims all races end
+# in visible render failure.
+if has "$F" 'Three interleavings' \
+   && has "$F" 'a successful render, indistinguishable' \
+   && has "$F" 'silent content drift, the accepted residual' \
+   && has "$F" 'silently consumes its content' \
+   && hasnt "$F" 'never silent miscontent' \
+   && hasnt "$F" 'all ending in visible render failure'; then c=0; else c=1; fi
+chk DOC-RACE-OUTCOME-HONESTY 'race inventory and risk-table echo name each interleaving outcome honestly' $c
+
+# --- F-DELETE-RECREATE-OUTCOME (round-5 minor; FIXED at 31466993) ------------
+# Contract: the delete+recreate closure claim is scoped to outside the accepted
+# interleavings, and the recreate-under-same-name outcome is named.
+if has "$F" 'Outside the accepted interleavings, this closes the delete + recreate-under-same-name bypass' \
+   && has "$F" 'the recreate lands on a dangling reference'; then c=0; else c=1; fi
+chk DOC-DELETE-RECREATE-OUTCOME 'delete+recreate closure claim scoped; recreate outcome named' $c
+
+# --- F-ANNOTATION-FLIP-DODGE (round-5 minor; FIXED at 31466993) --------------
+# Contract: the annotation flip is rejected at write time (both webhooks
+# intercept CREATE and UPDATE); the render leg is scoped to the webhook-absent
+# window; the Test Plan setup produces the render-leg state via that window.
+if hasnt "$F" 'dodges write-time rejection' \
+   && has "$F" 'the webhook-absent window, not for the annotation flip' \
+   && has "$F" 'flipping a written role to a deprecated surface is itself a rejected spec update' \
+   && has "$F" 'rejected as a spec update through admission'; then c=0; else c=1; fi
+chk DOC-ANNOTATION-FLIP-DODGE 'annotation flip rejected at write time; render leg scoped to webhook-absent window; Test Plan setup producible' $c
+
+# --- F-REUPGRADE-WEBHOOK-REINSTALL (round-5 minor; FIXED at 31466993) --------
+# Contract: re-upgrade does not reinstall the CERP webhook entry (the
+# controller only patches existing configurations — verified at fd160cc9:
+# cmd/rbgs/main.go:600 + pkg/webhook/certmanager.go PatchValidatingWebhookCABundle
+# is patch-only); the drill re-applies the configuration as its own step.
+if hasnt "$F" 'reinstalls the entry (it deploys with the image)' \
+   && has "$F" 'patches existing webhook configurations and never creates them' \
+   && has "$F" 'reapplied from the release artifacts'; then c=0; else c=1; fi
+chk DOC-REUPGRADE-WEBHOOK 're-upgrade cannot reinstall the webhook entry; explicit re-application step' $c
+
+# --- F-DOWNGRADE-UNSCOPED-SAFETY (round-5 minor; FIXED at 31466993) ----------
+# Contract: the always-safe downgrade condition requires profileName-only
+# references (an unscoped targetContainers reference silently loses patches on
+# downgrade), and the drills carry the scenario-4 shape.
+if hasnt "$F" 'references are all unscoped can downgrade' \
+   && has "$F" 'references set only `profileName` can downgrade at any depth' \
+   && has "$F" 'while its patches silently stop firing'; then c=0; else c=1; fi
+chk DOC-DOWNGRADE-SAFETY 'always-safe downgrade scoped to profileName-only references; scenario-4 drill present' $c
+
+# --- F-WRAP-CHANNEL-CONTRADICTION (round-6 NEW minor; OPEN at 31466993) ------
+# The B1 fix sentence claims args-only/bare targets "take their wrap, if any,
+# from role-side patches" — but the doc's own shared entrypoint-merge rule
+# ("creating `command` is always an error") applies to BOTH sides, so a
+# role-side /command/0 insert on such a target is a render error too, and no
+# patch channel can wrap it. The only channels: direct template authoring for
+# a role-declared target, none for a profile-declared one. PASS when the
+# sentence names a deliverable channel or drops the claim.
+if has "$F" 'Such consumers take their wrap, if any, from role-side patches'; then c=1; else c=0; fi
+chk DOC-WRAP-CHANNEL 'args-only/bare wrap channel claim consistent with the command-creation error rule' $c
 
 echo "----"; echo "pass=$pass fail=$fail"
 [ "$fail" -eq 0 ]

@@ -337,6 +337,48 @@
     "F-DRIFT-BASELINE-UNOBSERVED-DRAIN (nit)",
     "F-STALE-PR-BODY (reopened minor \u2014 scripts/check-pr-body.sh)"
    ]
+  },
+  "round6": {
+   "head": "31466993fc4e38670003d40a36182fb0bdca1ae8",
+   "script": "scripts/check-doc-contracts.sh (39 checks)",
+   "fixed": [
+    "F-RACE-OUTCOME-OVERCLAIM",
+    "F-DELETE-RECREATE-OUTCOME",
+    "F-ANNOTATION-FLIP-DODGE",
+    "F-REUPGRADE-WEBHOOK-REINSTALL",
+    "F-DOWNGRADE-UNSCOPED-SAFETY",
+    "F-NO-LIVE-ADOPTION-CLAIM",
+    "F-INJECTOR-CHAIN-ATTRIBUTION",
+    "F-BOOKKEEPING-OLD-CRD-PRUNING",
+    "F-DRIFT-BASELINE-UNOBSERVED-DRAIN",
+    "F-CONVERSION-STATUS-PIN",
+    "F-STALE-PR-BODY"
+   ],
+   "harnessUpdates": [
+    "DOC-STAGE3-LEGACY (case)",
+    "DOC-DELETE-RACE (three-interleaving wording)",
+    "DOC-COMPAT-CERP-LIFECYCLE (item-6 wording)",
+    "DOC-ROLE-INSERT-ORDER (reworded pins)",
+    "check-pr-body.sh (affirmative stale phrasings)"
+   ],
+   "new": [
+    "F-WRAP-CHANNEL-CONTRADICTION (minor) \u2014 DOC-WRAP-CHANNEL FAIL at head"
+   ],
+   "newContracts": [
+    "DOC-RACE-OUTCOME-HONESTY",
+    "DOC-DELETE-RECREATE-OUTCOME",
+    "DOC-ANNOTATION-FLIP-DODGE",
+    "DOC-REUPGRADE-WEBHOOK",
+    "DOC-DOWNGRADE-SAFETY",
+    "DOC-WRAP-CHANNEL"
+   ],
+   "results": {
+    "head": "results/doc-contracts-r6b-31466993.txt (38 pass / 1 fail)",
+    "prev": "results/doc-contracts-r6b-b4637b51.txt",
+    "base": "results/doc-contracts-r6b-3612013e.txt (KEP absent, vacuous)",
+    "bites": "results/doc-bites-r6.txt",
+    "prBody": "results/pr-body-r6.txt (PASS)"
+   }
   }
  },
  "liveNote": "No live layer: this PR is docs-only; there is no runtime change to observe. The e2e scenarios belong to the follow-up implementation PRs (see the KEP Test Plan)."

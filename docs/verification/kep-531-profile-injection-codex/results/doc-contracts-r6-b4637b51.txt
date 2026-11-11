@@ -1,0 +1,35 @@
+PASS  DOC-CONSISTENCY              single-scope env-duplicate rule; legacy merge unchecked; dup-reference byte-for-byte case in Test Plan
+PASS  DOC-ISSUE-COVERAGE           updateStrategy/profile-lifecycle dispositioned; kep.yaml overclaim gone
+PASS  DOC-CAPS                     no false pre-existing-cap claims; published lists documented uncapped
+PASS  DOC-MAIN-ACCURACY            mechanism-citation slips fixed (mountPath apiserver / PodSecurity stage / injector-set variation / $(VAR) direction)
+PASS  DOC-COMPONENT-VOCAB          component field documented as unvalidated (mirrors unmarked source vocabulary)
+PASS  DOC-CONVERSION               v1alpha1<->v1alpha2 round-trip pinned (Version Serving + Graduation)
+PASS  DOC-ENABLEMENT               Feature Enablement and Rollback section present (KEP template, alpha)
+PASS  DOC-UNKNOWN-TARGET           unknown targetContainers name stated as render error in the resolution prose
+PASS  DOC-VMOUNT-EQUALITY          volumeMount no-op requires full-field semantic equality
+PASS  DOC-NO-404-LINK              kep.yaml carries no dead see-also link
+PASS  DOC-STAGE3-LEGACY            stage-3 ownership counts the role's own legacy-merge env names; 'earlier references only' gone
+PASS  DOC-PROPAGATION-TRIGGER      propagation settled: no inaccurate trigger claim; referenced profiles immutable
+PASS  DOC-SSA-ENV-KEYED            false SSA premise and the normalization/author-precedence model are gone
+PASS  DOC-ENV-POSITIONAL-MODEL     positional env model stated: verbatim landing, index-0-only profile default on role-owned names, collision event
+PASS  DOC-IMMUTABILITY-REDESIGN    r5 immutability redesign consistent: flag/finalizer/warning-window fully removed; fail-closed webhook stated
+PASS  DOC-DELETE-RACE              accepted-race inventory names the delete-side window and outcome; no exhaustiveness claim
+PASS  DOC-COMPAT-CERP-LIFECYCLE    Compatibility carries the CERP lifecycle item; #2 states the enforcement; updateStrategy accepted
+PASS  DOC-GRADUATION-EVENTS        Graduation checklist inventories all named warning events incl. the shadowing and env-collision events
+PASS  DOC-KEPYAML-SEEALSO          kep.yaml see-also links issue #531
+PASS  DOC-DOWNGRADE-WORDING        Downgrade framing: every reconcile re-renders; pods change only via the workload's own rollout
+PASS  DOC-V1ALPHA1-CEL             v1alpha1 CEL mirror carries the size>0 predicate (empty-components edge handled)
+PASS  DOC-PROFILE-EVOLUTION-TEST   profile evolution pinned structurally: rejection of referenced edits + revision workflow envtest
+PASS  DOC-CAPABILITY-FORM-REGEX    capability form-warning fires on the CAP_-prefixed form the Test Plan promises
+PASS  DOC-DEPRECATED-PATH-MECHANISM deprecated-path rejection of the new fields names its enforcement mechanism
+PASS  DOC-FINALIZER-REMOVAL-OVERCLAIM finalizer-removal freshness: uncached confirm narrows, not closes, the reference-create race
+PASS  DOC-WEBHOOK-ROLLBACK         Downgrade path addresses the retained CERP webhook configuration (failurePolicy deadlock)
+PASS  DOC-ROLE-INSERT-ORDER        role-side two-reference winner rule qualified by spelling (grammar + Test Plan)
+PASS  DOC-PROFILE-DEFAULT-GEOMETRY index-0-only default rule rationale matches insert geometry
+PASS  DOC-SNAPSHOT-ENV-SOURCE      stage-3 sources: role template env entries read off the snapshotted containers
+FAIL  DOC-INJECTOR-CHAIN-ATTRIBUTION injector pass-count variation attributed to real membership drivers (lwpEnv RIS-only), not config statefulness
+FAIL  DOC-NO-LIVE-ADOPTION         reject-from-alpha justification is principled/verifiable, not an unverifiable zero-adoption claim
+FAIL  DOC-BOOKKEEPING-OLD-CRD      version-skew claim scoped: bookkeeping needs the new CRD (old status schema prunes); only admission is CRD-independent
+FAIL  DOC-DRIFT-BASELINE-EDGE      referencedGeneration drift claim admits the unobserved-drain false-positive window
+----
+pass=29 fail=4

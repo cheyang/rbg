@@ -307,3 +307,73 @@ DOC-FLAG-FINALIZER replaced by DOC-IMMUTABILITY-REDESIGN (removal consistency).
 
 Bites: all four new FAILs flip to PASS on a scratch clone carrying the proposed
 one-sentence fixes (33/33 green there) — see `results/doc-bites-r5.txt`.
+
+## Round 6 — head 31466993 (two commits over round 5: df8c669b prose tightening + round-8 findings, 31466993 B1/B2/B3/B4 + M5-M10 + m11-m13)
+
+Docs-only again: `git diff --name-only b4637b51..31466993` = the two KEP files.
+The head fixes the entire round-5 open set and more: the race inventory is
+rewritten as three interleavings with per-case outcomes (the risk-table echo
+now matches), the delete+recreate closure claim is scoped outside the accepted
+interleavings with the silent-recreate outcome named, the annotation-flip
+rationale is corrected (both webhooks intercept UPDATE; the render leg covers
+the webhook-absent window; the Test Plan setup is producible), the re-upgrade
+story states the controller only patches existing webhook configurations
+(verified at fd160cc9: `cmd/rbgs/main.go:600` + `pkg/webhook/certmanager.go`
+`PatchValidatingWebhookCABundle` — patch-only, never creates), the downgrade
+condition is `profileName`-only references (scenario-4 drill added), the
+reject-from-alpha justification now cites the alpha-API convention with a
+softened "no known adoption" + contingency sentence, the version-skew claim
+names the old CRD's bare `type: object` status schema pruning (verified:
+`config/crd/bases/...clusterengineruntimeprofiles.yaml` status is `type:
+object` with subresources.status on both served versions), the drift-baseline
+sentence admits the unobserved-drain window, the injector-count variation is
+attributed to the real membership drivers (verified at fd160cc9: RIS leader 4
+/ RIS worker 3 / LWS worker 2 / default 3 at `pkg/reconciler/*_reconciler.go`
+SetInjectors sites), the conversion round-trip pin now covers the tracking
+status fields, and the PR body was refreshed to the head design
+(`results/pr-body-r6.txt` PASS; updatedAt 2026-11-11T01:15:33Z).
+
+New design deltas introduced this round, reviewed and verified: the `/command/0`
+wrap's shape precondition (B1: render error on args-only/bare targets, with the
+entrypoint-merge rule; Test Plan pins both legs), the `envFrom` paragraph
+(direct-env priority over `envFrom` is real Kubernetes behavior; the event and
+ownership carve-outs are internally consistent), the upgrade-order switch to
+controller-first/CRD-second (sound: the dangerous old-controller/new-CRD row is
+never traversed on the way up), the `profileName` schema correction (verified:
+required, no minLength, both served versions), the `Deprecated:` doc-comment →
+OpenAPI-description claim (verified: controller-gen emits no field-level
+`deprecated: true`; field "Deprecated:" comments land in descriptions).
+
+### Code-fact harness
+
+`bash scripts/re-verify.sh` (auto-fetched head 31466993) — **17/17 FIXED** (all
+premise contracts green; raw output `results/reverify/`). Also run against the
+moved base fd160cc9 (current main): 17/17 green — the KEP's main-behavior
+claims hold on today's main, not only on the PR's merge-base.
+
+### Doc-text contracts: 39 checks
+
+Raw: `results/doc-contracts-r6b-{31466993,b4637b51,3612013e}.txt`; bites:
+`results/doc-bites-r6.txt`; PR body: `results/pr-body-r6.txt`.
+
+- Fixed (FAIL@prev → PASS@head): all six round-5 open findings
+  (F-RACE-OUTCOME-OVERCLAIM, F-DELETE-RECREATE-OUTCOME, F-ANNOTATION-FLIP-DODGE,
+  F-REUPGRADE-WEBHOOK-REINSTALL, F-DOWNGRADE-UNSCOPED-SAFETY,
+  F-NO-LIVE-ADOPTION-CLAIM) and all four round-5 nits, each pinned by a new or
+  existing contract; F-STALE-PR-BODY fixed (PR-BODY-FRESHNESS PASS).
+- Harness-updates (re-pinned for the round-6 rewording, semantics re-verified
+  by direct read at head): DOC-STAGE3-LEGACY (case), DOC-DELETE-RACE
+  (three-interleaving wording), DOC-COMPAT-CERP-LIFECYCLE (item-6 wording),
+  DOC-ROLE-INSERT-ORDER (comma→and, inversion clause reworded);
+  check-pr-body.sh pins the affirmative stale phrasings (the refreshed body
+  mentions "no in-use finalizer" — negated, correct).
+- ONE NEW finding (minor): **F-WRAP-CHANNEL-CONTRADICTION** — DOC-WRAP-CHANNEL
+  FAIL at head. The B1 fix says args-only/bare targets "take their wrap, if
+  any, from role-side patches, where the author knows the shape", but the doc's
+  own shared entrypoint-merge rule ("creating `command` is always an error")
+  applies to both sides: a role-side `/command/0` insert on such a target is
+  the same render error (attributed to the role). No patch channel can wrap an
+  args-only/bare target; the only channel is direct template authoring for a
+  role-declared target (none for a profile-declared one). Bite demonstrated
+  (dropping the sentence flips the contract green); the sentence is absent at
+  prev (contract PASS there) — introduced this round.
