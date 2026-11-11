@@ -118,4 +118,70 @@ func TestClaudeMemberOrdinalsBranches(t *testing.T) {
 		require.NoError(t, err)
 		require.Equal(t, []int{0, 1, 2}, members)
 	})
+
+	// ---- Round 3 additions (head 2c347c47) ----
+	// eec29c95 "allow discovery of claimable dense orphan children": the
+	// owner-guard now accepts an ownerless dense child carrying the matching
+	// group-name label (the same dense orphan the selective writer can claim),
+	// and still rejects sparse orphans, foreign owners, and label mismatches.
+	labelledChild := func(ownerUID, record string, labels map[string]string) *workloadsv1alpha2.RoleInstanceSet {
+		set := child(ownerUID, record)
+		if labels != nil {
+			set.Labels = labels
+		} else {
+			set.Labels = map[string]string{}
+		}
+		return set
+	}
+
+	t.Run("accepts a claimable ownerless dense orphan", func(t *testing.T) {
+		rbg := newRBG()
+		ownerless := labelledChild("", "", map[string]string{constants.GroupNameLabelKey: "group"})
+		c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(ownerless).Build()
+		b := &ConfigBuilder{client: c, rbg: rbg}
+		members, err := b.memberOrdinals(newRole("1,3"))
+		require.NoError(t, err, "dense orphan with matching label must be readable, not rejected")
+		require.Equal(t, []int{0, 1, 2}, members)
+	})
+
+	t.Run("rejects an ownerless sparse orphan", func(t *testing.T) {
+		rbg := newRBG()
+		ownerless := labelledChild("", "1,3", map[string]string{constants.GroupNameLabelKey: "group"})
+		c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(ownerless).Build()
+		b := &ConfigBuilder{client: c, rbg: rbg}
+		_, err := b.memberOrdinals(newRole("1,3"))
+		require.Error(t, err, "sparse membership must never be inherited from an ownerless child")
+		require.Contains(t, err.Error(), "different controller owner")
+	})
+
+	t.Run("rejects an ownerless dense orphan with a foreign label", func(t *testing.T) {
+		rbg := newRBG()
+		ownerless := labelledChild("", "", map[string]string{constants.GroupNameLabelKey: "other-group"})
+		c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(ownerless).Build()
+		b := &ConfigBuilder{client: c, rbg: rbg}
+		_, err := b.memberOrdinals(newRole("1,3"))
+		require.Error(t, err, "an ownerless child of another group must not be claimed")
+		require.Contains(t, err.Error(), "different controller owner")
+	})
+
+	// e340f9f7 "isolate invalid selective scaling roles": invalid input must
+	// not plan membership, while an existing child keeps publishing its
+	// committed target (frozen role) and a missing child publishes nothing.
+	t.Run("freezes discovery on the committed target for an invalid role", func(t *testing.T) {
+		rbg := newRBG()
+		c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(child("rbg-uid", "1,3")).Build()
+		b := &ConfigBuilder{client: c, rbg: rbg}
+		members, err := b.memberOrdinals(newRole("2-1"))
+		require.NoError(t, err)
+		require.Equal(t, []int{0, 2, 4}, members, "invalid input must retain the committed discovery target")
+	})
+
+	t.Run("publishes no members for an invalid role without a child", func(t *testing.T) {
+		rbg := newRBG()
+		c := fake.NewClientBuilder().WithScheme(scheme).Build()
+		b := &ConfigBuilder{client: c, rbg: rbg}
+		members, err := b.memberOrdinals(newRole("2-1"))
+		require.NoError(t, err)
+		require.Empty(t, members, "never plan new membership from invalid input")
+	})
 }

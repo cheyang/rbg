@@ -1,0 +1,53 @@
+=== RUN   TestRBGController
+Running Suite: RoleBasedGroup Controller Suite - /home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/test/envtest/testcase/rbg
+=======================================================================================================================================
+Random Seed: [1m1794425114[0m
+
+Will run [1m2[0m of [1m26[0m specs
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0mI1112 03:25:18.440679  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-doomed" elapsedTime="19.688641ms"
+I1112 03:25:18.450844  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-spare" elapsedTime="10.073148ms"
+I1112 03:25:18.458368  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="7.418264ms"
+I1112 03:25:18.461127  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-doomed" elapsedTime="2.680486ms"
+I1112 03:25:18.463921  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-spare" elapsedTime="2.695946ms"
+I1112 03:25:18.466385  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="2.382445ms"
+I1112 03:25:18.469070  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-doomed" elapsedTime="2.603402ms"
+I1112 03:25:18.472293  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-spare" elapsedTime="3.110451ms"
+I1112 03:25:18.474919  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="2.54042ms"
+I1112 03:25:18.477632  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-spare" elapsedTime="2.634134ms"
+I1112 03:25:18.480458  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="2.53041ms"
+I1112 03:25:18.484538  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="2.566761ms"
+I1112 03:25:18.487445  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="2.818011ms"
+I1112 03:25:18.490037  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="2.515179ms"
+I1112 03:25:18.493049  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-spare" elapsedTime="2.917993ms"
+I1112 03:25:18.496921  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-spare" elapsedTime="2.367985ms"
+I1112 03:25:18.499389  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-spare" elapsedTime="2.404785ms"
+I1112 03:25:18.501813  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-spare" elapsedTime="2.364724ms"
+I1112 03:25:18.506760  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="2.451247ms"
+I1112 03:25:18.509643  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="2.80149ms"
+I1112 03:25:18.512292  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="2.576312ms"
+I1112 03:25:18.518480  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="3.65926ms"
+I1112 03:25:18.657550  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-spare" elapsedTime="5.450574ms"
+I1112 03:25:18.672822  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-spare" elapsedTime="15.193281ms"
+I1112 03:25:18.687673  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-spare" elapsedTime="14.764966ms"
+I1112 03:25:18.690453  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-spare" elapsedTime="2.705386ms"
+I1112 03:25:20.812119  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="4.162198ms"
+I1112 03:25:20.814631  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="2.428487ms"
+I1112 03:25:20.829346  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="14.63217ms"
+I1112 03:25:20.832275  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425117995707395/claude-f5-worker" elapsedTime="2.834271ms"
+[38;5;10m•[0mI1112 03:25:24.065796  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425124023228294/claude-orphan-worker" elapsedTime="29.681917ms"
+I1112 03:25:24.080007  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425124023228294/claude-orphan-worker" elapsedTime="14.093362ms"
+I1112 03:25:24.082568  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425124023228294/claude-orphan-worker" elapsedTime="2.458578ms"
+I1112 03:25:24.097596  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425124023228294/claude-orphan-worker" elapsedTime="14.934872ms"
+I1112 03:25:24.100201  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425124023228294/claude-orphan-worker" elapsedTime="2.513549ms"
+I1112 03:25:24.247612  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425124023228294/claude-orphan-worker" elapsedTime="2.567442ms"
+I1112 03:25:24.274485  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425124023228294/claude-orphan-worker" elapsedTime="5.202686ms"
+I1112 03:25:24.277412  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425124023228294/claude-orphan-worker" elapsedTime="2.842351ms"
+I1112 03:25:24.280194  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425124023228294/claude-orphan-worker" elapsedTime="2.711877ms"
+I1112 03:25:24.282838  853466 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="claude-r3-1794425124023228294/claude-orphan-worker" elapsedTime="2.577121ms"
+[38;5;10m•[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+
+[38;5;10m[1mRan 2 of 26 Specs in 13.277 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m2 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m24 Skipped[0m
+--- PASS: TestRBGController (13.28s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	13.294s

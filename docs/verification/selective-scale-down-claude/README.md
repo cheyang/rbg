@@ -3,10 +3,50 @@
 Reproducible evidence for the findings raised by Reviewer A (Claude) while
 reviewing https://github.com/sgl-project/rbg/pull/538.
 
-**Current round: 2 / incremental** — head `f3d448746b02a10ebff161885e98d352d19d393f`,
-base `fd160cc964b0e1438bead4ad7324d0a8f0bf5eac`, previous reviewed head
-`07ae1194c0481b2f39db2d41c32c08a6b2123b1d`. Round 1 ran against head `07ae1194`
-/ base `4a0765f`.
+**Current round: 3 / incremental** — head `2c347c471633b8ecee2c4d59079749b139632359`,
+base `fd160cc964b0e1438bead4ad7324d0a8f0bf5eac` (unchanged), previous reviewed
+head `f3d448746b02a10ebff161885e98d352d19d393f`. Round 1 ran against head
+`07ae1194` / base `4a0765f`; round 2 against `f3d44874` / `fd160cc`.
+The branch was rebased onto the round-3 head so the working tree is
+head + harness (harness commits only; production code untouched).
+
+## Round 3 results (2026-11-12)
+
+The author pushed five commits (`f3d44874..2c347c47`), one per open finding:
+`eec29c95` dense-orphan discovery (discovery-gates-adoption), `def9bf63`
+FailedScale preservation (F4), `e340f9f7` role-scoped invalid input (F5),
+`5fc8c972` surge exclusions (F3), `2c347c47` docs for recovery/early-drain
+(F6 + Q2). Re-verify and new round-3 harness evidence:
+
+| ID | Round 2 | Round 3 | Note |
+|----|---------|---------|------|
+| F1 lint gate | fixed | **FIXED (kept green)** | pinned golangci-lint v2.13.1: 0 issues on 2c347c47 (results/round3/lint.out); CI `lint` check green. |
+| F3 surge on excluded ordinal | still-broken | **FIXED** | 5fc8c972 mirrors E onto the child RIS for allocation; `nextSurgeOrdinal` jumps committed gaps AND exclusion ranges. Harness-update: the test now models the mirrored input (the writer writes it — pinned separately). Surge lands on 6, not 5. Residual: a legacy pre-upgrade child (record, no mirror) keeps record-only allocation for one reconcile window — pinned by the legacy canary subtest; transient, documented here, not tracked as a finding. |
+| F4 FailedScale erasure | still-broken | **FIXED** | def9bf63 scopes the drop predicate to `Reason == invalidCommittedOrdinalsReason` (the exact one-line scoping requested). Contract test green. |
+| F5 preCheck blocks whole RBG | open (reasoning) | **FIXED** | e340f9f7 moves the gate into reconcileRoles per role; Step 8/9 are joined so cleanup always runs; Ready=False + Warning retained via updateRBGStatus (Step 4, runs even when roles fail). Verified by MY OWN envtest (results/round3/envtest-claude-r3.out): invalid role frozen with identities kept, sibling role's selective scale-down commits, removed role's child RIS deleted, repair unfreezes. |
+| F6 corrupt record wedges controllers | open | **RESOLVED (runbook + tests)** | 2c347c47 documents the guarded operator repair (UID/RV/replica JSON-patch test-ops, restore-verified-sparse vs clear-verified-dense) and the author's envtest covers both paths incl. failed guards leaving the record unchanged — ran green in my full suite re-run. The wedge-until-manual-repair behavior is unchanged by design; the missing runbook is delivered. |
+| discovery-gates-adoption | open (code-path) | **FIXED** | eec29c95 lets memberOrdinals read an ownerless dense child with the matching group-name label (sparse orphans and foreign owners still rejected — pinned by my unit subtests). My own full-controller envtest: delete RBG, orphan all dependents (set/services/CM/revisions), recreate with E → child adopted (same UID), members [0,2,4], survivors keep UIDs, **persisted discovery ConfigMap carries the sparse addresses** (also closes round-2 AC-10's envtest half). |
+| Q2 discovery early-drain | open | **ANSWERED** | docs now state the commit-time removal contract explicitly ("early-drain signal, not a guarantee…"). |
+| F7 / M2 memberOrdinals coverage | narrowed-open | **CLOSED** | Build-level matrix (round 2) + the envtest ConfigMap assertions above; my TestClaudeMemberOrdinalsBranches extended with the 5 new branches (claimable orphan, sparse orphan, foreign label, invalid-input freeze/no-members). |
+| REG commit/controller suites | green | green | all envtest suites re-run green on 2c347c47 (results/round3/envtest-all.out: rbg 110s, selective_commit, webhook, stateful, restart_policy, deprecation*). |
+
+Bite check for every new/updated round-3 test: grafted onto the pre-fix head
+`f3d44874` in a throwaway worktree — all FAIL there (mirror absent → E
+annotation ignored; ownerless dense orphan rejected; surge on 5), all PASS on
+`2c347c47`. F3's round-2-shaped test was also re-run by re-verify against the
+new head before the harness update (fail → harness-update → updated → pass).
+
+New unit pins added this round:
+- `TestClaudeWriterMirrorsExcludedOrdinalsForSurge` /
+  `TestClaudeMirrorIsAtomicWithRecordAndReplicas` (pkg/reconciler) — the
+  mirror rides in the same conditional write as replicas+record; a rejected
+  patch leaves no half-applied E.
+- `TestClaudeValidateRoleExcludedOrdinalsScopesToTheOffendingRole`
+  (internal/controller/workloads) — the per-role backstop names only the
+  offending role.
+- envtest `test/envtest/testcase/rbg/claude_round3_test.go` — F5 isolation +
+  dense-orphan adoption + ConfigMap assertion, written independently of the
+  author's specs (same contracts, different scenarios).
 
 ## Round 2 results (2026-11-11)
 

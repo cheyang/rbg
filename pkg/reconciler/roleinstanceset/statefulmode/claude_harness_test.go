@@ -39,13 +39,22 @@ import (
 // allocation: skips.Members(replicas+maxSurge) yields [0,2,4,5] and the
 // surge instance lands exactly on the excluded ordinal 5.
 //
-// polarity: contract — FAILS on the PR head (07ae1194) as captured in
-// results/unit-head.out; PASSES once surge allocation also consults the
-// user's exclusion input (or the record covers exclusions above the last
-// member).
+// polarity: contract — round-1/2: FAILED (surge landed on excluded ordinal 5).
+// Round-3 (head 2c347c47, commit 5fc8c972) changed the input path: the
+// exclusion input now reaches surge allocation through a mirror of E on the
+// child RIS annotations (written by buildSelectiveTarget/mergeSelectiveTarget),
+// so this test mirrors that input like the writer does. Harness-update:
+// without the mirrored annotation (a legacy pre-upgrade child, or a writer
+// regression that stops mirroring) allocation falls back to the old
+// record-only behavior — pinned separately in the legacy subtest.
 func TestClaudeSurgeOrdinalAvoidsUserExcludedOrdinals(t *testing.T) {
 	set := buildSet("claude-surge", 3, nil, nil)
-	set.Annotations = map[string]string{constants.CommittedSkipOrdinalsAnnotationKey: "1,3"}
+	set.Annotations = map[string]string{
+		constants.CommittedSkipOrdinalsAnnotationKey: "1,3",
+		// The selective writer mirrors the role's exclusion input onto the
+		// child for allocation only (5fc8c972).
+		constants.ExcludedOrdinalsAnnotationKey: "1,3,5",
+	}
 	set.Spec.UpdateStrategy.MaxSurge = ptr.To(intstr.FromInt32(1))
 	set.Spec.UpdateStrategy.Type = workloadsv1alpha2.RecreatePodUpdateStrategyType
 
@@ -71,10 +80,33 @@ func TestClaudeSurgeOrdinalAvoidsUserExcludedOrdinals(t *testing.T) {
 		"surge instance would be created at ordinal %d, which the user excluded (E=%q); "+
 			"surge allocation consults only the committed gap record, not the exclusion input",
 		surgeOrdinal, "1,3,5")
+	require.Equal(t, 6, surgeOrdinal, "surge must jump ordinal 5 to the next free ordinal")
 
 	// Positive control: without ordinal 5 in the exclusion input the surge
 	// ordinal 5 is legal and the current behavior is correct.
 	control, err := ordinals.Parse("1,3")
 	require.NoError(t, err)
 	require.False(t, control.Contains(topo.ordinal(topo.replicas)))
+}
+
+// Legacy-child documentation subtest: a child carrying a committed record but
+// no E mirror (created before 5fc8c972, before the writer's next sync lands)
+// still allocates surge from the record only. This is a transient upgrade
+// window, not the steady-state contract — the writer mirrors E on its next
+// selective sync (pinned by TestClaudeWriterMirrorsExcludedOrdinalsForSurge).
+func TestClaudeSurgeLegacyChildWithoutMirrorStillUsesRecordOnly(t *testing.T) {
+	set := buildSet("claude-surge-legacy", 3, nil, nil)
+	set.Annotations = map[string]string{constants.CommittedSkipOrdinalsAnnotationKey: "1,3"}
+	set.Spec.UpdateStrategy.MaxSurge = ptr.To(intstr.FromInt32(1))
+	set.Spec.UpdateStrategy.Type = workloadsv1alpha2.RecreatePodUpdateStrategyType
+	instances := []*workloadsv1alpha2.RoleInstance{
+		buildInst(set.Name, 0, "rev-1", true, true),
+		buildInst(set.Name, 2, "rev-1", true, true),
+		buildInst(set.Name, 4, "rev-1", true, true),
+	}
+	topo, err := computeTopology(set, instances, "rev-1", "rev-2", false)
+	require.NoError(t, err)
+	// Canary polarity: asserts the observed (still record-only) behavior.
+	require.Equal(t, 5, topo.ordinal(topo.replicas),
+		"legacy child without the E mirror allocates from the record only")
 }

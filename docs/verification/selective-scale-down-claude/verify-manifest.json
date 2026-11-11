@@ -2,20 +2,23 @@
   "topic": "selective-scale-down-claude",
   "pr": "https://github.com/sgl-project/rbg/pull/538",
   "round": {
-    "number": 2,
+    "number": 3,
     "mode": "incremental",
     "reviewer": "claude",
     "baseSha": "fd160cc964b0e1438bead4ad7324d0a8f0bf5eac",
-    "headSha": "f3d448746b02a10ebff161885e98d352d19d393f",
-    "previousHeadSha": "07ae1194c0481b2f39db2d41c32c08a6b2123b1d",
-    "notes": "PR rebased onto new main fd160cc (feature files byte-identical; one conflict hunk in updateRBGStatus adopted upstream #533) plus 10 fix commits. Round-2 verdicts: F1 FIXED (lint gate green), F3/F4 STILL-BROKEN, F7/REG green. F1's TestClaudeLintGateGreen is kept as a contract regression pin."
+    "headSha": "2c347c471633b8ecee2c4d59079749b139632359",
+    "previousHeadSha": "f3d448746b02a10ebff161885e98d352d19d393f",
+    "notes": "Five fix commits, one per open round-2 finding. Branch rebased onto the round-3 head (harness-only commits). Round-3 verdicts: F3 FIXED via E mirror on the child + nextSurgeOrdinal (harness updated to the new input path; legacy no-mirror window pinned as a canary), F4 FIXED via reason-scoped drop, F5 FIXED via per-role isolation (envtest), discovery-gates-adoption FIXED via claimable dense orphan (envtest + unit branches), F6 resolved by documented guarded repair, Q2 answered in docs. All envtest suites + lint green on the head; every new test bites on f3d44874."
   },
   "harnessPaths": [
     "docs/verification/selective-scale-down-claude",
     "pkg/reconciler/roleinstanceset/statefulmode/claude_premise_test.go",
     "pkg/reconciler/roleinstanceset/statefulmode/claude_harness_test.go",
+    "pkg/reconciler/claude_round3_test.go",
     "internal/controller/workloads/claude_harness_test.go",
-    "pkg/discovery/claude_harness_test.go"
+    "internal/controller/workloads/claude_round3_test.go",
+    "pkg/discovery/claude_harness_test.go",
+    "test/envtest/testcase/rbg/claude_round3_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -63,11 +66,38 @@
       ]
     },
     {
+      "id": "F3-LEGACY",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestClaudeSurgeLegacyChildWithoutMirrorStillUsesRecordOnly"
+      ],
+      "note": "pins the intended record-only allocation for a legacy child predating the E mirror (one-reconcile upgrade window, documented in README); goes red if allocation ever consults E that is not mirrored on the child"
+    },
+    {
       "id": "F4",
       "polarity": "contract",
       "layer": "unit",
       "match": [
         "TestClaudeInvalidRecordPreservesUnrelatedFailedScaleCondition"
+      ]
+    },
+    {
+      "id": "F5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestClaudeValidateRoleExcludedOrdinalsScopesToTheOffendingRole"
+      ],
+      "note": "controller-chain isolation pinned by the envtest specs in test/envtest/testcase/rbg/claude_round3_test.go (run within TestRBGController)"
+    },
+    {
+      "id": "MIRROR",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestClaudeWriterMirrorsExcludedOrdinalsForSurge",
+        "TestClaudeMirrorIsAtomicWithRecordAndReplicas"
       ]
     },
     {
