@@ -2313,3 +2313,36 @@ func TestPhaseGateTerminologyConsistent(t *testing.T) {
 			"to the controller-observed inputs (readyPolicy + the configured in-place gate)")
 	}
 }
+
+// ---------------------------------------------------------------------------
+// F24 (round 8, nit — introduced by this round's rewrite of the RBG Creating
+// rule at 9862499f): the rule conditions `Creating` on "the current target did
+// not add the child" without defining the reference point of "add". During
+// initial bootstrap the current (initial) target is what requires every child,
+// so a literal reading makes bootstrap children target-added (->
+// RoleInstanceSetUpdated), contradicting the Initial-creation -> `Creating`
+// mapping row (:185) and the candidate-reasons row (:307). Context rescues the
+// intent (the next sentence's "a target that adds a new child" is plainly
+// about a target change), but the doc's own standard is that reason selection
+// is derivable from the rule text alone. One clause ("did not newly add", or
+// "added by a target change") removes the ambiguity. Red at 9862499f.
+// ---------------------------------------------------------------------------
+
+func TestCreatingRuleNamesAddReference(t *testing.T) {
+	doc := stripFences(kepDoc(t))
+	if !strings.Contains(doc, "did not add the child") {
+		return // rule reworded or redesigned; guard retires
+	}
+	precise := strings.Contains(doc, "did not newly add") ||
+		strings.Contains(doc, "target change that adds") ||
+		strings.Contains(doc, "a target change added") ||
+		strings.Contains(doc, "added by a target change") ||
+		strings.Contains(doc, "relative to the previous")
+	if !precise {
+		t.Errorf("F24: 'the current target did not add the child' does not define the " +
+			"reference point of 'add' — during initial bootstrap the current target is what " +
+			"requires every child, so a literal reading sends bootstrap to " +
+			"RoleInstanceSetUpdated; anchor 'add' to a target change (e.g. 'did not newly add " +
+			"the child', 'a target change that adds a new child')")
+	}
+}

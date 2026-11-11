@@ -322,6 +322,14 @@
       "match": [
         "TestSingleFailureVsConfirmedBlocker"
       ]
+    },
+    {
+      "id": "F24-creating-add-reference-undefined",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestCreatingRuleNamesAddReference"
+      ]
     }
   ],
   "liveNote": "Docs-only KEP PR: no live layer. Integration replay (markdownlint-cli2 with .github/.markdownlint.json, YAML parsing of kep.yaml and the 3 examples) is recorded in results/markdownlint.txt and embedded as Go guards (TestKepYAMLWellFormed, TestYAMLExamplesParse).",
