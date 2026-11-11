@@ -50,6 +50,7 @@ question is whether the problem exists today.
 | F4 | force-deleted member misses the deletion trigger (missed-window hypothesis) | 2 | **Refuted** — even grace-0 delete is observed; hypothesis withdrawn, regression test kept | scenario D (flipped to contract) |
 | F5 | scale-in removal is not member loss | 1 | Confirmed | `TestFromCreation_ScaleInRemovalNotMemberLoss_Contract` |
 | F6 | Failed pod during in-place update still triggers | 1 | Confirmed | `TestFromCreation_FailedPodDuringInPlaceUpdate_Contract` |
+| F7 | deleting a SUCCEEDED desired member also triggers a rebuild (contradicts the KEP non-goal / "normal completion is not a trigger") | 1 | Confirmed as current behavior (canary) | `TestFromCreation_DeletedSucceededMemberTriggersRebuild_Canary` |
 
 Also verified (no finding): legacy policy behavior unchanged on head (P0 canaries still
 pass; full 28-spec envtest suite passes); webhook/deprecation envtest suites pass;

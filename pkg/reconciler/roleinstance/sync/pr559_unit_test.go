@@ -196,3 +196,24 @@ func TestFromCreation_FailedPodDuringInPlaceUpdate_Contract(t *testing.T) {
 		t.Fatal("FromCreation: Failed pod during in-place update did not trigger recreation")
 	}
 }
+
+// F7 (CANARY): a SUCCEEDED desired member that is being deleted (external
+// delete of a normally-completed pod) DOES trigger a whole-instance rebuild
+// under FromCreation, because the deletion branch does not exclude
+// PodSucceeded — while the doc comment above shouldRecreateInstance still
+// says "Per KEP Non-Goals: Succeeded pods are NOT handled here - they
+// represent normal completion and should not trigger Instance recreation"
+// and the PR's own test matrix calls normal completion a non-trigger.
+// Current behavior asserted; flip if Succeeded is excluded from the
+// deletion trigger.
+func TestFromCreation_DeletedSucceededMemberTriggersRebuild_Canary(t *testing.T) {
+	instance := fromCreationInstance()
+	pod := fromCreationPod("fc-instance-worker-1")
+	pod.Status.Phase = corev1.PodSucceeded
+	now := metav1.Now()
+	pod.DeletionTimestamp = &now
+
+	if !shouldRecreateInstance(instance, []*corev1.Pod{pod}, nil) {
+		t.Fatal("FromCreation: deleting a Succeeded member no longer triggers recreation; canary is stale")
+	}
+}

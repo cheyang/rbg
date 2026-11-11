@@ -41,7 +41,8 @@
     { "id": "F4", "polarity": "canary", "layer": "unit", "match": ["TestFromCreation_MissedDeletionWindow_Canary"] },
     { "id": "F4", "polarity": "contract", "layer": "integration", "match": ["D: force-deleted member still triggers a whole-instance rebuild"] },
     { "id": "F5", "polarity": "contract", "layer": "unit", "match": ["TestFromCreation_ScaleInRemovalNotMemberLoss_Contract"] },
-    { "id": "F6", "polarity": "contract", "layer": "unit", "match": ["TestFromCreation_FailedPodDuringInPlaceUpdate_Contract"] }
+    { "id": "F6", "polarity": "contract", "layer": "unit", "match": ["TestFromCreation_FailedPodDuringInPlaceUpdate_Contract"] },
+    { "id": "F7", "polarity": "canary", "layer": "unit", "match": ["TestFromCreation_DeletedSucceededMemberTriggersRebuild_Canary"] }
   ],
   "liveNote": "L3 (live cluster) not run per this round's instructions (unit + integration only). If run later: with a real node failure, check the controller emits ReCreateInstance within the eviction window and the instance returns to Ready without manual RoleInstance deletion."
 }
