@@ -5,28 +5,28 @@ Reproducible evidence for the findings raised while reviewing
 Profile Injection — **documentation-only**; production code is identical to
 base `3612013e`/`73e05db4`).
 
-**Round 5** (frozen head `b4637b51`; the PR advanced through two commits
-`51f91ca3` + `b4637b51` — the round-6/7 review fixes, +272/−171 on the README
-only). The headline change is a **redesign of the immutability subsystem**:
-webhook-only enforcement (rejection, `failurePolicy: Fail`, from the alpha —
-no warning window), **no in-use finalizer**, **no
-`--disable-profile-immutability` flag**, plus a new Reference Bookkeeping
-section (`status.referenceCount`/`referencedGeneration`/`Frozen` condition).
-Round 4 reviewed `0c51bc0e`; round 3 `d84004a2`; round 2 `7a9827bc`;
-round 1 `12693d02`. Layers run against the code under review:
+**Round 6** (frozen head `31466993`; delta `b4637b51..31466993`, two commits
+`df8c669b` + `31466993` — a full prose-style rewrite of the README, +1055/−960,
+plus 3 lines of kep.yaml). **All seven round-5 open canaries flipped — fixed**
+— and the 12 contract checks that initially failed did so on **wording only**:
+each pinned semantic was verified present in the new text before re-pinning
+(see `results/doc-bites-r6.txt`). All 41 harness findings are green at head
+(`results/reverify-round6.txt`). Round 5 reviewed `b4637b51`; round 4
+`0c51bc0e`; round 3 `d84004a2`; round 2 `7a9827bc`; round 1 `12693d02`.
+Layers run against the code under review:
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
 | 1. Unit | `SidecarBuilder`/`PodReconciler` injection behavior that the KEP documents and pins compatibility against, plus the v1alpha1 conversion premise pin | `go test ./pkg/discovery/ ./pkg/reconciler/ -run 'TestKEP531_Verify' -json` |
-| 1b. Doc | 19 doc-text checks (round 4): 17 CONTRACT (fixed state of prior findings; fail = regression) + 2 CANARY (open wording defects; flip = fixed) | `bash docs/verification/kep-531-profile-injection/scripts/check_doc_contracts.sh [--json]` |
+| 1b. Doc | 40 doc-text checks (round 6): all CONTRACT (fixed state / pinned content; fail = regression) — the last 7 canaries flipped at `31466993` and were inverted | `bash docs/verification/kep-531-profile-injection/scripts/check_doc_contracts.sh [--json]` |
 | 2. Integration | — (skipped: docs-only PR, no runtime change) | — |
 | 3. Live | — (not applicable) | — |
 
 > Test polarity: the **unit** tests and the doc **CONTRACT** checks pass on
 > the current head and MUST keep passing after the KEP implementation lands —
-> a red result is a compatibility break or a doc regression. The doc **CANARY**
-> checks pass *while the defective wording is present* and flip to fail when
-> the author fixes it (then invert the check into a contract).
+> a red result is a compatibility break or a doc regression. No canaries
+> remain: every canary raised r1–r5 has flipped and been inverted into a
+> contract.
 
 ## Problem premise (P0)
 
@@ -61,6 +61,44 @@ Premise evidence (base `3612013e`):
 - Gap 4 (updateStrategy unconsumed): no consumer of
   `ClusterEngineRuntimeProfileSpec.UpdateStrategy` in `pkg/` (grep). The KEP
   does not address it anywhere — see finding F2.
+
+## Summary of results — round 6 (head `31466993`)
+
+Re-verify on the new head (grafted harness, `--layers unit,doc`;
+`results/reverify-round6.txt`, bites `results/doc-bites-r6.txt`):
+
+| finding | class | layer | verdict at `31466993` |
+|---|---|---|---|
+| All round-1..5 contracts (34 findings incl. F3 unit) | fixed | doc/unit | **stay FIXED** — after re-pinning 12 contracts to the round-6 wording (semantics verified present first; the re-pinned checks fail against the round-5 text — bite evidence) |
+| F-RACE-OUTCOME-OVERCLAIM | minor (r5) | doc | **FIXED** — risk table names all three interleaving outcomes incl. the silent legs ("silently consumes the recreated content"; "drifts content on later re-renders … watch warning event as the only signal"); overbroad "never silent miscontent"/"all ending in visible render failure" gone; canary flipped, inverted |
+| F-DELETE-RECREATE-OUTCOME | minor (r5) | doc | **FIXED** — closure claim scoped ("Outside the accepted interleavings…"); CREATE-interception alternative considered and rejected for the GitOps recovery order; dangling-reference silent outcome named in the body and risk table; canary flipped, inverted |
+| F-ANNOTATION-FLIP-DODGE | minor (r5) | doc | **FIXED** — Validation Model: both webhooks intercept CREATE and UPDATE checking the whole object, so the flip "is itself a rejected spec update"; render leg scoped to the webhook-absent window; Test Plan gains the flip admission case; canary flipped, inverted |
+| F-REUPGRADE-WEBHOOK-REINSTALL | minor (r5) | doc | **FIXED** — drill now says the image "cannot reinstall the entry (the controller patches existing webhook configurations and never creates them)"; the configuration is "reapplied from the release artifacts as its own step"; canary flipped, inverted |
+| F-DOWNGRADE-UNSCOPED-SAFETY | minor (r5) | doc | **FIXED** — safety condition is now "references set only `profileName`" (neither new field) + a new downgrade drill for the scenario-4 standalone reference under the old controller; canary flipped, inverted |
+| F-STALE-PR-BODY | minor (r3/r5) | doc (external) | **FIXED** — live `gh pr view` shows the body describing the head design ("deliberately no in-use finalizer and no opt-out flag"); canary flipped, inverted |
+| Q-CERP-NO-ADOPTION | question (r5) | doc | **ADDRESSED** — premise now "rests on the API stage rather than on a field survey" (both served versions alpha → breaking changes without staging); canary flipped, inverted |
+| F-INJECTOR-CHAIN-ATTRIBUTION | nit (r5) | doc | **FIXED** — 2-4 variation attributed to chain composition (worker chains omit sidecar; LWP env injector RIS-only), verified against the `SetInjectors` call sites; pinned (was ledger-only r5) |
+| F-BOOKKEEPING-OLD-CRD-PRUNING | nit (r5) | doc | **FIXED** — Version skew states the tracking status lands with the new CRD; old CRD's bare `type: object` status schema prunes the fields on write (verified against the published CRD); pinned |
+| F-DRIFT-BASELINE-UNOBSERVED-DRAIN | nit (r5) | doc | **FIXED** — drift evidence names "a bypassed write, or a legal edit in a zero-reference window the controller never observed"; pinned |
+| F-CONVERSION-STATUS-PIN | nit (r5) | doc | **FIXED** — conversion round-trip pin extended to the tracking status fields incl. the v1alpha1 `components: []` edge; pinned |
+| F-PROFILENAME-LENGTH-CLAIM | **NEW (pre-existing, fixed r6)** | doc | old text claimed `profileName` "required, `MinLength=1`" — the published schemas carry no MinLength marker (`api/workloads/v1alpha2/rolebasedgroup_types.go:467`, no `+kubebuilder:validation:MinLength`); unnoticed r1–r5, corrected by the rewrite; pinned |
+| F-R6-NEW-CONTENT | regression pin (r6) | doc | **PINS VERIFIED ADDITIONS** — envFrom priority rules (matches Kubernetes behavior), volumeMount-without-volume render error, `/command/0` args-only/bare-target precondition, upgrade order swap to controller-first-CRD-second (avoids the documented dangerous row), controller-gen no-field-level `deprecated: true` (verified against controller-tools v0.17.2, the repo's pinned version), CERP webhook entry as release artifact (`config/webhook/manifests.yaml` exists) |
+| kep.yaml `feature-gates: []` + `disable-supported: true` | consistency | — | consistent with the body ("no feature gates and no opt-out flag"; "Can the feature be disabled? Yes, but not for free") |
+
+Round-6 delta review notes (the rewrite claims "without semantic loss" —
+checked via full word-diff, every hunk read):
+
+- The rewrite is overwhelmingly editorial (em-dash removal, sentence
+  tightening); the 12 contract failures were wording re-pins, semantics
+  intact in every case.
+- Substantive additions all verified correct against the repo (see
+  F-R6-NEW-CONTENT above) — no new false claims found.
+- The upgrade order changed from "CRD first, controller second" to
+  "controller first, CRD second" with an explicit rationale (never traverse
+  the dangerous old-controller/new-CRD row on the way up); internally
+  consistent with the matrix, drills, and version-skew paragraph.
+- CI at the new head: workflow runs are `action_required` (fork-PR approval
+  gate) — not run yet, no failure to attribute.
 
 ## Summary of results — round 5 (head `b4637b51`)
 

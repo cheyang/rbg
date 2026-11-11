@@ -1,0 +1,61 @@
+re-verify: manifest = docs/verification/kep-531-profile-injection/verify-manifest.json
+re-verify: resolving PR head via 'git fetch https://github.com/sgl-project/rbg.git pull/548/head' (machine-independent)
+re-verify: current head = 31466993fc4e38670003d40a36182fb0bdca1ae8
+re-verify: last-reviewed = b4637b5113796930a72218ae02275f042d83ab52  (review delta = b4637b5113796930a72218ae02275f042d83ab52..31466993fc4e38670003d40a36182fb0bdca1ae8)
+re-verify: fixed-ref=31466993fc4e38670003d40a36182fb0bdca1ae8  harness-from=verify/kep-531-profile-injection-claude
+re-verify: running layer 'unit' (gotest)
+re-verify: running layer 'doc' (gotest)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+F-ENV-CONFLICT contract  doc          FIXED          pass=1 fail=0 miss=0
+F-COVERAGE-UPDATESTRATEGY contract  doc          FIXED          pass=1 fail=0 miss=0
+F-CAPS-MAXITEMS contract  doc          FIXED          pass=1 fail=0 miss=0
+F-COMPONENT-VOCAB contract  doc          FIXED          pass=1 fail=0 miss=0
+F-ENABLEMENT-ROLLBACK contract  doc          FIXED          pass=1 fail=0 miss=0
+F-CONVERSION-ROUNDTRIP contract  doc          FIXED          pass=1 fail=0 miss=0
+F-UNKNOWN-TARGET-PROSE contract  doc          FIXED          pass=1 fail=0 miss=0
+F-COPILOT-SECRET-CHANNEL contract  doc          FIXED          pass=1 fail=0 miss=0
+F-COPILOT-VOLUMEMOUNT-EQUALITY contract  doc          FIXED          pass=1 fail=0 miss=0
+F-INFERENCE-KIT-404 contract  doc          FIXED          pass=1 fail=0 miss=0
+F-MOUNTPATH-MECHANISM contract  doc          FIXED          pass=1 fail=0 miss=0
+F-PODSECURITY-STAGE contract  doc          FIXED          pass=1 fail=0 miss=0
+F-ENV-VAR-DIRECTION contract  doc          FIXED          pass=1 fail=0 miss=0
+F-INJECTOR-COUNT-WORDING contract  doc          FIXED          pass=1 fail=0 miss=0
+F-STAGE3-CHECK-TIMING contract  doc          FIXED          pass=1 fail=0 miss=0
+F-PROFILE-EVOLUTION-TEST contract  doc          FIXED          pass=1 fail=0 miss=0
+F3     contract  unit         FIXED          pass=3 fail=0 miss=0
+F-SSA-ENV-PREMISE contract  doc          FIXED          pass=1 fail=0 miss=0
+F-GRADUATION-EVENT-INVENTORY contract  doc          FIXED          pass=1 fail=0 miss=0
+F-ROLE-INSERT-ORDER contract  doc          FIXED          pass=1 fail=0 miss=0
+F-V1ALPHA1-CEL-EMPTY-COMPONENTS contract  doc          FIXED          pass=1 fail=0 miss=0
+F-DEPRECATED-PATH-MECHANISM contract  doc          FIXED          pass=1 fail=0 miss=0
+F-WEBHOOK-ROLLBACK contract  doc          FIXED          pass=1 fail=0 miss=0
+F-CAPABILITY-FORM-REGEX contract  doc          FIXED          pass=1 fail=0 miss=0
+F-PROFILE-DEFAULT-GEOMETRY contract  doc          FIXED          pass=1 fail=0 miss=0
+F-SNAPSHOT-ENV-SOURCE contract  doc          FIXED          pass=1 fail=0 miss=0
+F-PODRECONCILER-TERMINOLOGY contract  doc          FIXED          pass=1 fail=0 miss=0
+F-FINALIZER-REMOVAL-OVERCLAIM contract  doc          FIXED          pass=1 fail=0 miss=0
+F-RACE-OUTCOME-OVERCLAIM contract  doc          FIXED          pass=1 fail=0 miss=0
+F-DELETE-RECREATE-OUTCOME contract  doc          FIXED          pass=1 fail=0 miss=0
+F-ANNOTATION-FLIP-DODGE contract  doc          FIXED          pass=1 fail=0 miss=0
+F-REUPGRADE-WEBHOOK-REINSTALL contract  doc          FIXED          pass=1 fail=0 miss=0
+F-DOWNGRADE-UNSCOPED-SAFETY contract  doc          FIXED          pass=1 fail=0 miss=0
+F-STALE-PR-BODY contract  doc          FIXED          pass=1 fail=0 miss=0
+Q-CERP-NO-ADOPTION contract  doc          FIXED          pass=1 fail=0 miss=0
+F-INJECTOR-CHAIN-ATTRIBUTION contract  doc          FIXED          pass=1 fail=0 miss=0
+F-BOOKKEEPING-OLD-CRD-PRUNING contract  doc          FIXED          pass=1 fail=0 miss=0
+F-DRIFT-BASELINE-UNOBSERVED-DRAIN contract  doc          FIXED          pass=1 fail=0 miss=0
+F-CONVERSION-STATUS-PIN contract  doc          FIXED          pass=1 fail=0 miss=0
+F-PROFILENAME-LENGTH-CLAIM contract  doc          FIXED          pass=1 fail=0 miss=0
+F-R6-NEW-CONTENT contract  doc          FIXED          pass=1 fail=0 miss=0
+
+Live layer (manual): L3 not applicable: docs-only PR; no runtime behavior change to observe on a cluster. The KEP's own Test Plan specifies the envtest/e2e matrix for the follow-up implementation PRs — this harness is the regression suite those PRs must keep green.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/kep-531-profile-injection/results/reverify
+
+Review delta this round: b4637b5113796930a72218ae02275f042d83ab52..31466993fc4e38670003d40a36182fb0bdca1ae8
+After reviewing that delta, advance the marker for the next round:
+  echo 31466993fc4e38670003d40a36182fb0bdca1ae8 > docs/verification/kep-531-profile-injection/.last-reviewed && git add docs/verification/kep-531-profile-injection/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: all findings fixed.
