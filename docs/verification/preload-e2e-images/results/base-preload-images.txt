@@ -1,0 +1,9 @@
+base release-test.yml + setup-e2e-cluster action pre-load image set (merge-base 73e05db):
+"registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0"
+"registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest"
+
+"registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0"
+"registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest"
+"registry.k8s.io/lws/lws:${{ inputs.lws_version }}"
+
+retry behavior on base: release-test.yml inline steps had NO retry loop; composite action had 6 attempts x 15s.

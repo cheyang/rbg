@@ -1,0 +1,28 @@
+mode: aliyun
+== pulled ==
+busybox:1.36
+python:3.11-slim
+registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0
+registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest
+registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.10
+== tagged (src -> dst) ==
+TAG registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest -> nginx:latest
+TAG registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest -> nginx:1.25
+TAG registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.10 -> registry.k8s.io/pause:3.10
+== loaded into kind (docker image save targets) ==
+busybox:1.36
+nginx:1.25
+nginx:latest
+python:3.11-slim
+registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0
+registry.k8s.io/pause:3.10
+== referenced by e2e pod specs ==
+busybox:1.36
+nginx:1.25
+nginx:latest
+nonexistent-registry.example.com/fake-image:v999
+python:3.11-slim
+registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0
+registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest
+registry.invalid/rbg/missing:issue-486
+registry.k8s.io/pause:3.10

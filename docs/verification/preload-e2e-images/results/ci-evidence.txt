@@ -1,0 +1,12 @@
+== CI evidence (GitHub API, 2026-11-12) ==
+PR head ec9c88cf e2e-test.yml run 43031453847: 'E2E rollout' job 130561081175 FAILED (all other jobs incl. manifest/volcano/sp/deprecated passed).
+Failing specs: v1alpha2 component ordering (startAfter/deleteAfter), rbg_v2_expect.go:68, 'Timed out after 150.001s', reason 'role prefill not ready: readyReplicas=0' and event 'FailedReconcileWorkload ... RoleInstanceSet not found' — a controller reconcile flake; no ImagePullBackOff/ErrImagePull anywhere in the job log; images present, pods Created/Started.
+
+Evidence for F1 (runtime Hangzhou pull on head):
+  'kubectl get events' in the same job shows:
+Container image "registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest" already present on machine
+Container image "registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest" already present on machine
+Container image "registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest" already present on machine
+  (this image is NOT in the docker.io-mode pre-load set, so it reached the node via a kubelet runtime pull from cn-hangzhou during the suite)
+
+Premise evidence: run 42213206716 (Release Test, base head 73e05db): job e2e-test-helm run_attempt=2, attempt 1 conclusion=failure, attempt 2 success — matches the PR's quoted pre-load step failure.

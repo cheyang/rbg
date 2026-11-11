@@ -1,0 +1,21 @@
+PULL registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest
+TAG registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest -> nginx:latest
+SAVE nginx:latest
+KINDLOAD load image-archive /tmp/tmp.lsj9EcX07u/e2e-preload.7sEkxC --name rbgs-e2e
+PULL registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest
+TAG registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest -> nginx:1.25
+SAVE nginx:1.25
+KINDLOAD load image-archive /tmp/tmp.lsj9EcX07u/e2e-preload.7sEkxC --name rbgs-e2e
+PULL busybox:1.36
+SAVE busybox:1.36
+KINDLOAD load image-archive /tmp/tmp.lsj9EcX07u/e2e-preload.7sEkxC --name rbgs-e2e
+PULL python:3.11-slim
+SAVE python:3.11-slim
+KINDLOAD load image-archive /tmp/tmp.lsj9EcX07u/e2e-preload.7sEkxC --name rbgs-e2e
+PULL registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.10
+TAG registry.cn-hangzhou.aliyuncs.com/google_containers/pause:3.10 -> registry.k8s.io/pause:3.10
+SAVE registry.k8s.io/pause:3.10
+KINDLOAD load image-archive /tmp/tmp.lsj9EcX07u/e2e-preload.7sEkxC --name rbgs-e2e
+PULL registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0
+SAVE registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0
+KINDLOAD load image-archive /tmp/tmp.lsj9EcX07u/e2e-preload.7sEkxC --name rbgs-e2e

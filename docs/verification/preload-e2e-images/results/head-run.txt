@@ -1,0 +1,11 @@
+{"Test":"F1_DefaultImage_loaded_in_docker.io_mode","Action":"fail"}
+{"Test":"F2_patio_runtime_loaded_in_docker.io_mode","Action":"fail"}
+{"Test":"G1_all_referenced_aliyun_images_loaded_docker.io_mode","Action":"fail"}
+{"Test":"P0fix_no_aliyun_pull_in_preload_step","Action":"pass"}
+{"Test":"F1_DefaultImage_loaded_in_aliyun_mode","Action":"fail"}
+{"Test":"F2_patio_runtime_loaded_in_aliyun_mode","Action":"pass"}
+{"Test":"G1_all_referenced_aliyun_images_loaded_aliyun_mode","Action":"fail"}
+{"Test":"F5a_invalid_registry_rejected","Action":"pass"}
+{"Test":"F5b_retry_exhaustion_exits_1","Action":"pass"}
+{"Test":"F3_aliyun_mode_retag_aliases_versions","Action":"pass"}
+{"Test":"F4_backoff_sleeps_after_final_attempt","Action":"pass"}

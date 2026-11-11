@@ -1,0 +1,5 @@
+== bites-check (2026-11-12) ==
+proposed F1 fix (docker.io-mode re-tag nginx:latest -> registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest) applied to hack/preload-e2e-images.sh:
+  F1_DefaultImage_loaded_in_docker.io_mode: fail -> pass  (harness bites)
+  F2_patio_runtime_loaded_in_docker.io_mode: fail -> fail  (no docker.io source exists; author decision required)
+  production code then reverted; git diff empty.

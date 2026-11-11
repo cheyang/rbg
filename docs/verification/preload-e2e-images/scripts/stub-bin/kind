@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Stub `kind` for the preload-e2e-images verification harness.
+# Records `kind load image-archive <archive> --name <cluster>` invocations.
+set -uo pipefail
+LOG="${STUB_LOG:?STUB_LOG must be set}"
+if [ "$1" = "load" ]; then
+  printf 'KINDLOAD %s\n' "$*" >>"$LOG"
+  exit 0
+fi
+echo "stub kind: unsupported command '$*'" >&2
+exit 1

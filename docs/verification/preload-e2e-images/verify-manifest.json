@@ -1,0 +1,35 @@
+{
+  "topic": "preload-e2e-images",
+  "pr": "https://github.com/sgl-project/rbg/pull/567",
+  "harnessPaths": [
+    "docs/verification/preload-e2e-images"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Release Test run 42213206716 failed in e2e-test-helm at the 'Pre-load e2e test images' step: 'docker pull registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest -> failed to authorize: ... connection reset by peer'; GitHub-hosted (overseas) runners only reach the Hangzhou registry intermittently and the release-test.yml inline copies had no retry.",
+    "reportedComponent": ".github/workflows/release-test.yml pre-load steps (unconditional cn-hangzhou pulls)",
+    "patchedComponent": "hack/preload-e2e-images.sh + release-test.yml + setup-e2e-cluster action",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "Run 42213206716 job e2e-test-helm failed on attempt 1 and only passed after a manual re-run (jobs API shows run_attempt=2, attempt 1 conclusion=failure); base release-test.yml performs 'docker pull' of both cn-hangzhou images with no retry (results/base-preload-images.txt).",
+    "match": ["P0fix_no_aliyun_pull_in_preload_step"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "bash docs/verification/preload-e2e-images/scripts/run-all.sh"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["F1_DefaultImage_loaded_in_docker.io_mode"] },
+    { "id": "F2", "polarity": "contract", "layer": "unit", "match": ["F2_patio_runtime_loaded_in_docker.io_mode"] },
+    { "id": "G1", "polarity": "contract", "layer": "unit", "match": ["G1_all_referenced_aliyun_images_loaded_docker.io_mode"] },
+    { "id": "P0FIX", "polarity": "contract", "layer": "unit", "match": ["P0fix_no_aliyun_pull_in_preload_step"] },
+    { "id": "F3", "polarity": "canary", "layer": "unit", "match": ["F3_aliyun_mode_retag_aliases_versions"] },
+    { "id": "F4", "polarity": "canary", "layer": "unit", "match": ["F4_backoff_sleeps_after_final_attempt"] },
+    { "id": "F5", "polarity": "contract", "layer": "unit", "match": ["F5a_invalid_registry_rejected", "F5b_retry_exhaustion_exits_1"] }
+  ],
+  "liveNote": "L3 (live, not run this round): trigger a /release-test run on a GitHub-hosted runner with the Hangzhou registry degraded and observe whether e2e pods referencing registry.cn-hangzhou.aliyuncs.com/acs-sample/nginx:latest or registry-cn-hangzhou.ack.aliyuncs.com/dev/patio-runtime:v0.2.0 log 'Successfully pulled' (runtime pull from Hangzhou) or sit in ImagePullBackOff. In the head CI run 43031453847 (E2E rollout job) the events already show those pods pulling acs-sample/nginx at test runtime ('already present on machine' only after an in-suite pull), which is the observable signal for F1."
+}

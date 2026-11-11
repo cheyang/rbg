@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Stub `docker` for the preload-e2e-images verification harness.
+# Records every invocation to $STUB_LOG (one tag per line) so the audit can
+# reconstruct exactly which images the production script pulls / tags / saves.
+# A pull fails (exit 1) when the image matches $STUB_FAIL_PATTERN (ERE).
+set -uo pipefail
+LOG="${STUB_LOG:?STUB_LOG must be set}"
+FAIL_RE="${STUB_FAIL_PATTERN:-}"
+cmd="$1"; shift
+case "$cmd" in
+  pull)
+    image="$1"
+    printf 'PULL %s\n' "$image" >>"$LOG"
+    if [ -n "$FAIL_RE" ] && printf '%s' "$image" | grep -Eq "$FAIL_RE"; then
+      echo "stub docker: simulated pull failure for $image" >&2
+      exit 1
+    fi
+    exit 0
+    ;;
+  tag)
+    src="$1"; dst="$2"
+    printf 'TAG %s -> %s\n' "$src" "$dst" >>"$LOG"
+    exit 0
+    ;;
+  image)
+    sub="$1"; shift
+    if [ "$sub" = "save" ]; then
+      # docker image save --platform P --output F <image...> ; image is the last arg
+      image="${!#}"
+      printf 'SAVE %s\n' "$image" >>"$LOG"
+      exit 0
+    fi
+    echo "stub docker: unsupported 'image $sub'" >&2; exit 1
+    ;;
+  *)
+    echo "stub docker: unsupported command '$cmd'" >&2; exit 1
+    ;;
+esac
