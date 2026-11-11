@@ -29,21 +29,21 @@ import (
 	workloadsv1alpha2 "sigs.k8s.io/rbgs/api/workloads/v1alpha2"
 )
 
-// F3 canary (documents current behavior; flips red once surge allocation
-// consults the role's exclusion input): with committed members [0,2,4] (record
-// "1,3") and maxSurge=1, a rollout places the transient surge instance at
-// ordinal 5 — even when the role's excluded-ordinals input is "1,3,5", i.e. the
-// user asked for ordinal 5 never to be used. The child RIS never carries the
-// exclusion input (filteredRoleAnnotations strips it) and the committed record
-// encodes only holes below the last member, so computeTopology cannot see E.
-// Verified still present on head f3d44874 after the ce03814f surge rework:
-// materializeSurge allocates via skips.Next over the committed record only.
-func TestVerifyF3SurgeLandsOnUserExcludedOrdinal(t *testing.T) {
+// F3 contract (was a canary on heads <= f3d44874; the fix in 5fc8c972 mirrors
+// the role's exclusion input onto the child RIS and consults it in
+// computeTopology via nextSurgeOrdinal): with committed members [0,2,4]
+// (record "1,3"), mirrored exclusion input "1,3,5" on the child, and
+// maxSurge=1, a rollout must NOT place the transient surge instance on
+// user-excluded ordinal 5; it must skip to 6.
+func TestVerifyF3SurgeSkipsMirroredExclusions(t *testing.T) {
 	userExclusions, err := ordinals.Parse("1,3,5")
 	require.NoError(t, err)
 
 	h := newRollbackTestHarness(t, "verify-f3-surge", 3, 0, 1)
-	h.set.Annotations = map[string]string{constants.CommittedSkipOrdinalsAnnotationKey: "1,3"}
+	h.set.Annotations = map[string]string{
+		constants.CommittedSkipOrdinalsAnnotationKey: "1,3",
+		constants.ExcludedOrdinalsAnnotationKey:      "1,3,5", // mirrored by the conditional writer
+	}
 	instances := []*workloadsv1alpha2.RoleInstance{
 		h.instance(0, h.current.Name, true),
 		h.instance(2, h.current.Name, true),
@@ -54,8 +54,29 @@ func TestVerifyF3SurgeLandsOnUserExcludedOrdinal(t *testing.T) {
 	require.Equal(t, 1, topo.activeSurge, "rollout with 3 healthy old base members and maxUnavailable=0 should surge")
 
 	surgeOrdinal := topo.ordinal(3)
-	t.Logf("committed members [0,2,4], user excluded %q, surge ordinal = %d", "1,3,5", surgeOrdinal)
-	require.True(t, userExclusions.Contains(surgeOrdinal),
-		"F3 appears fixed: surge ordinal %d no longer falls on a user-excluded ordinal; invert this canary", surgeOrdinal)
-	require.Equal(t, 5, surgeOrdinal)
+	require.False(t, userExclusions.Contains(surgeOrdinal),
+		"surge ordinal %d must not fall on a user-excluded ordinal", surgeOrdinal)
+	require.Equal(t, 6, surgeOrdinal)
+}
+
+// F3 characterization of the residual upgrade window: a child RIS last written
+// by a pre-mirror controller carries the committed record but no mirrored
+// exclusion input, so surge allocation can only consult the record and still
+// picks ordinal 5. The conditional writer mirrors E on its first sync after
+// upgrade, so this shape is transient; the test pins the documented behavior
+// so any change is deliberate.
+func TestVerifyF3LegacyChildWithoutMirror(t *testing.T) {
+	h := newRollbackTestHarness(t, "verify-f3-legacy", 3, 0, 1)
+	h.set.Annotations = map[string]string{
+		constants.CommittedSkipOrdinalsAnnotationKey: "1,3",
+	}
+	instances := []*workloadsv1alpha2.RoleInstance{
+		h.instance(0, h.current.Name, true),
+		h.instance(2, h.current.Name, true),
+		h.instance(4, h.current.Name, true),
+	}
+	topo, err := computeTopology(h.set, instances, h.current.Name, h.intermediate.Name, false)
+	require.NoError(t, err)
+	require.Equal(t, 1, topo.activeSurge)
+	require.Equal(t, 5, topo.ordinal(3), "without the mirrored input the allocator can only consult the committed record")
 }

@@ -33,21 +33,22 @@
   "findings": [
     {
       "id": "F2",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerifyF2FailedScaleConditionsReplacedOnInvalidRecord"
+        "TestVerifyF2FailedScaleConditionsPreservedOnInvalidRecord"
       ],
-      "note": "Documents current replace semantics: an invalid committed record causes validateCommittedMembership to drop ALL FailedScale conditions (any reason) and install InvalidCommittedOrdinals. If the authors scope the filter to the InvalidCommittedOrdinals reason (the proposed fix), this canary flips red and must be inverted to a contract test."
+      "note": "FIXED on 2c347c47 (def9bf63 scopes the drop predicate to reason == InvalidCommittedOrdinals). Canary flipped red on the fixed head and was inverted to this contract test: unrelated FailedScale conditions survive an invalid-record episode and its repair; only the InvalidCommittedOrdinals entry clears. Round-3 re-verify: unit layer pass on 2c347c47, fail on f3d44874 (bites check)."
     },
     {
       "id": "F3",
-      "polarity": "canary",
+      "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerifyF3SurgeLandsOnUserExcludedOrdinal"
+        "TestVerifyF3SurgeSkipsMirroredExclusions",
+        "TestVerifyF3LegacyChildWithoutMirror"
       ],
-      "note": "Documents current behavior: with committed members [0,2,4] (record '1,3') and maxSurge=1, surge lands on ordinal 5 even when the role exclusion input is '1,3,5' (surge allocation sees only the committed record, never E). If the authors make surge allocation consult the exclusion input, this canary flips red and must be inverted to a contract test."
+      "note": "FIXED on 2c347c47 (5fc8c972 mirrors E onto the child RIS for allocation only and nextSurgeOrdinal jumps both committed gaps and exclusion ranges). The round-2 canary kept passing after the fix because its setup modeled the pre-mirror child shape (record only, no E) which the conditional writer no longer produces; inverted per harness-update rules into a contract test on the mirrored shape (surge skips E, lands on 6), plus a characterization test pinning the transient pre-mirror upgrade window (no mirror -> allocator consults only the record). Round-3 re-verify: both pass on 2c347c47; the contract test fails on f3d44874 (bites check)."
     }
   ],
   "liveNote": "L3 skipped per debate policy. F1 (CI lint gate red on PR-added code: gocyclo 45>30 on reconcileSelectiveMembership, goconst on InvalidCommittedOrdinals x4, prealloc in two new test files) is evidenced in results/lint-repro.txt and reproduced by 'make lint' / CI job 124766651800; it is a CI gate, not a runtime contract.",

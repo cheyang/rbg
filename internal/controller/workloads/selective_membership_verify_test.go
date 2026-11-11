@@ -37,12 +37,14 @@ import (
 	workloadsv1alpha2 "sigs.k8s.io/rbgs/api/workloads/v1alpha2"
 )
 
-// F2 canary (documents current semantics; flips if the authors scope the
-// filter): when committed-membership validation fails,
-// validateCommittedMembership drops EVERY pre-existing FailedScale condition —
-// including ones with an unrelated reason written by another flow — and
-// replaces them with the single InvalidCommittedOrdinals condition.
-func TestVerifyF2FailedScaleConditionsReplacedOnInvalidRecord(t *testing.T) {
+// F2 contract (was a canary on heads <= f3d44874; the fix in def9bf63 scopes
+// the drop predicate to reason == InvalidCommittedOrdinals and this test pins
+// the fixed semantics): when committed-membership validation fails,
+// validateCommittedMembership must preserve pre-existing FailedScale
+// conditions with unrelated reasons, report InvalidCommittedOrdinals alongside
+// them, and remove only the InvalidCommittedOrdinals entry once the record is
+// repaired.
+func TestVerifyF2FailedScaleConditionsPreservedOnInvalidRecord(t *testing.T) {
 	ctx := context.Background()
 	scheme := newTestScheme()
 	set := &workloadsv1alpha2.RoleInstanceSet{
@@ -67,27 +69,36 @@ func TestVerifyF2FailedScaleConditionsReplacedOnInvalidRecord(t *testing.T) {
 	require.Error(t, err)
 	actual := &workloadsv1alpha2.RoleInstanceSet{}
 	require.NoError(t, c.Get(ctx, client.ObjectKeyFromObject(set), actual))
-	// CANARY: current behavior deletes the unrelated FailedScale/ScaleOutFailed
-	// record. If the authors scope the filter to reason == InvalidCommittedOrdinals
-	// (the proposed fix), the two assertions below flip and this test must be
-	// inverted to a contract test.
+	var unrelated, reported, progressing bool
 	for _, cond := range actual.Status.Conditions {
-		require.NotEqual(t, "ScaleOutFailed", cond.Reason,
-			"unrelated FailedScale condition survived: replace semantics changed")
-	}
-	var found bool
-	for _, cond := range actual.Status.Conditions {
-		if cond.Type == workloadsv1alpha2.RoleInstanceSetConditionFailedScale && cond.Reason == "InvalidCommittedOrdinals" {
-			found = true
+		if cond.Type == workloadsv1alpha2.RoleInstanceSetConditionFailedScale && cond.Reason == "ScaleOutFailed" {
+			unrelated = true
 		}
-	}
-	require.True(t, found, "InvalidCommittedOrdinals condition must be reported")
-	// Unrelated condition TYPES are preserved; only FailedScale entries are replaced.
-	var progressing bool
-	for _, cond := range actual.Status.Conditions {
+		if cond.Type == workloadsv1alpha2.RoleInstanceSetConditionFailedScale && cond.Reason == "InvalidCommittedOrdinals" {
+			reported = true
+		}
 		if cond.Type == "Progressing" {
 			progressing = true
 		}
 	}
+	require.True(t, unrelated, "unrelated FailedScale condition must survive an invalid-record episode")
+	require.True(t, reported, "InvalidCommittedOrdinals condition must be reported")
 	require.True(t, progressing, "non-FailedScale conditions must be preserved")
+
+	// Repair the record: only the InvalidCommittedOrdinals condition clears.
+	actual.Annotations[constants.CommittedSkipOrdinalsAnnotationKey] = "1"
+	require.NoError(t, c.Update(ctx, actual))
+	require.NoError(t, c.Get(ctx, client.ObjectKeyFromObject(set), actual))
+	require.NoError(t, r.validateCommittedMembership(ctx, actual))
+	require.NoError(t, c.Get(ctx, client.ObjectKeyFromObject(set), actual))
+	for _, cond := range actual.Status.Conditions {
+		require.NotEqual(t, "InvalidCommittedOrdinals", cond.Reason, "repaired record must clear the validation condition")
+	}
+	var stillThere bool
+	for _, cond := range actual.Status.Conditions {
+		if cond.Type == workloadsv1alpha2.RoleInstanceSetConditionFailedScale && cond.Reason == "ScaleOutFailed" {
+			stillThere = true
+		}
+	}
+	require.True(t, stillThere, "genuine failure history must survive the repair")
 }
