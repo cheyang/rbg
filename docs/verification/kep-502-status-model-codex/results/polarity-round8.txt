@@ -1,0 +1,16 @@
+Round-8 polarity matrix (harness c1faf015 + F24 guard; run 2026-11-12).
+
+Guard (contract polarity)                  @05807351 (prev)   @9862499f (head)
+F22-own-crop TestOwnCROperationErrorsClassified        STILL-BROKEN(red)  FIXED(green)
+C4528984285  TestWaitingForGangSourcedFromRuntimeState STILL-BROKEN(red)  FIXED(green)
+C4528984415  TestRestartAmbiguityResolved              STILL-BROKEN(red)  FIXED(green)
+C4528984469  TestSingleFailureVsConfirmedBlocker       STILL-BROKEN(red)  FIXED(green)
+F23          TestPhaseGateTerminologyConsistent        STILL-BROKEN(red)  STILL-BROKEN(red, designed-open)
+F24          TestCreatingRuleNamesAddReference         n/a (rule absent)  STILL-BROKEN(red, designed-open)
+
+Bite check: F24 guard flips green at 9862499f with the one-word fix
+"did not add" -> "did not newly add" (scratch worktree, reverted; production
+docs untouched). Red@05807351 for the four fixed items is the polarity proof
+(raw: results/reverify-previous-05807351.txt, results/reverify/reverify log).
+The 9 carried designed-open guards (F13/F16/F18/F19/F20/F21/F22-ris/Q5/Q6)
+remain red at head; the 23 fixed guards remain green at head.

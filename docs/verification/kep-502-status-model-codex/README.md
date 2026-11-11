@@ -441,3 +441,47 @@ Suite at head: 34 pass / 9 intentional open-finding reds (F13, F16, F18, F19,
 F20, F21, F22, Q5, Q6) — results/unit-head-05807351.txt; polarity matrix in
 results/polarity-round7.txt; markdownlint replay 0 issues
 (results/markdownlint-head-05807351.txt).
+
+## Round 8 — revision 9862499f (incremental, 2026-11-12)
+
+Delta 05807351..9862499f (1 commit, docs-only, +9/-7): a targeted fix round —
+re-sources `WaitingForGang` from runtime gang-scheduling state (PodGroup phase /
+member scheduling status) instead of the `GangConfigured` condition and defines
+`GangConfigured` as configuration-compatibility-only (:169, :174, :532);
+prescribes own-CR-operation error reasons one way ("classifies its own
+CR-operation errors with the same rules … `UnclassifiedBlocker` reserved for
+errors whose family cannot be determined", :173 + :338); resolves the
+post-restart establishment ambiguity (durable evidence -> `Recovering`, else
+`Creating` with a message note, :217-218 + test bullet :507); and scopes the
+events bullet to a single failure vs a confirmed blocker (:498).
+
+Fixed / resolved by the delta (guard differential; raw:
+results/reverify-previous-05807351.txt + results/reverify-head-9862499f.txt;
+polarity matrix results/polarity-round8.txt):
+
+| finding | severity | status @9862499f | evidence |
+| --- | --- | --- | --- |
+| F22-own-crop-blocker-reason-contradiction | minor | FIXED | New guard `TestOwnCROperationErrorsClassified` red@05807351 / green@head: :173, :171, and :338 now agree — same classification rules, `UnclassifiedBlocker` only when the family cannot be determined. |
+| C4528984285-gangconfigured-gang-wait (Copilot advisory) | nit | FIXED | New guard `TestWaitingForGangSourcedFromRuntimeState` red@05807351 / green@head: waiting observation is runtime gang state; "It is never used as the waiting observation and never implies whether the gang is waiting" (:174). Code claim verified accurate: `setGangConfiguredCondition` (rolebasedgroup_controller.go:848-895) sets True on satisfiable config regardless of Pod scheduling, False=`IncompatibleGangConfig`, absent when gang disabled. |
+| C4528984415-restart-establishment-evidence (Copilot advisory) | nit | FIXED | New guard `TestRestartAmbiguityResolved` red@05807351 / green@head: `Recovering` requires durable evidence of prior establishment (:217); restart-ambiguous case falls back to `Creating` with a message note (:218); zero-replica ambiguity covered in the restart test bullet (:507). |
+| C4528984469-events-vs-blocker-distinction (Copilot advisory) | nit | FIXED | New guard `TestSingleFailureVsConfirmedBlocker` red@05807351 / green@head: a single failure "does not by itself" change the aggregated reason; "A confirmed current blocker changes the reason through the documented classification and propagation rules" (:498). |
+
+New finding introduced by this delta:
+
+| finding | severity | status | evidence |
+| --- | --- | --- | --- |
+| F24-creating-add-reference-undefined | nit | OPEN | New guard `TestCreatingRuleNamesAddReference` red@head; bite check: one-word fix ("did not newly add") flips it green at 9862499f (scratch worktree, reverted). The rewritten rule (:217) conditions `Creating` on "the current target did not add the child" without defining the reference point of "add" — during initial bootstrap the current target is what requires every child, so a literal reading collides with the Initial-creation -> `Creating` mapping (:185). |
+
+Still open (unchanged by the delta; guards red at head as designed): F13, F16,
+F17 (PR body re-fetched 2026-11-12 — still promises persisted phase transitions
+for RBG/RIS/RI and "Accepted / Progressing / Ready" semantics, both superseded),
+F18, F19 (RIS boundary :340 still existential; note the RBG analog moved from
+collective to evidence-based at :217 — the mismatch F19 tracks persists), F20,
+F21, F22-ris-readiness (:338 sentence unchanged), F23 (:432 leftover unchanged;
+new guard `TestPhaseGateTerminologyConsistent` red@05807351 / red@head), Q5, Q6.
+
+Suite at head: 27 FIXED / 11 intentional open-finding reds (F13, F16, F18, F19,
+F20, F21, F22-ris, F23, F24, Q5, Q6) — results/reverify-head-9862499f.txt;
+markdownlint replay 0 issues (results/markdownlint-head-9862499f.txt);
+kep.yaml parses (502 / provisional). CI at head 9862499f: 9 SUCCESS / 6 SKIPPED
+(e2e groups legitimately skip on the docs-only diff), observed live 2026-11-12.
