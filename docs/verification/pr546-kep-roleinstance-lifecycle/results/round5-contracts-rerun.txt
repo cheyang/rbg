@@ -1,4 +1,4 @@
-== Round-5 contracts on /tmp/tmp.SbJ5NHuO21/pr546-reverify ==
+== Round-5 contracts on /tmp/tmp.baXrCz8FrZ/pr546-reverify ==
 PASS  R5-OLDNEW-COEXIST [EN] (required present: The new protocol coexists with the legacy RoleInstanceSet lifecycle protocol at the API level, but admission prevents both from being active on the same RIS)
 PASS  R5-OLDNEW-COEXIST [EN] (required present: Admission rejects a Role/RIS combination in which the new lifecycle protocol and a legacy user-configured RIS lifecycle are both non-empty)
 PASS  R5-OLDNEW-COEXIST [EN] (required present: the legacy protocol is executed by the RIS controller, while the new protocol is executed by the RI controller)
