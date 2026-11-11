@@ -145,7 +145,14 @@ func TestKEP531_S6_ProfileEditsDoNotPropagate(t *testing.T) {
 	if strings.Contains(ctrl, "ClusterEngineRuntimeProfile") {
 		t.Error("RBG controller now references CERP — re-check the KEP's missing updateStrategy/propagation discussion")
 	}
-	// The only non-generated production consumer of CERP remains the sidecar builder.
+	// The only non-generated production consumer of CERP spec content remains the
+	// sidecar builder. Base-move note (fd160cc9, PR #524): cmd/rbgs/main.go gained
+	// a second reference — the v1alpha1 CERP *deprecation* webhook registration
+	// (warning-only admission, failurePolicy: Ignore, v1alpha1 CREATE/UPDATE only,
+	// config/webhook/manifests.yaml) — which is neither a controller watch nor a
+	// spec consumer, so the pinned premises (no CERP-driven re-render,
+	// updateStrategy unconsumed) still hold. Any OTHER new consumer is a real
+	// premise change and fails here.
 	var consumers []string
 	for _, root := range []string{"pkg", "internal", "cmd"} {
 		_ = filepath.Walk(filepath.Join("..", "..", root), func(path string, info os.FileInfo, err error) error {
@@ -159,8 +166,28 @@ func TestKEP531_S6_ProfileEditsDoNotPropagate(t *testing.T) {
 			return nil
 		})
 	}
-	if len(consumers) != 1 || !strings.HasSuffix(consumers[0], "pkg/discovery/sidecar_builder.go") {
-		t.Errorf("CERP consumers changed: %v — re-check KEP premises (updateStrategy, render path)", consumers)
+	allowed := map[string]bool{
+		"pkg/discovery/sidecar_builder.go": true, // the render-path consumer
+		"cmd/rbgs/main.go":                 true, // v1alpha1 deprecation webhook registration (warning-only)
+	}
+	for _, c := range consumers {
+		normalized := strings.TrimPrefix(filepath.ToSlash(c), "../../")
+		if !allowed[normalized] {
+			t.Errorf("new CERP consumer %s — re-check KEP premises (updateStrategy, render path, no CERP watch)", c)
+		}
+	}
+	// updateStrategy stays unconsumed: nothing reads CERP's Spec.UpdateStrategy.
+	for _, root := range []string{"pkg", "internal", "cmd"} {
+		_ = filepath.Walk(filepath.Join("..", "..", root), func(path string, info os.FileInfo, err error) error {
+			if err != nil || info.IsDir() || !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
+				return nil
+			}
+			b, _ := os.ReadFile(path)
+			if strings.Contains(string(b), ".Spec.UpdateStrategy") && strings.Contains(string(b), "ClusterEngineRuntimeProfile") {
+				t.Errorf("CERP updateStrategy now consumed in %s — the KEP's deprecation premise is stale", path)
+			}
+			return nil
+		})
 	}
 }
 
