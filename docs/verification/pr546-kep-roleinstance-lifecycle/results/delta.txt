@@ -1,8 +1,5 @@
-6c15cc92 docs: align KEP-527 non-goal wording with English version
-3a95f42c docs: fix KEP-527 remaining wording nits
-02e82de8 docs: clarify KEP-527 trigger table and marker wording
-3c42447b docs: polish KEP-527 wording and ownership terms
-ba79084e docs: resolve KEP-527 wording conflicts and ambiguities
-472a672e docs: refine lifecycle protocol wording
-271464d2 docs: clarify lifecycle configuration authority
-f0cc3c54 docs: resolve KEP-527 consistency issues
+c3ea6547 docs: align Pod mirror cleanup with marker-key record in KEP-527
+0448e977 docs: rename signalLabels and add Pod propagation to KEP-527
+64f30e38 docs: fix KEP-527 summary conflict and reduce Ready repetition
+7018a526 docs: remove markNotReady and readiness gating from KEP-527
+f7166771 docs: add marker-key record and admission safeguards to KEP-527

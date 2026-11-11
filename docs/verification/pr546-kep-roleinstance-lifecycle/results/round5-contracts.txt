@@ -1,4 +1,4 @@
-== Round-5 contracts on /tmp/tmp.g8mRdlSwTu/pr546-reverify ==
+== Round-5 contracts on /tmp/tmp.SbJ5NHuO21/pr546-reverify ==
 PASS  R5-OLDNEW-COEXIST [EN] (required present: The new protocol coexists with the legacy RoleInstanceSet lifecycle protocol at the API level, but admission prevents both from being active on the same RIS)
 PASS  R5-OLDNEW-COEXIST [EN] (required present: Admission rejects a Role/RIS combination in which the new lifecycle protocol and a legacy user-configured RIS lifecycle are both non-empty)
 PASS  R5-OLDNEW-COEXIST [EN] (required present: the legacy protocol is executed by the RIS controller, while the new protocol is executed by the RI controller)
@@ -36,15 +36,15 @@ PASS  R5-FINALIZER-ORDERING [ZH] (required present: controller 无法补充 fina
 PASS  R5-FINALIZER-ORDERING [ZH] (required present: Kubernetes 不允许删除开始后新增 finalizer)
 PASS  R5-TESTPLAN-DISABLE [EN] (required present: Hook disablement stops marker matching on the next reconciliation and cleans stale runtime labels and the reserved RI finalizer, even when another lifecycle operation is unfinished)
 PASS  R5-TESTPLAN-DISABLE [ZH] (required present: 下一次 reconcile 起停止 marker 匹配)
-PASS  R5-TESTPLAN-DISABLE [ZH] (required present: 清理遗留运行时 labels 和 RI 上的保留 finalizer)
+FAIL  R5-TESTPLAN-DISABLE [ZH] (required MISSING: 清理遗留运行时 labels 和 RI 上的保留 finalizer)
 PASS  R5-TESTPLAN-DISABLE [ZH] (required present: 即使其他 lifecycle 操作尚未完成)
 PASS  R5-TESTPLAN-DISABLE [EN] (forbidden absent: disablement during an unfinished operation does not skip the marker)
 PASS  R5-TESTPLAN-DISABLE [ZH] (forbidden absent: 操作未完成时禁用不得跳过 marker)
 PASS  R5-TESTPLAN-DISABLE [EN] (required present: Removing an active hook uses absence semantics: the controller performs no marker matching for it, removes its stale runtime labels, and follows the released-hook transition)
 PASS  R5-TESTPLAN-DISABLE [ZH] (required present: 删除 active hook 后按“不存在”语义处理：controller 不为它执行 marker 匹配，清理遗留 runtime labels，并按已放行 hook 的转换继续)
-PASS  R5-STALE-LABEL-DISPOSITION [EN] (required present: the controller stops matching its markers, removes stale runtime labels owned by the protocol, and, for `preDelete`, removes the reserved RI finalizer)
+FAIL  R5-STALE-LABEL-DISPOSITION [EN] (required MISSING: the controller stops matching its markers, removes stale runtime labels owned by the protocol, and, for `preDelete`, removes the reserved RI finalizer)
 PASS  R5-STALE-LABEL-DISPOSITION [ZH] (required present: controller 停止匹配其 marker)
-PASS  R5-STALE-LABEL-DISPOSITION [ZH] (required present: 清理协议拥有的遗留运行时 labels；对 preDelete 还要在正常配置收敛中)
+FAIL  R5-STALE-LABEL-DISPOSITION [ZH] (required MISSING: 清理协议拥有的遗留运行时 labels；对 preDelete 还要在正常配置收敛中)
 PASS  R5-STALE-LABEL-DISPOSITION [ZH] (required present: 清理 RI 上的保留 finalizer)
 PASS  R5-GATE-OFF-RULE [EN] (required present: The gate defaults to false\. While it is disabled, the new protocol fields are rejected and the legacy RIS lifecycle protocol retains its existing behavior)
 PASS  R5-GATE-OFF-RULE [ZH] (required present: 该 gate 默认关闭)
@@ -56,9 +56,9 @@ PASS  R5-FOREGROUND-WEBHOOK [EN] (required present: it resolves reachable RIs th
 PASS  R5-FOREGROUND-WEBHOOK [ZH] (required present: webhook 拦截这些 DELETE 请求，检查 `DeleteOptions\.propagationPolicy`，并拒绝 `Foreground`)
 PASS  R5-FOREGROUND-WEBHOOK [ZH] (required present: 通过 owner reference 和 informer 缓存解析可达 RI)
 PASS  R5-RESERVED-PREFIX [EN] (required present: rejected when they equal the exact hook-state key or use the reserved `rbg\.workloads\.x-k8s\.io/` prefix)
-PASS  R5-RESERVED-PREFIX [ZH] (required present: handler key 也不能等于固定的 hook-state key 或使用保留的 `rbg\.workloads\.x-k8s\.io/` 前缀)
-PASS  R5-FIELD-OWNERSHIP [EN] (required present: the controller owns phase, `hook-state`, the effective RI snapshot, and the reserved finalizer; the executor only removes markers)
-PASS  R5-FIELD-OWNERSHIP [ZH] (required present: controller 拥有 phase、`hook-state`、RI 生效快照和保留 finalizer；executor 只负责清除 marker)
+FAIL  R5-RESERVED-PREFIX [ZH] (required MISSING: handler key 也不能等于固定的 hook-state key 或使用保留的 `rbg\.workloads\.x-k8s\.io/` 前缀)
+FAIL  R5-FIELD-OWNERSHIP [EN] (required MISSING: the controller owns phase, `hook-state`, the effective RI snapshot, and the reserved finalizer; the executor only removes markers)
+FAIL  R5-FIELD-OWNERSHIP [ZH] (required MISSING: controller 拥有 phase、`hook-state`、RI 生效快照和保留 finalizer；executor 只负责清除 marker)
 PASS  R5-HOOKSTATE-OVERLAP [EN] (required present: `Updating`, `Recovering`, and `Terminating` appear in both fields because the hook-state records which operation is in progress; it is cleared once no operation or background hook remains)
 PASS  R5-HOOKSTATE-OVERLAP [ZH] (required present: 在两个字段中同名，是因为 hook-state 记录当前操作)
 PASS  R5-HOOKSTATE-OVERLAP [ZH] (required present: 没有进行中的操作或后台 hook 时清空)
@@ -78,9 +78,16 @@ SUPERSEDED (round-4 wording, re-pinned above): 准入 webhook 必须拒绝新 Ro
 SUPERSEDED (round-4 wording, re-pinned above): 不得独立修改，也不得与旧协议混用
 SUPERSEDED (round-4 wording, re-pinned above): If `preDelete` is removed while deletion is in progress, the controller treats the hook as absent, performs no marker matching, and removes the reserved finalizer so deletion may continue
 SUPERSEDED (round-4 wording, re-pinned above): 使删除可以继续
-SUPERSEDED (round-4 wording, re-pinned above): 唯一事实来源
 SUPERSEDED (round-4 wording, re-pinned above): Enablement is rejected or deferred if the RI already has a deletionTimestamp
-PASS  R5-CARRY (all non-superseded round-4 carry pins green on this ref; superseded wordings: 10)
+FAIL  F-INDEPENDENT-TYPE [EN] (required MISSING: The new protocol defines an independent hook type: pre-operation hooks contain `labelsHandler` and `markNotReady`, while `postReady` contains only `labelsHandler`)
+FAIL  F-INDEPENDENT-TYPE [EN] (required MISSING: Pre-operation hook fields \| `labelsHandler`, `markNotReady` \|)
+FAIL  F-INDEPENDENT-TYPE [EN] (required MISSING: postReady field \| `labelsHandler` \|)
+FAIL  F-INDEPENDENT-TYPE [ZH] (required MISSING: 前置 hooks 包含 `labelsHandler` 和 `markNotReady`)
+FAIL  F-INDEPENDENT-TYPE [ZH] (required MISSING: 前置 hook 字段 \| `labelsHandler`、`markNotReady` \|)
+FAIL  F-LABEL-SYNTAX [EN] (required MISSING: Every `labelsHandler` key and value must satisfy Kubernetes label syntax)
+FAIL  CARRY-GATE-LIFETIME [EN] (required MISSING: remains until the RI object is deleted)
+FAIL  CARRY-GATE-LIFETIME [ZH] (required MISSING: 持续到 RI 对象删除)
+FAIL  R5-CARRY-REGRESSION (a round-4 pin that is NOT in the disclosed supersession list failed — see above)
 OPEN  F-SEEALSO-502 (see-also target /keps/502-workload-status-model still absent from repo)
 
-ROUND5 CONTRACTS: all round-5 and carry contracts hold
+ROUND5 CONTRACTS: one or more contracts missing

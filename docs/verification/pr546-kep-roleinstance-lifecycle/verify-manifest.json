@@ -2,14 +2,15 @@
   "topic": "pr546-kep-roleinstance-lifecycle",
   "pr": "https://github.com/sgl-project/rbg/pull/546",
   "reviewer": "claude",
-  "round": 5,
+  "round": 6,
   "harnessPaths": [
     "docs/verification/pr546-kep-roleinstance-lifecycle",
     "pkg/inplace/instance/readiness/kep527_claims_test.go",
     "pkg/inplace/instance/lifecycle/kep527_claims_test.go",
     "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh",
     "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh",
-    "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh"
+    "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh",
+    "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round6_contracts.sh"
   ],
   "premise": {
     "id": "P0",
@@ -50,6 +51,10 @@
     "round5-contracts": {
       "kind": "script",
       "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh <repo-root-of-ref>"
+    },
+    "round6-contracts": {
+      "kind": "script",
+      "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round6_contracts.sh <repo-root-of-ref>"
     }
   },
   "findings": [
@@ -62,7 +67,7 @@
         "TestKep527ExistingCoordinationModel",
         "TestKep527ReadinessGatePrerequisite"
       ],
-      "note": "Re-verified on head 6c15cc92 (round 5): contract pins green (results/gotest-rerun.txt); docs-only PR, code paths unchanged since base."
+      "note": "Re-verified on head c3ea6547 (round 6): contract pins green (results/gotest-rerun.txt); docs-only PR, code paths unchanged since base. New round-6 code claim (stateful RIS instance-reference logic releases the owner reference for a non-matching owned RI) verified by direct read of pkg/reconciler/roleinstanceset/statefulmode/instance_ref_manager.go (release() on !match)."
     },
     {
       "id": "F-SEEALSO-502",
@@ -73,7 +78,7 @@
         "check_round4_contracts.sh (F-SEEALSO-502 OPEN check)",
         "check_kep_docs.sh (see-also)"
       ],
-      "note": "Open on head 6c15cc92 (5th consecutive round): kep.yaml untouched by the round-5 diff (only the two READMEs changed); /keps/502-workload-status-model still absent from the repo; PR #528 re-fetched 2026-11-11: still OPEN, head 0580735. Auto-resolves if #528 merges first."
+      "note": "Open on head c3ea6547 (6th consecutive round): kep.yaml untouched by the round-6 diff (only the two READMEs changed); /keps/502-workload-status-model still absent from the repo; PR #528 re-fetched 2026-11-12: still OPEN, new head 9862499, still adds exactly that directory. Auto-resolves if #528 merges first."
     },
     {
       "id": "F-PREDELETE-LIVENESS",
@@ -141,7 +146,7 @@
       "match": [
         "check_round4_contracts.sh (F-OLDNEW-COEXIST / F-INDEPENDENT-TYPE / nit pins)"
       ],
-      "note": "Re-pinned under the round-4 independent-type design: markNotReady is the new type's wire name (pinned in the Wire Names table and all examples), markPodNotReady remains the legacy type's wire name, each used only in its own protocol's context; the round-3 'forbidden markNotReady' pin is superseded by 'forbidden markPodNotReady: true' in new-protocol examples.",
+      "note": "Harness-update in round 6: the new protocol field set is now signalLabels only; markNotReady no longer exists anywhere in either README (grep: 0 hits); the legacy markPodNotReady survives only in the legacy-context comparison sentences (EN :412, ZH :312). Re-pinned R6-SIGNALLABELS / R6-NO-READY-GATING, green on head.",
       "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
     },
     {
@@ -182,9 +187,10 @@
       "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
       "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
       "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+        "check_round6_contracts.sh (R6-NO-READY-GATING)",
+        "check_round5_contracts.sh (CARRY-GATE-LIFETIME, retired)"
       ],
-      "note": "Carried: gate-lifetime sentence retained verbatim through the round-3 rewrite (EN+ZH). Carry pin green on head."
+      "note": "MOOT in round 6 (design removal, disclosed by commit 7018a526): markNotReady and RI-Ready gating are removed from the new protocol entirely; there is no readiness gate left to have a lifetime. Replacement contract R6-NO-READY-GATING (hooks never change RI Ready, readiness gating a Non-Goal) pinned green on head, red on previous head and base. CARRY-GATE-LIFETIME pins retired as superseded-by-design, not regressed."
     },
     {
       "id": "F-ESCAPE-HATCH",
@@ -407,7 +413,7 @@
       "match": [
         "check_round5_contracts.sh (R5-REMOVAL-SEMANTICS pins — absence semantics and mid-deletion release pinned)"
       ],
-      "note": "Still open (2nd round; merged ledger id F-CONFIG-REMOVAL-SKIPS-HOOK): round 5 neither adds an admission guard for preDelete removal during deletion nor acknowledges the skip path in Risks/Troubleshooting; the ownership sentence 'This is the direct result of the user removing the hook' was deleted this round. The removal semantics are now stronger (phase-advance rule: removing preUpdate mid-flight advances PreUpdate->Updating), which makes the skip path more explicit, not safer."
+      "note": "Renamed/split ledger note: the round-4 one-way mid-deletion barrier release is now also tracked as F-CONFIG-REMOVAL-SKIPS-HOOK in the published ledger (question). Round 6 did not add an admission guard or a Risks/Troubleshooting acknowledgment; the removal path now also cleans Pod mirrors via the marker-key record, which strengthens cleanup but not the guard."
     },
     {
       "id": "F-COEXIST-GATE-EDGE",
@@ -417,7 +423,7 @@
       "match": [
         "check_round5_contracts.sh (R5-GATE-OFF-RULE pins, EN+ZH)"
       ],
-      "note": "PARTIALLY fixed in round 5: the gate-off rule is now stated (gate defaults to false; while disabled the new protocol fields are rejected and legacy retains existing behavior, EN :1128-1130, zh :813-815, pinned green on head, red on previous head). Still open: gate-on for an existing object carrying both new and legacy config (admission validates writes only), controller behavior for already-configured objects under gate-off, and the legacy inPlaceUpdate deprecation timeline (still only 'post-Alpha migration path')."
+      "note": "Still open on head c3ea6547 (3rd round): gate-off rule retained (R5-GATE-OFF-RULE carry green); gate-on for existing dual-configured objects, controller behavior for already-configured objects under gate-off, and the legacy inPlaceUpdate deprecation timeline all still unstated (re-read Feature Enablement and Rollback at :1159-1172; only \"post-Alpha migration path\" :934)."
     },
     {
       "id": "F-STALE-LABEL-DISPOSITION",
@@ -427,7 +433,7 @@
       "match": [
         "grep (three inconsistent normative strengths at head; reasoning only)"
       ],
-      "note": "Nit (new this round): stale runtime label disposition is stated three ways — removed hook: 'may clean its stale runtime labels'; normal-disable paragraph: 'removes stale runtime labels owned by the protocol'; changed markerA->markerB (test plan): 'without migrating or removing the old marker'. One sentence with a single disposition rule closes it."
+      "note": "Carried fixed under the round-6 wording: removal cleans stale runtime labels AND their Pod mirrors identified through the marker-key record, at a single normative strength in all sites (R6-REMOVAL-SEMANTICS pins green on head, red on previous head). Marker reconfiguration still deliberately retains the old key, now durably recorded (F-C4528291076 fixed)."
     },
     {
       "id": "F-KEP502-CREATING-PHASE-CONFLICT",
@@ -467,6 +473,84 @@
         "external: PR #528 head 0580735 (re-fetched 2026-11-11)"
       ],
       "note": "Fixed OUTSIDE this PR (dependency side), round 5: PR #528 (KEP-502) head moved 39e2ecdf -> 0580735 and now states phase completion uses controller-observed workload readiness only, RoleInstanceCustomReady and other externally owned gates do not gate phase transitions, and explicitly 'removes the circular wait with KEP-527: the lifecycle-owned RoleInstanceCustomReady contribution ... does not prevent the RI from entering Running'. PR #528 is still OPEN; holds as long as that wording lands. Not machine-pinnable in this repo (keps/502 absent from PR #546's tree)."
+    },
+    {
+      "id": "F-C4528291076",
+      "polarity": "contract",
+      "layer": "round6-contracts",
+      "status": "fixed",
+      "match": [
+        "check_round6_contracts.sh (R6-MARKER-KEY-RECORD)"
+      ],
+      "note": "FIXED in round 6: the marker-key record annotation rbg.workloads.x-k8s.io/role-instance-hook-marker-keys (comma-separated, same metadata write as the marker, key removed only after RI label AND Pod mirrors confirmed absent, retained across restarts, rollback precondition = absent hook-state + empty record) is exactly the durable retired-key tracking the advisory asked for. Pins green on head, red on previous head/base; bites-verified."
+    },
+    {
+      "id": "F-C4528290874",
+      "polarity": "contract",
+      "layer": "round6-contracts",
+      "status": "fixed",
+      "match": [
+        "check_round6_contracts.sh (R6-ADMISSION-SAFEGUARDS)"
+      ],
+      "note": "FIXED in round 6: admission now rejects marker keys used by the owning RIS spec.selector (matchLabels or any matchExpressions entry, even DoesNotExist-only) plus a test-plan bullet; the KEP states the release consequence, verified against pkg/reconciler/roleinstanceset/statefulmode/instance_ref_manager.go (release() on !match for an owned instance). EN+ZH pinned."
+    },
+    {
+      "id": "F-C4528291011",
+      "polarity": "contract",
+      "layer": "round6-contracts",
+      "status": "fixed",
+      "match": [
+        "check_round6_contracts.sh (R6-FAIL-CLOSED-WEBHOOK)"
+      ],
+      "note": "FIXED in round 6: foreground-deletion webhook resolution is now explicitly fail-closed (\"A cache miss must not establish that deletion is safe\"), with an integration bullet covering races with RI creation and preDelete enablement. EN+ZH pinned green on head, red on previous head."
+    },
+    {
+      "id": "F-C4528290945",
+      "polarity": "contract",
+      "layer": "round6-contracts",
+      "status": "fixed",
+      "match": [
+        "check_round6_contracts.sh (R6-NO-READY-GATING forbidden markNotReady/RoleInstanceCustomReady)"
+      ],
+      "note": "MOOT/DISSOLVED in round 6: the markNotReady gate is removed entirely; there is no lifecycle readiness gate for stateful readiness math to miss. Hooks never change RI Ready (Non-Goal, both languages); Pod-level consumers get the mirror path instead. Residual observation (parent consumers reading only RI Ready see no lifecycle signal) is an owned design decision consistent with issue #527 itself (\"routing system must independently keep the instance out of rotation rather than relying solely on Ready\")."
+    },
+    {
+      "id": "F-KEP502-GATE-REFERENCE-DRIFT",
+      "polarity": "contract",
+      "layer": "external",
+      "status": "open",
+      "match": [],
+      "note": "NEW round-6 question: PR #528 (KEP-502) at its current head 9862499 (fetched 2026-11-12) still cites \"the lifecycle-owned RoleInstanceCustomReady contribution established by markPodNotReady\" and a test bullet \"including while a KEP-527 markPodNotReady lifecycle gate is still held\" — mechanisms KEP-527 round 6 removed. Cross-proposal drift, opposite direction from round 3. Not machine-pinnable in this repo (keps/502 absent from this tree). Ask: re-sync the two KEPs before either merges; pre-implementable blocker #1 keeps the coupling."
+    },
+    {
+      "id": "F-POD-MIRROR-SPOOF-WINDOW",
+      "polarity": "contract",
+      "layer": "round6-contracts",
+      "status": "open",
+      "match": [
+        "check_round6_contracts.sh (R6-POD-PROPAGATION, propagation rules pinned so the trust model stays reviewable)"
+      ],
+      "note": "NEW round-6 question (minor): the propagation rules make signal label keys controller-owned on member Pods and re-sync them each RI reconcile, but only TEMPLATE-label declaration is admission-rejected; nothing rejects external runtime writes to those keys on a Pod. Any actor with Pod label-write permission can inject a false signal (e.g. a drain/delete-block label) that Pod-level consumers — routers, EndpointSlice-based selectors, explicitly named as consumers — will act on until the next reconcile re-syncs. Risks row \"Pod mirrors overwritten externally | Re-sync mirrors each RI reconcile\" acknowledges overwrite but not the spoofing window. Ask: state the trust model (admission guard on Pod label writes for signal keys, or an explicit note that consumers must treat the RI as authoritative and the mirror as best-effort)."
+    },
+    {
+      "id": "F-SCALABILITY-POD-MIRROR-WRITES",
+      "polarity": "contract",
+      "layer": "round6-contracts",
+      "status": "open",
+      "match": [
+        "check_round6_contracts.sh (R6-POD-PROPAGATION reconcile/batching pins)"
+      ],
+      "note": "NEW round-6 nit: the Scalability section still reads \"The main additional costs are phase and marker writes, executor watch connections, and application retries\" — it omits the new controller-to-Pod PATCH traffic (every member Pod per RI, re-checked every reconciliation, batched). One sentence closes it."
+    },
+    {
+      "id": "F-TESTPLAN-PREFIX-COVERAGE",
+      "polarity": "contract",
+      "layer": "round6-contracts",
+      "status": "open",
+      "match": [
+        "check_round6_contracts.sh (R6-RESERVED-PREFIX design-rule pin; bullet still exact-key only)"
+      ],
+      "note": "Still open in round 6 (2nd round): the unit bullet still reads \"rejects marker keys that collide with the fully qualified controller state key\" (EN :959-961) — no reserved-prefix clause, even though round 6 added two NEW admission bullets to the same list (selector collision, Pod template labels) and the design rule (now under the signalLabels wording) still requires prefix rejection. Fix: one clause, EN+zh."
     }
   ],
   "gatingFindings": [

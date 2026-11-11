@@ -1,12 +1,12 @@
 
 == 1. markdownlint (repo CI config .github/.markdownlint.json) ==
-Finding: /tmp/tmp.g8mRdlSwTu/pr546-reverify/keps/527-roleinstance-lifecycle/README.md /tmp/tmp.g8mRdlSwTu/pr546-reverify/keps/527-roleinstance-lifecycle/README.zh-CN.md
+Finding: /tmp/tmp.SbJ5NHuO21/pr546-reverify/keps/527-roleinstance-lifecycle/README.md /tmp/tmp.SbJ5NHuO21/pr546-reverify/keps/527-roleinstance-lifecycle/README.zh-CN.md
 Linting: 2 files
 Summary: 0 issues in 0 files
 markdownlint: PASS
 
 == 2. markdownlint (default config, as the PR body claims) ==
-Finding: /tmp/tmp.g8mRdlSwTu/pr546-reverify/keps/527-roleinstance-lifecycle/README.md /tmp/tmp.g8mRdlSwTu/pr546-reverify/keps/527-roleinstance-lifecycle/README.zh-CN.md
+Finding: /tmp/tmp.SbJ5NHuO21/pr546-reverify/keps/527-roleinstance-lifecycle/README.md /tmp/tmp.SbJ5NHuO21/pr546-reverify/keps/527-roleinstance-lifecycle/README.zh-CN.md
 Linting: 2 files
 Summary: 0 issues in 0 files
 markdownlint-default: PASS
@@ -20,10 +20,10 @@ MISSING /keps/502-workload-status-model (not present in repo; if it is a future 
 see-also: FAIL (dangling reference — reproduces finding F-SEEALSO-502)
 
 == 5. en/zh structural parity (headings, tables, code fences, hook mentions) ==
-hook preUpdate: en=26 zh=26
-hook preRecover: en=25 zh=25
-hook postReady: en=90 zh=87
-hook preDelete: en=48 zh=48
+hook preUpdate: en=24 zh=24
+hook preRecover: en=23 zh=23
+hook postReady: en=77 zh=72
+hook preDelete: en=47 zh=47
 headings: en=43 zh=43
 code-fences: en=12 zh=12
 table-lines: en=67 zh=67

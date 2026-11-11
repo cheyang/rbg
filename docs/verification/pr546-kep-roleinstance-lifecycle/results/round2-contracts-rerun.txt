@@ -1,4 +1,4 @@
-== Round-2 contracts on /tmp/tmp.g8mRdlSwTu/pr546-reverify ==
+== Round-2 contracts on /tmp/tmp.SbJ5NHuO21/pr546-reverify ==
 FAIL  F-OLDNEW-ISOLATION [EN] (required MISSING: sole user-facing definition point for the new four-hook protocol)
 FAIL  F-OLDNEW-ISOLATION [EN] (required MISSING: Alpha admission must reject a Role/RIS combination)
 PASS  F-OLDNEW-ISOLATION [EN] (required present: hook is deprecated)
@@ -20,8 +20,8 @@ PASS  F-PHASE-STORAGE [EN] (required present: persisted in `RoleInstance\.status
 PASS  F-PHASE-STORAGE [EN] (required present: KEP-527 cannot become implementable until the KEP-502)
 PASS  F-PHASE-STORAGE [ZH] (required present: RoleInstance\.status\.phase)
 PASS  F-PHASE-STORAGE [ZH] (required present: KEP-502 的 schema 与持久化规则被接受前)
-PASS  F-PREDELETE-GATE-LIFETIME [EN] (required present: remains until the RI object is deleted)
-PASS  F-PREDELETE-GATE-LIFETIME [ZH] (required present: 持续到 RI 对象删除)
+FAIL  F-PREDELETE-GATE-LIFETIME [EN] (required MISSING: remains until the RI object is deleted)
+FAIL  F-PREDELETE-GATE-LIFETIME [ZH] (required MISSING: 持续到 RI 对象删除)
 PASS  F-ESCAPE-HATCH [EN] (required present: break-glass)
 PASS  F-ESCAPE-HATCH [ZH] (required present: break-glass)
 PASS  F-DEAD-ENGINE-PREUPDATE [EN] (required present: must not assume that a live engine is available)
@@ -29,9 +29,9 @@ PASS  F-DEAD-ENGINE-PREUPDATE [ZH] (required present: 不能假设必然存在�
 FAIL  F-INFLIGHT-CONFIG-ADMISSION [EN] (required MISSING: Admission should reject lifecycle changes while an affected RI has a non-empty `lifecycle-state`)
 FAIL  F-INFLIGHT-CONFIG-ADMISSION [ZH] (required MISSING: 非空时拒绝修改 lifecycle)
 PASS  F-MARKNOTREADY-NAME [EN] (required present: markPodNotReady)
-FAIL  F-MARKNOTREADY-NAME [EN] (forbidden PRESENT: markNotReady)
+PASS  F-MARKNOTREADY-NAME [EN] (forbidden absent: markNotReady)
 PASS  F-MARKNOTREADY-NAME [ZH] (required present: markPodNotReady)
-FAIL  F-MARKNOTREADY-NAME [ZH] (forbidden PRESENT: markNotReady)
+PASS  F-MARKNOTREADY-NAME [ZH] (forbidden absent: markNotReady)
 PASS  F-READYBLOCK-NAME [EN] (required present: ready-notify)
 PASS  F-READYBLOCK-NAME [EN] (forbidden absent: ready-block)
 PASS  F-READYBLOCK-NAME [ZH] (required present: ready-notify)

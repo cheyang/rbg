@@ -5,17 +5,18 @@ Reproducible evidence for the findings raised while reviewing
 Lifecycle Hooks — a **documentation-only** PR: `keps/527-roleinstance-lifecycle/{README.md,README.zh-CN.md,kep.yaml}`).
 
 Harness branch: `verify/pr546-kep-roleinstance-lifecycle-claude`, rebased on the
-reviewed PR head `6c15cc92` (round 1 reviewed `6e8419ab`, round 2 `71dd5e87`,
-round 3 `fb6c2b36`, round 4 `43dab57b`).
+reviewed PR head `c3ea6547` (round 1 reviewed `6e8419ab`, round 2 `71dd5e87`,
+round 3 `fb6c2b36`, round 4 `43dab57b`, round 5 `6c15cc92`).
 **Production code is touched only by the PR itself** — the branch adds only test
 files and this harness on top of the PR head.
 
-Layers run against the code under review (PR head `6c15cc92`):
+Layers run against the code under review (PR head `c3ea6547`):
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
-| 1. Unit (Go) | pins the KEP's factual claims about *existing* code (premise + Ready-Gating prerequisite) | `go test ./pkg/inplace/instance/readiness/ ./pkg/inplace/instance/lifecycle/ -run 'TestKep527' -v` |
+| 1. Unit (Go) | pins the KEP's factual claims about *existing* code (premise + readiness-gate helper behavior) | `go test ./pkg/inplace/instance/readiness/ ./pkg/inplace/instance/lifecycle/ -run 'TestKep527' -v` |
 | 2. Docs | markdownlint (CI config + default), whitespace, kep.yaml see-also resolution, en/zh parity | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_kep_docs.sh` |
+| 2a. Round-6 contracts (**gating**) | pins the round-6 design change (markNotReady/RI-Ready gating REMOVED; every hook contains only `signalLabels`; no `markNotReady`/`RoleInstanceCustomReady` anywhere), the three NEW mechanisms (marker-key record annotation, signal-label propagation to member Pods, admission safeguards incl. RIS spec.selector collision + Pod template label collision, fail-closed foreground-deletion webhook), the reworded removal/disable/field-ownership contracts, and re-runs the round-5 script failing on any carry pin outside the 14 disclosed round-6 supersessions | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round6_contracts.sh <repo-root>` |
 | 2b. Round-5 contracts (**gating**) | pins the round-5 wording of the reworded round-4 contracts (mutual exclusion, snapshot ownership, removal semantics, enablement-during-deletion), the round-5 fixes (test-plan bullet, stale-label disposition, gate-off rule), the new round-5 normative content (foreground webhook mechanism, reserved prefix, field ownership, hook-state overlap), and re-runs the round-4 script failing on any carry pin outside the disclosed supersession list | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh <repo-root>` |
 | 2b'. Round-4 contracts (carry, via round-5) | round-4 wording pins; 10 patterns are disclosed as superseded by the round-5 rewrite (substance re-pinned in 2b); any other round-4 failure is a carry regression | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round4_contracts.sh <repo-root>` |
 | 2c. Round-3 contracts (reference) | round-3 wording pins — fail on head **by design** (the round-4 coexistence pivot restored what the removal pivot had deleted); kept for history, not gating | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh <repo-root>` |
@@ -49,7 +50,95 @@ dropping `preCreate`/`postDelete` without an explicit rationale and adding
 `preRecover`. See finding F-SCOPE-PRECREATE.
 
 
-## Round 5 (head 6c15cc92) — delta reviewed: 43dab57b..6c15cc92 (8 docs commits, +276/−219)
+## Round 6 (head c3ea6547) — delta reviewed: 6c15cc92..c3ea6547 (5 docs commits, +322/−256)
+
+A **real design change**, not a wording pass. What it does:
+
+1. **Removes `markNotReady` / RI-Ready gating from the new protocol**
+   (commit `7018a526`). Every hook now contains only `signalLabels`;
+   `RoleInstanceCustomReady` is gone from the wire table and the whole doc
+   (grep: 0 hits in both languages); "Providing a readiness-gating field or
+   changing RI Ready" is an explicit Non-Goal; "Hook markers never participate
+   in RI Ready computation" is the new normative rule. Issue #527 itself says
+   routing "must independently keep the instance out of rotation rather than
+   relying solely on Ready", so the removal moves the KEP *toward* the issue's
+   philosophy. Consequence for the ledger: `F-PREDELETE-GATE-LIFETIME` is MOOT
+   (no gate left to have a lifetime — retired pins disclosed, replacement
+   contract `R6-NO-READY-GATING`), `F-MARKNOTREADY-NAME` is a Harness-update
+   (re-pinned under `signalLabels`), and advisory `F-C4528290945` is dissolved
+   (no gate for stateful readiness math to miss).
+2. **Renames `labelsHandler` → `signalLabels`** (commit `0448e977`), including
+   the wire-table row, the example, and the coordination section ("Signal
+   Label Coordination"). The old name survives only in the two legacy-context
+   comparison sentences (EN :866, ZH :660) — correct scoping.
+3. **Adds the marker-key record** (`f7166771` + `c3ea6547`): annotation
+   `rbg.workloads.x-k8s.io/role-instance-hook-marker-keys` (Go constant
+   `RoleInstanceHookMarkerKeysAnnotation`), comma-separated, written in the
+   same metadata write as the marker, a key removed only after the RI label
+   *and its Pod mirrors* are confirmed absent, retained across restarts, with
+   the rollback precondition = absent `hook-state` + empty/absent record.
+   **Closes advisory F-C4528291076** exactly as asked (durable retired-key
+   tracking).
+4. **Adds signal-label propagation to member Pods**: unidirectional RI→Pod,
+   only `signalLabels` keys (never `hook-state`), executors still remove
+   markers only on the RI, metadata-only (no Pod recreation), reconciled every
+   RI reconciliation with batched updates, controller-owned on Pods with
+   template-label declaration rejected by admission. Pod-level consumers
+   (routers, EndpointSlice-based selectors, sidecars) get the observation path
+   that replaces RI-Ready gating.
+5. **Adds admission safeguards**: marker keys used by the owning RIS
+   `spec.selector` (`matchLabels` or any `matchExpressions` entry, even
+   `DoesNotExist`-only) are rejected — **closes advisory F-C4528290874**; the
+   KEP now also states the release consequence, which I verified against
+   `pkg/reconciler/roleinstanceset/statefulmode/instance_ref_manager.go`
+   (`release()` is called for an owned instance that no longer matches).
+6. **Makes the foreground-deletion webhook explicitly fail-closed**:
+   "A cache miss must not establish that deletion is safe", plus an
+   integration bullet for races with RI creation / `preDelete` enablement —
+   **closes advisory F-C4528291011**.
+
+**Harness-bites check (round 6):** deleting the markerA/markerB durability
+sentence, the fail-closed block, and the "only `signalLabels` keys are
+mirrored" rule in a scratch worktree flips the corresponding pins red
+(`results/round6-contracts-bites.txt`, 4 FAILs); the tree was restored
+byte-identical and the pins went green again.
+
+**Differential:** round-6 pins 95 PASS / 0 FAIL on head `c3ea6547`
+(`results/round6-contracts-rerun.txt`), 85 FAIL on previous head `6c15cc92`
+(`results/round6-contracts-6c15cc92.txt`), 202 FAIL on base `3612013e`
+(`results/round6-contracts-3612013e.txt`).
+
+**Still open after round 6** (none gating, docs-only PR):
+
+- `F-SEEALSO-502` — 6th consecutive round; `kep.yaml` untouched; PR #528
+  re-fetched 2026-11-12: OPEN, new head `9862499`, still adds exactly the
+  dangling directory.
+- `F-CONFIG-REMOVAL-SKIPS-HOOK` — 3rd round; Risks/Troubleshooting still have
+  no acknowledgment of the removal-skip path, no admission guard; the
+  ownership sentence and the "not a routine recovery procedure" caution remain
+  deleted (round-5 regressions in operator guidance, still unacknowledged).
+- `F-COEXIST-GATE-EDGE` — 3rd round; the three residuals (gate-on for
+  dual-configured objects, already-configured under gate-off, deprecation
+  timeline) remain unstated; the gate-off rule itself is carried green.
+- `F-TESTPLAN-PREFIX-COVERAGE` — 2nd round; the exact-key admission bullet
+  still lacks the reserved-prefix clause, even though round 6 added two new
+  admission bullets to the same list.
+- **NEW `F-KEP502-GATE-REFERENCE-DRIFT`** (question, external): PR #528's
+  current head `9862499` still cites "the lifecycle-owned
+  `RoleInstanceCustomReady` contribution established by `markPodNotReady`"
+  and a "`markPodNotReady` lifecycle gate" test bullet — mechanisms this round
+  removed. The two KEPs drifted again, opposite direction from round 3; they
+  must re-sync before either merges.
+- **NEW `F-POD-MIRROR-SPOOF-WINDOW`** (question, minor): the propagation rules
+  declare signal keys controller-owned on Pods and re-synced per reconcile,
+  but only *template* declaration is admission-rejected; nothing rejects
+  external runtime writes to those keys, and Pod-level consumers are told to
+  act on them. State the trust model.
+- **NEW `F-SCALABILITY-POD-MIRROR-WRITES`** (nit): the Scalability section
+  still enumerates "phase and marker writes, executor watch connections, and
+  application retries" — the new controller→Pod PATCH traffic is missing.
+
+
 
 A wording-only rewrite; **no design pivot this round**. What it does:
 

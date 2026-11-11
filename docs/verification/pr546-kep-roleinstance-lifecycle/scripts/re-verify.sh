@@ -26,6 +26,19 @@
 # the gating contract set; it internally re-runs the round-4 script and fails
 # on any round-4 carry pin that is NOT in the disclosed supersession list.
 #
+# Round 6 (head c3ea6547): a REAL DESIGN CHANGE (+322/-256, 5 commits):
+# markNotReady / RI-Ready gating is REMOVED (every hook contains only
+# signalLabels; RoleInstanceCustomReady gone; readiness gating is a Non-Goal),
+# labelsHandler is renamed signalLabels, and three NEW mechanisms land: the
+# marker-key record annotation (durable retired-key tracking — closes
+# C4528291076), signal-label propagation onto member Pods, and admission
+# safeguards (RIS spec.selector marker-key collision — closes C4528290874;
+# Pod template label collision) plus a fail-closed foreground-deletion webhook
+# (closes C4528291011). The round-6 script is the gating contract set; it
+# internally re-runs the round-5 script and tolerates ONLY the 14 disclosed
+# round-6 supersessions (design-change re-pins or the retired gate-lifetime
+# pins); anything else red in round-5 is a carry regression.
+#
 # Usage: bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/re-verify.sh [<ref>]
 #   <ref> defaults to the current PR head fetched from manifest.pr
 set -u
@@ -67,7 +80,14 @@ bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check
 DOC_STATUS="${PIPESTATUS[0]}"
 
 echo
-echo "== Round-5 contracts (gating; round-5 pins + round-4 carry, red = regression) =="
+echo "== Round-6 contracts (gating; round-6 pins + round-5 carry, red = regression) =="
+CHECK_ROUND6_OUT="$TOPIC_DIR/results" \
+  bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round6_contracts.sh" "$WORKTREE" \
+  2>&1 | tee "$TOPIC_DIR/results/round6-contracts-rerun.txt" | grep -E '^(FAIL|OPEN|SUPERSEDED|PASS  R6|ROUND6)' | tail -20
+R6_STATUS="${PIPESTATUS[0]}"
+
+echo
+echo "== Round-5 contracts (reference; its design-changed pins are superseded by round-6 — see check_round6_contracts.sh) =="
 CHECK_ROUND5_OUT="$TOPIC_DIR/results" \
   bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh" "$WORKTREE" \
   2>&1 | tee "$TOPIC_DIR/results/round5-contracts-rerun.txt" | grep -E '^(FAIL|OPEN|SUPERSEDED|PASS  R5-CARRY|ROUND5)'
@@ -132,33 +152,41 @@ else
   echo "F-CUSTOMREADY-STATUS-EMPTY: Harness-update (test missing or did not run)"
 fi
 
-# Round-4 fixed findings: verdicts come from the round-5 contract pins
-# (re-pinned wording) — the round-4 script is invoked inside check_round5.
-if [ "$R5_STATUS" -eq 0 ]; then
-  for f in F-OLDNEW-COEXIST F-INDEPENDENT-TYPE F-LATEST-CONFIG-SEMANTICS \
+# Round-4/5 fixed findings: verdicts come from the round-6 contract pins
+# (round-5 carry is invoked inside check_round6; the 14 round-6
+# supersessions are disclosed design-change re-pins, not regressions).
+if [ "$R6_STATUS" -eq 0 ]; then
+  for f in F-OLDNEW-COEXIST F-LATEST-CONFIG-SEMANTICS \
            F-LABEL-SYNTAX F-INTERRUPT-WHEN-DEAD-AMBIGUITY F-KEPYAML-GATE-SHAPE \
            F-PROPAGATED-SNAPSHOT-EDIT F-ZH-ENGLISH-TERMS \
            CARRY-PRECREATE-RATIONALE CARRY-FINALIZER-ORDERING CARRY-NS-TEARDOWN \
-           CARRY-RBGSET-BOUNDARY CARRY-GATE-LIFETIME CARRY-ESCAPE-HATCH \
+           CARRY-RBGSET-BOUNDARY CARRY-ESCAPE-HATCH \
            CARRY-DEAD-ENGINE CARRY-PHASE-STORAGE CARRY-NOPODFINALIZERS \
            CARRY-PREDELETE-LIVENESS CARRY-DISABLE-SUPPORTED \
            CARRY-NOPOSTREADY-OMITTED CARRY-WIRE-NAMES CARRY-KEPYAML-NOISE; do
-    echo "$f: Fixed (round-4 contract pin green on this ref)"
+    echo "$f: Fixed (round-5 carry pin green on this ref via check_round6)"
   done
+  echo "F-INDEPENDENT-TYPE / F-MARKNOTREADY-NAME: Harness-update (round-6 design change: every hook contains only signalLabels, re-pinned R6-SIGNALLABELS / R6-NO-READY-GATING)"
+  echo "F-PREDELETE-GATE-LIFETIME: Moot (round-6 design change removed markNotReady and RI-Ready gating entirely — no gate left to have a lifetime; replacement contract R6-NO-READY-GATING green)"
+  echo "F-C4528291076 (marker-key record): Fixed (R6-MARKER-KEY-RECORD pins green — durable retired-key tracking now specified EN+ZH)"
+  echo "F-C4528290874 (marker keys vs RIS selectors): Fixed (R6-ADMISSION-SAFEGUARDS pins green — selector-collision admission rule + test bullet, EN+ZH)"
+  echo "F-C4528291011 (fail-closed on cache miss): Fixed (R6-FAIL-CLOSED-WEBHOOK pins green — fail-closed resolution + integration bullet, EN+ZH)"
+  echo "F-C4528290945 (stateful readiness never sees the gate): Moot (round-6 removed the markNotReady gate entirely; hooks never change RI Ready, stated as a Non-Goal)"
 else
-  echo "Round-4/5 fixed findings: one or more MISSING (see results/round5-contracts-rerun.txt)"
+  echo "Round-4/5/6 fixed findings: one or more MISSING (see results/round6-contracts-rerun.txt)"
 fi
-echo "F-TESTPLAN-ABSENCE-CONTRADICTION: verdict from R5-TESTPLAN-DISABLE pins (new bullet present, old bullet absent, EN+ZH)"
-echo "F-STALE-LABEL-DISPOSITION: verdict from R5-STALE-LABEL-DISPOSITION / R5-REMOVAL-SEMANTICS pins (single disposition rule, EN+ZH)"
-echo "F-COEXIST-GATE-EDGE: PARTIAL — gate-off rule stated (R5-GATE-OFF-RULE pins); gate-on for dual-configured objects and the deprecation timeline still unstated"
+echo "F-TESTPLAN-ABSENCE-CONTRADICTION: verdict from R5-TESTPLAN-DISABLE pins (carried inside check_round6; new bullet present, old bullet absent, EN+ZH)"
+echo "F-STALE-LABEL-DISPOSITION: verdict from R6-REMOVAL-SEMANTICS pins (single disposition rule incl. Pod mirrors, EN+ZH)"
+echo "F-COEXIST-GATE-EDGE: PARTIAL — gate-off rule stated (R5-GATE-OFF-RULE carry pins); gate-on for dual-configured objects and the deprecation timeline still unstated"
 echo "F-CONFIG-REMOVAL-SKIPS-HOOK: Still-open — no admission guard, no Risks/Troubleshooting acknowledgment of the mid-deletion skip path"
-echo "F-KEP502-RECOVERING-GATE-CIRCULARITY: Fixed on the dependency side (PR #528 head 0580735 states phase completion uses controller-observed readiness only and explicitly removes the KEP-527 circular wait) — re-fetch PR #528 to confirm"
-echo "F-INFLIGHT-CONFIG-ADMISSION / F-INFLIGHT-ADMISSION-MUST: Disputed (author reversed the rule by design in round 4 — see F-PREDELETE-REMOVAL-ONE-WAY; reversed rule pinned absent)"
+echo "F-KEP502-RECOVERING-GATE-CIRCULARITY: Fixed on the dependency side (PR #528 states phase completion uses controller-observed readiness only and explicitly removes the KEP-527 circular wait) — but its head now references the markNotReady/RoleInstanceCustomReady mechanism KEP-527 round 6 removed: see F-KEP502-GATE-REFERENCE-DRIFT; re-fetch PR #528 to confirm"
+echo "F-KEP502-GATE-REFERENCE-DRIFT: Open (question) — PR #528's current head (9862499, fetched 2026-11-12) still cites 'the lifecycle-owned RoleInstanceCustomReady contribution established by markPodNotReady' and a 'markPodNotReady lifecycle gate' test bullet; KEP-527 no longer defines that mechanism. External, not machine-pinnable in this repo."
+echo "F-INFLIGHT-CONFIG-ADMISSION / F-INFLIGHT-ADMISSION-MUST: Disputed (author reversed the rule by design in round 4 — see F-CONFIG-REMOVAL-SKIPS-HOOK; reversed rule pinned absent)"
 echo "F-LEGACY-REMOVAL-TRANSITION: Resolved by the round-4 reversal (coexistence satisfies issue #527 compatibility; narrowed residue tracked as F-COEXIST-GATE-EDGE)"
 echo "F-KEP502-CREATING-PHASE-CONFLICT: Fixed in the dependency PR (PR #528 amended to fold Creating-target changes, citing KEP-527 consistency) — external evidence, re-fetch to confirm"
 
 echo
-if [ "$premise_ok" -eq 1 ] && [ "$GO_STATUS" -eq 0 ] && [ "$R5_STATUS" -eq 0 ] \
+if [ "$premise_ok" -eq 1 ] && [ "$GO_STATUS" -eq 0 ] && [ "$R6_STATUS" -eq 0 ] \
    && ! grep -q 'see-also: FAIL' "$TOPIC_DIR/results/docchecks-rerun.txt"; then
   echo "RESULT: all machine-checkable gating findings fixed (F-SEEALSO-502 aside)"
   exit 0
