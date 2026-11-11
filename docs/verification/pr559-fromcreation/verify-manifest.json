@@ -17,7 +17,11 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "TestP0_* canaries pass on merge-base fd160cc9: legacy policy ignores an observed member deletion and closes the restart gate once NotReady without a prior rebuild; see results/premise-p0-base.txt",
-    "match": ["TestP0_LegacyPolicy_IgnoresObservedMemberDeletion", "TestP0_LegacyPolicy_RestartGateClosedOnceNotReady", "TestP0_LegacyPolicy_BypassRequiresPriorRebuild"]
+    "match": [
+      "TestP0_LegacyPolicy_IgnoresObservedMemberDeletion",
+      "TestP0_LegacyPolicy_RestartGateClosedOnceNotReady",
+      "TestP0_LegacyPolicy_BypassRequiresPriorRebuild"
+    ]
   },
   "layers": {
     "unit": {
@@ -31,18 +35,107 @@
     }
   },
   "findings": [
-    { "id": "P0", "polarity": "canary", "layer": "unit", "match": ["TestP0_LegacyPolicy_IgnoresObservedMemberDeletion", "TestP0_LegacyPolicy_RestartGateClosedOnceNotReady", "TestP0_LegacyPolicy_BypassRequiresPriorRebuild"] },
-    { "id": "F1", "polarity": "contract", "layer": "integration", "match": ["A: observed member deletion after Ready rebuilds the whole instance"] },
-    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestFromCreation_DeletionTriggerPreReady_Contract"] },
-    { "id": "F2", "polarity": "contract", "layer": "integration", "match": ["B: pre-Ready container crash rebuilds the whole instance"] },
-    { "id": "F2", "polarity": "contract", "layer": "unit", "match": ["TestFromCreation_ContainerCrashPreReady_Contract"] },
-    { "id": "F3", "polarity": "canary", "layer": "integration", "match": ["C: mid-recovery member loss is suppressed until Ready"] },
-    { "id": "F3", "polarity": "canary", "layer": "unit", "match": ["TestFromCreation_RestartingGuardSuppressesMemberLossDuringRecovery_Canary"] },
-    { "id": "F4", "polarity": "canary", "layer": "unit", "match": ["TestFromCreation_MissedDeletionWindow_Canary"] },
-    { "id": "F4", "polarity": "contract", "layer": "integration", "match": ["D: force-deleted member still triggers a whole-instance rebuild"] },
-    { "id": "F5", "polarity": "contract", "layer": "unit", "match": ["TestFromCreation_ScaleInRemovalNotMemberLoss_Contract"] },
-    { "id": "F6", "polarity": "contract", "layer": "unit", "match": ["TestFromCreation_FailedPodDuringInPlaceUpdate_Contract"] },
-    { "id": "F7", "polarity": "canary", "layer": "unit", "match": ["TestFromCreation_DeletedSucceededMemberTriggersRebuild_Canary"] }
+    {
+      "id": "P0",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestP0_LegacyPolicy_IgnoresObservedMemberDeletion",
+        "TestP0_LegacyPolicy_RestartGateClosedOnceNotReady",
+        "TestP0_LegacyPolicy_BypassRequiresPriorRebuild"
+      ]
+    },
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "A: observed member deletion after Ready rebuilds the whole instance"
+      ]
+    },
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestFromCreation_DeletionTriggerPreReady_Contract"
+      ]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "B: pre-Ready container crash rebuilds the whole instance"
+      ]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestFromCreation_ContainerCrashPreReady_Contract"
+      ]
+    },
+    {
+      "id": "F3",
+      "polarity": "canary",
+      "layer": "integration",
+      "match": [
+        "C: mid-recovery member loss is suppressed until Ready"
+      ]
+    },
+    {
+      "id": "F3",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestFromCreation_RestartingGuardSuppressesMemberLossDuringRecovery_Canary"
+      ]
+    },
+    {
+      "id": "F4",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestFromCreation_MissedDeletionWindow_Canary"
+      ]
+    },
+    {
+      "id": "F4",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "D: force-deleted member still triggers a whole-instance rebuild"
+      ]
+    },
+    {
+      "id": "F5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestFromCreation_ScaleInRemovalNotMemberLoss_Contract"
+      ]
+    },
+    {
+      "id": "F6",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestFromCreation_FailedPodDuringInPlaceUpdate_Contract"
+      ]
+    },
+    {
+      "id": "F7",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestFromCreation_DeletedSucceededMemberTriggersRebuild_Canary"
+      ]
+    }
   ],
-  "liveNote": "L3 (live cluster) not run per this round's instructions (unit + integration only). If run later: with a real node failure, check the controller emits ReCreateInstance within the eviction window and the instance returns to Ready without manual RoleInstance deletion."
+  "liveNote": "L3 (live cluster) not run per this round's instructions (unit + integration only). If run later: with a real node failure, check the controller emits ReCreateInstance within the eviction window and the instance returns to Ready without manual RoleInstance deletion.",
+  "_ledgerMapping": {
+    "_comment": "Manifest IDs were assigned when the harness was built; the review ledger (findings-claude.json / findings-claude.md) uses its own numbering. Mapping: manifest F1/F2 = acceptance criteria AC1/AC2 (they verify the PR's core fix, not defects); manifest F3 = ledger F3 (Restarting-guard suppression); manifest F4 = ledger F4 (missed-window, refuted); manifest F7 = ledger F6 (deleted Succeeded member); manifest F5/F6 = behavior contracts with no corresponding ledger defect (scale-in exclusion, Failed-during-inplace-update)."
+  }
 }
