@@ -34,8 +34,8 @@ PASS  R6-MARKER-KEY-RECORD [EN] (required present: The record is updated in the 
 PASS  R6-MARKER-KEY-RECORD [ZH] (required present: 只有确认对应 RI label 及其 Pod 镜像均已不存在后才移除条目)
 PASS  R6-MARKER-KEY-RECORD [EN] (required present: After markerA changes to markerB, markerA stays recorded until its label and Pod mirrors are cleaned, so a restart can still distinguish protocol-owned stale labels from ordinary user labels)
 PASS  R6-MARKER-KEY-RECORD [ZH] (required present: markerA 在 label 和 Pod 镜像清理前保持记录)
-PASS  R6-MARKER-KEY-RECORD [EN] (required present: The rollback precondition is an absent `hook-state` label together with an empty or absent marker-key record)
-PASS  R6-MARKER-KEY-RECORD [ZH] (required present: 回滚前置条件是：`hook-state` label 不存在，且 marker key 记录为空或不存在)
+FAIL  R6-MARKER-KEY-RECORD [EN] (required MISSING: The rollback precondition is an absent `hook-state` label together with an empty or absent marker-key record)
+FAIL  R6-MARKER-KEY-RECORD [ZH] (required MISSING: 回滚前置条件是：`hook-state` label 不存在，且 marker key 记录为空或不存在)
 PASS  R6-MARKER-KEY-RECORD [EN] (required present: the controller sets `hook-state`, the corresponding marker, and its marker-key record in the same RI metadata write)
 PASS  R6-MARKER-KEY-RECORD [EN] (required present: `hook-state`, the marker, and its marker-key record must be set in the same metadata write)
 PASS  R6-MARKER-KEY-RECORD [ZH] (required present: marker 与 marker key 记录同批写入)
@@ -69,13 +69,13 @@ PASS  R6-ADMISSION-SAFEGUARDS [EN] (required present: Admission rejects marker k
 PASS  R6-ADMISSION-SAFEGUARDS [ZH] (required present: 准入拒绝所属 RIS `spec\.selector` 在 `matchLabels` 或 `matchExpressions`)
 PASS  R6-ADMISSION-SAFEGUARDS [EN] (required present: Admission rejects signal label keys that are declared in the Pod template labels)
 PASS  R6-ADMISSION-SAFEGUARDS [ZH] (required present: 准入拒绝在 Pod template labels 中声明的信号标签 key)
-PASS  R6-FAIL-CLOSED-WEBHOOK [EN] (required present: Resolution is fail-closed: when the cache has not yet observed a newly created RI or a recently enabled `preDelete`, the webhook cannot prove the deletion is safe and rejects or defers the request)
-PASS  R6-FAIL-CLOSED-WEBHOOK [ZH] (required present: 解析采用 fail-closed 语义：缓存尚未观察到新建 RI 或刚启用的 preDelete 时)
-PASS  R6-FAIL-CLOSED-WEBHOOK [ZH] (required present: webhook 无法证明删除安全，应拒绝或暂缓该请求)
-PASS  R6-FAIL-CLOSED-WEBHOOK [EN] (required present: A cache miss must not establish that deletion is safe)
-PASS  R6-FAIL-CLOSED-WEBHOOK [ZH] (required present: cache miss 不能证明删除安全)
-PASS  R6-FAIL-CLOSED-WEBHOOK [EN] (required present: Foreground-deletion admission is fail-closed: requests that race RI creation or `preDelete` enablement are rejected or deferred while the informer cache is stale)
-PASS  R6-FAIL-CLOSED-WEBHOOK [ZH] (required present: foreground 删除准入采用 fail-closed)
+FAIL  R6-FAIL-CLOSED-WEBHOOK [EN] (required MISSING: Resolution is fail-closed: when the cache has not yet observed a newly created RI or a recently enabled `preDelete`, the webhook cannot prove the deletion is safe and rejects or defers the request)
+FAIL  R6-FAIL-CLOSED-WEBHOOK [ZH] (required MISSING: 解析采用 fail-closed 语义：缓存尚未观察到新建 RI 或刚启用的 preDelete 时)
+FAIL  R6-FAIL-CLOSED-WEBHOOK [ZH] (required MISSING: webhook 无法证明删除安全，应拒绝或暂缓该请求)
+FAIL  R6-FAIL-CLOSED-WEBHOOK [EN] (required MISSING: A cache miss must not establish that deletion is safe)
+FAIL  R6-FAIL-CLOSED-WEBHOOK [ZH] (required MISSING: cache miss 不能证明删除安全)
+FAIL  R6-FAIL-CLOSED-WEBHOOK [EN] (required MISSING: Foreground-deletion admission is fail-closed: requests that race RI creation or `preDelete` enablement are rejected or deferred while the informer cache is stale)
+FAIL  R6-FAIL-CLOSED-WEBHOOK [ZH] (required MISSING: foreground 删除准入采用 fail-closed)
 PASS  R6-REMOVAL-SEMANTICS [EN] (required present: If an active hook is removed, the controller treats it as absent, stops matching its marker, removes its stale runtime labels, and follows the same transition as a released hook; for example, `PreUpdate` advances to `Updating`)
 PASS  R6-REMOVAL-SEMANTICS [ZH] (required present: 如果删除 active hook，controller 视其)
 PASS  R6-REMOVAL-SEMANTICS [ZH] (required present: 不为它执行 marker 匹配，清理遗留 runtime labels)
@@ -85,13 +85,13 @@ PASS  R6-REMOVAL-SEMANTICS [EN] (required present: If `preDelete` is removed whi
 PASS  R6-REMOVAL-SEMANTICS [ZH] (required present: 如果删除过程中移除 preDelete，清理 finalizer 后删除可以继续)
 PASS  R6-REMOVAL-SEMANTICS [EN] (required present: Hook disablement stops marker matching on the next reconciliation and cleans stale runtime labels and the reserved RI finalizer, even when another lifecycle operation is unfinished)
 PASS  R6-REMOVAL-SEMANTICS [ZH] (required present: 清理遗留运行时 labels、其 Pod 镜像和 RI 上的保留 finalizer)
-PASS  R6-FIELD-OWNERSHIP [EN] (required present: the controller owns phase, `hook-state`, the effective RI snapshot, the reserved finalizer, and the mirrored signal labels on member Pods; the executor only removes markers)
-PASS  R6-FIELD-OWNERSHIP [ZH] (required present: controller 拥有 phase、`hook-state`、RI 生效快照、保留 finalizer 以及成员 Pod 上的)
+FAIL  R6-FIELD-OWNERSHIP [EN] (required MISSING: the controller owns phase, `hook-state`, the effective RI snapshot, the reserved finalizer, and the mirrored signal labels on member Pods; the executor only removes markers)
+FAIL  R6-FIELD-OWNERSHIP [ZH] (required MISSING: controller 拥有 phase、`hook-state`、RI 生效快照、保留 finalizer 以及成员 Pod 上的)
 PASS  R6-FIELD-OWNERSHIP [ZH] (required present: 镜像信号标签；executor 只负责清除 marker)
 PASS  R6-RESERVED-PREFIX [EN] (required present: Signal label keys must also be rejected when they equal the exact hook-state key or use the reserved `rbg\.workloads\.x-k8s\.io/` prefix)
 PASS  R6-RESERVED-PREFIX [ZH] (required present: 也不能等于固定的 hook-state key 或使用保留的 `rbg\.workloads\.x-k8s\.io/` 前缀)
 PASS  R6-ROLLBACK-PRECONDITION [EN] (required present: has no `hook-state` label, remaining marker, or Pod mirror \(verified through the marker-key record\))
-PASS  R6-ROLLBACK-PRECONDITION [ZH] (required present: 回滚前置条件是 `hook-state` label 不存在且记录为空)
+FAIL  R6-ROLLBACK-PRECONDITION [ZH] (required MISSING: 回滚前置条件是 `hook-state` label 不存在且记录为空)
 SUPERSEDED (round-5 wording, re-pinned above or retired): 清理遗留运行时 labels 和 RI 上的保留 finalizer
 SUPERSEDED (round-5 wording, re-pinned above or retired): 清理协议拥有的遗留运行时 labels；对 preDelete 还要在正常配置收敛中
 SUPERSEDED (round-5 wording, re-pinned above or retired): the controller stops matching its markers, removes stale runtime labels owned by the protocol, and, for `preDelete`, removes the reserved RI finalizer
@@ -106,6 +106,12 @@ SUPERSEDED (round-5 wording, re-pinned above or retired): 前置 hooks 包含 `l
 SUPERSEDED (round-5 wording, re-pinned above or retired): 前置 hook 字段 \| `labelsHandler`、`markNotReady` \|
 SUPERSEDED (round-5 wording, re-pinned above or retired): remains until the RI object is deleted
 SUPERSEDED (round-5 wording, re-pinned above or retired): 持续到 RI 对象删除
-PASS  R6-CARRY (all non-superseded round-5 carry pins green on this ref; superseded wordings: 14)
+FAIL  R5-FOREGROUND-WEBHOOK [EN] (required MISSING: The webhook intercepts those DELETE requests, checks `DeleteOptions\.propagationPolicy`, and rejects `Foreground`)
+FAIL  R5-FOREGROUND-WEBHOOK [EN] (required MISSING: it resolves reachable RIs through owner references and cached informers)
+FAIL  R5-FOREGROUND-WEBHOOK [ZH] (required MISSING: webhook 拦截这些 DELETE 请求，检查 `DeleteOptions\.propagationPolicy`，并拒绝 `Foreground`)
+FAIL  R5-FOREGROUND-WEBHOOK [ZH] (required MISSING: 通过 owner reference 和 informer 缓存解析可达 RI)
+FAIL  CARRY-RBGSET-BOUNDARY [EN] (required MISSING: for RBGSet, RBG, RIS, or RI deletion requests that can reach an RI)
+FAIL  CARRY-RBGSET-BOUNDARY [ZH] (required MISSING: RBGSet、RBG、RIS 或 RI)
+FAIL  R6-CARRY-REGRESSION (a round-5 pin that is NOT in the disclosed round-6 supersession list failed — see above)
 OPEN  F-SEEALSO-502 (keps/502-workload-status-model still absent from this tree)
-ROUND6 CONTRACTS: all round-6 pins green on this ref
+ROUND6 CONTRACTS: one or more round-6 contracts missing

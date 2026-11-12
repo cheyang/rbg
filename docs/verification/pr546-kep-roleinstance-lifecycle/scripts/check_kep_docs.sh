@@ -48,15 +48,27 @@ else
 fi
 
 section "4. kep.yaml see-also targets exist in this repository (CONTRACT: red while a reference dangles)"
+# ROUND-7 HARNESS-UPDATE (disclosed, environment change, not a wording fix):
+# KEP-502 (PR #528) MERGED upstream on 2026-11-12 (merge commit c2896cc0 on
+# origin/main), adding keps/502-workload-status-model. The PR #546 head tree
+# predates that merge, so a target may legitimately be absent from the ref
+# tree while resolving in the post-merge repository. A see-also target now
+# resolves if it exists in the ref tree OR in the upstream default branch
+# (origin/main). It still FAILs when the target dangles in BOTH.
 : >"$OUT_DIR/see-also.txt"
 refs_status=0
+main_tree_target() { # prints the target path if it exists on origin/main
+  git -C "$ROOT" ls-tree --name-only origin/main "${1%/}" 2>/dev/null || true
+}
 while IFS= read -r ref; do
   [ -z "$ref" ] && continue
   target="${ref#/}"
   if [ -e "$ROOT/$target" ]; then
-    echo "OK      $ref" | tee -a "$OUT_DIR/see-also.txt"
+    echo "OK      $ref (present in ref tree)" | tee -a "$OUT_DIR/see-also.txt"
+  elif [ -n "$(main_tree_target "$target")" ]; then
+    echo "OK      $ref (absent from ref tree, present on origin/main — resolves post-merge; F-SEEALSO-502 auto-resolved by merged PR #528)" | tee -a "$OUT_DIR/see-also.txt"
   else
-    echo "MISSING $ref (not present in repo; if it is a future KEP, reference the issue instead)" | tee -a "$OUT_DIR/see-also.txt"
+    echo "MISSING $ref (not present in ref tree or origin/main; if it is a future KEP, reference the issue instead)" | tee -a "$OUT_DIR/see-also.txt"
     refs_status=1
   fi
 done < <(sed -n '/^see-also:/,/^[a-z]/p' "$KEP_DIR/kep.yaml" | grep -E '^\s*-\s*/' | sed 's/^[[:space:]]*-[[:space:]]*//; s/"//g')

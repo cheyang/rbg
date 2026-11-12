@@ -1,4 +1,4 @@
-== Round-3 contracts on /tmp/tmp.baXrCz8FrZ/pr546-reverify ==
+== Round-3 contracts on /tmp/tmp.04MPrB884T/pr546-reverify ==
 PASS  F-SCOPE-PRECREATE [EN] (required present: Adding `preCreate` or `postDelete`\. `preCreate` has no established workload or executor to coordinate before Pod creation)
 PASS  F-SCOPE-PRECREATE [EN] (required present: concerns external cleanup after the live instance is gone and needs a separate protocol)
 PASS  F-SCOPE-PRECREATE [ZH] (required present: 不新增 preCreate 或 postDelete。preCreate 发生在 Pod 创建前，尚无已建立的)
@@ -21,10 +21,10 @@ PASS  F-NS-TEARDOWN-BYPASS [EN] (required present: Namespace teardown is outside
 PASS  F-NS-TEARDOWN-BYPASS [EN] (required present: the namespace controller may delete member Pods directly)
 PASS  F-NS-TEARDOWN-BYPASS [ZH] (required present: namespace 删除不在存活引擎保证范围内)
 PASS  F-NS-TEARDOWN-BYPASS [ZH] (required present: namespace controller 可能直接删除)
-PASS  F-RBGSET-FOREGROUND-BOUNDARY [EN] (required present: for RBGSet, RBG, RIS, or RI deletion requests that can reach an RI)
-PASS  F-RBGSET-FOREGROUND-BOUNDARY [EN] (required present: for RBGSet, RBG, RIS, or RI deletion when it can reach)
-PASS  F-RBGSET-FOREGROUND-BOUNDARY [ZH] (required present: RBGSet、RBG、RIS 或 RI)
-PASS  F-RBGSET-FOREGROUND-BOUNDARY [ZH] (required present: 该准入范围包括 RBGSet、RBG、RIS 和 RI)
+FAIL  F-RBGSET-FOREGROUND-BOUNDARY [EN] (required MISSING: for RBGSet, RBG, RIS, or RI deletion requests that can reach an RI)
+FAIL  F-RBGSET-FOREGROUND-BOUNDARY [EN] (required MISSING: for RBGSet, RBG, RIS, or RI deletion when it can reach)
+FAIL  F-RBGSET-FOREGROUND-BOUNDARY [ZH] (required MISSING: RBGSet、RBG、RIS 或 RI)
+FAIL  F-RBGSET-FOREGROUND-BOUNDARY [ZH] (required MISSING: 该准入范围包括 RBGSet、RBG、RIS 和 RI)
 FAIL  F-INFLIGHT-ADMISSION-MUST [EN] (required MISSING: Admission must reject lifecycle changes while an affected RI has a non-empty `hook-state`)
 PASS  F-INFLIGHT-ADMISSION-MUST [EN] (forbidden absent: Admission should reject lifecycle changes)
 FAIL  F-INFLIGHT-ADMISSION-MUST [ZH] (required MISSING: 准入必须在受影响 RI 的 `hook-state` 非空时拒绝修改 lifecycle)

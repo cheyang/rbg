@@ -5,18 +5,19 @@ Reproducible evidence for the findings raised while reviewing
 Lifecycle Hooks — a **documentation-only** PR: `keps/527-roleinstance-lifecycle/{README.md,README.zh-CN.md,kep.yaml}`).
 
 Harness branch: `verify/pr546-kep-roleinstance-lifecycle-claude`, rebased on the
-reviewed PR head `c3ea6547` (round 1 reviewed `6e8419ab`, round 2 `71dd5e87`,
-round 3 `fb6c2b36`, round 4 `43dab57b`, round 5 `6c15cc92`).
+reviewed PR head `d038c23b` (round 1 reviewed `6e8419ab`, round 2 `71dd5e87`,
+round 3 `fb6c2b36`, round 4 `43dab57b`, round 5 `6c15cc92`, round 6 `c3ea6547`).
 **Production code is touched only by the PR itself** — the branch adds only test
 files and this harness on top of the PR head.
 
-Layers run against the code under review (PR head `c3ea6547`):
+Layers run against the code under review (PR head `d038c23b`):
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
 | 1. Unit (Go) | pins the KEP's factual claims about *existing* code (premise + readiness-gate helper behavior) | `go test ./pkg/inplace/instance/readiness/ ./pkg/inplace/instance/lifecycle/ -run 'TestKep527' -v` |
 | 2. Docs | markdownlint (CI config + default), whitespace, kep.yaml see-also resolution, en/zh parity | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_kep_docs.sh` |
-| 2a. Round-6 contracts (**gating**) | pins the round-6 design change (markNotReady/RI-Ready gating REMOVED; every hook contains only `signalLabels`; no `markNotReady`/`RoleInstanceCustomReady` anywhere), the three NEW mechanisms (marker-key record annotation, signal-label propagation to member Pods, admission safeguards incl. RIS spec.selector collision + Pod template label collision, fail-closed foreground-deletion webhook), the reworded removal/disable/field-ownership contracts, and re-runs the round-5 script failing on any carry pin outside the 14 disclosed round-6 supersessions | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round6_contracts.sh <repo-root>` |
+| 2a'. Round-7 contracts (**gating**) | pins the round-7 responses to every open round-6 item (cache-free blanket foreground rejection while the gate is enabled; KEP-502 "now merged" + disclosed markPodNotReady drift + follow-up-amendment gate; marker-key record in the field-ownership enumeration with the non-writer rule; "Mirrors are not authenticated" trust model; selector converse rule; cross-generation signal-key uniqueness; rollback precondition + preDelete finalizer; "Gate edges" paragraph; zh rollout-risk re-parity; scalability mirror fan-out; reserved-prefix unit bullet) and re-runs the round-6 script failing on any carry pin outside the 20 disclosed round-7 supersessions | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round7_contracts.sh <repo-root>` |
+| 2a. Round-6 contracts (reference) | pins the round-6 design change (markNotReady/RI-Ready gating REMOVED; every hook contains only `signalLabels`; no `markNotReady`/`RoleInstanceCustomReady` anywhere), the three NEW mechanisms (marker-key record annotation, signal-label propagation to member Pods, admission safeguards incl. RIS spec.selector collision + Pod template label collision, fail-closed foreground-deletion webhook), the reworded removal/disable/field-ownership contracts, and re-runs the round-5 script failing on any carry pin outside the 14 disclosed round-6 supersessions | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round6_contracts.sh <repo-root>` |
 | 2b. Round-5 contracts (**gating**) | pins the round-5 wording of the reworded round-4 contracts (mutual exclusion, snapshot ownership, removal semantics, enablement-during-deletion), the round-5 fixes (test-plan bullet, stale-label disposition, gate-off rule), the new round-5 normative content (foreground webhook mechanism, reserved prefix, field ownership, hook-state overlap), and re-runs the round-4 script failing on any carry pin outside the disclosed supersession list | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh <repo-root>` |
 | 2b'. Round-4 contracts (carry, via round-5) | round-4 wording pins; 10 patterns are disclosed as superseded by the round-5 rewrite (substance re-pinned in 2b); any other round-4 failure is a carry regression | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round4_contracts.sh <repo-root>` |
 | 2c. Round-3 contracts (reference) | round-3 wording pins — fail on head **by design** (the round-4 coexistence pivot restored what the removal pivot had deleted); kept for history, not gating | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh <repo-root>` |
@@ -49,6 +50,104 @@ proposes **four** (`preUpdate`, `preRecover`, `postReady`, `preDelete`),
 dropping `preCreate`/`postDelete` without an explicit rationale and adding
 `preRecover`. See finding F-SCOPE-PRECREATE.
 
+
+## Round 7 (head d038c23b) — delta reviewed: c3ea6547..d038c23b (1 docs commit, +127/−60)
+
+A **review-response round** that closes every open round-6 item. What it does:
+
+1. **Redesigns foreground-deletion admission** (closes F-C4541237496 and
+   re-closes F-C4528291011 with a simpler rule): the webhook no longer
+   resolves reachable RIs through owner references and informer caches at
+   all. While `RoleInstanceLifecycleHooks` is enabled, admission rejects
+   *every* `Foreground` propagation at the RBGSet/RBG/RIS/RI deletion
+   entries; "neither a cache miss nor a successful lookup can prove that no
+   reachable RI has `preDelete` in effect, because RI creation or hook
+   enablement may have committed before its watch event arrived"; the client
+   may retry with background propagation. Verified all six Foreground
+   mentions in both languages are consistent with the new blanket scope.
+   Residual (new, non-gating): the blanket scope also covers workloads with
+   no hooks — F-FOREGROUND-BLANKET-SCOPE.
+2. **Declares KEP-502 merged and discloses the drift** (closes
+   F-KEP502-GATE-REFERENCE-DRIFT on the KEP-527 side): "The phase model is
+   defined by KEP-502, now merged" — verified: PR #528 MERGED 2026-11-12,
+   merge commit `c2896cc0` on origin/main; the five phase values pinned in
+   KEP-527 match the merged KEP-502 phase table exactly (Creating, Running,
+   Updating, Recovering, Terminating). The KEP further states the *merged*
+   KEP-502 text still references the `markPodNotReady` gate from an earlier
+   revision of this proposal and that a KEP-502 follow-up amendment must
+   remove those references before implementation — verified true against
+   `keps/502-workload-status-model/README.md:413` and `:485` on the merge
+   commit. The still-untracked external amendment is the new non-gating
+   question F-KEP502-AMENDMENT-TRACKER; the stale "until ... accepted"
+   phrasing is the nit F-KEP502-ACCEPTED-PHRASING.
+3. **Marker-key record ownership** (closes F-MARKERKEY-RECORD-OWNERSHIP):
+   the record joins the field-ownership enumeration and "Users, metadata
+   synchronization, and executors must not write the marker-key record"
+   (EN+ZH; zh also extends the metadata-sync sentence).
+4. **Mirror trust model** (closes F-POD-MIRROR-SPOOF-WINDOW): new
+   propagation rule "Mirrors are not authenticated. Any actor with Pod
+   update permission can write or clear these keys until the next
+   reconciliation re-syncs them, so the RI is the only authoritative source;
+   safety-relevant consumers must verify the RI rather than trust a mirror
+   alone" (EN+ZH).
+5. **Admission converse rule** (closes F-SELECTOR-RESERVED-KEY-REVERSE):
+   owning RIS selectors may not use controller-reserved keys such as the
+   hook-state key (EN+ZH + unit bullet).
+6. **Cross-generation uniqueness** (closes F-C4541237385): a signal key may
+   not be reassigned from one hook to another while any governed RI still
+   records that key, "so a retired executor cannot remove a marker that now
+   belongs to a different hook, such as a pending `postReady` key reassigned
+   to `preDelete`" (EN+ZH + unit bullet).
+7. **Rollback precondition strengthened**: absent `hook-state` label + empty/
+   absent marker-key record + **no reserved `preDelete` finalizer remaining**
+   (body + test plan, EN+ZH).
+8. **"Gate edges" paragraph** (closes F-COEXIST-GATE-EDGE and
+   AC-KEP-REPLACEMENT-RULE): no retroactive validation, mutual exclusion on
+   every subsequent write, dual-configured objects corrected before their
+   next update, gate-off controller behavior (neither writes nor matches;
+   existing state remains for a compatible controller to finish), and the
+   inPlaceUpdate deprecation contract ("until a deprecation release is
+   announced") (EN+ZH).
+9. **Mid-operation hook-removal acknowledgment** (closes the
+   F-CONFIG-REMOVAL-SKIPS-HOOK / F-PREDELETE-REMOVAL-ONE-WAY residue):
+   risk-table row "Active hook removed mid-operation | Barrier skipped;
+   operator confirms" plus a Troubleshooting bullet stating the preDelete
+   release is one-way (EN+ZH).
+10. **zh rollout-risk re-parity** (closes F-ZH-EN-ROLLOUT-RISK-PARITY): zh
+    drops the stale "Ready 循环等待" entry; EN/ZH risk lists match again
+    (forbidden-pin verified).
+11. **Scalability mirror fan-out** (closes F-SCALABILITY-POD-MIRROR-WRITES)
+    and the **reserved-prefix unit bullet** (closes
+    F-TESTPLAN-PREFIX-COVERAGE), both EN+ZH.
+12. **F-SEEALSO-502 auto-resolved**: PR #528 (KEP-502) MERGED upstream
+    (2026-11-12, `c2896cc0`), adding `keps/502-workload-status-model` to
+    origin/main. The PR #546 head tree predates the merge, so the reference
+    still resolves only post-merge (merge commit or rebase). Disclosed
+    Harness-update in `check_kep_docs.sh`: a see-also target resolves if it
+    exists in the ref tree OR on origin/main; it still FAILs when it dangles
+    in both.
+
+**Round-7 verification (differential, bites-verified):** 58 round-7 pins
+(53 required + 5 forbidden) extracted as exact fixed-string literals from the
+whitespace-flattened head text — all green on head `d038c23b`, 57 red on
+previous head `c3ea6547` (the 58th is the EN rollout-risk wording already
+fixed in round 6 and carried), 54 red on base `3612013e` (the 4
+differently-green pins at base are forbidden-pins that pass trivially because
+the round-6-only wording they forbid did not exist at base). Explicit
+harness-bites check: corrupting the "Mirrors are not authenticated" bullet in
+a scratch tree flips R7-MIRROR-UNAUTH [EN] to FAIL. The round-6 script runs
+inside check_round7; its 19 wording FAILs + the F-SEEALSO OPEN are all in the
+disclosed 20-entry round-7 supersession list (re-pinned under the round-7
+wording) — a disclosed Harness-update, not a masked pass. Go premise pins and
+the pre-existing bug canary unchanged (green = bug present, non-gating).
+Round-6 acceptance residue: all four round-6 failed criteria now pass except
+the see-also criterion which passes via the disclosed origin/main resolution.
+
+**Open (non-gating) after round 7:** F-CUSTOMREADY-STATUS-EMPTY (pre-existing
+code defect, canary green, upstream tracking-issue candidate),
+F-KEP502-AMENDMENT-TRACKER (external follow-up amendment untracked),
+F-FOREGROUND-BLANKET-SCOPE (design-tradeoff question),
+F-KEP502-ACCEPTED-PHRASING (nit).
 
 ## Round 6 (head c3ea6547) — delta reviewed: 6c15cc92..c3ea6547 (5 docs commits, +322/−256)
 
@@ -389,7 +488,7 @@ vs `results/round2-contracts-prevhead.txt` (previous reviewed head `6e8419ab`:
 | ID | Claim | Layer | Verdict | Evidence |
 |----|-------|-------|---------|----------|
 | P0 | Existing RIS lifecycle coordination exists as the issue/KEP describes | 1 | Confirmed | `TestKep527ExistingCoordinationModel` PASS; `results/premise-code-evidence.txt` |
-| F-SEEALSO-502 | `kep.yaml` `see-also` references `/keps/502-workload-status-model`, which does not exist in the repo | 2 | **Confirmed (reproduced)** | `check_kep_docs.sh` section 4 → `see-also: FAIL`; `results/docchecks.txt` |
+| F-SEEALSO-502 | `kep.yaml` `see-also` references `/keps/502-workload-status-model`, which did not exist in the repo | 2 | **Fixed round 7** (PR #528 merged 2026-11-12 as `c2896cc0`; target exists on origin/main; ref-tree absence is pre-merge only) | `check_kep_docs.sh` section 4 → `see-also: PASS` (disclosed Harness-update: resolves on ref tree OR origin/main); `results/docchecks-rerun.txt` |
 | F-KEP-CLAIMS-ACCURATE | KEP's "ReadinessGate prerequisite" claim about the existing helper is accurate | 1 | Confirmed (claim true) | `TestKep527ReadinessGatePrerequisite` PASS |
 | F-CUSTOMREADY-STATUS-EMPTY | **Pre-existing** (not this PR): first `RoleInstanceCustomReady` write omits `Status` | 1 | Confirmed (canary green) | `TestKep527CanaryCustomReadyFirstWriteOmitsStatus` PASS = bug present |
 | F-PREDELETE-LIVENESS | preDelete live-engine barrier is unachievable on the GC/owner-delete path | — | Not-reproduced at runtime; hypothesis grounded in K8s semantics + KEP's own admission | `liveNote` in manifest; no kubelet/GC layer this round |

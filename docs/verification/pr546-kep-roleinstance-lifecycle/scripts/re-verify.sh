@@ -26,6 +26,26 @@
 # the gating contract set; it internally re-runs the round-4 script and fails
 # on any round-4 carry pin that is NOT in the disclosed supersession list.
 #
+# Round 7 (head d038c23b, docs-only, 1 commit): responds to every open
+# round-6 item — the foreground-deletion webhook is redesigned to reject ALL
+# Foreground propagation at the four deletion entries while the gate is
+# enabled (no informer-cache dependency at all), KEP-502 is declared merged
+# (verified: PR #528 merged 2026-11-12, c2896cc0) with its stale
+# markPodNotReady references disclosed and gated on a follow-up amendment,
+# the marker-key record joins the field-ownership enumeration with an
+# explicit non-writer rule, the mirror trust model is stated
+# ("Mirrors are not authenticated"), the selector converse rule and the
+# cross-generation signal-key uniqueness rule are added, the rollback
+# precondition gains the preDelete-finalizer clause, a "Gate edges" paragraph
+# closes F-COEXIST-GATE-EDGE, the zh rollout-risk list is re-parityed, the
+# Scalability section adds mirror fan-out, and the reserved-prefix unit
+# bullet lands. check_kep_docs.sh's see-also check is a disclosed
+# Harness-update (environment change: the reference now resolves on
+# origin/main via the merged KEP-502). The round-7 script is the gating
+# contract set; it internally re-runs the round-6 script and tolerates ONLY
+# the 20 disclosed round-7 supersessions; anything else red is a carry
+# regression.
+#
 # Round 6 (head c3ea6547): a REAL DESIGN CHANGE (+322/-256, 5 commits):
 # markNotReady / RI-Ready gating is REMOVED (every hook contains only
 # signalLabels; RoleInstanceCustomReady gone; readiness gating is a Non-Goal),
@@ -80,7 +100,14 @@ bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check
 DOC_STATUS="${PIPESTATUS[0]}"
 
 echo
-echo "== Round-6 contracts (gating; round-6 pins + round-5 carry, red = regression) =="
+echo "== Round-7 contracts (gating; round-7 pins + round-6 carry with disclosed supersessions, red = regression) =="
+CHECK_ROUND7_OUT="$TOPIC_DIR/results" \
+  bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round7_contracts.sh" "$WORKTREE" \
+  2>&1 | tee "$TOPIC_DIR/results/round7-contracts-rerun.txt" | grep -E '^(FAIL|OPEN|SUPERSEDED|PASS  R7|ROUND7)' | tail -20
+R7_STATUS="${PIPESTATUS[0]}"
+
+echo
+echo "== Round-6 contracts (reference; its design-changed pins are superseded by round-7 — see check_round7_contracts.sh) =="
 CHECK_ROUND6_OUT="$TOPIC_DIR/results" \
   bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round6_contracts.sh" "$WORKTREE" \
   2>&1 | tee "$TOPIC_DIR/results/round6-contracts-rerun.txt" | grep -E '^(FAIL|OPEN|SUPERSEDED|PASS  R6|ROUND6)' | tail -20
@@ -135,7 +162,7 @@ else
 fi
 
 if [ "$DOC_STATUS" -eq 0 ]; then
-  echo "F-SEEALSO-502: Fixed (see-also targets all resolve)"
+  echo "F-SEEALSO-502: Fixed (see-also targets all resolve — in the ref tree or on origin/main via merged PR #528; disclosed Harness-update in check_kep_docs.sh)"
 else
   if grep -q 'see-also: FAIL' "$TOPIC_DIR/results/docchecks-rerun.txt"; then
     echo "F-SEEALSO-502: Still-broken (dangling see-also reference reproduces)"
@@ -152,10 +179,10 @@ else
   echo "F-CUSTOMREADY-STATUS-EMPTY: Harness-update (test missing or did not run)"
 fi
 
-# Round-4/5 fixed findings: verdicts come from the round-6 contract pins
-# (round-5 carry is invoked inside check_round6; the 14 round-6
+# Round-4/5/6/7 fixed findings: verdicts come from the round-7 contract pins
+# (round-6 carry is invoked inside check_round7; the 20 round-7
 # supersessions are disclosed design-change re-pins, not regressions).
-if [ "$R6_STATUS" -eq 0 ]; then
+if [ "$R7_STATUS" -eq 0 ]; then
   for f in F-OLDNEW-COEXIST F-LATEST-CONFIG-SEMANTICS \
            F-LABEL-SYNTAX F-INTERRUPT-WHEN-DEAD-AMBIGUITY F-KEPYAML-GATE-SHAPE \
            F-PROPAGATED-SNAPSHOT-EDIT F-ZH-ENGLISH-TERMS \
@@ -164,7 +191,7 @@ if [ "$R6_STATUS" -eq 0 ]; then
            CARRY-DEAD-ENGINE CARRY-PHASE-STORAGE CARRY-NOPODFINALIZERS \
            CARRY-PREDELETE-LIVENESS CARRY-DISABLE-SUPPORTED \
            CARRY-NOPOSTREADY-OMITTED CARRY-WIRE-NAMES CARRY-KEPYAML-NOISE; do
-    echo "$f: Fixed (round-5 carry pin green on this ref via check_round6)"
+    echo "$f: Fixed (round-5 carry pin green on this ref via check_round7 -> check_round6)"
   done
   echo "F-INDEPENDENT-TYPE / F-MARKNOTREADY-NAME: Harness-update (round-6 design change: every hook contains only signalLabels, re-pinned R6-SIGNALLABELS / R6-NO-READY-GATING)"
   echo "F-PREDELETE-GATE-LIFETIME: Moot (round-6 design change removed markNotReady and RI-Ready gating entirely — no gate left to have a lifetime; replacement contract R6-NO-READY-GATING green)"
@@ -173,22 +200,31 @@ if [ "$R6_STATUS" -eq 0 ]; then
   echo "F-C4528291011 (fail-closed on cache miss): Fixed (R6-FAIL-CLOSED-WEBHOOK pins green — fail-closed resolution + integration bullet, EN+ZH)"
   echo "F-C4528290945 (stateful readiness never sees the gate): Moot (round-6 removed the markNotReady gate entirely; hooks never change RI Ready, stated as a Non-Goal)"
 else
-  echo "Round-4/5/6 fixed findings: one or more MISSING (see results/round6-contracts-rerun.txt)"
+  echo "Round-4/5/6/7 fixed findings: one or more MISSING (see results/round7-contracts-rerun.txt)"
 fi
-echo "F-TESTPLAN-ABSENCE-CONTRADICTION: verdict from R5-TESTPLAN-DISABLE pins (carried inside check_round6; new bullet present, old bullet absent, EN+ZH)"
-echo "F-STALE-LABEL-DISPOSITION: verdict from R6-REMOVAL-SEMANTICS pins (single disposition rule incl. Pod mirrors, EN+ZH)"
-echo "F-COEXIST-GATE-EDGE: PARTIAL — gate-off rule stated (R5-GATE-OFF-RULE carry pins); gate-on for dual-configured objects and the deprecation timeline still unstated"
-echo "F-CONFIG-REMOVAL-SKIPS-HOOK: Still-open — no admission guard, no Risks/Troubleshooting acknowledgment of the mid-deletion skip path"
-echo "F-KEP502-RECOVERING-GATE-CIRCULARITY: Fixed on the dependency side (PR #528 states phase completion uses controller-observed readiness only and explicitly removes the KEP-527 circular wait) — but its head now references the markNotReady/RoleInstanceCustomReady mechanism KEP-527 round 6 removed: see F-KEP502-GATE-REFERENCE-DRIFT; re-fetch PR #528 to confirm"
-echo "F-KEP502-GATE-REFERENCE-DRIFT: Open (question) — PR #528's current head (9862499, fetched 2026-11-12) still cites 'the lifecycle-owned RoleInstanceCustomReady contribution established by markPodNotReady' and a 'markPodNotReady lifecycle gate' test bullet; KEP-527 no longer defines that mechanism. External, not machine-pinnable in this repo."
+echo "F-STALE-LABEL-DISPOSITION: Fixed (R6-REMOVAL-SEMANTICS pins carried green inside check_round7; single disposition rule incl. Pod mirrors, EN+ZH)"
+echo "F-COEXIST-GATE-EDGE: Fixed (R7-GATE-EDGES-DUAL / R7-GATE-EDGES-OFF / R7-INPLACEUPDATE-DEPRECATION pins green — gate-on for dual-configured objects, gate-off controller behavior, inPlaceUpdate deprecation contract, EN+ZH)"
+echo "F-CONFIG-REMOVAL-SKIPS-HOOK: Fixed at the acknowledgment level (R7-RISK-REMOVAL-ROW + R7-TROUBLESHOOT-ONEWAY pins green — risk-table row and Troubleshooting bullet acknowledge the mid-operation removal barrier skip and the one-way preDelete release, EN+ZH; the absence-semantics design itself remains the adjudicated round-4 decision)"
+echo "F-PREDELETE-REMOVAL-ONE-WAY: Fixed (same R7-RISK-REMOVAL-ROW / R7-TROUBLESHOOT-ONEWAY pins; the one-way release is now an explicitly acknowledged operator confirmation)"
+echo "F-POD-MIRROR-SPOOF-WINDOW: Fixed (R7-MIRROR-UNAUTH pins green — 'Mirrors are not authenticated', RI is the only authoritative source, safety-relevant consumers must verify the RI, EN+ZH)"
+echo "F-SELECTOR-RESERVED-KEY-REVERSE: Fixed (R7-SELECTOR-CONVERSE pins green — admission rejects owning RIS selectors using controller-reserved keys, EN+ZH, plus the unit bullet)"
+echo "F-C4541237385 (postReady key reassigned to preDelete): Fixed (R7-UNIQ-GENERATIONS / R7-UNIQ-TESTBULLET pins green — uniqueness spans configuration generations, EN+ZH)"
+echo "F-C4541237496 (stale cache even on successful lookup): Fixed by redesign (R7-FOREGROUND-BLANKET / R7-FOREGROUND-NO-CACHE pins green — the webhook no longer consults informer caches at all and rejects every Foreground propagation while the gate is enabled, EN+ZH)"
+echo "F-ZH-EN-ROLLOUT-RISK-PARITY: Fixed (R7-ROLLOUT-RISK pins + forbidden zh 循环等待 absent; EN/ZH rollout-risk lists match again)"
+echo "F-MARKERKEY-RECORD-OWNERSHIP: Fixed (R7-OWNERSHIP-RECORD / R7-OWNERSHIP-NONWRITERS / R7-OWNERSHIP-METASYNC pins green — record in the ownership enumeration, users/metadata-sync/executors barred, EN+ZH)"
+echo "F-SCALABILITY-POD-MIRROR-WRITES: Fixed (R7-SCALABILITY-FANOUT / R7-SCALABILITY-TEST pins green — mirror fan-out cost + scale coverage, EN+ZH)"
+echo "F-TESTPLAN-PREFIX-COVERAGE: Fixed (R7-PREFIX-TESTBULLET pins green — reserved-prefix clause added to the unit bullet, EN+ZH)"
+echo "F-KEP502-RECOVERING-GATE-CIRCULARITY: Fixed on the dependency side (PR #528 MERGED 2026-11-12 as c2896cc0: phase completion uses controller-observed readiness only and explicitly removes the KEP-527 circular wait)"
+echo "F-KEP502-GATE-REFERENCE-DRIFT: Fixed on the KEP-527 side (R7-KEP502-MERGED / R7-KEP502-DRIFT / R7-KEP502-AMENDMENT / R7-KEP502-PREIMPL pins green — the KEP states KEP-502 is merged, discloses that its merged text still references markPodNotReady, and gates implementation on the follow-up amendment, EN+ZH; verified against merged KEP-502 README.md:413/:485). The external KEP-502 amendment itself is still owed — tracked as the non-gating question F-KEP502-AMENDMENT-TRACKER."
+echo "F-KEP502-AMENDMENT-TRACKER: Open (non-gating question) — the required KEP-502 follow-up amendment (remove markPodNotReady references at merged KEP-502 README.md:413/:485) has no tracking issue/PR yet; pre-implementable item #1 depends on it."
 echo "F-INFLIGHT-CONFIG-ADMISSION / F-INFLIGHT-ADMISSION-MUST: Disputed (author reversed the rule by design in round 4 — see F-CONFIG-REMOVAL-SKIPS-HOOK; reversed rule pinned absent)"
 echo "F-LEGACY-REMOVAL-TRANSITION: Resolved by the round-4 reversal (coexistence satisfies issue #527 compatibility; narrowed residue tracked as F-COEXIST-GATE-EDGE)"
-echo "F-KEP502-CREATING-PHASE-CONFLICT: Fixed in the dependency PR (PR #528 amended to fold Creating-target changes, citing KEP-527 consistency) — external evidence, re-fetch to confirm"
+echo "F-KEP502-CREATING-PHASE-CONFLICT: Fixed in the dependency PR (PR #528 merged as c2896cc0: Creating-target changes folded into Create convergence, citing KEP-527 consistency)"
 
 echo
-if [ "$premise_ok" -eq 1 ] && [ "$GO_STATUS" -eq 0 ] && [ "$R6_STATUS" -eq 0 ] \
-   && ! grep -q 'see-also: FAIL' "$TOPIC_DIR/results/docchecks-rerun.txt"; then
-  echo "RESULT: all machine-checkable gating findings fixed (F-SEEALSO-502 aside)"
+if [ "$premise_ok" -eq 1 ] && [ "$GO_STATUS" -eq 0 ] && [ "$R7_STATUS" -eq 0 ] \
+   && [ "$DOC_STATUS" -eq 0 ]; then
+  echo "RESULT: all machine-checkable gating findings fixed (round-7 contract set green; see-also resolves via merged PR #528)"
   exit 0
 else
   echo "RESULT: gating findings remain open"

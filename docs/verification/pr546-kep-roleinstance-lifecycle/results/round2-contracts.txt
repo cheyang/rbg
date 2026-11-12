@@ -1,4 +1,4 @@
-== Round-2 contracts on /tmp/tmp.baXrCz8FrZ/pr546-reverify ==
+== Round-2 contracts on /tmp/tmp.04MPrB884T/pr546-reverify ==
 FAIL  F-OLDNEW-ISOLATION [EN] (required MISSING: sole user-facing definition point for the new four-hook protocol)
 FAIL  F-OLDNEW-ISOLATION [EN] (required MISSING: Alpha admission must reject a Role/RIS combination)
 PASS  F-OLDNEW-ISOLATION [EN] (required present: hook is deprecated)
@@ -7,9 +7,9 @@ PASS  F-OLDNEW-ISOLATION [ZH] (required present: 同时非空)
 PASS  F-OLDNEW-ISOLATION [ZH] (required present: 标记为 deprecated)
 PASS  F-OLDNEW-ISOLATION [EN] (forbidden absent: sole user-facing definition point\.$)
 PASS  F-PREDELETE-LIVENESS [EN] (required present: background GC does not delete dependent member Pods)
-PASS  F-PREDELETE-LIVENESS [EN] (required present: [Ff]oreground cascading deletion must be rejected by admission)
+FAIL  F-PREDELETE-LIVENESS [EN] (required MISSING: [Ff]oreground cascading deletion must be rejected by admission)
 PASS  F-PREDELETE-LIVENESS [EN] (required present: reserved RI finalizer keeps the owner object present)
-PASS  F-PREDELETE-LIVENESS [ZH] (required present: 准入必须拒绝)
+FAIL  F-PREDELETE-LIVENESS [ZH] (required MISSING: 准入必须拒绝)
 PASS  F-PREDELETE-LIVENESS [ZH] (required present: 保留的 RI finalizer 使 owner 对象继续存在)
 PASS  F-PREDELETE-LIVENESS [EN] (forbidden absent: inject an RBG-owned `preDelete` finalizer into each member Pod)
 PASS  F-CREATING-REPLACE-FINALIZER [EN] (required present: No member Pod requires a lifecycle finalizer|No per-Pod finalizer is used)

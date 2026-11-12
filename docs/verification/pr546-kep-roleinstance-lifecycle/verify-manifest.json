@@ -1,562 +1,600 @@
 {
-  "topic": "pr546-kep-roleinstance-lifecycle",
-  "pr": "https://github.com/sgl-project/rbg/pull/546",
-  "reviewer": "claude",
-  "round": 6,
-  "harnessPaths": [
-    "docs/verification/pr546-kep-roleinstance-lifecycle",
-    "pkg/inplace/instance/readiness/kep527_claims_test.go",
-    "pkg/inplace/instance/lifecycle/kep527_claims_test.go",
-    "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh",
-    "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh",
-    "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh",
-    "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round6_contracts.sh"
-  ],
-  "premise": {
-    "id": "P0",
-    "claim": "RBG's existing RIS lifecycle provides coordination through labels and finalizers for PreDelete / InPlaceUpdate, but this needs to be extended to support instance-level application actions across RI creation, updates, readiness, and deletion (issue #527); container lifecycle hooks cannot express instance-level coordination.",
-    "reportedComponent": "RoleInstance / RIS lifecycle coordination (labelsHandler + finalizersHandler)",
-    "patchedComponent": "keps/527-roleinstance-lifecycle (design document; no code change in this PR)",
-    "componentMatch": true,
-    "runsAgainst": "base",
-    "layer": "unit",
-    "verdict": "confirmed",
-    "evidence": "Code-path: existing PreDelete/InPlaceUpdate hooks with labelsHandler/finalizersHandler verified in api/workloads/v1alpha2/roleinstanceset_types.go and pkg/inplace/instance/lifecycle/lifecycle_utils.go; pinned by TestKep527ExistingCoordinationModel; see results/premise-code-evidence.txt",
-    "match": [
-      "TestKep527ExistingCoordinationModel",
-      "TestKep527ReadinessGatePrerequisite"
-    ]
+ "topic": "pr546-kep-roleinstance-lifecycle",
+ "pr": "https://github.com/sgl-project/rbg/pull/546",
+ "reviewer": "claude",
+ "round": 7,
+ "harnessPaths": [
+  "docs/verification/pr546-kep-roleinstance-lifecycle",
+  "pkg/inplace/instance/readiness/kep527_claims_test.go",
+  "pkg/inplace/instance/lifecycle/kep527_claims_test.go",
+  "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh",
+  "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh",
+  "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh",
+  "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round6_contracts.sh",
+  "docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round7_contracts.sh"
+ ],
+ "premise": {
+  "id": "P0",
+  "claim": "RBG's existing RIS lifecycle provides coordination through labels and finalizers for PreDelete / InPlaceUpdate, but this needs to be extended to support instance-level application actions across RI creation, updates, readiness, and deletion (issue #527); container lifecycle hooks cannot express instance-level coordination.",
+  "reportedComponent": "RoleInstance / RIS lifecycle coordination (labelsHandler + finalizersHandler)",
+  "patchedComponent": "keps/527-roleinstance-lifecycle (design document; no code change in this PR)",
+  "componentMatch": true,
+  "runsAgainst": "base",
+  "layer": "unit",
+  "verdict": "confirmed",
+  "evidence": "Code-path: existing PreDelete/InPlaceUpdate hooks with labelsHandler/finalizersHandler verified in api/workloads/v1alpha2/roleinstanceset_types.go and pkg/inplace/instance/lifecycle/lifecycle_utils.go; pinned by TestKep527ExistingCoordinationModel; see results/premise-code-evidence.txt",
+  "match": [
+   "TestKep527ExistingCoordinationModel",
+   "TestKep527ReadinessGatePrerequisite"
+  ]
+ },
+ "layers": {
+  "unit": {
+   "kind": "gotest",
+   "cmd": "go test ./pkg/inplace/instance/readiness/ ./pkg/inplace/instance/lifecycle/ -run 'TestKep527' -v"
   },
-  "layers": {
-    "unit": {
-      "kind": "gotest",
-      "cmd": "go test ./pkg/inplace/instance/readiness/ ./pkg/inplace/instance/lifecycle/ -run 'TestKep527' -v"
-    },
-    "docs": {
-      "kind": "script",
-      "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_kep_docs.sh"
-    },
-    "round2-contracts": {
-      "kind": "script",
-      "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh <repo-root-of-ref>"
-    },
-    "round3-contracts": {
-      "kind": "script",
-      "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh <repo-root-of-ref>"
-    },
-    "round4-contracts": {
-      "kind": "script",
-      "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round4_contracts.sh <repo-root-of-ref>"
-    },
-    "round5-contracts": {
-      "kind": "script",
-      "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh <repo-root-of-ref>"
-    },
-    "round6-contracts": {
-      "kind": "script",
-      "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round6_contracts.sh <repo-root-of-ref>"
-    }
+  "docs": {
+   "kind": "script",
+   "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_kep_docs.sh"
   },
-  "findings": [
-    {
-      "id": "P0",
-      "polarity": "contract",
-      "layer": "unit",
-      "status": "passed",
-      "match": [
-        "TestKep527ExistingCoordinationModel",
-        "TestKep527ReadinessGatePrerequisite"
-      ],
-      "note": "Re-verified on head c3ea6547 (round 6): contract pins green (results/gotest-rerun.txt); docs-only PR, code paths unchanged since base. New round-6 code claim (stateful RIS instance-reference logic releases the owner reference for a non-matching owned RI) verified by direct read of pkg/reconciler/roleinstanceset/statefulmode/instance_ref_manager.go (release() on !match)."
-    },
-    {
-      "id": "F-SEEALSO-502",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "open",
-      "match": [
-        "check_round4_contracts.sh (F-SEEALSO-502 OPEN check)",
-        "check_kep_docs.sh (see-also)"
-      ],
-      "note": "Open on head c3ea6547 (6th consecutive round): kep.yaml untouched by the round-6 diff (only the two READMEs changed); /keps/502-workload-status-model still absent from the repo; PR #528 re-fetched 2026-11-12: still OPEN, new head 9862499, still adds exactly that directory. Auto-resolves if #528 merges first."
-    },
-    {
-      "id": "F-PREDELETE-LIVENESS",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Round-3 delta retains the round-2 invariant (background GC does not delete dependent member Pods while their owner is solid; verified round 2 against kubernetes release-1.32 garbagecollector.go) and adds the exact finalizer name rbg.workloads.x-k8s.io/role-instance-pre-delete. Carry pin green on head.",
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
-    },
-    {
-      "id": "F-CREATING-REPLACE-FINALIZER",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
-      "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Carried: no per-Pod finalizers in the round-3 design; moot."
-    },
-    {
-      "id": "F-PHASE-STORAGE",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Carried and strengthened: phase model retained (status.phase per KEP-502, Creating/Running/Updating/Recovering/Terminating, pre-implementable blocker #1) and now additionally pinned in the normative Wire Names and Constants table. KEP-502 cross-checked against PR #528 (still OPEN) at round 3.",
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
-    },
-    {
-      "id": "F-OLDNEW-ISOLATION",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "match": [
-        "check_round4_contracts.sh (F-OLDNEW-COEXIST / F-INDEPENDENT-TYPE / nit pins)"
-      ],
-      "note": "Superseded and strengthened by the round-3 removal pivot: the coexistence-with-mutual-exclusion rule is replaced by outright removal of the legacy protocol (admission rejects the field). The round-2 wording pins fail on head BY DESIGN (the pinned sentences are gone); the substance (no two gating protocols over the same RoleInstance) is preserved and strengthened, pinned by the round-3 contracts.",
-      "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
-    },
-    {
-      "id": "F-KEPYAML-NOISE",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Carried: no Segment comment, no TBD, authors=[diw-zw]; round-3 adds feature-gates and disable-supported: true. Forbidden pins green on head.",
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
-    },
-    {
-      "id": "F-MARKNOTREADY-NAME",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "match": [
-        "check_round4_contracts.sh (F-OLDNEW-COEXIST / F-INDEPENDENT-TYPE / nit pins)"
-      ],
-      "note": "Harness-update in round 6: the new protocol field set is now signalLabels only; markNotReady no longer exists anywhere in either README (grep: 0 hits); the legacy markPodNotReady survives only in the legacy-context comparison sentences (EN :412, ZH :312). Re-pinned R6-SIGNALLABELS / R6-NO-READY-GATING, green on head.",
-      "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
-    },
-    {
-      "id": "F-READYBLOCK-NAME",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
-      "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Carried: ready-notify used in both diagrams and prose (EN+ZH)."
-    },
-    {
-      "id": "F-LIFECYCLE-STATE-PREFIX",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
-      "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Round-3 delta strengthens the pin: the implementation must use the EXACT hook-state label key rbg.workloads.x-k8s.io/role-instance-hook-state and must not reuse rbg.workloads.x-k8s.io/role-instance-lifecycle-state (EN+ZH; bare lifecycle-state= usages are gone). Supersedes the round-2 prefix-only wording, which the removal pivot rewrote."
-    },
-    {
-      "id": "F-PREDELETE-GATE-LIFETIME",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
-      "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
-      "match": [
-        "check_round6_contracts.sh (R6-NO-READY-GATING)",
-        "check_round5_contracts.sh (CARRY-GATE-LIFETIME, retired)"
-      ],
-      "note": "MOOT in round 6 (design removal, disclosed by commit 7018a526): markNotReady and RI-Ready gating are removed from the new protocol entirely; there is no readiness gate left to have a lifetime. Replacement contract R6-NO-READY-GATING (hooks never change RI Ready, readiness gating a Non-Goal) pinned green on head, red on previous head and base. CARRY-GATE-LIFETIME pins retired as superseded-by-design, not regressed."
-    },
-    {
-      "id": "F-ESCAPE-HATCH",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Carried: break-glass procedure retained through the round-3 rewrite (EN+ZH) and now referenced from the namespace-teardown scoping sentence. Carry pin green on head.",
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
-    },
-    {
-      "id": "F-DEAD-ENGINE-PREUPDATE",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
-      "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Carried: dead-engine preUpdate guidance retained through the round-3 rewrite (EN+ZH). Carry pin green on head."
-    },
-    {
-      "id": "F-INFLIGHT-CONFIG-ADMISSION",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "disputed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
-      "match": [
-        "check_round4_contracts.sh (F-LATEST-CONFIG-SEMANTICS: reversed rule pinned ABSENT)"
-      ],
-      "note": "Round-4 pivot deleted the in-flight config-change admission guard (both languages) and replaced it with latest-effective-config / absence semantics. The round-2/3 fix is reversed BY DESIGN; the author owns the change. Safety analysis and the residual question are filed as F-PREDELETE-REMOVAL-ONE-WAY (question, non-gating)."
-    },
-    {
-      "id": "F-SCOPE-PRECREATE",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Round-3 delta adds the exclusion rationale to Non-Goals (EN+ZH): preCreate has no established workload or executor to coordinate before Pod creation; postDelete concerns external cleanup after the live instance is gone and needs a separate protocol. Pinned red on base and previous head, green on head.",
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
-    },
-    {
-      "id": "F-CUSTOMREADY-STATUS-EMPTY",
-      "polarity": "canary",
-      "layer": "unit",
-      "status": "open",
-      "origin": "preexisting",
-      "introducedByPR": false,
-      "match": [
-        "TestKep527CanaryCustomReadyFirstWriteOmitsStatus"
-      ]
-    },
-    {
-      "id": "F-NS-TEARDOWN-BYPASS",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Round-3 delta scopes namespace teardown out of the live-engine guarantee and points operators at the break-glass procedure if a reserved RI finalizer remains (EN+ZH + test-plan entry). The wedge failure mode is now acknowledged rather than silent; a live cluster remains the final authority (liveNote).",
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
-    },
-    {
-      "id": "F-PROPAGATED-VS-LEGACY",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
-      "match": [
-        "check_round4_contracts.sh (F-OLDNEW-COEXIST / F-INDEPENDENT-TYPE / nit pins)"
-      ],
-      "note": "Round-4 re-fix under coexistence: new protocol on distinct fields (roles[].lifecycle -> roleInstanceTemplate.lifecycle -> RoleInstance.spec.lifecycle), legacy field retained but mutually exclusive per RIS by admission; RBG-propagated snapshot 'must not be independently edited or combined with the legacy protocol'.",
-      "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
-    },
-    {
-      "id": "F-FINALIZER-BOOTSTRAP-RACE",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Round-3 delta pins establishment: new RIs are created with the reserved finalizer when preDelete is configured; for an existing stable RI the controller adds the finalizer BEFORE exposing the effective configuration; enablement is rejected or deferred if the RI already has a deletionTimestamp, because Kubernetes does not allow a new finalizer to be added after deletion has begun (EN+ZH + test-plan entries).",
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
-    },
-    {
-      "id": "F-RBGSET-FOREGROUND-BOUNDARY",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Round-3 delta includes RBGSet in the foreground-deletion admission boundary in both the deletion-paths section and the rollout section (EN+ZH + test-plan entry). Carried into this manifest from the round-2 debate ledger (Copilot-flagged, corroborated by both critiques).",
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
-    },
-    {
-      "id": "F-INFLIGHT-ADMISSION-MUST",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "disputed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
-      "match": [
-        "check_round4_contracts.sh (F-LATEST-CONFIG-SEMANTICS: reversed rule pinned ABSENT)"
-      ],
-      "note": "Round-4 pivot deleted the in-flight config-change admission guard (both languages) and replaced it with latest-effective-config / absence semantics. The round-2/3 fix is reversed BY DESIGN; the author owns the change. Safety analysis and the residual question are filed as F-PREDELETE-REMOVAL-ONE-WAY (question, non-gating)."
-    },
-    {
-      "id": "F-DISABLE-SUPPORTED-CONTRADICTION",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Round-3 delta names the feature gate (RoleInstanceLifecycleHooks) in kep.yaml, flips disable-supported to true, and adds the clarifying line: the disable-supported metadata field describes feature-gate rollback, not stable-boundary removal of individual hook configuration (EN).",
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
-    },
-    {
-      "id": "F-NOPOSTREADY-CLEANUP-CLARIFICATION",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Round-3 delta adds the no-postReady completion path explicitly: if postReady is omitted, enter Running, release the operation gate, and clear hook-state without writing a marker — in prose, in BOTH mermaid diagrams via alt/else branches (EN+ZH), and in the test plan. Closes the round-2 disputed Copilot clarification nit.",
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
-    },
-    {
-      "id": "F-ZH-RIS-RI-PARITY",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
-      "match": [
-        "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
-      ],
-      "note": "Dissolved by the round-3 removal pivot: the zh-CN sentence that read 同一 RI (vs EN \"the same RIS\") is gone entirely, replaced by the removal statement in both languages; the round-3 pins forbid the old coexistence wording in both files.",
-      "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
-    },
-    {
-      "id": "F-LEGACY-REMOVAL-COMPAT",
-      "polarity": "contract",
-      "layer": "manual",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "firstSeenSha": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
-      "match": [
-        "check_round4_contracts.sh (F-OLDNEW-COEXIST pins)"
-      ],
-      "note": "Merged ledger id F-LEGACY-REMOVAL-TRANSITION in the round ledger. Resolved by the round-4 reversal: the legacy protocol is retained (coexistence, mutual exclusion, inPlaceUpdate deprecated), so issue #527's 'Remain compatible with existing lifecycle and readiness gate mechanisms' is satisfied and no migration/drain/gate-off-removal contract is owed. Narrowed residue (gate-off behavior of the NEW protocol fields, enablement on objects carrying both) is filed as question F-COEXIST-GATE-EDGE.",
-      "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
-    },
-    {
-      "id": "F-PROPAGATED-SNAPSHOT-EDIT",
-      "polarity": "contract",
-      "layer": "manual",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "firstSeenSha": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
-      "match": [
-        "check_round4_contracts.sh (F-OLDNEW-COEXIST / F-INDEPENDENT-TYPE / nit pins)"
-      ],
-      "note": "nit (residue of F-PROPAGATED-VS-LEGACY, much weakened by the removal pivot): for an RBG-managed RIS the RBG controller writes the desired snapshot into RoleInstanceSet.spec.roleInstanceTemplate.lifecycle — the round-2 'must not be independently edited' clause is gone, and no rule states that user edits of that controller-written snapshot on an RBG-owned RIS are unsupported/overwritten. Worst case is now ordinary controller-vs-user drift (the RBG controller rewrites it), not dual gating. One sentence closes it.",
-      "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
-    },
-    {
-      "id": "F-ZH-ENGLISH-TERMS",
-      "polarity": "contract",
-      "layer": "manual",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "firstSeenSha": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
-      "match": [
-        "check_round4_contracts.sh (F-OLDNEW-COEXIST / F-INDEPENDENT-TYPE / nit pins)"
-      ],
-      "note": "nit: README.zh-CN.md uses untranslated English phrases 'source of truth' (2x) and 'desired snapshot' (2x) in the configuration-hierarchy section; other zh KEPs in the repo translate such terms. Cosmetic translation-polish only.",
-      "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
-    },
-    {
-      "id": "F-PREDELETE-REMOVAL-ONE-WAY",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "open",
-      "match": [
-        "check_round5_contracts.sh (R5-REMOVAL-SEMANTICS pins — absence semantics and mid-deletion release pinned)"
-      ],
-      "note": "Renamed/split ledger note: the round-4 one-way mid-deletion barrier release is now also tracked as F-CONFIG-REMOVAL-SKIPS-HOOK in the published ledger (question). Round 6 did not add an admission guard or a Risks/Troubleshooting acknowledgment; the removal path now also cleans Pod mirrors via the marker-key record, which strengthens cleanup but not the guard."
-    },
-    {
-      "id": "F-COEXIST-GATE-EDGE",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "open",
-      "match": [
-        "check_round5_contracts.sh (R5-GATE-OFF-RULE pins, EN+ZH)"
-      ],
-      "note": "Still open on head c3ea6547 (3rd round): gate-off rule retained (R5-GATE-OFF-RULE carry green); gate-on for existing dual-configured objects, controller behavior for already-configured objects under gate-off, and the legacy inPlaceUpdate deprecation timeline all still unstated (re-read Feature Enablement and Rollback at :1159-1172; only \"post-Alpha migration path\" :934)."
-    },
-    {
-      "id": "F-STALE-LABEL-DISPOSITION",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "open",
-      "match": [
-        "grep (three inconsistent normative strengths at head; reasoning only)"
-      ],
-      "note": "Carried fixed under the round-6 wording: removal cleans stale runtime labels AND their Pod mirrors identified through the marker-key record, at a single normative strength in all sites (R6-REMOVAL-SEMANTICS pins green on head, red on previous head). Marker reconfiguration still deliberately retains the old key, now durably recorded (F-C4528291076 fixed)."
-    },
-    {
-      "id": "F-KEP502-CREATING-PHASE-CONFLICT",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "match": [
-        "external: PR #528 diff (re-fetched 2026-11-10)"
-      ],
-      "note": "Round-3 question, resolved OUTSIDE this PR: PR #528 amended its transition table to fold Creating-target changes into Create convergence, citing KEP-527 consistency. Re-confirmed at the round-5 re-fetch (PR #528 head 0580735, still OPEN): the wording is retained. Holds as long as that wording lands.",
-      "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
-    },
-    {
-      "id": "F-TESTPLAN-ABSENCE-CONTRADICTION",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "origin": "revision-regression",
-      "introducedByPR": true,
-      "firstSeenSha": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948",
-      "fixedIn": "6c15cc92bcc8ecb2cc149ed54f7e5b9056199f2e",
-      "match": [
-        "check_round5_contracts.sh (R5-TESTPLAN-DISABLE: new bullet required EN+ZH, old round-3 bullet forbidden EN+ZH)"
-      ],
-      "note": "Fixed in round 5: the integration-test bullet now states the absence semantics in both languages (README.md:1033-1035, zh :754-756); the stale round-3 bullet is pinned forbidden and absent. Differential: new bullet red on 43dab57b and 09accf63, green on 6c15cc92; old bullet present on 43dab57b (forbidden pin red), absent on 6c15cc92."
-    },
-    {
-      "id": "F-KEP502-RECOVERING-GATE-CIRCULARITY",
-      "polarity": "contract",
-      "layer": "docs",
-      "status": "fixed",
-      "origin": "initial-pr",
-      "introducedByPR": true,
-      "firstSeenSha": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948",
-      "fixedIn": "6c15cc92bcc8ecb2cc149ed54f7e5b9056199f2e",
-      "match": [
-        "external: PR #528 head 0580735 (re-fetched 2026-11-11)"
-      ],
-      "note": "Fixed OUTSIDE this PR (dependency side), round 5: PR #528 (KEP-502) head moved 39e2ecdf -> 0580735 and now states phase completion uses controller-observed workload readiness only, RoleInstanceCustomReady and other externally owned gates do not gate phase transitions, and explicitly 'removes the circular wait with KEP-527: the lifecycle-owned RoleInstanceCustomReady contribution ... does not prevent the RI from entering Running'. PR #528 is still OPEN; holds as long as that wording lands. Not machine-pinnable in this repo (keps/502 absent from PR #546's tree)."
-    },
-    {
-      "id": "F-C4528291076",
-      "polarity": "contract",
-      "layer": "round6-contracts",
-      "status": "fixed",
-      "match": [
-        "check_round6_contracts.sh (R6-MARKER-KEY-RECORD)"
-      ],
-      "note": "FIXED in round 6: the marker-key record annotation rbg.workloads.x-k8s.io/role-instance-hook-marker-keys (comma-separated, same metadata write as the marker, key removed only after RI label AND Pod mirrors confirmed absent, retained across restarts, rollback precondition = absent hook-state + empty record) is exactly the durable retired-key tracking the advisory asked for. Pins green on head, red on previous head/base; bites-verified."
-    },
-    {
-      "id": "F-C4528290874",
-      "polarity": "contract",
-      "layer": "round6-contracts",
-      "status": "fixed",
-      "match": [
-        "check_round6_contracts.sh (R6-ADMISSION-SAFEGUARDS)"
-      ],
-      "note": "FIXED in round 6: admission now rejects marker keys used by the owning RIS spec.selector (matchLabels or any matchExpressions entry, even DoesNotExist-only) plus a test-plan bullet; the KEP states the release consequence, verified against pkg/reconciler/roleinstanceset/statefulmode/instance_ref_manager.go (release() on !match for an owned instance). EN+ZH pinned."
-    },
-    {
-      "id": "F-C4528291011",
-      "polarity": "contract",
-      "layer": "round6-contracts",
-      "status": "fixed",
-      "match": [
-        "check_round6_contracts.sh (R6-FAIL-CLOSED-WEBHOOK)"
-      ],
-      "note": "FIXED in round 6: foreground-deletion webhook resolution is now explicitly fail-closed (\"A cache miss must not establish that deletion is safe\"), with an integration bullet covering races with RI creation and preDelete enablement. EN+ZH pinned green on head, red on previous head."
-    },
-    {
-      "id": "F-C4528290945",
-      "polarity": "contract",
-      "layer": "round6-contracts",
-      "status": "fixed",
-      "match": [
-        "check_round6_contracts.sh (R6-NO-READY-GATING forbidden markNotReady/RoleInstanceCustomReady)"
-      ],
-      "note": "MOOT/DISSOLVED in round 6: the markNotReady gate is removed entirely; there is no lifecycle readiness gate for stateful readiness math to miss. Hooks never change RI Ready (Non-Goal, both languages); Pod-level consumers get the mirror path instead. Residual observation (parent consumers reading only RI Ready see no lifecycle signal) is an owned design decision consistent with issue #527 itself (\"routing system must independently keep the instance out of rotation rather than relying solely on Ready\")."
-    },
-    {
-      "id": "F-KEP502-GATE-REFERENCE-DRIFT",
-      "polarity": "contract",
-      "layer": "external",
-      "status": "open",
-      "match": [],
-      "note": "NEW round-6 question: PR #528 (KEP-502) at its current head 9862499 (fetched 2026-11-12) still cites \"the lifecycle-owned RoleInstanceCustomReady contribution established by markPodNotReady\" and a test bullet \"including while a KEP-527 markPodNotReady lifecycle gate is still held\" — mechanisms KEP-527 round 6 removed. Cross-proposal drift, opposite direction from round 3. Not machine-pinnable in this repo (keps/502 absent from this tree). Ask: re-sync the two KEPs before either merges; pre-implementable blocker #1 keeps the coupling."
-    },
-    {
-      "id": "F-POD-MIRROR-SPOOF-WINDOW",
-      "polarity": "contract",
-      "layer": "round6-contracts",
-      "status": "open",
-      "match": [
-        "check_round6_contracts.sh (R6-POD-PROPAGATION, propagation rules pinned so the trust model stays reviewable)"
-      ],
-      "note": "NEW round-6 question (minor): the propagation rules make signal label keys controller-owned on member Pods and re-sync them each RI reconcile, but only TEMPLATE-label declaration is admission-rejected; nothing rejects external runtime writes to those keys on a Pod. Any actor with Pod label-write permission can inject a false signal (e.g. a drain/delete-block label) that Pod-level consumers — routers, EndpointSlice-based selectors, explicitly named as consumers — will act on until the next reconcile re-syncs. Risks row \"Pod mirrors overwritten externally | Re-sync mirrors each RI reconcile\" acknowledges overwrite but not the spoofing window. Ask: state the trust model (admission guard on Pod label writes for signal keys, or an explicit note that consumers must treat the RI as authoritative and the mirror as best-effort)."
-    },
-    {
-      "id": "F-SCALABILITY-POD-MIRROR-WRITES",
-      "polarity": "contract",
-      "layer": "round6-contracts",
-      "status": "open",
-      "match": [
-        "check_round6_contracts.sh (R6-POD-PROPAGATION reconcile/batching pins)"
-      ],
-      "note": "NEW round-6 nit: the Scalability section still reads \"The main additional costs are phase and marker writes, executor watch connections, and application retries\" — it omits the new controller-to-Pod PATCH traffic (every member Pod per RI, re-checked every reconciliation, batched). One sentence closes it."
-    },
-    {
-      "id": "F-TESTPLAN-PREFIX-COVERAGE",
-      "polarity": "contract",
-      "layer": "round6-contracts",
-      "status": "open",
-      "match": [
-        "check_round6_contracts.sh (R6-RESERVED-PREFIX design-rule pin; bullet still exact-key only)"
-      ],
-      "note": "Still open in round 6 (2nd round): the unit bullet still reads \"rejects marker keys that collide with the fully qualified controller state key\" (EN :959-961) — no reserved-prefix clause, even though round 6 added two NEW admission bullets to the same list (selector collision, Pod template labels) and the design rule (now under the signalLabels wording) still requires prefix rejection. Fix: one clause, EN+zh."
-    }
-  ],
-  "gatingFindings": [
-    "F-SEEALSO-502"
-  ],
-  "liveNote": "L3 (not run, per round policy: unit+integration only): the deletion-design claims are pinned textually and re-verified against upstream GC source; a live cluster remains the final authority for the namespace-teardown scoping and foreground-rejection enforcement once a webhook exists. The round-4 absence-semantics reversal (F-PREDELETE-REMOVAL-ONE-WAY) is a design question for KEP review, not a runtime claim.",
-  "headSha": "6c15cc92bcc8ecb2cc149ed54f7e5b9056199f2e",
-  "previousHeadSha": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
+  "round2-contracts": {
+   "kind": "script",
+   "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round2_contracts.sh <repo-root-of-ref>"
+  },
+  "round3-contracts": {
+   "kind": "script",
+   "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round3_contracts.sh <repo-root-of-ref>"
+  },
+  "round4-contracts": {
+   "kind": "script",
+   "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round4_contracts.sh <repo-root-of-ref>"
+  },
+  "round5-contracts": {
+   "kind": "script",
+   "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh <repo-root-of-ref>"
+  },
+  "round6-contracts": {
+   "kind": "script",
+   "cmd": "bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round6_contracts.sh <repo-root-of-ref>"
+  }
+ },
+ "findings": [
+  {
+   "id": "P0",
+   "polarity": "contract",
+   "layer": "unit",
+   "status": "passed",
+   "match": [
+    "TestKep527ExistingCoordinationModel",
+    "TestKep527ReadinessGatePrerequisite"
+   ],
+   "note": "Re-verified on head c3ea6547 (round 6): contract pins green (results/gotest-rerun.txt); docs-only PR, code paths unchanged since base. New round-6 code claim (stateful RIS instance-reference logic releases the owner reference for a non-matching owned RI) verified by direct read of pkg/reconciler/roleinstanceset/statefulmode/instance_ref_manager.go (release() on !match)."
+  },
+  {
+   "id": "F-SEEALSO-502",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "match": [
+    "check_round4_contracts.sh (F-SEEALSO-502 OPEN check)",
+    "check_kep_docs.sh (see-also)",
+    "check_round7_contracts.sh (round-7 pins)"
+   ],
+   "note": "Fixed round 7 (dependency landed, disclosed Harness-update): PR #528 (KEP-502) MERGED upstream 2026-11-12 as c2896cc0, adding keps/502-workload-status-model to origin/main. The PR #546 head tree predates the merge, so the entry is still absent from the ref tree, but it resolves in the post-merge repository (merge commit or rebase); check_kep_docs.sh now resolves see-also targets against the ref tree OR origin/main. 7th round; auto-resolved exactly as the round-1..6 notes predicted."
+  },
+  {
+   "id": "F-PREDELETE-LIVENESS",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Round-3 delta retains the round-2 invariant (background GC does not delete dependent member Pods while their owner is solid; verified round 2 against kubernetes release-1.32 garbagecollector.go) and adds the exact finalizer name rbg.workloads.x-k8s.io/role-instance-pre-delete. Carry pin green on head.",
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
+  },
+  {
+   "id": "F-CREATING-REPLACE-FINALIZER",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
+   "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Carried: no per-Pod finalizers in the round-3 design; moot."
+  },
+  {
+   "id": "F-PHASE-STORAGE",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Carried and strengthened: phase model retained (status.phase per KEP-502, Creating/Running/Updating/Recovering/Terminating, pre-implementable blocker #1) and now additionally pinned in the normative Wire Names and Constants table. KEP-502 cross-checked against PR #528 (still OPEN) at round 3.",
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
+  },
+  {
+   "id": "F-OLDNEW-ISOLATION",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "match": [
+    "check_round4_contracts.sh (F-OLDNEW-COEXIST / F-INDEPENDENT-TYPE / nit pins)"
+   ],
+   "note": "Superseded and strengthened by the round-3 removal pivot: the coexistence-with-mutual-exclusion rule is replaced by outright removal of the legacy protocol (admission rejects the field). The round-2 wording pins fail on head BY DESIGN (the pinned sentences are gone); the substance (no two gating protocols over the same RoleInstance) is preserved and strengthened, pinned by the round-3 contracts.",
+   "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
+  },
+  {
+   "id": "F-KEPYAML-NOISE",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Carried: no Segment comment, no TBD, authors=[diw-zw]; round-3 adds feature-gates and disable-supported: true. Forbidden pins green on head.",
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
+  },
+  {
+   "id": "F-MARKNOTREADY-NAME",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "match": [
+    "check_round4_contracts.sh (F-OLDNEW-COEXIST / F-INDEPENDENT-TYPE / nit pins)"
+   ],
+   "note": "Harness-update in round 6: the new protocol field set is now signalLabels only; markNotReady no longer exists anywhere in either README (grep: 0 hits); the legacy markPodNotReady survives only in the legacy-context comparison sentences (EN :412, ZH :312). Re-pinned R6-SIGNALLABELS / R6-NO-READY-GATING, green on head.",
+   "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
+  },
+  {
+   "id": "F-READYBLOCK-NAME",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
+   "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Carried: ready-notify used in both diagrams and prose (EN+ZH)."
+  },
+  {
+   "id": "F-LIFECYCLE-STATE-PREFIX",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
+   "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Round-3 delta strengthens the pin: the implementation must use the EXACT hook-state label key rbg.workloads.x-k8s.io/role-instance-hook-state and must not reuse rbg.workloads.x-k8s.io/role-instance-lifecycle-state (EN+ZH; bare lifecycle-state= usages are gone). Supersedes the round-2 prefix-only wording, which the removal pivot rewrote."
+  },
+  {
+   "id": "F-PREDELETE-GATE-LIFETIME",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
+   "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
+   "match": [
+    "check_round6_contracts.sh (R6-NO-READY-GATING)",
+    "check_round5_contracts.sh (CARRY-GATE-LIFETIME, retired)"
+   ],
+   "note": "MOOT in round 6 (design removal, disclosed by commit 7018a526): markNotReady and RI-Ready gating are removed from the new protocol entirely; there is no readiness gate left to have a lifetime. Replacement contract R6-NO-READY-GATING (hooks never change RI Ready, readiness gating a Non-Goal) pinned green on head, red on previous head and base. CARRY-GATE-LIFETIME pins retired as superseded-by-design, not regressed."
+  },
+  {
+   "id": "F-ESCAPE-HATCH",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Carried: break-glass procedure retained through the round-3 rewrite (EN+ZH) and now referenced from the namespace-teardown scoping sentence. Carry pin green on head.",
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
+  },
+  {
+   "id": "F-DEAD-ENGINE-PREUPDATE",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
+   "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Carried: dead-engine preUpdate guidance retained through the round-3 rewrite (EN+ZH). Carry pin green on head."
+  },
+  {
+   "id": "F-INFLIGHT-CONFIG-ADMISSION",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "disputed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "firstSeenSha": "6e8419abef232541fe4b0df7bf6d609972902887",
+   "match": [
+    "check_round4_contracts.sh (F-LATEST-CONFIG-SEMANTICS: reversed rule pinned ABSENT)"
+   ],
+   "note": "Round-4 pivot deleted the in-flight config-change admission guard (both languages) and replaced it with latest-effective-config / absence semantics. The round-2/3 fix is reversed BY DESIGN; the author owns the change. Safety analysis and the residual question are filed as F-PREDELETE-REMOVAL-ONE-WAY (question, non-gating)."
+  },
+  {
+   "id": "F-SCOPE-PRECREATE",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Round-3 delta adds the exclusion rationale to Non-Goals (EN+ZH): preCreate has no established workload or executor to coordinate before Pod creation; postDelete concerns external cleanup after the live instance is gone and needs a separate protocol. Pinned red on base and previous head, green on head.",
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
+  },
+  {
+   "id": "F-CUSTOMREADY-STATUS-EMPTY",
+   "polarity": "canary",
+   "layer": "unit",
+   "status": "open",
+   "origin": "preexisting",
+   "introducedByPR": false,
+   "match": [
+    "TestKep527CanaryCustomReadyFirstWriteOmitsStatus"
+   ]
+  },
+  {
+   "id": "F-NS-TEARDOWN-BYPASS",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Round-3 delta scopes namespace teardown out of the live-engine guarantee and points operators at the break-glass procedure if a reserved RI finalizer remains (EN+ZH + test-plan entry). The wedge failure mode is now acknowledged rather than silent; a live cluster remains the final authority (liveNote).",
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
+  },
+  {
+   "id": "F-PROPAGATED-VS-LEGACY",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+   "match": [
+    "check_round4_contracts.sh (F-OLDNEW-COEXIST / F-INDEPENDENT-TYPE / nit pins)"
+   ],
+   "note": "Round-4 re-fix under coexistence: new protocol on distinct fields (roles[].lifecycle -> roleInstanceTemplate.lifecycle -> RoleInstance.spec.lifecycle), legacy field retained but mutually exclusive per RIS by admission; RBG-propagated snapshot 'must not be independently edited or combined with the legacy protocol'.",
+   "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
+  },
+  {
+   "id": "F-FINALIZER-BOOTSTRAP-RACE",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Round-3 delta pins establishment: new RIs are created with the reserved finalizer when preDelete is configured; for an existing stable RI the controller adds the finalizer BEFORE exposing the effective configuration; enablement is rejected or deferred if the RI already has a deletionTimestamp, because Kubernetes does not allow a new finalizer to be added after deletion has begun (EN+ZH + test-plan entries).",
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
+  },
+  {
+   "id": "F-RBGSET-FOREGROUND-BOUNDARY",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Round-3 delta includes RBGSet in the foreground-deletion admission boundary in both the deletion-paths section and the rollout section (EN+ZH + test-plan entry). Carried into this manifest from the round-2 debate ledger (Copilot-flagged, corroborated by both critiques).",
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
+  },
+  {
+   "id": "F-INFLIGHT-ADMISSION-MUST",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "disputed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+   "match": [
+    "check_round4_contracts.sh (F-LATEST-CONFIG-SEMANTICS: reversed rule pinned ABSENT)"
+   ],
+   "note": "Round-4 pivot deleted the in-flight config-change admission guard (both languages) and replaced it with latest-effective-config / absence semantics. The round-2/3 fix is reversed BY DESIGN; the author owns the change. Safety analysis and the residual question are filed as F-PREDELETE-REMOVAL-ONE-WAY (question, non-gating)."
+  },
+  {
+   "id": "F-DISABLE-SUPPORTED-CONTRADICTION",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Round-3 delta names the feature gate (RoleInstanceLifecycleHooks) in kep.yaml, flips disable-supported to true, and adds the clarifying line: the disable-supported metadata field describes feature-gate rollback, not stable-boundary removal of individual hook configuration (EN).",
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
+  },
+  {
+   "id": "F-NOPOSTREADY-CLEANUP-CLARIFICATION",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Round-3 delta adds the no-postReady completion path explicitly: if postReady is omitted, enter Running, release the operation gate, and clear hook-state without writing a marker — in prose, in BOTH mermaid diagrams via alt/else branches (EN+ZH), and in the test plan. Closes the round-2 disputed Copilot clarification nit.",
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
+  },
+  {
+   "id": "F-ZH-RIS-RI-PARITY",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "firstSeenSha": "71dd5e87ca8704e2447caf574db72c06007d77ef",
+   "match": [
+    "check_round4_contracts.sh (CARRY-* pins green on head 43dab57b)"
+   ],
+   "note": "Dissolved by the round-3 removal pivot: the zh-CN sentence that read 同一 RI (vs EN \"the same RIS\") is gone entirely, replaced by the removal statement in both languages; the round-3 pins forbid the old coexistence wording in both files.",
+   "fixedIn": "fb6c2b3605fff9fab5ea0606529791f28c671d69"
+  },
+  {
+   "id": "F-LEGACY-REMOVAL-COMPAT",
+   "polarity": "contract",
+   "layer": "manual",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "firstSeenSha": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
+   "match": [
+    "check_round4_contracts.sh (F-OLDNEW-COEXIST pins)"
+   ],
+   "note": "Merged ledger id F-LEGACY-REMOVAL-TRANSITION in the round ledger. Resolved by the round-4 reversal: the legacy protocol is retained (coexistence, mutual exclusion, inPlaceUpdate deprecated), so issue #527's 'Remain compatible with existing lifecycle and readiness gate mechanisms' is satisfied and no migration/drain/gate-off-removal contract is owed. Narrowed residue (gate-off behavior of the NEW protocol fields, enablement on objects carrying both) is filed as question F-COEXIST-GATE-EDGE.",
+   "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
+  },
+  {
+   "id": "F-PROPAGATED-SNAPSHOT-EDIT",
+   "polarity": "contract",
+   "layer": "manual",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "firstSeenSha": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
+   "match": [
+    "check_round4_contracts.sh (F-OLDNEW-COEXIST / F-INDEPENDENT-TYPE / nit pins)"
+   ],
+   "note": "nit (residue of F-PROPAGATED-VS-LEGACY, much weakened by the removal pivot): for an RBG-managed RIS the RBG controller writes the desired snapshot into RoleInstanceSet.spec.roleInstanceTemplate.lifecycle — the round-2 'must not be independently edited' clause is gone, and no rule states that user edits of that controller-written snapshot on an RBG-owned RIS are unsupported/overwritten. Worst case is now ordinary controller-vs-user drift (the RBG controller rewrites it), not dual gating. One sentence closes it.",
+   "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
+  },
+  {
+   "id": "F-ZH-ENGLISH-TERMS",
+   "polarity": "contract",
+   "layer": "manual",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "firstSeenSha": "fb6c2b3605fff9fab5ea0606529791f28c671d69",
+   "match": [
+    "check_round4_contracts.sh (F-OLDNEW-COEXIST / F-INDEPENDENT-TYPE / nit pins)"
+   ],
+   "note": "nit: README.zh-CN.md uses untranslated English phrases 'source of truth' (2x) and 'desired snapshot' (2x) in the configuration-hierarchy section; other zh KEPs in the repo translate such terms. Cosmetic translation-polish only.",
+   "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
+  },
+  {
+   "id": "F-PREDELETE-REMOVAL-ONE-WAY",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "match": [
+    "check_round5_contracts.sh (R5-REMOVAL-SEMANTICS pins — absence semantics and mid-deletion release pinned)",
+    "check_round7_contracts.sh (round-7 pins)"
+   ],
+   "note": "Fixed round 7 at the acknowledgment level: risk-table row 'Active hook removed mid-operation | Barrier skipped; operator confirms' plus a Troubleshooting bullet stating the preDelete release is one-way (the finalizer cannot be re-added once deletion has begun) so operators must confirm the hook is no longer required before removing it (EN+ZH). Pinned R7-RISK-REMOVAL-ROW / R7-TROUBLESHOOT-ONEWAY."
+  },
+  {
+   "id": "F-COEXIST-GATE-EDGE",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "match": [
+    "check_round5_contracts.sh (R5-GATE-OFF-RULE pins, EN+ZH)",
+    "check_round7_contracts.sh (round-7 pins)"
+   ],
+   "note": "Fixed round 7: new 'Gate edges' paragraph (Feature Enablement and Rollback) states all three residuals — enabling does not retroactively validate existing objects but mutual exclusion applies to every subsequent write so dual-configured objects must be corrected before their next update; with the gate disabled the controller neither writes nor matches new-protocol runtime labels while existing hook-state/markers/marker-key record remain for a compatible controller to finish; the legacy inPlaceUpdate hook remains supported for standalone RIS users until a deprecation release is announced. EN+ZH, pinned R7-GATE-EDGES-DUAL / R7-GATE-EDGES-OFF / R7-INPLACEUPDATE-DEPRECATION."
+  },
+  {
+   "id": "F-STALE-LABEL-DISPOSITION",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "match": [
+    "grep (three inconsistent normative strengths at head; reasoning only)",
+    "check_round7_contracts.sh (round-7 pins)"
+   ],
+   "note": "Carried fixed (round-6 wording) and re-verified green inside check_round7 on head d038c23b; round-7 delta does not touch the removal-semantics section."
+  },
+  {
+   "id": "F-KEP502-CREATING-PHASE-CONFLICT",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "match": [
+    "external: PR #528 diff (re-fetched 2026-11-10)"
+   ],
+   "note": "Round-3 question, resolved OUTSIDE this PR: PR #528 amended its transition table to fold Creating-target changes into Create convergence, citing KEP-527 consistency. Re-confirmed at the round-5 re-fetch (PR #528 head 0580735, still OPEN): the wording is retained. Holds as long as that wording lands.",
+   "fixedIn": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948"
+  },
+  {
+   "id": "F-TESTPLAN-ABSENCE-CONTRADICTION",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "origin": "revision-regression",
+   "introducedByPR": true,
+   "firstSeenSha": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948",
+   "fixedIn": "6c15cc92bcc8ecb2cc149ed54f7e5b9056199f2e",
+   "match": [
+    "check_round5_contracts.sh (R5-TESTPLAN-DISABLE: new bullet required EN+ZH, old round-3 bullet forbidden EN+ZH)"
+   ],
+   "note": "Fixed in round 5: the integration-test bullet now states the absence semantics in both languages (README.md:1033-1035, zh :754-756); the stale round-3 bullet is pinned forbidden and absent. Differential: new bullet red on 43dab57b and 09accf63, green on 6c15cc92; old bullet present on 43dab57b (forbidden pin red), absent on 6c15cc92."
+  },
+  {
+   "id": "F-KEP502-RECOVERING-GATE-CIRCULARITY",
+   "polarity": "contract",
+   "layer": "docs",
+   "status": "fixed",
+   "origin": "initial-pr",
+   "introducedByPR": true,
+   "firstSeenSha": "43dab57b9ce73c7bdffc0ccae29b9f5ce9284948",
+   "fixedIn": "6c15cc92bcc8ecb2cc149ed54f7e5b9056199f2e",
+   "match": [
+    "external: PR #528 head 0580735 (re-fetched 2026-11-11)"
+   ],
+   "note": "Fixed OUTSIDE this PR (dependency side), round 5: PR #528 (KEP-502) head moved 39e2ecdf -> 0580735 and now states phase completion uses controller-observed workload readiness only, RoleInstanceCustomReady and other externally owned gates do not gate phase transitions, and explicitly 'removes the circular wait with KEP-527: the lifecycle-owned RoleInstanceCustomReady contribution ... does not prevent the RI from entering Running'. PR #528 is still OPEN; holds as long as that wording lands. Not machine-pinnable in this repo (keps/502 absent from PR #546's tree)."
+  },
+  {
+   "id": "F-C4528291076",
+   "polarity": "contract",
+   "layer": "round6-contracts",
+   "status": "fixed",
+   "match": [
+    "check_round6_contracts.sh (R6-MARKER-KEY-RECORD)"
+   ],
+   "note": "FIXED in round 6: the marker-key record annotation rbg.workloads.x-k8s.io/role-instance-hook-marker-keys (comma-separated, same metadata write as the marker, key removed only after RI label AND Pod mirrors confirmed absent, retained across restarts, rollback precondition = absent hook-state + empty record) is exactly the durable retired-key tracking the advisory asked for. Pins green on head, red on previous head/base; bites-verified."
+  },
+  {
+   "id": "F-C4528290874",
+   "polarity": "contract",
+   "layer": "round6-contracts",
+   "status": "fixed",
+   "match": [
+    "check_round6_contracts.sh (R6-ADMISSION-SAFEGUARDS)"
+   ],
+   "note": "FIXED in round 6: admission now rejects marker keys used by the owning RIS spec.selector (matchLabels or any matchExpressions entry, even DoesNotExist-only) plus a test-plan bullet; the KEP states the release consequence, verified against pkg/reconciler/roleinstanceset/statefulmode/instance_ref_manager.go (release() on !match for an owned instance). EN+ZH pinned."
+  },
+  {
+   "id": "F-C4528291011",
+   "polarity": "contract",
+   "layer": "round6-contracts",
+   "status": "fixed",
+   "match": [
+    "check_round6_contracts.sh (R6-FAIL-CLOSED-WEBHOOK)"
+   ],
+   "note": "FIXED in round 6: foreground-deletion webhook resolution is now explicitly fail-closed (\"A cache miss must not establish that deletion is safe\"), with an integration bullet covering races with RI creation and preDelete enablement. EN+ZH pinned green on head, red on previous head."
+  },
+  {
+   "id": "F-C4528290945",
+   "polarity": "contract",
+   "layer": "round6-contracts",
+   "status": "fixed",
+   "match": [
+    "check_round6_contracts.sh (R6-NO-READY-GATING forbidden markNotReady/RoleInstanceCustomReady)"
+   ],
+   "note": "MOOT/DISSOLVED in round 6: the markNotReady gate is removed entirely; there is no lifecycle readiness gate for stateful readiness math to miss. Hooks never change RI Ready (Non-Goal, both languages); Pod-level consumers get the mirror path instead. Residual observation (parent consumers reading only RI Ready see no lifecycle signal) is an owned design decision consistent with issue #527 itself (\"routing system must independently keep the instance out of rotation rather than relying solely on Ready\")."
+  },
+  {
+   "id": "F-KEP502-GATE-REFERENCE-DRIFT",
+   "polarity": "contract",
+   "layer": "external",
+   "status": "fixed",
+   "match": [
+    "check_round7_contracts.sh (round-7 pins)"
+   ],
+   "note": "Fixed on the KEP-527 side round 7: the KEP now states KEP-502 is merged, discloses that the merged text still references the markPodNotReady lifecycle gate from an earlier revision of this proposal, and requires a KEP-502 follow-up amendment to remove those references before implementation (pre-implementable item #1 updated accordingly). Verified against the merged KEP-502 README.md:413/:485 (both markPodNotReady references present). The external amendment itself remains outstanding — tracked as F-KEP502-AMENDMENT-TRACKER (non-gating question)."
+  },
+  {
+   "id": "F-POD-MIRROR-SPOOF-WINDOW",
+   "polarity": "contract",
+   "layer": "round6-contracts",
+   "status": "fixed",
+   "match": [
+    "check_round6_contracts.sh (R6-POD-PROPAGATION, propagation rules pinned so the trust model stays reviewable)",
+    "check_round7_contracts.sh (round-7 pins)"
+   ],
+   "note": "Fixed round 7: new propagation rule 'Mirrors are not authenticated. Any actor with Pod update permission can write or clear these keys until the next reconciliation re-syncs them, so the RI is the only authoritative source; safety-relevant consumers must verify the RI rather than trust a mirror alone' (EN+ZH), plus the risk-table row reworded to 'RI is authoritative; re-sync per reconcile'. Pinned R7-MIRROR-UNAUTH."
+  },
+  {
+   "id": "F-SCALABILITY-POD-MIRROR-WRITES",
+   "polarity": "contract",
+   "layer": "round6-contracts",
+   "status": "fixed",
+   "match": [
+    "check_round6_contracts.sh (R6-POD-PROPAGATION reconcile/batching pins)",
+    "check_round7_contracts.sh (round-7 pins)"
+   ],
+   "note": "Fixed round 7: Scalability section now lists 'signal-label mirror fan-out (one RI write plus one write per member Pod per signal transition, re-checked on every reconciliation)' among the main costs and adds 'mirror fan-out on multi-Pod instances' to scale testing (EN+ZH). Pinned R7-SCALABILITY-FANOUT / R7-SCALABILITY-TEST."
+  },
+  {
+   "id": "F-TESTPLAN-PREFIX-COVERAGE",
+   "polarity": "contract",
+   "layer": "round6-contracts",
+   "status": "fixed",
+   "match": [
+    "check_round6_contracts.sh (R6-RESERVED-PREFIX design-rule pin; bullet still exact-key only)",
+    "check_round7_contracts.sh (round-7 pins)"
+   ],
+   "note": "Fixed round 7: the unit bullet now reads 'rejects marker keys that collide with the controller state key or use the reserved rbg.workloads.x-k8s.io/ prefix' (EN+ZH), matching the design rule. Pinned R7-PREFIX-TESTBULLET."
+  },
+  {
+   "id": "F-KEP502-AMENDMENT-TRACKER",
+   "polarity": "contract",
+   "layer": "external",
+   "status": "open",
+   "match": [],
+   "note": "NEW round-7 question (non-gating, residue of the fixed F-KEP502-GATE-REFERENCE-DRIFT): KEP-527 now correctly discloses that the MERGED KEP-502 text still references the markPodNotReady gate (README.md:413 'the lifecycle-owned RoleInstanceCustomReady contribution established by markPodNotReady'; :485 'including while a KEP-527 markPodNotReady lifecycle gate is still held') and gates its own implementability on a KEP-502 follow-up amendment. That amendment has no tracking issue or PR yet. Ask: open a tracking issue (or amend KEP-502 directly) so pre-implementable item #1 has an owner before implementation starts."
+  },
+  {
+   "id": "F-FOREGROUND-BLANKET-SCOPE",
+   "polarity": "contract",
+   "layer": "round7-contracts",
+   "status": "open",
+   "match": [
+    "check_round7_contracts.sh (R7-FOREGROUND-* pins)"
+   ],
+   "note": "NEW round-7 question (minor): the redesigned foreground rule rejects EVERY Foreground propagation at RBGSet/RBG/RIS/RI deletion entries while RoleInstanceLifecycleHooks is enabled, replacing the round-6 'can reach an RI with preDelete' scope. The new rule is strictly safer (no informer-cache dependency, closes the stale-cache-on-successful-lookup hole) and the KEP discloses the mitigation (retry with background propagation), but the operational blast radius now covers workloads with NO lifecycle hooks at all: any user of kubectl delete --cascade=foreground on RBG-family resources gets rejections for the whole gate-on period (Alpha, gate default off). Ask: either scope the rejection (e.g. by namespace/annotation or by any-preDelete-configured presence) or add one sentence acknowledging that non-hook workloads also lose Foreground deletion while the gate is enabled."
+  },
+  {
+   "id": "F-KEP502-ACCEPTED-PHRASING",
+   "polarity": "contract",
+   "layer": "round7-contracts",
+   "status": "open",
+   "match": [
+    "check_round7_contracts.sh (R7-KEP502-* pins)"
+   ],
+   "note": "NEW round-7 nit: 'KEP-527 cannot become implementable until the KEP-502 schema and phase persistence rules are accepted' is now stale alongside 'now merged' — acceptance has happened; the operative remaining gate is the follow-up amendment (correctly stated in the next sentence and in pre-implementable item #1). One-line rewording, EN+ZH."
+  }
+ ],
+ "gatingFindings": [
+  "F-CUSTOMREADY-STATUS-EMPTY"
+ ],
+ "liveNote": "L3 (not run, per round policy: unit+integration only): the deletion-design claims are pinned textually and re-verified against upstream GC source; a live cluster remains the final authority for the namespace-teardown scoping and foreground-rejection enforcement once a webhook exists. The round-4 absence-semantics reversal (F-PREDELETE-REMOVAL-ONE-WAY) is a design question for KEP review, not a runtime claim.",
+ "headSha": "d038c23b549b3e70b2df067a754c729e54655555",
+ "previousHeadSha": "c3ea6547cba7af45fe5826e162b4c5f4d112ca4b"
 }
