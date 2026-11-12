@@ -1,0 +1,33 @@
+=== RUN   TestF3_OlderController_PreservesCompactSharedConfigMap
+2026-11-13T05:08:56+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"v1","data":{"config.yaml":"group:\n  name: test-rbg\n  roles:\n  - test-role\n  size: 1\nroles:\n  test-role:\n    instances:\n    - address: test-rbg-test-role-0.s-test-rbg-test-role\n    size: 1\n"},"kind":"ConfigMap","metadata":{"name":"test-rbg","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"controller":true,"kind":"RoleBasedGroup","name":"test-rbg","uid":"rbg-test-uid"}]}}}
+    kep133_review_test.go:88: KEP-133 claims older controllers do not overwrite the RBG-level ConfigMap, but the current controller rewrote it.
+        --- before (compact):
+        format: refine
+        namespace: default
+        group: test-rbg
+        roles: []
+        
+        --- after (current controller):
+        group:
+          name: test-rbg
+          roles:
+          - test-role
+          size: 1
+        roles:
+          test-role:
+            instances:
+            - address: test-rbg-test-role-0.s-test-rbg-test-role
+            size: 1
+--- FAIL: TestF3_OlderController_PreservesCompactSharedConfigMap (0.04s)
+=== RUN   TestF3_CurrentController_WritesLegacySchemaIntoSharedConfigMap
+2026-11-13T05:08:56+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"v1","data":{"config.yaml":"group:\n  name: test-rbg\n  roles:\n  - test-role\n  size: 1\nroles:\n  test-role:\n    instances:\n    - address: test-rbg-test-role-0.s-test-rbg-test-role\n    size: 1\n"},"kind":"ConfigMap","metadata":{"name":"test-rbg","namespace":"default","ownerReferences":[{"apiVersion":"workloads.x-k8s.io/v1alpha2","blockOwnerDeletion":true,"controller":true,"kind":"RoleBasedGroup","name":"test-rbg","uid":"rbg-test-uid"}]}}}
+    kep133_review_test.go:123: current controller writes legacy full-enumeration schema into the shared ConfigMap
+--- PASS: TestF3_CurrentController_WritesLegacySchemaIntoSharedConfigMap (0.00s)
+=== RUN   TestF4_SingleSharedConfigMap_AlreadyDefault
+2026-11-13T05:08:56+08:00	INFO	Initialized discovery config mode	{"mode": "refine"}
+2026-11-13T05:08:56+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"v1","data":{"config.yaml":"group:\n  name: test-rbg\n  roles:\n  - test-role\n  size: 1\nroles:\n  test-role:\n    instances:\n    - address: test-rbg-test-role-0.s-test-rbg-test-role\n    size: 1\n"},"kind":"ConfigMap","metadata":{"name":"test-rbg","namespace":"default","ownerReferences":[{"apiVersion":"","blockOwnerDeletion":true,"controller":true,"kind":"","name":"test-rbg","uid":"rbg-test-uid"}]}}}
+    kep133_review_test.go:189: single RBG-level ConfigMap named after the RBG is already the default behavior
+--- PASS: TestF4_SingleSharedConfigMap_AlreadyDefault (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.062s
+FAIL

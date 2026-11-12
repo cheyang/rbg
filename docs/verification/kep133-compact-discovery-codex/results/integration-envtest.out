@@ -1,0 +1,9 @@
+  KEP-133 says older controllers do not manage/overwrite this object; if the current controller rewrites it, the downgrade story is broken
+  Expected
+      <string>: "group:..."
+  to equal       |
+      <string>: "format..."
+--- FAIL: TestKEP133Discovery (21.81s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/kep133discovery	21.826s
+FAIL
