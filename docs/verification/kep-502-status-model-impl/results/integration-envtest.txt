@@ -1,0 +1,3 @@
+KUBEBUILDER_ASSETS=/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/bin/k8s/1.31.0-linux-amd64
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/stateful	41.751s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	(cached)

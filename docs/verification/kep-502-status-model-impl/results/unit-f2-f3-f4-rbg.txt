@@ -1,0 +1,17 @@
+=== RUN   TestVerifyF3SubGroupPolicyBackendIsNotASchedulerCapability
+    gang_classify_verify_test.go:48: F3 REPRODUCED: subGroupPolicy backend incompatibility classified as SchedulerUnsupported, want IncompatibleGangConfig (the scheduler capability is fine; the role's backend type is the configuration problem)
+--- FAIL: TestVerifyF3SubGroupPolicyBackendIsNotASchedulerCapability (0.00s)
+=== RUN   TestVerifyF3ControlSchedulerCapabilityStaysSchedulerUnsupported
+--- PASS: TestVerifyF3ControlSchedulerCapabilityStaysSchedulerUnsupported (0.00s)
+=== RUN   TestVerifyF4StaleProgressingConditionRemovedWhenNoLongerAllRIS
+    gang_classify_verify_test.go:101: F4 REPRODUCED: stale Progressing condition survives on a mixed-backend RBG: {Type:Progressing Status:True ObservedGeneration:6 LastTransitionTime:2026-11-13 07:11:51.305100408 +0800 CST m=+0.010311178 Reason:RoleInstanceSetUpdated Message:decode is updating}
+--- FAIL: TestVerifyF4StaleProgressingConditionRemovedWhenNoLongerAllRIS (0.04s)
+=== RUN   TestVerifyF2ControlRetentionWorksBeforeStatusRewrite
+--- PASS: TestVerifyF2ControlRetentionWorksBeforeStatusRewrite (0.00s)
+=== RUN   TestVerifyF2RetentionLostAfterProgressingRecompute
+2026-11-13T07:11:51+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"inference","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-12T23:11:51Z","message":"Put \"...\": dial tcp: i/o timeout","observedGeneration":6,"reason":"UnclassifiedBlocker","status":"True","type":"Progressing"}],"observedGeneration":6,"roleStatuses":[{"name":"decode","readyReplicas":2,"replicas":2,"updatedReplicas":2}]}}}
+    progressing_retention_verify_test.go:145: F2 REPRODUCED: persisted Progressing reason = UnclassifiedBlocker, want retained WaitingForQuota
+--- FAIL: TestVerifyF2RetentionLostAfterProgressingRecompute (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.058s
+FAIL

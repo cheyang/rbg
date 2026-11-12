@@ -1,0 +1,10 @@
+=== RUN   TestVerifyF1ControlFreshLossReportsRecovering
+--- PASS: TestVerifyF1ControlFreshLossReportsRecovering (0.00s)
+=== RUN   TestVerifyF1PersistedLossMisclassifiedAsScalingUp
+    progressing_verify_test.go:95: F1 REPRODUCED: persisted loss on an established set reports status=True reason=ScalingUp, want True/Recovering (KEP-502: missing instances of an established set classify as Recovering, not ScalingUp)
+--- FAIL: TestVerifyF1PersistedLossMisclassifiedAsScalingUp (0.00s)
+=== RUN   TestVerifyF1GenuineScaleUpStillScalingUp
+--- PASS: TestVerifyF1GenuineScaleUpStillScalingUp (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset	0.010s
+FAIL

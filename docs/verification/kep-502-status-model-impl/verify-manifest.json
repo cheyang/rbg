@@ -1,0 +1,35 @@
+{
+  "topic": "kep-502-status-model-impl",
+  "pr": "https://github.com/sgl-project/rbg/pull/572",
+  "harnessPaths": [
+    "docs/verification/kep-502-status-model-impl",
+    "pkg/reconciler/roleinstanceset/progressing_verify_test.go",
+    "internal/controller/workloads/progressing_retention_verify_test.go",
+    "internal/controller/workloads/gang_classify_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Implements KEP-502 workload status model: the base branch has no Progressing condition family, no RI status.phase, and no persisted instance lifecycle phase (KEP merged in #528).",
+    "reportedComponent": "RBG/RIS/RI status model (api/workloads/v1alpha2, pkg/reconciler/*, internal/controller/workloads/*)",
+    "patchedComponent": "same",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "grep of base c2896cc0 finds no Progressing/phase machinery; KEP-502 doc is the base commit; feature absent on base",
+    "match": ["premise-grep"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/roleinstanceset/ -run 'TestVerifyF1' -v && go test ./internal/controller/workloads/ -run 'TestVerifyF2|TestVerifyF3|TestVerifyF4' -v"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestVerifyF1"] },
+    { "id": "F2", "polarity": "contract", "layer": "unit", "match": ["TestVerifyF2RetentionLostAfterProgressingRecompute"] },
+    { "id": "F3", "polarity": "contract", "layer": "unit", "match": ["TestVerifyF3SubGroupPolicyBackendIsNotASchedulerCapability"] },
+    { "id": "F4", "polarity": "contract", "layer": "unit", "match": ["TestVerifyF4StaleProgressingConditionRemovedWhenNoLongerAllRIS"] }
+  ],
+  "liveNote": "No live layer: skipped per debate-pipeline instructions. Integration layer = envtest suites already in the repo, both pass on head (see results/integration-envtest.txt)."
+}
