@@ -1,0 +1,33 @@
+
+Harness grafted onto c2896cc0d9ccb8b72de0dda4838f52d8807c9ff1; running L1 unit layer ...
+
+=== RUN   TestKEP133Claude_RolloutClaimsMatchShippedBehavior
+--- PASS: TestKEP133Claude_RolloutClaimsMatchShippedBehavior (0.00s)
+=== RUN   TestKEP133Claude_AddressShapeIsShortForm
+--- PASS: TestKEP133Claude_AddressShapeIsShortForm (0.04s)
+=== RUN   TestKEP133Claude_CCPComponentOrderIsSpecOrder
+--- PASS: TestKEP133Claude_CCPComponentOrderIsSpecOrder (0.00s)
+=== RUN   TestKEP133Claude_DiscoveryFollowsCommittedTargetNotAnnotation
+--- PASS: TestKEP133Claude_DiscoveryFollowsCommittedTargetNotAnnotation (0.00s)
+=== RUN   TestKEP133Claude_GroupSizeEqualsRoleCount
+--- PASS: TestKEP133Claude_GroupSizeEqualsRoleCount (0.02s)
+=== RUN   TestKEP133Claude_EnumerationGrowsWithReplicas
+    kep133_verify_claude_test.go:335: enumeration sizes: map[10:502 100:4283 1000:42984 10000:438985]
+    kep133_verify_claude_test.go:336: bytes per instance: 10=50 100=43 1000=43 10000=44
+--- PASS: TestKEP133Claude_EnumerationGrowsWithReplicas (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.142s
+=== RUN   TestKEP133Claude_NewRBGDefaultsToRefineWithSingleEnumerationConfigMap
+2026-11-13T04:59:32+08:00	INFO	Initialized discovery config mode	{"mode": "refine"}
+2026-11-13T04:59:32+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"v1","data":{"config.yaml":"group:\n  name: test-rbg\n  roles:\n  - role-a\n  - role-b\n  size: 2\nroles:\n  role-a:\n    instances:\n    - address: test-rbg-role-a-0.s-test-rbg-role-a\n    - address: test-rbg-role-a-1.s-test-rbg-role-a\n    - address: test-rbg-role-a-2.s-test-rbg-role-a\n    size: 3\n  role-b:\n    instances:\n    - address: test-rbg-role-b-0.s-test-rbg-role-b\n    - address: test-rbg-role-b-1.s-test-rbg-role-b\n    size: 2\n"},"kind":"ConfigMap","metadata":{"name":"test-rbg","namespace":"default","ownerReferences":[{"apiVersion":"","blockOwnerDeletion":true,"controller":true,"kind":"","name":"test-rbg","uid":"rbg-test-uid"}]}}}
+--- PASS: TestKEP133Claude_NewRBGDefaultsToRefineWithSingleEnumerationConfigMap (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.058s
+
+Per-finding verdicts (all canaries of current behavior):
+  P0/F1 mode+single-enum-CM   : pass  -> KEP 'today/rollout' claims remain refuted
+  F2  short-form addresses    : pass  -> KEP base-template FQDN claim remains refuted
+  F3  committed-target governs: pass  -> KEP 'annotation projected verbatim' claim remains refuted
+  F4  CCP spec-order instances: pass  -> KEP sorted-by-name rendering divergence remains real
+  F6  group.size == len(roles): pass  -> KEP motivation example remains wrong
+  P0  enumeration O(replicas) : pass  -> KEP size premise remains confirmed

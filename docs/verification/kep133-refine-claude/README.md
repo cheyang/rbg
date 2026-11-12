@@ -19,7 +19,8 @@ The real problem (stored size grows with instance count) is confirmed; the dupli
 
 | Finding | Layer | Test | Result | Meaning |
 | --- | --- | --- | --- | --- |
-| F1 (blocker) rollout model contradicts shipped refine mode | unit | `TestKEP133Claude_NewRBGDefaultsToRefineWithSingleEnumerationConfigMap` | PASS (fact established) | KEP rollout/compat claims refuted |
+| F1 (blocker) rollout model contradicts shipped refine mode | unit | `TestKEP133Claude_RolloutClaimsMatchShippedBehavior` | **FAIL on head** (reproduction) — PASS on base | the rewritten KEP asserts three rollout claims the shipped code refutes; red on head is the bug, green after the doc is reworked |
+| F1 (supporting fact) | unit | `TestKEP133Claude_NewRBGDefaultsToRefineWithSingleEnumerationConfigMap` | PASS | new RBG on base: mode=refine, one RBG-level enumeration ConfigMap |
 | F2 (major) `base` templates carry FQDN suffix current builder never emits | unit | `TestKEP133Claude_AddressShapeIsShortForm` | PASS | KEP template examples refuted — renderer built from them fails the KEP's own equality gate |
 | F3 (major) discovery follows committed child target, not the annotation | unit | `TestKEP133Claude_DiscoveryFollowsCommittedTargetNotAnnotation` | PASS | "projected from the annotation, semantics inherited verbatim" refuted |
 | F4 (major) legacy CCP enumeration is spec-order, not name-sorted | unit | `TestKEP133Claude_CCPComponentOrderIsSpecOrder` | PASS | sorted-by-name rendering diverges from legacy ordering |
@@ -27,15 +28,15 @@ The real problem (stored size grows with instance count) is confirmed; the dupli
 | F6 (minor) group.size example + O(roles×components) PRR claim inconsistent | unit | `TestKEP133Claude_GroupSizeEqualsRoleCount` | PASS | group.size = len(roles) = 3, KEP example says 4 |
 | P0 (premise) enumeration size O(replicas) | unit | `TestKEP133Claude_EnumerationGrowsWithReplicas` | PASS | size problem confirmed |
 
-Full raw output: `results/unit-l1.txt`.
+Raw output: `results/unit-l1-head-fail.txt` (head: 6 pass / 1 fail — the F1 reproduction) and `results/unit-l1-base.txt` (base: 7/7 pass — the pre-rewrite KEP contains none of the refuted claims).
 
 ## Polarity
 
-All automated tests are **canaries of current behavior** (they assert what the code does today; each contradicts a corresponding KEP statement). This PR is documentation-only, so base and head code are identical — a green run re-establishes the same facts. When an implementation of KEP-133 lands:
-
-- F2/F3/F4 tests **flip or get superseded** only if the address shape, exclusion source-of-truth, or component ordering deliberately changes; at that point invert/promote them per the new compat contract.
-- F1's test keeps passing while the current default-mode behavior is unchanged; if a new mode value is introduced, add a test for the new selection logic.
-- "All green" here means "codebase facts unchanged", **not** "the KEP is now correct".
+- `TestKEP133Claude_RolloutClaimsMatchShippedBehavior` is a **contract test**: asserts the intended correct state (KEP free of the refuted claims). RED on the current head is the reproduction of F1; it flips GREEN when the rollout/compat section is reworked. Fixed = pass.
+- All other tests are **canaries of current behavior** (they assert what the code does today; each contradicts a corresponding KEP statement). This PR is documentation-only, so base and head code are identical — a green run re-establishes the same facts. When an implementation of KEP-133 lands:
+  - F2/F3/F4 tests **flip or get superseded** only if the address shape, exclusion source-of-truth, or component ordering deliberately changes; at that point invert/promote them per the new compat contract.
+  - F1's canary keeps passing while the current default-mode behavior is unchanged; if a new mode value is introduced, add a test for the new selection logic.
+  - "All green" (canaries) means "codebase facts unchanged", **not** "the KEP is now correct".
 
 ## How to run
 
@@ -43,6 +44,8 @@ All automated tests are **canaries of current behavior** (they assert what the c
 # from a checkout of this branch
 GOFLAGS=-mod=vendor go test -count=1 -v -run 'TestKEP133Claude' \
   ./pkg/discovery/ ./internal/controller/workloads/
+# note: the F1 contract test is expected to FAIL while PR #570's KEP still
+# contains the refuted rollout claims; that red is the reproduction.
 
 # or, grafting onto the current PR head anywhere:
 bash docs/verification/kep133-refine-claude/scripts/re-verify.sh
@@ -50,7 +53,11 @@ bash docs/verification/kep133-refine-claude/scripts/re-verify.sh
 
 ## Harness-bites check
 
-Because the PR is docs-only there is no production fix to apply/revert; the bite check is the exact-value assertions themselves: each test asserts exact addresses/ordering/counts, so it fails if the fact it pins were false. Verified both packages' full suites still pass with the harness added (`go test ./pkg/discovery/ ./internal/controller/workloads/` → ok).
+Because the PR is docs-only there is no production fix to apply/revert. The bite check is done two ways:
+- the F1 contract test provably bites: it PASSES on the base commit's KEP (grafted run, `results/unit-l1-base.txt`) and FAILS on the PR head's KEP (`results/unit-l1-head-fail.txt`) — same harness, different doc, opposite outcome;
+- every fact test asserts exact addresses/ordering/counts, so it fails if the fact it pins were false.
+
+Verified both packages' full suites still pass with the harness added on the base graft (`go test ./pkg/discovery/ ./internal/controller/workloads/` → ok).
 
 ## Continuing after the fix
 

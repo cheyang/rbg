@@ -29,19 +29,26 @@
       "claim": "The KEP states existing RBGs are 'never migrated automatically', that legacy objects 'keep their per-role ConfigMaps and mounted content unchanged', that 'new RBGs created after the controller upgrade get refine', and that 'older controllers ignore [the RBG-level ConfigMap] (they only manage per-role ConfigMaps)'. All four statements are false on the base branch: refine mode is the default for new RBGs since PR #134 (shipped in v0.7.0/v0.8.0), refine RBGs already have a single RBG-level ConfigMap with full enumeration that reconcileRefinedDiscoveryConfigMap rewrites on every reconcile, and post-#134 older controllers DO manage that object (a downgrade would overwrite compact content with enumeration). Implementing this KEP as written silently migrates every refine-pinned RBG created since v0.7.0.",
       "tests": [
         {
+          "name": "TestKEP133Claude_RolloutClaimsMatchShippedBehavior",
+          "file": "pkg/discovery/kep133_verify_claude_test.go",
+          "layer": "unit",
+          "polarity": "contract",
+          "polarityNote": "Asserts the KEP document no longer contains the three rollout claims refuted by the shipped code. RED on the current PR head (reproduction of F1); flips GREEN when the rollout/compat section is reworked. Passes on the base (pre-rewrite) KEP."
+        },
+        {
           "name": "TestKEP133Claude_NewRBGDefaultsToRefineWithSingleEnumerationConfigMap",
           "file": "internal/controller/workloads/kep133_verify_claude_test.go",
           "layer": "unit",
           "polarity": "canary",
-          "polarityNote": "Asserts current behavior (refine default + single enumeration ConfigMap). Passes on buggy-doc state because the doc, not the code, is wrong. If a future implementation pins new RBGs to a new mode value or stops rewriting refine ConfigMaps, re-evaluate."
+          "polarityNote": "Asserts current behavior (refine default + single enumeration ConfigMap). Supporting evidence: establishes the codebase fact the contract test checks the doc against. If a future implementation pins new RBGs to a new mode value or stops rewriting refine ConfigMaps, re-evaluate."
         }
       ],
       "verification": {
         "base": "pass",
         "previous": "not-run",
-        "head": "pass"
+        "head": "fail"
       },
-      "evidence": "results/unit-l1.txt"
+      "evidence": "results/unit-l1-base.txt (base: 7/7 pass), results/unit-l1-head-fail.txt (head: contract test FAIL - the reproduction)"
     },
     {
       "id": "F2",
@@ -67,7 +74,7 @@
         "previous": "not-run",
         "head": "pass"
       },
-      "evidence": "results/unit-l1.txt"
+      "evidence": "results/unit-l1-head-fail.txt"
     },
     {
       "id": "F3",
@@ -93,7 +100,7 @@
         "previous": "not-run",
         "head": "pass"
       },
-      "evidence": "results/unit-l1.txt"
+      "evidence": "results/unit-l1-head-fail.txt"
     },
     {
       "id": "F4",
@@ -119,7 +126,7 @@
         "previous": "not-run",
         "head": "pass"
       },
-      "evidence": "results/unit-l1.txt"
+      "evidence": "results/unit-l1-head-fail.txt"
     },
     {
       "id": "F5",
@@ -129,7 +136,7 @@
       "origin": "initial-pr",
       "introducedByPR": true,
       "firstSeenSha": "91cac0738171a561882406a46a72f992a81f2e33",
-      "evidenceKind": "hypothesis",
+      "evidenceKind": "code-path",
       "claim": "Today the discovery ConfigMap is mounted directly as a volume (non-subPath, pkg/discovery/injector.go:86-121), so kubelet's ConfigMap sync propagates content updates (scale events, KEP-499 drains) to running Pods within the sync period, and consumers that re-read /etc/rbg/config.yaml see them. With the init-container snapshot, the rendered file never changes until Pod recreation. The KEP's Notes ('This matches the effective contract today, where consumers reload at their own discretion') and Non-Goals ('same effective contract as today') are incorrect: 'reload at their own discretion' only yields fresh data when the underlying file updates. The Drawbacks section admits the snapshot but the equivalence claims hide a real regression in visibility of scale/drain events for long-running pods.",
       "tests": [
         {
@@ -171,7 +178,7 @@
         "previous": "not-run",
         "head": "pass"
       },
-      "evidence": "results/unit-l1.txt"
+      "evidence": "results/unit-l1-head-fail.txt"
     }
   ],
   "liveNote": "L3 (live cluster) layer skipped per round policy: unit + integration only. The only claim that would need L3 is F5 (ConfigMap volume update propagation), for which the code-path evidence (whole-volume mount, not subPath) is given."

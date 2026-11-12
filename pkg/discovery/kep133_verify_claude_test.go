@@ -34,6 +34,9 @@ package discovery
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	stdruntime "runtime"
 	"strings"
 	"testing"
 
@@ -47,6 +50,47 @@ import (
 
 	"sigs.k8s.io/yaml"
 )
+
+// F1 (CONTRACT test — red on the PR head is the reproduction): the rewritten
+// KEP-133 must not assert rollout facts that the shipped code refutes. Refine
+// mode is already the default for new RBGs (PR #134, released v0.7.0/v0.8.0):
+// reconcileRefinedDiscoveryConfigMap rewrites the single RBG-level ConfigMap
+// for every refine RBG on each reconcile, and the injector mounts it directly.
+// These three claims each contradict that:
+//   - "New RBGs created after the controller upgrade get refine" (they already do),
+//   - "older controllers ignore it (they only manage per-role ConfigMaps)"
+//     (post-#134 controllers actively rewrite the RBG-level ConfigMap),
+//   - "existing RBGs keep their per-role ConfigMaps and mounted content
+//     unchanged" (refine-pinned RBGs have neither per-role ConfigMaps nor
+//     unchanged mounts once this design lands).
+// Base (pre-rewrite) KEP contains none of the three claims; the rewritten KEP
+// contains all three. Green once the rollout section is reworked.
+func TestKEP133Claude_RolloutClaimsMatchShippedBehavior(t *testing.T) {
+	_, thisFile, _, ok := stdruntime.Caller(0)
+	if !ok {
+		t.Fatal("cannot locate test file")
+	}
+	kepPath := filepath.Join(filepath.Dir(thisFile), "..", "..", "keps", "133-configmap-refine", "README.md")
+	data, err := os.ReadFile(kepPath)
+	if err != nil {
+		t.Fatalf("read KEP-133: %v", err)
+	}
+	doc := string(data)
+
+	staleClaims := []string{
+		"New RBGs created after the controller upgrade get `refine`",
+		"older controllers ignore it (they only manage per-role ConfigMaps)",
+		"existing RBGs keep their per-role ConfigMaps",
+	}
+	for _, claim := range staleClaims {
+		if strings.Contains(doc, claim) {
+			t.Errorf("KEP-133 asserts a rollout claim refuted by the shipped code: %q\n"+
+				"refine mode already ships as the default (v0.7.0/v0.8.0, PR #134): existing refine-pinned\n"+
+				"RBGs are migrated when this design lands, and post-#134 controllers DO manage the\n"+
+				"RBG-level ConfigMap. See TestKEP133Claude_NewRBGDefaultsToRefineWithSingleEnumerationConfigMap.", claim)
+		}
+	}
+}
 
 func kepScheme(t *testing.T) *runtime.Scheme {
 	t.Helper()

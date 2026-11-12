@@ -42,16 +42,25 @@ echo ""
 echo "Harness grafted onto ${TARGET_REF}; running L1 unit layer ..."
 echo ""
 cd "${WORKDIR}"
-# This PR is documentation-only: code is identical between base and head, so a
-# green run here re-establishes the same codebase facts (see README polarity table).
+# This PR is documentation-only: code is identical between base and head, so the
+# fact tests (canaries) re-establish the same codebase facts. The F1 contract
+# test is RED while the KEP still contains the refuted rollout claims; that red
+# is the reproduction, so capture the exit code instead of aborting.
+set +e
 GOFLAGS=-mod=vendor go test -count=1 -v -run 'TestKEP133Claude' \
   ./pkg/discovery/ ./internal/controller/workloads/
+TEST_RC=$?
+set -e
 
 echo ""
-echo "Per-finding verdicts (all canaries of current behavior):"
-echo "  P0/F1 mode+single-enum-CM   : pass  -> KEP 'today/rollout' claims remain refuted"
+echo "Per-finding verdicts:"
+echo "  F1  contract: KEP free of refuted rollout claims : FAIL on head = Still-broken (fixed when GREEN)"
+echo "  F1  canary  : new RBG -> refine + single enum CM : pass  -> codebase fact unchanged"
 echo "  F2  short-form addresses    : pass  -> KEP base-template FQDN claim remains refuted"
 echo "  F3  committed-target governs: pass  -> KEP 'annotation projected verbatim' claim remains refuted"
 echo "  F4  CCP spec-order instances: pass  -> KEP sorted-by-name rendering divergence remains real"
 echo "  F6  group.size == len(roles): pass  -> KEP motivation example remains wrong"
 echo "  P0  enumeration O(replicas) : pass  -> KEP size premise remains confirmed"
+echo ""
+echo "Exit code is non-zero while the F1 contract test is red (finding open)."
+exit "${TEST_RC}"
