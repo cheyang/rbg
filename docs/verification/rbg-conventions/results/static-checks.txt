@@ -1,0 +1,56 @@
+
+In .agents/skills/rbg-conventions/scripts/crd-default-on-read.sh line 64:
+  local status=$?
+  ^-------------^ SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In .agents/skills/rbg-conventions/scripts/crd-default-on-read.sh line 65:
+  [ "$keep" = true ] && { echo "kept $crd"; return; }
+  ^-----------------^ SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+                        ^---------------------------^ SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+                          ^--------------^ SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+                                            ^----^ SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In .agents/skills/rbg-conventions/scripts/crd-default-on-read.sh line 66:
+  delete_with_uid "/apis/apiextensions.k8s.io/v1/customresourcedefinitions/$crd" "$crd_uid" || {
+  ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+                                                                                               ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In .agents/skills/rbg-conventions/scripts/crd-default-on-read.sh line 67:
+    echo "error: cleanup of $crd failed; see the message above" >&2
+    ^-- SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In .agents/skills/rbg-conventions/scripts/crd-default-on-read.sh line 68:
+    exit 2
+    ^----^ SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In .agents/skills/rbg-conventions/scripts/crd-default-on-read.sh line 70:
+  exit "$status"
+  ^------------^ SC2317 (info): Command appears to be unreachable. Check usage (or ignore if invoked indirectly).
+
+
+In .agents/skills/rbg-conventions/scripts/rbg-compare.sh line 15:
+[ -r "$before" ] && [ -r "$after" ] || { echo "error: cannot read $before or $after" >&2; exit 2; }
+                 ^-- SC2015 (info): Note that A && B || C is not if-then-else. C may run when A is true.
+
+
+In .agents/skills/rbg-conventions/scripts/v1alpha1-roundtrip.sh line 38:
+[ -n "$ns" ] && [ -n "$name" ] || usage
+             ^-- SC2015 (info): Note that A && B || C is not if-then-else. C may run when A is true.
+
+For more information:
+  https://www.shellcheck.net/wiki/SC2015 -- Note that A && B || C is not if-t...
+  https://www.shellcheck.net/wiki/SC2317 -- Command appears to be unreachable...
+shellcheck rc=1
+bash -n OK: .agents/skills/rbg-conventions/scripts/common.sh
+bash -n OK: .agents/skills/rbg-conventions/scripts/crd-default-on-read.sh
+bash -n OK: .agents/skills/rbg-conventions/scripts/rbg-compare.sh
+bash -n OK: .agents/skills/rbg-conventions/scripts/rbg-fixtures.sh
+bash -n OK: .agents/skills/rbg-conventions/scripts/rbg-snapshot.sh
+bash -n OK: .agents/skills/rbg-conventions/scripts/selftest.sh
+bash -n OK: .agents/skills/rbg-conventions/scripts/ssa-key-removal.sh
+bash -n OK: .agents/skills/rbg-conventions/scripts/v1alpha1-roundtrip.sh

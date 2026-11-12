@@ -1,0 +1,96 @@
+{
+  "pr": "https://github.com/sgl-project/rbg/pull/568",
+  "reviewer": "claude",
+  "topic": "rbg-conventions",
+  "headSha": "9ff493817cc3b60387565b9f3d8a2799b4eeb1fe",
+  "baseSha": "7e377a06fe3845f38bf9fc1ce363198d632107e7",
+  "premise": {
+    "id": "P0",
+    "claim": "RBG review problem classes are real, knowledge is spread out, and the upgrade e2e suite only runs on /release-test",
+    "runsAgainst": "base",
+    "verdict": "confirmed",
+    "evidence": "release-test.yml restricts /release-test to OWNER/MEMBER/COLLABORATOR; make test-e2e-upgrade documented as release-test-only; ~25 doc citations verified against the PR head; problem classes exist in the cited code"
+  },
+  "findings": [
+    {
+      "id": "V1",
+      "title": "kc write retry never replays a possibly-sent request; reads retry transient transport failures, max 5",
+      "tests": [
+        { "path": ".agents/skills/rbg-conventions/scripts/selftest.sh", "polarity": "contract", "layer": "L1" },
+        { "path": "docs/verification/rbg-conventions/scripts/edge_tests.sh", "polarity": "contract", "layer": "L1" }
+      ],
+      "status": "open",
+      "evidenceKind": "differential",
+      "evidence": "results/selftest.txt, results/edge-tests.txt: all retry-classification checks pass"
+    },
+    {
+      "id": "V2",
+      "title": "namespace ownership guard fails closed on missing record, foreign token, tampered token; fixtures scripts refuse and send nothing",
+      "tests": [
+        { "path": "docs/verification/rbg-conventions/scripts/edge_tests.sh", "polarity": "contract", "layer": "L1" }
+      ],
+      "status": "open",
+      "evidenceKind": "code-path",
+      "evidence": "results/edge-tests.txt: 31/31 pass incl. apply/delete refusals"
+    },
+    {
+      "id": "V3",
+      "title": "delete_with_uid carries the recorded UID as a delete precondition and cleans up the state record only after success",
+      "tests": [
+        { "path": ".agents/skills/rbg-conventions/scripts/selftest.sh", "polarity": "contract", "layer": "L1" },
+        { "path": "docs/verification/rbg-conventions/scripts/edge_tests.sh", "polarity": "contract", "layer": "L1" }
+      ],
+      "status": "open",
+      "evidenceKind": "differential",
+      "evidence": "results/edge-tests.txt: precondition JSON and state-file lifecycle asserted"
+    },
+    {
+      "id": "V4",
+      "title": "kubectl jsonpath templates used by the scripts (slash keys in dot notation, multi-expression, missing label fail-closed) parse and evaluate correctly",
+      "tests": [
+        { "path": "docs/verification/rbg-conventions/harness", "subcommand": "jsonpath", "polarity": "contract", "layer": "L2" }
+      ],
+      "status": "open",
+      "evidenceKind": "code-path",
+      "evidence": "results/jsonpath-check.txt: 7/7 pass with client-go v0.34.2 jsonpath"
+    },
+    {
+      "id": "V5",
+      "title": "fixtures are valid against the v1alpha2 CRD (JSON schema, CEL, nothing pruned)",
+      "tests": [
+        { "path": "docs/verification/rbg-conventions/harness", "subcommand": "fixtures", "polarity": "contract", "layer": "L2" }
+      ],
+      "status": "open",
+      "evidenceKind": "differential",
+      "evidence": "results/fixture-validation.txt: 18/18 pass; harness-bites check: type violation is caught"
+    },
+    {
+      "id": "V6",
+      "title": "scripts pass shellcheck (info-level only) and bash -n",
+      "tests": [
+        { "path": "docs/verification/rbg-conventions/results/static-checks.txt", "polarity": "contract", "layer": "static" }
+      ],
+      "status": "open",
+      "evidenceKind": "code-path",
+      "evidence": "results/static-checks.txt: shellcheck 0.9.0 info-only (SC2317 trap function, SC2015 benign), bash -n all OK"
+    },
+    {
+      "id": "V8",
+      "title": "live cluster cases VC-1..VC-5",
+      "tests": [],
+      "status": "open",
+      "evidenceKind": "hypothesis",
+      "liveNote": "Live layer not run this round (debate setup skips it). Author-recorded results are in .agents/skills/rbg-conventions/references/verification-cases.md. Signal to check on a cluster: VC-1 A1-A4 all PASS, VC-2/VC-3 via rbg-snapshot+rbg-compare, VC-4 single rbg/Apply manager, VC-5 exit codes per fixture.",
+      "evidence": "not run; author-reported results only"
+    }
+  ],
+  "acceptance": [
+    { "id": "AC1", "contract": "selftest.sh passes 22/22 offline", "status": "passed", "evidence": "results/selftest.txt" },
+    { "id": "AC2", "contract": "edge_tests.sh passes (ownership guards, retry exhaustion, refusals, precondition delete)", "status": "passed", "evidence": "results/edge-tests.txt" },
+    { "id": "AC3", "contract": "fixtures validate against the v1alpha2 CRD schema + CEL with nothing pruned", "status": "passed", "evidence": "results/fixture-validation.txt" },
+    { "id": "AC4", "contract": "script jsonpath templates evaluate correctly via client-go jsonpath", "status": "passed", "evidence": "results/jsonpath-check.txt" },
+    { "id": "AC5", "contract": "shellcheck and bash -n clean on all scripts", "status": "passed", "evidence": "results/static-checks.txt" },
+    { "id": "AC6", "contract": "CI green on the PR head", "status": "passed", "evidence": "statusCheckRollup at 9ff49381: 25/25 checks SUCCESS (GitHub, 2026-11-13)" },
+    { "id": "AC7", "contract": "live cluster verification cases VC-1..VC-5 re-run green on the head scripts", "status": "unverified", "evidence": "live layer skipped this round; author-recorded PASS results predate the rebase onto #548/#559 for the VC-2..VC-4 table entries but the review-fix checks (9ff49381) were re-run on cluster per the PR body" }
+  ]
+}

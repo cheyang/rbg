@@ -1,0 +1,26 @@
+== kc retries
+PASS a read is retried after a refused connection
+PASS a write is retried when the connection could not be opened
+PASS the retry sends the same input again
+PASS a write is retried when the connection was refused
+PASS a write is not retried after an error from the API server, even one that mentions dial
+PASS a partly applied write is not replayed
+PASS it reports what was written
+PASS a write is not retried when one of its requests may have been sent
+PASS a write is not retried when the connection broke after the request was sent
+== delete_with_uid
+PASS a delete succeeds
+PASS it carries the UID as a precondition
+PASS a delete is retried when the connection was refused
+PASS an object that replaced the checked one is left alone
+PASS it says so
+PASS an object that is already gone counts as deleted
+PASS a delete whose response was lost counts if the object is being deleted
+PASS a delete lost in transit is sent again while the object is untouched
+== rbg-snapshot.sh and rbg-compare.sh
+PASS the snapshot records init and sidecar container images
+PASS the snapshot records init and sidecar container restarts
+PASS a sidecar restart is reported although the Pod UID and its regular containers are unchanged
+PASS it is explained
+PASS a snapshot in an older format is refused
+all tests passed

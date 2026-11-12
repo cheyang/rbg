@@ -1,0 +1,40 @@
+== kc additional edges
+PASS a read gives up after 5 transient failures
+== ownership guard (require_owned_namespace / rbg-fixtures.sh)
+PASS a namespace with no ownership record is refused
+PASS a namespace whose token was replaced is refused
+PASS a matching token and UID is accepted
+== rbg-fixtures.sh apply
+PASS apply creates a namespace that does not exist
+PASS the fixtures are applied with the image substituted (8 images)
+PASS no __IMAGE__ placeholder survives
+PASS the created namespace carries the owner labels
+PASS the ownership record is written for the created token
+PASS apply reuses a namespace it owns
+PASS reusing does not create the namespace again
+PASS reusing still applies the fixtures
+PASS apply refuses a namespace owned by someone else
+PASS a refused apply writes nothing
+PASS apply refuses an existing namespace with no ownership record
+PASS no create happens without a record
+== rbg-fixtures.sh delete
+PASS delete removes an owned namespace
+PASS the delete carries the recorded UID as a precondition
+PASS the ownership record is cleaned up
+PASS delete refuses a namespace owned by someone else
+PASS a refused delete sends no delete request
+== v1alpha1-roundtrip.sh
+PASS an unchanged round trip passes
+PASS the object was written through v1alpha1
+PASS a CRD without webhook conversion is refused
+PASS no write happens without webhook conversion
+PASS v1alpha1 round trip refuses a namespace without an ownership record
+== ssa-key-removal.sh guard
+PASS ssa-key-removal refuses a namespace without an ownership record
+PASS no patch is sent
+== crd-default-on-read.sh cleanup on unreachable server
+PASS crd-default-on-read fails when the server is unreachable
+== rbg-compare.sh extra cases
+PASS a container restart is reported
+PASS it is explained
+all edge tests passed

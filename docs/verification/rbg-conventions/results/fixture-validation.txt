@@ -1,0 +1,19 @@
+PASS fx-standalone: schema validation
+PASS fx-standalone: CEL validation
+PASS fx-standalone: no unknown fields (nothing pruned)
+PASS fx-lwp-legacy: schema validation
+PASS fx-lwp-legacy: CEL validation
+PASS fx-lwp-legacy: no unknown fields (nothing pruned)
+PASS fx-lwp-default: schema validation
+PASS fx-lwp-default: CEL validation
+PASS fx-lwp-default: no unknown fields (nothing pruned)
+PASS fx-lwp-backoff: schema validation
+PASS fx-lwp-backoff: CEL validation
+PASS fx-lwp-backoff: no unknown fields (nothing pruned)
+PASS fx-components: schema validation
+PASS fx-components: CEL validation
+PASS fx-components: no unknown fields (nothing pruned)
+PASS fx-template-ref: schema validation
+PASS fx-template-ref: CEL validation
+PASS fx-template-ref: no unknown fields (nothing pruned)
+OK

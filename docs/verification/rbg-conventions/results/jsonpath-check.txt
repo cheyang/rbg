@@ -1,0 +1,8 @@
+PASS slash key in dot notation
+PASS combined owner+uid template
+PASS uid alone
+PASS uid on create
+PASS resourceVersion
+PASS conversion strategy
+PASS missing label yields no value
+OK
