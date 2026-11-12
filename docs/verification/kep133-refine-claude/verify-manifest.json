@@ -1,0 +1,178 @@
+{
+  "pr": "https://github.com/sgl-project/rbg/pull/570",
+  "topic": "kep133-refine-claude",
+  "reviewer": "claude",
+  "round": "initial",
+  "headSha": "91cac0738171a561882406a46a72f992a81f2e33",
+  "baseSha": "c2896cc0d9ccb8b72de0dda4838f52d8807c9ff1",
+  "kind": "docs-only",
+  "premise": {
+    "claim": "P0: 'Today every role of an RBG gets its own ConfigMap whose content is a full enumeration ... duplicated across all roles of the group' and the stored content grows O(replicas) toward the 1 MiB limit; new RBGs would only get refine mode after this design lands.",
+    "runsAgainst": "base",
+    "verdict": "partially-refuted",
+    "evidence": [
+      "TestKEP133Claude_NewRBGDefaultsToRefineWithSingleEnumerationConfigMap (internal/controller/workloads/kep133_verify_claude_test.go): a brand-new RBG on the base branch defaults to discovery-config-mode=refine and gets exactly one RBG-level ConfigMap (named after the RBG) holding the full enumeration - no per-role ConfigMaps, no duplication. The single-ConfigMap behavior shipped in PR #134 (in releases v0.7.0 and v0.8.0), not with this KEP.",
+      "TestKEP133Claude_EnumerationGrowsWithReplicas (pkg/discovery/kep133_verify_claude_test.go): stored content grows linearly with replicas (~43-44 bytes/pod; 10000 replicas -> ~439 KB), so the O(instances) size problem the KEP targets is real and confirmed."
+    ],
+    "notes": "The size half of the premise is Confirmed; the per-role duplication half and the 'new RBGs get refine only after upgrade' rollout framing are Refuted by code. Partially-valid premise: proceed to review the design on its merits."
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "title": "Rollout/compatibility model contradicts the already-shipped refine mode",
+      "severity": "blocker",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "91cac0738171a561882406a46a72f992a81f2e33",
+      "evidenceKind": "differential",
+      "claim": "The KEP states existing RBGs are 'never migrated automatically', that legacy objects 'keep their per-role ConfigMaps and mounted content unchanged', that 'new RBGs created after the controller upgrade get refine', and that 'older controllers ignore [the RBG-level ConfigMap] (they only manage per-role ConfigMaps)'. All four statements are false on the base branch: refine mode is the default for new RBGs since PR #134 (shipped in v0.7.0/v0.8.0), refine RBGs already have a single RBG-level ConfigMap with full enumeration that reconcileRefinedDiscoveryConfigMap rewrites on every reconcile, and post-#134 older controllers DO manage that object (a downgrade would overwrite compact content with enumeration). Implementing this KEP as written silently migrates every refine-pinned RBG created since v0.7.0.",
+      "tests": [
+        {
+          "name": "TestKEP133Claude_NewRBGDefaultsToRefineWithSingleEnumerationConfigMap",
+          "file": "internal/controller/workloads/kep133_verify_claude_test.go",
+          "layer": "unit",
+          "polarity": "canary",
+          "polarityNote": "Asserts current behavior (refine default + single enumeration ConfigMap). Passes on buggy-doc state because the doc, not the code, is wrong. If a future implementation pins new RBGs to a new mode value or stops rewriting refine ConfigMaps, re-evaluate."
+        }
+      ],
+      "verification": {
+        "base": "pass",
+        "previous": "not-run",
+        "head": "pass"
+      },
+      "evidence": "results/unit-l1.txt"
+    },
+    {
+      "id": "F2",
+      "title": "Address templates embed a FQDN suffix the current builder never emits",
+      "severity": "major",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "91cac0738171a561882406a46a72f992a81f2e33",
+      "evidenceKind": "code-path",
+      "claim": "Every `base` example and the pattern table in the KEP end with `.<ns>.svc.cluster.local`, and the motivation example shows FQDN addresses; but the current builder emits short-form `pod.serviceName` addresses with no namespace suffix (pkg/discovery/config_builder.go:153-177; e2e test test/e2e/testcase/v1alpha2/discovery_configmap.go asserts the short form). A renderer built from the KEP's templates fails the KEP's own 'field-by-field identical to the current builder output' e2e gate.",
+      "tests": [
+        {
+          "name": "TestKEP133Claude_AddressShapeIsShortForm",
+          "file": "pkg/discovery/kep133_verify_claude_test.go",
+          "layer": "unit",
+          "polarity": "canary",
+          "polarityNote": "Asserts current short-form addresses. If the rendered address shape is intentionally changed later, this flips and must be re-evaluated against an updated compat contract."
+        }
+      ],
+      "verification": {
+        "base": "pass",
+        "previous": "not-run",
+        "head": "pass"
+      },
+      "evidence": "results/unit-l1.txt"
+    },
+    {
+      "id": "F3",
+      "title": "excludedOrdinals semantics: current discovery follows the committed child target, not the annotation",
+      "severity": "major",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "91cac0738171a561882406a46a72f992a81f2e33",
+      "evidenceKind": "code-path",
+      "claim": "The KEP says excludedOrdinals is 'projected from the KEP-499 role annotation' with 'semantics inherited from KEP-499 unchanged', and that the renderer skips annotation-listed ordinals. Today's discovery deliberately follows the child RIS's committed membership (memberOrdinals -> set.CommittedOrdinals(); comment: 'Discovery follows the committed child target, not live Pods or the exclusion input'), and KEP-499 itself says nothing about discovery projection. A renderer skipping annotation ordinals produces a different address list than the current builder in the window between annotation edit and membership commit, so the KEP's two e2e assertions (field-by-field equality AND excluded-ordinals-absent) are mutually incompatible in that window. The 'out-of-range entries dropped' validation also differs from today's freeze-on-invalid-input behavior.",
+      "tests": [
+        {
+          "name": "TestKEP133Claude_DiscoveryFollowsCommittedTargetNotAnnotation",
+          "file": "pkg/discovery/kep133_verify_claude_test.go",
+          "layer": "unit",
+          "polarity": "canary",
+          "polarityNote": "Asserts committed-target semantics. If discovery later switches to projecting the annotation, this flips (and the KEP's equality claim must then be re-scoped)."
+        }
+      ],
+      "verification": {
+        "base": "pass",
+        "previous": "not-run",
+        "head": "pass"
+      },
+      "evidence": "results/unit-l1.txt"
+    },
+    {
+      "id": "F4",
+      "title": "Sorted-by-name component rendering diverges from legacy spec-order enumeration",
+      "severity": "major",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "91cac0738171a561882406a46a72f992a81f2e33",
+      "evidenceKind": "code-path",
+      "claim": "The refine format sorts components by name; the current builder enumerates CustomComponentsPattern components in spec order (config_builder.go:146). For a role whose components are declared non-alphabetically, the rendered instance list order differs from the legacy enumeration, so the 'field-by-field identical' e2e assertion fails on ordering. The design must either preserve spec order in rendering or define order-insensitive equality explicitly.",
+      "tests": [
+        {
+          "name": "TestKEP133Claude_CCPComponentOrderIsSpecOrder",
+          "file": "pkg/discovery/kep133_verify_claude_test.go",
+          "layer": "unit",
+          "polarity": "canary",
+          "polarityNote": "Asserts spec-order enumeration. If rendering deliberately canonicalizes order, flip or drop after the compat contract is updated."
+        }
+      ],
+      "verification": {
+        "base": "pass",
+        "previous": "not-run",
+        "head": "pass"
+      },
+      "evidence": "results/unit-l1.txt"
+    },
+    {
+      "id": "F5",
+      "title": "'Startup snapshot is the same effective contract as today' misstates a real behavior change",
+      "severity": "major",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "91cac0738171a561882406a46a72f992a81f2e33",
+      "evidenceKind": "hypothesis",
+      "claim": "Today the discovery ConfigMap is mounted directly as a volume (non-subPath, pkg/discovery/injector.go:86-121), so kubelet's ConfigMap sync propagates content updates (scale events, KEP-499 drains) to running Pods within the sync period, and consumers that re-read /etc/rbg/config.yaml see them. With the init-container snapshot, the rendered file never changes until Pod recreation. The KEP's Notes ('This matches the effective contract today, where consumers reload at their own discretion') and Non-Goals ('same effective contract as today') are incorrect: 'reload at their own discretion' only yields fresh data when the underlying file updates. The Drawbacks section admits the snapshot but the equivalence claims hide a real regression in visibility of scale/drain events for long-running pods.",
+      "tests": [
+        {
+          "name": "(no automated test - live-layer)",
+          "file": "",
+          "layer": "live",
+          "polarity": "none",
+          "polarityNote": "Code-path evidence only: mount is a whole-volume ConfigMap mount, not subPath, so updates propagate under standard kubelet behavior. Live verification (update ConfigMap, observe file change in running Pod) was skipped per round policy (unit+integration only)."
+        }
+      ],
+      "verification": {
+        "base": "not-run",
+        "previous": "not-run",
+        "head": "not-run"
+      },
+      "evidence": "pkg/discovery/injector.go:86-121 (volume mount, no subPath); K8s documented ConfigMap volume sync behavior"
+    },
+    {
+      "id": "F6",
+      "title": "Motivation example and PRR scalability answer are internally inconsistent",
+      "severity": "minor",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "91cac0738171a561882406a46a72f992a81f2e33",
+      "evidenceKind": "code-path",
+      "claim": "The motivation example shows group.size: 4 for a 3-role group; the builder sets group.size = len(roles) (= 3). The PRR Scalability answer claims a stored size of O(roles x components), but excludedOrdinals - projected as an expanded int array - makes the stored size O(instances) during rollouts/scale-downs (the doc itself cites 'exclusion-list growth during rollouts' as guardrail rationale), and the 512 KiB guardrail covers only the rendered output, not the stored object. The Alpha criterion 'stored ConfigMap stays under 1 KiB' likewise conflicts with any nontrivial exclusion list. Practically bounded, but the doc's own claims should agree.",
+      "tests": [
+        {
+          "name": "TestKEP133Claude_GroupSizeEqualsRoleCount",
+          "file": "pkg/discovery/kep133_verify_claude_test.go",
+          "layer": "unit",
+          "polarity": "canary",
+          "polarityNote": "Asserts group.size == len(roles) today."
+        }
+      ],
+      "verification": {
+        "base": "pass",
+        "previous": "not-run",
+        "head": "pass"
+      },
+      "evidence": "results/unit-l1.txt"
+    }
+  ],
+  "liveNote": "L3 (live cluster) layer skipped per round policy: unit + integration only. The only claim that would need L3 is F5 (ConfigMap volume update propagation), for which the code-path evidence (whole-volume mount, not subPath) is given."
+}
