@@ -27,6 +27,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"sync"
 	"time"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -36,7 +37,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	k8sruntime "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/yaml"
-	"k8s.io/utils/ptr"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -57,25 +57,23 @@ const ChartContractNamespace = "deprecation-chart-contract"
 
 // SetupChartContractTestEnv boots envtest and installs the *chart-rendered*
 // webhook configurations (deploy/helm/rbgs rendered with `helm template`),
-// rewritten to the local test server — instead of the shipped
-// config/webhook/manifests.yaml the v1alpha1 contract suite uses.
+// rewritten to the local test server.
 //
-// legacyBinary selects which handler set the manager registers:
-//   - false: the full production set (what a post-#524 image serves);
-//   - true: only the pre-#524 set — the v1alpha2 admission/mutating endpoints
-//     and conversion, WITHOUT the six v1alpha1 deprecation endpoints. This is
-//     the set the chart's pinned default image v0.9.0-d88b3186 serves: that
-//     image predates #524, so a chart install with default values points the
-//     API server at six endpoints the running binary does not register.
+// Round 3 (head 69fc06c1, base ea5e82ae): #556 removed the v1alpha1
+// admission webhooks from the serving binary, and this PR removed the six
+// v1alpha1 deprecation entries from the chart template. The composition under
+// test is therefore the production post-#556 one: the manager registers only
+// the four v1alpha2 webhooks (validators + defaulters + conversion), and the
+// chart-rendered Validating/MutatingWebhookConfigurations route writes to
+// them. v1alpha1 writes traverse v1alpha1 -> conversion -> v1alpha2
+// validator (matchPolicy: Equivalent) and the CRD deprecationWarning is the
+// sole warning layer.
 //
 // seed, when non-nil, runs after the namespace exists but BEFORE the webhook
-// configurations are installed, so tests can persist pre-upgrade state (e.g. a
-// role that already carries a deprecated workload type) through the plain API
-// server — the same technique the #524 deprecation suite uses.
-//
-// The specs in test/envtest/testcase/deprecationchartlegacy then observe what
-// the API server does to v1alpha1 writes in that state.
-func SetupChartContractTestEnv(legacyBinary bool, seed func()) {
+// configurations are installed, so tests can persist pre-upgrade state (e.g.
+// a role that already carries a deprecated workload type) through the plain
+// API server — the same technique the #524 deprecation suite uses.
+func SetupChartContractTestEnv(seed func()) {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
 
 	Ctx, Cancel = context.WithCancel(context.TODO())
@@ -88,7 +86,8 @@ func SetupChartContractTestEnv(legacyBinary bool, seed func()) {
 
 	// Register every type the suite serves before starting the environment, so
 	// envtest enables CRD conversion for both API versions (same reason as the
-	// v1alpha1 contract setup).
+	// repo's v1a1gate setup: controller-runtime's Start() PrepWithoutInstalling()
+	// patches Webhook conversion onto the convertible GroupKinds).
 	err := workloadsv1alpha1.AddToScheme(scheme.Scheme)
 	Expect(err).NotTo(HaveOccurred())
 	err = workloadsv1alpha2.AddToScheme(scheme.Scheme)
@@ -113,7 +112,7 @@ func SetupChartContractTestEnv(legacyBinary bool, seed func()) {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(K8sClient).NotTo(BeNil())
 
-	By("registering the webhook handlers the serving binary would register")
+	By("registering the webhook handlers the serving binary registers (post-#556)")
 	TestMgr, err = ctrl.NewManager(Cfg, ctrl.Options{
 		Scheme: scheme.Scheme,
 		Metrics: server.Options{
@@ -127,11 +126,7 @@ func SetupChartContractTestEnv(legacyBinary bool, seed func()) {
 	})
 	Expect(err).NotTo(HaveOccurred())
 
-	if legacyBinary {
-		registerPreGateWebhooks(TestMgr)
-	} else {
-		registerProductionWebhooks(TestMgr)
-	}
+	registerProductionWebhooks(TestMgr)
 
 	go func() {
 		defer GinkgoRecover()
@@ -167,17 +162,28 @@ func SetupChartContractTestEnv(legacyBinary bool, seed func()) {
 	By("installing the chart-rendered webhook configurations")
 	installChartWebhookConfigurations(chartPath)
 
-	if !legacyBinary {
-		// Same readiness barrier as the shipped-manifest suite, probing this
-		// suite's namespace: the v1alpha1 gate must actively reject a new
-		// deprecated use through the real admission chain before specs run.
-		waitForChartGate()
-	}
+	// Readiness barrier: the gate must actively reject a new deprecated use
+	// through the real admission chain (v1alpha1 -> conversion -> v1alpha2
+	// validator) before specs run. A server-side dry-run create traverses
+	// admission without persisting anything.
+	waitForChartGate()
 }
 
-// waitForChartGate blocks until the chart-rendered v1alpha1 webhook actually
-// rejects a new deprecated workload use through the real admission chain. A
-// server-side dry-run create traverses admission without persisting anything.
+// registerProductionWebhooks registers exactly the webhook endpoints the
+// post-#556 binary serves (mirrors cmd/rbgs): the four v1alpha2 admission
+// and defaulting endpoints. The manager serves CRD conversion automatically
+// because both API versions are in the scheme. No v1alpha1 deprecation
+// endpoints exist anymore — #556 removed them.
+func registerProductionWebhooks(mgr ctrl.Manager) {
+	Expect((&workloadsv1alpha2.RoleBasedGroup{}).SetupWebhookWithManager(mgr, true)).To(Succeed())
+	Expect((&workloadsv1alpha2.RoleBasedGroupSet{}).SetupWebhookWithManager(mgr, true)).To(Succeed())
+	Expect((&workloadsv1alpha2.CoordinatedPolicy{}).SetupWebhookWithManager(mgr, false)).To(Succeed())
+	Expect((&workloadsv1alpha2.RoleInstanceSet{}).SetupWebhookWithManager(mgr)).To(Succeed())
+}
+
+// waitForChartGate blocks until the chart-rendered v1alpha2 webhook chain
+// actually rejects a new deprecated workload use submitted as v1alpha1
+// (through conversion with matchPolicy: Equivalent).
 func waitForChartGate() {
 	Eventually(func() bool {
 		rbg := &workloadsv1alpha1.RoleBasedGroup{
@@ -185,7 +191,7 @@ func waitForChartGate() {
 			Spec: workloadsv1alpha1.RoleBasedGroupSpec{
 				Roles: []workloadsv1alpha1.RoleSpec{{
 					Name:     "worker",
-					Replicas: ptr.To(int32(1)),
+					Replicas: func() *int32 { r := int32(1); return &r }(),
 					Workload: workloadsv1alpha1.WorkloadSpec{
 						APIVersion: "apps/v1",
 						Kind:       "StatefulSet",
@@ -202,18 +208,7 @@ func waitForChartGate() {
 		}
 		err := K8sClient.Create(Ctx, rbg, &client.CreateOptions{DryRun: []string{metav1.DryRunAll}})
 		return err != nil && strings.Contains(err.Error(), "new uses are not accepted")
-	}, 10*time.Second, 250*time.Millisecond).Should(BeTrue(), "the chart-rendered v1alpha1 gate did not become active")
-}
-
-// registerPreGateWebhooks registers only the webhook endpoints a binary built
-// before #524 serves: the v1alpha2 admission/defaulting endpoints (and CRD
-// conversion, which the manager serves automatically). The six v1alpha1
-// deprecation endpoints are deliberately NOT registered.
-func registerPreGateWebhooks(mgr ctrl.Manager) {
-	Expect((&workloadsv1alpha2.RoleBasedGroup{}).SetupWebhookWithManager(mgr, true)).To(Succeed())
-	Expect((&workloadsv1alpha2.RoleBasedGroupSet{}).SetupWebhookWithManager(mgr, true)).To(Succeed())
-	Expect((&workloadsv1alpha2.CoordinatedPolicy{}).SetupWebhookWithManager(mgr, false)).To(Succeed())
-	Expect((&workloadsv1alpha2.RoleInstanceSet{}).SetupWebhookWithManager(mgr)).To(Succeed())
+	}, 10*time.Second, 250*time.Millisecond).Should(BeTrue(), "the chart-rendered v1alpha2 gate did not become active")
 }
 
 // installChartWebhookConfigurations renders the chart with `helm template` and
@@ -241,6 +236,7 @@ func installChartWebhookConfigurations(chartPath string) {
 			config := &admissionregistrationv1.ValidatingWebhookConfiguration{}
 			Expect(k8sruntime.DefaultUnstructuredConverter.FromUnstructured(raw, config)).To(Succeed())
 			for i := range config.Webhooks {
+				vwhookSanity = append(vwhookSanity, sanityWebhookOf(config.Webhooks[i]))
 				rewriteClientConfigV1(&config.Webhooks[i].ClientConfig, chartHostPort(), TestEnv.WebhookInstallOptions.LocalServingCAData)
 			}
 			Expect(K8sClient.Create(Ctx, config)).To(Succeed())
@@ -249,6 +245,7 @@ func installChartWebhookConfigurations(chartPath string) {
 			config := &admissionregistrationv1.MutatingWebhookConfiguration{}
 			Expect(k8sruntime.DefaultUnstructuredConverter.FromUnstructured(raw, config)).To(Succeed())
 			for i := range config.Webhooks {
+				vwhookSanity = append(vwhookSanity, sanityWebhookOfMutating(config.Webhooks[i]))
 				rewriteClientConfigV1(&config.Webhooks[i].ClientConfig, chartHostPort(), TestEnv.WebhookInstallOptions.LocalServingCAData)
 			}
 			Expect(K8sClient.Create(Ctx, config)).To(Succeed())
@@ -260,6 +257,45 @@ func installChartWebhookConfigurations(chartPath string) {
 		}
 	}
 	Expect(installed).To(Equal(2), "the rendered chart must contain exactly two webhook configurations")
+
+	// Round-3 contract: the chart must render NO v1alpha1 deprecation
+	// webhook entries — #556 removed the handlers, so a rendered entry would
+	// point the API server at an endpoint nothing serves.
+	for _, wh := range vwhookSanity {
+		assertNoV1alpha1DeprecationWebhook(wh.name, wh.policy, wh.path)
+	}
+}
+
+type sanityWebhook struct {
+	name   string
+	policy string
+	path   string
+}
+
+var vwhookSanity []sanityWebhook
+
+func assertNoV1alpha1DeprecationWebhook(name, policy, path string) {
+	if strings.Contains(name, "v1alpha1") && strings.Contains(name, "deprecation") {
+		Fail(fmt.Sprintf("chart renders v1alpha1 deprecation webhook entry %q (failurePolicy %s)", name, policy))
+	}
+	if strings.Contains(path, "v1alpha1") && strings.Contains(path, "deprecation") {
+		Fail(fmt.Sprintf("chart webhook %q routes v1alpha1 deprecation path %q", name, path))
+	}
+}
+
+func sanityWebhookOf(wh admissionregistrationv1.ValidatingWebhook) sanityWebhook {
+	return sanityWebhook{name: wh.Name, policy: string(*wh.FailurePolicy), path: servicePathOf(wh.ClientConfig)}
+}
+
+func sanityWebhookOfMutating(wh admissionregistrationv1.MutatingWebhook) sanityWebhook {
+	return sanityWebhook{name: wh.Name, policy: string(*wh.FailurePolicy), path: servicePathOf(wh.ClientConfig)}
+}
+
+func servicePathOf(cc admissionregistrationv1.WebhookClientConfig) string {
+	if cc.Service != nil && cc.Service.Path != nil {
+		return *cc.Service.Path
+	}
+	return ""
 }
 
 func chartHostPort() string {
@@ -276,4 +312,62 @@ func chartWebhookManifests(chartPath string) string {
 	out, err := cmd.Output()
 	Expect(err).NotTo(HaveOccurred(), "helm template failed: %s\n%s", err, out)
 	return string(out)
+}
+
+// ContractWarningRecorder collects Warning headers returned by the API server
+// (both CRD deprecation warnings and admission warnings travel the same way).
+type ContractWarningRecorder struct {
+	mu       sync.Mutex
+	warnings []string
+}
+
+// Reset drops all recorded warnings. Call it at the start of every spec.
+func (r *ContractWarningRecorder) Reset() {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.warnings = nil
+}
+
+// HandleWarningHeader implements rest.WarningHandler.
+func (r *ContractWarningRecorder) HandleWarningHeader(code int, agent string, text string) {
+	if code < 200 || code > 299 || text == "" {
+		return
+	}
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.warnings = append(r.warnings, text)
+}
+
+// Containing returns every recorded warning containing substr.
+func (r *ContractWarningRecorder) Containing(substr string) []string {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	var out []string
+	for _, warning := range r.warnings {
+		if strings.Contains(warning, substr) {
+			out = append(out, warning)
+		}
+	}
+	return out
+}
+
+// All returns a copy of every recorded warning.
+func (r *ContractWarningRecorder) All() []string {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	return append([]string(nil), r.warnings...)
+}
+
+// ContractWarnings is shared by the chart contract suite's client.
+var ContractWarnings = &ContractWarningRecorder{}
+
+// rewriteClientConfigV1 rewrites a webhook clientConfig to point at the local
+// test server (same rewrite envtest applies to its own webhook manifests).
+func rewriteClientConfigV1(cc *admissionregistrationv1.WebhookClientConfig, hostPort string, caData []byte) {
+	if cc.Service != nil && cc.Service.Path != nil {
+		url := fmt.Sprintf("https://%s%s", hostPort, *cc.Service.Path)
+		cc.URL = &url
+		cc.Service = nil
+	}
+	cc.CABundle = caData
 }

@@ -5,8 +5,7 @@
     "docs/verification/pr552-chart-deprecation-webhooks",
     "test/chart/webhook_config_test.go",
     "test/envtest/testutil/chart_contract_setup.go",
-    "test/envtest/testcase/deprecationchart",
-    "test/envtest/testcase/deprecationchartlegacy"
+    "test/envtest/testcase/deprecationchart"
   ],
   "premise": {
     "id": "P0",
@@ -29,7 +28,7 @@
     },
     "integration": {
       "kind": "ginkgo",
-      "cmd": "KUBEBUILDER_ASSETS=$(ls -d ~/.local/share/kubebuilder-envtest/k8s/1.36.2-linux-amd64) KUBECONFIG=/tmp/rbgs-missing-kubeconfig go test ./test/envtest/testcase/deprecationchart/ ./test/envtest/testcase/deprecationchartlegacy/ -count=1 -v --ginkgo.v -timeout 10m",
+      "cmd": "KUBEBUILDER_ASSETS=$(ls -d ~/.local/share/kubebuilder-envtest/k8s/1.36.2-linux-amd64) KUBECONFIG=/tmp/rbgs-missing-kubeconfig go test ./test/envtest/testcase/deprecationchart/ -count=1 -v --ginkgo.v -timeout 10m",
       "report": "docs/verification/pr552-chart-deprecation-webhooks/results/unit-and-integration.txt"
     }
   },
@@ -41,7 +40,7 @@
       "match": [
         "TestChartDefaultImageServesRenderedWebhookPaths"
       ],
-      "note": "RED on head is the reproduction: the chart default image v0.9.0-d88b3186 registers none of the six v1alpha1 deprecation paths the chart renders. Flips GREEN when the default image tag is bumped to a post-#524 commit (verified with tag v0.9.0-a1ff903e).",
+      "note": "Round 3: FIXED on the merge of the PR head into base ea5e82ae \u2014 the chart renders no v1alpha1 paths and the base pin (#555, v0.9.0-73e05db4) registers every rendered path. Tracker green in results/reverify-69fc06c1-merge-l1.txt.",
       "witness": {
         "layer": "integration",
         "match": [
@@ -57,10 +56,9 @@
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestChartWebhookConfigurationsMatchShippedManifests",
-        "TestChartV1alpha1DeprecationWebhookFields"
+        "TestChartWebhookConfigurationsMatchShippedManifests"
       ],
-      "note": "The guard the PR is missing: chart webhook specs must equal config/webhook/manifests.yaml. Passes on head (parity holds); bites when the template drifts. These are uplift candidates for the author's fix."
+      "note": "Round 3: parity holds on the merge tree (both sides v1alpha2-only); the guard still lives only on this branch. The PR-introduced drift surface (chart shipping hand-copied v1alpha1 entries) was removed with it; the residual unguarded parity (v1alpha2 entries, hand-maintained chart vs generated config) is pre-existing repo hygiene. Bites on an injected v1alpha1 entry (round-3 bites record)."
     },
     {
       "id": "F3",
@@ -82,24 +80,62 @@
       "layer": "unit",
       "match": [],
       "note": "Docs/process only (Chart.yaml version not bumped)."
+    },
+    {
+      "id": "F8",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [],
+      "note": "Docs-only round 3: ecca7885 + 69fc06c1 require completed reconciliation and deletion of old RBG-owned workloads before the cutoff in all four doc surfaces (root README EN+zh, chart README, NOTES.txt, values.yaml comments); NOTES.txt WARNING moved to both modes. Verified by reading."
+    },
+    {
+      "id": "F9",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestPinnedCrdUpgraderImageCarriesDocumentedWarningText"
+      ],
+      "note": "NEW round 3, OPEN (minor, release-pinning, pre-existing on base via #555): the chart applies CRDs through the crdUpgrade image, which embeds config/crd/bases at build time (tools/crd-upgrade/Dockerfile). The pinned v0.9.0-73e05db4 build predates #556, so default-values installs emit the v1alpha1 deprecation warning WITHOUT the 0.10.0 timeline the round-3 docs juxtapose. RED on the merge tree; goes green once the pin is bumped past #556."
+    },
+    {
+      "id": "F10",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestChartRendersNoV1alpha1DeprecationWebhookEntries"
+      ],
+      "note": "NEW round 3: the chart must render zero v1alpha1 deprecation webhook entries \u2014 #556 removed the handlers, so a rendered entry would route writes to an unserved endpoint (fail-closed for Fail entries). Bites on injected entry."
+    },
+    {
+      "id": "F11",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestCRDDeprecationWarningsCarryDocumentedTimeline"
+      ],
+      "note": "NEW round 3: every v1alpha1 CRD version must stay deprecated with a warning naming the 0.10.0 timeline \u2014 the sole warning layer the round-3 docs lean on."
     }
   ],
   "acceptanceSupport": {
     "chartGateBehavior": {
       "layer": "integration",
       "match": [
-        "warns on a v1alpha1 write through the chart-rendered webhooks",
-        "rejects a new deprecated workload use through the chart-rendered webhooks",
+        "rejects a new deprecated workload use submitted as v1alpha1 (conversion -> v1alpha2 gate)",
+        "rejects a v1alpha1 create whose workload key is genuinely absent (schema default -> StatefulSet -> new use)",
+        "accepts a v1alpha1 create with explicit RoleInstanceSet and returns exactly one CRD deprecation warning",
+        "returns no deprecation warning on a v1alpha2 write",
         "keeps an existing deprecated use writable (type-exact exemption)",
         "rejects switching between deprecated workload types",
-        "rejects a deprecated type in a new set template role"
+        "rejects a deprecated type in a new set template role",
+        "runs the documented jq verbatim against the live API server"
       ]
     }
   },
   "liveNote": "L3 (live) not run for this round: the claims are decided at unit + envtest layers. A live check, if ever wanted: helm install the chart from source with default images into a kind cluster and confirm v1alpha1 RBG writes fail with the admission error in results/f1-admission-errors.txt until a post-#524 image is pinned.",
   "reviewedHeads": {
     "round1": "a1ff903e3aab5fa7749b9a7ea67457db9972e8b6",
-    "round2": "1a4f7ab00cbb0be6021cca2690bacfef9a0e0278"
+    "round2": "1a4f7ab00cbb0be6021cca2690bacfef9a0e0278",
+    "round3": "69fc06c162a026376c8daf46a935fbc7f351fb6d"
   },
   "round2": {
     "delta": "a1ff903e..1a4f7ab0",
@@ -117,5 +153,27 @@
       "F6": "Deferred to slice 3 (unchanged); the new Upgrading section still does not mention the fail-closed rollout window."
     },
     "newObservation": "N2: DeprecationWarningValidator is production-dead after the merge-endpoint refactor (only its own unit test references it); v1alpha1WarningHandler has no direct unit test (covered via envtest). deprecationv1a1/contract_test.go:56 comment stale."
+  },
+  "round3": {
+    "delta": "1a4f7ab0..69fc06c1 (branch rewritten: 1a4f7ab0 dropped; carried commits a1ff903e, 02f0e06e + new 1bbfdfb9, ecca7885, 69fc06c1)",
+    "baseMove": "73e05db4 -> ea5e82ae (upstream merged #556 v1alpha1-webhook removal, #555 chart/pin bump to 0.9.0-alpha.3, plus #528/#538/#548/#553/#559)",
+    "verifiedAgainst": "merge of PR head 69fc06c1 into base ea5e82ae (git merge-tree clean; merged tree = base + the PR's five docs files). The PR branch alone still carries pre-#556 code and FAILS chart-config parity in isolation \u2014 an artifact of the un-rebased branch, resolved by the merge.",
+    "harnessUpdate": "chart_contract_setup.go rewritten to the post-#556 handler set (four v1alpha2 webhooks) with a local ContractWarningRecorder; deprecationchartlegacy suite retired; L1 gained TestChartRendersNoV1alpha1DeprecationWebhookEntries, TestCRDDeprecationWarningsCarryDocumentedTimeline, TestPinnedCrdUpgraderImageCarriesDocumentedWarningText; L2 rewritten to the conversion-composition and gained the inventory-jq spec (8/8). re-verify.sh now merges the PR head into the current base before grafting.",
+    "results": [
+      "results/reverify-69fc06c1-merge-l1.txt",
+      "results/reverify-69fc06c1-merge-l2.txt"
+    ],
+    "outcomes": {
+      "F1": "Fixed on the merge: chart renders no v1alpha1 paths; base pin v0.9.0-73e05db4 (#555) serves all rendered paths.",
+      "F2": "Parity green on the merge tree; committed-guard gap remains but is now pre-existing (v1alpha2-only surface).",
+      "F3": "Fixed round 2; docs unchanged this round.",
+      "F4": "Fixed round 2; references still resolve to #454.",
+      "F5": "Fixed on base by #555 (0.9.0-alpha.3 / v0.9.0-73e05db4).",
+      "F6": "Obsoleted: no v1alpha1 Fail entries ship anywhere; no released chart ever carried them.",
+      "F7": "Obsoleted: #556 deleted the dead type and its tests.",
+      "F8": "Fixed this round (ecca7885 + 69fc06c1) in all four doc surfaces.",
+      "F9": "Open (new, minor): pinned crdUpgrade image predates #556 -> old warning text on default-values installs.",
+      "Q1": "Resolved: #555 bumped pin/chart on the base; post-#556 chart renders only paths the pin serves."
+    }
   }
 }

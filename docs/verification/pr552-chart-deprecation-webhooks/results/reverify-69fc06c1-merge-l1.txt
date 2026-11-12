@@ -1,0 +1,27 @@
+=== RUN   TestManagerFlagReflectsToggle
+--- PASS: TestManagerFlagReflectsToggle (0.08s)
+=== RUN   TestClusterRoleGrantsReflectToggle
+--- PASS: TestClusterRoleGrantsReflectToggle (0.08s)
+=== RUN   TestToggleDeltaIsScopedToDeprecatedRBACAndFlag
+--- PASS: TestToggleDeltaIsScopedToDeprecatedRBACAndFlag (0.05s)
+=== RUN   TestChartWebhookConfigurationsMatchShippedManifests
+--- PASS: TestChartWebhookConfigurationsMatchShippedManifests (0.03s)
+=== RUN   TestChartRendersNoV1alpha1DeprecationWebhookEntries
+--- PASS: TestChartRendersNoV1alpha1DeprecationWebhookEntries (0.03s)
+=== RUN   TestCRDDeprecationWarningsCarryDocumentedTimeline
+--- PASS: TestCRDDeprecationWarningsCarryDocumentedTimeline (0.12s)
+=== RUN   TestPinnedCrdUpgraderImageCarriesDocumentedWarningText
+    webhook_config_test.go:336: CRD rolebasedgroups embedded in the pinned crdUpgrade image 73e05db4 carries no 0.10.0 timeline in its v1alpha1 deprecation warning; default-values installs emit the old text until the pin is bumped past #556
+    webhook_config_test.go:336: CRD rolebasedgroupsets embedded in the pinned crdUpgrade image 73e05db4 carries no 0.10.0 timeline in its v1alpha1 deprecation warning; default-values installs emit the old text until the pin is bumped past #556
+    webhook_config_test.go:336: CRD instancesets embedded in the pinned crdUpgrade image 73e05db4 carries no 0.10.0 timeline in its v1alpha1 deprecation warning; default-values installs emit the old text until the pin is bumped past #556
+    webhook_config_test.go:336: CRD instances embedded in the pinned crdUpgrade image 73e05db4 carries no 0.10.0 timeline in its v1alpha1 deprecation warning; default-values installs emit the old text until the pin is bumped past #556
+    webhook_config_test.go:336: CRD rolebasedgroupscalingadapters embedded in the pinned crdUpgrade image 73e05db4 carries no 0.10.0 timeline in its v1alpha1 deprecation warning; default-values installs emit the old text until the pin is bumped past #556
+    webhook_config_test.go:336: CRD clusterengineruntimeprofiles embedded in the pinned crdUpgrade image 73e05db4 carries no 0.10.0 timeline in its v1alpha1 deprecation warning; default-values installs emit the old text until the pin is bumped past #556
+--- FAIL: TestPinnedCrdUpgraderImageCarriesDocumentedWarningText (0.06s)
+=== RUN   TestChartDefaultImageServesRenderedWebhookPaths
+--- PASS: TestChartDefaultImageServesRenderedWebhookPaths (0.05s)
+=== RUN   TestChartNamespaceTemplatedIntoWebhookService
+--- PASS: TestChartNamespaceTemplatedIntoWebhookService (0.03s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/chart	0.547s
+FAIL

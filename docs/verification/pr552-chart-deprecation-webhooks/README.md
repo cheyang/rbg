@@ -1,10 +1,75 @@
 # Verification — PR #552: ship the 0.9.0 deprecation webhooks in the Helm chart
 
 - PR: https://github.com/sgl-project/rbg/pull/552
-- Reviewed heads: round 1 `a1ff903e` → round 2 `1a4f7ab00cbb0be6021cca2690bacfef9a0e0278`
-  (base `73e05db4213950a5dd1f230279e9344a4ffe8435`, the #524 merge)
+- Reviewed heads: round 1 `a1ff903e` → round 2 `1a4f7ab0` → **round 3 `69fc06c1`**
+  (base moved: `73e05db4` (#524) → **`ea5e82ae`**; see Round 3 below)
 - Reviewer: Reviewer A (Claude). Harness branch: `verify/pr552-chart-deprecation-webhooks-claude`
 - Layers run: L1 (unit, `helm template` + go test) and L2 (integration, envtest). No live layer was run.
+
+## Round 3 (head `69fc06c1`) — the PR became docs-only; base moved past #556
+
+**The ground shifted under this PR.** Between rounds the author rewrote history (dropped the
+round-2 merge-endpoint refactor `1a4f7ab0`, kept its docs commit `02f0e06e`) and **removed the six
+v1alpha1 deprecation entries from the chart template** (`1bbfdfb9`). Meanwhile upstream main
+moved `73e05db4 → ea5e82ae`, merging:
+
+- **#556** `refactor(deprecation): remove v1alpha1 admission webhooks` — deletes
+  `api/workloads/v1alpha1/deprecation_webhook.go`, the `cmd/rbgs` wiring, the six entries from
+  `config/webhook/manifests.yaml` / `deploy/kubectl/manifests.yaml`, and updates the six CRD
+  `deprecationWarning` texts to carry the 0.10.0 removal timeline (it also lands the
+  `test/envtest/testcase/v1a1gate` suite covering the post-removal composition).
+- **#555** `chore(rbgs): update Helm chart and default image versions to 0.9.0-alpha.3` —
+  `Chart.yaml` `0.9.0-alpha.3`, `values.yaml` controller+crdUpgrade pins `v0.9.0-73e05db4`.
+
+The PR's own delta vs merge-base is now **docs-only** (`README.md`, `README-zh_CN.md`, chart
+README, `NOTES.txt`, `values.yaml` comments) and the PR body says so: *"It does not ship
+v1alpha1 admission webhooks: #556 removes those handlers at the source because the CRD
+deprecatedVersion warning already covers every v1alpha1 request and the v1alpha2 validators
+continue to enforce the compatibility gate through conversion."*
+
+Consequences for this harness:
+
+- **Harness-update applied (large)**: the round-2 contract (chart renders 3 v1alpha1 entries in
+  parity with the shipped 6) is inverted — the round-3 contract is **chart renders zero v1alpha1
+  deprecation entries, in parity with the post-#556 shipped config**. `chart_contract_setup.go`
+  now registers the post-#556 handler set (the four v1alpha2 webhooks) and defines its own
+  `ContractWarningRecorder` (the old one lived in `v1alpha1_contract_setup.go`, deleted by #556);
+  the `deprecationchartlegacy` suite is **retired** (its premise — chart renders v1alpha1
+  entries a pre-#524 image does not serve — no longer exists). The L2 specs were rewritten to
+  the post-#556 composition (gate through conversion, CRD-level warning) and gained an
+  inventory-command spec running the chart README's documented jq verbatim.
+- **The shipping tree is the merge, not the branch**: the PR branch itself still carries the
+  pre-#556 code (its tree has the six v1alpha1 webhook entries in `config/webhook/manifests.yaml`
+  and a chart that renders none — parity *fails* on the branch in isolation). `re-verify.sh` now
+  merges the PR head into the current base before grafting (verified: the merge is clean, and
+  the merged tree differs from the base by exactly the PR's five docs files).
+- Round-3 verification ran against merge `69fc06c1` + base `ea5e82ae`:
+  `results/reverify-69fc06c1-merge-l1.txt`, `results/reverify-69fc06c1-merge-l2.txt`.
+
+### Round-3 observed vs expected
+
+| ID | Finding | Layer / test | Observed on the merge of `69fc06c1` into `ea5e82ae` | Verdict |
+| --- | --- | --- | --- | --- |
+| F1 | Chart default image serves every rendered webhook path | L1 `TestChartDefaultImageServesRenderedWebhookPaths` | PASS: pin `v0.9.0-73e05db4` (from #555) registers all 5 rendered paths; chart renders no v1alpha1 paths | **Fixed** (via base #555 + this PR's chart-entry removal) |
+| F2 | Chart↔shipped-manifest parity (now: v1alpha2 entries) | L1 `TestChartWebhookConfigurationsMatchShippedManifests` | PASS on merge tree (both sides carry only the v1alpha2 entries); bites on injected v1alpha1 entry (see bites record) | **Parity holds; the committed-guard gap is now pre-existing repo hygiene, not PR-introduced** |
+| F8 | Cutoff guidance requires completed reconciliation | docs (README decision bullets, Upgrading, NOTES.txt, values.yaml comments) + `deleteOrphanRoles` gating re-checked in round 2 | `ecca7885` + `69fc06c1` add "reconciliation has finished / old RBG-owned workloads are gone" to all four places; NOTES.txt WARNING moved to apply in both modes | **Fixed** |
+| F9 | NEW: pinned crdUpgrade image predates #556 — default-values installs emit the old CRD warning text (no 0.10.0 timeline) | L1 `TestPinnedCrdUpgraderImageCarriesDocumentedWarningText` | RED: `git show 73e05db4:config/crd/bases/*` warning texts carry no "0.10.0"; `tools/crd-upgrade/Dockerfile` COPYs `config/crd/bases` into the image, so the CRDs a default-values install applies come from the pin | **Open (minor)** — release-pinning, not PR-introduced |
+| F10 | NEW: chart must render zero v1alpha1 deprecation entries (post-#556) | L1 `TestChartRendersNoV1alpha1DeprecationWebhookEntries` | PASS on merge tree; bites on injected entry | **Contract green** |
+| F11 | NEW: every v1alpha1 CRD version is deprecated with a 0.10.0-timeline warning (the layer the docs now lean on) | L1 `TestCRDDeprecationWarningsCarryDocumentedTimeline` | PASS on merge tree (six kinds, `deprecated: true` + warning contains "0.10.0") | **Contract green** |
+| — | Chart-rendered webhooks drive the documented gate in the post-#556 composition | L2 `deprecationchart`, 8 specs | 8/8 PASS: v1alpha1 new-use rejected through conversion; schema-absent-workload default → StatefulSet → rejected; explicit RoleInstanceSet accepted with exactly one CRD warning carrying 0.10.0; v1alpha2 write unwarned; type-exact grandfathering; deprecated-type switch rejected; set-template rejection; inventory jq lists exactly the deprecated roles | **Confirmed** (the PR's premise holds for the docs it ships) |
+| F6 | helm-upgrade fail-closed rollout window (v1alpha1 Fail entries) | n/a | No v1alpha1 entries ship in the chart or the shipped config anymore; no released chart ever carried them (the entries only ever existed on PR branches) | **Obsoleted by removal** |
+| F7 | Dead `DeprecationWarningValidator` | n/a | #556 deleted `deprecation_webhook.go` and its test file entirely | **Obsoleted** |
+| F5 | Chart version not bumped | n/a | #555 (base) bumped chart to `0.9.0-alpha.3` / appVersion `v0.9.0-73e05db4` | **Fixed on base** |
+
+### Round-3 residual risk recorded for the ledger
+
+The PR branch (as pushed) is **7 commits behind its base** and still carries the pre-#556 code in
+its tree, including the six v1alpha1 webhook entries in `config/webhook/manifests.yaml` and
+`deploy/kubectl/manifests.yaml`. The merge into the current base is clean and the merged tree is
+exactly base + this PR's five docs files (verified with `git merge-tree`), so nothing stale ships
+— but per-commit history review (e.g. `git log -p` on the branch) shows chart entries being added
+(`a1ff903e`) and later removed (`1bbfdfb9`). A rebase would drop the churn; not required for
+correctness.
 
 ## Round 2 (head `1a4f7ab0`) — delta `a1ff903e..1a4f7ab0`
 
@@ -35,7 +100,14 @@ this harness:
   production code path wires it (the merged handler replaces it); only its own unit test
   references it, and `deprecationv1a1/contract_test.go:56` still describes the old wiring.
 
-## Premise (P0) — CONFIRMED (round 1, base unchanged)
+## Premise (P0) — CONFIRMED (round 1); SUPERSEDED round 3
+
+Round 3 note: the premise the PR originally solved ("chart lacks the gate webhooks") was closed by
+round 1 and then **dissolved**: #556 removed the v1alpha1 admission webhooks at the source, and
+this PR now removes them from the chart too. The round-3 premise is the PR body's new claim — the
+CRD deprecatedVersion warning covers every v1alpha1 request and the v1alpha2 validators enforce
+the gate through conversion — which is verified above (F11, L2 suite 8/8). The original
+differential evidence is retained below for provenance.
 
 The PR claims to close the chart↔manifests intermediate state left by #524: the kubectl-rendered
 `config/webhook/manifests.yaml` ships the v1alpha1 deprecation webhooks, while the Helm chart
@@ -71,8 +143,7 @@ go test ./test/chart/ -count=1 -v
 
 # L2 — integration (envtest). Assets: setup-envtest use 1.36.2 (any 1.3x works).
 export KUBEBUILDER_ASSETS=$(ls -d ~/.local/share/kubebuilder-envtest/k8s/1.36.2-linux-amd64)
-go test ./test/envtest/testcase/deprecationchart/ -count=1 -v -timeout 10m        # full handlers + chart config
-go test ./test/envtest/testcase/deprecationchartlegacy/ -count=1 -v --ginkgo.v -timeout 10m  # pre-#524 handlers + chart config
+go test ./test/envtest/testcase/deprecationchart/ -count=1 -v -timeout 10m
 ```
 
 Or run everything at once: `bash docs/verification/pr552-chart-deprecation-webhooks/scripts/re-verify.sh`
@@ -90,15 +161,28 @@ Or run everything at once: `bash docs/verification/pr552-chart-deprecation-webho
   `controller.image.tag: "v0.9.0-a1ff903e"` (a post-#524 commit) → GREEN; reverted → RED.
   The test therefore flips exactly when the default image is bumped past the gate.
 - Production code was never modified; `git status` on the branch shows only additive test/doc files.
+- Round 3: injected a v1alpha1 deprecation entry into the chart template (on the merge tree) →
+  `TestChartRendersNoV1alpha1DeprecationWebhookEntries` AND
+  `TestChartWebhookConfigurationsMatchShippedManifests` went RED (the parity test also reported
+  "chart renders 4 validating webhooks, shipped manifests carry 3"); reverted → GREEN. This is
+  the regression guard for the round-3 contract (chart must not grow entries the binary does not
+  serve).
+- Round 3 (logic bite for F9's tracker): `git show 73e05db4:config/crd/bases/…` returns the
+  pre-#556 warning text (no "0.10.0") while `git show 47b347fd:…` carries the timeline — the
+  tracker fails on the first and would pass on the second, i.e. it flips exactly when the
+  crdUpgrade pin moves past #556.
 
 ## Interpreting results after a fix
 
-| Test | Polarity | When F1 is fixed (image bumped past #524) |
+| Test | Polarity | Round-3 meaning |
 | --- | --- | --- |
-| `TestChartDefaultImageServesRenderedWebhookPaths` | contract | goes GREEN — this is the F1 tracker |
-| `deprecationchartlegacy` suite | mechanism witness (canary-like) | still PASSES by design: it proves the causal chain (unregistered path → 404 → admission error → failurePolicy applied) and does not depend on the deployment state |
-| `deprecationchart` suite | contract | stays GREEN |
-| Parity tests | contract | stay GREEN unless the chart drifts from `config/webhook/manifests.yaml` |
+| `TestChartDefaultImageServesRenderedWebhookPaths` | contract | GREEN on the merge tree — F1 tracker (was RED rounds 1–2) |
+| `TestChartRendersNoV1alpha1DeprecationWebhookEntries` | contract | GREEN; RED if the chart ever re-adds v1alpha1 deprecation entries |
+| `TestChartWebhookConfigurationsMatchShippedManifests` | contract | GREEN; RED on any chart↔config drift (committed-guard gap F2 residual) |
+| `TestCRDDeprecationWarningsCarryDocumentedTimeline` | contract | GREEN; RED if a CRD loses its v1alpha1 deprecation marker/timeline |
+| `TestPinnedCrdUpgraderImageCarriesDocumentedWarningText` | contract | **RED by design until the crdUpgrade pin moves past #556** — the F9 tracker |
+| `deprecationchart` suite | contract | stays GREEN (gate through conversion, CRD warning, inventory command) |
+| `deprecationchartlegacy` suite | retired in round 3 | its premise (chart renders v1alpha1 entries a pre-#524 image does not serve) no longer exists |
 
 ## Findings summary (full detail in the review debate document)
 

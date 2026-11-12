@@ -29,16 +29,19 @@ import (
 // configurations (helm template output) installed — the exact admission
 // wiring a Helm install of PR #552 produces with a post-#524 image.
 //
-// It pins the chart README's documented gate behavior end-to-end: the
-// on-the-wire v1alpha1 warning, the new-use rejection, the type-exact
-// compatibility exemption, and the deprecated-type switch rejection.
+// Round 3: the chart renders only the v1alpha2 webhook entries; v1alpha1
+// writes are gated through conversion (matchPolicy: Equivalent) and warned
+// by the CRD deprecationWarning. It pins the chart README's documented gate
+// behavior end-to-end: the new-use rejection (explicit and schema-defaulted),
+// the type-exact compatibility exemption, the deprecated-type switch
+// rejection, the sole CRD-level warning, and the deprecated-role inventory.
 func TestChartDeprecationContract(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Chart Deprecation Contract Suite")
 }
 
 var _ = BeforeSuite(func() {
-	testutil.SetupChartContractTestEnv(false, seedGrandfatheredObjects)
+	testutil.SetupChartContractTestEnv(seedGrandfatheredObjects)
 })
 
 var _ = AfterSuite(func() {

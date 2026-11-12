@@ -16,24 +16,32 @@ limitations under the License.
 
 // Webhook-configuration assertions for the rbgs Helm chart.
 //
-// PR #552 ports the v1alpha1 deprecation webhooks from the shipped
-// config/webhook/manifests.yaml (landed by #524) into the chart-rendered
-// ValidatingWebhookConfiguration. The tests here pin that port:
+// Round 3 (PR #552 head 69fc06c1, base ea5e82ae): #556 removed the v1alpha1
+// admission webhooks from the serving binary and the shipped manifests, and
+// this PR removed the six v1alpha1 deprecation entries from the chart
+// template — the chart now renders only the v1alpha2 entries again. The
+// tests pin the round-3 contract:
 //
 //   - TestChartWebhookConfigurationsMatchShippedManifests: the chart-rendered
 //     webhook *specs* (names, paths, failurePolicy, matchPolicy, rules) must be
 //     identical to the shipped config/webhook/manifests.yaml. Without this,
 //     nothing in the repo notices when `make manifests` regenerates the shipped
-//     file (e.g. the 0.10.0 v1alpha1 removal) and the chart silently drifts
-//     back into the intermediate state #552 exists to close.
-//   - TestChartV1alpha1DeprecationWebhookFields: the deprecation entries
-//     with the exact enforcing/warning failurePolicy split the PR documents
-//     (two Fail entries + one merged warning entry since head 1a4f7ab0,
-//     which folded the four warning-only kinds into one endpoint).
+//     file and the chart silently drifts (the round-1/round-2 gap).
+//   - TestChartRendersNoV1alpha1DeprecationWebhookEntries: the chart must
+//     render NO v1alpha1 deprecation webhook entries. #556 removed the
+//     handlers, so a rendered entry would point the API server at an endpoint
+//     nothing serves (fail-closed for failurePolicy=Fail entries).
 //   - TestChartDefaultImageServesRenderedWebhookPaths: the chart's default
 //     controller image must be built from a commit that registers every webhook
-//     path the chart renders (contract test — RED on head is the F1
-//     reproduction: v0.9.0-d88b3186 predates #524's path registrations).
+//     path the chart renders (the round-1/2 F1 tracker; green on the merge
+//     result where #555 re-pins to v0.9.0-73e05db4).
+//   - TestCRDDeprecationWarningsCarryDocumentedTimeline: the CRD bases must
+//     mark every v1alpha1 version deprecated with a 0.10.0 timeline — the
+//     warning layer the PR's documentation now leans on.
+//   - TestPinnedCrdUpgraderImageCarriesDocumentedWarningText: the chart's
+//     pinned crdUpgrade image embeds the CRDs; its build commit must carry the
+//     same 0.10.0 warning text the docs describe (round-3 gap: the pin
+//     v0.9.0-73e05db4 predates #556).
 package chart
 
 import (
@@ -49,33 +57,6 @@ import (
 	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
 	"sigs.k8s.io/yaml"
 )
-
-// v1alpha1DeprecationWebhooks is the exact set of v1alpha1 deprecation webhook
-// entries PR #552 renders, with the failurePolicy each entry must carry. Since
-// head 1a4f7ab0 the four warning-only kinds share ONE merged endpoint. Keep in
-// sync with the kubebuilder markers in
-// api/workloads/v1alpha1/deprecation_webhook.go.
-var v1alpha1DeprecationWebhooks = map[string]string{
-	"vrolebasedgroup-v1alpha1-deprecation.kb.io":    "Fail",
-	"vrolebasedgroupset-v1alpha1-deprecation.kb.io": "Fail",
-	"vv1alpha1-warning-deprecation.kb.io":           "Ignore",
-}
-
-// v1alpha1DeprecationPaths pins each deprecation entry's service path against
-// the path the Go code actually registers (marker + Register call in
-// deprecation_webhook.go). A mismatch means the API server calls an endpoint
-// the webhook server does not serve.
-var v1alpha1DeprecationPaths = map[string]string{
-	"vrolebasedgroup-v1alpha1-deprecation.kb.io":    "/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup",
-	"vrolebasedgroupset-v1alpha1-deprecation.kb.io": "/validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset",
-	"vv1alpha1-warning-deprecation.kb.io":           "/validate-workloads-v1alpha1-deprecation",
-}
-
-// v1alpha1WarningResources are the four kinds the merged warning endpoint
-// covers, in the order the marker lists them.
-var v1alpha1WarningResources = []string{
-	"instancesets", "instances", "rolebasedgroupscalingadapters", "clusterengineruntimeprofiles",
-}
 
 // webhookSpec is the comparable projection of a webhook entry. Service
 // name/namespace and caBundle are deliberately excluded: they legitimately
@@ -243,72 +224,146 @@ func TestChartWebhookConfigurationsMatchShippedManifests(t *testing.T) {
 	}
 }
 
-// TestChartV1alpha1DeprecationWebhookFields pins the deprecation entries
-// and their failurePolicy split: Fail on the two enforcing RBG/RBGSet
-// endpoints, Ignore on the merged warning endpoint covering the four
-// warning-only kinds.
-func TestChartV1alpha1DeprecationWebhookFields(t *testing.T) {
-	vwc, _ := chartWebhookConfigurations(t)
+// TestChartRendersNoV1alpha1DeprecationWebhookEntries pins the round-3
+// contract: #556 removed the v1alpha1 admission handlers from the binary and
+// the shipped manifests, so the chart must not render any v1alpha1
+// deprecation webhook entries. A rendered entry would route v1alpha1 writes
+// to an endpoint nothing serves; for failurePolicy=Fail entries that
+// fail-closes every matched write.
+func TestChartRendersNoV1alpha1DeprecationWebhookEntries(t *testing.T) {
+	vwc, mwc := chartWebhookConfigurations(t)
 
-	rendered := map[string]admissionregistrationv1.ValidatingWebhook{}
 	for _, wh := range vwc.Webhooks {
-		rendered[wh.Name] = wh
+		assertNoV1alpha1DeprecationEntry(t, wh.Name, string(*wh.FailurePolicy), wh.Rules, wh.ClientConfig.Service)
 	}
-	if len(rendered) != len(vwc.Webhooks) {
-		t.Fatalf("duplicate webhook names in rendered ValidatingWebhookConfiguration")
+	for _, wh := range mwc.Webhooks {
+		assertNoV1alpha1DeprecationEntry(t, wh.Name, string(*wh.FailurePolicy), wh.Rules, wh.ClientConfig.Service)
 	}
+}
 
-	for name, wantPolicy := range v1alpha1DeprecationWebhooks {
-		wh, ok := rendered[name]
-		if !ok {
-			t.Errorf("deprecation webhook %q missing from rendered chart", name)
+func assertNoV1alpha1DeprecationEntry(t *testing.T, name, policy string, rules []admissionregistrationv1.RuleWithOperations, service *admissionregistrationv1.ServiceReference) {
+	t.Helper()
+	if strings.Contains(name, "v1alpha1") && strings.Contains(name, "deprecation") {
+		t.Errorf("chart renders v1alpha1 deprecation webhook entry %q (failurePolicy %s)", name, policy)
+	}
+	if service != nil && service.Path != nil && strings.Contains(*service.Path, "v1alpha1") && strings.Contains(*service.Path, "deprecation") {
+		t.Errorf("chart webhook %q routes v1alpha1 deprecation path %q", name, *service.Path)
+	}
+	for _, rule := range rules {
+		if !strings.Contains(name, "deprecation") {
 			continue
 		}
-		if got := string(*wh.FailurePolicy); got != wantPolicy {
-			t.Errorf("deprecation webhook %q failurePolicy = %q, want %q", name, got, wantPolicy)
-		}
-		if got := matchPolicyOf(wh.MatchPolicy); got != "Exact" {
-			t.Errorf("deprecation webhook %q matchPolicy = %q, want Exact", name, got)
-		}
-		if wh.ClientConfig.Service == nil || wh.ClientConfig.Service.Path == nil {
-			t.Fatalf("deprecation webhook %q has no service path", name)
-		}
-		if path := *wh.ClientConfig.Service.Path; path != v1alpha1DeprecationPaths[name] {
-			t.Errorf("deprecation webhook %q path = %q, want %q", name, path, v1alpha1DeprecationPaths[name])
-		}
-		if len(wh.Rules) != 1 {
-			t.Fatalf("deprecation webhook %q has %d rules, want 1", name, len(wh.Rules))
-		}
-		rule := wh.Rules[0]
-		if len(rule.Operations) != 2 || rule.Operations[0] != admissionregistrationv1.Create || rule.Operations[1] != admissionregistrationv1.Update {
-			t.Errorf("deprecation webhook %q operations = %v, want [CREATE UPDATE]", name, rule.Operations)
-		}
-		if len(rule.APIVersions) != 1 || rule.APIVersions[0] != "v1alpha1" {
-			t.Errorf("deprecation webhook %q apiVersions = %v, want [v1alpha1]", name, rule.APIVersions)
-		}
-		if wantPolicy == "Ignore" {
-			// The merged warning endpoint must cover exactly the four
-			// warning-only kinds.
-			if len(rule.Resources) != len(v1alpha1WarningResources) {
-				t.Errorf("merged warning webhook %q covers %d resources %v, want %v", name, len(rule.Resources), rule.Resources, v1alpha1WarningResources)
-			} else if !reflect.DeepEqual([]string(rule.Resources), v1alpha1WarningResources) {
-				t.Errorf("merged warning webhook %q resources = %v, want %v", name, rule.Resources, v1alpha1WarningResources)
+		for _, v := range rule.APIVersions {
+			if v == "v1alpha1" {
+				t.Errorf("chart webhook %q matches v1alpha1 writes (%v)", name, rule.Resources)
 			}
-		} else if len(rule.Resources) != 1 {
-			t.Errorf("enforcing webhook %q covers %d resources %v, want exactly its own kind", name, len(rule.Resources), rule.Resources)
 		}
 	}
+}
 
-	// The three v1alpha2 admission entries must still be there untouched.
-	for _, name := range []string{
-		"vrolebasedgroup.kb.io",
-		"vrolebasedgroupset.kb.io",
-		"vcoordinatedpolicy.kb.io",
-	} {
-		if _, ok := rendered[name]; !ok {
-			t.Errorf("v1alpha2 validating webhook %q missing from rendered chart", name)
+// crdKindsWithV1alpha1 is every CRD carrying a v1alpha1 version — the six
+// kinds the deprecation documentation covers.
+var crdKindsWithV1alpha1 = []string{
+	"rolebasedgroups",
+	"rolebasedgroupsets",
+	"instancesets",
+	"instances",
+	"rolebasedgroupscalingadapters",
+	"clusterengineruntimeprofiles",
+}
+
+// TestCRDDeprecationWarningsCarryDocumentedTimeline verifies the warning
+// layer the PR's documentation now leans on: every v1alpha1 CRD version is
+// marked deprecated with a warning that names the 0.10.0 removal timeline
+// (#556). "Every v1alpha1 request returns a deprecation warning" is only
+// true if these markers survive.
+func TestCRDDeprecationWarningsCarryDocumentedTimeline(t *testing.T) {
+	for _, kind := range crdKindsWithV1alpha1 {
+		path := filepath.Join(chartDir(t), "..", "..", "..", "config", "crd", "bases", "workloads.x-k8s.io_"+kind+".yaml")
+		data, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatalf("read CRD %s: %v", kind, err)
+		}
+		var crd struct {
+			Spec struct {
+				Versions []struct {
+					Name               string `json:"name"`
+					Deprecated         bool   `json:"deprecated"`
+					DeprecationWarning string `json:"deprecationWarning"`
+				} `json:"versions"`
+			} `json:"spec"`
+		}
+		if err := yaml.Unmarshal(data, &crd); err != nil {
+			t.Fatalf("parse CRD %s: %v", kind, err)
+		}
+		found := false
+		for _, v := range crd.Spec.Versions {
+			if v.Name != "v1alpha1" {
+				continue
+			}
+			found = true
+			if !v.Deprecated {
+				t.Errorf("%s v1alpha1 is not marked deprecated; every v1alpha1 request would silently lose the documented warning", kind)
+			}
+			if !strings.Contains(v.DeprecationWarning, "deprecated") || !strings.Contains(v.DeprecationWarning, "0.10.0") {
+				t.Errorf("%s v1alpha1 deprecationWarning = %q, want a warning naming deprecation and the 0.10.0 removal timeline", kind, v.DeprecationWarning)
+			}
+		}
+		if !found {
+			t.Errorf("CRD %s has no v1alpha1 version", kind)
 		}
 	}
+}
+
+// TestPinnedCrdUpgraderImageCarriesDocumentedWarningText pins the round-3
+// finding: the chart installs CRDs through the crdUpgrade Job image, which
+// embeds config/crd/bases at its build commit. The docs this PR lands say
+// every v1alpha1 request warns that v1alpha1 "will be removed in 0.10.0";
+// that timeline only reaches users once the pinned image is built from a
+// commit carrying #556's warning texts. RED on the merge result documents
+// the gap (pin v0.9.0-73e05db4 predates #556).
+func TestPinnedCrdUpgraderImageCarriesDocumentedWarningText(t *testing.T) {
+	pin := pinnedImageCommit(t, "crdUpgrade")
+	if pin == "" {
+		return // skipped inside helper
+	}
+	for _, kind := range crdKindsWithV1alpha1 {
+		out, err := exec.Command("git", "show", pin+":config/crd/bases/workloads.x-k8s.io_"+kind+".yaml").Output()
+		if err != nil {
+			t.Skipf("cannot read CRD %s at pinned image commit %s: %v", kind, pin, err)
+		}
+		if !strings.Contains(string(out), "0.10.0") {
+			t.Errorf("CRD %s embedded in the pinned crdUpgrade image %s carries no 0.10.0 timeline in its v1alpha1 deprecation warning; default-values installs emit the old text until the pin is bumped past #556", kind, pin)
+		}
+	}
+}
+
+// pinnedImageCommit reads the image tag under the given values.yaml key and
+// returns the commit sha it embeds ("" + skip when it does not).
+func pinnedImageCommit(t *testing.T, section string) string {
+	t.Helper()
+	valuesPath := filepath.Join(chartDir(t), "values.yaml")
+	data, err := os.ReadFile(valuesPath)
+	if err != nil {
+		t.Fatalf("read chart values.yaml: %v", err)
+	}
+	secRe := regexp.MustCompile(`(?m)^` + section + `:
+(?:[ 	]+.*
+)*?[ 	]+tag:\s*"?(v[0-9][^\s"]*)"?\s*$`)
+	m := secRe.FindStringSubmatch(string(data))
+	if m == nil {
+		t.Skipf("no %s image tag found in values.yaml", section)
+	}
+	shaRe := regexp.MustCompile(`-([0-9a-f]{7,12})$`)
+	sm := shaRe.FindStringSubmatch(m[1])
+	if sm == nil {
+		t.Skipf("image tag %q embeds no commit sha; cannot check which code it carries", m[1])
+	}
+	commit := sm[1]
+	if err := exec.Command("git", "rev-parse", "--verify", "--quiet", commit+"^{commit}").Run(); err != nil {
+		t.Skipf("image commit %s not present in local git history; cannot check which code it carries", commit)
+	}
+	return commit
 }
 
 // TestChartDefaultImageServesRenderedWebhookPaths is the F1 contract test.
