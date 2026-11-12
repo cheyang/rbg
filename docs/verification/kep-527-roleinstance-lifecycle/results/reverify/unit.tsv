@@ -21,7 +21,7 @@ CheckInflightSemanticsDefined	pass
 CheckLegacyCoexistenceSpecified	pass
 CheckFinalizerEstablishmentOrdering	pass
 CheckNamespaceTeardownScoped	pass
-CheckRBGSetForegroundBoundary	fail
+CheckRBGSetForegroundBoundary	pass
 CheckPostReadyOmittedPath	pass
 CheckDisableSupportedClarified	pass
 CheckWireConstantsPinned	pass
@@ -33,7 +33,7 @@ CheckMarkNotReadyNaming	fail
 CheckGateOffBehaviorStated	pass
 CheckAbsenceTestplanConsistent	pass
 CheckStaleLabelDispositionSingle	pass
-CheckTestplanPrefixCoverage	fail
+CheckTestplanPrefixCoverage	pass
 CheckRemovalRiskAcknowledged	pass
 CheckPreDeleteExecutorIndependent	pass
 CheckDeletingRINeverExposesHook	pass
@@ -41,7 +41,7 @@ CheckReservedPrefixRejected	pass
 CheckFieldOwnershipExplicit	pass
 CheckUserConfiguredClarified	pass
 CheckReadyGatingRemoved	pass
-CheckSignalLabelsOnlyHookField	fail
+CheckSignalLabelsOnlyHookField	pass
 CheckPodPropagationSpecified	pass
 CheckMarkerKeyRecordPinned	pass
 CheckSelectorAdmissionStated	pass
@@ -51,6 +51,14 @@ CheckMarkerKeyRecordOwnership	pass
 CheckScalabilityPodMirrorCost	pass
 CheckRollbackPreconditionComplete	pass
 CheckWebhookDeferralNotClaimed	pass
+CheckForegroundRejectUnconditional	pass
+CheckGateEdgesStated	pass
+CheckCrossGenerationKeyUniqueness	pass
+CheckMirrorNotAuthenticated	pass
+CheckSelectorReservedKeyReverse	pass
+CheckKep502DriftDisclosed	pass
+CheckAffectedAncestorRetired	fail
+CheckForegroundScopeAcknowledged	fail
 CheckMarkdownlint	pass
 CheckEnZhSectionParity	pass
 CheckWhitespace	pass
