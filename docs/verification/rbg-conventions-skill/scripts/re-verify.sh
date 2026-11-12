@@ -172,8 +172,8 @@ run_layer() {
     if ! grep -qE '^(PASS|FAIL) ' "$out"; then
       echo "__BUILD_OR_NO_TESTS__"; return 0
     fi
-    sed -E 's/^PASS ([^ :]+).*/\1\tpass/; s/^FAIL ([^ :]+).*/\1\tfail/' "$out" \
-      | grep -E '\t(pass|fail)$' || echo "__PARSE_ERROR__"
+    sed -nE 's/^PASS ([^ :]+).*/\1\tpass/p; s/^FAIL ([^ :]+).*/\1\tfail/p' "$out" \
+      || echo "__PARSE_ERROR__"
   fi
 }
 

@@ -23,7 +23,7 @@
   "layers": {
     "unit": {
       "kind": "script",
-      "cmd": "bash docs/verification/rbg-conventions-skill/scripts/script-units.sh && bash .agents/skills/rbg-conventions/scripts/selftest.sh && bash docs/verification/rbg-conventions-skill/scripts/citation-check.sh"
+      "cmd": "bash docs/verification/rbg-conventions-skill/scripts/script-units.sh; bash .agents/skills/rbg-conventions/scripts/selftest.sh; bash docs/verification/rbg-conventions-skill/scripts/citation-check.sh"
     },
     "integration": {
       "kind": "script",
