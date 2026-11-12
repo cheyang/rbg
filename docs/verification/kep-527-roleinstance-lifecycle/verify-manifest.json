@@ -138,7 +138,7 @@
       "match": [
         "CheckRBGSetForegroundBoundary"
       ],
-      "summary": "F-RBGSET-FOREGROUND-BOUNDARY: foreground-delete admission boundary includes RBGSet (EN+zh)"
+      "summary": "F-RBGSET-FOREGROUND-BOUNDARY: foreground-delete admission boundary includes RBGSet (EN+zh). Round-7 Harness-update: pin tracks the new unconditional wording ('rejects every Foreground propagation for RBGSet, RBG, RIS, and RI'); substance strengthened."
     },
     {
       "id": "F13",
@@ -213,7 +213,7 @@
       "match": [
         "CheckSignalLabelsOnlyHookField"
       ],
-      "summary": "F-MARKNOTREADY-NAME (round-6 form): RESOLVED BY DESIGN REMOVAL — markNotReady no longer exists; the new contract pins signalLabels as the only hook field (EN+zh) and markPodNotReady confined to legacy-context sentences. Harness-update: CheckMarkNotReadyNaming superseded by CheckSignalLabelsOnlyHookField (disclosed)."
+      "summary": "F-MARKNOTREADY-NAME (round-7 form): signalLabels remains the only hook field (EN+zh); markPodNotReady survives only in legacy-context OR KEP-502-drift-disclosure sentences (round-7 Harness-update for the merged-KEP-502 disclosure mentions)."
     },
     {
       "id": "F21",
@@ -253,7 +253,7 @@
       "match": [
         "CheckTestplanPrefixCoverage"
       ],
-      "summary": "NEW round-5 nit (OPEN): design now rejects handler keys carrying the reserved rbg.workloads.x-k8s.io/ prefix, but the integration-test bullet still covers only the exact-key collision (EN+zh). Contract fails at head while open; vacuous pass on refs without the strengthened rule."
+      "summary": "F-TESTPLAN-PREFIX-COVERAGE: FIXED at d038c23b — unit-test bullet now covers the reserved rbg.workloads.x-k8s.io/ prefix (EN+zh); round-7 Harness-update fixed the pin regex to span the dotted qualified key name."
     },
     {
       "id": "F25",
@@ -345,9 +345,9 @@
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "CheckFailClosedCacheMiss"
+        "CheckForegroundRejectUnconditional"
       ],
-      "summary": "Fix evidence for advisory F-C4528291011: foreground-deletion webhook resolution is fail-closed on cache miss, EN+zh."
+      "summary": "F-C4528291011 / F-C4541237496 (round-7 form): SUPERSEDED pin CheckFailClosedCacheMiss — the fail-closed cache-miss rule was replaced by an unconditional Foreground rejection at RBGSet/RBG/RIS/RI while the gate is enabled, with no informer-cache dependence (EN+zh). Disclosed mechanism replacement, strictly stronger."
     },
     {
       "id": "F35",
@@ -398,6 +398,69 @@
         "CheckWebhookDeferralNotClaimed"
       ],
       "summary": "NEW round-6 nit: fail-closed rule claims the webhook 'rejects or defers the request'; admission webhooks cannot defer, EN+zh."
+    },
+    {
+      "id": "F40",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckGateEdgesStated"
+      ],
+      "summary": "F-COEXIST-GATE-EDGE fix evidence (round 7): gate edges stated — gate-on no retroactive validation but mutual exclusion on subsequent writes; gate-off leaves runtime state for a compatible controller; inPlaceUpdate supported until a deprecation release is announced (EN+zh)."
+    },
+    {
+      "id": "F41",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckCrossGenerationKeyUniqueness"
+      ],
+      "summary": "F-C4541237385 fix evidence (round 7): signal-key uniqueness spans configuration generations — no reassignment to another hook while any governed RI still records the key (EN+zh)."
+    },
+    {
+      "id": "F42",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckMirrorNotAuthenticated"
+      ],
+      "summary": "F-POD-MIRROR-SPOOF-WINDOW fix evidence (round 7): mirrors are not authenticated; RI is the only authoritative source; safety-relevant consumers must verify the RI (EN+zh)."
+    },
+    {
+      "id": "F43",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckSelectorReservedKeyReverse"
+      ],
+      "summary": "F-SELECTOR-RESERVED-KEY-REVERSE fix evidence (round 7): admission rejects an owning RIS selector that uses a controller-reserved key (EN+zh)."
+    },
+    {
+      "id": "F44",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckKep502DriftDisclosed"
+      ],
+      "summary": "F-KEP502-GATE-REFERENCE-DRIFT fix evidence (round 7): KEP-502 stated as now merged; stale markPodNotReady references in the merged text disclosed; a KEP-502 follow-up amendment is required before implementation (EN+zh). External facts verified: PR #528 MERGED 2026-11-12; origin/main keps/502-workload-status-model still references markPodNotReady."
+    },
+    {
+      "id": "F45",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckAffectedAncestorRetired"
+      ],
+      "summary": "F-AFFECTED-ANCESTOR-WORDING (NEW round-7 nit; contract FAILS while open): the preDelete integration-test bullet still says admission rejects foreground deletion 'at every affected ancestor' (EN+zh) — a reachability term whose definition was removed with the informer-based resolution."
+    },
+    {
+      "id": "F46",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckForegroundScopeAcknowledged"
+      ],
+      "summary": "F-FOREGROUND-SCOPE-BROADENED (NEW round-7 question; contract FAILS while open): the unconditional Foreground rejection also covers RBGSet/RBG/RIS/RI objects with no hooks configured while the gate is enabled; the KEP does not acknowledge the broadened blast radius."
     }
   ],
   "liveNote": "Docs-only PR: no live layer. Design-level findings F1-F3 are verified by codebase inspection and their checks are text proxies that confirm the KEP ADDRESSES the topic; design correctness of the added text still requires human review.",

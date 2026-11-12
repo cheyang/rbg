@@ -197,9 +197,12 @@ if [ -f "$KEP_EN" ] && tr '\n' ' ' < "$KEP_EN" | tr -s ' ' \
   ok CheckNamespaceTeardownScoped; else bad CheckNamespaceTeardownScoped; fi
 
 # F12 (F-RBGSET-FOREGROUND-BOUNDARY). The foreground-delete admission boundary
-#     must include RBGSet (EN and zh).
-if [ -f "$KEP_EN" ] && grep -q 'for RBGSet, RBG, RIS, or RI deletion' "$KEP_EN" \
-  && grep -q 'RBGSet、RBG、RIS 或 RI foreground 删除请求' "$KEP_ZH"; then
+#     must include RBGSet (EN and zh). UPDATED round 7 (Harness-update): the
+#     rule became unconditional — while the gate is enabled, admission rejects
+#     every Foreground propagation at RBGSet/RBG/RIS/RI entries; the pin now
+#     tracks the new wording (substance strengthened, finding stays fixed).
+if [ -f "$KEP_EN" ] && tr '\n' ' ' < "$KEP_EN" | tr -s ' ' | grep -q 'rejects every `Foreground` propagation for RBGSet, RBG, RIS, and RI' \
+  && tr '\n' ' ' < "$KEP_ZH" | tr -s ' ' | grep -q '准入拒绝 RBGSet、RBG、RIS 和 RI 所有使用 `Foreground` 传播'; then
   ok CheckRBGSetForegroundBoundary; else bad CheckRBGSetForegroundBoundary; fi
 
 # F13 (F-NOPOSTREADY-CLEANUP-CLARIFICATION). The postReady-omitted completion
@@ -334,9 +337,12 @@ fi
 if [ "$prefix_rule_present" -eq 0 ]; then
   ok CheckTestplanPrefixCoverage   # rule absent on this ref: nothing to cover
 elif sed -n '/#### Unit Tests/,/#### Integration Tests/p' "$KEP_EN" | tr '\n' ' ' | tr -s ' ' \
-    | grep -q 'controller state key[^.]*prefix' \
+    | grep -q 'controller state key.*prefix' \
   && sed -n '/#### 单元测试/,/#### 集成测试/p' "$KEP_ZH" | tr '\n' ' ' | tr -s ' ' \
-    | grep -q 'controller 状态 key[^。]*前缀'; then
+    | grep -q 'controller 状态 key.*前缀'; then
+  # UPDATED round 7 (Harness-update): the round-7 bullet lands the coverage in
+  # the Unit Tests section; the old [^.]* pattern could not span the dots in
+  # the qualified rbg.workloads.x-k8s.io/ name. Substance fixed at d038c23b.
   ok CheckTestplanPrefixCoverage; else bad CheckTestplanPrefixCoverage; fi
 
 # F25 (F-CONFIG-REMOVAL-SKIPS-HOOK, round-4 question; still OPEN in round 5).
@@ -423,11 +429,15 @@ if [ -f "$KEP_EN" ] && [ -f "$KEP_ZH" ]; then
   grep -q 'signalLabels' "$KEP_ZH" || r6naming=0
   while IFS= read -r hit; do
     ln="${hit%%:*}"
-    sed -n "$(( ln > 2 ? ln - 2 : 1 )),$(( ln + 2 ))p" "$KEP_EN" | grep -qiE 'legacy' || r6naming=0
+    sed -n "$(( ln > 2 ? ln - 2 : 1 )),$(( ln + 2 ))p" "$KEP_EN" | grep -qiE 'legacy|KEP-502|earlier revision|stale' || r6naming=0
   done < <(grep -n 'markPodNotReady' "$KEP_EN")
   while IFS= read -r hit; do
     ln="${hit%%:*}"
-    sed -n "$(( ln > 2 ? ln - 2 : 1 )),$(( ln + 2 ))p" "$KEP_ZH" | grep -qE 'legacy|旧' || r6naming=0
+    # UPDATED round 7 (Harness-update): markPodNotReady may now also appear in
+    # KEP-502-drift disclosure sentences (merged KEP-502's stale references),
+    # in addition to legacy-context sentences. signalLabels remains the only
+    # hook field; the mention class is what widened.
+    sed -n "$(( ln > 2 ? ln - 2 : 1 )),$(( ln + 2 ))p" "$KEP_ZH" | grep -qE 'legacy|旧|KEP-502|遗留|早期' || r6naming=0
   done < <(grep -n 'markPodNotReady' "$KEP_ZH")
 else
   r6naming=0
@@ -476,6 +486,11 @@ if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'Admission also rejects a marker
 
 # F34 (fix evidence for advisory F-C4528291011). Foreground-deletion webhook
 #     resolution is fail-closed on cache miss (EN+zh).
+#     SUPERSEDED round 7: the fail-closed cache-miss rule was replaced by an
+#     unconditional rejection design (disclosed mechanism replacement in
+#     d038c23b — strictly stronger: resolution no longer consults informer
+#     caches at all). This pin now FAILS BY DESIGN at head; the active
+#     contract is CheckForegroundRejectUnconditional (group 2f).
 if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'Resolution is fail-closed' \
   && flat "$KEP_EN" | grep -q 'cache miss must not establish that deletion is safe' \
   && grep -q '解析采用 fail-closed 语义' "$KEP_ZH" \
@@ -552,6 +567,96 @@ if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'Resolution is fail-closed'; the
     ok CheckWebhookDeferralNotClaimed; else bad CheckWebhookDeferralNotClaimed; fi
 else
   ok CheckWebhookDeferralNotClaimed   # no fail-closed rule on this ref: vacuous pass
+fi
+
+# --- group 2f: round-7 checks (delta c3ea6547..d038c23b) ---
+
+# F34' (round-7 form of the F34 contract). While the gate is enabled,
+#     admission rejects every Foreground propagation at RBGSet/RBG/RIS/RI
+#     deletion entries, with no informer-cache dependence, and the test plan
+#     states the unconditional rule (EN+zh).
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'rejects every `Foreground` propagation for RBGSet, RBG, RIS, and RI' \
+  && flat "$KEP_EN" | grep -q 'does not depend on informer caches' \
+  && flat "$KEP_EN" | grep -q 'Foreground deletion is rejected for RBGSet, RBG, RIS, and RI while the feature gate is enabled' \
+  && flat "$KEP_ZH" | grep -q '不依赖 informer 缓存' \
+  && flat "$KEP_ZH" | grep -q 'RBGSet、RBG、RIS 和 RI 的 foreground 删除均被拒绝'; then
+  ok CheckForegroundRejectUnconditional; else bad CheckForegroundRejectUnconditional; fi
+
+# F40 (fix evidence for F-COEXIST-GATE-EDGE, closed round 7). Gate edges
+#     stated (EN+zh): gate-on does not retroactively validate existing objects
+#     but mutual exclusion applies to subsequent writes (dual-configured
+#     objects must be corrected before their next update); gate-off leaves
+#     runtime state for a compatible controller; legacy inPlaceUpdate remains
+#     supported until a deprecation release is announced.
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'Gate edges:' \
+  && flat "$KEP_EN" | grep -q 'must be corrected before its next update' \
+  && flat "$KEP_EN" | grep -q 'neither writes nor matches new-protocol runtime labels' \
+  && flat "$KEP_EN" | grep -q 'until a deprecation release is announced' \
+  && flat "$KEP_ZH" | grep -q '不会回溯校验存量对象' \
+  && flat "$KEP_ZH" | grep -q '在下一次更新前修正' \
+  && flat "$KEP_ZH" | grep -q '公布弃用版本前继续支持'; then
+  ok CheckGateEdgesStated; else bad CheckGateEdgesStated; fi
+
+# F41 (fix evidence for advisory F-C4541237385, closed round 7). Signal-key
+#     uniqueness spans configuration generations: no reassignment to another
+#     hook while any governed RI still records the key (EN+zh).
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'may not be reassigned from one hook to another while any RI' \
+  && flat "$KEP_ZH" | grep -q '不得被重新分配给另一个 hook'; then
+  ok CheckCrossGenerationKeyUniqueness; else bad CheckCrossGenerationKeyUniqueness; fi
+
+# F42 (fix evidence for F-POD-MIRROR-SPOOF-WINDOW, closed round 7). Mirrors
+#     are not authenticated; the RI is the only authoritative source and
+#     safety-relevant consumers must verify the RI (EN+zh).
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'Mirrors are not authenticated' \
+  && flat "$KEP_EN" | grep -q 'verify the RI rather than trust a mirror' \
+  && flat "$KEP_ZH" | grep -q '镜像不可信' \
+  && flat "$KEP_ZH" | grep -q '回验 RI'; then
+  ok CheckMirrorNotAuthenticated; else bad CheckMirrorNotAuthenticated; fi
+
+# F43 (fix evidence for F-SELECTOR-RESERVED-KEY-REVERSE, closed round 7).
+#     Admission also rejects an owning RIS selector that uses a
+#     controller-reserved key (the reverse direction), EN+zh.
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'admission rejects an owning RIS selector that uses a controller-reserved key' \
+  && flat "$KEP_ZH" | grep -q '准入也拒绝在所属 RIS selector 中使用'; then
+  ok CheckSelectorReservedKeyReverse; else bad CheckSelectorReservedKeyReverse; fi
+
+# F44 (fix evidence for F-KEP502-GATE-REFERENCE-DRIFT, closed round 7). The
+#     KEP states KEP-502 is now merged, discloses that the merged text still
+#     references the removed markPodNotReady gate, and requires a KEP-502
+#     follow-up amendment before implementation (EN+zh).
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'KEP-502, now merged' \
+  && flat "$KEP_EN" | grep -q 'still references the `markPodNotReady`' \
+  && flat "$KEP_EN" | grep -q 'follow-up amendment must remove' \
+  && flat "$KEP_ZH" | grep -q '现已合入' \
+  && flat "$KEP_ZH" | grep -q '仍引用早期提案中的 `markPodNotReady`' \
+  && flat "$KEP_ZH" | grep -q '后续修订删除'; then
+  ok CheckKep502DriftDisclosed; else bad CheckKep502DriftDisclosed; fi
+
+# F45 (F-AFFECTED-ANCESTOR-WORDING, NEW round-7 nit; contract FAILS while
+#     open). The preDelete integration-test bullet still says admission
+#     rejects foreground deletion "at every affected ancestor" (EN+zh) — a
+#     reachability term whose definition was removed with the informer-based
+#     resolution; under the unconditional rule nothing computes affectedness.
+#     Pass when the bullet is aligned with the unconditional rule.
+if [ -f "$KEP_EN" ] && grep -q 'Foreground deletion is rejected for RBGSet' "$KEP_EN"; then
+  if ! grep -q 'affected ancestor' "$KEP_EN" && ! grep -q '受影响祖先' "$KEP_ZH"; then
+    ok CheckAffectedAncestorRetired; else bad CheckAffectedAncestorRetired; fi
+else
+  ok CheckAffectedAncestorRetired   # pre-redesign ref: vacuous pass
+fi
+
+# F46 (F-FOREGROUND-SCOPE-BROADENED, NEW round-7 question; contract FAILS
+#     while open). The unconditional foreground rejection also covers
+#     RBGSet/RBG/RIS/RI objects that configure no hooks at all while the gate
+#     is enabled (gate defaults false; clients retry with background). The
+#     KEP never acknowledges that broadened blast radius. Pass when an
+#     acknowledgment sentence exists (EN or zh); a flip needs a human re-read.
+if [ -f "$KEP_EN" ] && grep -q 'rejects every `Foreground`' "$KEP_EN"; then
+  if flat "$KEP_EN" | grep -qiE 'regardless of whether[^.]*(hook|preDelete)|even (when|if)[^.]*no[^.]*(hook|preDelete)[^.]*configured|whether or not[^.]*(hook|preDelete)[^.]*configured' \
+    || flat "$KEP_ZH" | grep -qE '无论[^，。]*(是否|有无)[^，。]*(hook|preDelete)|即使[^，。]*未配置[^，。]*(hook|preDelete)'; then
+    ok CheckForegroundScopeAcknowledged; else bad CheckForegroundScopeAcknowledged; fi
+else
+  ok CheckForegroundScopeAcknowledged   # rule absent on this ref: vacuous pass
 fi
 
 # --- group 3: document hygiene (regression guards for future revisions) ---

@@ -205,3 +205,89 @@ Delta `6c15cc92..c3ea6547` (docs-only, +322/-256, EN+zh only; kep.yaml untouched
 | Hygiene (3) | group 3 | pass ×3 | pass ×3 | pass ×3 | clean (markdownlint repo config 0 issues on both files, section parity 29/29, `git diff --check` clean) |
 
 Raw output: `results/reverify/unit.tsv` (head, persisted by re-verify.sh), `results/reverify/unit-c3ea6547-round6.tsv` (head), `unit-6c15cc92-round6.tsv` (previous head, updated harness), `unit-3612013e-round6.tsv` (base control).
+
+## Observed vs expected (head d038c23b — round 7, incremental)
+
+Delta `c3ea6547..d038c23b` (docs-only, single commit "docs: address round-6
+review findings in KEP-527", +127/-60, EN+zh only; kep.yaml untouched): the
+author addressed essentially every open round-6 finding —
+
+- **zh rollout-risk parity restored** ("Ready 循环等待" dropped) — F35 fixed.
+- **Field ownership now covers the marker-key record** ("the controller owns
+  ... the marker-key record ..."; "Users, metadata synchronization, and
+  executors must not write the marker-key record", EN+zh) — F36 fixed.
+- **Rollback precondition completed** with the reserved-finalizer condition
+  (design text + test plan, EN+zh) — F38 fixed.
+- **Foreground-delete redesigned**: the fail-closed cache-miss rule was
+  REPLACED by unconditional rejection — while the gate is enabled, admission
+  rejects every `Foreground` propagation at RBGSet/RBG/RIS/RI entries, with NO
+  informer-cache dependence ("neither a cache miss nor a successful lookup can
+  prove that no reachable RI has preDelete in effect"); the "rejects or
+  defers" wording is gone; test-plan bullet updated (EN+zh). Disclosed
+  mechanism replacement, strictly stronger — F34 pin superseded
+  (CheckForegroundRejectUnconditional), F39 fixed, advisory F-C4541237496
+  (informer cache-hit staleness) resolved by the redesign.
+- **Mirrors-are-not-authenticated rule** added to propagation (EN+zh) — the
+  Pod-mirror spoof question (F-POD-MIRROR-SPOOF-WINDOW) answered.
+- **Selector reverse rule**: admission rejects an owning RIS selector that
+  uses a controller-reserved key (EN+zh) — F-SELECTOR-RESERVED-KEY-REVERSE
+  answered.
+- **Cross-generation key uniqueness**: a signal key may not be reassigned to
+  another hook while any governed RI still records it (EN+zh) — advisory
+  F-C4541237385 (postReady->preDelete key reassignment) resolved.
+- **KEP-502 drift disclosed**: "The phase model is defined by KEP-502, now
+  merged" — externally verified: PR #528 MERGED 2026-11-12 (merge commit
+  c2896cc0); merged keps/502-workload-status-model still references
+  markPodNotReady as a KEP-527 gate (origin/main README.md:413, :485). The
+  KEP requires a KEP-502 follow-up amendment removing the stale references
+  before implementation (pre-implementable item #1, EN+zh) —
+  F-KEP502-GATE-REFERENCE-DRIFT fixed on this PR's side.
+- **Gate edges stated** (EN+zh): gate-on applies mutual exclusion to
+  subsequent writes (dual-configured objects must be corrected before their
+  next update); gate-off leaves hook-state/markers/record for a compatible
+  controller; legacy inPlaceUpdate supported until a deprecation release is
+  announced — F-COEXIST-GATE-EDGE fixed.
+- **Removal-skip risk acknowledged**: risk-table row + Risks bullet
+  ("Removing an active hook configuration mid-operation skips its remaining
+  barrier. The preDelete release is one-way ...", EN+zh) —
+  F-CONFIG-REMOVAL-SKIPS-HOOK fixed.
+- **Prefix-rule test coverage** landed in the unit-test bullet (EN+zh) —
+  F24 fixed (Harness-update: pin regex now spans the dotted qualified name).
+- **Scalability** now accounts for the mirror fan-out (EN+zh) — F37 fixed.
+- F-SEEALSO-502: kep.yaml untouched, but PR #528 merged first — the
+  see-also target keps/502-workload-status-model now EXISTS on origin/main.
+  The pin still fails on the PR head tree (it predates that merge); the
+  reference resolves on main post-merge. Externally resolved.
+
+| Finding | Check | base 3612013e | previous c3ea6547 | head d038c23b | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| F1-F3, F6-F19, F21-F23, F26-F30 (carried fixes) | carried pins | — | pass | pass | still FIXED (regression guard) |
+| F5, F20 (round-6 forms) | CheckReadyGatingRemoved / CheckSignalLabelsOnlyHookField | fail | pass | pass | still FIXED; F20 Harness-update (markPodNotReady now also allowed in KEP-502-drift disclosure sentences) |
+| F12 foreground boundary | CheckRBGSetForegroundBoundary | fail | pass (old pin) | pass | still FIXED; Harness-update to the new unconditional wording (substance strengthened) |
+| F24 prefix coverage | CheckTestplanPrefixCoverage | vacuous pass | fail | pass | FIXED |
+| F25 removal-risk ack | CheckRemovalRiskAcknowledged | fail | fail | pass | FIXED |
+| F34 fail-closed -> unconditional | CheckForegroundRejectUnconditional | fail | fail | pass | FIXED BY REDESIGN (CheckFailClosedCacheMiss superseded, fails by design) |
+| F35-F39 round-6 opens | round-6 pins | vacuous pass | fail | pass | ALL FIXED |
+| F40 gate edges (F-COEXIST-GATE-EDGE) | CheckGateEdgesStated | fail | fail | pass | FIXED |
+| F41 cross-generation uniqueness (F-C4541237385) | CheckCrossGenerationKeyUniqueness | fail | fail | pass | FIXED (advisory confirmed-then-fixed) |
+| F42 mirrors not authenticated (F-POD-MIRROR-SPOOF-WINDOW) | CheckMirrorNotAuthenticated | fail | fail | pass | FIXED |
+| F43 selector reverse rule (F-SELECTOR-RESERVED-KEY-REVERSE) | CheckSelectorReservedKeyReverse | fail | fail | pass | FIXED |
+| F44 KEP-502 drift disclosure (F-KEP502-GATE-REFERENCE-DRIFT) | CheckKep502DriftDisclosed | fail | fail | pass | FIXED (external facts gh-verified) |
+| F45 affected-ancestor wording (NEW nit) | CheckAffectedAncestorRetired | vacuous pass | vacuous pass | **fail** | OPEN — integration bullet (EN :1083, zh :804) still says "at every affected ancestor" — a reachability term whose definition the redesign removed; align with the unconditional rule |
+| F46 foreground scope broadened (NEW question) | CheckForegroundScopeAcknowledged | vacuous pass | vacuous pass | **fail** | OPEN — the unconditional rejection also covers RBGSet/RBG/RIS/RI objects with NO hooks configured while the gate is enabled; the KEP never acknowledges the broadened blast radius (clients retry with background) |
+| F4 see-also residue (F-SEEALSO-502) | CheckSeeAlsoDirsExist | fail | fail | fail (PR tree) | FIXED EXTERNALLY — target dir now on origin/main (PR #528 merged); pin red only because the PR tree predates that merge |
+| Codebase-truth claims (10) | group 1 | pass x10 | pass x10 | pass x10 | KEP accurate on head |
+| Hygiene (3) | group 3 | pass x3 | pass x3 | pass x3 | clean (markdownlint 0 issues, section parity, whitespace) |
+
+Bites verification (round 7): mutating/deleting the pinned sentences at head
+flips CheckForegroundRejectUnconditional, CheckGateEdgesStated,
+CheckCrossGenerationKeyUniqueness, CheckMirrorNotAuthenticated,
+CheckSelectorReservedKeyReverse, CheckKep502DriftDisclosed, and
+CheckRBGSetForegroundBoundary to FAIL; simulating the fixes flips
+CheckAffectedAncestorRetired and CheckForegroundScopeAcknowledged to PASS.
+Tree restored byte-identical (git checkout -f d038c23b -- keps/).
+
+Raw output: `results/reverify/unit.tsv` (head, persisted by re-verify.sh),
+`results/reverify/unit-d038c23b-round7.tsv` (head), `unit-c3ea6547-round7.tsv`
+(previous head, updated harness), `unit-3612013e-round7.tsv` (base control),
+`unit-bites-round7.tsv` (mutation run).
