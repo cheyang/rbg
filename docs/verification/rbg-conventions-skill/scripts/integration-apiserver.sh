@@ -67,14 +67,15 @@ printf '%s\n' "$out" | sed 's/^/  /'
 # The F5 flake is timing-dependent, so record it as an observation, not a gate: the deterministic
 # reproduction lives in results/f5-wait-flake.txt (waitrace run). A first-attempt pass can mean
 # "fixed" or just "lucky".
-if [ "$rc" != 0 ] && printf '%s' "$out" | grep -q 'status.conditions accessor error'; then
-  echo "NOTE canary-vc1-wait-flake: F5 flake observed on the first attempt"
+attempt=1
+while [ "$rc" != 0 ] && printf '%s' "$out" | grep -q 'status.conditions accessor error' && [ "$attempt" -lt 3 ]; do
+  echo "NOTE canary-vc1-wait-flake: F5 flake observed on attempt $attempt"
   echo "  (F5 flake hit; retrying for the contract check)"
   out=$("$skill/scripts/crd-default-on-read.sh" 2>&1) && rc=0 || rc=$?
   printf '%s\n' "$out" | sed 's/^/  /'
-else
-  echo "NOTE canary-vc1-wait-flake: no flake on the first attempt (fixed, or lucky)"
-fi
+  attempt=$((attempt + 1))
+done
+[ "$attempt" -eq 1 ] && echo "NOTE canary-vc1-wait-flake: no flake on the first attempt (fixed, or lucky)"
 if [ "$rc" = 0 ] && [ "$(printf '%s\n' "$out" | grep -c '^PASS A')" = 4 ]; then
   pass contract-vc1-default-on-read
 else
