@@ -1,0 +1,15 @@
+{
+  "apiVersion": "v1",
+  "kind": "List",
+  "items": [
+    {
+      "apiVersion": "workloads.x-k8s.io/v1alpha1",
+      "kind": "RoleBasedGroup",
+      "metadata": {"name": "legacy-direct", "namespace": "team-a"},
+      "spec": {"roles": [
+        {"name": "sts", "workload": {"apiVersion": "apps/v1", "kind": "StatefulSet"}},
+        {"name": "ris", "workload": {"apiVersion": "workloads.x-k8s.io/v1alpha2", "kind": "RoleInstanceSet"}}
+      ]}
+    }
+  ]
+}

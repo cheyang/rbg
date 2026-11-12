@@ -1,0 +1,84 @@
+{
+  "pr": "https://github.com/sgl-project/rbg/pull/552",
+  "headSha": "69fc06c162a026376c8daf46a935fbc7f351fb6d",
+  "baseSha": "ea5e82ae59169e0e954fb1c7068f9480fb4b7375",
+  "verificationTarget": "merge(head, base) — the PR is docs+values-only and its claims describe the post-#556 composition, so the harness runs on a synthetic merge of the PR head into origin/main (created by scripts/re-verify.sh), not on the raw head tree (whose pre-#556 base still contains the v1alpha1 admission webhooks).",
+  "harnessPaths": [
+    "test/chart/webhook_manifests_test.go",
+    "test/chart/inventory_command_test.go",
+    "test/chart/testdata/inventory",
+    "test/envtest/testcase/deprecationdocs",
+    "docs/verification/chart-deprecation-webhooks-codex"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Round 3: the PR is the documentation/chart-value slice of the v1alpha1 deprecation; its factual claims are that after #556 the compatibility gate still holds through the v1alpha2 validators via conversion, every v1alpha1 request returns the CRD deprecation warning naming the 0.10.0 removal, and the chart renders no v1alpha1 deprecation webhook endpoints.",
+    "runsAgainst": "merge(head, base)",
+    "verdict": "confirmed",
+    "evidence": "results/envtest-compat.out + envtest-strict.out (gate behavior incl. the schema-defaulted v1alpha1 create rejected in both modes with the genuinely-absent workload key; type-exact grandfathering; RBGSet legacy-template child exemption), results/no-v1alpha1-render.out (helm template renders zero v1alpha1-deprecation entries), results/envtest-compat.out warning assertions (CRD deprecation warning with the 0.10.0 timeline on v1alpha1 create AND list; none on v1alpha2)."
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "KC=\"$(mktemp)\"; printf 'apiVersion: v1\\nkind: Config\\n' > \"$KC\"; chmod 600 \"$KC\"; KUBECONFIG=\"$KC\" go test ./test/chart/ -count=1; rc=$?; rm -f \"$KC\"; exit $rc"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=\"$([ -x \"$PWD/bin/setup-envtest\" ] && \"$PWD/bin/setup-envtest\" use 1.31.0 --bin-dir \"$PWD/bin\" -p path 2>/dev/null || echo \"$PWD/bin/k8s/1.31.0-linux-amd64\")\" go test ./test/envtest/testcase/deprecationdocs/ -count=1 && RBGS_DOCS_SUITE_MODE=strict KUBEBUILDER_ASSETS=... go test ./test/envtest/testcase/deprecationdocs/ -count=1 && RBGS_DOCS_SUITE_MODE=nowebhook KUBEBUILDER_ASSETS=... go test ./test/envtest/testcase/deprecationdocs/ -count=1"
+    },
+    "tracker": {
+      "kind": "script",
+      "cmd": "bash docs/verification/chart-deprecation-webhooks-codex/scripts/check-default-image-paths.sh && bash docs/verification/chart-deprecation-webhooks-codex/scripts/check-notes.sh"
+    }
+  },
+  "findings": [
+    {
+      "id": "A-NO-V1A1-RENDER",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestChartRendersNoV1alpha1DeprecationWebhooks"],
+      "note": "The rendered chart registers no v1alpha1 webhook entries (handlers removed by #556). Bites on the round-2 head 1a4f7ab0 (results/bites-oldhead-1a4f7ab0.out, names all three removed entries)."
+    },
+    {
+      "id": "A-PARITY",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestChartWebhookConfigurationsMatchShippedManifests"],
+      "note": "Generalized chart<->config/webhook/manifests.yaml parity over ALL entries (F2 legacy guard, now covering the full surface). Bites on the raw PR head 69fc06c1 whose pre-#556 base leaves 6 v1alpha1 entries in the shipped config the chart does not render (results/bites-rawhead-69fc06c1.out)."
+    },
+    {
+      "id": "A-GATE-DOCS",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["TestDeprecationDocs"],
+      "note": "envtest, post-#556 composition (conversion -> v1alpha2 validators, no v1alpha1 admission webhooks): schema-defaulted v1alpha1 create rejected in compat AND strict (unstructured workload-free wire shape — the path #556's own suite left uncovered), explicit-RoleInstanceSet v1alpha1 admitted with the 0.10.0 CRD warning, v1alpha2 unwarned, new deprecated use rejected, type-exact grandfathering, type-switch rejected, RBGSet legacy-template child exemption (wrong-UID and no-owner controls rejected), strict mode rejects remaining uses and admits RoleInstanceSet. nowebhook control proves causality (default fires, annotation stamped, create admitted)."
+    },
+    {
+      "id": "A-INVENTORY",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["TestDeprecationDocs/inventory", "TestInventoryCommand"],
+      "note": "The chart README's inventory pipeline (kubectl get rbg,rbgs -A -o json | jq -r ...) extracted byte-identically from the README: fixture layer covers v1alpha1 RBG direct workload, v1alpha1 RBGSet .spec.template.roles, v1alpha2 annotation shapes for both kinds, and edge cases; the envtest layer runs the verbatim pipeline against the live API server with seeded deprecated RBG + RBGSet + modern control."
+    },
+    {
+      "id": "A-IMAGE",
+      "polarity": "contract",
+      "layer": "tracker",
+      "match": ["tracker"],
+      "note": "F1 legacy, generalized: every webhook path the chart renders must be registered at the default image pin commit. GREEN on the merged state (pin v0.9.0-73e05db4 serves all six rendered v1alpha2 paths; results/tracker-merged.out)."
+    },
+    {
+      "id": "A-NOTES",
+      "polarity": "contract",
+      "layer": "tracker",
+      "match": ["notes"],
+      "note": "NOTES.txt renders in the toggle x install/upgrade matrix with the round-3 guidance (F8 fix: cutoff requires completed reconciliation + deleted legacy workloads); scripts/check-notes.sh asserts the per-scenario strings."
+    }
+  ],
+  "retiredHarness": [
+    {"id": "A-HANDLER", "reason": "v1alpha1WarningHandler and the whole deprecation_webhook.go were deleted at the source by #556 (merged into base); nothing left to unit-test.", "lastSeen": "e039c903"},
+    {"id": "A-GATE (chart-rendered v1alpha1 VWC)", "reason": "The PR no longer ships chart webhook entries and the handlers are gone; the contract is superseded by A-GATE-DOCS on the post-#556 composition.", "lastSeen": "e039c903"},
+    {"id": "premise mode (base chart ships no gate)", "reason": "Round 1-2 premise is historical: #556 removed the shipped v1alpha1 entries from config as well, so chart and shipped config agree again.", "lastSeen": "e039c903"}
+  ],
+  "liveNote": "L3 (skipped in this debate round): on a real cluster, helm upgrade from the 0.9.0-alpha.3 chart to a post-merge chart and observe that v1alpha1 RBG/RBGSet writes keep working throughout (no fail-closed window exists anymore: the chart renders no v1alpha1 deprecation entries), and that kubectl v1alpha1 requests surface the CRD deprecation warning."
+}
