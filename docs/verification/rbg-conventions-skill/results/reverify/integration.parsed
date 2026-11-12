@@ -1,0 +1,14 @@
+contract-vc1-default-on-read	pass
+contract-vc1-cleanup	pass
+contract-fixtures-apply	pass
+contract-fixtures-marker-label	pass
+contract-fixtures-reapply	pass
+contract-foreign-statedir-refused	pass
+contract-foreign-statedir-ns-intact	pass
+contract-foreign-namespace-refused	pass
+contract-compare-real-identical	pass
+contract-roundtrip-refuses-none-live	pass
+contract-vc2-restart-noop	pass
+contract-vc4-label-removal	pass
+contract-fixtures-delete-accepted	pass
+contract-delete-keeps-state-while-terminating	pass
