@@ -1,0 +1,35 @@
+== Round 10 differential (stock trees, harness grafted) ==
+== contract: TestVerifyPR474_LWSBarrier_HoldsUntilNewRevisionPersisted ==
+== previous head 8f07c37e ==
+=== RUN   TestVerifyPR474_LWSBarrier_HoldsUntilNewRevisionPersisted
+--- PASS: TestVerifyPR474_LWSBarrier_HoldsUntilNewRevisionPersisted (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.057s
+== head cb0a201a ==
+=== RUN   TestVerifyPR474_LWSBarrier_HoldsUntilNewRevisionPersisted
+        	Error Trace:	/tmp/r10-head/internal/controller/workloads/rolebasedgroupset_round10_verify_test.go:160
+        	Error:      	Should be false
+--- FAIL: TestVerifyPR474_LWSBarrier_HoldsUntilNewRevisionPersisted (0.04s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.059s
+FAIL
+
+== contract: TestVerifyPR474_NeedsUpdate_ReorderedRoleTemplates (d923c387 fix) ==
+== previous head 8f07c37e ==
+=== RUN   TestVerifyPR474_NeedsUpdate_ReorderedRoleTemplates
+        	Error Trace:	/tmp/r10-prev/internal/controller/workloads/rolebasedgroupset_round10_verify_test.go:206
+        	Error:      	Should be false
+--- FAIL: TestVerifyPR474_NeedsUpdate_ReorderedRoleTemplates (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.013s
+FAIL
+== head cb0a201a ==
+=== RUN   TestVerifyPR474_NeedsUpdate_ReorderedRoleTemplates
+--- PASS: TestVerifyPR474_NeedsUpdate_ReorderedRoleTemplates (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.014s
+== control: the author's new upgrade test needs NO production change ==
+== TestRoleHashUpgradeConvergesWithoutChangingWorkloadTemplates (author test file
+== from cb0a201a grafted onto the PREVIOUS head 8f07c37e production code): ==
+--- PASS: TestRoleHashUpgradeConvergesWithoutChangingWorkloadTemplates (0.18s)
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.196s

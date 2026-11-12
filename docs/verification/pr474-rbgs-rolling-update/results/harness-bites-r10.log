@@ -1,0 +1,26 @@
+== Round 10 harness-bites: proposed fix for R10LWSBARRIER ==
+== fix: leaderWorkerSetRolloutComplete requires EqualRevision(highest persisted, recomputed current) ==
+== (see internal/controller/workloads/rolebasedgroup_rollout_status.go at /tmp/r10-head, ==
+==  restored from /tmp/r10-head-rollout-status.orig.bak + patch below) ==
+
+== 1. round-10 contract flips green with the fix ==
+--- PASS: TestVerifyPR474_LWSBarrier_HoldsUntilNewRevisionPersisted (0.05s)
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.059s
+
+== 2. all 37 carried TestVerifyPR474 contracts stay green with the fix ==
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	5.844s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.014s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.010s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.075s
+
+== 3. author LWS tests with production-faithful fixtures (persisted revisions ==
+==    carry label+Data written together; stock fixtures relabel without ==
+==    re-writing Data, which CreateRevision never does) ==
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.311s
+
+== 4. full workloads package with the fix ==
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	10.956s
+
+== control: stock head (no fix) fails the round-10 contract; stock fixtures ==
+==          pass author tests because the false-positive window IS their ==
+==          asserted steady state (see differential-r10.log) ==

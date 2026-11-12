@@ -13,7 +13,8 @@
   "pkg/reconciler/round6_verify_test.go",
   "internal/controller/workloads/rolebasedgroupset_round7_verify_test.go",
   "internal/controller/workloads/rolebasedgroupset_round8_verify_test.go",
-  "internal/controller/workloads/rolebasedgroupset_round9_verify_test.go"
+  "internal/controller/workloads/rolebasedgroupset_round9_verify_test.go",
+  "internal/controller/workloads/rolebasedgroupset_round10_verify_test.go"
  ],
  "premise": {
   "id": "P0",
@@ -299,6 +300,15 @@
     "scripts/doc-match-r9.sh"
    ],
    "note": "round 9 (head 8f07c37e): FIXED \u2014 the PR body's surge-sizing sentence was rewritten to the shipped deficit-inclusive form: 'the desired surge count is min(maxSurge, max(0, servingOutdated + floor - readyBase)) when servingOutdated > 0, otherwise 0'. doc-match-r9.sh re-pins body and code to that exact formula (plus asserts neither contains the round-6 headroom form) and re-runs every prior body claim: 51/51 PASS, body matches the shipped API (results/doc-match-r9.log). The round-8 gate (AC8) is satisfied."
+  },
+  {
+   "id": "R10LWSBARRIER",
+   "polarity": "contract",
+   "layer": "unit",
+   "match": [
+    "TestVerifyPR474_LWSBarrier_HoldsUntilNewRevisionPersisted"
+   ],
+   "note": "round 10 (head cb0a201a): RED at head, GREEN at previous head 8f07c37e (results/differential-r10.log) \u2014 revision regression introduced by cb0a201a's rewrite of leaderWorkerSetRolloutComplete. The completion check now targets the highest PERSISTED LWS ControllerRevision; because reconcileRoles (applies the LWS write) and finalizeRolloutStatus run in the same RBG reconcile, and the LWS controller creates the new revision only after observing the write, the check in that window compares the deployed chain against the PRE-update revision and returns complete: the RBG publishes RollingUpdateInProgress=False and acknowledges the rollout request before the LWS controller has seen the new template, so the set advances the availability budget (maxUnavailable) for LWS roles. Deployment/StatefulSet/RoleInstanceSet cover the same window with observedGeneration; LWS has none, which is why the pre-cb0a201a code recomputed the target hash from the current spec. Harness-bites (results/harness-bites-r10.log): proposed fix = require lwsrevision.EqualRevision(highest persisted, recomputed current) \u2014 the LWS controller's own update detection \u2014 flips the contract green, keeps all 37 carried contracts and the full workloads package green; the author's new LWS tests pass under the fix once their fixtures are made production-faithful (a persisted revision's RevisionKey label and Data are written together by CreateRevision; the stock fixtures relabel without re-writing Data \u2014 a state the real LWS controller cannot produce, and which encodes the premature-acknowledgment window as the asserted steady state). Control: the author's upgrade test also passes on the PREVIOUS head's production code, so the production change was not required by any author test."
   }
  ],
  "liveNote": "L3 (live layer) was NOT run: the debate pipeline mandates unit + integration only. The author's kind e2e (test/e2e/testcase/v1alpha2/rbgs.go) covers paced recreate, surge, partition, and InPlaceUpdate UID preservation on a real cluster; make test-e2e is wired to PR CI.",
@@ -375,6 +385,15 @@
    "previousHeadSha": "09aaa4d70d4f8525224fe12ead63d18c16ffbedb",
    "delta": "single commit 8f07c37e on top of the round-8 head (no rebase, base unchanged at 73e05db4): needsUpdate RoleTemplates comparison swapped from reflect.DeepEqual to apiequality.Semantic.DeepEqual plus the author's round-trip regression table (R8TPLCHURN fixed). PR body surge-formula sentence rewritten to the deficit-inclusive form (DOC-SURGE-FORMULA-R8 / AC8 fixed).",
    "newFindings": []
+  },
+  {
+   "round": 10,
+   "headSha": "cb0a201a97d3843b8e33610cb64623b7aeb02ad7",
+   "previousHeadSha": "8f07c37e7110907f43a38343f05633fe37e210b7",
+   "delta": "rebase onto the moved base (73e05db4 -> c2896cc0, 6 upstream commits: selective scale-down 86509bf9, v1alpha1 webhook removal 47b347fd, engine runtime profile 229b4954, KEP-502 c2896cc0, roleinstance recovery 7e377a06, helm fd160cc9) plus 3 commits: d923c387 (roleTemplatesEqual by name \u2014 closes F6), 76df3fe3 (partition godoc \u2014 closes C4498053235, CRD description verified truncated so no manifest change), cb0a201a (LWS completion rewrite + legacy-hash/revision upgrade tests \u2014 introduces R10LWSBARRIER).",
+   "newFindings": [
+    "R10LWSBARRIER"
+   ]
   }
  ]
 }

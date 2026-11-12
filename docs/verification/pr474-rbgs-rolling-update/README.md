@@ -91,6 +91,55 @@ becomes whether the new path is correct — covered by POS1/POS2 below.
 
 ## Summary of results
 
+### Round 10 (head `cb0a201a`, base tip `c2896cc0`, previous head `8f07c37e` — rebase + 3 commits; ONE NEW BLOCKER)
+
+The delta is a **rebase onto the moved base** (`73e05db4` → `c2896cc0`: selective
+scale-down #538, v1alpha1 admission-webhook removal #556, engine runtime profile
+#548, KEP-502 #528, roleinstance recovery #559, helm 0.9.0-alpha.3 #555) plus
+three commits:
+
+- `d923c387` "compare role templates by name in legacy drift check" — **F6
+  FIXED**: `roleTemplatesEqual` (copy, sort by name, Semantic.DeepEqual) makes
+  the `needsUpdate` RoleTemplates comparison order-insensitive.
+- `76df3fe3` "correct the partition upper-bound comment" — **C4498053235
+  FIXED**: godoc now says "A value above Replicas is capped at Replicas by the
+  controller"; generated CRD description verified truncated before the
+  sentence, so no manifest change (the commit's claim checks out).
+- `cb0a201a` "cover legacy hash and revision upgrade convergence" — **F17
+  FIXED** (upgrade-path coverage for the role-hash fold, all four workload
+  kinds + envtest RIS chain + set-level legacy-revision migration), **but its
+  one production change is a regression**: `leaderWorkerSetRolloutComplete`
+  now targets the highest **persisted** LWS ControllerRevision instead of
+  recomputing the hash from the current spec. Because the RBG applies the LWS
+  write and runs `finalizeRolloutStatus` in the same reconcile, and the LWS
+  controller creates the new revision only after observing the write, the
+  barrier passes in that window against the **pre-update** revision: the
+  rollout request is acknowledged and the set advances the availability
+  budget before the new template is applied anywhere. maxUnavailable silently
+  degrades to update-everything-at-once for LWS roles — the PR's core
+  contract. **R10LWSBARRIER (blocker)**: contract
+  `TestVerifyPR474_LWSBarrier_HoldsUntilNewRevisionPersisted` is
+  **GREEN at `8f07c37e`, RED at `cb0a201a`** (results/differential-r10.log).
+
+| ID | Claim | Layer | Verdict | Evidence |
+|----|-------|-------|---------|----------|
+| R10LWSBARRIER (round-10 blocker) | A freshly applied LWS template whose ControllerRevision the LWS controller has not yet persisted must NOT satisfy the completion barrier (the write and the check share one reconcile; Deployment/STS/RIS cover this window with observedGeneration, LWS has none — which is why the pre-cb0a201a code recomputed the target hash) | 1 | **RED at head** — revision regression (same contract: pass at `8f07c37e`, fail at `cb0a201a`). Harness-bites: proposed fix = require `lwsrevision.EqualRevision(highest persisted, recomputed current)` (the LWS controller's own update detection) — flips the contract green, keeps all 37 carried contracts + the full workloads package + the author's LWS tests (with production-faithful fixtures: persisted revisions carry label+Data written together via CreateRevision; the stock fixtures relabel without re-writing Data — an unreachable state that encodes the window as the asserted steady state) green. Control: the author's new upgrade test also passes on the PREVIOUS head's production code, so the production change was required by no author test | results/differential-r10.log; results/harness-bites-r10.log; results/proposed-fix-r10-rollout-status.go |
+| F6 (nit) | Reordered roleTemplates list must not read as drift | 1 | **FIXED at `d923c387`** — contract `TestVerifyPR474_NeedsUpdate_ReorderedRoleTemplates` RED at `8f07c37e`, GREEN at head | results/differential-r10.log |
+| C4498053235 (minor doc) | Stale partition godoc | code | **FIXED at `76df3fe3`** — godoc matches admission+clamp; CRD manifest verified truncated before the sentence | code read + CRD grep |
+| F17 (minor) | No committed upgrade-path test for the role-hash input change | 1 | **FIXED at `cb0a201a`** — TestRoleHashUpgradeConvergesWithoutChangingWorkloadTemplates (4 kinds × 2 annotations), envtest upgrade table (RIS instance+Pod chain preserved), TestGroupSetLegacyRevisionUpgradeConvergesOnce | results/author-envtest-r10.log; full workloads package ok |
+| F12 (canary) | One-time migration churn for intermediate-commit revisions | 1 | **Still present** (by design) — but now pinned as bounded: budget-held migration, old revision preserved, two revisions total, stable on repeat | TestGroupSetLegacyRevisionUpgradeConvergesOnce green at head |
+| Round-1–9 contracts (37 carried + 1 round-10) | Full regression sweep on the rebased head | 1+2 | **Green** — 37/37 unit contract lines PASS (the round-10 LWS contract is RED by design at head and is the open gate), envtest `PR #474` focused specs ok (27.7 s), full repo unit sweep 41 packages ok (exit 0), `-race` on `internal/controller/workloads` ok (23.6 s), author full rbgs_rolling envtest suite green (277.6 s); CI: all 22 checks pass at `cb0a201a` (live fetch 2026-11-13). The base move re-verified the affected contracts (admission, v1alpha1 conversion, revision utils, RIS) — no rebase regressions | results/reverify-r10-unit.log; results/reverify-r10-integration.log; results/full-unit-r10.log; results/race-r10.log; results/author-envtest-r10.log |
+
+Round-10 notes:
+- Open items carried unchanged: Q1, Q2 (still no author answer — last PR
+  comment is 2026-10-08), C4242488120, C4242488140, C4242488155, F7, F5,
+  F3-release-note, F18, F12, C4431272968, C4445152194, C4498053179.
+- New harness file:
+  `internal/controller/workloads/rolebasedgroupset_round10_verify_test.go`
+  (two contracts). Additive only; production code untouched on this branch.
+- Verdict: REQUEST_CHANGES (the round-10 blocker must be fixed before merge;
+  AC27 is the merge gate).
+
 ### Round 9 (head `8f07c37e`, base tip `73e05db4`, previous head `09aaa4d7` — the round-8 gate closed)
 
 The delta `09aaa4d7..8f07c37e` is a **single commit** (no rebase, base

@@ -1,0 +1,2 @@
+== race (internal/controller/workloads):
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	23.584s
