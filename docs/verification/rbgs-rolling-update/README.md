@@ -359,3 +359,46 @@ shapes + premise/non-mutation/real-change controls). Parentage is linear
   integration-8f07c37e.parsed): **28/28 FIXED, RESULT: all findings fixed**,
   exit 0. Author workloads+api unit sweep green at head. CI 22/22 SUCCESS on
   8f07c37e. L3 skipped per debate setup.
+
+## Round 10 — head cb0a201a (rebase onto c2896cc0 + three new commits)
+
+Delta `8f07c37e..cb0a201a`: the PR was rebased from 73e05db4 onto c2896cc0
+(upstream #528 status model, #538 selective scale-down, #548, #555, #556, #559;
+14 of 18 rebased commits are patch-id-identical, 4 are conflict resolutions —
+all verified coherent at head) and gained three new commits: `d923c387`
+(roleTemplates order-insensitive compare), `76df3fe3` (partition godoc fix),
+`cb0a201a` (upgrade-convergence tests + a production change to
+`leaderWorkerSetRolloutComplete`).
+
+- **R10LWSACK — NEW REGRESSION, RED at head** (results/reverify/r10-head-cb0a201a.log):
+  `TestVerify_R10_LWSCompletionAwaitsCurrentRevision`. cb0a201a changed the LWS
+  completion check (`rolebasedgroup_rollout_status.go:184-206`) to take the target
+  hash from the highest PERSISTED ControllerRevision instead of recomputing it from
+  the live LWS spec. In the window between the RBG controller applying a new
+  leaderWorkerTemplate (the object carries the new role-revision label immediately)
+  and the LWS controller persisting the matching revision, the highest persisted
+  revision still describes the OLD template and the stale-but-complete old
+  leader/pod/worker chain matches it: `roleWorkloadRolloutComplete` returns true,
+  `finalizeRolloutStatus` clears the barrier and acknowledges the outstanding
+  rollout-request token in the same reconcile that issued the change, and the set's
+  `groupSetChildReady` frees the availability budget before any pod has rolled.
+  GREEN at 8f07c37e (results/reverify/r10-prev-8f07c37e.log — the recompute-based
+  target could not match the old chain). Harness-bites: gating the persisted
+  revision on `EqualRevision(NewRevision(live), highest)` (data-currency check)
+  flips the test green while keeping the legacy-revisionKey adoption case working;
+  it breaks only two author fixtures whose persisted revision Data does not match
+  the live template they model (an object state no real LWS controller produces).
+  Production diff empty after the bites check.
+- **R10TPLORDER — GREEN at head, RED at 8f07c37e** (same logs): F6's
+  order-sensitivity half is FIXED by d923c387 (sorted copies + semantic compare;
+  no input mutation; real changes still detected). Regression guard.
+- 76df3fe3 verified: the set-level partition godoc no longer claims an upper
+  bound; `maxDescLen=200` in the Makefile truncates the CRD description before the
+  changed sentence, so no manifest regeneration is owed (checked config/crd and
+  deploy/kubectl/manifests.yaml at head).
+- Re-verify at cb0a201a (results/reverify/): all 28 carried contracts FIXED on the
+  rebased tree (unit + envtest integration layers); the graft compiles cleanly
+  against the rebased production code, so no carried harness needed an update.
+- The author's upgrade test (`TestRoleHashUpgradeConvergesWithoutChangingWorkloadTemplates`)
+  also passes against the PREVIOUS head's production code — the fixture does not
+  capture the legacy-revisionKey wedge the production change addresses.

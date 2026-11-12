@@ -1,0 +1,13 @@
+=== RUN   TestVerify_R10_LWSCompletionAwaitsCurrentRevision
+2026-11-13T04:10:37+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-12T20:10:37Z","message":"All target role workloads are updated and ready","observedGeneration":2,"reason":"AllRolesUpdated","status":"False","type":"RollingUpdateInProgress"}],"observedGeneration":0,"observedRolloutRequest":"2"}}}
+--- PASS: TestVerify_R10_LWSCompletionAwaitsCurrentRevision (0.05s)
+=== RUN   TestVerify_R10_NeedsUpdateRoleTemplateOrder
+    rolebasedgroupset_round10_verify_test.go:241: 
+        	Error Trace:	/tmp/r10-graft-8f07c37e/internal/controller/workloads/rolebasedgroupset_round10_verify_test.go:241
+        	Error:      	Should be false
+        	Test:       	TestVerify_R10_NeedsUpdateRoleTemplateOrder
+        	Messages:   	a reordered roleTemplates list must not read as drift (permanent write churn otherwise)
+--- FAIL: TestVerify_R10_NeedsUpdateRoleTemplateOrder (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.061s
+FAIL
