@@ -1,0 +1,41 @@
+apiserver up
+== install RBG CRDs from config/crd/bases
+== VC-1: crd-default-on-read.sh
+  creating defaultprobes.p8653e766cdefcfc5.rbg-conventions.example.com without defaults
+  error: .status.conditions accessor error: <nil> is of the type <nil>, expected []interface{}
+NOTE canary-vc1-wait-flake: F5 flake observed on the first attempt
+  (F5 flake hit; retrying for the contract check)
+  creating defaultprobes.p9a758217ed21b099.rbg-conventions.example.com without defaults
+  creating object 'before' with spec.parent set and spec.optionalParent unset
+  adding defaults: spec.parent.added=30 and spec.optionalParent.child=600
+  PASS A1: default applied on read where the parent exists
+  PASS A2: nothing materialized under an absent optional parent
+  PASS A3: object not rewritten (resourceVersion unchanged)
+  PASS A4: defaults inside a newly set optional struct apply
+PASS contract-vc1-default-on-read
+PASS contract-vc1-cleanup
+== fixtures lifecycle
+PASS contract-fixtures-apply
+PASS contract-fixtures-marker-label
+PASS contract-fixtures-reapply
+PASS contract-foreign-statedir-refused
+PASS contract-foreign-statedir-ns-intact
+PASS contract-foreign-namespace-refused
+== snapshot + compare on real objects
+PASS contract-compare-real-identical
+== v1alpha1-roundtrip.sh refuses strategy None
+  error: rolebasedgroups conversion strategy is 'None', not Webhook; refusing to write through v1alpha1
+PASS contract-roundtrip-refuses-none-live
+== controller cases (VC-2 restart, VC-4 label removal)
+  pods in itest: 11
+  PASS: nothing changed (302 records compared)
+PASS contract-vc2-restart-noop
+  removing rbg-conventions/remove-me from role server of itest/fx-standalone
+  PASS label removed from RoleInstanceSet fx-standalone-server
+  PASS single field manager rbg/Apply on the main resource
+PASS contract-vc4-label-removal
+== fixtures delete
+PASS contract-fixtures-delete-accepted
+PASS contract-delete-keeps-state-while-terminating
+
+ALL PASS

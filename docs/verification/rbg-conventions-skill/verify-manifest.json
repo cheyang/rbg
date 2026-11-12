@@ -1,0 +1,47 @@
+{
+  "topic": "rbg-conventions-skill",
+  "pr": "https://github.com/sgl-project/rbg/pull/568",
+  "reviewer": "codex",
+  "headSha": "9ff493817cc3b60387565b9f3d8a2799b4eeb1fe",
+  "baseSha": "7e377a06fe3845f38bf9fc1ce363198d632107e7",
+  "harnessPaths": [
+    "docs/verification/rbg-conventions-skill",
+    "test/envtest/testcase/deprecationv1a1/vc5_roundtrip_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Docs/tooling PR (carve-out). Its load-bearing empirical claims about main were verified instead: CRD defaults apply on read without a write (VC-1), a controller restart changes nothing (VC-2), role label removal propagates with a single rbg/Apply field manager (VC-4), and a no-op v1alpha1 round trip rewrites the stored v1alpha2 object including resetting baseDelaySeconds 10 -> 30 (VC-5).",
+    "reportedComponent": "docs + .agents/skills verification scripts",
+    "patchedComponent": "same",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "integration",
+    "verdict": "confirmed",
+    "evidence": "results/integration-apiserver.txt (VC-1 A1-A4, VC-2 302-record no-op restart, VC-4 single-manager), results/vc5-envtest.txt (3/3 canaries), results/citation-check.txt (39/39)",
+    "match": ["contract-vc1-default-on-read", "contract-vc2-restart-noop", "contract-vc4-label-removal"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "script",
+      "cmd": "bash docs/verification/rbg-conventions-skill/scripts/script-units.sh && bash .agents/skills/rbg-conventions/scripts/selftest.sh && bash docs/verification/rbg-conventions-skill/scripts/citation-check.sh"
+    },
+    "integration": {
+      "kind": "script",
+      "cmd": "go build -o /tmp/rbgs-reverify ./cmd/rbgs && bash docs/verification/rbg-conventions-skill/scripts/integration-apiserver.sh --with-controller /tmp/rbgs-reverify"
+    },
+    "envtest": {
+      "kind": "gotest",
+      "cmd": "KA=${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64}; KUBEBUILDER_ASSETS=$KA go test ./test/envtest/testcase/deprecationv1a1/ -run TestV1alpha1DeprecationContract -ginkgo.focus VC-5 -timeout 8m -json"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["contract-settle-timeout-quiet"] },
+    { "id": "F1-canary", "polarity": "canary", "layer": "unit", "match": ["canary-settle-timeout-prints-snapshot"] },
+    { "id": "F3", "polarity": "canary", "layer": "unit", "match": ["canary-removed-cr-unexplained"] },
+    { "id": "F4", "polarity": "contract", "layer": "unit", "match": ["contract-apply-lost-create-guides-cleanup"] },
+    { "id": "F4-canary", "polarity": "canary", "layer": "unit", "match": ["canary-apply-lost-create-bare-message"] },
+    { "id": "F5", "polarity": "contract", "layer": "integration", "match": ["contract-vc1-default-on-read"], "note": "F5 is the wait-flake robustness gap; the contract maps to VC-1 passing (the harness retries once after the documented flake). Deterministic reproduction: results/f5-wait-flake.txt (2/3 failures right after CRD churn)." },
+    { "id": "VC5-canaries", "polarity": "canary", "layer": "envtest", "match": ["TestV1alpha1DeprecationContract"], "note": "Documents the pre-existing v1alpha1 round-trip loss the PR describes; flips red if conversion ever becomes lossless." }
+  ],
+  "liveNote": "No live/cluster layer was run (per debate round policy). The PR author's own cluster results (Kubernetes 1.37) are in the PR body section IV."
+}

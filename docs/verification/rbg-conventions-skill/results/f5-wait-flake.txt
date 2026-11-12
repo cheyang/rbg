@@ -1,0 +1,9 @@
+round 1 rc=1
+error: .status.conditions accessor error: <nil> is of the type <nil>, expected []interface{}
+round 2 rc=1
+error: .status.conditions accessor error: <nil> is of the type <nil>, expected []interface{}
+round 3 rc=0
+PASS A1: default applied on read where the parent exists
+PASS A2: nothing materialized under an absent optional parent
+PASS A3: object not rewritten (resourceVersion unchanged)
+PASS A4: defaults inside a newly set optional struct apply

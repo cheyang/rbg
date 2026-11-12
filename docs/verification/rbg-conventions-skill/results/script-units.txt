@@ -1,0 +1,34 @@
+== kc: retry budget
+PASS contract-kc-retry-budget
+PASS contract-kc-wait-is-read
+== delete_with_uid: transient get after a lost delete
+PASS contract-delete-unknown-no-blind-retry
+== require_owned_namespace
+PASS contract-owner-no-record
+PASS contract-owner-tampered-refused
+PASS contract-owner-match-accepted
+== state_file is per-cluster
+PASS contract-state-file-per-cluster
+== rbg-snapshot.sh: rendering
+PASS contract-snapshot-rendering
+PASS contract-snapshot-deterministic
+== rbg-snapshot.sh: settle timeout (F1)
+FAIL contract-settle-timeout-quiet: rc=3, stdout 1 header line(s) (want rc=3 and no snapshot on stdout)
+PASS canary-settle-timeout-prints-snapshot
+== rbg-compare.sh
+PASS contract-compare-hints
+PASS canary-removed-cr-unexplained
+PASS contract-compare-refuses-empty
+PASS contract-compare-refuses-no-rbg
+== rbg-fixtures.sh apply: lost create response (F4)
+FAIL contract-apply-lost-create-guides-cleanup: rc=2, stderr='Post "https://192.0.2.1:6443/api/v1/namespaces": http2: client connection lost
+error: cannot create namespace orphan'
+PASS canary-apply-lost-create-bare-message
+== v1alpha1-roundtrip.sh: guards
+PASS contract-roundtrip-requires-ownership
+PASS contract-roundtrip-refuses-none
+PASS contract-roundtrip-conflict-not-retried
+== fixtures image substitution
+PASS contract-fixture-image-substitution
+
+SOME CHECKS FAILED

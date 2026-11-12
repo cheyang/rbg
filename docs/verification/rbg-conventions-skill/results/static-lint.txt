@@ -1,0 +1,11 @@
+$ npx --yes markdownlint-cli2@0.18.1 --config .github/.markdownlint.json ".agents/skills/rbg-conventions/**/*.md" AGENTS.md
+markdownlint-cli2 v0.18.1 (markdownlint v0.38.0)
+Finding: .agents/skills/rbg-conventions/**/*.md AGENTS.md
+Linting: 8 file(s)
+Summary: 0 error(s)
+
+$ npx --yes autocorrect-node@2 --lint AGENTS.md
+[32m.[39m
+No issues found.
+AutoCorrect spend time: [90m3.42ms[39m
+
