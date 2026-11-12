@@ -1,4 +1,4 @@
-== Round-4 contracts on /tmp/tmp.04MPrB884T/pr546-reverify ==
+== Round-4 contracts on /tmp/tmp.3sPP1YJ9tD/pr546-reverify ==
 FAIL  F-OLDNEW-COEXIST [EN] (required MISSING: The new protocol coexists with the legacy RoleInstanceSet lifecycle protocol, but the two are mutually exclusive on the same RIS)
 FAIL  F-OLDNEW-COEXIST [EN] (required MISSING: An admission webhook must reject a Role/RIS combination in which the new Role-level lifecycle and a legacy user-configured RIS lifecycle are both non-empty)
 PASS  F-OLDNEW-COEXIST [EN] (required present: the legacy protocol is executed by the RIS controller, while the new protocol is executed by the RI controller)
