@@ -1,0 +1,21 @@
+>> fetching current head of PR #572
+From https://github.com/sgl-project/rbg
+ * branch              refs/pull/572/head -> FETCH_HEAD
+>> ref under test: FETCH_HEAD (95ddf06a88747bf2180a67a36e299dbe459e8627)
+Preparing worktree (detached HEAD 95ddf06a)
+HEAD is now at 95ddf06a fix(lint): drop duplicate constants import and fix goimports grouping
+>> L1 unit: contract tests
+>> L1 unit: full package suites (regression guard)
+   package suite failed: ./pkg/reconciler/roleinstance/
+   package suite failed: ./pkg/reconciler/roleinstanceset/
+   package suite failed: ./internal/controller/workloads/
+>> L2 integration: envtest (needs KUBEBUILDER_ASSETS)
+   skipped (KUBEBUILDER_ASSETS not set)
+
+== per-finding verdicts ==
+  F1-ris-recovery-scaling-flap: still-broken
+  F2-ris-invalidspec-not-propagated: still-broken
+  F3-mixed-backend-stale-progressing: still-broken
+  F4-ri-blocker-append-order: still-broken
+F5/F6 are code-path findings without contract tests — re-check by inspection.
+SOME FINDINGS STILL BROKEN

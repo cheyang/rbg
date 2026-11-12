@@ -1,0 +1,10 @@
+# F2 — RBG aggregates RIS InvalidSpec as configuration blocker (contract test, FAILS on PR head = reproduced)
+# F3 — mixed-backend stale Progressing cleanup (contract test, FAILS on PR head = reproduced)
+--- FAIL: TestRBGAggregatesRISInvalidSpecAsConfigurationBlocker (0.00s)
+    rolebasedgroup_progressing_contractverify_test.go:63: reason = "RoleInstanceSetUpdated" is not a blocker-family reason: a child RoleInstanceSet stuck on an invalid spec is a needs-attention blocker, not an activity. KEP-502 ranks the configuration family first; the consumer decision table treats a non-blocker True reason as "still progressing, no attention needed"
+2026-11-13T06:53:03+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"mixed-rbg","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-12T22:53:03Z","message":"converged at generation 1","observedGeneration":1,"reason":"Converged","status":"False","type":"Progressing"},{"lastTransitionTime":"2026-11-12T22:53:03Z","message":"All roles are ready","observedGeneration":2,"reason":"AllRolesReady","status":"True","type":"Ready"}],"observedGeneration":2,"roleStatuses":[{"name":"prefill","readyReplicas":2,"replicas":2,"updatedReplicas":2},{"name":"decode","readyReplicas":2,"replicas":2,"updatedReplicas":2}]}}}
+--- FAIL: TestMixedBackendRBGCleansUpProgressing (0.04s)
+    rolebasedgroup_progressing_contractverify_test.go:125: stale controller-owned Progressing condition (reason="Converged", observedGeneration=1) survived the transition to a mixed-backend RBG: updateRBGStatus neither recomputes nor removes it, so consumers read a frozen verdict forever
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.055s
+FAIL

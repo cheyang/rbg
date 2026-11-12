@@ -1,0 +1,134 @@
+{
+  "topic": "kep502-status",
+  "pr": "https://github.com/sgl-project/rbg/pull/572",
+  "reviewer": "claude",
+  "headSha": "95ddf06a88747bf2180a67a36e299dbe459e8627",
+  "baseSha": "ea5e82ae59169e0e954fb1c7068f9480fb4b7375",
+  "mergeBase": "c2896cc0d9ccb8b72de0dda4838f52d8807c9ff1",
+  "premise": {
+    "id": "P0",
+    "claim": "The base status model cannot distinguish progress from blockers: RBG/RIS/RI controllers write no Progressing condition, RI has no persisted phase, and transient operation failures are recorded as lasting FailedScale/FailedUpdate facts (KEP-502 motivation).",
+    "runsAgainst": "base",
+    "verdict": "Confirmed",
+    "evidence": "git grep on c2896cc0: RoleBasedGroupProgressing declared in api but never written by controllers; RoleInstanceSet/RoleInstance FailedScale/FailedUpdate written from 10 call sites; no RoleInstance status.phase field. See results/premise-and-suite.txt."
+  },
+  "findings": [
+    {
+      "id": "F1-ris-recovery-scaling-flap",
+      "title": "Established RIS missing-instance classification flaps Recovering to ScalingUp after one reconcile",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "95ddf06a88747bf2180a67a36e299dbe459e8627",
+      "evidenceKind": "differential",
+      "claim": "Under an established set with a still-missing required RoleInstance (recreation deferred), the RIS Progressing reason should be Recovering on every reconcile, but is ScalingUp from the second reconcile on.",
+      "tests": [
+        {
+          "file": "pkg/reconciler/roleinstanceset/progressing_contractverify_test.go",
+          "name": "TestEstablishedSetMissingInstanceStaysRecovering",
+          "polarity": "contract",
+          "layer": "unit"
+        },
+        {
+          "file": "pkg/reconciler/roleinstanceset/progressing_contractverify_test.go",
+          "name": "TestScaleUpAfterConvergenceStillReportsScalingUp",
+          "polarity": "contract",
+          "layer": "unit",
+          "note": "control case guarding the fix: genuine target growth must stay ScalingUp"
+        }
+      ],
+      "proposedFix": "establishedInstanceMissing should treat a persisted live Progressing reason of Recovering as durable prior-workflow evidence (mirroring the RBG layer's persisted-counter evidence), not only set.Status.Replicas >= target, which holds for exactly one reconcile."
+    },
+    {
+      "id": "F2-ris-invalidspec-not-propagated",
+      "title": "RBG does not propagate the RIS-level InvalidSpec blocker; reports a benign activity reason instead",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "95ddf06a88747bf2180a67a36e299dbe459e8627",
+      "evidenceKind": "differential",
+      "claim": "A child RIS blocked by invalid committed ordinals reports Progressing=True(InvalidSpec); the RBG aggregation should surface a configuration-family blocker (needs attention), but reports RoleInstanceSetUpdated (activity).",
+      "tests": [
+        {
+          "file": "internal/controller/workloads/rolebasedgroup_progressing_contractverify_test.go",
+          "name": "TestRBGAggregatesRISInvalidSpecAsConfigurationBlocker",
+          "polarity": "contract",
+          "layer": "unit"
+        }
+      ],
+      "proposedFix": "Map ProgressingReasonInvalidSpec in risReasonToRBG and include it in rbgCurrentBlocker's byFamily collection (configuration family already ranks first), or compute the equivalent fact at RBG preflight."
+    },
+    {
+      "id": "F3-mixed-backend-stale-progressing",
+      "title": "Mixed-backend RBG keeps a stale controller-owned Progressing condition forever",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "95ddf06a88747bf2180a67a36e299dbe459e8627",
+      "evidenceKind": "differential",
+      "claim": "When a role switches from RoleInstanceSet to a legacy backend, KEP-502 requires cleanup of controller-owned new-model output; updateRBGProgressingCondition returns nil and the stale Progressing condition is re-applied by the SSA patch indefinitely.",
+      "tests": [
+        {
+          "file": "internal/controller/workloads/rolebasedgroup_progressing_contractverify_test.go",
+          "name": "TestMixedBackendRBGCleansUpProgressing",
+          "polarity": "contract",
+          "layer": "unit"
+        }
+      ],
+      "proposedFix": "In updateRBGProgressingCondition, RemoveStatusCondition(RoleBasedGroupProgressing) when !allRolesUseRoleInstanceSet, preserving external conditions."
+    },
+    {
+      "id": "F4-ri-blocker-append-order",
+      "title": "RI layer keeps the first-appended blocker instead of competing through family precedence",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "95ddf06a88747bf2180a67a36e299dbe459e8627",
+      "evidenceKind": "differential",
+      "claim": "When Scale and Update both fail in one reconcile, the finalized RI Progressing reason is the scale error regardless of family priority, dropping a higher-priority family (e.g. permission) that the RIS layer would have kept.",
+      "tests": [
+        {
+          "file": "pkg/reconciler/roleinstance/progressing_contractverify_test.go",
+          "name": "TestInstanceBlockerSelectionFollowsFamilyPriority",
+          "polarity": "contract",
+          "layer": "unit"
+        }
+      ],
+      "proposedFix": "Make instanceProgressingBlocker select by documented family priority (permission > admission > quota > resources > unclassified), as extractOwnSetBlocker does at the RIS layer."
+    },
+    {
+      "id": "F5-ris-observation-failure-skips-write",
+      "title": "RIS/stateful read failures skip the status write instead of reporting Unknown(ObservationIncomplete)",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "95ddf06a88747bf2180a67a36e299dbe459e8627",
+      "evidenceKind": "code-path",
+      "claim": "ListRevisions / getInstanceSetRevisions failures in the stateful path return before ApplySetProgressingCondition and before any status write, so observedGeneration is not recorded on preflight failure; the RBG layer does write Unknown in the equivalent case.",
+      "tests": [],
+      "proposedFix": "Report Progressing=Unknown(reason=ObservationIncomplete) with observedGeneration when the RIS preflight fails, mirroring updateRBGProgressingCondition's readErr branch."
+    },
+    {
+      "id": "F6-ri-phase-lags-one-reconcile",
+      "title": "RI phase exits Creating/Updating one reconcile late",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "95ddf06a88747bf2180a67a36e299dbe459e8627",
+      "evidenceKind": "code-path",
+      "claim": "newStatus.Phase is computed from the pre-calculateStatus revision values (CurrentRevision not yet advanced), so the Running transition lands on the following reconcile. Cosmetic latency only.",
+      "tests": [],
+      "proposedFix": "Compute the phase after calculateStatus advances CurrentRevision, or derive updateActive from the about-to-be-written revision equality."
+    }
+  ],
+  "layers": {
+    "unit": "go test on the three touched packages (contract tests fail on head by design)",
+    "integration": "KUBEBUILDER_ASSETS=<envtest-assets> go test ./test/envtest/testcase/rbg/ ./test/envtest/testcase/stateful/",
+    "live": "skipped per review instructions (no KUBECONFIG)"
+  },
+  "liveNote": "L3 skipped. If run later: on a real cluster, delete one RoleInstance of an established set with PodManagementPolicy=OrderedReady and an unhealthy predecessor, then observe RIS Progressing flipping Recovering -> ScalingUp across reconciles.",
+  "harnessBites": {
+    "method": "Each proposed fix was applied temporarily to the production code, its contract test flipped to PASS with the package suite still green, then the fix was reverted (production diff empty on the branch).",
+    "verified": ["F1-ris-recovery-scaling-flap", "F2-ris-invalidspec-not-propagated", "F3-mixed-backend-stale-progressing", "F4-ri-blocker-append-order"]
+  }
+}

@@ -1,0 +1,21 @@
+# Premise (P0) check — base branch c2896cc0
+
+$ git grep -n 'RoleInstanceSetProgressing|RoleInstanceProgressing|Status.Phase' c2896cc0 -- api/ pkg/ internal/ | grep -v v1alpha1 | grep -v 'RoleBasedGroupProgressing' (controller writes)
+→ no controller writes any Progressing condition on base; RoleBasedGroupProgressing is a declared-but-unwritten type (KEP motivation).
+
+$ git grep -c 'RoleInstanceFailedScale|RoleInstanceSetConditionFailedScale' c2896cc0 -- pkg/ internal/
+c2896cc0:internal/controller/workloads/roleinstanceset_controller.go:2
+c2896cc0:internal/controller/workloads/selective_membership_test.go:2
+c2896cc0:pkg/reconciler/roleinstance/instance_reconciler.go:1
+c2896cc0:pkg/reconciler/roleinstance/instance_status.go:2
+c2896cc0:pkg/reconciler/roleinstance/instance_status_conditions_test.go:2
+c2896cc0:pkg/reconciler/roleinstanceset/statelessmode/reconciler.go:1
+
+$ go build ./... on PR head 95ddf06a
+→ BUILD_OK
+
+$ go test ./pkg/reconciler/roleinstance/... ./pkg/reconciler/roleinstanceset/... ./internal/controller/workloads/... ./api/... on PR head (harness reverted)
+→ all ok except the 4 reproduction contract tests (expected)
+
+$ KUBEBUILDER_ASSETS=... go test ./test/envtest/testcase/rbg/ ./test/envtest/testcase/stateful/ on PR head
+→ ok  101.5s / 42.1s

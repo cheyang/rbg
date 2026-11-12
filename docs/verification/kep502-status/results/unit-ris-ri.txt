@@ -1,0 +1,13 @@
+# F1 — RIS missing-instance classification flap (contract test, FAILS on PR head = reproduced)
+--- FAIL: TestEstablishedSetMissingInstanceStaysRecovering (0.00s)
+    progressing_contractverify_test.go:91: reconcile 2: reason = "ScalingUp", want "Recovering" — the target did not grow, so a still-missing instance of an established set must remain Recovering, not be reported as ScalingUp
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset	0.011s
+FAIL
+
+# F4 — RI dual-blocker family precedence (contract test, FAILS on PR head = reproduced)
+--- FAIL: TestInstanceBlockerSelectionFollowsFamilyPriority (0.00s)
+    progressing_contractverify_test.go:67: reason = "PodCreateQuotaExceeded", want "PodUpdateForbidden": the permission family outranks the quota family in the KEP-502 blocker precedence, so the finalized condition must not keep the first-appended (scale) reason and drop the higher-priority family
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.015s
+FAIL
