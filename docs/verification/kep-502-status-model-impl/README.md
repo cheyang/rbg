@@ -17,12 +17,14 @@ This is a feature PR: the contract under test is the KEP itself (`keps/502-workl
 | F1 | RIS `establishedInstanceMissing` requires `set.Status.Replicas >= target`, so once the reduced replica count is persisted, an established set missing an instance flips from `Recovering` to `ScalingUp` for the rest of the recovery window | contract | unit | `TestVerifyF1PersistedLossMisclassifiedAsScalingUp` FAILS: reason=`ScalingUp` | KEP: "missing instances of an established set classify as `Recovering`"; test plan: "fault recovery must not be misclassified as scaling" | **Confirmed** |
 | F2 | `reportRBGProgressingBlocker` retains a previously confirmed current-generation blocker family across unclassifiable errors (KEP retention rule) | contract | unit (fake client) | `TestVerifyF2RetentionLostAfterProgressingRecompute`: after step-4's `updateRBGProgressingCondition` rewrites the in-memory condition, retention sees nothing; persisted reason becomes `UnclassifiedBlocker` | confirmed family (`WaitingForQuota`) retained until a fresh successful observation | **Confirmed** |
 | F3 | `classifyGangIncompatibility` string-matches "not support"/"unsupported" and would classify the subGroupPolicy-backend config error (`pkg/scheduler/volcano/scheduler.go` "is not supported for role ... backed by workload type") as `SchedulerUnsupported` instead of `IncompatibleGangConfig` | contract | unit | FAILS on that message; control (genuine capability gap) passes | config-family split per KEP reason taxonomy | **Confirmed, but unreachable today**: all-RIS RBGs can't produce that message (`emitsRoleInstanceLabel` is true for RIS roles) and mixed-backend RBGs skip the report. Kept as a fragility nit: classification by message substring where a typed error exists |
+| F5 | KEP upgrade table: "The current phase cannot be confirmed -> Leave phase absent; do not default to initial creation or Running" | contract | unit | `TestVerifyF5UnconfirmableLegacyInstanceStaysAbsent` FAILS: legacy instance with persisted status, no readiness latch, and missing Pods initializes `Creating` | phase stays absent until facts confirm a workflow | **Confirmed** (severity minor: reporting-only, affects legacy instances that never latched readiness) |
 | F4 | KEP upgrade/downgrade: "When an RBG no longer uses RIS for all roles, clean up controller-owned new-model output" | contract | unit | `TestVerifyF4StaleProgressingConditionRemovedWhenNoLongerAllRIS` FAILS: stale `Progressing` condition survives the transition to a mixed-backend RBG | controller-owned `Progressing` removed on the transition | **Confirmed** (severity minor: reachable only via role backend annotation edits) |
 
 Harness-bites checks (fix applied temporarily, then reverted; production diff empty afterwards):
 
 - F1: holding the persisted current-generation `Recovering` reason in `establishedInstanceMissing` flips the contract test green; all 17 subtests of the PR's own `TestComputeSetProgressingCondition` still pass.
 - F2: snapshotting the persisted `Progressing` condition before the step-4 rewrite and retaining from the snapshot flips the contract test green; the full `internal/controller/workloads` package still passes.
+- F5: threading a `legacyStatus` fact (persisted status exists) into `nextRoleInstancePhase` flips the contract test green while keeping the genuinely-new control and the PR's own `TestNextRoleInstancePhase` green.
 - F4: `apimeta.RemoveStatusCondition` on the non-all-RIS early return flips the contract test green; PR-owned RBG progressing tests still pass.
 
 Baseline on head: every PR-owned unit test passes, and both envtest packages the PR touched
@@ -33,6 +35,7 @@ pass (`test/envtest/testcase/stateful`, `test/envtest/testcase/rbg` — see `res
 - `pkg/reconciler/roleinstanceset/progressing_verify_test.go` — F1 (+controls).
 - `internal/controller/workloads/progressing_retention_verify_test.go` — F2 (+control).
 - `internal/controller/workloads/gang_classify_verify_test.go` — F3, F4 (+controls).
+- `pkg/reconciler/roleinstance/phase_init_verify_test.go` — F5 (+control).
 - `results/` — captured outputs.
 
 ## Re-running
@@ -40,12 +43,13 @@ pass (`test/envtest/testcase/stateful`, `test/envtest/testcase/rbg` — see `res
 ```bash
 go test ./pkg/reconciler/roleinstanceset/ -run 'TestVerifyF1' -v
 go test ./internal/controller/workloads/ -run 'TestVerifyF2|TestVerifyF3|TestVerifyF4' -v
+go test ./pkg/reconciler/roleinstance/ -run 'TestVerifyF5' -v
 ```
 
 or `bash docs/verification/kep-502-status-model-impl/scripts/re-verify.sh` from this branch.
 
 ## Continuing after a fix
 
-All four findings are contract tests: they FAIL on the reviewed head and must PASS when fixed
+All five findings are contract tests: they FAIL on the reviewed head and must PASS when fixed
 (no canaries to invert). `scripts/re-verify.sh` fetches the current PR head, grafts this
 harness onto it, and reports Fixed / Still-broken per finding.

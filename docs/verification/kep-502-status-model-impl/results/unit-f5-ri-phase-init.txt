@@ -1,0 +1,8 @@
+=== RUN   TestVerifyF5UnconfirmableLegacyInstanceStaysAbsent
+    phase_init_verify_test.go:65: F5 REPRODUCED: unconfirmable legacy instance initialized to phase "Creating", want absent per KEP-502 upgrade table
+--- FAIL: TestVerifyF5UnconfirmableLegacyInstanceStaysAbsent (0.00s)
+=== RUN   TestVerifyF5ControlNewInstanceStartsCreating
+--- PASS: TestVerifyF5ControlNewInstanceStartsCreating (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.012s
+FAIL
