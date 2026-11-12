@@ -1,0 +1,7 @@
+--- FAIL: TestChartRendersNoV1alpha1DeprecationWebhooks (0.02s)
+    webhook_manifests_test.go:212: ValidatingWebhookConfiguration renders v1alpha1 webhook entry "vv1alpha1-warning-deprecation.kb.io" (path /validate-workloads-v1alpha1-deprecation): the v1alpha1 deprecation handlers were removed at the source (#556), so a rendered entry calls an unserved path
+    webhook_manifests_test.go:212: ValidatingWebhookConfiguration renders v1alpha1 webhook entry "vrolebasedgroup-v1alpha1-deprecation.kb.io" (path /validate-workloads-x-k8s-io-v1alpha1-rolebasedgroup): the v1alpha1 deprecation handlers were removed at the source (#556), so a rendered entry calls an unserved path
+    webhook_manifests_test.go:212: ValidatingWebhookConfiguration renders v1alpha1 webhook entry "vrolebasedgroupset-v1alpha1-deprecation.kb.io" (path /validate-workloads-x-k8s-io-v1alpha1-rolebasedgroupset): the v1alpha1 deprecation handlers were removed at the source (#556), so a rendered entry calls an unserved path
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/chart	0.053s
+FAIL

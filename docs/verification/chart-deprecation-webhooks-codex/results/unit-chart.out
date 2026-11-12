@@ -1,0 +1,20 @@
+=== RUN   TestManagerFlagReflectsToggle
+--- PASS: TestManagerFlagReflectsToggle (0.08s)
+=== RUN   TestClusterRoleGrantsReflectToggle
+--- PASS: TestClusterRoleGrantsReflectToggle (0.08s)
+=== RUN   TestToggleDeltaIsScopedToDeprecatedRBACAndFlag
+--- PASS: TestToggleDeltaIsScopedToDeprecatedRBACAndFlag (0.05s)
+=== RUN   TestInventoryCommandV1alpha1DirectWorkload
+--- PASS: TestInventoryCommandV1alpha1DirectWorkload (0.00s)
+=== RUN   TestInventoryCommandV1alpha1RBGSetTemplateRoles
+--- PASS: TestInventoryCommandV1alpha1RBGSetTemplateRoles (0.00s)
+=== RUN   TestInventoryCommandV1alpha2AnnotationShapes
+--- PASS: TestInventoryCommandV1alpha2AnnotationShapes (0.00s)
+=== RUN   TestInventoryCommandEdgeCases
+--- PASS: TestInventoryCommandEdgeCases (0.00s)
+=== RUN   TestChartRendersNoV1alpha1DeprecationWebhooks
+--- PASS: TestChartRendersNoV1alpha1DeprecationWebhooks (0.02s)
+=== RUN   TestChartWebhookConfigurationsMatchShippedManifests
+--- PASS: TestChartWebhookConfigurationsMatchShippedManifests (0.03s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/chart	0.282s

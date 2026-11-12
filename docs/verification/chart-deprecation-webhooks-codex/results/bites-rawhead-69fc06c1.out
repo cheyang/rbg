@@ -1,0 +1,5 @@
+--- FAIL: TestChartWebhookConfigurationsMatchShippedManifests (0.03s)
+    webhook_manifests_test.go:229: ValidatingWebhookConfiguration: shipped config has 9 entries, chart renders 3 (missing in chart: [vclusterengineruntimeprofile-v1alpha1-deprecation.kb.io vinstance-v1alpha1-deprecation.kb.io vinstanceset-v1alpha1-deprecation.kb.io vrolebasedgroup-v1alpha1-deprecation.kb.io vrolebasedgroupscalingadapter-v1alpha1-deprecation.kb.io vrolebasedgroupset-v1alpha1-deprecation.kb.io]; extra in chart: [])
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/chart	0.054s
+FAIL

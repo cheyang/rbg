@@ -1,0 +1,9 @@
+default image pin: v0.9.0-73e05db4 (commit 73e05db4213950a5dd1f230279e9344a4ffe8435)
+NAME                                       PATH                                                       POLICY  SERVED-BY-PIN
+mrolebasedgroup.kb.io                      /mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroup         Fail    yes
+mroleinstanceset.kb.io                     /mutate-workloads-x-k8s-io-v1alpha2-roleinstanceset        Fail    yes
+mrolebasedgroupset.kb.io                   /mutate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset      Fail    yes
+vrolebasedgroup.kb.io                      /validate-workloads-x-k8s-io-v1alpha2-rolebasedgroup       Fail    yes
+vrolebasedgroupset.kb.io                   /validate-workloads-x-k8s-io-v1alpha2-rolebasedgroupset    Fail    yes
+vcoordinatedpolicy.kb.io                   /validate-workloads-x-k8s-io-v1alpha2-coordinatedpolicy    Fail    yes
+RESULT: GREEN - every Fail-policy path the chart renders is served by the pinned image

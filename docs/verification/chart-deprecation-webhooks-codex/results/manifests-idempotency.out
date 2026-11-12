@@ -1,0 +1,7 @@
+/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/bin/controller-gen crd:allowDangerousTypes=true,crdVersions=v1,generateEmbeddedObjectMeta=true,ignoreUnexportedFields=true,maxDescLen=200 rbac:roleName=controller-role webhook paths="./..." output:crd:artifacts:config=config/crd/bases output:rbac:artifacts:config=config/rbac
+
+NOTE: config/rbac/role.yaml has been regenerated.
+go run ./hack/gen-helm-rbac
+gen-helm-rbac: wrote deploy/helm/rbgs/templates/rbac/clusterrole.yaml from config/rbac/role.yaml
+
+/home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/bin/kustomize build config/default > deploy/kubectl/manifests.yaml
