@@ -39,7 +39,11 @@ type Interface interface {
 	ClearRestarting(instance *workloadsv1alpha2.RoleInstance)
 }
 
-// restartingCache tracks instances currently undergoing restart-policy recreation.
+// restartingCache tracks in-progress restart-policy recreation waves. The value is
+// the set of pre-restart Pod identities: while any of them is still present, the
+// deletion triggers they produce belong to the same wave instead of starting a new
+// recreation (#563). Once all of them are gone the wave is complete and the marker
+// is removed, even if the replacement generation has not become Ready yet.
 // This in-memory cache provides immediate visibility that doesn't depend on the
 // informer cache catching up with the latest status write.
 var restartingCache sync.Map

@@ -1626,9 +1626,9 @@ func TestShouldRecreateInstance(t *testing.T) {
 	}
 }
 
-// TestRestartingCachePreventsRecreation tests that the in-memory restarting cache
-// prevents shouldRecreateInstanceGuarded from triggering when the instance is already restarting.
-func TestRestartingCachePreventsRecreation(t *testing.T) {
+// TestRestartWaveGuardScopesCascadingRecreation tests that the restart wave marker
+// blocks recreation only while the pre-restart Pods are still being deleted.
+func TestRestartWaveGuardScopesCascadingRecreation(t *testing.T) {
 	instance := &workloadsv1alpha2.RoleInstance{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:       "test-instance",
@@ -1642,17 +1642,21 @@ func TestRestartingCachePreventsRecreation(t *testing.T) {
 			},
 		},
 		Status: workloadsv1alpha2.RoleInstanceStatus{
-			ObservedGeneration: 1,
+			ObservedGeneration:  1,
+			LastReadyGeneration: 1,
+			// The instance is NOT Ready: the rebuilt generation has not become
+			// Ready yet, which is the #563 scenario the guard must tolerate.
 			Conditions: []workloadsv1alpha2.RoleInstanceCondition{
 				{
 					Type:   workloadsv1alpha2.RoleInstanceReady,
-					Status: corev1.ConditionTrue,
+					Status: corev1.ConditionFalse,
 				},
 			},
 		},
 	}
 	pods := []*corev1.Pod{
 		{
+			ObjectMeta: metav1.ObjectMeta{Name: "test-instance-0", UID: "old-pod-uid"},
 			Status: corev1.PodStatus{
 				Phase: corev1.PodRunning,
 				ContainerStatuses: []corev1.ContainerStatus{
@@ -1665,14 +1669,23 @@ func TestRestartingCachePreventsRecreation(t *testing.T) {
 	// Without cache: shouldRecreateInstance returns true
 	assert.True(t, shouldRecreateInstance(instance, pods, nil))
 
-	// Set the in-memory cache to mark instance as restarting
-	restartingCache.Store(instanceKey(instance), true)
+	// A wave is in progress and the pre-restart Pod is still present: the
+	// deletion trigger it produces must not start another wave.
+	rememberRestartWave(instance, pods)
 	defer restartingCache.Delete(instanceKey(instance))
 
 	// The guarded version with a nil apiReader (cache hit means no API call needed)
 	ctrl := &realControl{}
-	result := ctrl.shouldRecreateInstanceGuarded(context.Background(), instance, pods, nil)
-	assert.False(t, result, "should not recreate when instance is in restarting cache")
+	result := ctrl.shouldRecreateInstanceGuarded(context.Background(), instance, pods, nil, nil)
+	assert.False(t, result, "should not recreate while the pre-restart Pod is still present")
+
+	// The pre-restart Pod is gone and only a replacement Pod (new UID, same name)
+	// remains: the wave is complete and a new failure must be allowed to recreate
+	// again, even though the instance is not Ready (#563).
+	replacement := pods[0].DeepCopy()
+	replacement.UID = "new-pod-uid"
+	result = ctrl.shouldRecreateInstanceGuarded(context.Background(), instance, []*corev1.Pod{replacement}, nil, nil)
+	assert.True(t, result, "should recreate again once the restart wave completed")
 }
 
 // TestIsInstanceRestarting tests the isInstanceRestarting helper function
@@ -1772,14 +1785,117 @@ func TestClearRestartingPreventsStaleBlock(t *testing.T) {
 		ObjectMeta: metav1.ObjectMeta{Namespace: "default", Name: "test-instance"},
 	}
 	ctrl := &realControl{}
+	oldPod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod-0", UID: "old-uid"}}
+	t.Cleanup(func() { restartingCache.Delete(instanceKey(instance)) })
 
-	// Simulate restart trigger then deletion cleanup
+	// Simulate a restart trigger (wave marker + Restarting=True), then the
+	// Ready/deletion cleanup path.
+	rememberRestartWave(instance, []*corev1.Pod{oldPod})
 	setRestartingCondition(instance)
 	ctrl.ClearRestarting(instance)
+	completeRestartingCondition(instance)
 
-	// With nil apiReader, isAlreadyRestarting should return false
-	assert.False(t, ctrl.isAlreadyRestarting(context.Background(), instance),
-		"should not be restarting after cache cleared")
+	// With nil apiReader and a completed wave, isAlreadyRestarting should return false
+	assert.False(t, ctrl.isAlreadyRestarting(context.Background(), instance, []*corev1.Pod{oldPod}, nil),
+		"should not be restarting after the cache entry was cleared")
+}
+
+// TestReleaseCompletedRestartWave verifies that the wave guard is released as soon
+// as every pre-restart Pod is gone, flipping Restarting to False (RestartCompleted)
+// so the same reconcile observes a completed wave in both backoff and recreation
+// decisions.
+func TestReleaseCompletedRestartWave(t *testing.T) {
+	instance := &workloadsv1alpha2.RoleInstance{
+		ObjectMeta: metav1.ObjectMeta{Namespace: "default", Name: "test-instance"},
+		Status: workloadsv1alpha2.RoleInstanceStatus{
+			LastRestartTime: ptr.To(metav1.NewTime(time.Now().Add(-5 * time.Second))),
+			RestartCount:    1,
+			Conditions: []workloadsv1alpha2.RoleInstanceCondition{
+				{Type: workloadsv1alpha2.RoleInstanceRestarting, Status: corev1.ConditionTrue},
+			},
+		},
+	}
+	oldPod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod-0", UID: "old-uid"}}
+	newPod := &corev1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "pod-0", UID: "new-uid"}}
+	ctrl := &realControl{}
+	t.Cleanup(func() { restartingCache.Delete(instanceKey(instance)) })
+
+	// Wave still in progress: the pre-restart Pod is present.
+	rememberRestartWave(instance, []*corev1.Pod{oldPod})
+	ctrl.releaseCompletedRestartWave(instance, nil, []*corev1.Pod{oldPod})
+	_, ok := restartingCache.Load(instanceKey(instance))
+	assert.True(t, ok, "wave marker must remain while a pre-restart Pod is present")
+	assert.True(t, isInstanceRestarting(instance), "Restarting must remain True while the wave is active")
+
+	// Wave complete: only the replacement Pod is present.
+	fresh := instance.DeepCopy()
+	ctrl.releaseCompletedRestartWave(instance, fresh, []*corev1.Pod{newPod})
+	_, ok = restartingCache.Load(instanceKey(instance))
+	assert.False(t, ok, "wave marker must be removed once every pre-restart Pod is gone")
+	assert.False(t, isInstanceRestarting(instance), "Restarting must flip to False on completion")
+	assert.False(t, isInstanceRestarting(fresh), "fresh copy must also observe completion")
+	cond := findCondition(instance, workloadsv1alpha2.RoleInstanceRestarting)
+	require.NotNil(t, cond)
+	assert.Equal(t, "RestartCompleted", cond.Reason)
+
+	// A completed wave allows a second recreation and applies backoff.
+	instance.Generation = 1
+	instance.Status.ObservedGeneration = 1
+	instance.Status.CurrentRevision = "rev-1"
+	instance.Status.UpdateRevision = "rev-1"
+	instance.Status.LastReadyGeneration = 1
+	instance.Spec.RestartPolicyConfig = &workloadsv1alpha2.RestartPolicyConfig{
+		Type:             workloadsv1alpha2.RecreateRoleInstanceOnPodRestart,
+		BaseDelaySeconds: ptr.To(int32(30)),
+		MaxDelaySeconds:  ptr.To(int32(600)),
+	}
+	failedReplacement := newPod.DeepCopy()
+	failedReplacement.Status.Phase = corev1.PodFailed
+	assert.True(t, ctrl.shouldRecreateInstanceGuarded(context.Background(), instance, []*corev1.Pod{failedReplacement}, nil, fresh))
+	assert.Greater(t, ctrl.checkRestartBackoff(instance, fresh, []*corev1.Pod{failedReplacement}, nil), time.Duration(0),
+		"backoff must bound the second recreation after wave completion")
+}
+
+// TestIsAlreadyRestartingPersistedWaveFallback covers the marker-less fallback
+// (controller restarted mid-wave): a persisted Restarting condition blocks only
+// while a Pod from the pre-restart generation is still present.
+func TestIsAlreadyRestartingPersistedWaveFallback(t *testing.T) {
+	scheme := runtime.NewScheme()
+	require.NoError(t, corev1.AddToScheme(scheme))
+	require.NoError(t, workloadsv1alpha2.AddToScheme(scheme))
+
+	lastRestart := metav1.NewTime(time.Now().Add(-30 * time.Second))
+	instance := &workloadsv1alpha2.RoleInstance{
+		ObjectMeta: metav1.ObjectMeta{Namespace: "default", Name: "test-instance"},
+		Status: workloadsv1alpha2.RoleInstanceStatus{
+			LastRestartTime: &lastRestart,
+			Conditions: []workloadsv1alpha2.RoleInstanceCondition{
+				{Type: workloadsv1alpha2.RoleInstanceRestarting, Status: corev1.ConditionTrue},
+			},
+		},
+	}
+	c := fake.NewClientBuilder().WithScheme(scheme).WithObjects(instance).Build()
+	ctrl := &realControl{apiReader: c}
+
+	oldPod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{Name: "pod-0", CreationTimestamp: metav1.NewTime(lastRestart.Add(-time.Minute))},
+	}
+	newPod := &corev1.Pod{
+		ObjectMeta: metav1.ObjectMeta{Name: "pod-0", CreationTimestamp: metav1.NewTime(lastRestart.Add(time.Minute))},
+	}
+	assert.True(t, ctrl.isAlreadyRestarting(context.Background(), instance, []*corev1.Pod{oldPod}, nil),
+		"persisted wave with a pre-restart Pod still blocks")
+	assert.False(t, ctrl.isAlreadyRestarting(context.Background(), instance, []*corev1.Pod{newPod}, nil),
+		"persisted wave without pre-restart Pods no longer blocks")
+}
+
+func findCondition(instance *workloadsv1alpha2.RoleInstance, condType workloadsv1alpha2.RoleInstanceConditionType) *workloadsv1alpha2.RoleInstanceCondition {
+	for i := range instance.Status.Conditions {
+		if instance.Status.Conditions[i].Type == condType {
+			return &instance.Status.Conditions[i]
+		}
+	}
+	return nil
 }
 
 // TestHasRecentRestart tests that hasRecentRestart correctly identifies whether

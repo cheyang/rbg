@@ -469,3 +469,49 @@ func TestReadinessLatchRequiresReadyTargetRevision(t *testing.T) {
 	updater.calculateStatus(instance, status, nil, pods)
 	require.Equal(t, instance.Generation, status.LastReadyGeneration, "latch once the target revision actually becomes Ready")
 }
+
+func TestRestartingConditionLifecycleWithReadiness(t *testing.T) {
+	ctx := context.Background()
+	instance := newReadinessTestInstance()
+	pods := []*v1.Pod{newReadinessTestPod(instance, "router"), newReadinessTestPod(instance, "sidecar")}
+	c := fake.NewClientBuilder().WithScheme(readinessTestScheme(t)).WithObjects(pods[0], pods[1]).Build()
+	updater := &realStatusUpdater{Client: c}
+	hasRestarting := func(status *workloadsv1alpha2.RoleInstanceStatus, condStatus v1.ConditionStatus) bool {
+		return slices.ContainsFunc(status.Conditions, func(condition workloadsv1alpha2.RoleInstanceCondition) bool {
+			return condition.Type == workloadsv1alpha2.RoleInstanceRestarting && condition.Status == condStatus
+		})
+	}
+
+	// A wave that starts while the pod snapshot is still Ready (for example a
+	// container-restart trigger) must keep its in-progress condition.
+	inProgress := &workloadsv1alpha2.RoleInstanceStatus{CurrentRevision: "r1", UpdateRevision: "r1"}
+	updater.setInstanceConditions(instance, inProgress, []workloadsv1alpha2.RoleInstanceCondition{
+		{Type: workloadsv1alpha2.RoleInstanceRestarting, Status: v1.ConditionTrue, Reason: "RestartPolicyTriggered"},
+	})
+	require.True(t, hasRestarting(inProgress, v1.ConditionTrue),
+		"an in-progress wave must survive a Ready pod snapshot")
+	instance.Status = *inProgress
+
+	// A completed wave is dropped once the instance is Ready.
+	completed := &workloadsv1alpha2.RoleInstanceStatus{
+		CurrentRevision: "r1", UpdateRevision: "r1", LastReadyGeneration: instance.Status.LastReadyGeneration,
+	}
+	updater.setInstanceConditions(instance, completed, []workloadsv1alpha2.RoleInstanceCondition{
+		{Type: workloadsv1alpha2.RoleInstanceRestarting, Status: v1.ConditionFalse, Reason: "RestartCompleted"},
+	})
+	require.False(t, hasRestarting(completed, v1.ConditionFalse),
+		"a completed wave must be dropped when the instance is Ready")
+
+	// A completed wave persists while the instance is not Ready.
+	instance.Status = *completed
+	instance.Status.Conditions = append(instance.Status.Conditions, workloadsv1alpha2.RoleInstanceCondition{
+		Type: workloadsv1alpha2.RoleInstanceRestarting, Status: v1.ConditionFalse, Reason: "RestartCompleted",
+	})
+	require.NoError(t, c.Delete(ctx, pods[0]))
+	notReady := &workloadsv1alpha2.RoleInstanceStatus{
+		CurrentRevision: "r1", UpdateRevision: "r1", LastReadyGeneration: instance.Status.LastReadyGeneration,
+	}
+	updater.setInstanceConditions(instance, notReady, nil)
+	require.True(t, hasRestarting(notReady, v1.ConditionFalse),
+		"a completed wave must persist while the instance is not Ready")
+}
