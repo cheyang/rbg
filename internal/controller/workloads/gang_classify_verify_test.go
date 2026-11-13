@@ -16,7 +16,8 @@ limitations under the License.
 
 package workloads
 
-// Verification harness for PR #572 findings F3 / F4 (Reviewer B / Codex).
+// Verification harness for PR #572 ledger findings O3 (gang classify) and F4 (stale
+// Progressing condition on mixed backends) (Reviewer B / Codex).
 // Polarity: CONTRACT tests — they assert the KEP-502 documented classification.
 
 import (
@@ -95,7 +96,7 @@ func TestVerifyF4StaleProgressingConditionRemovedWhenNoLongerAllRIS(t *testing.T
 	}
 	r := &RoleBasedGroupReconciler{client: fake.NewClientBuilder().WithScheme(scheme).Build()}
 	r.updateRBGProgressingCondition(context.Background(), rbg,
-		[]workloadsv1alpha2.RoleStatus{{Name: "decode", Replicas: 1, ReadyReplicas: 1, UpdatedReplicas: 1}}, nil, false)
+		[]workloadsv1alpha2.RoleStatus{{Name: "decode", Replicas: 1, ReadyReplicas: 1, UpdatedReplicas: 1}}, nil, false, nil)
 	for _, condition := range rbg.Status.Conditions {
 		if condition.Type == string(workloadsv1alpha2.RoleBasedGroupProgressing) {
 			t.Fatalf("F4 REPRODUCED: stale Progressing condition survives on a mixed-backend RBG: %+v", condition)

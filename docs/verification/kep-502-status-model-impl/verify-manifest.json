@@ -4,8 +4,10 @@
   "harnessPaths": [
     "docs/verification/kep-502-status-model-impl",
     "pkg/reconciler/roleinstanceset/progressing_verify_test.go",
+    "pkg/reconciler/roleinstanceset/progressing_establishment_verify_test.go",
     "internal/controller/workloads/progressing_retention_verify_test.go",
     "internal/controller/workloads/gang_classify_verify_test.go",
+    "internal/controller/workloads/ris_invalidspec_verify_test.go",
     "pkg/reconciler/roleinstance/phase_init_verify_test.go"
   ],
   "premise": {
@@ -25,36 +27,46 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/reconciler/roleinstanceset/ -run 'TestVerifyF1' -v && go test ./internal/controller/workloads/ -run 'TestVerifyF2|TestVerifyF3|TestVerifyF4' -v"
+      "cmd": "go test ./pkg/reconciler/roleinstanceset/ -run 'TestVerify' -v; go test ./pkg/reconciler/roleinstance/ -run 'TestVerify' -v; go test ./internal/controller/workloads/ -run 'TestVerify' -v"
     }
   },
+  "idMapping": "Manifest finding ids are the PR-572 debate ledger ids. Test names keep their round-1 codex-local numbers (TestVerifyF2* = ledger F3, TestVerifyF3* = ledger O3, TestVerifyF4* = ledger F4, TestVerifyF5* = ledger F6).",
   "findings": [
     {
       "id": "F1",
+      "ledgerNote": "Established RIS missing-instance classification flaps Recovering to ScalingUp after one reconcile",
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerifyF1"
+        "TestVerifyF1ControlFreshLossReportsRecovering",
+        "TestVerifyF1PersistedLossMisclassifiedAsScalingUp",
+        "TestVerifyF1GenuineScaleUpStillScalingUp"
       ]
     },
     {
       "id": "F2",
+      "ledgerNote": "RIS InvalidSpec blocker must surface at the RBG as the configuration family",
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerifyF2RetentionLostAfterProgressingRecompute"
+        "TestVerifyLedgerF2InvalidSpecSurfacesAtRBG",
+        "TestVerifyLedgerF2ControlStaleInvalidSpecSkipped"
       ]
     },
     {
       "id": "F3",
+      "ledgerNote": "Confirmed RBG blocker family must survive the step-4 recompute + step-8 unclassifiable error, and clear on fresh success",
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerifyF3SubGroupPolicyBackendIsNotASchedulerCapability"
+        "TestVerifyF3ControlEntrySnapshotRetainsFamily",
+        "TestVerifyF3RetentionSurvivesRecomputeAndUnclassifiedError",
+        "TestVerifyF3ControlFreshSuccessClearsFamily"
       ]
     },
     {
       "id": "F4",
+      "ledgerNote": "Mixed-backend RBG must drop the controller-owned Progressing condition",
       "polarity": "contract",
       "layer": "unit",
       "match": [
@@ -62,13 +74,36 @@
       ]
     },
     {
-      "id": "F5",
+      "id": "F6",
+      "ledgerNote": "Unconfirmable legacy RoleInstance keeps phase absent (codex-local test names TestVerifyF5*)",
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerifyF5UnconfirmableLegacyInstanceStaysAbsent"
+        "TestVerifyF5UnconfirmableLegacyInstanceStaysAbsent",
+        "TestVerifyF5ControlNewInstanceStartsCreating"
+      ]
+    },
+    {
+      "id": "O3",
+      "ledgerNote": "classifyGangIncompatibility maps the subGroupPolicy backend message to SchedulerUnsupported (codex-local TestVerifyF3SubGroup*)",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyF3SubGroupPolicyBackendIsNotASchedulerCapability",
+        "TestVerifyF3ControlSchedulerCapabilityStaysSchedulerUnsupported"
+      ]
+    },
+    {
+      "id": "F11",
+      "ledgerNote": "NEW round-2: InstancesNotReady removed from setEstablishmentReasons; an established set whose persisted Progressing reason is InstancesNotReady reports Creating on member loss (revision regression: Recovering on 95ddf06a)",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyN1EstablishedSetLossDuringReadinessFlapIsNotCreating",
+        "TestVerifyN2LossDuringScaleUpReadinessWindowIsNotCreating",
+        "TestVerifyNControlNeverReadySetStaysCreating"
       ]
     }
   ],
-  "liveNote": "No live layer: skipped per debate-pipeline instructions. Integration layer = envtest suites already in the repo, both pass on head (see results/integration-envtest.txt)."
+  "liveNote": "No live layer: skipped per debate-pipeline instructions. Integration layer = envtest suites already in the repo (testcase/rbg, testcase/stateful), run per round with KUBEBUILDER_ASSETS; results in results/."
 }
