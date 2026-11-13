@@ -1,0 +1,5 @@
+=== RUN   TestBase_InjectSidecarUnconditional
+    base_sidecar_behavior_test.go:104: base (ea5e82ae) InjectSidecar injected sidecar "rt-sidecar" and volume "rt-vol" into the handed pod template, regardless of the role's standalonePattern — the differential premise for review finding F2
+--- PASS: TestBase_InjectSidecarUnconditional (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/discovery	(cached)

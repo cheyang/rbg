@@ -1,0 +1,22 @@
+=== RUN   TestReview_EnvOwnershipAfterDefault
+=== RUN   TestReview_EnvOwnershipAfterDefault/profile_B_appending_a_role-owned_name_is_a_render_error_even_after_profile_A_defaulted_it
+    review_env_ownership_test.go:82: expected a render error: profile "telemetry" appends env PYTHONPATH, a name the role's own template declares, at /env/- — KEP-531 makes that a render error regardless of profile "accel" having defaulted the same name at /env/0 earlier in this render.
+        Rendered env (profile content won the role-owned name): [{PYTHONPATH /opt/accel nil} {PYTHONPATH /usr/lib/python nil} {PYTHONPATH /opt/telemetry nil}]
+=== RUN   TestReview_EnvOwnershipAfterDefault/control:_a_lone_profile_appending_a_role-owned_name_errors
+=== RUN   TestReview_EnvOwnershipAfterDefault/control:_cross-profile_stacking_on_a_fresh_name_stays_legal
+--- FAIL: TestReview_EnvOwnershipAfterDefault (0.00s)
+    --- FAIL: TestReview_EnvOwnershipAfterDefault/profile_B_appending_a_role-owned_name_is_a_render_error_even_after_profile_A_defaulted_it (0.00s)
+    --- PASS: TestReview_EnvOwnershipAfterDefault/control:_a_lone_profile_appending_a_role-owned_name_errors (0.00s)
+    --- PASS: TestReview_EnvOwnershipAfterDefault/control:_cross-profile_stacking_on_a_fresh_name_stays_legal (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/discovery	0.015s
+=== RUN   TestReview_LWSNonLWPPatternFragmentRouting
+=== RUN   TestReview_LWSNonLWPPatternFragmentRouting/standalonePattern_role_on_the_LWS_surface_keeps_main's_fragment_delivery
+    review_lws_compat_test.go:160: profile content silently dropped on the LWS render path: expected main's behavior (sidecar "rt-sidecar" and volume "rt-vol" injected into the leader template), got containers=[nginx] volumes=[]. The resolver keyed the fragments at the pattern vocabulary while the LWS construct path reads position "leader".
+=== RUN   TestReview_LWSNonLWPPatternFragmentRouting/control:_leaderWorkerPattern_role_on_the_LWS_surface_injects_into_the_leader
+--- FAIL: TestReview_LWSNonLWPPatternFragmentRouting (0.04s)
+    --- FAIL: TestReview_LWSNonLWPPatternFragmentRouting/standalonePattern_role_on_the_LWS_surface_keeps_main's_fragment_delivery (0.04s)
+    --- PASS: TestReview_LWSNonLWPPatternFragmentRouting/control:_leaderWorkerPattern_role_on_the_LWS_surface_injects_into_the_leader (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.058s
+FAIL

@@ -1,0 +1,33 @@
+=== RUN   TestApplyContainerPatchEnv
+=== RUN   TestApplyContainerPatchEnv/adds_a_fresh_var_and_leaves_existing_ones_untouched
+=== RUN   TestApplyContainerPatchEnv/profile-side_append_onto_a_role-owned_name_is_a_render_error
+=== RUN   TestApplyContainerPatchEnv/profile-side_/env/0_onto_a_role-owned_name_is_the_sanctioned_default
+=== RUN   TestApplyContainerPatchEnv/the_/env/0_default_is_effective_when_the_template_omits_the_name
+=== RUN   TestApplyContainerPatchEnv/an_envFrom-carried_name_does_not_block_a_profile-side_append
+=== RUN   TestApplyContainerPatchEnv/declaring_the_name_in_direct_env_is_the_role_defense_against_a_profile-side_append
+=== RUN   TestApplyContainerPatchEnv/duplicate_env_name_within_one_profile-side_list_errors
+=== RUN   TestApplyContainerPatchEnv/duplicate_env_name_within_one_role-side_list_errors
+=== RUN   TestApplyContainerPatchEnv/role-side_same-named_append_is_the_override_gesture,_never_an_error
+I1113 08:04:01.092312 3067209 runtime_resolver.go:421] "container \"engine\": role \"worker\" engineRuntimes[\"p\"].targetContainers[\"engine\"].extraPatches[0] adds env var \"PYTHONPATH\" already present from the container's earlier rendered entries (role template, legacy merge, built-in injectors or an earlier patch pass); kubelet resolves same-name entries by last occurrence and $(VAR) expands against earlier entries only — re-declare consumers after the winning entry if alignment matters"
+=== RUN   TestApplyContainerPatchEnv/RBG__prefix_is_reserved_on_both_sides
+--- PASS: TestApplyContainerPatchEnv (0.00s)
+    --- PASS: TestApplyContainerPatchEnv/adds_a_fresh_var_and_leaves_existing_ones_untouched (0.00s)
+    --- PASS: TestApplyContainerPatchEnv/profile-side_append_onto_a_role-owned_name_is_a_render_error (0.00s)
+    --- PASS: TestApplyContainerPatchEnv/profile-side_/env/0_onto_a_role-owned_name_is_the_sanctioned_default (0.00s)
+    --- PASS: TestApplyContainerPatchEnv/the_/env/0_default_is_effective_when_the_template_omits_the_name (0.00s)
+    --- PASS: TestApplyContainerPatchEnv/an_envFrom-carried_name_does_not_block_a_profile-side_append (0.00s)
+    --- PASS: TestApplyContainerPatchEnv/declaring_the_name_in_direct_env_is_the_role_defense_against_a_profile-side_append (0.00s)
+    --- PASS: TestApplyContainerPatchEnv/duplicate_env_name_within_one_profile-side_list_errors (0.00s)
+    --- PASS: TestApplyContainerPatchEnv/duplicate_env_name_within_one_role-side_list_errors (0.00s)
+    --- PASS: TestApplyContainerPatchEnv/role-side_same-named_append_is_the_override_gesture,_never_an_error (0.00s)
+    --- PASS: TestApplyContainerPatchEnv/RBG__prefix_is_reserved_on_both_sides (0.00s)
+=== RUN   TestReview_EnvOwnershipAfterDefault
+=== RUN   TestReview_EnvOwnershipAfterDefault/profile_B_appending_a_role-owned_name_is_a_render_error_even_after_profile_A_defaulted_it
+=== RUN   TestReview_EnvOwnershipAfterDefault/control:_a_lone_profile_appending_a_role-owned_name_errors
+=== RUN   TestReview_EnvOwnershipAfterDefault/control:_cross-profile_stacking_on_a_fresh_name_stays_legal
+--- PASS: TestReview_EnvOwnershipAfterDefault (0.00s)
+    --- PASS: TestReview_EnvOwnershipAfterDefault/profile_B_appending_a_role-owned_name_is_a_render_error_even_after_profile_A_defaulted_it (0.00s)
+    --- PASS: TestReview_EnvOwnershipAfterDefault/control:_a_lone_profile_appending_a_role-owned_name_errors (0.00s)
+    --- PASS: TestReview_EnvOwnershipAfterDefault/control:_cross-profile_stacking_on_a_fresh_name_stays_legal (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.016s

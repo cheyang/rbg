@@ -1,0 +1,8 @@
+=== RUN   TestReview_LWSNonLWPPatternFragmentRouting
+=== RUN   TestReview_LWSNonLWPPatternFragmentRouting/standalonePattern_role_on_the_LWS_surface_keeps_main's_fragment_delivery
+=== RUN   TestReview_LWSNonLWPPatternFragmentRouting/control:_leaderWorkerPattern_role_on_the_LWS_surface_injects_into_the_leader
+--- PASS: TestReview_LWSNonLWPPatternFragmentRouting (0.05s)
+    --- PASS: TestReview_LWSNonLWPPatternFragmentRouting/standalonePattern_role_on_the_LWS_surface_keeps_main's_fragment_delivery (0.05s)
+    --- PASS: TestReview_LWSNonLWPPatternFragmentRouting/control:_leaderWorkerPattern_role_on_the_LWS_surface_injects_into_the_leader (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.062s
