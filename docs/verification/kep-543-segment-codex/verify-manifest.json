@@ -1,0 +1,55 @@
+{
+  "topic": "kep-543-segment-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/569",
+  "harnessPaths": [
+    "docs/verification/kep-543-segment-codex",
+    "pkg/reconciler/roleinstanceset/statefulmode/verify_kep543_segment_floor_test.go",
+    "keps/543-segment/segment_doc_consistency_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Docs-only KEP proposal (PR body: 'Documentation-only proposal: no API, CRD, controller, or generated-code changes'); premise validation is scoped out for docs-only PRs. Instead, the KEP's claims about existing behavior were validated against base ea5e82ae.",
+    "reportedComponent": "keps/543-segment design documents",
+    "patchedComponent": "keps/543-segment (README.md, README.zh-CN.md, kep.yaml)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "All code references in the KEP resolve on base ea5e82ae: CoordinatedPolicyRule/GangSchedulingStrategy/ScalingCoordinationStrategy shapes, AdapterScaleTargetRef.Role currently required, ScalingAdapter type, applyRBGSAReplicasOverride/handleCoordinationStrategies/raiseScalingTargetsToGangMinimum in rolebasedgroup_controller.go, Volcano buildGangSpec per-RI subgroups with MatchLabelKeys=[role-instance-name], computeMaxUnavailable floor-to-1 when maxSurge==0, activeSurge=min(maxSurge,max(surgeNeeded,existingValidSurge)) with surgeNeeded=max(0,healthyOldInBase-maxUnavailable), excluded-ordinals/committed-skip-ordinals annotations, rbg.workloads.x-k8s.io label prefix. One contradiction found: see F1.",
+    "match": [
+      "TestVerifyKEP543_ExplicitZeroMaxUnavailableFloorsToOneWithoutSurge"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/roleinstanceset/statefulmode/ ./keps/543-segment/ -run 'TestVerifyKEP543' -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/roleinstanceset/statefulmode/ -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyKEP543_ExplicitZeroMaxUnavailableFloorsToOneWithoutSurge",
+        "TestVerifyKEP543_ExplicitZeroMaxUnavailablePreservedWithSurge"
+      ],
+      "note": "Canary PASSes today: computeMaxUnavailable floors an explicit 0 to 1 when maxSurge==0, contradicting the KEP's 'B=0 -> RIS receives 0' execution-window rule. Fixed (doc amended or RIS floor bypassed and documented) when the first canary flips red or the KEP text acknowledges the floor; then invert."
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyKEP543_SegmentLabelExamplesUseRuleIDScheme"
+      ],
+      "note": "RED on reviewed head: design-overview table and annotation paragraph still show kv-cache-N as the segment label value instead of <ruleID>-<groupIndex>."
+    }
+  ],
+  "liveNote": "L3 skipped per debate-round policy (no KUBECONFIG layer). Docs-only PR; live layer adds nothing."
+}

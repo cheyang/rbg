@@ -1,0 +1,8 @@
+198:| Segment 0 | prefill-0, prefill-1, decode-0 | `kv-cache-0` |
+199:| Segment 1 | prefill-2, prefill-3, decode-1 | `kv-cache-1` |
+438:The annotation is an internal transport protocol, not a user configuration interface. RBG maintains and removes it. A specific label such as `segment=kv-cache-0` belongs only on the corresponding RIs and their Pods, not on the shared RIS instance template, because instances in one RIS belong to different groups.
+FAIL: keps/543-segment/README.md contains stale rule-name-based segment label values (normative scheme is <ruleID>-<groupIndex>)
+198:| Segment 0 | prefill-0、prefill-1、decode-0 | `kv-cache-0` |
+199:| Segment 1 | prefill-2、prefill-3、decode-1 | `kv-cache-1` |
+436:annotation 是内部传递协议，不是用户配置入口。RBG 负责维护和撤销它。具体的 `segment=kv-cache-0` 只写到对应 RI 及其 Pod，不写入 RIS 公共实例模板，因为同一 RIS 的实例分属多个组。
+FAIL: keps/543-segment/README.zh-CN.md contains stale rule-name-based segment label values (normative scheme is <ruleID>-<groupIndex>)

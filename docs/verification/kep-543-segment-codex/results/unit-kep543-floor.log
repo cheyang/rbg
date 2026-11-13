@@ -1,0 +1,7 @@
+=== RUN   TestVerifyKEP543_ExplicitZeroMaxUnavailableFloorsToOneWithoutSurge
+    verify_kep543_segment_floor_test.go:60: observed: explicit maxUnavailable=0 with maxSurge=0 resolves to 1, not 0
+--- PASS: TestVerifyKEP543_ExplicitZeroMaxUnavailableFloorsToOneWithoutSurge (0.00s)
+=== RUN   TestVerifyKEP543_ExplicitZeroMaxUnavailablePreservedWithSurge
+--- PASS: TestVerifyKEP543_ExplicitZeroMaxUnavailablePreservedWithSurge (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.012s

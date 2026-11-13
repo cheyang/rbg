@@ -1,0 +1,7 @@
+=== RUN   TestVerifyKEP543_SegmentLabelExamplesUseRuleIDScheme
+    segment_doc_consistency_test.go:44: README.md contains stale rule-name-based segment label values [`kv-cache-0` `kv-cache-1` segment=kv-cache-0]; normative scheme is <ruleID>-<groupIndex> (SHA-256-derived), see Group Assignment and Persistence
+    segment_doc_consistency_test.go:44: README.zh-CN.md contains stale rule-name-based segment label values [`kv-cache-0` `kv-cache-1` segment=kv-cache-0]; normative scheme is <ruleID>-<groupIndex> (SHA-256-derived), see Group Assignment and Persistence
+--- FAIL: TestVerifyKEP543_SegmentLabelExamplesUseRuleIDScheme (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/keps/543-segment	0.006s
+FAIL
