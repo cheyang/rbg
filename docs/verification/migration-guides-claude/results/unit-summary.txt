@@ -1,0 +1,4 @@
+--- FAIL: TestMigrationGuide_F1_RollbackDocClaim (0.00s)
+--- PASS: TestMigrationGuide_RollbackRestore_InstanceSetNotRejectedByValidator (0.04s)
+--- PASS: TestMigrationGuide_RollbackRestore_DeprecatedTypesRejected (0.00s)
+--- PASS: TestMigrationGuide_TypeExactCompat (0.00s)

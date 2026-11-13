@@ -1,0 +1,58 @@
+{
+  "topic": "migration-guides-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/586",
+  "harnessPaths": [
+    "docs/verification/migration-guides-claude",
+    "api/workloads/v1alpha2/migration_guide_claims_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Docs-only PR (8 markdown files, no production code): adds the English and Chinese manual v1alpha1-to-v1alpha2 migration guides plus cross-links. Slice 3 of the v1alpha1 deprecation split (1: admission gate #524, 2: chart+gate docs #552, 3: migration guides, 4: webhook removal #556).",
+    "reportedComponent": "documentation (doc/, READMEs, chart README, release checklist)",
+    "patchedComponent": "documentation only — no Go/YAML/chart-template changes",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "not-applicable",
+    "evidence": "Docs/tests-only PR: premise validation and P0 reproduction are carved out per the review rubric. The premise reviewed instead is content accuracy: every behavioral claim in the guides was traced to code on the PR head (see README table).",
+    "match": []
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./api/workloads/v1alpha2/ -run 'TestMigrationGuide' -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestMigrationGuide_F1_RollbackDocClaim"],
+      "note": "Doc-contract test: RED on the PR head (reproduction — the Rollback section claims the validator rejects an InstanceSet restore, which it does not); GREEN once both guides stop making that claim. Code-pin evidence: TestMigrationGuide_RollbackRestore_InstanceSetNotRejectedByValidator (canary on the code side, documents that the write is accepted today)."
+    },
+    {
+      "id": "GUIDE-ROLLBACK-DSL",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestMigrationGuide_RollbackRestore_DeprecatedTypesRejected"],
+      "note": "Pins the guide's accurate claim: restoring a Deployment/StatefulSet/LeaderWorkerSet selector after migration is rejected even with compat enabled."
+    },
+    {
+      "id": "GUIDE-TYPEEXACT",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestMigrationGuide_TypeExactCompat"],
+      "note": "Pins the guide's type-exact compatibility claim (same type kept = accepted; switch between deprecated types = rejected)."
+    }
+  ],
+  "standaloneChecks": [
+    {
+      "id": "GUIDE-INVENTORY-JQ",
+      "polarity": "contract",
+      "cmd": "bash docs/verification/migration-guides-claude/scripts/inventory-jq-check.sh",
+      "note": "The guide's role-inventory jq command (identical copy in chart README) run against fixtures covering all four role-location shapes, positive selectors, the v1alpha1 workload-field precedence over a stale annotation, and negative controls. Runs standalone; not part of the gotest layer."
+    }
+  ],
+  "liveNote": "L3 (live cluster) skipped per round policy: unit + integration layers only. The kubectl commands in the guide (get/replace/patch with fully-qualified v1alpha2 resources, CRD status.storedVersions subresource patch) were validated against the repo's CRD manifests and kubectl semantics by inspection; the jq pipeline is covered deterministically by the GUIDE-INVENTORY-JQ standalone check above."
+}

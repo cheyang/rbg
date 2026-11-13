@@ -1,0 +1,46 @@
+{
+  "kind": "List",
+  "apiVersion": "v1",
+  "items": [
+    {
+      "apiVersion": "workloads.x-k8s.io/v1alpha2",
+      "kind": "RoleBasedGroup",
+      "metadata": {"name": "rbg-mixed", "namespace": "ns1"},
+      "spec": {"roles": [
+        {"name": "sts-role", "annotations": {"rbg.workloads.x-k8s.io/role-workload-type": "apps/v1/StatefulSet"}, "replicas": 1},
+        {"name": "deploy-role", "annotations": {"rbg.workloads.x-k8s.io/role-workload-type": "apps/v1/Deployment"}, "replicas": 1},
+        {"name": "lws-role", "annotations": {"rbg.workloads.x-k8s.io/role-workload-type": "leaderworkerset.x-k8s.io/v1/LeaderWorkerSet"}, "replicas": 1},
+        {"name": "ris-default", "replicas": 1},
+        {"name": "ris-redundant", "annotations": {"rbg.workloads.x-k8s.io/role-workload-type": "workloads.x-k8s.io/v1alpha2/RoleInstanceSet"}, "replicas": 1},
+        {"name": "is-role", "annotations": {"rbg.workloads.x-k8s.io/role-workload-type": "workloads.x-k8s.io/v1alpha1/InstanceSet"}, "replicas": 1}
+      ]}
+    },
+    {
+      "apiVersion": "workloads.x-k8s.io/v1alpha2",
+      "kind": "RoleBasedGroupSet",
+      "metadata": {"name": "rbgs-legacy", "namespace": "ns2"},
+      "spec": {"groupTemplate": {"spec": {"roles": [
+        {"name": "set-sts", "annotations": {"rbg.workloads.x-k8s.io/role-workload-type": "apps/v1/StatefulSet"}, "replicas": 2}
+      ]}}}
+    },
+    {
+      "apiVersion": "workloads.x-k8s.io/v1alpha1",
+      "kind": "RoleBasedGroup",
+      "metadata": {"name": "rbg-old", "namespace": "ns3"},
+      "spec": {"roles": [
+        {"name": "v1a1-sts", "workload": {"apiVersion": "apps/v1", "kind": "StatefulSet"}, "replicas": 1},
+        {"name": "v1a1-stale-annot", "workload": {"apiVersion": "apps/v1", "kind": "Deployment"}, "annotations": {"rbg.workloads.x-k8s.io/role-workload-type": "apps/v1/StatefulSet"}, "replicas": 1},
+        {"name": "v1a1-is", "workload": {"apiVersion": "workloads.x-k8s.io/v1alpha1", "kind": "InstanceSet"}, "replicas": 1},
+        {"name": "v1a1-ris", "workload": {"apiVersion": "workloads.x-k8s.io/v1alpha2", "kind": "RoleInstanceSet"}, "replicas": 1}
+      ]}
+    },
+    {
+      "apiVersion": "workloads.x-k8s.io/v1alpha1",
+      "kind": "RoleBasedGroupSet",
+      "metadata": {"name": "rbgs-old", "namespace": "ns4"},
+      "spec": {"template": {"roles": [
+        {"name": "v1a1-set-deploy", "workload": {"apiVersion": "apps/v1", "kind": "Deployment"}, "replicas": 3}
+      ]}}
+    }
+  ]
+}
