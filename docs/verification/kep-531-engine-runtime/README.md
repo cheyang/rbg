@@ -55,3 +55,29 @@ tests: green = behavior intact.
 - `results/unit-verify.log` — the harness's own tests (13 PASS)
 - `results/unit-full-suite.log` — full repo unit suite at head (exit 0)
 - `results/envtest-immutability.log`, `results/envtest-rbg.log` — PR's envtest suites re-run
+
+## Round 2 (2026-11-14) — incremental review, head f3d4849a
+
+The PR moved `1810f5c6 -> f3d4849a` (rebase-identical first three commits, then 8 fix commits
+addressing the round-1 debate) and main advanced `ea5e82ae -> 3abe58a5` (#575, manager probes —
+no contract overlap). Round-2 verdicts:
+
+| ID | finding | verdict at f3d4849a | evidence |
+|----|---------|--------------------|----------|
+| R2-F1 | F-LWS-DROP (blocker, round 1) | **Fixed** — vocabulary collapses to {leader, worker} with leader default for the grandfathered LWS × non-LWP shape | `TestVerifyPR571R2_LWSVocabularyCollapse` + `TestVerifyPR571R2_LWSConstructDeliversLeader` green on head, red on 1810f5c6; Claude's original `TestReview_LWSNonLWPPatternFragmentRouting` re-run green (`results/round2/claude-contract-tests-head-f3d4849a.out`) |
+| R2-F2 | F-ENV-OWNERSHIP (major, round 1) | **Fixed** — `envCreationTracker` records only genuinely created names | `TestVerifyPR571R2_EnvOwnershipAcrossStackedProfiles` green on head, finding case red on 1810f5c6; Claude's `TestReview_EnvOwnershipAfterDefault` re-run green |
+| R2-F3 | C4557947790 (advisory, round 1) | **Fixed** — consent-only `targetContainers` validated against role + own-profile declarations | `TestVerifyPR571R2_ConsentOnlyTargetsValidated` green on head, unknown-target case red on 1810f5c6 |
+| F1 | F-COLLISION-EXTRAPATCHES (minor) | **Still present** — canary unchanged | re-verify at f3d4849a: canary still passes |
+| AC-1/AC-2/AC-3 | compat / grammar / validation contracts | **Green** on f3d4849a | `results/reverify/` (re-verify.sh at f3d4849a) |
+| AC-4 | envtest integration | **Green** on f3d4849a, 8/8 packages vs kube-apiserver 1.31 | full `./test/envtest/testcase/...` re-run (immutability 95s, rbg 322s) |
+
+Also verified this round: the CEL cost-budget evidence is now an in-repo reproducible test
+(`TestGeneratedCRDsAdmitNoRoleSpecCELPresenceRule`, offline apiserver CRD validation — the
+shipped CRDs validate clean, injecting the KEP's RoleSpec CEL rule is rejected >100x over
+budget); the scope-ownership check is linear + capped at 20 errors with admission-equivalent
+semantics; the CERP webhook no longer intercepts CREATE (no-op there anyway); all 11 commits
+carry DCO sign-off; the `[WIP]` marker is dropped; the shipped example is self-consistent
+(the init container installs the wrapper it prepends).
+
+Harness-bites for the new contract tests: `results/round2/bites-previous-head-1810f5c6.out`
+(every finding case red on the round-1 head, controls green).

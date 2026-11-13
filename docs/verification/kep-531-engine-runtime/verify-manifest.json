@@ -5,14 +5,16 @@
     "remote": "https://github.com/sgl-project/rbg.git",
     "ref": "pull/571/head"
   },
-  "headSha": "1810f5c6ed28a48addcc3e348699c3f4ae170a6c",
-  "baseSha": "ea5e82ae59169e0e954fb1c7068f9480fb4b7375",
+  "headSha": "f3d4849a3d3dc25232c8e1b70e61042f2f077bb9",
+  "baseSha": "3abe58a5aac1c2ab1381af337514e9e8f27f901b",
   "reviewer": "codex",
   "harnessPaths": [
     "docs/verification/kep-531-engine-runtime",
     "pkg/discovery/zz_verify_pr571_compat_test.go",
     "pkg/discovery/zz_verify_pr571_grammar_test.go",
-    "api/workloads/v1alpha2/zz_verify_pr571_validation_test.go"
+    "api/workloads/v1alpha2/zz_verify_pr571_validation_test.go",
+    "pkg/discovery/zz_verify_pr571_r2_test.go",
+    "pkg/reconciler/zz_verify_pr571_lws_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -29,7 +31,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/discovery/ ./api/workloads/v1alpha2/ -run 'TestVerifyPR571' -json"
+      "cmd": "go test ./pkg/discovery/ ./pkg/reconciler/ ./api/workloads/v1alpha2/ -run 'TestVerifyPR571' -json"
     },
     "integration": {
       "kind": "gotest",
@@ -46,8 +48,8 @@
         "TestVerifyPR571_CollisionSkipThenRolePatch"
       ],
       "title": "Cross-profile container-name collision: the losing reference's role-side extraPatches land on the surviving (other profile's) container",
-      "result": "pass (canary documents current behavior)",
-      "observed": "profile b's 'shared' sidecar skipped (a wins, EngineRuntimeNameCollision fires), but reference b's targetContainers[shared].extraPatches still resolve by name and mutate profile a's container. KEP-531 D8 gray zone. Flip this canary when the behavior becomes a render error."
+      "result": "pass (canary documents current behavior \u2014 still present at f3d4849a)",
+      "observed": "profile b's 'shared' sidecar skipped (a wins, EngineRuntimeNameCollision fires), but reference b's targetContainers[shared].extraPatches still resolve by name and mutate profile a's container. KEP-531 D8 gray zone. Flip this canary when the behavior becomes a render error. Re-run at f3d4849a: unchanged (canary still passes); the author fixed the adjacent consent-validation (C4557947790) and collision-tracker (C4557947728) items but left this KEP gray zone as-is."
     },
     {
       "id": "AC-1",
@@ -102,6 +104,40 @@
       "title": "CERP freeze across both served versions + reference tracking status + targeting renders (PR's envtest suites re-run)",
       "result": "pass",
       "observed": "kube-apiserver 1.31: immutability ok (94s), rbg ok (321s)"
+    },
+    {
+      "id": "R2-F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR571R2_LWSVocabularyCollapse",
+        "TestVerifyPR571R2_LWSConstructDeliversLeader"
+      ],
+      "title": "Round-1 F-LWS-DROP fix verification: LWS x non-leaderWorkerPattern roles keep main's fragment delivery (leader injected, worker skipped)",
+      "result": "pass",
+      "observed": "Green on f3d4849a; both tests red on the round-1 head 1810f5c6 (bites check, results/round2/bites-previous-head-1810f5c6.out). Claude's original TestReview_LWSNonLWPPatternFragmentRouting also re-run green on f3d4849a (results/round2/claude-contract-tests-head-f3d4849a.out)."
+    },
+    {
+      "id": "R2-F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR571R2_EnvOwnershipAcrossStackedProfiles"
+      ],
+      "title": "Round-1 F-ENV-OWNERSHIP fix verification: a profile-side append onto a role-owned env name errors even after another profile's /env/0 default",
+      "result": "pass",
+      "observed": "Green on f3d4849a (finding case + both controls); the finding case is red on 1810f5c6 while the controls stay green (results/round2/bites-previous-head-1810f5c6.out). Claude's original TestReview_EnvOwnershipAfterDefault re-run green on f3d4849a."
+    },
+    {
+      "id": "R2-F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR571R2_ConsentOnlyTargetsValidated"
+      ],
+      "title": "Round-1 advisory C4557947790 fix verification: consent-only targetContainers entries are validated against role + own-profile declarations",
+      "result": "pass",
+      "observed": "Green on f3d4849a; the unknown-target case red on 1810f5c6, controls green (results/round2/bites-previous-head-1810f5c6.out)."
     }
   ],
   "liveNote": "Live/KUBECONFIG layer intentionally skipped per debate setup. The PR's own real-cluster drill evidence (20/20) is author-reported and not independently re-run."
