@@ -1,0 +1,125 @@
+=== RUN   TestVerifyPR571_Scenario1ByteForByte
+=== RUN   TestVerifyPR571_Scenario1ByteForByte/lwp_leader_default_scope,_profile_+_legacy_env/args_merge
+=== RUN   TestVerifyPR571_Scenario1ByteForByte/lwp_two_profiles,_cross-profile_container_name_collision
+=== RUN   TestVerifyPR571_Scenario1ByteForByte/lwp_duplicate_same-profile_references_(compatibility_pair),_merge_applies_twice
+=== RUN   TestVerifyPR571_Scenario1ByteForByte/lwp_legacy_override_naming_a_profile_init_container_is_a_silent_no-op
+=== RUN   TestVerifyPR571_Scenario1ByteForByte/lwp_legacy_override_naming_a_container_the_profile_does_not_declare_is_skipped
+=== RUN   TestVerifyPR571_Scenario1ByteForByte/standalone_role,_default_scope_keys_by_role_name
+=== RUN   TestVerifyPR571_Scenario1ByteForByte/customComponentsPattern:_absent_component_injects_every_component_(main_default)
+=== RUN   TestVerifyPR571_Scenario1ByteForByte/customComponentsPattern:_duplicate_same-profile_references_(compatibility_pair)
+=== RUN   TestVerifyPR571_Scenario1ByteForByte/no_engine_runtimes_at_all_renders_the_template_untouched
+=== RUN   TestVerifyPR571_Scenario1ByteForByte/role_template_pre-declares_the_profile's_container_and_volume_(role_wins)
+--- PASS: TestVerifyPR571_Scenario1ByteForByte (0.05s)
+    --- PASS: TestVerifyPR571_Scenario1ByteForByte/lwp_leader_default_scope,_profile_+_legacy_env/args_merge (0.04s)
+    --- PASS: TestVerifyPR571_Scenario1ByteForByte/lwp_two_profiles,_cross-profile_container_name_collision (0.00s)
+    --- PASS: TestVerifyPR571_Scenario1ByteForByte/lwp_duplicate_same-profile_references_(compatibility_pair),_merge_applies_twice (0.00s)
+    --- PASS: TestVerifyPR571_Scenario1ByteForByte/lwp_legacy_override_naming_a_profile_init_container_is_a_silent_no-op (0.00s)
+    --- PASS: TestVerifyPR571_Scenario1ByteForByte/lwp_legacy_override_naming_a_container_the_profile_does_not_declare_is_skipped (0.00s)
+    --- PASS: TestVerifyPR571_Scenario1ByteForByte/standalone_role,_default_scope_keys_by_role_name (0.00s)
+    --- PASS: TestVerifyPR571_Scenario1ByteForByte/customComponentsPattern:_absent_component_injects_every_component_(main_default) (0.00s)
+    --- PASS: TestVerifyPR571_Scenario1ByteForByte/customComponentsPattern:_duplicate_same-profile_references_(compatibility_pair) (0.00s)
+    --- PASS: TestVerifyPR571_Scenario1ByteForByte/no_engine_runtimes_at_all_renders_the_template_untouched (0.00s)
+    --- PASS: TestVerifyPR571_Scenario1ByteForByte/role_template_pre-declares_the_profile's_container_and_volume_(role_wins) (0.00s)
+=== RUN   TestVerifyPR571_ByteForByteNegativeControl
+--- PASS: TestVerifyPR571_ByteForByteNegativeControl (0.00s)
+=== RUN   TestVerifyPR571_ProfileSideRootAllowlist
+=== RUN   TestVerifyPR571_ProfileSideRootAllowlist/profile_/args/-_rejected
+=== RUN   TestVerifyPR571_ProfileSideRootAllowlist/profile_/command/1_rejected
+=== RUN   TestVerifyPR571_ProfileSideRootAllowlist/profile_capabilities_rejected
+=== RUN   TestVerifyPR571_ProfileSideRootAllowlist/profile_/command/0_allowed
+=== RUN   TestVerifyPR571_ProfileSideRootAllowlist/profile_/env/-_allowed_for_a_fresh_name
+=== RUN   TestVerifyPR571_ProfileSideRootAllowlist/role_/args/0_allowed
+=== RUN   TestVerifyPR571_ProfileSideRootAllowlist/role_capabilities_allowed
+=== RUN   TestVerifyPR571_ProfileSideRootAllowlist/role_/command/1_allowed
+--- PASS: TestVerifyPR571_ProfileSideRootAllowlist (0.00s)
+    --- PASS: TestVerifyPR571_ProfileSideRootAllowlist/profile_/args/-_rejected (0.00s)
+    --- PASS: TestVerifyPR571_ProfileSideRootAllowlist/profile_/command/1_rejected (0.00s)
+    --- PASS: TestVerifyPR571_ProfileSideRootAllowlist/profile_capabilities_rejected (0.00s)
+    --- PASS: TestVerifyPR571_ProfileSideRootAllowlist/profile_/command/0_allowed (0.00s)
+    --- PASS: TestVerifyPR571_ProfileSideRootAllowlist/profile_/env/-_allowed_for_a_fresh_name (0.00s)
+    --- PASS: TestVerifyPR571_ProfileSideRootAllowlist/role_/args/0_allowed (0.00s)
+    --- PASS: TestVerifyPR571_ProfileSideRootAllowlist/role_capabilities_allowed (0.00s)
+    --- PASS: TestVerifyPR571_ProfileSideRootAllowlist/role_/command/1_allowed (0.00s)
+=== RUN   TestVerifyPR571_EntrypointMergeRule
+=== RUN   TestVerifyPR571_EntrypointMergeRule/command_insert_into_command-less_container_errors
+=== RUN   TestVerifyPR571_EntrypointMergeRule/command_insert_into_fully_bare_container_errors
+=== RUN   TestVerifyPR571_EntrypointMergeRule/args_insert_with_command_set_succeeds
+=== RUN   TestVerifyPR571_EntrypointMergeRule/args_insert_with_neither_set_errors
+=== RUN   TestVerifyPR571_EntrypointMergeRule/args_append_with_args_set_succeeds
+--- PASS: TestVerifyPR571_EntrypointMergeRule (0.00s)
+    --- PASS: TestVerifyPR571_EntrypointMergeRule/command_insert_into_command-less_container_errors (0.00s)
+    --- PASS: TestVerifyPR571_EntrypointMergeRule/command_insert_into_fully_bare_container_errors (0.00s)
+    --- PASS: TestVerifyPR571_EntrypointMergeRule/args_insert_with_command_set_succeeds (0.00s)
+    --- PASS: TestVerifyPR571_EntrypointMergeRule/args_insert_with_neither_set_errors (0.00s)
+    --- PASS: TestVerifyPR571_EntrypointMergeRule/args_append_with_args_set_succeeds (0.00s)
+=== RUN   TestVerifyPR571_ProfileSideEnvDefaultOnly
+--- PASS: TestVerifyPR571_ProfileSideEnvDefaultOnly (0.00s)
+=== RUN   TestVerifyPR571_RBGPrefixReserved
+--- PASS: TestVerifyPR571_RBGPrefixReserved (0.00s)
+=== RUN   TestVerifyPR571_VolumeMountInvariants
+--- PASS: TestVerifyPR571_VolumeMountInvariants (0.00s)
+=== RUN   TestVerifyPR571_CollisionSkipThenRolePatch
+    zz_verify_pr571_grammar_test.go:314: CANARY OBSERVED: reference b's extraPatches landed on the container injected by profile a (image a:1)
+--- PASS: TestVerifyPR571_CollisionSkipThenRolePatch (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.068s
+=== RUN   TestVerifyPR571_PresenceRule
+=== RUN   TestVerifyPR571_PresenceRule/lwp:_targetContainers_without_component_rejected
+=== RUN   TestVerifyPR571_PresenceRule/ccp:_targetContainers_without_component_rejected
+=== RUN   TestVerifyPR571_PresenceRule/standalone:_targetContainers_without_component_accepted_(exemption)
+=== RUN   TestVerifyPR571_PresenceRule/lwp:_targetContainers_with_component_accepted
+=== RUN   TestVerifyPR571_PresenceRule/no_engine_runtimes_passes
+--- PASS: TestVerifyPR571_PresenceRule (0.00s)
+    --- PASS: TestVerifyPR571_PresenceRule/lwp:_targetContainers_without_component_rejected (0.00s)
+    --- PASS: TestVerifyPR571_PresenceRule/ccp:_targetContainers_without_component_rejected (0.00s)
+    --- PASS: TestVerifyPR571_PresenceRule/standalone:_targetContainers_without_component_accepted_(exemption) (0.00s)
+    --- PASS: TestVerifyPR571_PresenceRule/lwp:_targetContainers_with_component_accepted (0.00s)
+    --- PASS: TestVerifyPR571_PresenceRule/no_engine_runtimes_passes (0.00s)
+=== RUN   TestVerifyPR571_ScopeOwnership
+=== RUN   TestVerifyPR571_ScopeOwnership/same_profile,_overlapping_unscoped_refs_with_targetContainers_rejected
+=== RUN   TestVerifyPR571_ScopeOwnership/compatibility_pair:_both_unscoped,_no_targetContainers_—_accepted
+=== RUN   TestVerifyPR571_ScopeOwnership/lwp:_unscoped_(leader)_+_component_worker_—_disjoint,_accepted
+=== RUN   TestVerifyPR571_ScopeOwnership/lwp:_unscoped_(leader)_+_component_leader_—_overlap,_rejected
+=== RUN   TestVerifyPR571_ScopeOwnership/ccp:_unscoped_covers_all_components,_so_any_scoped_same-profile_ref_overlaps
+=== RUN   TestVerifyPR571_ScopeOwnership/different_profiles_never_overlap
+--- PASS: TestVerifyPR571_ScopeOwnership (0.00s)
+    --- PASS: TestVerifyPR571_ScopeOwnership/same_profile,_overlapping_unscoped_refs_with_targetContainers_rejected (0.00s)
+    --- PASS: TestVerifyPR571_ScopeOwnership/compatibility_pair:_both_unscoped,_no_targetContainers_—_accepted (0.00s)
+    --- PASS: TestVerifyPR571_ScopeOwnership/lwp:_unscoped_(leader)_+_component_worker_—_disjoint,_accepted (0.00s)
+    --- PASS: TestVerifyPR571_ScopeOwnership/lwp:_unscoped_(leader)_+_component_leader_—_overlap,_rejected (0.00s)
+    --- PASS: TestVerifyPR571_ScopeOwnership/ccp:_unscoped_covers_all_components,_so_any_scoped_same-profile_ref_overlaps (0.00s)
+    --- PASS: TestVerifyPR571_ScopeOwnership/different_profiles_never_overlap (0.00s)
+=== RUN   TestVerifyPR571_ComponentVocabulary
+=== RUN   TestVerifyPR571_ComponentVocabulary/lwp_ghost_component_rejected
+=== RUN   TestVerifyPR571_ComponentVocabulary/lwp_leader_accepted
+=== RUN   TestVerifyPR571_ComponentVocabulary/lwp_worker_accepted
+=== RUN   TestVerifyPR571_ComponentVocabulary/standalone_component_must_equal_role_name
+=== RUN   TestVerifyPR571_ComponentVocabulary/standalone_component_equal_to_role_name_accepted
+=== RUN   TestVerifyPR571_ComponentVocabulary/standalone_non-DNS_role_name_as_component_accepted
+=== RUN   TestVerifyPR571_ComponentVocabulary/ccp_declared_component_accepted
+=== RUN   TestVerifyPR571_ComponentVocabulary/ccp_undeclared_component_rejected
+--- PASS: TestVerifyPR571_ComponentVocabulary (0.00s)
+    --- PASS: TestVerifyPR571_ComponentVocabulary/lwp_ghost_component_rejected (0.00s)
+    --- PASS: TestVerifyPR571_ComponentVocabulary/lwp_leader_accepted (0.00s)
+    --- PASS: TestVerifyPR571_ComponentVocabulary/lwp_worker_accepted (0.00s)
+    --- PASS: TestVerifyPR571_ComponentVocabulary/standalone_component_must_equal_role_name (0.00s)
+    --- PASS: TestVerifyPR571_ComponentVocabulary/standalone_component_equal_to_role_name_accepted (0.00s)
+    --- PASS: TestVerifyPR571_ComponentVocabulary/standalone_non-DNS_role_name_as_component_accepted (0.00s)
+    --- PASS: TestVerifyPR571_ComponentVocabulary/ccp_declared_component_accepted (0.00s)
+    --- PASS: TestVerifyPR571_ComponentVocabulary/ccp_undeclared_component_rejected (0.00s)
+=== RUN   TestVerifyPR571_DeprecatedSurfaceRejection
+=== RUN   TestVerifyPR571_DeprecatedSurfaceRejection/apps/v1/Deployment
+=== RUN   TestVerifyPR571_DeprecatedSurfaceRejection/apps/v1/StatefulSet
+=== RUN   TestVerifyPR571_DeprecatedSurfaceRejection/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet
+=== RUN   TestVerifyPR571_DeprecatedSurfaceRejection/scenario-1_reference_on_deprecated_surface_stays_legal
+=== RUN   TestVerifyPR571_DeprecatedSurfaceRejection/RIS_default_(no_annotation)_accepted
+--- PASS: TestVerifyPR571_DeprecatedSurfaceRejection (0.00s)
+    --- PASS: TestVerifyPR571_DeprecatedSurfaceRejection/apps/v1/Deployment (0.00s)
+    --- PASS: TestVerifyPR571_DeprecatedSurfaceRejection/apps/v1/StatefulSet (0.00s)
+    --- PASS: TestVerifyPR571_DeprecatedSurfaceRejection/leaderworkerset.x-k8s.io/v1/LeaderWorkerSet (0.00s)
+    --- PASS: TestVerifyPR571_DeprecatedSurfaceRejection/scenario-1_reference_on_deprecated_surface_stays_legal (0.00s)
+    --- PASS: TestVerifyPR571_DeprecatedSurfaceRejection/RIS_default_(no_annotation)_accepted (0.00s)
+=== RUN   TestVerifyPR571_IntraListDuplicateEnvCreation
+--- PASS: TestVerifyPR571_IntraListDuplicateEnvCreation (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	(cached)

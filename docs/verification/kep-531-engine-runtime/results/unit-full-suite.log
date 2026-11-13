@@ -1,0 +1,85 @@
+?   	sigs.k8s.io/rbgs/api/workloads/constants	[no test files]
+ok  	sigs.k8s.io/rbgs/api/workloads/ordinals	(cached)
+?   	sigs.k8s.io/rbgs/api/workloads/pub/inplace_update	[no test files]
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	(cached)
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	(cached)
+?   	sigs.k8s.io/rbgs/client-go/applyconfiguration	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/applyconfiguration/internal	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/applyconfiguration/workloads/v1alpha1	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/applyconfiguration/workloads/v1alpha2	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/clientset/versioned	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/clientset/versioned/fake	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/clientset/versioned/scheme	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/clientset/versioned/typed/workloads/v1alpha1	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/clientset/versioned/typed/workloads/v1alpha1/fake	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/clientset/versioned/typed/workloads/v1alpha2	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/clientset/versioned/typed/workloads/v1alpha2/fake	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/informers/externalversions	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/informers/externalversions/internalinterfaces	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/informers/externalversions/workloads	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/informers/externalversions/workloads/v1alpha1	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/informers/externalversions/workloads/v1alpha2	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/listers/workloads/v1alpha1	[no test files]
+?   	sigs.k8s.io/rbgs/client-go/listers/workloads/v1alpha2	[no test files]
+?   	sigs.k8s.io/rbgs/cmd/cli	[no test files]
+?   	sigs.k8s.io/rbgs/cmd/cli/cmd	[no test files]
+ok  	sigs.k8s.io/rbgs/cmd/cli/cmd/rollout	(cached)
+ok  	sigs.k8s.io/rbgs/cmd/cli/cmd/status	(cached)
+ok  	sigs.k8s.io/rbgs/cmd/cli/util	(cached)
+ok  	sigs.k8s.io/rbgs/cmd/rbgs	(cached)
+ok  	sigs.k8s.io/rbgs/hack/gen-helm-rbac	(cached)
+?   	sigs.k8s.io/rbgs/hack/internal	[no test files]
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/component-discovery	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/coordination/coordinationscaling	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/dependency	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/discovery	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance	(cached)
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/clientdapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	(cached)
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/readiness	(cached)
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/specifieddelete	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod	(cached)
+?   	sigs.k8s.io/rbgs/pkg/inplace/pod/clientadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/inplaceupdate	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/readiness	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/port-allocator	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	(cached)
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode	(cached)
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/core	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/sync	(cached)
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/utils	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/utils/revisionadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/scale	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/scheduler	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/common	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/k8s-scheduler-plugin	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/volcano	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/utils	(cached)
+?   	sigs.k8s.io/rbgs/pkg/utils/client	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/expectations	(cached)
+?   	sigs.k8s.io/rbgs/pkg/utils/fieldindex	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/history	(cached)
+?   	sigs.k8s.io/rbgs/pkg/utils/ratelimiter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/requeueduration	(cached)
+?   	sigs.k8s.io/rbgs/pkg/utils/revisionadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/webhook	(cached)
+?   	sigs.k8s.io/rbgs/pkg/webhook/cert/generator	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/webhook/cert/writer	(cached)
+ok  	sigs.k8s.io/rbgs/test/chart	(cached)
+ok  	sigs.k8s.io/rbgs/test/stress	(cached)
+ok  	sigs.k8s.io/rbgs/test/utils	(cached)
+?   	sigs.k8s.io/rbgs/test/wrappers	[no test files]
+?   	sigs.k8s.io/rbgs/test/wrappers/v1alpha1	[no test files]
+?   	sigs.k8s.io/rbgs/test/wrappers/v1alpha2	[no test files]
+?   	sigs.k8s.io/rbgs/version	[no test files]

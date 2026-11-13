@@ -1,0 +1,108 @@
+{
+  "topic": "kep-531-engine-runtime",
+  "pr": "https://github.com/sgl-project/rbg/pull/571",
+  "prHeadFetch": {
+    "remote": "https://github.com/sgl-project/rbg.git",
+    "ref": "pull/571/head"
+  },
+  "headSha": "1810f5c6ed28a48addcc3e348699c3f4ae170a6c",
+  "baseSha": "ea5e82ae59169e0e954fb1c7068f9480fb4b7375",
+  "reviewer": "codex",
+  "harnessPaths": [
+    "docs/verification/kep-531-engine-runtime",
+    "pkg/discovery/zz_verify_pr571_compat_test.go",
+    "pkg/discovery/zz_verify_pr571_grammar_test.go",
+    "api/workloads/v1alpha2/zz_verify_pr571_validation_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "KEP-531 (merged in #548) specifies component targeting and containerPatches for engine runtime profiles; main implements neither. The PR implements the KEP.",
+    "reportedComponent": "pkg/discovery engine-runtime render path + engineRuntimes API",
+    "patchedComponent": "api/workloads v1alpha1+v1alpha2, pkg/discovery, pkg/reconciler, internal/controller/workloads",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "base ea5e82ae api/workloads/v1alpha2/rolebasedgroup_types.go EngineRuntime has only profileName/injectContainers/containers (no component/targetContainers); pkg/discovery/sidecar_builder.go has no targeting concept; keps/531-engine-runtime-profile-injection/README.md exists at base (merged via #548). Component match: PR touches exactly the KEP's named components (api surfaces, pkg/discovery render pipeline, reconcilers, CERP webhook/controller).",
+    "match": []
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/discovery/ ./api/workloads/v1alpha2/ -run 'TestVerifyPR571' -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "go test -count=1 ./test/envtest/testcase/immutability/... ./test/envtest/testcase/rbg/... -json",
+      "envNote": "requires KUBEBUILDER_ASSETS pointing at kube-apiserver 1.31 envtest binaries"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR571_CollisionSkipThenRolePatch"
+      ],
+      "title": "Cross-profile container-name collision: the losing reference's role-side extraPatches land on the surviving (other profile's) container",
+      "result": "pass (canary documents current behavior)",
+      "observed": "profile b's 'shared' sidecar skipped (a wins, EngineRuntimeNameCollision fires), but reference b's targetContainers[shared].extraPatches still resolve by name and mutate profile a's container. KEP-531 D8 gray zone. Flip this canary when the behavior becomes a render error."
+    },
+    {
+      "id": "AC-1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR571_Scenario1ByteForByte",
+        "TestVerifyPR571_ByteForByteNegativeControl"
+      ],
+      "title": "Scenario-1 references render byte-for-byte identical to main (KEP Compatibility Guarantee #1)",
+      "result": "pass",
+      "observed": "DeepEqual vs verbatim main oracle across 10-case matrix; negative control bites"
+    },
+    {
+      "id": "AC-2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR571_ProfileSideRootAllowlist",
+        "TestVerifyPR571_EntrypointMergeRule",
+        "TestVerifyPR571_ProfileSideEnvDefaultOnly",
+        "TestVerifyPR571_RBGPrefixReserved",
+        "TestVerifyPR571_VolumeMountInvariants"
+      ],
+      "title": "Patch grammar enforcement per KEP-531 Patch Grammar",
+      "result": "pass",
+      "observed": "all enforcement points behave per KEP"
+    },
+    {
+      "id": "AC-3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyPR571_PresenceRule",
+        "TestVerifyPR571_ScopeOwnership",
+        "TestVerifyPR571_ComponentVocabulary",
+        "TestVerifyPR571_DeprecatedSurfaceRejection",
+        "TestVerifyPR571_IntraListDuplicateEnvCreation"
+      ],
+      "title": "ValidateEngineRuntimes: D7 presence + standalone exemption, D6 ownership + compatibility pair, vocabulary, deprecated-surface, dup env",
+      "result": "pass",
+      "observed": "all 25 cases pass"
+    },
+    {
+      "id": "AC-4",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestEngineRuntimeProfileImmutability",
+        "TestRBG"
+      ],
+      "title": "CERP freeze across both served versions + reference tracking status + targeting renders (PR's envtest suites re-run)",
+      "result": "pass",
+      "observed": "kube-apiserver 1.31: immutability ok (94s), rbg ok (321s)"
+    }
+  ],
+  "liveNote": "Live/KUBECONFIG layer intentionally skipped per debate setup. The PR's own real-cluster drill evidence (20/20) is author-reported and not independently re-run."
+}
