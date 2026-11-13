@@ -72,14 +72,6 @@ func TestVerifyLedgerF2InvalidSpecSurfacesAtRBG(t *testing.T) {
 // F2-control: a stale (older-generation) InvalidSpec child condition must NOT confirm
 // the current RBG generation.
 func TestVerifyLedgerF2ControlStaleInvalidSpecSkipped(t *testing.T) {
-	replicas := int32(2)
-	rbg := &workloadsv1alpha2.RoleBasedGroup{
-		ObjectMeta: metav1.ObjectMeta{Name: "inference", Namespace: "default", Generation: 5},
-		Spec:       workloadsv1alpha2.RoleBasedGroupSpec{Roles: []workloadsv1alpha2.RoleSpec{{Name: "decode", Replicas: &replicas}}},
-		Status: workloadsv1alpha2.RoleBasedGroupStatus{
-			RoleStatuses: []workloadsv1alpha2.RoleStatus{{Name: "decode", Replicas: 2, ReadyReplicas: 2, UpdatedReplicas: 2}},
-		},
-	}
 	observations := map[string]risObservation{
 		"decode": {
 			exists:   true,
