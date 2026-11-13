@@ -8,6 +8,7 @@
     "pkg/reconciler/roleinstanceset/progressing_partition_verify_test.go",
     "internal/controller/workloads/progressing_retention_verify_test.go",
     "internal/controller/workloads/gang_classify_verify_test.go",
+    "pkg/reconciler/roleinstance/blocker_precedence_verify_test.go",
     "internal/controller/workloads/ris_invalidspec_verify_test.go",
     "pkg/reconciler/roleinstance/phase_init_verify_test.go"
   ],
@@ -72,6 +73,16 @@
       "layer": "unit",
       "match": [
         "TestVerifyF4StaleProgressingConditionRemovedWhenNoLongerAllRIS"
+      ]
+    },
+    {
+      "id": "F5",
+      "ledgerNote": "RI layer blocker selection must follow family precedence over append order",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyLedgerF5BlockerFamilyPrecedenceBeatsAppendOrder",
+        "TestVerifyLedgerF5ControlReversedOrderSameWinner"
       ]
     },
     {
