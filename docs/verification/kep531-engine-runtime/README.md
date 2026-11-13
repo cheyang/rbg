@@ -14,12 +14,12 @@ DCO-signed) and nine fix commits landed on top. `re-verify.sh` verdicts:
 
 | finding | polarity | round 1 | round 2 | evidence |
 |---|---|---|---|---|
-| **F-ENV-OWNERSHIP** profile-side env ownership hole | contract | FAIL | **FIXED** — `container_patch.go` now records into `envCreationTracker` only when `!hasEnvName` (52794c9e); my contract test green; the author also grafted `TestEngineRuntimeEnvOwnershipAfterDefault` + a creation control into the PR | `results/reverify/unit.out` |
-| **F-LWS-DROP** LWS × non-LWP silent fragment drop | contract | FAIL | **FIXED** — `positionVocabulary` collapses LWS-typed non-LWP roles to `{leader, worker}` with leader the default (dbc8f208), exactly the harness-bites fix from round 1; my contract test green; the author grafted `TestReview_LWSNonLWPPatternFragmentRouting` into `pkg/reconciler/lws_reconciler_test.go` (renamed my harness twin `…FragmentRoutingVerify` to avoid the symbol collision) | `results/reverify/unit.out` |
-| **F-COLLISION-EXTRAPATCHES** losing reference's extraPatches land on the winning profile's container | canary | present | **STILL-PRESENT** (non-blocking, consensus minor / KEP D8 gray zone; the author did not act on it — advisory) — `resolvePatchTarget` still resolves a profile-declared name by name against the rendered pod | `results/reverify/unit.out` |
-| AC5 validation contracts (Codex 25-case suite) | contract | pass | **pass** — including the linear D6 rewrite (f7ea2b43) and the 20-error cap (52794c9e) | `results/reverify/unit.out` |
-| AC6 patch grammar (Codex suite) | contract | pass | **pass** | `results/reverify/unit.out` |
-| AC1 scenario-1 byte-for-byte compat (Codex oracle) | contract | pass | **pass** | `results/reverify/unit.out` |
+| **F-ENV-OWNERSHIP** profile-side env ownership hole | contract | FAIL | **FIXED** — `container_patch.go` now records into `envCreationTracker` only when `!hasEnvName` (52794c9e); my contract test green; the author also grafted `TestEngineRuntimeEnvOwnershipAfterDefault` + a creation control into the PR | `results/reverify-round2/unit.out` (round-1 red baseline: `results/reverify/unit.parsed`) |
+| **F-LWS-DROP** LWS × non-LWP silent fragment drop | contract | FAIL | **FIXED** — `positionVocabulary` collapses LWS-typed non-LWP roles to `{leader, worker}` with leader the default (dbc8f208), exactly the harness-bites fix from round 1; my contract test green; the author grafted `TestReview_LWSNonLWPPatternFragmentRouting` into `pkg/reconciler/lws_reconciler_test.go` (renamed my harness twin `…FragmentRoutingVerify` to avoid the symbol collision) | `results/reverify-round2/unit.out` (round-1 red baseline: `results/reverify/unit.parsed`) |
+| **F-COLLISION-EXTRAPATCHES** losing reference's extraPatches land on the winning profile's container | canary | present | **STILL-PRESENT** (non-blocking, consensus minor / KEP D8 gray zone; the author did not act on it — advisory) — `resolvePatchTarget` still resolves a profile-declared name by name against the rendered pod | `results/reverify-round2/unit.out` (round-1 red baseline: `results/reverify/unit.parsed`) |
+| AC5 validation contracts (Codex 25-case suite) | contract | pass | **pass** — including the linear D6 rewrite (f7ea2b43) and the 20-error cap (52794c9e) | `results/reverify-round2/unit.out` (round-1 red baseline: `results/reverify/unit.parsed`) |
+| AC6 patch grammar (Codex suite) | contract | pass | **pass** | `results/reverify-round2/unit.out` (round-1 red baseline: `results/reverify/unit.parsed`) |
+| AC1 scenario-1 byte-for-byte compat (Codex oracle) | contract | pass | **pass** | `results/reverify-round2/unit.out` (round-1 red baseline: `results/reverify/unit.parsed`) |
 
 Full-suite re-run at `f3d4849a` (round 2, independent of the PR's CI):
 
