@@ -1,0 +1,10 @@
+[PASS] T1-diff-shape: README minus tombstone is byte-identical to base (after EOF newline normalization)
+[PASS] T1-yaml-shape: kep.yaml differs from base only in the status line
+[PASS] T2-status-enum: status='replaced', template enum=['provisional', 'implementable', 'implemented', 'deferred', 'rejected', 'withdrawn', 'replaced']
+[PASS] T3-successor-link-canary: link target /keps/576-compact-discovery-configmap ABSENT from PR head tree (canary: absent = dead link documented; KEP-576 ships only via open PR #578)
+[PASS] T4-pr134-in-v070-v080: PR #134 merge 3ddf8af6 is ancestor of v0.7.0=True v0.8.0=True
+[PASS] T4-full-enumeration-shipped: ConfigBuilder uses per-instance full addresses=True, compact excludes field=False (expected: enumeration yes, excludes no)
+[PASS] T4-rbg-level-configmap: controller creates one RBG-level ConfigMap named after the RBG
+[PASS] T4-genealogy-backpointer (non-gating): KEP-576 kep.yaml declares replaces: /keps/133-configmap-refine
+
+Summary: 8/8 checks in expected state

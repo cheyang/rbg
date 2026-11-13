@@ -1,0 +1,17 @@
+Harness-bites check (review-finding-verifier Step 4) — 2026-11-14
+================================================================
+
+Bite 1 (fix simulation for kep133-deadlink-order): committed a stub
+keps/576-compact-discovery-configmap/kep.yaml onto the PR head to simulate
+PR #578 merged, then re-ran the checker.
+  Expected: T3-successor-link-canary FAILS (flips: target now PRESENT).
+  Observed: [FAIL] T3-successor-link-canary: link target ... PRESENT in PR head tree
+  => the canary bites; it detects the fix. Reverted afterwards.
+
+Bite 2 (T1 bite): appended an unrelated line to keps/133 README and re-ran.
+  Expected: T1-diff-shape FAILS (content changed beyond the tombstone).
+  Observed: [FAIL] T1-diff-shape: README differs from base beyond the tombstone block
+  => T1 bites; it is not a vacuous comparison. Reverted afterwards.
+
+Production tree confirmed clean at d4d8563630aafba179e094210d6c53e7e1346583 after both
+bite tests (git status empty, no code changes shipped by this harness).

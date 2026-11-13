@@ -1,0 +1,59 @@
+{
+  "pr": "https://github.com/sgl-project/rbg/pull/577",
+  "topic": "kep133-replaced",
+  "reviewer": "claude",
+  "headSha": "d4d8563630aafba179e094210d6c53e7e1346583",
+  "baseSha": "ea5e82ae59169e0e954fb1c7068f9480fb4b7375",
+  "premise": {
+    "id": "P0",
+    "claim": "KEP-133's compact-format proposal was only partially implemented by #134 (RBG-level shared ConfigMap with full address enumeration, shipped v0.7.0/v0.8.0); the compact part never shipped; KEP-576 supersedes KEP-133.",
+    "runsAgainst": "base",
+    "verdict": "confirmed",
+    "note": "Docs-only PR: formal premise validation skipped per pipeline carve-out; the verifiable factual claims were still checked (T4) and all hold. See verify results.",
+    "tests": ["T4-pr134-in-v070-v080", "T4-full-enumeration-shipped", "T4-rbg-level-configmap", "T4-genealogy-backpointer"]
+  },
+  "findings": [
+    {
+      "id": "kep133-deadlink-order",
+      "title": "Tombstone link and status point at a successor KEP that is not on main yet",
+      "tests": ["T3-successor-link-canary"],
+      "polarity": "canary",
+      "layer": "unit",
+      "canaryNote": "PASS while the link target is ABSENT from the PR head tree (dead link documented). FIXED when it flips to FAIL; then invert to a contract test asserting PRESENT."
+    },
+    {
+      "id": "kep133-diff-shape",
+      "title": "Diff-shape claim: original proposal content unchanged apart from tombstone/status/EOF",
+      "tests": ["T1-diff-shape", "T1-yaml-shape"],
+      "polarity": "contract",
+      "layer": "unit"
+    },
+    {
+      "id": "kep133-status-valid",
+      "title": "status: replaced is a valid KEP status per the repo template enum",
+      "tests": ["T2-status-enum"],
+      "polarity": "contract",
+      "layer": "unit"
+    },
+    {
+      "id": "kep133-factual-claims",
+      "title": "Tombstone factual claims (#134 partial implementation, full enumeration, v0.7.0/v0.8.0)",
+      "tests": ["T4-pr134-in-v070-v080", "T4-full-enumeration-shipped", "T4-rbg-level-configmap"],
+      "polarity": "contract",
+      "layer": "unit"
+    }
+  ],
+  "acceptance": [
+    { "id": "A1-kep133-diff-shape", "status": "passed", "tests": ["T1-diff-shape", "T1-yaml-shape"] },
+    { "id": "A2-kep133-status-enum", "status": "passed", "tests": ["T2-status-enum"] },
+    { "id": "A3-kep133-successor-resolves", "status": "failed", "tests": ["T3-successor-link-canary"], "note": "fails while PR #578 (KEP-576) is unmerged; passes once #578 lands before/with this PR or this PR is rebased onto it" },
+    { "id": "A4-kep133-factual-claims", "status": "passed", "tests": ["T4-pr134-in-v070-v080", "T4-full-enumeration-shipped", "T4-rbg-level-configmap"] }
+  ],
+  "ci": {
+    "status": "success",
+    "attribution": "unknown",
+    "evidence": "GitHub statusCheckRollup at round start (review-context.json); docs-only change with no CI surface beyond lint"
+  },
+  "liveNote": "No live/KUBECONFIG layer needed: docs-only PR; unit layer (git history + tree inspection) decides every claim.",
+  "harnessBites": "results/harness-bites-2026-11-14.txt"
+}
