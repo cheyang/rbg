@@ -451,7 +451,8 @@
       "match": [
         "CheckAffectedAncestorRetired"
       ],
-      "summary": "F-AFFECTED-ANCESTOR-WORDING (NEW round-7 nit; contract FAILS while open): the preDelete integration-test bullet still says admission rejects foreground deletion 'at every affected ancestor' (EN+zh) — a reachability term whose definition was removed with the informer-based resolution."
+      "summary": "F-AFFECTED-ANCESTOR-WORDING: FIXED at e1116c79 — the preDelete integration bullet now states the unconditional rule (\"at every RBGSet, RBG, RIS, and RI entry while the feature gate is enabled\"; zh mirrors); no affected-ancestor/受影响祖先 residue anywhere (grep-verified).",
+      "ledgerId": "F-AFFECTED-ANCESTOR-WORDING"
     },
     {
       "id": "F46",
@@ -460,7 +461,38 @@
       "match": [
         "CheckForegroundScopeAcknowledged"
       ],
-      "summary": "F-FOREGROUND-SCOPE-BROADENED (NEW round-7 question; contract FAILS while open): the unconditional Foreground rejection also covers RBGSet/RBG/RIS/RI objects with no hooks configured while the gate is enabled; the KEP does not acknowledge the broadened blast radius."
+      "summary": "F-FOREGROUND-BLANKET-SCOPE: PARTIAL at e1116c79. Harness-update (disclosed): the acknowledgment landed in round-8 wording (Goal exception + \"also applies to workloads that configure no hooks\", EN+zh), so the pin regex was updated and the contract NARROWED to the residue: EN Upgrade/Downgrade (\"retain their existing behavior\") and the EN regression-baseline bullet still promise unchanged behavior for hook-less workloads while their zh mirrors carry the exception — an EN/zh content divergence. Still open.",
+      "ledgerId": "F-FOREGROUND-BLANKET-SCOPE"
+    },
+    {
+      "id": "F47",
+      "ledgerId": "F-C4554909778",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckExecutorRereadFencing"
+      ],
+      "summary": "Fix evidence for advisory F-C4554909778 (closed round 8): executor re-reads the RI and removes a marker only while hook-state still matches its own invocation and the RI UID is unchanged; emptied-record wording + reassigned-key delayed-cleanup test bullet pinned (EN+zh)."
+    },
+    {
+      "id": "F48",
+      "ledgerId": "F-SELECTOR-RESERVED-KEY-SCOPE",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckSelectorReservedKeyScoped"
+      ],
+      "summary": "NEW round-8 minor (Copilot C4566649841, independently confirmed): the selector-reverse admission rule uses the unscoped term \"controller-reserved key\" while every RBG-generated RIS selector carries reserved-prefix identity labels; the rule needs its key set scoped to lifecycle runtime keys. Contract fails while open."
+    },
+    {
+      "id": "F49",
+      "ledgerId": "F-HOOKSTATE-MIRROR-WORDING",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "CheckHookStateMirrorWording"
+      ],
+      "summary": "NEW round-8 nit (Copilot C4566649766, independently confirmed): the declarative-flow sentence attributes Pod mirroring to hook-state, contradicting the propagation contract (hook-state remains on the RI). Contract fails while open."
     }
   ],
   "liveNote": "Docs-only PR: no live layer. Design-level findings F1-F3 are verified by codebase inspection and their checks are text proxies that confirm the KEP ADDRESSES the topic; design correctness of the added text still requires human review.",

@@ -645,18 +645,92 @@ else
   ok CheckAffectedAncestorRetired   # pre-redesign ref: vacuous pass
 fi
 
-# F46 (F-FOREGROUND-SCOPE-BROADENED, NEW round-7 question; contract FAILS
-#     while open). The unconditional foreground rejection also covers
+# F46 (F-FOREGROUND-BLANKET-SCOPE, round-7 question; contract FAILS while
+#     open). The unconditional foreground rejection also covers
 #     RBGSet/RBG/RIS/RI objects that configure no hooks at all while the gate
-#     is enabled (gate defaults false; clients retry with background). The
-#     KEP never acknowledges that broadened blast radius. Pass when an
-#     acknowledgment sentence exists (EN or zh); a flip needs a human re-read.
+#     is enabled (gate defaults false; clients retry with background).
+#     UPDATED round 8 (Harness-update, human re-read done): round 8 added the
+#     acknowledgment in wording the round-7 regex did not anticipate — the
+#     Goal now carries "except that Foreground deletion is rejected
+#     cluster-wide while the feature gate is enabled" (EN+zh) and the
+#     deletion section states the rejection "also applies to workloads that
+#     configure no hooks" (EN+zh). The contract is NARROWED to the remaining
+#     residue: the two other carried claims must be reconciled too — the EN
+#     Upgrade/Downgrade promise ("retain their existing behavior") and the EN
+#     regression-baseline bullet still flatly promise unchanged behavior for
+#     hook-less workloads, while their zh mirrors already carry the exception
+#     (唯一例外是… / 唯一变化是…), so the residue is also an EN/zh content
+#     divergence. Pass requires acknowledgment + no unreconciled residue; a
+#     further flip needs a human re-read.
 if [ -f "$KEP_EN" ] && grep -q 'rejects every `Foreground`' "$KEP_EN"; then
-  if flat "$KEP_EN" | grep -qiE 'regardless of whether[^.]*(hook|preDelete)|even (when|if)[^.]*no[^.]*(hook|preDelete)[^.]*configured|whether or not[^.]*(hook|preDelete)[^.]*configured' \
-    || flat "$KEP_ZH" | grep -qE '无论[^，。]*(是否|有无)[^，。]*(hook|preDelete)|即使[^，。]*未配置[^，。]*(hook|preDelete)'; then
+  f46_ack=0; f46_res=0
+  flat "$KEP_EN" | grep -q 'except that Foreground deletion is rejected cluster-wide' && f46_ack=1
+  flat "$KEP_EN" | grep -q 'it also applies to workloads that configure no hooks' && f46_ack=1
+  flat "$KEP_ZH" | grep -q '唯一例外是 feature gate' && f46_ack=1
+  flat "$KEP_EN" | grep -oE 'Workloads with no new hooks configured retain their existing behavior[^.]*\.' | grep -qi 'foreground' || f46_res=1
+  flat "$KEP_EN" | grep -oE 'Establish regression baselines[^.]*\.' | grep -qi 'foreground' || f46_res=1
+  flat "$KEP_ZH" | grep -q '唯一例外是 feature gate 开启期间' || f46_res=1
+  flat "$KEP_ZH" | grep -q '唯一变化是 Foreground 删除被拒绝' || f46_res=1
+  if [ "$f46_ack" -eq 1 ] && [ "$f46_res" -eq 0 ]; then
     ok CheckForegroundScopeAcknowledged; else bad CheckForegroundScopeAcknowledged; fi
 else
   ok CheckForegroundScopeAcknowledged   # rule absent on this ref: vacuous pass
+fi
+
+# --- group 2g: round-8 checks (delta d038c23b..e1116c79) ---
+
+# F47 (fix evidence for advisory F-C4554909778, closed round 8). Before
+#     removing a marker the executor re-reads the RI and removes it only
+#     while the current hook-state still matches its own invocation and the
+#     RI UID is unchanged; the KEP states that an emptied marker-key record
+#     proves only label cleanup (not that a superseded execution stopped),
+#     and the reassigned-key delayed-cleanup race is pinned in the test plan
+#     (EN+zh).
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'Before removing a marker, the executor re-reads the RI' \
+  && flat "$KEP_EN" | grep -q 'still matches the hook it executed' \
+  && flat "$KEP_EN" | grep -q 'RI UID is unchanged' \
+  && flat "$KEP_EN" | grep -q 'An emptied marker-key record proves only that the label was cleaned' \
+  && flat "$KEP_EN" | grep -q 'a delayed `postReady` cleanup cannot remove a `preDelete` marker' \
+  && flat "$KEP_ZH" | grep -q '必须重读 RI' \
+  && flat "$KEP_ZH" | grep -q 'RI UID 未变化' \
+  && flat "$KEP_ZH" | grep -q '迟到的 postReady 清理无法删除 preDelete marker'; then
+  ok CheckExecutorRereadFencing; else bad CheckExecutorRereadFencing; fi
+
+# F48 (F-SELECTOR-RESERVED-KEY-SCOPE, NEW round-8 minor; contract FAILS while
+#     open; Copilot C4566649841 independently confirmed by Codex). The
+#     selector-reverse admission rule rejects an owning RIS selector that uses
+#     "a controller-reserved key such as the hook-state key" without bounding
+#     that key set — two sentences earlier the KEP defines the reserved
+#     rbg.workloads.x-k8s.io/ prefix, and every RBG-generated RIS selector
+#     carries three such identity keys (group-name/group-uid/role-name:
+#     pkg/reconciler/roleinstanceset_reconciler.go:227 +
+#     api/workloads/constants/label.go:33,38,58), so a literal implementation
+#     would reject every normal RIS. The stated rationale only covers keys the
+#     lifecycle protocol writes at runtime. Pass when the rule scopes the set
+#     (runtime/state/lifecycle qualifier or an enumeration), EN+zh; another
+#     wording needs a human re-read.
+if [ -f "$KEP_EN" ] && flat "$KEP_EN" | grep -q 'admission rejects an owning RIS selector'; then
+  if flat "$KEP_EN" | grep -qiE 'controller-reserved (runtime|state|lifecycle)[a-z -]*key|lifecycle-owned key|keys the (lifecycle )?(controller|protocol) writes' \
+    && flat "$KEP_ZH" | grep -qE 'controller (运行时|状态|生命周期)保留|运行时保留 key|保留的运行时 key'; then
+    ok CheckSelectorReservedKeyScoped; else bad CheckSelectorReservedKeyScoped; fi
+else
+  ok CheckSelectorReservedKeyScoped   # rule absent on this ref: vacuous pass
+fi
+
+# F49 (F-HOOKSTATE-MIRROR-WORDING, NEW round-8 nit; contract FAILS while open;
+#     Copilot C4566649766 independently confirmed by Codex). The
+#     declarative-flow sentence lumps `hook-state` and runtime markers into
+#     "written to RI labels, mirrored onto member Pods" (zh :323 mirrors),
+#     but the propagation contract pins "Only `signalLabels` keys are
+#     mirrored; `hook-state` remains on the RI". Pass when the sentence stops
+#     attributing Pod mirroring to hook-state (EN+zh); a flip needs a human
+#     re-read.
+if [ -f "$KEP_EN" ] && grep -q 'Only `signalLabels` keys are mirrored' "$KEP_EN"; then
+  if flat "$KEP_EN" | grep -q '`hook-state` and runtime markers are written to RI labels, mirrored onto member Pods' \
+    || flat "$KEP_ZH" | grep -q 'hook-state` 和运行时 marker 写入 RI labels 并镜像到成员 Pod'; then
+    bad CheckHookStateMirrorWording; else ok CheckHookStateMirrorWording; fi
+else
+  ok CheckHookStateMirrorWording   # propagation section absent: vacuous pass
 fi
 
 # --- group 3: document hygiene (regression guards for future revisions) ---
