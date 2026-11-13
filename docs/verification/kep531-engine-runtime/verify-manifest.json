@@ -21,7 +21,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/discovery/ ./pkg/reconciler/ -run 'TestReview_EnvOwnershipAfterDefault|TestReview_LWSNonLWPPatternFragmentRouting' -json"
+      "cmd": "go test ./pkg/discovery/ ./pkg/reconciler/ -run 'TestReview_EnvOwnershipAfterDefault|TestReview_LWSNonLWPFragmentRoutingVerify' -json"
     },
     "integration": {
       "kind": "ginkgo",
@@ -40,7 +40,7 @@
       "id": "F2",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestReview_LWSNonLWPPatternFragmentRouting"]
+      "match": ["TestReview_LWSNonLWPFragmentRoutingVerify"]
     }
   ],
   "liveNote": "L3 (not run this round, per review scope): the e2e drill suite (make test-e2e-drills, RBGS_DRILLS=1) against a real cluster; the PR claims 20/20. The L1 evidence for F1/F2 is deterministic and does not need a cluster."

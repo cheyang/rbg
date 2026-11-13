@@ -62,7 +62,7 @@ import (
 // passes once the LWS render keeps main's fragment delivery for the role's
 // pattern (e.g. by collapsing the LWS vocabulary for non-LWP patterns to the
 // leader position, where main injected).
-func TestReview_LWSNonLWPPatternFragmentRouting(t *testing.T) {
+func TestReview_LWSNonLWPFragmentRoutingVerify(t *testing.T) {
 	ctx := context.Background()
 
 	newScheme := func() *runtime.Scheme {
