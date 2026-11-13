@@ -1,0 +1,12 @@
+$ go test ./api/workloads/v1alpha2/ -run 'TestGeneratedCRDsAdmitNoRoleSpecCELPresenceRule' -v   (at head f3d4849a)
+=== RUN   TestGeneratedCRDsAdmitNoRoleSpecCELPresenceRule
+=== RUN   TestGeneratedCRDsAdmitNoRoleSpecCELPresenceRule/RoleBasedGroupSet
+=== RUN   TestGeneratedCRDsAdmitNoRoleSpecCELPresenceRule/RoleBasedGroup
+--- PASS: TestGeneratedCRDsAdmitNoRoleSpecCELPresenceRule (0.49s)
+    --- PASS: TestGeneratedCRDsAdmitNoRoleSpecCELPresenceRule/RoleBasedGroupSet (0.22s)
+    --- PASS: TestGeneratedCRDsAdmitNoRoleSpecCELPresenceRule/RoleBasedGroup (0.27s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.519s
+
+The >100x CEL cost-budget claim behind the webhook-vs-CEL deviation is now an
+executable, pinned invariant (control: unmodified CRDs validate cleanly).

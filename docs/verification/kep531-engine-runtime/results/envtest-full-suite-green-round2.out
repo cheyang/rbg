@@ -1,0 +1,8 @@
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/deprecation	7.361s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/immutability	94.768s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	322.773s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy	213.560s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/selective_commit	23.870s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/stateful	42.716s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/v1a1gate	7.049s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/webhook	39.793s
