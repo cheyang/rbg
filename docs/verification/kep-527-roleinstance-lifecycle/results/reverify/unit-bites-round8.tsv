@@ -1,0 +1,14 @@
+head-baseline	CheckAffectedAncestorRetired	pass
+head-baseline	CheckForegroundScopeAcknowledged	fail
+head-baseline	CheckExecutorRereadFencing	pass
+head-baseline	CheckSelectorReservedKeyScoped	fail
+head-baseline	CheckHookStateMirrorWording	fail
+f46-fix-simulation	CheckForegroundScopeAcknowledged	pass
+f47-deletion-bite	CheckExecutorRereadFencing	fail
+f48-fix-simulation	CheckSelectorReservedKeyScoped	pass
+f49-en-only-bite	CheckHookStateMirrorWording	fail
+f49-fix-simulation	CheckHookStateMirrorWording	pass
+restored-baseline	CheckForegroundScopeAcknowledged	fail
+restored-baseline	CheckExecutorRereadFencing	pass
+restored-baseline	CheckSelectorReservedKeyScoped	fail
+restored-baseline	CheckHookStateMirrorWording	fail

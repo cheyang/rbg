@@ -10,7 +10,7 @@ CheckAdmissionWebhookInfra	pass
 CheckAPIGroupVersion	pass
 CheckKepYamlNoSegmentComment	pass
 CheckKepYamlAuthorsSet	pass
-CheckSeeAlsoDirsExist	fail
+CheckSeeAlsoDirsExist	pass
 CheckDeletionCascadeSpecified	pass
 CheckPhaseStorageSpecified	pass
 CheckOldNewCoexistenceRule	pass
@@ -57,7 +57,7 @@ CheckCrossGenerationKeyUniqueness	pass
 CheckMirrorNotAuthenticated	pass
 CheckSelectorReservedKeyReverse	pass
 CheckKep502DriftDisclosed	pass
-CheckAffectedAncestorRetired	fail
+CheckAffectedAncestorRetired	pass
 CheckForegroundScopeAcknowledged	fail
 CheckMarkdownlint	pass
 CheckEnZhSectionParity	pass
