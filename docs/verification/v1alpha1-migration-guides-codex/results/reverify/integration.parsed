@@ -1,0 +1,5 @@
+TestManagerFlagReflectsToggle	pass
+TestClusterRoleGrantsReflectToggle	pass
+TestToggleDeltaIsScopedToDeprecatedRBACAndFlag	pass
+TestChartManagerHasHealthProbes	pass
+TestKustomizeManagerHasHealthProbes	pass

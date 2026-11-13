@@ -1,0 +1,24 @@
+{"Time":"2026-11-14T06:55:50.277121026+08:00","Action":"start","Package":"sigs.k8s.io/rbgs/test/chart"}
+{"Time":"2026-11-14T06:55:50.279948687+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestManagerFlagReflectsToggle"}
+{"Time":"2026-11-14T06:55:50.280011829+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestManagerFlagReflectsToggle","Output":"=== RUN   TestManagerFlagReflectsToggle\n","OutputType":"frame"}
+{"Time":"2026-11-14T06:55:50.363467801+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestManagerFlagReflectsToggle","Output":"--- PASS: TestManagerFlagReflectsToggle (0.08s)\n","OutputType":"frame"}
+{"Time":"2026-11-14T06:55:50.363501622+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestManagerFlagReflectsToggle","Elapsed":0.08}
+{"Time":"2026-11-14T06:55:50.363516542+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestClusterRoleGrantsReflectToggle"}
+{"Time":"2026-11-14T06:55:50.363518072+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestClusterRoleGrantsReflectToggle","Output":"=== RUN   TestClusterRoleGrantsReflectToggle\n","OutputType":"frame"}
+{"Time":"2026-11-14T06:55:50.445944548+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestClusterRoleGrantsReflectToggle","Output":"--- PASS: TestClusterRoleGrantsReflectToggle (0.08s)\n","OutputType":"frame"}
+{"Time":"2026-11-14T06:55:50.445977519+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestClusterRoleGrantsReflectToggle","Elapsed":0.08}
+{"Time":"2026-11-14T06:55:50.445988079+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestToggleDeltaIsScopedToDeprecatedRBACAndFlag"}
+{"Time":"2026-11-14T06:55:50.445989769+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestToggleDeltaIsScopedToDeprecatedRBACAndFlag","Output":"=== RUN   TestToggleDeltaIsScopedToDeprecatedRBACAndFlag\n","OutputType":"frame"}
+{"Time":"2026-11-14T06:55:50.49935456+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestToggleDeltaIsScopedToDeprecatedRBACAndFlag","Output":"--- PASS: TestToggleDeltaIsScopedToDeprecatedRBACAndFlag (0.05s)\n","OutputType":"frame"}
+{"Time":"2026-11-14T06:55:50.49938129+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestToggleDeltaIsScopedToDeprecatedRBACAndFlag","Elapsed":0.05}
+{"Time":"2026-11-14T06:55:50.499386011+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerHasHealthProbes"}
+{"Time":"2026-11-14T06:55:50.499387781+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerHasHealthProbes","Output":"=== RUN   TestChartManagerHasHealthProbes\n","OutputType":"frame"}
+{"Time":"2026-11-14T06:55:50.526237967+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerHasHealthProbes","Output":"--- PASS: TestChartManagerHasHealthProbes (0.03s)\n","OutputType":"frame"}
+{"Time":"2026-11-14T06:55:50.526265188+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerHasHealthProbes","Elapsed":0.03}
+{"Time":"2026-11-14T06:55:50.526269778+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKustomizeManagerHasHealthProbes"}
+{"Time":"2026-11-14T06:55:50.526271298+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKustomizeManagerHasHealthProbes","Output":"=== RUN   TestKustomizeManagerHasHealthProbes\n","OutputType":"frame"}
+{"Time":"2026-11-14T06:55:50.526778026+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKustomizeManagerHasHealthProbes","Output":"--- PASS: TestKustomizeManagerHasHealthProbes (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-11-14T06:55:50.526780836+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKustomizeManagerHasHealthProbes","Elapsed":0}
+{"Time":"2026-11-14T06:55:50.526791517+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Output":"PASS\n","OutputType":"frame"}
+{"Time":"2026-11-14T06:55:50.527602966+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Output":"ok  \tsigs.k8s.io/rbgs/test/chart\t0.250s\n"}
+{"Time":"2026-11-14T06:55:50.527636257+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Elapsed":0.251}
