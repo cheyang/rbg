@@ -1,4 +1,4 @@
-== Round-2 contracts on /tmp/tmp.bBYIDYmSJQ/pr546-reverify ==
+== Round-2 contracts on /tmp/tmp.mguhMCaRFy/pr546-reverify ==
 FAIL  F-OLDNEW-ISOLATION [EN] (required MISSING: sole user-facing definition point for the new four-hook protocol)
 FAIL  F-OLDNEW-ISOLATION [EN] (required MISSING: Alpha admission must reject a Role/RIS combination)
 PASS  F-OLDNEW-ISOLATION [EN] (required present: hook is deprecated)

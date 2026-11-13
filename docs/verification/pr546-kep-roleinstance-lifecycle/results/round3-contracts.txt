@@ -1,4 +1,4 @@
-== Round-3 contracts on /tmp/tmp.bBYIDYmSJQ/pr546-reverify ==
+== Round-3 contracts on /tmp/tmp.mguhMCaRFy/pr546-reverify ==
 PASS  F-SCOPE-PRECREATE [EN] (required present: Adding `preCreate` or `postDelete`\. `preCreate` has no established workload or executor to coordinate before Pod creation)
 PASS  F-SCOPE-PRECREATE [EN] (required present: concerns external cleanup after the live instance is gone and needs a separate protocol)
 PASS  F-SCOPE-PRECREATE [ZH] (required present: 不新增 preCreate 或 postDelete。preCreate 发生在 Pod 创建前，尚无已建立的)
