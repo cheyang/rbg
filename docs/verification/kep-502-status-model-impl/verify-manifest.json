@@ -27,7 +27,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/reconciler/roleinstanceset/ -run 'TestVerify' -v; go test ./pkg/reconciler/roleinstance/ -run 'TestVerify' -v; go test ./internal/controller/workloads/ -run 'TestVerify' -v"
+      "cmd": "go test ./pkg/reconciler/roleinstanceset/ -run 'TestVerify' -json; go test ./pkg/reconciler/roleinstance/ -run 'TestVerify' -json; go test ./internal/controller/workloads/ -run 'TestVerify' -json"
     }
   },
   "idMapping": "Manifest finding ids are the PR-572 debate ledger ids. Test names keep their round-1 codex-local numbers (TestVerifyF2* = ledger F3, TestVerifyF3* = ledger O3, TestVerifyF4* = ledger F4, TestVerifyF5* = ledger F6).",
