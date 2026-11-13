@@ -4,7 +4,10 @@
   "harnessPaths": [
     "docs/verification/kep531-engine-runtime",
     "pkg/discovery/review_env_ownership_test.go",
-    "pkg/reconciler/review_lws_compat_test.go"
+    "pkg/reconciler/review_lws_compat_test.go",
+    "pkg/discovery/zz_verify_pr571_grammar_test.go",
+    "pkg/discovery/zz_verify_pr571_compat_test.go",
+    "api/workloads/v1alpha2/zz_verify_pr571_validation_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -21,7 +24,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/discovery/ ./pkg/reconciler/ -run 'TestReview_EnvOwnershipAfterDefault|TestReview_LWSNonLWPFragmentRoutingVerify' -json"
+      "cmd": "go test ./pkg/discovery/ ./pkg/reconciler/ ./api/workloads/v1alpha2/ -run 'TestReview_EnvOwnershipAfterDefault|TestReview_LWSNonLWPFragmentRoutingVerify|TestVerifyPR571' -json"
     },
     "integration": {
       "kind": "ginkgo",
@@ -31,16 +34,41 @@
   },
   "findings": [
     {
-      "id": "F1",
+      "id": "F-ENV-OWNERSHIP",
       "polarity": "contract",
       "layer": "unit",
       "match": ["TestReview_EnvOwnershipAfterDefault"]
     },
     {
-      "id": "F2",
+      "id": "F-LWS-DROP",
       "polarity": "contract",
       "layer": "unit",
       "match": ["TestReview_LWSNonLWPFragmentRoutingVerify"]
+    },
+    {
+      "id": "F-COLLISION-EXTRAPATCHES",
+      "polarity": "canary",
+      "layer": "unit",
+      "note": "Canary: PASSES while the cross-profile patch targeting gray zone is present; a fix must FLIP it to fail, then invert it.",
+      "match": ["TestVerifyPR571_CollisionSkipThenRolePatch"]
+    },
+    {
+      "id": "AC5-validation-contracts",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyPR571_PresenceRule", "TestVerifyPR571_ScopeOwnership", "TestVerifyPR571_ComponentVocabulary", "TestVerifyPR571_DeprecatedSurfaceRejection", "TestVerifyPR571_IntraListDuplicateEnvCreation"]
+    },
+    {
+      "id": "AC6-patch-grammar",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyPR571_ProfileSideRootAllowlist", "TestVerifyPR571_EntrypointMergeRule", "TestVerifyPR571_ProfileSideEnvDefaultOnly", "TestVerifyPR571_RBGPrefixReserved", "TestVerifyPR571_VolumeMountInvariants"]
+    },
+    {
+      "id": "AC1-scenario1-byte-compat",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyPR571_Scenario1ByteForByte"]
     }
   ],
   "liveNote": "L3 (not run this round, per review scope): the e2e drill suite (make test-e2e-drills, RBGS_DRILLS=1) against a real cluster; the PR claims 20/20. The L1 evidence for F1/F2 is deterministic and does not need a cluster."

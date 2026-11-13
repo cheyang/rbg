@@ -1,0 +1,75 @@
+renders the consented patches into the child workload	skipped
+unaimed patch: fragments inject, patch does not fire, warning event	skipped
+legacy single-template render: a scenario-1 reference on a Deployment-annotated leaderWorkerPattern role injects into the role template	skipped
+render error: no child workload is created and a warning event fires	skipped
+schema: op replace is rejected at write time	skipped
+schema: an element without a jsonPatch is rejected at write time	skipped
+schema: an explicit jsonPatch: null is rejected at write time	skipped
+schema: a path outside the allowlist is rejected at write time	skipped
+schema: a segment-boundary bypass (/commando) is rejected at write time	skipped
+schema: more than 32 patches is rejected at write time	skipped
+render error: a patch adding an env var the container already declares is rejected	skipped
+profile change rides the next reconcile: update then touch the RBG	skipped
+Should fall back to LeaderOnly and only give the leader component a serviceName	skipped
+Should give every component a serviceName and a pod network identity	skipped
+Should clear the worker component serviceName and narrow the shared service in place	skipped
+Should accept an unset policy and reject an explicit LeaderOnly	skipped
+Should create child Deployment for each role	skipped
+Should reject v1alpha2 custom components with duplicate names	skipped
+Should reject v1alpha1 components with duplicate names	skipped
+Should reject RoleInstance components with duplicate names	skipped
+Should allow v1alpha2 templateRef without patch	skipped
+Should reject v1alpha2 role rolloutStrategy with invalid update type	skipped
+Should reject RoleInstanceSet with invalid update strategy type	skipped
+Should accept all valid v1alpha2 update strategy types	skipped
+Should allow updating a valid v1alpha2 rolloutStrategy	skipped
+Should apply a named CoordinatedPolicy and still create the role workloads	skipped
+delivers the fragments to the leader only — the worker sidecar stage is skipped	pass
+withholds the patches of a patch-carrying profile and warns	pass
+removing the reference leaves no template residue	pass
+delivers the fragments to the worker only	pass
+component: worker delivers pod-level fragments to the worker template (new capability)	pass
+profile-side: targetContainers fires the profile's patches on the named role container	pass
+role-side: extraPatches fire the role's patches into the profile's sidecar	pass
+role-side: extraPatches address profile init containers too	pass
+bidirectional: an entry naming a profile-declared container receives only the role-side pass	pass
+role-side: a same-name append onto the profile's env is the override gesture	pass
+role-side: a role-declared volume mounts into a profile container (D9)	pass
+role-side: a secretKeyRef env lands in a profile container (D9)	pass
+D6: two same-profile references naming one component create no child	pass
+a reference naming an unknown component creates no child	pass
+an explicit component on a standalone role creates no child	pass
+a targetContainers entry naming a container another reference injected creates no child	pass
+D6: a compatibility-shape reference overlapping a component-scoped one creates no child	pass
+a profile deleted mid-life dangles the reference and fails the next render	pass
+a same-name recreate resolves the dangling reference and the re-render succeeds	pass
+duplicate profileName-only references render as on main (D6 exemption)	pass
+the disjoint mix (compat + component: worker) renders byte-identically to its all-scoped spelling	pass
+legacy containers merge and role-side patches coexist on one sidecar	pass
+the legacy containers merge appends a same-named override verbatim	pass
+duplicate references append their legacy override once per reference	pass
+D9 permitted direction: a role-side patch mounting the profile's own volume into the sidecar renders	pass
+component: <role name> selects the standalone component and renders	pass
+a mixed-case role name writes with component: <role name>	pass
+a role-side wrap ahead of a profile-side one warns and still renders	pass
+leader and all workers	skipped
+standalone	skipped
+adopts a dense orphan through refined discovery after recreating its RBG	skipped
+isolates invalid bypassed input while reconciling other roles and cleaning removed roles	skipped
+does not create an invalid initial role and recovers after its input is fixed	skipped
+remove the record for a verified dense target	skipped
+restore a verified sparse target	skipped
+creates initial sparse members and recovers a missing member at its committed ordinal	skipped
+uses the Scaling Adapter scale API without changing replica ownership	skipped
+keeps surge off excluded ordinals and preserves its identity across pause and input edits	skipped
+accepts a component outside the DNS-label grammar (render-time vocabulary gate)	pass
+accepts a legal component	pass
+rejects a targetContainers name that is not a DNS label	pass
+rejects duplicate targetContainers names (map list)	pass
+rejects more than 32 targetContainers entries	pass
+rejects a role-side extraPatches entry without jsonPatch	pass
+rejects a role-side extraPatches path outside the allowlist	pass
+D7: accepts targetContainers with component (scenario 3)	pass
+D7: the schema accepts the standalone exemption shape (component-less targetContainers under standalonePattern)	pass
+scenario 1: accepts a profileName-only reference	pass
+injectContainers stays accepted with arbitrary values (inert field)	pass
