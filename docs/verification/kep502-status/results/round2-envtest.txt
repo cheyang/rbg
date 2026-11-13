@@ -1,0 +1,4 @@
+# Round 2 — envtest on head effc2f8e (KUBEBUILDER_ASSETS=1.37.0)
+
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	100.266s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/stateful	42.379s

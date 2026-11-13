@@ -1,0 +1,28 @@
+# Round 2 (head effc2f8e) — full package suites with harness grafted (expected failures: F4 mixed-backend, F11, F12 contract tests)
+
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.082s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	0.015s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.015s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	0.017s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.085s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	0.015s
+--- FAIL: TestEstablishedSetReadinessFlapThenMemberLossStaysRecovering (0.00s)
+--- FAIL: TestEstablishedSetRecoveryAfterBlockerInterruptionStaysRecovering (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset	0.013s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.109s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode	0.014s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/core	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision	0.018s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/sync	0.061s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/utils	[no test files]
+--- FAIL: TestMixedBackendRBGCleansUpProgressing (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	4.092s
+?   	sigs.k8s.io/rbgs/api/workloads/constants	[no test files]
+ok  	sigs.k8s.io/rbgs/api/workloads/ordinals	0.459s
+?   	sigs.k8s.io/rbgs/api/workloads/pub/inplace_update	[no test files]
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.011s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.149s
+FAIL

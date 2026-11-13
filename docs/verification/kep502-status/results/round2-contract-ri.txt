@@ -1,0 +1,6 @@
+# Round 2 (head effc2f8e) — RI contract tests, targeted, -v
+
+=== RUN   TestInstanceBlockerSelectionFollowsFamilyPriority
+--- PASS: TestInstanceBlockerSelectionFollowsFamilyPriority (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.013s

@@ -63,6 +63,9 @@ go test ./pkg/reconciler/roleinstanceset -run "TestScaleUpAfterConvergenceStillR
 run_contract ./internal/controller/workloads "TestRBGAggregatesRISInvalidSpecAsConfigurationBlocker" "F2-ris-invalidspec-not-propagated"
 run_contract ./internal/controller/workloads "TestMixedBackendRBGCleansUpProgressing" "F3-mixed-backend-stale-progressing"
 run_contract ./pkg/reconciler/roleinstance "TestInstanceBlockerSelectionFollowsFamilyPriority" "F4-ri-blocker-append-order"
+run_contract ./internal/controller/workloads "TestRBGBlockerFamilySurvivesRecomputeAndUnclassifiedRetry" "F5-rbg-entry-blocker-retention"
+run_contract ./pkg/reconciler/roleinstanceset "TestEstablishedSetReadinessFlapThenMemberLossStaysRecovering" "F11-ris-readiness-flap-loss-regression"
+run_contract ./pkg/reconciler/roleinstanceset "TestEstablishedSetRecoveryAfterBlockerInterruptionStaysRecovering" "F12-ris-blocker-interruption-establishment-loss"
 
 echo ">> L1 unit: full package suites (regression guard)"
 for pkg in ./pkg/reconciler/roleinstance/ ./pkg/reconciler/roleinstanceset/ ./internal/controller/workloads/; do
@@ -84,9 +87,9 @@ fi
 
 echo
 echo "== per-finding verdicts =="
-for k in F1-ris-recovery-scaling-flap F2-ris-invalidspec-not-propagated F3-mixed-backend-stale-progressing F4-ri-blocker-append-order; do
+for k in F1-ris-recovery-scaling-flap F2-ris-invalidspec-not-propagated F3-mixed-backend-stale-progressing F4-ri-blocker-append-order F5-rbg-entry-blocker-retention F11-ris-readiness-flap-loss-regression F12-ris-blocker-interruption-establishment-loss; do
   echo "  $k: ${RESULT[$k]:-not-run}"
 done
-echo "F5/F6 are code-path findings without contract tests — re-check by inspection."
+echo "F6/F7/F8 (legacy phase default, RIS preflight status write, FailedScale cleanup ordering) are code-path findings without contract tests — re-check by inspection."
 [[ $overall -eq 0 ]] && echo "ALL FINDINGS FIXED" || echo "SOME FINDINGS STILL BROKEN"
 exit $overall

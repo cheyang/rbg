@@ -2,7 +2,7 @@
   "topic": "kep502-status",
   "pr": "https://github.com/sgl-project/rbg/pull/572",
   "reviewer": "claude",
-  "headSha": "95ddf06a88747bf2180a67a36e299dbe459e8627",
+  "headSha": "effc2f8ee983d6c5a95be12f07ec4a19d94aec14",
   "baseSha": "ea5e82ae59169e0e954fb1c7068f9480fb4b7375",
   "mergeBase": "c2896cc0d9ccb8b72de0dda4838f52d8807c9ff1",
   "premise": {
@@ -16,7 +16,7 @@
     {
       "id": "F1-ris-recovery-scaling-flap",
       "title": "Established RIS missing-instance classification flaps Recovering to ScalingUp after one reconcile",
-      "status": "open",
+      "status": "fixed",
       "origin": "initial-pr",
       "introducedByPR": true,
       "firstSeenSha": "95ddf06a88747bf2180a67a36e299dbe459e8627",
@@ -37,12 +37,17 @@
           "note": "control case guarding the fix: genuine target growth must stay ScalingUp"
         }
       ],
-      "proposedFix": "establishedInstanceMissing should treat a persisted live Progressing reason of Recovering as durable prior-workflow evidence (mirroring the RBG layer's persisted-counter evidence), not only set.Status.Replicas >= target, which holds for exactly one reconcile."
+      "proposedFix": "establishedInstanceMissing should treat a persisted live Progressing reason of Recovering as durable prior-workflow evidence (mirroring the RBG layer's persisted-counter evidence), not only set.Status.Replicas >= target, which holds for exactly one reconcile.",
+      "verification": {
+        "base": "pass",
+        "previous": "fail",
+        "head": "pass"
+      }
     },
     {
       "id": "F2-ris-invalidspec-not-propagated",
       "title": "RBG does not propagate the RIS-level InvalidSpec blocker; reports a benign activity reason instead",
-      "status": "open",
+      "status": "fixed",
       "origin": "initial-pr",
       "introducedByPR": true,
       "firstSeenSha": "95ddf06a88747bf2180a67a36e299dbe459e8627",
@@ -56,7 +61,12 @@
           "layer": "unit"
         }
       ],
-      "proposedFix": "Map ProgressingReasonInvalidSpec in risReasonToRBG and include it in rbgCurrentBlocker's byFamily collection (configuration family already ranks first), or compute the equivalent fact at RBG preflight."
+      "proposedFix": "Map ProgressingReasonInvalidSpec in risReasonToRBG and include it in rbgCurrentBlocker's byFamily collection (configuration family already ranks first), or compute the equivalent fact at RBG preflight.",
+      "verification": {
+        "base": "pass",
+        "previous": "fail",
+        "head": "pass"
+      }
     },
     {
       "id": "F3-mixed-backend-stale-progressing",
@@ -75,12 +85,18 @@
           "layer": "unit"
         }
       ],
-      "proposedFix": "In updateRBGProgressingCondition, RemoveStatusCondition(RoleBasedGroupProgressing) when !allRolesUseRoleInstanceSet, preserving external conditions."
+      "proposedFix": "In updateRBGProgressingCondition, RemoveStatusCondition(RoleBasedGroupProgressing) when !allRolesUseRoleInstanceSet, preserving external conditions.",
+      "verification": {
+        "base": "pass",
+        "previous": "fail",
+        "head": "fail"
+      },
+      "note": "Round 2: unchanged code path; the stale controller-owned Progressing condition still rides the SSA status patch (patch payload captured in results/round2-contract-rbg.txt)."
     },
     {
       "id": "F4-ri-blocker-append-order",
       "title": "RI layer keeps the first-appended blocker instead of competing through family precedence",
-      "status": "open",
+      "status": "fixed",
       "origin": "initial-pr",
       "introducedByPR": true,
       "firstSeenSha": "95ddf06a88747bf2180a67a36e299dbe459e8627",
@@ -94,7 +110,12 @@
           "layer": "unit"
         }
       ],
-      "proposedFix": "Make instanceProgressingBlocker select by documented family priority (permission > admission > quota > resources > unclassified), as extractOwnSetBlocker does at the RIS layer."
+      "proposedFix": "Make instanceProgressingBlocker select by documented family priority (permission > admission > quota > resources > unclassified), as extractOwnSetBlocker does at the RIS layer.",
+      "verification": {
+        "base": "not-run",
+        "previous": "fail",
+        "head": "pass"
+      }
     },
     {
       "id": "F5-ris-observation-failure-skips-write",
@@ -119,6 +140,81 @@
       "claim": "newStatus.Phase is computed from the pre-calculateStatus revision values (CurrentRevision not yet advanced), so the Running transition lands on the following reconcile. Cosmetic latency only.",
       "tests": [],
       "proposedFix": "Compute the phase after calculateStatus advances CurrentRevision, or derive updateActive from the about-to-be-written revision equality."
+    },
+    {
+      "id": "F5-rbg-entry-blocker-retention",
+      "title": "RBG confirmed blocker family lost on the roleErr path (round-1 ledger F3)",
+      "status": "fixed",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "95ddf06a88747bf2180a67a36e299dbe459e8627",
+      "fixedInSha": "effc2f8ee983d6c5a95be12f07ec4a19d94aec14",
+      "evidenceKind": "differential",
+      "claim": "A confirmed current-generation blocker family survives the step-4 status recompute and an unclassifiable step-8 role error, and is cleared only by a fresh successful retry.",
+      "tests": [
+        {
+          "file": "internal/controller/workloads/rolebasedgroup_progressing_contractverify_test.go",
+          "name": "TestRBGBlockerFamilySurvivesRecomputeAndUnclassifiedRetry",
+          "polarity": "contract",
+          "layer": "unit"
+        }
+      ],
+      "proposedFix": "Landed in effc2f8e as the entry-blocker snapshot (rbgEntryOwnBlocker) carried through aggregation and finalizeRBGProgressingCondition; test added this round to pin the new mechanism.",
+      "verification": {
+        "base": "pass",
+        "previous": "fail",
+        "head": "pass"
+      }
+    },
+    {
+      "id": "F11-ris-readiness-flap-loss-regression",
+      "title": "Established set member loss during a readiness flap reports Creating instead of Recovering (revision regression)",
+      "status": "open",
+      "origin": "revision-regression",
+      "introducedByPR": true,
+      "firstSeenSha": "effc2f8ee983d6c5a95be12f07ec4a19d94aec14",
+      "evidenceKind": "differential",
+      "claim": "An established set that converged, then flapped a pod's readiness (persisted Progressing=True/InstancesNotReady with ReadyReplicas<Replicas), then lost a member RoleInstance reports Recovering on every reconcile; on effc2f8e it reports Creating.",
+      "tests": [
+        {
+          "file": "pkg/reconciler/roleinstanceset/progressing_contractverify_test.go",
+          "name": "TestEstablishedSetReadinessFlapThenMemberLossStaysRecovering",
+          "polarity": "contract",
+          "layer": "unit",
+          "note": "PASS on previous head 95ddf06a, FAIL on effc2f8e (results/round2-differential-previous-head.txt); bites-checked with a discriminating fix (InstancesNotReady + completed-update-scope counters) that keeps the PR suite green"
+        }
+      ],
+      "proposedFix": "Effc2f8e removed InstancesNotReady from setEstablishmentReasons to keep never-ready sets at Creating, but establishment evidence must distinguish never-ready from currently-unready durably (e.g. latch prior convergence, or count the condition as evidence only when the set previously completed its update scope: UpdatedReplicas >= ExpectedUpdatedReplicas with ExpectedUpdatedReplicas > 0 — note stateful synthetic slots inflate these counters, so a dedicated latch is safer).",
+      "verification": {
+        "base": "not-applicable",
+        "previous": "pass",
+        "head": "fail"
+      }
+    },
+    {
+      "id": "F12-ris-blocker-interruption-establishment-loss",
+      "title": "Own-operation blocker interlude destroys establishment evidence; post-blocker recovery reports Creating",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "effc2f8ee983d6c5a95be12f07ec4a19d94aec14",
+      "evidenceKind": "differential",
+      "claim": "An established set whose member-loss recovery was interrupted by a now-cleared own-operation blocker (persisted WaitingForQuota) reports Recovering while the replacement is pending; it reports Creating on both 95ddf06a and effc2f8e.",
+      "tests": [
+        {
+          "file": "pkg/reconciler/roleinstanceset/progressing_contractverify_test.go",
+          "name": "TestEstablishedSetRecoveryAfterBlockerInterruptionStaysRecovering",
+          "polarity": "contract",
+          "layer": "unit",
+          "note": "FAIL on both heads — pre-existing within this PR, not a round-2 regression"
+        }
+      ],
+      "proposedFix": "Same root cause as F11: establishment evidence lives only in the persisted Progressing reason / counter shape and any intermediate write erases it. A durable establishment latch (or sticky workflow evidence like the RBG layer's persisted counters) fixes both.",
+      "verification": {
+        "base": "not-applicable",
+        "previous": "fail",
+        "head": "fail"
+      }
     }
   ],
   "layers": {
@@ -129,6 +225,13 @@
   "liveNote": "L3 skipped. If run later: on a real cluster, delete one RoleInstance of an established set with PodManagementPolicy=OrderedReady and an unhealthy predecessor, then observe RIS Progressing flipping Recovering -> ScalingUp across reconciles.",
   "harnessBites": {
     "method": "Each proposed fix was applied temporarily to the production code, its contract test flipped to PASS with the package suite still green, then the fix was reverted (production diff empty on the branch).",
-    "verified": ["F1-ris-recovery-scaling-flap", "F2-ris-invalidspec-not-propagated", "F3-mixed-backend-stale-progressing", "F4-ri-blocker-append-order"]
-  }
+    "verified": [
+      "F1-ris-recovery-scaling-flap",
+      "F2-ris-invalidspec-not-propagated",
+      "F3-mixed-backend-stale-progressing",
+      "F4-ri-blocker-append-order"
+    ]
+  },
+  "previousHeadSha": "95ddf06a88747bf2180a67a36e299dbe459e8627",
+  "round": 2
 }

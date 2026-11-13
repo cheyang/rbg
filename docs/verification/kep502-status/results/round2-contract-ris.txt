@@ -1,0 +1,15 @@
+# Round 2 (head effc2f8e) — contract tests, targeted, -v
+
+=== RUN   TestEstablishedSetMissingInstanceStaysRecovering
+--- PASS: TestEstablishedSetMissingInstanceStaysRecovering (0.00s)
+=== RUN   TestScaleUpAfterConvergenceStillReportsScalingUp
+--- PASS: TestScaleUpAfterConvergenceStillReportsScalingUp (0.00s)
+=== RUN   TestEstablishedSetReadinessFlapThenMemberLossStaysRecovering
+    progressing_contractverify_test.go:180: reason = "Creating", want "Recovering" — an established set (previously converged, all instances at the expected update scope) that loses a member during a readiness flap is fault recovery, not initial establishment; Creating is reserved for initial establishment (KEP-502)
+--- FAIL: TestEstablishedSetReadinessFlapThenMemberLossStaysRecovering (0.00s)
+=== RUN   TestEstablishedSetRecoveryAfterBlockerInterruptionStaysRecovering
+    progressing_contractverify_test.go:234: reason = "Creating", want "Recovering" — a previously established set (3 instances converged at the expected update scope) whose member-loss recovery was interrupted by a now-cleared quota blocker is still fault recovery, not initial establishment
+--- FAIL: TestEstablishedSetRecoveryAfterBlockerInterruptionStaysRecovering (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset	0.011s
+FAIL

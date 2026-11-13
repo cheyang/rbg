@@ -1,0 +1,12 @@
+# Round 2 (head effc2f8e) — RBG contract tests, targeted, -v (DEBUG patch logs trimmed)
+
+=== RUN   TestRBGAggregatesRISInvalidSpecAsConfigurationBlocker
+--- PASS: TestRBGAggregatesRISInvalidSpecAsConfigurationBlocker (0.00s)
+=== RUN   TestMixedBackendRBGCleansUpProgressing
+    rolebasedgroup_progressing_contractverify_test.go:127: stale controller-owned Progressing condition (reason="Converged", observedGeneration=1) survived the transition to a mixed-backend RBG: updateRBGStatus neither recomputes nor removes it, so consumers read a frozen verdict forever
+--- FAIL: TestMixedBackendRBGCleansUpProgressing (0.04s)
+=== RUN   TestRBGBlockerFamilySurvivesRecomputeAndUnclassifiedRetry
+--- PASS: TestRBGBlockerFamilySurvivesRecomputeAndUnclassifiedRetry (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.063s
+FAIL
