@@ -5,6 +5,7 @@
     "docs/verification/kep-502-status-model-impl",
     "pkg/reconciler/roleinstanceset/progressing_verify_test.go",
     "pkg/reconciler/roleinstanceset/progressing_establishment_verify_test.go",
+    "pkg/reconciler/roleinstanceset/progressing_partition_verify_test.go",
     "internal/controller/workloads/progressing_retention_verify_test.go",
     "internal/controller/workloads/gang_classify_verify_test.go",
     "internal/controller/workloads/ris_invalidspec_verify_test.go",
@@ -102,6 +103,16 @@
         "TestVerifyN1EstablishedSetLossDuringReadinessFlapIsNotCreating",
         "TestVerifyN2LossDuringScaleUpReadinessWindowIsNotCreating",
         "TestVerifyNControlNeverReadySetStaysCreating"
+      ]
+    },
+    {
+      "id": "F12",
+      "ledgerNote": "NEW round-2: updateActive revision-inequality-only signal makes partition-scoped rollouts report RoleInstanceUpdated forever after their scope completes; RBG never reaches Converged (revision regression: Converged on 95ddf06a)",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyF12PartitionScopedRolloutCompleteReportsConverged",
+        "TestVerifyF12ControlIncompleteScopeStillUpdating"
       ]
     }
   ],
