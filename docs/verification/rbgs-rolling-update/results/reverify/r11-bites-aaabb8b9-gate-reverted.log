@@ -1,0 +1,458 @@
+2026-11-14T00:52:00+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":null,"message":"","observedGeneration":2,"reason":"","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-13T16:52:00Z","message":"All target role workloads are updated and ready","observedGeneration":2,"reason":"AllRolesUpdated","status":"False","type":"RollingUpdateInProgress"}],"observedGeneration":2,"observedRolloutRequest":"2"}}}
+2026-11-14T00:52:00+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":null,"message":"","observedGeneration":2,"reason":"","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-13T16:52:00Z","message":"All target role workloads are updated and ready","observedGeneration":2,"reason":"AllRolesUpdated","status":"False","type":"RollingUpdateInProgress"}],"observedGeneration":2,"observedRolloutRequest":"2"}}}
+2026-11-14T00:52:00+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":null,"message":"","observedGeneration":2,"reason":"","status":"True","type":"Ready"},{"lastTransitionTime":"2026-11-13T16:52:00Z","message":"All target role workloads are updated and ready","observedGeneration":2,"reason":"AllRolesUpdated","status":"False","type":"RollingUpdateInProgress"}],"observedGeneration":2,"observedRolloutRequest":"2"}}}
+--- FAIL: TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision (0.06s)
+    --- FAIL: TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template (0.05s)
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:381
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:385
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: "1"
+            	            	actual  : "2"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-1
+            	            	+2
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:386
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:387
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+            	Messages:   	the set must retain the availability slot until the live target completes
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:381
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:385
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: "1"
+            	            	actual  : "2"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-1
+            	            	+2
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:386
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:387
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+            	Messages:   	the set must retain the availability slot until the live target completes
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:381
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:385
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: "1"
+            	            	actual  : "2"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-1
+            	            	+2
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:386
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:387
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+            	Messages:   	the set must retain the availability slot until the live target completes
+        rolebasedgroup_rollout_status_test.go:413: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:385
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:413
+            	Error:      	Not equal: 
+            	            	expected: "1"
+            	            	actual  : "2"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-1
+            	            	+2
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+        rolebasedgroup_rollout_status_test.go:413: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:386
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:413
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+        rolebasedgroup_rollout_status_test.go:413: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:387
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:413
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+            	Messages:   	the set must retain the availability slot until the live target completes
+    --- FAIL: TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template (0.01s)
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:381
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:385
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: "1"
+            	            	actual  : "2"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-1
+            	            	+2
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:386
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:387
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+            	Messages:   	the set must retain the availability slot until the live target completes
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:381
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:385
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: "1"
+            	            	actual  : "2"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-1
+            	            	+2
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:386
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:387
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+            	Messages:   	the set must retain the availability slot until the live target completes
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:381
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:385
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: "1"
+            	            	actual  : "2"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-1
+            	            	+2
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:386
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:387
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+            	Messages:   	the set must retain the availability slot until the live target completes
+        rolebasedgroup_rollout_status_test.go:413: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:385
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:413
+            	Error:      	Not equal: 
+            	            	expected: "1"
+            	            	actual  : "2"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-1
+            	            	+2
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+        rolebasedgroup_rollout_status_test.go:413: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:386
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:413
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+        rolebasedgroup_rollout_status_test.go:413: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:387
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:413
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+            	Messages:   	the set must retain the availability slot until the live target completes
+    --- FAIL: TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config (0.01s)
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:381
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:385
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: "1"
+            	            	actual  : "2"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-1
+            	            	+2
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:386
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:387
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+            	Messages:   	the set must retain the availability slot until the live target completes
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:381
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:385
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: "1"
+            	            	actual  : "2"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-1
+            	            	+2
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:386
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:387
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+            	Messages:   	the set must retain the availability slot until the live target completes
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:381
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:385
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: "1"
+            	            	actual  : "2"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-1
+            	            	+2
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:386
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+        rolebasedgroup_rollout_status_test.go:403: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:387
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:403
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+            	Messages:   	the set must retain the availability slot until the live target completes
+        rolebasedgroup_rollout_status_test.go:413: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:385
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:413
+            	Error:      	Not equal: 
+            	            	expected: "1"
+            	            	actual  : "2"
+            	            	
+            	            	Diff:
+            	            	--- Expected
+            	            	+++ Actual
+            	            	@@ -1 +1 @@
+            	            	-1
+            	            	+2
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+        rolebasedgroup_rollout_status_test.go:413: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:386
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:413
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+        rolebasedgroup_rollout_status_test.go:413: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:387
+            	            				/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:413
+            	Error:      	Not equal: 
+            	            	expected: false
+            	            	actual  : true
+            	Test:       	TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+            	Messages:   	the set must retain the availability slot until the live target completes
+--- FAIL: TestLeaderWorkerSetRolloutChecksHighestRevisionData (0.01s)
+    --- FAIL: TestLeaderWorkerSetRolloutChecksHighestRevisionData/mismatched_data_with_matching_key (0.00s)
+        rolebasedgroup_rollout_status_test.go:453: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:453
+            	Error:      	Should be false
+            	Test:       	TestLeaderWorkerSetRolloutChecksHighestRevisionData/mismatched_data_with_matching_key
+    --- FAIL: TestLeaderWorkerSetRolloutChecksHighestRevisionData/newer_mismatched_revision (0.00s)
+        rolebasedgroup_rollout_status_test.go:453: 
+            	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroup_rollout_status_test.go:453
+            	Error:      	Should be false
+            	Test:       	TestLeaderWorkerSetRolloutChecksHighestRevisionData/newer_mismatched_revision
+2026-11-14T00:52:00+08:00	DEBUG	patch content	{"patchObject": {"apiVersion":"workloads.x-k8s.io/v1alpha2","kind":"RoleBasedGroup","metadata":{"name":"group","namespace":"default"},"status":{"conditions":[{"lastTransitionTime":"2026-11-13T16:52:00Z","message":"All target role workloads are updated and ready","observedGeneration":2,"reason":"AllRolesUpdated","status":"False","type":"RollingUpdateInProgress"}],"observedGeneration":0,"observedRolloutRequest":"2"}}}
+--- FAIL: TestVerify_R10_LWSCompletionAwaitsCurrentRevision (0.00s)
+    rolebasedgroupset_round10_verify_test.go:180: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroupset_round10_verify_test.go:180
+        	Error:      	Should be false
+        	Test:       	TestVerify_R10_LWSCompletionAwaitsCurrentRevision
+        	Messages:   	no revision for the current template exists yet; the old chain must not satisfy the new rollout
+    rolebasedgroupset_round10_verify_test.go:183: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroupset_round10_verify_test.go:183
+        	Error:      	Not equal: 
+        	            	expected: "1"
+        	            	actual  : "2"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-1
+        	            	+2
+        	Test:       	TestVerify_R10_LWSCompletionAwaitsCurrentRevision
+        	Messages:   	the outstanding rollout request must not be acknowledged before the new template rolls
+    rolebasedgroupset_round10_verify_test.go:185: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr474-r11-head/internal/controller/workloads/rolebasedgroupset_round10_verify_test.go:185
+        	Error:      	Should be true
+        	Test:       	TestVerify_R10_LWSCompletionAwaitsCurrentRevision
+        	Messages:   	the completion barrier must stay up while the LWS controller has not reacted
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.096s
+FAIL

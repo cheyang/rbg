@@ -402,3 +402,51 @@ all verified coherent at head) and gained three new commits: `d923c387`
 - The author's upgrade test (`TestRoleHashUpgradeConvergesWithoutChangingWorkloadTemplates`)
   also passes against the PREVIOUS head's production code — the fixture does not
   capture the legacy-revisionKey wedge the production change addresses.
+
+## Round 11 — head aaabb8b9 (one fix commit for R10LWSACK)
+
+Delta `cb0a201a..aaabb8b9` is exactly one commit: `aaabb8b9`
+"fix(rbgs): gate LWS completion on live revision data"
+(`rolebasedgroup_rollout_status.go` + its test). Base c2896cc0 unchanged;
+aaabb8b9's parent is the round-10 head cb0a201a.
+
+- **R10LWSACK — FIXED at aaabb8b9.** The fix is the round-10 prescribed gate:
+  after selecting the highest persisted LWS ControllerRevision,
+  `leaderWorkerSetRolloutComplete` now computes the expected revision from the
+  live LWS (`lwsrevision.NewRevision`, read-only — it only lists) and requires
+  `lwsrevision.EqualRevision(expected, highest)` before adopting the persisted
+  (possibly legacy) RevisionKey for the chain comparison
+  (`rolebasedgroup_rollout_status.go:198-210`). Re-verify:
+  `TestVerify_R10_LWSCompletionAwaitsCurrentRevision` flips RED -> GREEN
+  (results/reverify/unit-aaabb8b9.parsed), control phase still passes.
+- Harness-bites at head (results/reverify/r11-bites-aaabb8b9-gate-reverted.log):
+  reverting the gate on the head tree turns all three of
+  `TestVerify_R10_LWSCompletionAwaitsCurrentRevision`,
+  `TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision` (author, 3/3
+  subtests: leader template / worker template / network config) and
+  `TestLeaderWorkerSetRolloutChecksHighestRevisionData` (author; the two
+  mismatched-data subtests) RED; restoring the gate leaves the production diff
+  empty. The gate is the load-bearing change for all three.
+- Author fixture realism fixed as prescribed: `seedUpgradeWorkloadStatus`'s LWS
+  branch and the "leader only" case now write the persisted revision's label
+  and Data together (`objects[4] = revision`, UID preserved) instead of
+  relabeling stale Data.
+- Safety properties of the gate confirmed by reading: `NewRevision` performs no
+  writes (asserted by the author's `revisions.Items == 1` guard); the gate
+  fails safe (incomplete) on any data mismatch, so the residual risk direction
+  is a stall, never a premature ack; `getPatch` covers only
+  leaderWorkerTemplate+networkConfig, so replicas-only/rollout-strategy changes
+  still complete on status counts alone. Byte-identity between RBG's vendored
+  lws v0.7.0 patch computation and the deployed LWS controller's is guaranteed
+  by the documented floor (README: RBG v0.6.0+ requires LWS >= v0.7.0); a
+  hypothetical future LWS patch-format change would wedge LWS-role completion
+  until revendoring — same coupling class the pre-round-10 recompute had, fails
+  safe.
+- Sweep at head: full `internal/controller/workloads` unit package ok,
+  `-race` ok (results/reverify/r11-race-aaabb8b9.log), author rbgs_rolling
+  envtest suite ok 277.7s
+  (results/reverify/r11-author-envtest-rbgsrolling-aaabb8b9.log), re-verify
+  integration layer 4/4 green on a real apiserver. CI 22/22 SUCCESS on
+  aaabb8b9 (live fetch 2026-11-14), PR OPEN/MERGEABLE.
+- Re-verify at aaabb8b9: **30/30 FIXED, RESULT: all findings fixed**, exit 0.
+  L3 skipped per debate setup.
