@@ -1,0 +1,2 @@
+TestVerifyCompletedWaveConditionFlipIsPersisted	fail
+TestVerifyWaveDeletionRetriedAfterFailure	fail
