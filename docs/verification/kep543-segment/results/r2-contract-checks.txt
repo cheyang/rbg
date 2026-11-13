@@ -1,0 +1,36 @@
+== R2-F1 contract check: head (d8d53364) ==
+FAIL README.md: Member Mode Validation pairs fail-fast ('stops the entire RBG reconciliation') with the stale per-rule isolation sentence ('Non-Segment Stateless roles are unaffected') — under fail-fast, non-Segment roles' RBG-level reconciliation is affected (frozen), only their instances are not
+FAIL README.zh-CN.md: 成员模式校验 同时包含 fail-fast（停止整个 RBG reconcile）与逐规则隔离表述（不受该限制影响）
+R2-F1 consistency check: FAIL
+exit=1
+
+== R2-F1 contract check: previous head (bd378ebd) — control ==
+PASS README.md: no fail-fast/isolation pairing (per-rule semantics or already reworded)
+PASS README.zh-CN.md: no fail-fast/isolation pairing (per-rule semantics or already reworded)
+NOTE README.md: fail-fast language not found — if round-2 semantics were reverted/restructured, update this check (Harness-update)
+R2-F1 consistency check: PASS
+exit=0
+
+== B-F1 fixed-contract check: head ==
+PASS validation table: explicit 0 requires positive maxSurge (EN)
+PASS zero-budget rule paragraph (EN)
+PASS acknowledges the surge-conditional RIS floor (EN)
+PASS literal-0-survives claim (EN)
+PASS B=0 table row gated on surge (EN)
+PASS round-down-to-zero handled by reconciliation (EN)
+PASS validation table (ZH)
+PASS zero-budget rule paragraph (ZH)
+B-F1 zero-budget redesign check: PASS
+exit=0
+
+== B-F1 fixed-contract check: previous head (bd378ebd) — control ==
+FAIL validation table: explicit 0 requires positive maxSurge (EN)
+FAIL zero-budget rule paragraph (EN)
+FAIL acknowledges the surge-conditional RIS floor (EN)
+FAIL literal-0-survives claim (EN)
+FAIL B=0 table row gated on surge (EN)
+FAIL round-down-to-zero handled by reconciliation (EN)
+FAIL validation table (ZH)
+FAIL zero-budget rule paragraph (ZH)
+B-F1 zero-budget redesign check: FAIL
+exit=1

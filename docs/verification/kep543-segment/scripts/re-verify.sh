@@ -61,6 +61,41 @@ else
 fi
 
 echo
+echo "== KEP-543 code-claim canaries (unit layer, Go) =="
+CANARY_SRC="$BRANCH_ROOT/pkg/reconciler/roleinstanceset/statefulmode/kep543_segment_claims_test.go"
+CANARY_DST="$WT/pkg/reconciler/roleinstanceset/statefulmode/kep543_segment_claims_test.go"
+if [ -f "$CANARY_SRC" ]; then
+  cp "$CANARY_SRC" "$CANARY_DST"
+  if (cd "$WT" && go test ./pkg/reconciler/roleinstanceset/statefulmode/ -run 'TestVerifyKEP543' -count=1) 2>&1 | tail -5; then
+    :
+  else
+    echo "KEP-543 code claims: FAIL or Harness-update (code under review changed shape)"
+    overall=1
+  fi
+else
+  echo "KEP-543 code claims: Harness-update — canary test file missing from harness branch"
+  overall=1
+fi
+
+echo
+echo "== B-F1: zero-budget redesign present (contract: green = fixed) =="
+if bash "$HERE/scripts/check_b1_zero_budget.sh" "$WT"; then
+  echo "B-F1: Fixed — B=0 requires positive effective maxSurge and aligns with the RIS floor"
+else
+  echo "B-F1: Still-broken — zero-budget rule still contradicts the RIS floor"
+  overall=1
+fi
+
+echo
+echo "== R2-F1: fail-fast vs per-rule isolation consistency (contract: red = stale sentence) =="
+if bash "$HERE/scripts/check_r2_consistency.sh" "$WT"; then
+  echo "R2-F1: Fixed — isolation language consistent with fail-fast semantics"
+else
+  echo "R2-F1: Still-broken — 'Non-Segment Stateless roles are unaffected' is stale under whole-RBG fail-fast"
+  overall=1
+fi
+
+echo
 echo "== Incremental review delta =="
 LAST=$(cat "$HERE/.last-reviewed" 2>/dev/null)
 if [ -n "$LAST" ]; then

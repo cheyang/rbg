@@ -3,88 +3,130 @@
   "topic": "kep543-segment",
   "pr": "https://github.com/sgl-project/rbg/pull/569",
   "reviewer": "claude",
-  "headSha": "bd378ebd262fb71a64dff70f7d52a90b7b5dce7d",
+  "headSha": "d8d5336482511c1a4d2e8bf99b21ec7220eee600",
+  "previousHeadSha": "bd378ebd262fb71a64dff70f7d52a90b7b5dce7d",
   "baseSha": "ea5e82ae59169e0e954fb1c7068f9480fb4b7375",
-  "mode": "initial",
+  "mode": "incremental",
+  "round": 2,
   "premise": {
     "id": "P0",
     "claim": "Issue #543 (OPEN, cross-role service unit 'Segment' in CoordinatedPolicy) asks for a KEP under keps/543-segment covering API validation, assignment, label persistence, gang/scaling/rolling-update interaction, topology composition, migration, compatibility, and a test plan.",
     "runsAgainst": "base",
     "verdict": "Confirmed",
-    "evidence": "results/premise.txt — gh issue view 543: OPEN, title '[Feature] Support Segment as the cross-role service unit in CoordinatedPolicy', body matches the KEP scope one-to-one (ratio example 2P:1D, groupIndex formula, label key, scaling semantics). Component match: PR adds exactly the requested keps/543-segment/ design doc."
+    "evidence": "results/premise.txt (round 1); re-confirmed OPEN via gh during round-2 re-verify (results/r2-reverify.txt, 'PASS premise')."
   },
   "findings": [
     {
       "id": "F1",
       "title": "Segment-aware address discovery requirement has no mechanism, owner, or meaningful test coverage",
       "severity": "major",
-      "status": "open",
+      "status": "fixed",
+      "fixedInSha": "d8d5336482511c1a4d2e8bf99b21ec7220eee600",
       "origin": "initial-pr",
       "introducedByPR": true,
       "firstSeenSha": "bd378ebd262fb71a64dff70f7d52a90b7b5dce7d",
       "evidenceKind": "code-path",
-      "evidence": "KEP README.md lines 156, 381, 505 impose 'discovery must publish only the aligned base-group target; no residual or surge identities', but no section assigns an owner or mechanism (every other integration names exact entry points, e.g. line 665 for the Adapter). Today discovery is built by the RBG controller via discovery.NewConfigBuilder (rolebasedgroup_controller.go:492) and enumerates dense ordinals [0, spec.roles[].replicas) (pkg/discovery/config_builder.go buildInstances/memberOrdinals) — an unaligned desired state (2P:1D with P=5,D=2) would publish the residual prefill-4 address that will never be created, reintroducing issue #543's 'partial deployment / occupied resources / unusable service' failure mode. Test plan: exactly one unit bullet (line 1116), zero integration/e2e bullets.",
+      "verification": {"base": "not-run", "previous": "fail", "head": "pass"},
+      "evidence": "FIXED at d8d53364: Complete Segment Invariants now names the owner ('The owner is the existing RBG discovery ConfigMap builder; no separate Segment discovery component is introduced'), decides the enumeration source ('the committed base target — RBG role replicas before a child exists, otherwise the child RIS committed ordinals — and never from live Pods or RoleInstances'), and rules out surge identities by construction. Harness check_f1_discovery.sh (a) mechanism/owner and (b) integration+e2e coverage now PASS on head (results/r2-reverify.txt); round-1 results/f1-discovery.txt recorded both FAIL at bd378ebd. Code claims verified: CommittedOrdinals() reads desired membership from spec.replicas + committed-skip annotation, independent of live instances (api/workloads/v1alpha2/excluded_ordinals.go:112, canary TestVerifyKEP543_CommittedOrdinalsAreSpecBased); memberOrdinals already routes annotated paths to set.CommittedOrdinals() with the comment 'Discovery follows the committed child target, not live Pods' (pkg/discovery/config_builder.go:240-285); surge ordinals >= spec.replicas by construction (topology.surgeStart == replicas, materializeSurge allocates forward from the last base ordinal, stateful_instance_set_utils.go:261,429-451, canary TestVerifyKEP543_SurgeOrdinalsAtOrAboveReplicas). Ratio validation now explicitly runs 'at the start of RBG reconciliation, before the discovery ConfigMap ... is updated', so the misaligned window retains the last aligned table. Test plan gained an 'Address Discovery' integration subsection (2 bullets) and an e2e bullet.",
       "tests": [
-        {
-          "script": "scripts/check_f1_discovery.sh",
-          "polarity": "contract",
-          "layer": "unit",
-          "result": "fail"
-        }
+        {"script": "scripts/check_f1_discovery.sh", "polarity": "contract", "layer": "unit", "result": "pass"},
+        {"script": "pkg/reconciler/roleinstanceset/statefulmode/kep543_segment_claims_test.go#TestVerifyKEP543_CommittedOrdinalsAreSpecBased", "polarity": "contract", "layer": "unit", "result": "pass"},
+        {"script": "pkg/reconciler/roleinstanceset/statefulmode/kep543_segment_claims_test.go#TestVerifyKEP543_SurgeOrdinalsAtOrAboveReplicas", "polarity": "contract", "layer": "unit", "result": "pass"}
       ],
-      "proposedFix": "Add a design subsection naming the discovery entry point (RBG controller discovery step / pkg/discovery/config_builder.go), specify the source of truth (last valid applied base-group target vs current RBG spec) for the misaligned case, and add integration + e2e test-plan bullets for Segment-aware discovery."
+      "proposedFix": "Applied by commits ae7c60b9 + d8d53364."
     },
     {
       "id": "F2",
       "title": "Static webhook rule segBatchSize >= minSegments over-rejects valid steady-state configurations",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
+      "fixedInSha": "d8d5336482511c1a4d2e8bf99b21ec7220eee600",
       "origin": "initial-pr",
       "introducedByPR": true,
       "firstSeenSha": "bd378ebd262fb71a64dff70f7d52a90b7b5dce7d",
       "evidenceKind": "hypothesis",
-      "evidence": "README.md 'Configuration Validation with Scaling': a rule with scaling+Gang must satisfy B >= G unconditionally at admission, justified only by the from-zero / below-threshold first batch. For an RBG already running C >= G groups, B < G is safe, but the webhook still rejects it — permanently coupling scale-out batch granularity to the gang threshold (users wanting one-group-at-a-time additions on a mature gang-protected workload must add >= G groups per batch). Design decision is documented as stateless-by-choice; raised as a question, not a defect.",
+      "verification": {"base": "not-run", "previous": "fail", "head": "pass"},
+      "evidence": "FIXED at d8d53364: 'Integration with Gang' now documents the tradeoff explicitly — the webhook check 'is intentionally static and stateless', 'also rejects B < G for an RBG that already runs at least G complete groups', with the mature-five-group example, labeled 'a documented alpha tradeoff', and reconciliation-side checking named as a possible follow-up. Exactly the documentation fix the finding proposed.",
       "tests": [],
-      "proposedFix": "Either accept and document the steady-state over-rejection explicitly, or move the check to reconciliation where the current applied group count C is known (reject only when C < G and B < G)."
+      "proposedFix": "Applied by commit ae7c60b9/d8d53364 (documented tradeoff)."
     },
     {
       "id": "F3",
       "title": "Scale-in below minSegments: user-visible outcome not stated",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
+      "fixedInSha": "d8d5336482511c1a4d2e8bf99b21ec7220eee600",
       "origin": "initial-pr",
       "introducedByPR": true,
       "firstSeenSha": "bd378ebd262fb71a64dff70f7d52a90b7b5dce7d",
       "evidenceKind": "code-path",
-      "evidence": "README.md says an Adapter 'reducing desired groups below minSegments' is reported 'through the existing incompatible-Gang path' — but the existing path (rolebasedgroup_controller.go:253-276) does more than report: it returns early and leaves roles untouched, halting role reconciliation entirely. So the scale-in is blocked (RIS stays at the old target) until the user fixes the config. The doc never states this user-visible outcome; a reader could equally conclude the scale-in proceeds with a warning. The integration-test bullet 'reports the configuration error without adjusting replicas' is ambiguous between 'no auto-raise' and 'blocks the scale-in'.",
+      "verification": {"base": "not-run", "previous": "fail", "head": "pass"},
+      "evidence": "FIXED at d8d53364: new paragraph in 'Integration with Gang': the incompatible-Gang path 'is also the user-visible outcome for a scale-in below minSegments' — reports the condition, keeps the last valid group target applied to RIS, blocks the scale-in until corrected, requeues on the existing incompatible-Gang interval. Code-accurate: incompatibleGangConfigRequeue = 5 * time.Minute (rolebasedgroup_controller.go:80, unchanged at head). Integration bullet updated to match.",
       "tests": [],
-      "proposedFix": "State explicitly: scale-in below minSegments blocks member reconciliation (roles left untouched) until configuration is corrected, mirroring the existing incompatible-Gang semantics."
+      "proposedFix": "Applied by commit ae7c60b9."
     },
     {
       "id": "F4",
-      "title": "Rule rename rewrites fleet-wide segment labels; gang subGroup partition transiently splits",
+      "title": "Rule rename re-keys fleet-wide segment labels; gang subGroup partition transiently breaks",
       "severity": "minor",
-      "status": "open",
+      "status": "fixed",
+      "fixedInSha": "d8d5336482511c1a4d2e8bf99b21ec7220eee600",
       "origin": "initial-pr",
       "introducedByPR": true,
       "firstSeenSha": "bd378ebd262fb71a64dff70f7d52a90b7b5dce7d",
       "evidenceKind": "hypothesis",
-      "evidence": "ruleID = SHA-256(ruleName)[:12], so renaming a rule (allowed when the ratio is unchanged) changes every RI/Pod segment + segment-rule label value and re-keys the Volcano matchLabelKeys=[segment] subGroup partition. Until synchronization converges, pods of the same logical group carry different segment values, splitting subGroups; the PodGroup threshold (minSubGroups x subGroupSize) may be unsatisfiable in that window, stalling gang dispatch. The doc allows 'temporary cross-layer inconsistency' generically but never calls out the gang-threshold interaction during rename, and no test bullet covers rename under an active gang.",
+      "verification": {"base": "not-run", "previous": "fail", "head": "pass"},
+      "evidence": "FIXED at d8d53364: 'Renaming a rule also has a gang convergence boundary' paragraph in Policy Adoption and Withdrawal now states exactly the round-1 mechanism: new ruleID re-keys every managed label fleet-wide, SubGroupPolicy regenerated with the new selector, old-label Pods drop out of minSubGroups/minMember accounting during asynchronous convergence, gang dispatch of pending Pods may stall transiently, window bounded by metadata synchronization, no restart/PodGroup deletion. New integration bullet covers rename under an active PodGroup with minSubGroups.",
       "tests": [],
-      "proposedFix": "Add a boundary note (rename converges asynchronously and gang dispatch may stall during the window) plus a test-plan bullet for rename with an active gang PodGroup."
+      "proposedFix": "Applied by commit d8d53364."
     },
     {
       "id": "F5",
-      "title": "PR body stale: claims the Chinese README retains a broken review-discussion.zh-CN.md link that head bd378eb already removed",
+      "title": "PR body stale: claims the Chinese README retains a broken review-discussion.zh-CN.md link",
       "severity": "nit",
-      "status": "open",
+      "status": "fixed",
+      "fixedInSha": "d8d5336482511c1a4d2e8bf99b21ec7220eee600",
       "origin": "initial-pr",
       "introducedByPR": true,
       "firstSeenSha": "bd378ebd262fb71a64dff70f7d52a90b7b5dce7d",
       "evidenceKind": "differential",
-      "evidence": "results/f5-pr-body-staleness.txt — link present at be3a6f4 (README.zh-CN.md:125), removed at bd378eb; PR body still says it is retained.",
+      "verification": {"base": "not-run", "previous": "pass", "head": "pass"},
+      "evidence": "FIXED: the round-2 PR body no longer contains the stale review-discussion.zh-CN.md note (problemContext.prBody fetched fresh at round start).",
       "tests": [],
-      "proposedFix": "Update the PR body's 'Special notes' item."
+      "proposedFix": "Applied (PR body rewritten)."
+    },
+    {
+      "id": "R2-F1",
+      "title": "Fail-fast inversion left the per-rule isolation sentence stale: 'Non-Segment Stateless roles are unaffected' now contradicts whole-RBG halt",
+      "severity": "minor",
+      "status": "open",
+      "origin": "revision-regression",
+      "introducedByPR": true,
+      "firstSeenSha": "d8d5336482511c1a4d2e8bf99b21ec7220eee600",
+      "evidenceKind": "differential",
+      "verification": {"base": "not-run", "previous": "pass", "head": "fail"},
+      "evidence": "Commit 80e8897a ('make segment validation fail-fast') inverted the round-1 blocking semantics: sparse membership and invalid member-mode combinations now 'stop the entire RBG reconciliation' (README.md L378/L379, ZH L378/379) and a ratio violation 'stops the RBG reconciliation before any target or group description is written' (L388, L394). But the neighboring bullet still says 'Non-Segment Stateless roles are unaffected' (EN L382, ZH L380 '非 Segment 的 Stateless role 不受该限制影响') — under fail-fast this is stale: a non-Segment Stateless role in the same RBG IS affected at the reconciliation level (its target writes, parameter updates, and discovery ConfigMap updates freeze while the invalid Segment configuration persists); only its running instances are unaffected (L1224 integration bullet covers running, not reconciling). Differential evidence: check_r2_consistency.sh PASS on bd378ebd (per-rule semantics, 'unaffected' true) / FAIL on d8d53364 (fail-fast + stale sentence); bites check green under a simulated reword (results/r2-contract-checks.txt). The doc also never states the blast-radius consequence that one invalid Segment rule freezes RBG-level reconciliation for all roles in the RBG — worth one sentence stating the intended scope.",
+      "tests": [
+        {"script": "scripts/check_r2_consistency.sh", "polarity": "contract", "layer": "unit", "result": "fail"}
+      ],
+      "proposedFix": "Reword the L382/L380 bullet (e.g. 'Non-Segment Stateless roles are exempt from the membership requirement, but fail-fast halts their RBG-level reconciliation too; only their running instances are unaffected') and add one sentence to the fail-fast paragraphs stating that a persistent violation freezes target/parameter/discovery updates for the entire RBG, including non-Segment roles."
+    },
+    {
+      "id": "R2-NOTE1",
+      "title": "[observation, not a defect] B-F1 (Codex round-1 major) fixed and independently verified",
+      "severity": "nit",
+      "status": "fixed",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "bd378ebd262fb71a64dff70f7d52a90b7b5dce7d",
+      "evidenceKind": "code-path",
+      "verification": {"base": "not-run", "previous": "fail", "head": "pass"},
+      "evidence": "The round-2 redesign resolves both horns of B-F1: B=0 is now valid only with positive effective maxSurge; admission rejects an explicit maxUnavailable: 0 with omitted/zero maxSurge; reconciliation reports percentage budgets that round down to zero without surge (starvation horn); and the new alignment paragraph explicitly acknowledges the RIS floor instead of disclaiming changes to it. Code verification: computeMaxUnavailable applies 'if maxSurge == 0 && raw < 1 { raw = 1 }' in both the default and explicit branches and leaves an explicit 0 untouched when maxSurge > 0 (stateful_instance_set_utils.go:295-328) — canary TestVerifyKEP543_ExplicitZeroFloorsToOneOnlyWithoutSurge pins all four combinations (results/kep543-canary.log). check_b1_zero_budget.sh verifies the redesign text is present in EN+ZH (results/r2-contract-checks.txt); the same check fails on bd378ebd (control). Segment-mode surge projection uses ceil() at the Segment layer, so a positive percentage always resolves to >= 1 group — no residual round-to-zero-surge hole.",
+      "tests": [
+        {"script": "pkg/reconciler/roleinstanceset/statefulmode/kep543_segment_claims_test.go#TestVerifyKEP543_ExplicitZeroFloorsToOneOnlyWithoutSurge", "polarity": "contract", "layer": "unit", "result": "pass"},
+        {"script": "scripts/check_b1_zero_budget.sh", "polarity": "contract", "layer": "unit", "result": "pass"}
+      ],
+      "proposedFix": "None — verification record only."
     }
   ],
   "acceptance": [
@@ -92,44 +134,66 @@
       "id": "AC1",
       "contract": "Premise: issue #543 is OPEN and asks for exactly this KEP (component match)",
       "status": "passed",
-      "evidence": "results/premise.txt"
+      "evidence": "results/premise.txt (round 1); re-confirmed OPEN in round-2 re-verify (results/r2-reverify.txt)"
     },
     {
       "id": "AC2",
       "contract": "Both READMEs pass repository markdownlint with 0 issues",
       "status": "passed",
-      "evidence": "results/doc-quality.txt [1]"
+      "evidence": "results/r2-reverify.txt [1]: markdownlint-cli2 v0.24.1, 0 issues in 2 files at d8d53364"
     },
     {
       "id": "AC3",
       "contract": "All relative links and TOC anchors in both READMEs resolve",
       "status": "passed",
-      "evidence": "results/doc-quality.txt [2]"
+      "evidence": "results/r2-reverify.txt [2]: both files PASS at d8d53364 (incl. the new Address Discovery anchor)"
     },
     {
       "id": "AC4",
       "contract": "EN and ZH versions stay in content parity (headings, code blocks, tables, key numeric examples)",
       "status": "passed",
-      "evidence": "results/doc-quality.txt [3]"
+      "evidence": "results/r2-reverify.txt [3]: 105 headings identical, 28 code blocks, 28 tables, 13 key numbers at d8d53364"
     },
     {
       "id": "AC5",
-      "contract": "Every 'existing behavior' claim in the KEP resolves to real code at the head (functions, types, labels, formulas, defaults)",
+      "contract": "Every 'existing behavior' claim in the KEP resolves to real code at the head (functions, types, labels, formulas, defaults), including the round-2 additions (surge-conditional floor, surge ordinals >= spec.replicas, committed-ordinal discovery source)",
       "status": "passed",
-      "evidence": "results/code-refs.txt — 16/16 PASS"
+      "changeReason": "Round 2 added new code claims in the B=0 and discovery fixes; verified with the new Go canaries TestVerifyKEP543_ExplicitZeroFloorsToOneOnlyWithoutSurge, TestVerifyKEP543_SurgeOrdinalsAtOrAboveReplicas, and TestVerifyKEP543_CommittedOrdinalsAreSpecBased (results/kep543-canary.log) plus the 16/16 round-1 code refs (results/r2-reverify.txt).",
+      "evidence": "results/kep543-canary.log: 3/3 canaries PASS; code refs 16/16 PASS; ruleID example e7652f82cdee == SHA-256('kv-cache')[:12] verified locally; incompatibleGangConfigRequeue = 5min confirmed"
     },
     {
       "id": "AC6",
       "contract": "F1: the Segment-aware address-discovery requirement names a mechanism/owner and carries integration+e2e test-plan coverage",
+      "status": "passed",
+      "changeReason": "Status changed failed->passed: round-2 revision added the discovery owner paragraph and the Address Discovery test subsection; check_f1_discovery.sh (a)+(b) now PASS on head.",
+      "evidence": "results/r2-reverify.txt (F1: Fixed) vs round-1 results/f1-discovery.txt (FAIL)"
+    },
+    {
+      "id": "AC7",
+      "contract": "Internal consistency of the fail-fast semantics: the mode-validation isolation language matches the whole-RBG halt it now coexists with",
       "status": "failed",
-      "evidence": "results/f1-discovery.txt — (a) and (b) FAIL; harness-bites check results/f1-bites-check.txt"
+      "changeReason": "New criterion for round-2 finding R2-F1 (revision regression introduced by commit 80e8897a).",
+      "evidence": "results/r2-contract-checks.txt: check_r2_consistency.sh FAIL on d8d53364, PASS on bd378ebd, PASS under simulated fix"
+    },
+    {
+      "id": "AC8",
+      "contract": "B-F1: the B=0 execution-window rule is implementable with unchanged RIS code (surge-conditional floor acknowledged; zero-budget-without-surge rejected/reported)",
+      "status": "passed",
+      "changeReason": "New criterion carried from the round-1 consensus major B-F1 (Codex-led), re-verified independently this round.",
+      "evidence": "results/kep543-canary.log (floor canary) + results/r2-contract-checks.txt (check_b1_zero_budget.sh PASS on head, FAIL on bd378ebd)"
+    },
+    {
+      "id": "AC9",
+      "contract": "B-F3: the B=0 surge path defines how candidate update scope, admission, and budget occupancy relate (which RIS-facing parameter each state authorizes; surge-quota reservation across groups)",
+      "status": "unverified",
+      "evidence": "Unchanged region at d8d53364: admit() predicate, the partition-lowering exemption, and the per-role effectiveExecutionBudget story are as in round 1; the B=0-requires-surge fix narrows the no-surge deadlock case but the state machine is still undefined. Reasoning-only; no executable artifact exists until implementation."
     }
   ],
   "ci": {
-    "status": "failure",
-    "attribution": "not-attributable-to-pr (docs-only diff; envtest TestRestartPolicy flake — merge-base run green)",
-    "evidence": "results/ci-envtest.txt"
+    "status": "success",
+    "attribution": "baseline",
+    "evidence": "results/r2-ci.txt: all non-skipped checks SUCCESS at head d8d53364 (copyright, check-changes, markdown-check, lint, envtest, e2e-matrix-coverage, build, unit-test). The round-1 envtest TestRestartPolicy timeout flake (issue #574) is gone; diff still touches only keps/543-segment/*."
   },
-  "liveNote": "Docs-only PR: no live layer. L1 (doc-quality, code-ref, F1 contract checks) is the full harness; re-verify.sh re-runs all of it.",
-  "polarityNote": "All harness checks are contract polarity: green = requirement holds. check_f1_discovery.sh is RED on the reviewed head by design — it is the F1 reproduction; it turns green only when the design doc adds the discovery mechanism/coverage (see results/f1-bites-check.txt)."
+  "liveNote": "Docs-only PR: no live layer. L1 (doc-quality, code-ref, contract checks, Go canaries) is the full harness; re-verify.sh re-runs all of it.",
+  "polarityNote": "All checks are contract polarity: green = requirement holds. check_r2_consistency.sh is RED on the round-2 head by design — it is the R2-F1 reproduction; it turns green when the stale isolation sentence is reworded. The Go canaries prove the KEP's claims about existing code; if the code shape changes they fail as Harness-update."
 }

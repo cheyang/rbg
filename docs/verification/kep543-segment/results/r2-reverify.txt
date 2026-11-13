@@ -1,0 +1,80 @@
+Fetching current head of https://github.com/sgl-project/rbg/pull/569 ...
+From https://github.com/sgl-project/rbg
+ * branch              refs/pull/569/head -> FETCH_HEAD
+Verifying PR head: d8d5336482511c1a4d2e8bf99b21ec7220eee600
+== P0 premise ==
+issue #543: [OPEN] [Feature] Support Segment as the cross-role service unit in CoordinatedPolicy
+PASS premise: OPEN issue asking for this Segment KEP (component match)
+
+== Doc quality (markdownlint / links / EN-ZH parity) ==
+== [1] markdownlint ==
+markdownlint-cli2 v0.24.1 (markdownlint v0.42.1)
+Finding: keps/543-segment/README.md keps/543-segment/README.zh-CN.md
+Linting: 2 files
+Summary: 0 issues in 0 files
+PASS markdownlint (0 issues)
+== [2] links + anchors ==
+PASS README.md: all relative links and TOC anchors resolve
+PASS README.zh-CN.md: all relative links and TOC anchors resolve
+== [3] EN/ZH parity ==
+PASS headings: 105 headings, identical level sequence
+PASS code blocks: 28 blocks, identical beyond translation
+PASS tables: 28 tables, matching row counts
+PASS key numbers: 13 tracked examples match
+
+== 'Existing behavior' claims vs code ==
+PASS applyRBGSAReplicasOverride (RBG in-memory override path) (d8d5336482511c1a4d2e8bf99b21ec7220eee600:internal/controller/workloads/rolebasedgroup_controller.go)
+PASS handleCoordinationStrategies (RBG parameter calculation) (d8d5336482511c1a4d2e8bf99b21ec7220eee600:internal/controller/workloads/rolebasedgroup_controller.go)
+PASS updateRoleReplicas (Adapter persistent write path) (d8d5336482511c1a4d2e8bf99b21ec7220eee600:internal/controller/workloads/rolebasedgroupscalingadapter_controller.go)
+PASS ScalingAdapter type in RBG API (enable/labels reuse claim) (d8d5336482511c1a4d2e8bf99b21ec7220eee600:api/workloads/v1alpha2/rolebasedgroup_types.go)
+PASS AdapterScaleTargetRef with required Role today (d8d5336482511c1a4d2e8bf99b21ec7220eee600:api/workloads/v1alpha2/rolebasedgroupscalingadapter_types.go)
+PASS GangSchedulingStrategy.MinReplicas (map, per-role minimums) (d8d5336482511c1a4d2e8bf99b21ec7220eee600:api/workloads/v1alpha2/coordinatedpolicy_types.go)
+PASS Policy rollingUpdate maxSkew/partition/maxUnavailable exist (d8d5336482511c1a4d2e8bf99b21ec7220eee600:api/workloads/v1alpha2/coordinatedpolicy_types.go)
+PASS Progression default OrderScheduled (d8d5336482511c1a4d2e8bf99b21ec7220eee600:api/workloads/v1alpha2/coordinatedpolicy_types.go)
+PASS Volcano subGroupPolicy support probe (CRD capability check) (d8d5336482511c1a4d2e8bf99b21ec7220eee600:pkg/scheduler/volcano/scheduler.go)
+PASS subGroup per-RoleInstance + matchLabelKeys=role-instance-name today (d8d5336482511c1a4d2e8bf99b21ec7220eee600:pkg/scheduler/volcano/scheduler.go)
+PASS raiseScalingTargetsToGangMinimum (non-Segment target raising) (d8d5336482511c1a4d2e8bf99b21ec7220eee600:internal/controller/workloads/rolebasedgroup_controller.go)
+PASS committed-skip-ordinals annotation key (dense-membership prerequisite) (d8d5336482511c1a4d2e8bf99b21ec7220eee600:api/workloads/constants/annotation.go)
+PASS group-name label key (Segment selector reuse) (d8d5336482511c1a4d2e8bf99b21ec7220eee600:api/workloads/constants/label.go)
+PASS RIS surge formula: activeSurge = min(maxSurge, max(healthyOld-maxUnavailable,0)) (d8d5336482511c1a4d2e8bf99b21ec7220eee600:pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_utils.go)
+PASS RIS execution budget: maxUnavailable + availableSurge (d8d5336482511c1a4d2e8bf99b21ec7220eee600:pkg/reconciler/roleinstanceset/statefulmode/stateful_instance_set_control.go)
+PASS discovery ConfigMap built by RBG controller from spec roles (d8d5336482511c1a4d2e8bf99b21ec7220eee600:internal/controller/workloads/rolebasedgroup_controller.go)
+
+== F1: Segment-aware address discovery (contract: red = gap present) ==
+-- (a) mechanism/owner named in the design? --
+PASS design names a discovery mechanism/entry point
+-- (b) integration/e2e test coverage for Segment-aware discovery? --
+PASS integration/e2e test plan covers discovery
+-- (c) current code trace: discovery enumerates by RBG spec role replicas --
+PASS (evidence) discovery today enumerates [0, spec.replicas) from RBG spec roles — residual ordinals of an unaligned Segment would be published
+F1: Fixed — design now names a discovery mechanism with test coverage
+
+== KEP-543 code-claim canaries (unit layer, Go) ==
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.012s
+
+== B-F1: zero-budget redesign present (contract: green = fixed) ==
+PASS validation table: explicit 0 requires positive maxSurge (EN)
+PASS zero-budget rule paragraph (EN)
+PASS acknowledges the surge-conditional RIS floor (EN)
+PASS literal-0-survives claim (EN)
+PASS B=0 table row gated on surge (EN)
+PASS round-down-to-zero handled by reconciliation (EN)
+PASS validation table (ZH)
+PASS zero-budget rule paragraph (ZH)
+B-F1 zero-budget redesign check: PASS
+B-F1: Fixed — B=0 requires positive effective maxSurge and aligns with the RIS floor
+
+== R2-F1: fail-fast vs per-rule isolation consistency (contract: red = stale sentence) ==
+FAIL README.md: Member Mode Validation pairs fail-fast ('stops the entire RBG reconciliation') with the stale per-rule isolation sentence ('Non-Segment Stateless roles are unaffected') — under fail-fast, non-Segment roles' RBG-level reconciliation is affected (frozen), only their instances are not
+FAIL README.zh-CN.md: 成员模式校验 同时包含 fail-fast（停止整个 RBG reconcile）与逐规则隔离表述（不受该限制影响）
+R2-F1 consistency check: FAIL
+R2-F1: Still-broken — 'Non-Segment Stateless roles are unaffected' is stale under whole-RBG fail-fast
+
+== Incremental review delta ==
+last-reviewed..head: bd378ebd262fb71a64dff70f7d52a90b7b5dce7d..d8d5336482511c1a4d2e8bf99b21ec7220eee600
+d8d53364 docs(kep-543): clarify discovery ownership and zero-budget validation
+80e8897a docs(kep-543): make segment validation fail-fast
+ae7c60b9 docs(kep-543): address direct review findings
+after this round: echo d8d5336482511c1a4d2e8bf99b21ec7220eee600 > /home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/docs/verification/kep543-segment/.last-reviewed
+
+RESULT: failing checks remain

@@ -1,0 +1,16 @@
+=== RUN   TestVerifyKEP543_ExplicitZeroFloorsToOneOnlyWithoutSurge
+=== RUN   TestVerifyKEP543_ExplicitZeroFloorsToOneOnlyWithoutSurge/explicit_0_with_zero_surge_floors_to_1_(case_Segment_admission_must_reject)
+=== RUN   TestVerifyKEP543_ExplicitZeroFloorsToOneOnlyWithoutSurge/explicit_0_with_positive_surge_survives_as_literal_0_(KEP_claim)
+=== RUN   TestVerifyKEP543_ExplicitZeroFloorsToOneOnlyWithoutSurge/explicit_1_with_zero_surge_stays_1
+=== RUN   TestVerifyKEP543_ExplicitZeroFloorsToOneOnlyWithoutSurge/explicit_1_with_positive_surge_stays_1
+--- PASS: TestVerifyKEP543_ExplicitZeroFloorsToOneOnlyWithoutSurge (0.00s)
+    --- PASS: TestVerifyKEP543_ExplicitZeroFloorsToOneOnlyWithoutSurge/explicit_0_with_zero_surge_floors_to_1_(case_Segment_admission_must_reject) (0.00s)
+    --- PASS: TestVerifyKEP543_ExplicitZeroFloorsToOneOnlyWithoutSurge/explicit_0_with_positive_surge_survives_as_literal_0_(KEP_claim) (0.00s)
+    --- PASS: TestVerifyKEP543_ExplicitZeroFloorsToOneOnlyWithoutSurge/explicit_1_with_zero_surge_stays_1 (0.00s)
+    --- PASS: TestVerifyKEP543_ExplicitZeroFloorsToOneOnlyWithoutSurge/explicit_1_with_positive_surge_stays_1 (0.00s)
+=== RUN   TestVerifyKEP543_SurgeOrdinalsAtOrAboveReplicas
+--- PASS: TestVerifyKEP543_SurgeOrdinalsAtOrAboveReplicas (0.00s)
+=== RUN   TestVerifyKEP543_CommittedOrdinalsAreSpecBased
+--- PASS: TestVerifyKEP543_CommittedOrdinalsAreSpecBased (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.013s
