@@ -1,0 +1,51 @@
+=== RUN   TestLeaderWorkerSetRolloutChecksTargetRevisionChain
+=== RUN   TestLeaderWorkerSetRolloutChecksTargetRevisionChain/complete_without_condition_observed_generation
+=== RUN   TestLeaderWorkerSetRolloutChecksTargetRevisionChain/old_leader_hash
+=== RUN   TestLeaderWorkerSetRolloutChecksTargetRevisionChain/old_pod_hash
+=== RUN   TestLeaderWorkerSetRolloutChecksTargetRevisionChain/old_worker_hash
+=== RUN   TestLeaderWorkerSetRolloutChecksTargetRevisionChain/old_worker_generation
+=== RUN   TestLeaderWorkerSetRolloutChecksTargetRevisionChain/worker_updating
+=== RUN   TestLeaderWorkerSetRolloutChecksTargetRevisionChain/worker_replicas_drift
+=== RUN   TestLeaderWorkerSetRolloutChecksTargetRevisionChain/pod_not_ready
+=== RUN   TestLeaderWorkerSetRolloutChecksTargetRevisionChain/foreign_worker
+=== RUN   TestLeaderWorkerSetRolloutChecksTargetRevisionChain/missing_leader
+=== RUN   TestLeaderWorkerSetRolloutChecksTargetRevisionChain/missing_pod
+=== RUN   TestLeaderWorkerSetRolloutChecksTargetRevisionChain/missing_worker
+=== RUN   TestLeaderWorkerSetRolloutChecksTargetRevisionChain/leader_only
+--- PASS: TestLeaderWorkerSetRolloutChecksTargetRevisionChain (0.07s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksTargetRevisionChain/complete_without_condition_observed_generation (0.05s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksTargetRevisionChain/old_leader_hash (0.00s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksTargetRevisionChain/old_pod_hash (0.00s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksTargetRevisionChain/old_worker_hash (0.00s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksTargetRevisionChain/old_worker_generation (0.00s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksTargetRevisionChain/worker_updating (0.00s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksTargetRevisionChain/worker_replicas_drift (0.00s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksTargetRevisionChain/pod_not_ready (0.00s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksTargetRevisionChain/foreign_worker (0.00s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksTargetRevisionChain/missing_leader (0.00s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksTargetRevisionChain/missing_pod (0.00s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksTargetRevisionChain/missing_worker (0.00s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksTargetRevisionChain/leader_only (0.00s)
+=== RUN   TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision
+=== RUN   TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template
+=== RUN   TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template
+=== RUN   TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config
+--- FAIL: TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision (0.02s)
+    --- FAIL: TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/leader_template (0.01s)
+    --- FAIL: TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/worker_template (0.01s)
+    --- FAIL: TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision/network_config (0.01s)
+=== RUN   TestLeaderWorkerSetRolloutChecksHighestRevisionData
+=== RUN   TestLeaderWorkerSetRolloutChecksHighestRevisionData/missing_revision
+=== RUN   TestLeaderWorkerSetRolloutChecksHighestRevisionData/missing_key
+=== RUN   TestLeaderWorkerSetRolloutChecksHighestRevisionData/foreign_revision
+=== RUN   TestLeaderWorkerSetRolloutChecksHighestRevisionData/mismatched_data_with_matching_key
+=== RUN   TestLeaderWorkerSetRolloutChecksHighestRevisionData/newer_mismatched_revision
+--- FAIL: TestLeaderWorkerSetRolloutChecksHighestRevisionData (0.01s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksHighestRevisionData/missing_revision (0.00s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksHighestRevisionData/missing_key (0.00s)
+    --- PASS: TestLeaderWorkerSetRolloutChecksHighestRevisionData/foreign_revision (0.00s)
+    --- FAIL: TestLeaderWorkerSetRolloutChecksHighestRevisionData/mismatched_data_with_matching_key (0.00s)
+    --- FAIL: TestLeaderWorkerSetRolloutChecksHighestRevisionData/newer_mismatched_revision (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/internal/controller/workloads	0.118s
+FAIL

@@ -91,6 +91,46 @@ becomes whether the new path is correct — covered by POS1/POS2 below.
 
 ## Summary of results
 
+### Round 11 (head `aaabb8b9`, base `c2896cc0`, previous head `cb0a201a` — the round-10 blocker closed; NO new findings)
+
+The delta is a **single commit** (no rebase, merge base still `c2896cc0`):
+
+- `aaabb8b9` "fix(rbgs): gate LWS completion on live revision data" — **R10LWSBARRIER
+  FIXED**. `leaderWorkerSetRolloutComplete` now requires
+  `lwsrevision.EqualRevision(NewRevision(live lws), highest persisted revision)`
+  before trusting the persisted `RevisionKey`, which is exactly the round-10
+  proposed fix (results/proposed-fix-r10-rollout-status.go): the barrier holds
+  through the write->revision-creation window (the persisted data still
+  describes the pre-update template) while a legacy persisted revision whose
+  data already matches the spec still completes (legacy key adopted). The
+  round-10 fixture complaint is also addressed: `seedUpgradeWorkloadStatus`
+  now writes the revision label and Data together, so the author's tests model
+  the state the real LWS controller produces.
+
+No new findings this round. Two carried items are touched in spirit, not in
+letter: F7 (uncached-read amplification) gains one more uncached
+`ListRevisions` per LWS completion check (NewRevision lists internally), and
+the byte-strict `EqualRevision` couples the gate to the deployed LWS
+controller's revision serialization — filed as new question Q3 (fail-closed:
+a mismatch stalls the rollout and holds the budget, it never acknowledges
+early).
+
+| ID | Claim | Layer | Verdict | Evidence |
+|----|-------|-------|---------|----------|
+| R10LWSBARRIER (round-10 blocker) | A freshly applied LWS template whose ControllerRevision the LWS controller has not yet persisted must NOT satisfy the completion barrier | 1 | **FIXED at `aaabb8b9`** — contract `TestVerifyPR474_LWSBarrier_HoldsUntilNewRevisionPersisted` RED on `cb0a201a` production code (re-confirmed), GREEN at head. The author's own two new tests are RED at `cb0a201a` / GREEN at head, so the coverage is real, not fixture gaming | results/differential-r11.log; results/reverify-r11-unit.log |
+| Author LWS tests | `TestLeaderWorkerSetRolloutWaitsForPersistedLiveRevision` (3 template shapes, window + late-completion + no-self-persist) and `TestLeaderWorkerSetRolloutChecksHighestRevisionData` (5 negative shapes) | 1 | **Green at head, red at previous head** — harness-bites in the author's own suite | results/differential-r11.log |
+| Round-1–10 contracts (37 carried incl. the round-10 one) | Full regression sweep on the new head | 1+2 | **Green** — 37/37 unit contract lines PASS, envtest `PR #474` focused specs ok (28.0 s), full repo unit sweep exit 0, `-race` on `internal/controller/workloads` ok (23.6 s), author full rbgs_rolling envtest suite green, doc-match 51/51 PASS against the current PR body; CI: all 22 checks pass at `aaabb8b9` (live fetch 2026-11-14) | results/reverify-r11-unit.log; results/reverify-r11-integration.log; results/full-unit-r11.log; results/race-r11.log; results/author-envtest-r11.log; results/doc-match-r11.log |
+
+Round-11 notes:
+- Open items carried unchanged (delta touches neither their files nor their
+  contracts): Q1, Q2, Q3 (new), C4242488120, C4242488140, C4242488155, F7
+  (evidence extended), F5, F3-release-note, F18, F12, C4431272968,
+  C4445152194, C4498053179.
+- No new harness file needed this round: the round-10 contract already pins
+  the fixed behavior, and the author's own tests now bite on the old code.
+- Verdict: the round-10 merge gate (AC28) is satisfied; remaining open items
+  are minor/nit questions. Verdict for the round: COMMENT.
+
 ### Round 10 (head `cb0a201a`, base tip `c2896cc0`, previous head `8f07c37e` — rebase + 3 commits; ONE NEW BLOCKER)
 
 The delta is a **rebase onto the moved base** (`73e05db4` → `c2896cc0`: selective
