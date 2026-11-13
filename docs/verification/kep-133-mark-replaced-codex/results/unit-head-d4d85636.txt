@@ -1,0 +1,26 @@
+=== RUN   TestKEP133_Premise_RefineModeShipsFullEnumeration
+    kep133_replaced_verify_test.go:86: shipped refine-mode config.yaml:
+        group:
+          name: demo
+          roles:
+          - worker
+          size: 1
+        roles:
+          worker:
+            instances:
+            - address: demo-worker-0.s-demo-worker
+            - address: demo-worker-1.s-demo-worker
+            - address: demo-worker-2.s-demo-worker
+            size: 3
+    kep133_replaced_verify_test.go:118: premise confirmed in code: refine mode ships 3 enumerated addresses for 3 replicas; no compact 'excludes' format
+--- PASS: TestKEP133_Premise_RefineModeShipsFullEnumeration (0.04s)
+=== RUN   TestKEP133_ReplacedStatusAllowedByTemplate
+    kep133_replaced_verify_test.go:155: 'replaced' is template-legal (provisional|implementable|implemented|deferred|rejected|withdrawn|replaced) and KEP-133 now uses it
+--- PASS: TestKEP133_ReplacedStatusAllowedByTemplate (0.00s)
+=== RUN   TestKEP133_TombstoneLinkTargetExists
+    kep133_replaced_verify_test.go:177: tombstone link target "/keps/576-compact-discovery-configmap" missing kep.yaml: stat /home/ecs-user/.pr-debate/homes/codex/repos/sgl-project/rbg/keps/576-compact-discovery-configmap/kep.yaml: no such file or directory
+        Merge order: PR #578 (KEP-576) must land before PR #577, or the tombstone points into the void.
+--- FAIL: TestKEP133_TombstoneLinkTargetExists (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/discovery	0.055s
+FAIL

@@ -1,0 +1,32 @@
+{
+  "topic": "kep-133-mark-replaced-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/577",
+  "harnessPaths": [
+    "docs/verification/kep-133-mark-replaced-codex",
+    "pkg/discovery/kep133_replaced_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "KEP-133's compact-format proposal was only partially implemented by #134, which shipped the RBG-level shared ConfigMap carrying the full address enumeration (released in v0.7.0/v0.8.0) as the `refine` mode.",
+    "reportedComponent": "keps/133-configmap-refine (docs); pkg/discovery + api/workloads constants (shipped code the tombstone describes)",
+    "patchedComponent": "keps/133-configmap-refine/{README.md,kep.yaml} only (docs)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "PR #134 merged 3ddf8af6 (KEP + refine impl) is contained in tags v0.7.0/v0.8.0; ConfigBuilder.Build() emits one address entry per replica with no compact excludes format. results/unit-head-d4d85636.txt (TestKEP133_Premise_RefineModeShipsFullEnumeration); PR is docs-only so base and head run identical code.",
+    "match": ["TestKEP133_Premise_RefineModeShipsFullEnumeration"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/discovery/ -run 'TestKEP133' -json"
+    }
+  },
+  "findings": [
+    { "id": "P0", "polarity": "contract", "layer": "unit", "match": ["TestKEP133_Premise_RefineModeShipsFullEnumeration"] },
+    { "id": "C1", "polarity": "contract", "layer": "unit", "match": ["TestKEP133_ReplacedStatusAllowedByTemplate"] },
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestKEP133_TombstoneLinkTargetExists"] }
+  ],
+  "liveNote": "L3 skipped: docs-only PR, no runtime behavior to exercise. Integration (envtest) adds nothing beyond the unit codebase-fact checks."
+}
