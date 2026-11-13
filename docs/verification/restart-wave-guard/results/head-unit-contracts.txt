@@ -1,0 +1,15 @@
+# head (145cbadd) unit layer: both contract tests must FAIL while the bugs are present
+=== RUN   TestVerifyCompletedWaveConditionFlipIsPersisted
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-13/pr-573/work/verify/pkg/reconciler/roleinstance/wave_mirror_verify_test.go:172
+        	Error:      	Not equal: 
+        	Messages:   	the completed-wave flip must be persisted even when nothing else changed; got stale True/RestartPolicyTriggered
+--- FAIL: TestVerifyCompletedWaveConditionFlipIsPersisted (0.04s)
+=== RUN   TestVerifyWaveDeletionRetriedAfterFailure
+    wave_wedge_verify_test.go:224: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-13/pr-573/work/verify/pkg/reconciler/roleinstance/wave_wedge_verify_test.go:224
+        	Error:      	Should be true
+        	Messages:   	the failed recreation deletion must be retried once the API recovers; otherwise the wave guard blocks every later failure while the recorded pods survive (restart policy wedged)
+--- FAIL: TestVerifyWaveDeletionRetriedAfterFailure (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.062s
+FAIL

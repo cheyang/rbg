@@ -1,0 +1,9 @@
+# premise P0 on BASE (ea5e82ae): expect FAIL at the wave-release assertions (guard holds until Ready)
+[38;5;9m• [FAILED] [66.195 seconds][0m
+[38;5;243m/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-13/pr-573/work/base/test/envtest/testcase/restart_policy/wave563_verify_test.go:158[0m
+  2026-11-13T09:58:58+08:00	DEBUG	events	RestartPolicy is RecreateInstanceOnPodRestart, recreate all pods of instance: test-verify563-1794535134924722029/verify-563-second-failure-role-1-0 (reason=PodFailed, pod=verify-563-second-failure-role-1-0-0, restartCount=1)	{"type": "Normal", "object": {"kind":"RoleInstance","namespace":"test-verify563-1794535134924722029","name":"verify-563-second-failure-role-1-0","uid":"73ededbb-37de-4431-a762-9ae611d4219e","apiVersion":"workloads.x-k8s.io/v1alpha2","resourceVersion":"268"}, "reason": "ReCreateInstance"}
+  [38;5;9m[FAILED][0m in [It] - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-13/pr-573/work/base/test/envtest/testcase/restart_policy/wave563_verify_test.go:224 [38;5;243m@ 11/13/26 09:59:58.099[0m
+  [38;5;9m[FAILED] Timed out after 60.001s.
+  The function passed to Eventually failed at /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-13/pr-573/work/base/test/envtest/testcase/restart_policy/wave563_verify_test.go:219 with:
+  [38;5;9mIn [1m[It][0m[38;5;9m at: [1m/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-13/pr-573/work/base/test/envtest/testcase/restart_policy/wave563_verify_test.go:224[0m [38;5;243m@ 11/13/26 09:59:58.099[0m
+[38;5;9m[1mSummarizing 1 Failure:[0m

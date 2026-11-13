@@ -1,0 +1,2 @@
+# premise P0 on HEAD (145cbadd): expect PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy	11.206s

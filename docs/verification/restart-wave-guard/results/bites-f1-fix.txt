@@ -1,0 +1,13 @@
+# bites check F1: candidate fix (re-issue surviving wave deletions) applied
+=== RUN   TestVerifyWaveDeletionRetriedAfterFailure
+    wave_wedge_verify_test.go:233: persisted Restarting condition after retries: status=False reason=RestartCompleted
+--- PASS: TestVerifyWaveDeletionRetriedAfterFailure (0.04s)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.055s
+
+# collateral: full unit tests of the two touched packages with the fix
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.084s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.073s
+FAIL
+# note: the remaining roleinstance failure under the F1 fix is the F2 contract test only:
+--- FAIL: TestVerifyCompletedWaveConditionFlipIsPersisted (0.00s)

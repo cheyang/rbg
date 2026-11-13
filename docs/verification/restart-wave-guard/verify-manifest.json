@@ -1,0 +1,38 @@
+{
+  "topic": "restart-wave-guard",
+  "pr": "https://github.com/sgl-project/rbg/pull/573",
+  "harnessPaths": [
+    "docs/verification/restart-wave-guard",
+    "pkg/reconciler/roleinstance/wave_wedge_verify_test.go",
+    "pkg/reconciler/roleinstance/wave_mirror_verify_test.go",
+    "test/envtest/testcase/restart_policy/wave563_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "If a member of the rebuilt group fails again before the instance is Ready, nothing happens: the instance stays NotReady until the RoleInstance is deleted by hand (issue #563).",
+    "reportedComponent": "RoleInstance restart-policy guard (shouldRecreateInstanceGuarded/isAlreadyRestarting)",
+    "patchedComponent": "pkg/reconciler/roleinstance{,/sync} restart wave guard",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "integration",
+    "verdict": "confirmed",
+    "evidence": "results/premise-envtest-base.txt — spec times out on base at the wave-release assertions (guard holds until Ready); results/premise-envtest-head.txt — passes on head",
+    "match": ["verify-563"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/roleinstance/ -run 'TestVerifyWaveDeletionRetriedAfterFailure|TestVerifyCompletedWaveConditionFlipIsPersisted' -count=1 -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64} go test ./test/envtest/testcase/restart_policy/ -run TestRestartPolicy -ginkgo.focus 'verify-563' -count=1 -json"
+    }
+  },
+  "findings": [
+    { "id": "F1", "polarity": "contract", "layer": "unit", "match": ["TestVerifyWaveDeletionRetriedAfterFailure"] },
+    { "id": "F2", "polarity": "contract", "layer": "unit", "match": ["TestVerifyCompletedWaveConditionFlipIsPersisted"] },
+    { "id": "P0-fix", "polarity": "contract", "layer": "integration", "match": ["TestRestartPolicy"] }
+  ],
+  "liveNote": "L3 skipped per debate setup (unit + integration layers only)."
+}

@@ -1,0 +1,9 @@
+# bites check F2: candidate fix (drop mirror + never carry Restarting forward) applied
+=== RUN   TestVerifyCompletedWaveConditionFlipIsPersisted
+--- PASS: TestVerifyCompletedWaveConditionFlipIsPersisted (0.04s)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.053s
+
+# collateral impact: the PRs own TestRestartingConditionLifecycleWithReadiness block 3 pins carry-forward through artificial inputs and fails under this fix:
+=== RUN   TestRestartingConditionLifecycleWithReadiness
+        	Messages:   	a completed wave must persist while the instance is not Ready
+--- FAIL: TestRestartingConditionLifecycleWithReadiness (0.04s)

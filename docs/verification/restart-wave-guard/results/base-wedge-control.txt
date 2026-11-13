@@ -1,0 +1,5 @@
+# base (ea5e82ae) control: same wedge contract test PASSES (base retries the failed deletion)
+=== RUN   TestVerifyWaveDeletionRetriedAfterFailure
+    wave_wedge_verify_test.go:240: persisted Restarting condition after retries: status=True reason=RestartPolicyTriggered
+--- PASS: TestVerifyWaveDeletionRetriedAfterFailure (0.04s)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.057s
