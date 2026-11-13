@@ -1,0 +1,62 @@
+{
+  "topic": "kep-576-compact-discovery-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/578",
+  "harnessPaths": [
+    "docs/verification/kep-576-compact-discovery-codex",
+    "pkg/discovery/kep576_baseline_verify_test.go",
+    "test/envtest/testcase/rbg/kep576_legacy_mode_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "The shipped refine mode stores a full enumeration of every instance address in a single RBG-level ConfigMap (~40-120 bytes/entry); a 4000-replica role with 5 pods per instance is ~2.4 MB, beyond the 1 MiB ConfigMap limit, and every scale event rewrites the whole object to every mounting node.",
+    "reportedComponent": "pkg/discovery ConfigBuilder + RBG-level refine ConfigMap",
+    "patchedComponent": "keps/576-compact-discovery-configmap (docs-only KEP proposing the replacement design)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "reconcileRefinedDiscoveryConfigMap builds one <rbg> ConfigMap via ConfigBuilder.Build() with one entry per pod (pkg/discovery/config_builder.go); arithmetic 4000x5x118B = ~2.36MB > 1MiB. Mechanism-level confirmation; docs PR, not load-tested.",
+    "match": ["TestKEP576_Baseline_RolesSectionIsAlphabeticalNotSpecOrder"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/discovery/ -run 'TestKEP576' -v"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=$(bin/setup-envtest use 1.31.0 --bin-dir bin -p path) go test ./test/envtest/testcase/rbg/ -run TestRBGController -ginkgo.focus 'KEP-576 baseline: legacy discovery mode' -v"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestKEP576_Baseline_RolesSectionIsAlphabeticalNotSpecOrder"],
+      "note": "Codebase-fact pin: PASS means shipped code still emits the roles: section alphabetically while group.roles is spec order (KEP baseline #6 wrong as written). The fix is a KEP text change; a test FAILURE after code changes means re-audit the KEP text."
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestKEP576_Baseline_LegacyModeStillMountsGroupLevelConfigMap"],
+      "note": "Codebase-fact pin for the injector half of the legacy-mode gap."
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["KEP-576 baseline: legacy discovery mode"],
+      "note": "envtest: legacy-mode RBG's child RIS pod template mounts the <rbg> ConfigMap while no legacy code path creates it; refine control gets its ConfigMap."
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestKEP576_Baseline_InitialMembershipProjectsExclusionInput"],
+      "note": "Codebase-fact pin: pre-child-creation membership projects valid user exclusion input ([0 2 3] for replicas=3, excluded=1)."
+    }
+  ],
+  "liveNote": "L3 skipped: docs-only PR; no runtime behavior change to observe live."
+}

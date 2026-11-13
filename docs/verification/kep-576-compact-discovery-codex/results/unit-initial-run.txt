@@ -1,0 +1,27 @@
+=== RUN   TestKEP576_Baseline_RolesSectionIsAlphabeticalNotSpecOrder
+    kep576_baseline_verify_test.go:82: rendered shipped config.yaml:
+        group:
+          name: demo
+          roles:
+          - zz-role
+          - aa-role
+          size: 2
+        roles:
+          aa-role:
+            instances:
+            - address: demo-aa-role-0.s-demo-aa-role
+            size: 1
+          zz-role:
+            instances:
+            - address: demo-zz-role-0.s-demo-zz-role
+            size: 1
+    kep576_baseline_verify_test.go:107: roles: section key order is alphabetical (aa-role @70 < zz-role @153), group.roles is spec order
+--- PASS: TestKEP576_Baseline_RolesSectionIsAlphabeticalNotSpecOrder (0.04s)
+=== RUN   TestKEP576_Baseline_LegacyModeStillMountsGroupLevelConfigMap
+    kep576_baseline_verify_test.go:144: legacy-mode RBG injects volume for ConfigMap "demo" (RBG-level), which no code path creates in legacy mode
+--- PASS: TestKEP576_Baseline_LegacyModeStillMountsGroupLevelConfigMap (0.00s)
+=== RUN   TestKEP576_Baseline_InitialMembershipProjectsExclusionInput
+    kep576_baseline_verify_test.go:185: initial membership with excluded-ordinals=1, replicas=3, no child RIS: [0 2 3] (user exclusion input IS projected)
+--- PASS: TestKEP576_Baseline_InitialMembershipProjectsExclusionInput (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.059s

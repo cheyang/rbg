@@ -1,0 +1,45 @@
+=== RUN   TestKEP576_Baseline_RolesSectionIsAlphabeticalNotSpecOrder
+    kep576_baseline_verify_test.go:82: rendered shipped config.yaml:
+        group:
+          name: demo
+          roles:
+          - zz-role
+          - aa-role
+          size: 2
+        roles:
+          aa-role:
+            instances:
+            - address: demo-aa-role-0.s-demo-aa-role
+            size: 1
+          zz-role:
+            instances:
+            - address: demo-zz-role-0.s-demo-zz-role
+            size: 1
+    kep576_baseline_verify_test.go:104: roles: section emitted in spec declaration order (zz-role before aa-role); expected alphabetical map-marshal order (aa-role before zz-role). Output:
+        group:
+          name: demo
+          roles:
+          - zz-role
+          - aa-role
+          size: 2
+        roles:
+          aa-role:
+            instances:
+            - address: demo-aa-role-0.s-demo-aa-role
+            size: 1
+          zz-role:
+            instances:
+            - address: demo-zz-role-0.s-demo-zz-role
+            size: 1
+    kep576_baseline_verify_test.go:107: roles: section key order is alphabetical (aa-role @70 < zz-role @153), group.roles is spec order
+--- FAIL: TestKEP576_Baseline_RolesSectionIsAlphabeticalNotSpecOrder (0.04s)
+=== RUN   TestKEP576_Baseline_LegacyModeStillMountsGroupLevelConfigMap
+    kep576_baseline_verify_test.go:141: legacy-mode RBG mounts ConfigMap "demo", want RBG-level "demo" (per-role "demo-test-role" would match the KEP's legacy row)
+    kep576_baseline_verify_test.go:144: legacy-mode RBG injects volume for ConfigMap "demo" (RBG-level), which no code path creates in legacy mode
+--- FAIL: TestKEP576_Baseline_LegacyModeStillMountsGroupLevelConfigMap (0.00s)
+=== RUN   TestKEP576_Baseline_InitialMembershipProjectsExclusionInput
+    kep576_baseline_verify_test.go:179: memberOrdinals() = [0 2 3], want [0 1 2] (valid exclusion input projected before child creation)
+--- FAIL: TestKEP576_Baseline_InitialMembershipProjectsExclusionInput (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/discovery	0.058s
+FAIL
