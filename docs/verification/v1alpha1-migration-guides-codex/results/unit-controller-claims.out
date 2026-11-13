@@ -1,0 +1,8 @@
+=== RUN   TestDocClaimInstanceSetHasNoReconciler
+--- PASS: TestDocClaimInstanceSetHasNoReconciler (0.04s)
+=== RUN   TestDocClaimOrphanCleanupDeletesAbandonedDeployment
+--- PASS: TestDocClaimOrphanCleanupDeletesAbandonedDeployment (0.00s)
+=== RUN   TestDocClaimOrphanCleanupKeepsActiveDeployment
+--- PASS: TestDocClaimOrphanCleanupKeepsActiveDeployment (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.059s

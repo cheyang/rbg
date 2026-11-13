@@ -1,0 +1,14 @@
+=== RUN   TestDocClaimGateKeepsExistingDeprecatedRole
+--- PASS: TestDocClaimGateKeepsExistingDeprecatedRole (0.00s)
+=== RUN   TestDocClaimGateRejectsRenamedRole
+--- PASS: TestDocClaimGateRejectsRenamedRole (0.00s)
+=== RUN   TestDocClaimGateRejectsDeprecatedTypeSwitch
+--- PASS: TestDocClaimGateRejectsDeprecatedTypeSwitch (0.00s)
+=== RUN   TestDocClaimGateRejectsRollbackToDeprecatedType
+--- PASS: TestDocClaimGateRejectsRollbackToDeprecatedType (0.00s)
+=== RUN   TestDocClaimInstanceSetIsNotGateProtected
+--- PASS: TestDocClaimInstanceSetIsNotGateProtected (0.00s)
+=== RUN   TestDocClaimV1alpha2DefaultWorkloadIsRoleInstanceSet
+--- PASS: TestDocClaimV1alpha2DefaultWorkloadIsRoleInstanceSet (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.010s

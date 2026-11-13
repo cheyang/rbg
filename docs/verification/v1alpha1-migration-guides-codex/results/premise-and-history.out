@@ -1,0 +1,13 @@
+== base lacks the guide ==
+fatal: path 'doc/migration-v1alpha1-to-v1alpha2.md' exists on disk, but not in '2d31318890685f6c0c71bcf6261522f79bf9af17'
+exit=128
+
+== InstanceSet reconciler history ==
+pkg/reconciler/instanceset
+pkg/reconciler/instanceset_reconciler.go
+pkg/reconciler/instanceset_reconciler_test.go
+415f5869 2026-03-12 chore(rbg): implement v1alpha2 as storage version (#188)
+v0.7.0
+v0.7.0-alpha.1
+v0.7.0
+v0.7.0-alpha.1

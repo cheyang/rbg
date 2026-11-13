@@ -1,0 +1,16 @@
+=== RUN   TestGuideInventoryDetectsAllDocumentedShapes
+--- PASS: TestGuideInventoryDetectsAllDocumentedShapes (0.00s)
+=== RUN   TestGuideInventoryUnknownValueUnreachableRow_Canary
+    zz_guides_test.go:194: F1 confirmed: unknown selectors are silently filtered while the guide's table promises to surface them
+--- PASS: TestGuideInventoryUnknownValueUnreachableRow_Canary (0.00s)
+=== RUN   TestGuideLinksResolve
+--- PASS: TestGuideLinksResolve (0.00s)
+=== RUN   TestGuideChineseParity
+--- PASS: TestGuideChineseParity (0.00s)
+=== RUN   TestChartGateDefaultsToEnabled
+--- PASS: TestChartGateDefaultsToEnabled (0.00s)
+=== RUN   TestReleaseChecklistNotesLinkGap_Canary
+    zz_guides_test.go:293: F2 confirmed: checklist requires NOTES to link the migration guides, but NOTES has no such link
+--- PASS: TestReleaseChecklistNotesLinkGap_Canary (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/verification/pr586guides	0.005s

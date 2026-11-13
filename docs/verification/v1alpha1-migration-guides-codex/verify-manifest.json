@@ -1,0 +1,57 @@
+{
+  "topic": "v1alpha1-migration-guides-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/586",
+  "harnessPaths": [
+    "docs/verification/v1alpha1-migration-guides-codex",
+    "api/workloads/v1alpha2/zz_pr586_docclaims_test.go",
+    "pkg/reconciler/zz_pr586_docclaims_test.go",
+    "test/verification/pr586guides"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "The project has no v1alpha1-to-v1alpha2 migration guide; the migration-guide item of the v0.9.0 roadmap (#454) is open. Docs-only PR, so the premise is the absence of the deliverable plus the accuracy of the documented 0.9.0 behavior.",
+    "reportedComponent": "documentation (doc/, READMEs, chart README)",
+    "patchedComponent": "documentation (doc/, READMEs, chart README)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "doc/migration-v1alpha1-to-v1alpha2.md absent on base 2d313188 (git cat-file exit 128); the documented behavior claims are pinned by the contract tests below against the PR head.",
+    "match": ["TestGuideInventoryDetectsAllDocumentedShapes"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./api/workloads/v1alpha2/ ./pkg/reconciler/ ./test/verification/pr586guides/ -run 'TestDocClaim|TestGuide|TestChartGate|TestReleaseChecklist' -count=1 -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "go test ./test/chart/ -count=1 -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestGuideInventoryUnknownValueUnreachableRow_Canary"],
+      "note": "Guide's inventory interpretation table promises an 'Any other value' row, but the shipped jq select() only passes the four known deprecated forms, so unknown selectors are silently filtered. Fixed when the canary flips to FAIL (row removed or catch-all added) — then invert the assertion."
+    },
+    {
+      "id": "F2",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestReleaseChecklistNotesLinkGap_Canary"],
+      "note": "Release checklist asks to confirm chart NOTES link the migration guides; NOTES.txt has no such link. Fixed when the canary flips to FAIL (NOTES links the guide or checklist is reworded) — then invert."
+    }
+  ],
+  "contracts": [
+    "TestDocClaimGateKeepsExistingDeprecatedRole / RejectsRenamedRole / RejectsDeprecatedTypeSwitch / RejectsRollbackToDeprecatedType pin the type-exact compatibility gate and rollback rejection the guide documents",
+    "TestDocClaimInstanceSetIsNotGateProtected + TestDocClaimInstanceSetHasNoReconciler pin the InstanceSet claims (no gate protection, no reconciler)",
+    "TestDocClaimOrphanCleanupDeletesAbandonedDeployment / KeepsActiveDeployment pin the orphan-cleanup claims",
+    "TestGuideInventoryDetectsAllDocumentedShapes pins the shipped inventory command against both API encodings",
+    "TestGuideLinksResolve / TestGuideChineseParity / TestChartGateDefaultsToEnabled pin links, EN/ZH parity, and the chart default"
+  ],
+  "liveNote": "Docs PR: no live layer needed. If desired, on a real cluster run the guide's inventory command against real objects and follow section 3's storedVersions procedure; out of scope here.",
+  "prerequisites": "go, jq (for the inventory tests; skipped otherwise), helm (integration lint step in scripts/run-all.sh only)"
+}
