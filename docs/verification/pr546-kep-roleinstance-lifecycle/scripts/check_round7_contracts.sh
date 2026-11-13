@@ -186,6 +186,13 @@ CHECK_ROUND6_OUT="$(mktemp -d)" bash "$(dirname "$0")/check_round6_contracts.sh"
 r6_bad=0
 while IFS= read -r line; do
   case "$line" in
+    # round-8 additive fix (disclosed Harness-update): once the PR is rebased
+    # onto a base that contains keps/502-* (c2896cc0), the round-6 see-also
+    # check flips from OPEN to OPEN->RESOLVED in-tree. A resolved finding is
+    # not a carry regression — record it and move on.
+    'OPEN->RESOLVED'*)
+      echo "RESOLVED-IN-TREE (rebase brought keps/502-* into the ref): $line" | tee -a "$OUT"
+      ;;
     FAIL*|OPEN*)
       superseded=0
       for sp in "${SUPERSEDED_R7[@]}"; do

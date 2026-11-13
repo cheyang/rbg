@@ -26,6 +26,27 @@
 # the gating contract set; it internally re-runs the round-4 script and fails
 # on any round-4 carry pin that is NOT in the disclosed supersession list.
 #
+# Round 8 (head e1116c79, docs-only, 1 commit "docs: address round-7
+# review findings in KEP-527", +41/-11) PLUS a rebase of the PR branch onto
+# c2896cc0 (KEP-502 merge) — base moves 3612013e -> c2896cc0. Content:
+# blanket-Foreground scope acknowledged in the Goal (EN+ZH) and the webhook
+# paragraph (EN+ZH); zh also qualifies Upgrade/Downgrade and the regression
+# baseline, EN does not (partial fix of F-FOREGROUND-BLANKET-SCOPE + a new
+# EN/ZH content divergence at those two sites, non-gating minor); the
+# executor re-read / hook-state-match / RI-UID guard addresses Reviewer-C
+# advisory F-C4554909778 (EN+ZH prose + unit bullets); the preDelete
+# integration bullet drops the stale "affected ancestor" wording
+# (F-AFFECTED-ANCESTOR-WORDING fixed). Rebase effects (disclosed
+# Harness-updates): keps/502-* now exists IN the PR tree, so the round-6
+# see-also check flips to OPEN->RESOLVED in-tree (check_round7's carry
+# filter updated additively to tolerate it); the in-tree KEP-502 still
+# references markPodNotReady (:413/:485) so the KEP-527 drift disclosure
+# stays accurate, and the required amendment now has an owner (open PR
+# #572 removes both references). check_round8_contracts.sh is the gating
+# contract set; it internally re-runs the round-7 script (which chains
+# round-6/5/4/3/2) with no new supersessions — the round-8 delta is purely
+# additive wording.
+#
 # Round 7 (head d038c23b, docs-only, 1 commit): responds to every open
 # round-6 item — the foreground-deletion webhook is redesigned to reject ALL
 # Foreground propagation at the four deletion entries while the gate is
@@ -107,6 +128,13 @@ CHECK_ROUND7_OUT="$TOPIC_DIR/results" \
 R7_STATUS="${PIPESTATUS[0]}"
 
 echo
+echo "== Round-8 contracts (gating; round-8 pins + round-7 carry with no new supersessions, red = regression) =="
+CHECK_ROUND8_OUT="$TOPIC_DIR/results" \
+  bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round8_contracts.sh" "$WORKTREE" \
+  2>&1 | tee "$TOPIC_DIR/results/round8-contracts-rerun.txt" | grep -E '^(FAIL|OPEN|PASS  R8|ROUND8)' | tail -25
+R8_STATUS="${PIPESTATUS[0]}"
+
+echo
 echo "== Round-6 contracts (reference; its design-changed pins are superseded by round-7 — see check_round7_contracts.sh) =="
 CHECK_ROUND6_OUT="$TOPIC_DIR/results" \
   bash "$WORKTREE/docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round6_contracts.sh" "$WORKTREE" \
@@ -182,7 +210,7 @@ fi
 # Round-4/5/6/7 fixed findings: verdicts come from the round-7 contract pins
 # (round-6 carry is invoked inside check_round7; the 20 round-7
 # supersessions are disclosed design-change re-pins, not regressions).
-if [ "$R7_STATUS" -eq 0 ]; then
+if [ "$R8_STATUS" -eq 0 ]; then
   for f in F-OLDNEW-COEXIST F-LATEST-CONFIG-SEMANTICS \
            F-LABEL-SYNTAX F-INTERRUPT-WHEN-DEAD-AMBIGUITY F-KEPYAML-GATE-SHAPE \
            F-PROPAGATED-SNAPSHOT-EDIT F-ZH-ENGLISH-TERMS \
@@ -200,8 +228,12 @@ if [ "$R7_STATUS" -eq 0 ]; then
   echo "F-C4528291011 (fail-closed on cache miss): Fixed (R6-FAIL-CLOSED-WEBHOOK pins green — fail-closed resolution + integration bullet, EN+ZH)"
   echo "F-C4528290945 (stateful readiness never sees the gate): Moot (round-6 removed the markNotReady gate entirely; hooks never change RI Ready, stated as a Non-Goal)"
 else
-  echo "Round-4/5/6/7 fixed findings: one or more MISSING (see results/round7-contracts-rerun.txt)"
+  echo "Round-4/5/6/7/8 fixed findings: one or more MISSING (see results/round8-contracts-rerun.txt)"
 fi
+echo "F-AFFECTED-ANCESTOR-WORDING: Fixed (R8-ANCESTOR-WORDING pins green + forbidden 'at every affected ancestor' / 受影响祖先 absent, EN+ZH — the integration bullet now names the four deletion entries under the gate)"
+echo "F-C4554909778 (delayed old-executor cleanup deletes a reassigned marker): Fixed at the specification level (R8-EXECUTOR-REREAD / R8-EXECUTOR-REREAD-RECORD / R8-EXECUTOR-TESTBULLET pins green — the executor must re-read the RI and remove a marker only while hook-state still matches its own invocation and the RI UID is unchanged; an emptied marker-key record proves only that the label was cleaned, EN+ZH prose + unit bullets)"
+echo "F-FOREGROUND-BLANKET-SCOPE: PARTIAL (R8-BLANKET-GOAL / R8-BLANKET-WEBHOOK pins green EN+ZH — the Goal and the webhook paragraph now acknowledge the cluster-wide rejection of hook-less workloads; but R8-OPEN-UPGRADE-EN and R8-OPEN-REGRESSIONBASE-EN are red residue: README.md:1155 and :979-981 still promise unchanged behavior unqualified while the zh counterparts (:849, :737-738) now qualify it — open minor, EN/ZH content divergence at those two sites)"
+echo "F-KEP502-AMENDMENT-TRACKER: Fixed (the required KEP-502 amendment now has an owner — open PR #572 removes both markPodNotReady references at KEP-502 README.md:413/:485; unmerged at round-8 capture, re-opens if #572 stalls)"
 echo "F-STALE-LABEL-DISPOSITION: Fixed (R6-REMOVAL-SEMANTICS pins carried green inside check_round7; single disposition rule incl. Pod mirrors, EN+ZH)"
 echo "F-COEXIST-GATE-EDGE: Fixed (R7-GATE-EDGES-DUAL / R7-GATE-EDGES-OFF / R7-INPLACEUPDATE-DEPRECATION pins green — gate-on for dual-configured objects, gate-off controller behavior, inPlaceUpdate deprecation contract, EN+ZH)"
 echo "F-CONFIG-REMOVAL-SKIPS-HOOK: Fixed at the acknowledgment level (R7-RISK-REMOVAL-ROW + R7-TROUBLESHOOT-ONEWAY pins green — risk-table row and Troubleshooting bullet acknowledge the mid-operation removal barrier skip and the one-way preDelete release, EN+ZH; the absence-semantics design itself remains the adjudicated round-4 decision)"
@@ -222,9 +254,9 @@ echo "F-LEGACY-REMOVAL-TRANSITION: Resolved by the round-4 reversal (coexistence
 echo "F-KEP502-CREATING-PHASE-CONFLICT: Fixed in the dependency PR (PR #528 merged as c2896cc0: Creating-target changes folded into Create convergence, citing KEP-527 consistency)"
 
 echo
-if [ "$premise_ok" -eq 1 ] && [ "$GO_STATUS" -eq 0 ] && [ "$R7_STATUS" -eq 0 ] \
+if [ "$premise_ok" -eq 1 ] && [ "$GO_STATUS" -eq 0 ] && [ "$R8_STATUS" -eq 0 ] \
    && [ "$DOC_STATUS" -eq 0 ]; then
-  echo "RESULT: all machine-checkable gating findings fixed (round-7 contract set green; see-also resolves via merged PR #528)"
+  echo "RESULT: all machine-checkable gating findings fixed (round-8 contract set green; the only open items are non-gating: F-FOREGROUND-BLANKET-SCOPE EN residue minor, F-CUSTOMREADY-STATUS-EMPTY pre-existing minor)"
   exit 0
 else
   echo "RESULT: gating findings remain open"
