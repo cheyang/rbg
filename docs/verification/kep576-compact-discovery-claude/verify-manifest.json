@@ -1,0 +1,63 @@
+{
+  "topic": "kep576-compact-discovery-claude",
+  "pr": "https://github.com/sgl-project/rbg/pull/578",
+  "harnessPaths": [
+    "docs/verification/kep576-compact-discovery-claude",
+    "pkg/discovery/kep576_verify_claude_test.go",
+    "pkg/discovery/kep576_doctext_verify_claude_test.go",
+    "internal/controller/workloads/kep576_verify_claude_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "The RBG discovery ConfigMap stores a full enumeration of every instance address; ~43 bytes/pod claimed, a 4000-replica role with 5 pods per instance crosses the 1 MiB ConfigMap limit, and every scale event rewrites the whole object to every mounting node.",
+    "reportedComponent": "shipped refine-mode discovery ConfigMap (pkg/discovery/config_builder.go, reconcileRefinedDiscoveryConfigMap)",
+    "patchedComponent": "keps/576-compact-discovery-configmap (design doc for that component)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "Enumeration is O(pods); measured ~129 bytes/entry for the KEP's example shape (CCP leader1+worker4, ports http+grpc) => 4000x5 entries ~ 2.6 MB > 1 MiB. results/unit-l1-head.txt. (Note: the Summary's own '~43 bytes/pod crosses the limit' arithmetic is wrong — 860 KB — see F4.)",
+    "match": ["TestKEP576Claude_P0_EnumerationSizeGrowsWithPodCount"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -count=1 ./pkg/discovery/ ./internal/controller/workloads/ -run 'TestKEP576Claude' -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestKEP576Claude_DocMustNotClaimRolesMapIsSpecOrder"]
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestKEP576Claude_DocMustCoverPreChildExclusionWindow"]
+    },
+    {
+      "id": "F4",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestKEP576Claude_DocSummarySizeArithmeticMustBeConsistent"]
+    },
+    {
+      "id": "P0-facts",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": [
+        "TestKEP576Claude_ShippedRolesMapOrderIsSortedNotSpecOrder",
+        "TestKEP576Claude_ComponentIndexRuleReproducesShippedAddresses",
+        "TestKEP576Claude_CommittedMembershipIncludesOrdinalsAboveReplicas",
+        "TestKEP576Claude_PreChildExclusionWindowProjectsAnnotation",
+        "TestKEP576Claude_OldControllerRepinsUnknownMode",
+        "TestKEP576Claude_P0_EnumerationSizeGrowsWithPodCount"
+      ]
+    }
+  ],
+  "notes": "F2/F5/F6/F7 are design-gap findings (underspecification/questions) with no mechanical reproduction; re-review by reading the revised KEP. Integration layer not applicable: the PR changes no code. Doc-contract tests pass vacuously on the merge-base (KEP file absent -> t.Skip); re-verify against PR heads only.",
+  "liveNote": "L3 skipped this round (no KUBECONFIG layer). If run later: check that a refine-compact pod's /etc/rbg/config.yaml matches the enumeration the refine builder produces for the same RBG, field by field, for role names NOT in alphabetical order."
+}

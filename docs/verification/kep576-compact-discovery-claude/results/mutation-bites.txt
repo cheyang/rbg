@@ -1,0 +1,15 @@
+# Harness-bites check (mutation): both key tests fail when their assertions are inverted/relaxed, then pass when restored.
+
+## Mutation 1: F1 canary expecting spec order [prefill decode] instead of sorted [decode prefill]
+```
+--- FAIL: TestKEP576Claude_ShippedRolesMapOrderIsSortedNotSpecOrder (0.04s)
+        	Error:      	Not equal: 
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/discovery	0.055s
+```
+## Mutation 2: component-index rule with worker offset 0 instead of 1
+```
+--- FAIL: TestKEP576Claude_ComponentIndexRuleReproducesShippedAddresses (0.04s)
+    --- FAIL: TestKEP576Claude_ComponentIndexRuleReproducesShippedAddresses/LeaderWorkerPattern_on_RoleInstanceSet (0.00s)
+FAIL
+```

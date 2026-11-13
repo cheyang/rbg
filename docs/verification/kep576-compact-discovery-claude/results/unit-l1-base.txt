@@ -1,0 +1,26 @@
+=== RUN   TestKEP576Claude_DocMustNotClaimRolesMapIsSpecOrder
+--- SKIP: TestKEP576Claude_DocMustNotClaimRolesMapIsSpecOrder (0.00s)
+=== RUN   TestKEP576Claude_DocMustCoverPreChildExclusionWindow
+--- SKIP: TestKEP576Claude_DocMustCoverPreChildExclusionWindow (0.00s)
+=== RUN   TestKEP576Claude_DocSummarySizeArithmeticMustBeConsistent
+--- SKIP: TestKEP576Claude_DocSummarySizeArithmeticMustBeConsistent (0.00s)
+=== RUN   TestKEP576Claude_P0_EnumerationSizeGrowsWithPodCount
+--- PASS: TestKEP576Claude_P0_EnumerationSizeGrowsWithPodCount (0.07s)
+=== RUN   TestKEP576Claude_ShippedRolesMapOrderIsSortedNotSpecOrder
+--- PASS: TestKEP576Claude_ShippedRolesMapOrderIsSortedNotSpecOrder (0.00s)
+=== RUN   TestKEP576Claude_ComponentIndexRuleReproducesShippedAddresses
+=== RUN   TestKEP576Claude_ComponentIndexRuleReproducesShippedAddresses/CustomComponentsPattern_with_ServiceName_override
+=== RUN   TestKEP576Claude_ComponentIndexRuleReproducesShippedAddresses/LeaderWorkerPattern_on_RoleInstanceSet
+--- PASS: TestKEP576Claude_ComponentIndexRuleReproducesShippedAddresses (0.00s)
+=== RUN   TestKEP576Claude_CommittedMembershipIncludesOrdinalsAboveReplicas
+--- PASS: TestKEP576Claude_CommittedMembershipIncludesOrdinalsAboveReplicas (0.00s)
+=== RUN   TestKEP576Claude_PreChildExclusionWindowProjectsAnnotation
+--- PASS: TestKEP576Claude_PreChildExclusionWindowProjectsAnnotation (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.087s
+=== RUN   TestKEP576Claude_OldControllerRepinsUnknownMode
+=== RUN   TestKEP576Claude_OldControllerRepinsUnknownMode/unknown_mode_with_status_repins_to_legacy
+=== RUN   TestKEP576Claude_OldControllerRepinsUnknownMode/unknown_mode_without_status_repins_to_refine
+--- PASS: TestKEP576Claude_OldControllerRepinsUnknownMode (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.055s

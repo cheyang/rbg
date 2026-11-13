@@ -1,0 +1,31 @@
+=== RUN   TestKEP576Claude_DocMustNotClaimRolesMapIsSpecOrder
+    kep576_doctext_verify_claude_test.go:64: F1: Shipped Baseline claims "and roles in spec order" — the shipped `roles` map is serialized with sorted keys, not spec order (TestKEP576Claude_ShippedRolesMapOrderIsSortedNotSpecOrder). Reword the baseline and pin what the renderer must emit for the roles mapping.
+--- FAIL: TestKEP576Claude_DocMustNotClaimRolesMapIsSpecOrder (0.00s)
+=== RUN   TestKEP576Claude_DocMustCoverPreChildExclusionWindow
+    kep576_doctext_verify_claude_test.go:84: F3: Committed Membership lists the pre-child source of truth as dense "when no exclusion input is present" but is silent about the window where exclusion input IS present and the child does not exist yet; the shipped builder projects the annotation there. Specify what the compact source publishes in that window.
+--- FAIL: TestKEP576Claude_DocMustCoverPreChildExclusionWindow (0.00s)
+=== RUN   TestKEP576Claude_DocSummarySizeArithmeticMustBeConsistent
+    kep576_doctext_verify_claude_test.go:104: F4: Summary states ~43 bytes/pod and claims the 1 MiB limit is crossed at 4000 replicas x 5 pods; 20000 x 43 B = 860 KB, under the limit. The Motivation's ~118 B/entry analysis (~2.4 MB) is the correct one; make the Summary consistent with it.
+--- FAIL: TestKEP576Claude_DocSummarySizeArithmeticMustBeConsistent (0.00s)
+=== RUN   TestKEP576Claude_P0_EnumerationSizeGrowsWithPodCount
+    kep576_verify_claude_test.go:92: shipped enumeration: 1935 bytes for 15 entries => ~129 bytes/entry
+--- PASS: TestKEP576Claude_P0_EnumerationSizeGrowsWithPodCount (0.04s)
+=== RUN   TestKEP576Claude_ShippedRolesMapOrderIsSortedNotSpecOrder
+--- PASS: TestKEP576Claude_ShippedRolesMapOrderIsSortedNotSpecOrder (0.00s)
+=== RUN   TestKEP576Claude_ComponentIndexRuleReproducesShippedAddresses
+=== RUN   TestKEP576Claude_ComponentIndexRuleReproducesShippedAddresses/CustomComponentsPattern_with_ServiceName_override
+=== RUN   TestKEP576Claude_ComponentIndexRuleReproducesShippedAddresses/LeaderWorkerPattern_on_RoleInstanceSet
+--- PASS: TestKEP576Claude_ComponentIndexRuleReproducesShippedAddresses (0.00s)
+=== RUN   TestKEP576Claude_CommittedMembershipIncludesOrdinalsAboveReplicas
+--- PASS: TestKEP576Claude_CommittedMembershipIncludesOrdinalsAboveReplicas (0.00s)
+=== RUN   TestKEP576Claude_PreChildExclusionWindowProjectsAnnotation
+--- PASS: TestKEP576Claude_PreChildExclusionWindowProjectsAnnotation (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/discovery	0.061s
+=== RUN   TestKEP576Claude_OldControllerRepinsUnknownMode
+=== RUN   TestKEP576Claude_OldControllerRepinsUnknownMode/unknown_mode_with_status_repins_to_legacy
+=== RUN   TestKEP576Claude_OldControllerRepinsUnknownMode/unknown_mode_without_status_repins_to_refine
+--- PASS: TestKEP576Claude_OldControllerRepinsUnknownMode (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	0.058s
+FAIL
