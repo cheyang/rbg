@@ -10,7 +10,8 @@
     "internal/controller/workloads/gang_classify_verify_test.go",
     "pkg/reconciler/roleinstance/blocker_precedence_verify_test.go",
     "internal/controller/workloads/ris_invalidspec_verify_test.go",
-    "pkg/reconciler/roleinstance/phase_init_verify_test.go"
+    "pkg/reconciler/roleinstance/phase_init_verify_test.go",
+    "api/workloads/v1alpha2/admission_ratchet_verify_test.go"
   ],
   "premise": {
     "id": "P0",
@@ -29,7 +30,7 @@
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test ./pkg/reconciler/roleinstanceset/ -run 'TestVerify' -json; go test ./pkg/reconciler/roleinstance/ -run 'TestVerify' -json; go test ./internal/controller/workloads/ -run 'TestVerify' -json"
+      "cmd": "go test ./pkg/reconciler/roleinstanceset/ -run 'TestVerify' -json; go test ./pkg/reconciler/roleinstance/ -run 'TestVerify' -json; go test ./internal/controller/workloads/ -run 'TestVerify' -json; go test ./api/workloads/v1alpha2/ -run 'TestVerifyF14' -json"
     }
   },
   "idMapping": "Manifest finding ids are the PR-572 debate ledger ids. Test names keep their round-1 codex-local numbers (TestVerifyF2* = ledger F3, TestVerifyF3* = ledger O3, TestVerifyF4* = ledger F4, TestVerifyF5* = ledger F6).",
@@ -124,6 +125,16 @@
       "match": [
         "TestVerifyF12PartitionScopedRolloutCompleteReportsConverged",
         "TestVerifyF12ControlIncompleteScopeStillUpdating"
+      ]
+    },
+    {
+      "id": "F14",
+      "ledgerNote": "NEW round-2: admission ratchet runs the old object under the new managed flag, so becoming RBGSet-managed with a pre-existing excluded-ordinals annotation is no longer rejected (revision regression)",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyF14BecomingManagedWithExcludedOrdinalsRejected",
+        "TestVerifyF14ControlUnchangedViolationRatcheted"
       ]
     }
   ],
