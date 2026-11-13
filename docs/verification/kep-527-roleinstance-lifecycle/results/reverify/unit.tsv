@@ -59,6 +59,9 @@ CheckSelectorReservedKeyReverse	pass
 CheckKep502DriftDisclosed	pass
 CheckAffectedAncestorRetired	pass
 CheckForegroundScopeAcknowledged	fail
+CheckExecutorRereadFencing	pass
+CheckSelectorReservedKeyScoped	fail
+CheckHookStateMirrorWording	fail
 CheckMarkdownlint	pass
 CheckEnZhSectionParity	pass
 CheckWhitespace	pass

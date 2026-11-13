@@ -291,3 +291,57 @@ Raw output: `results/reverify/unit.tsv` (head, persisted by re-verify.sh),
 `results/reverify/unit-d038c23b-round7.tsv` (head), `unit-c3ea6547-round7.tsv`
 (previous head, updated harness), `unit-3612013e-round7.tsv` (base control),
 `unit-bites-round7.tsv` (mutation run).
+
+## Observed vs expected (head e1116c79 — round 8, incremental; REBASED)
+
+The PR was force-pushed: rebased onto main @ `c2896cc0` (the KEP-502 merge —
+keps/502-workload-status-model/ is now IN the PR tree, so F-SEEALSO-502's
+target resolves in-tree, no post-merge dependency left) plus one new commit
+`e1116c79` "docs: address round-7 review findings in KEP-527" (EN +26/-11,
+zh +26/-8; kep.yaml untouched). New frozen base: `3abe58a5` (main at round
+start). The round-8 delta does four things:
+
+- **Foreground blanket scope acknowledged** (F46, partial): the Goal now
+  carries "except that Foreground deletion is rejected cluster-wide while
+  the feature gate is enabled" (EN :113-115, zh :87-88) and the deletion
+  section states the rejection "also applies to workloads that configure no
+  hooks ... regain Foreground deletion when the gate is disabled" (EN
+  :755-758, zh :587-589).
+- **Executor re-read fencing** (closes Copilot advisory C4554909778):
+  before removing a marker the executor re-reads the RI and removes it only
+  while hook-state still matches its own invocation and the RI UID is
+  unchanged; "an emptied marker-key record proves only that the label was
+  cleaned, not that a superseded execution has stopped" (EN :349-356, zh
+  :258-261) + unit-test bullet (EN :1020-1023, zh :766-767). New pin F47.
+- **"affected ancestor" wording retired** (F45 fixed): the preDelete
+  integration bullet now states the unconditional rule (EN :1099-1101, zh
+  :812-814); no "affected ancestor"/"受影响祖先" residue anywhere.
+- zh ALSO carries the Foreground exception in the Upgrade/Downgrade section
+  (:849-850) and the regression-baseline bullet (:737-738) — the EN twins
+  (:1155, :979-981) do NOT. See the F46 residue below.
+
+| Finding | Check | base 3abe58a5 | previous d038c23b | head e1116c79 | Verdict |
+| --- | --- | --- | --- | --- | --- |
+| F1-F44 carried fixes | carried pins | — | pass | pass | still FIXED (regression guard; 61 pass at head) |
+| F4 see-also (F-SEEALSO-502) | CheckSeeAlsoDirsExist | fail | fail | pass | FIXED IN-TREE — the rebase onto c2896cc0 puts keps/502-workload-status-model/ in the PR tree itself |
+| F45 affected-ancestor (nit) | CheckAffectedAncestorRetired | vacuous pass | fail | pass | FIXED |
+| F46 foreground blanket scope (F-FOREGROUND-BLANKET-SCOPE) | CheckForegroundScopeAcknowledged | vacuous pass | fail | **fail** | PARTIAL — Harness-update (disclosed): acknowledgment landed in new wording (Goal exception + cluster-wide paragraph, EN+zh); contract NARROWED to the residue: EN Upgrade/Downgrade :1155 and EN regression-baseline :979-981 still flatly promise unchanged behavior while zh :849-850/:737-738 carry the exception — unreconciled claim + NEW EN/zh content divergence |
+| F47 executor re-read fencing (F-C4554909778) | CheckExecutorRereadFencing | fail | fail | pass | FIXED — advisory addressed by design addition + test bullet (EN+zh) |
+| F48 selector reserved-key scope (NEW minor; Copilot C4566649841, independently confirmed) | CheckSelectorReservedKeyScoped | vacuous pass | fail | **fail** | OPEN — "controller-reserved key" is unscoped two sentences after the reserved-prefix definition; every RBG-generated RIS selector carries rbg.workloads.x-k8s.io/{group-name,group-uid,role-name} (roleinstanceset_reconciler.go:227, constants/label.go:33,38,58, RBGPrefix constants.go:26), so a literal reading rejects every normal RIS; rationale only covers lifecycle runtime keys (EN :459 + test bullet :991, zh :345-347/:747) |
+| F49 hook-state mirror wording (NEW nit; Copilot C4566649766, independently confirmed) | CheckHookStateMirrorWording | vacuous pass | fail | **fail** | OPEN — EN :427 "hook-state and runtime markers ... mirrored onto member Pods" (zh :323) contradicts the propagation contract "Only signalLabels keys are mirrored; hook-state remains on the RI" (EN :508, zh :386) |
+| C4566649897 (markerA→markerB test bullet) | — | — | — | — | REFUTED by direct read — the bullet itself says "the old key remains recorded until its label and Pod mirrors are cleaned" (EN :1051-1053), exactly the cleanup-coupled retention Copilot asks for; no contradiction with :511-513 |
+| Codebase-truth claims (10) | group 1 | pass x10 | pass x10 | pass x10 | KEP accurate on the rebased head |
+| Hygiene (3) | group 3 | pass x3 | pass x3 | pass x3 | clean (markdownlint 0 issues, section parity, whitespace) |
+
+Bites verification (round 8, results/reverify/unit-bites-round8.tsv):
+F46' fix-simulation (EN Upgrade/Downgrade + regression-baseline carry the
+exception) flips fail→pass, restore flips back; F47 deletion-bite (remove
+the re-read paragraph) flips pass→fail; F48 fix-simulation
+("controller-reserved runtime key", EN+zh) flips fail→pass; F49 EN-only
+reword stays fail (zh half bites), EN+zh reword passes. All bites on a
+scratch worktree; `keps/` restored byte-identical (git status clean).
+
+Raw output: `results/reverify/unit.tsv` (head, persisted by re-verify.sh),
+`unit-e1116c79-round8.tsv` (head), `unit-d038c23b-round8.tsv` (previous
+head), `unit-3abe58a5-round8.tsv` (new base control),
+`unit-bites-round8.tsv` (mutation run).
