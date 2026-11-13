@@ -1,0 +1,3 @@
+TestKEP133_Premise_RefineModeShipsFullEnumeration	pass
+TestKEP133_ReplacedStatusAllowedByTemplate	fail
+TestKEP133_TombstoneLinkTargetExists	fail

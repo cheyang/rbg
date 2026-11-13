@@ -1,0 +1,4 @@
+=== RUN   TestKEP133_TombstoneLinkTargetExists
+--- PASS: TestKEP133_TombstoneLinkTargetExists (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.013s
