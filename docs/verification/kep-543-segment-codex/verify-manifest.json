@@ -65,11 +65,9 @@
       "polarity": "contract",
       "layer": "unit",
       "match": [
-        "TestVerifyKEP543_DiscoveryEnumerationSourceIsAccurate",
-        "TestVerifyKEP543_DiscoveryEnumeratesRBGSpecNotChildCommitted",
-        "TestVerifyKEP543_ChildCommittedOrdinalsOnlyOnAnnotatedPath"
+        "TestVerifyKEP543_DiscoveryEnumerationSourceIsAccurate"
       ],
-      "note": "RED (doc check) at d8d53364: the new discovery-owner paragraph claims the enumeration source is 'otherwise the child RIS committed ordinals'. Code truth (pkg/discovery ground-truth tests, PASS at head): for a Segment-shaped member (no excluded-ordinals, no committed-skip annotation) memberOrdinals always enumerates dense RBG spec replicas — the child-committed path requires annotations Segment membership forbids. The misaligned-window guard is the new fail-fast ordering (validation before ConfigMap update), not the enumeration source. Doc-side clause needs rewording; code must not change."
+      "note": "RED (doc check) at d8d53364: the new discovery-owner paragraph claims the enumeration source is 'otherwise the child RIS committed ordinals'. Code truth (pkg/discovery ground-truth tests, PASS at head): for a Segment-shaped member (no excluded-ordinals, no committed-skip annotation) memberOrdinals always enumerates dense RBG spec replicas — the child-committed path requires annotations Segment membership forbids. The misaligned-window guard is the new fail-fast ordering (validation before ConfigMap update), not the enumeration source. Doc-side clause needs rewording; code must not change. Ground-truth evidence tests TestVerifyKEP543_DiscoveryEnumeratesRBGSpecNotChildCommitted and TestVerifyKEP543_ChildCommittedOrdinalsOnlyOnAnnotatedPath run in the same unit layer and PASS at head (they document code behavior; they do not flip on a doc fix)."
     }
   ],
   "liveNote": "L3 skipped per debate-round policy (no KUBECONFIG layer). Docs-only PR; live layer adds nothing."
