@@ -1,0 +1,2 @@
+issue #543: [OPEN] [Feature] Support Segment as the cross-role service unit in CoordinatedPolicy
+PASS premise: OPEN issue asking for this Segment KEP (component match)

@@ -1,0 +1,6 @@
+-- (a) mechanism/owner named in the design? --
+FAIL design names no discovery mechanism/entry point (requirement stated in Non-Goals + Complete Segment Invariants has no owner)
+-- (b) integration/e2e test coverage for Segment-aware discovery? --
+FAIL integration/e2e test plan has no discovery coverage (only one unit-level bullet exists)
+-- (c) current code trace: discovery enumerates by RBG spec role replicas --
+PASS (evidence) discovery today enumerates [0, spec.replicas) from RBG spec roles — residual ordinals of an unaligned Segment would be published

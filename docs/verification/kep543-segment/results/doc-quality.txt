@@ -1,0 +1,14 @@
+== [1] markdownlint ==
+markdownlint-cli2 v0.24.1 (markdownlint v0.42.1)
+Finding: keps/543-segment/README.md keps/543-segment/README.zh-CN.md
+Linting: 2 files
+Summary: 0 issues in 0 files
+PASS markdownlint (0 issues)
+== [2] links + anchors ==
+PASS README.md: all relative links and TOC anchors resolve
+PASS README.zh-CN.md: all relative links and TOC anchors resolve
+== [3] EN/ZH parity ==
+PASS headings: 104 headings, identical level sequence
+PASS code blocks: 28 blocks, identical beyond translation
+PASS tables: 28 tables, matching row counts
+PASS key numbers: 13 tracked examples match

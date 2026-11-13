@@ -1,0 +1,135 @@
+{
+  "schema": "v1",
+  "topic": "kep543-segment",
+  "pr": "https://github.com/sgl-project/rbg/pull/569",
+  "reviewer": "claude",
+  "headSha": "bd378ebd262fb71a64dff70f7d52a90b7b5dce7d",
+  "baseSha": "ea5e82ae59169e0e954fb1c7068f9480fb4b7375",
+  "mode": "initial",
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #543 (OPEN, cross-role service unit 'Segment' in CoordinatedPolicy) asks for a KEP under keps/543-segment covering API validation, assignment, label persistence, gang/scaling/rolling-update interaction, topology composition, migration, compatibility, and a test plan.",
+    "runsAgainst": "base",
+    "verdict": "Confirmed",
+    "evidence": "results/premise.txt — gh issue view 543: OPEN, title '[Feature] Support Segment as the cross-role service unit in CoordinatedPolicy', body matches the KEP scope one-to-one (ratio example 2P:1D, groupIndex formula, label key, scaling semantics). Component match: PR adds exactly the requested keps/543-segment/ design doc."
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "title": "Segment-aware address discovery requirement has no mechanism, owner, or meaningful test coverage",
+      "severity": "major",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "bd378ebd262fb71a64dff70f7d52a90b7b5dce7d",
+      "evidenceKind": "code-path",
+      "evidence": "KEP README.md lines 156, 381, 505 impose 'discovery must publish only the aligned base-group target; no residual or surge identities', but no section assigns an owner or mechanism (every other integration names exact entry points, e.g. line 665 for the Adapter). Today discovery is built by the RBG controller via discovery.NewConfigBuilder (rolebasedgroup_controller.go:492) and enumerates dense ordinals [0, spec.roles[].replicas) (pkg/discovery/config_builder.go buildInstances/memberOrdinals) — an unaligned desired state (2P:1D with P=5,D=2) would publish the residual prefill-4 address that will never be created, reintroducing issue #543's 'partial deployment / occupied resources / unusable service' failure mode. Test plan: exactly one unit bullet (line 1116), zero integration/e2e bullets.",
+      "tests": [
+        {
+          "script": "scripts/check_f1_discovery.sh",
+          "polarity": "contract",
+          "layer": "unit",
+          "result": "fail"
+        }
+      ],
+      "proposedFix": "Add a design subsection naming the discovery entry point (RBG controller discovery step / pkg/discovery/config_builder.go), specify the source of truth (last valid applied base-group target vs current RBG spec) for the misaligned case, and add integration + e2e test-plan bullets for Segment-aware discovery."
+    },
+    {
+      "id": "F2",
+      "title": "Static webhook rule segBatchSize >= minSegments over-rejects valid steady-state configurations",
+      "severity": "minor",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "bd378ebd262fb71a64dff70f7d52a90b7b5dce7d",
+      "evidenceKind": "hypothesis",
+      "evidence": "README.md 'Configuration Validation with Scaling': a rule with scaling+Gang must satisfy B >= G unconditionally at admission, justified only by the from-zero / below-threshold first batch. For an RBG already running C >= G groups, B < G is safe, but the webhook still rejects it — permanently coupling scale-out batch granularity to the gang threshold (users wanting one-group-at-a-time additions on a mature gang-protected workload must add >= G groups per batch). Design decision is documented as stateless-by-choice; raised as a question, not a defect.",
+      "tests": [],
+      "proposedFix": "Either accept and document the steady-state over-rejection explicitly, or move the check to reconciliation where the current applied group count C is known (reject only when C < G and B < G)."
+    },
+    {
+      "id": "F3",
+      "title": "Scale-in below minSegments: user-visible outcome not stated",
+      "severity": "minor",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "bd378ebd262fb71a64dff70f7d52a90b7b5dce7d",
+      "evidenceKind": "code-path",
+      "evidence": "README.md says an Adapter 'reducing desired groups below minSegments' is reported 'through the existing incompatible-Gang path' — but the existing path (rolebasedgroup_controller.go:253-276) does more than report: it returns early and leaves roles untouched, halting role reconciliation entirely. So the scale-in is blocked (RIS stays at the old target) until the user fixes the config. The doc never states this user-visible outcome; a reader could equally conclude the scale-in proceeds with a warning. The integration-test bullet 'reports the configuration error without adjusting replicas' is ambiguous between 'no auto-raise' and 'blocks the scale-in'.",
+      "tests": [],
+      "proposedFix": "State explicitly: scale-in below minSegments blocks member reconciliation (roles left untouched) until configuration is corrected, mirroring the existing incompatible-Gang semantics."
+    },
+    {
+      "id": "F4",
+      "title": "Rule rename rewrites fleet-wide segment labels; gang subGroup partition transiently splits",
+      "severity": "minor",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "bd378ebd262fb71a64dff70f7d52a90b7b5dce7d",
+      "evidenceKind": "hypothesis",
+      "evidence": "ruleID = SHA-256(ruleName)[:12], so renaming a rule (allowed when the ratio is unchanged) changes every RI/Pod segment + segment-rule label value and re-keys the Volcano matchLabelKeys=[segment] subGroup partition. Until synchronization converges, pods of the same logical group carry different segment values, splitting subGroups; the PodGroup threshold (minSubGroups x subGroupSize) may be unsatisfiable in that window, stalling gang dispatch. The doc allows 'temporary cross-layer inconsistency' generically but never calls out the gang-threshold interaction during rename, and no test bullet covers rename under an active gang.",
+      "tests": [],
+      "proposedFix": "Add a boundary note (rename converges asynchronously and gang dispatch may stall during the window) plus a test-plan bullet for rename with an active gang PodGroup."
+    },
+    {
+      "id": "F5",
+      "title": "PR body stale: claims the Chinese README retains a broken review-discussion.zh-CN.md link that head bd378eb already removed",
+      "severity": "nit",
+      "status": "open",
+      "origin": "initial-pr",
+      "introducedByPR": true,
+      "firstSeenSha": "bd378ebd262fb71a64dff70f7d52a90b7b5dce7d",
+      "evidenceKind": "differential",
+      "evidence": "results/f5-pr-body-staleness.txt — link present at be3a6f4 (README.zh-CN.md:125), removed at bd378eb; PR body still says it is retained.",
+      "tests": [],
+      "proposedFix": "Update the PR body's 'Special notes' item."
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "AC1",
+      "contract": "Premise: issue #543 is OPEN and asks for exactly this KEP (component match)",
+      "status": "passed",
+      "evidence": "results/premise.txt"
+    },
+    {
+      "id": "AC2",
+      "contract": "Both READMEs pass repository markdownlint with 0 issues",
+      "status": "passed",
+      "evidence": "results/doc-quality.txt [1]"
+    },
+    {
+      "id": "AC3",
+      "contract": "All relative links and TOC anchors in both READMEs resolve",
+      "status": "passed",
+      "evidence": "results/doc-quality.txt [2]"
+    },
+    {
+      "id": "AC4",
+      "contract": "EN and ZH versions stay in content parity (headings, code blocks, tables, key numeric examples)",
+      "status": "passed",
+      "evidence": "results/doc-quality.txt [3]"
+    },
+    {
+      "id": "AC5",
+      "contract": "Every 'existing behavior' claim in the KEP resolves to real code at the head (functions, types, labels, formulas, defaults)",
+      "status": "passed",
+      "evidence": "results/code-refs.txt — 16/16 PASS"
+    },
+    {
+      "id": "AC6",
+      "contract": "F1: the Segment-aware address-discovery requirement names a mechanism/owner and carries integration+e2e test-plan coverage",
+      "status": "failed",
+      "evidence": "results/f1-discovery.txt — (a) and (b) FAIL; harness-bites check results/f1-bites-check.txt"
+    }
+  ],
+  "ci": {
+    "status": "failure",
+    "attribution": "not-attributable-to-pr (docs-only diff; envtest TestRestartPolicy flake — merge-base run green)",
+    "evidence": "results/ci-envtest.txt"
+  },
+  "liveNote": "Docs-only PR: no live layer. L1 (doc-quality, code-ref, F1 contract checks) is the full harness; re-verify.sh re-runs all of it.",
+  "polarityNote": "All harness checks are contract polarity: green = requirement holds. check_f1_discovery.sh is RED on the reviewed head by design — it is the F1 reproduction; it turns green only when the design doc adds the discovery mechanism/coverage (see results/f1-bites-check.txt)."
+}

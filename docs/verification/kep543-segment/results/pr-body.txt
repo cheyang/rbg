@@ -1,0 +1,19 @@
+PR #569: KEP-543: Segment as the cross-role service unit
+head: bd378ebd262fb71a64dff70f7d52a90b7b5dce7d
+--- body (truncated) ---
+### Ⅰ. Motivation
+
+Propose Segment as a stable cross-role service unit for workloads such as prefill/decode inference. Fixed RoleInstance ratios provide a common basis for scaling, rolling updates, and Gang scheduling.
+
+### Ⅱ. Modifications
+
+- Add KEP-543 metadata and English and Chinese design documents.
+- Define ordinal-based group identity, managed labels, controller responsibilities, and Stateful RIS constraints.
+- Describe creation batches, ScalingAdapter ownership, group-level update budgets, surge limits, and independent Gang scheduling.
+- Document policy adoption and withdrawal, controller downgrade procedures, test plans, and graduation criteria.
+
+### Ⅲ. Does this pull request fix one issue?
+
+Related to #543. This PR proposes the design; it does not implement the feature.
+
+### Ⅳ. List the added test cases (unit test/integration test) if any, please explain if no tests are needed

@@ -1,0 +1,17 @@
+F5 evidence: PR body stale relative to head bd378eb
+===================================================
+PR body ("Special notes for reviewers") claims:
+  "The Chinese README retains an existing link to `review-discussion.zh-CN.md`,
+   which is not included in this directory."
+
+Actual state at head bd378eb:
+  $ git show bd378eb:keps/543-segment/README.zh-CN.md | grep -c review-discussion
+  0
+At the FIRST PR commit be3a6f4b:
+  $ git show be3a6f4:keps/543-segment/README.zh-CN.md | grep review-discussion
+  125: ... 讨论过程见[设计讨论记录](review-discussion.zh-CN.md)。
+  => the broken link existed in be3a6f4b and was removed in bd378eb
+     ("docs(kep-543): address segment design review gaps").
+
+Net effect: the concern is already resolved at the head; only the PR
+description is stale. Nit-level: update the PR body.

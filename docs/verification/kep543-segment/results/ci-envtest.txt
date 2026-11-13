@@ -1,0 +1,16 @@
+CI rollup for PR #569 head bd378ebd (run 43219285708, 2026-11-12):
+  copyright-check SUCCESS | check-changes SUCCESS | markdown-check SUCCESS
+  lint SUCCESS | build SUCCESS | unit-test SUCCESS
+  e2e-matrix-coverage SUCCESS | e2e jobs SKIPPED (path-filtered: docs-only PR)
+  envtest FAILURE: --- FAIL: TestRestartPolicy (215.68s)
+
+Attribution analysis:
+  - The PR adds 3 files under keps/543-segment/ only (README.md,
+    README.zh-CN.md, kep.yaml). No Go file changes -> the compiled/tested
+    Go tree is identical to the merge-base ea5e82ae.
+  - The same envtest workflow at merge-base ea5e82ae (run 43176898037,
+    2026-11-12T07:39Z) and 4 earlier main runs: SUCCESS.
+  - TestRestartPolicy at 215.68s is consistent with a timeout/slow-flake
+    pattern, not a deterministic compile or assertion failure.
+  => The envtest failure is NOT attributable to this PR (docs-only diff).
+     Recorded as unrelated/infra-flake; not a PR finding.

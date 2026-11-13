@@ -1,0 +1,19 @@
+Harness-bites check for F1 (check_f1_discovery.sh, contract polarity)
+=====================================================================
+On the PR head (bd378eb):
+  (a) FAIL — design names no discovery mechanism/entry point
+  (b) FAIL — no integration/e2e discovery coverage
+  => F1 reproduced (red)
+
+Simulated fix (scratch copy only, NOT committed):
+  - added a "Segment-Aware Address Discovery" section naming
+    discovery.NewConfigBuilder / rolebasedgroup_controller.go /
+    pkg/discovery/config_builder.go as the owner, and an
+    integration-test bullet for discovery
+  (a) PASS
+  (b) PASS
+  => harness bites: the check fails for the right reason and flips
+     green under the proposed fix.
+
+Production diff on the verification branch after the check: empty
+(git status shows only docs/verification/** additions).
