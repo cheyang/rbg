@@ -1,0 +1,43 @@
+BUILD_EXIT=0
+VET_EXIT=0
+  	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr571-r2-head/vendor/sigs.k8s.io/controller-runtime/pkg/envtest/server.go:279
+  sigs.k8s.io/rbgs/test/envtest/testutil.SetupWebhookTestEnv
+  	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr571-r2-head/test/envtest/testutil/webhook_setup.go:72
+  sigs.k8s.io/rbgs/test/envtest/testcase/webhook.init.func3
+  	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr571-r2-head/test/envtest/testcase/webhook/suite_test.go:36
+  github.com/onsi/ginkgo/v2/internal.extractBodyFunction.func3
+  	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr571-r2-head/vendor/github.com/onsi/ginkgo/v2/internal/node.go:512
+  github.com/onsi/ginkgo/v2/internal.(*Suite).runNode.func3
+  	/home/ecs-user/.pr-debate/homes/codex/worktrees/pr571-r2-head/vendor/github.com/onsi/ginkgo/v2/internal/suite.go:922
+  [38;5;9m[FAILED][0m in [BeforeSuite] - /home/ecs-user/.pr-debate/homes/codex/worktrees/pr571-r2-head/test/envtest/testutil/webhook_setup.go:73 [38;5;243m@ 11/14/26 05:43:31.703[0m
+  [38;5;243m<< Timeline[0m
+
+  [38;5;9m[FAILED] Unexpected error:
+      <*fmt.wrapError | 0x2b24dd825680>: 
+      unable to start control plane itself: failed to start the controlplane. retried 5 times: fork/exec /usr/local/kubebuilder/bin/etcd: no such file or directory
+      {
+          msg: "unable to start control plane itself: failed to start the controlplane. retried 5 times: fork/exec /usr/local/kubebuilder/bin/etcd: no such file or directory",
+          err: <*fmt.wrapError | 0x2b24dd825660>{
+              msg: "failed to start the controlplane. retried 5 times: fork/exec /usr/local/kubebuilder/bin/etcd: no such file or directory",
+              err: <*fs.PathError | 0x2b24dd5c0a50>{
+                  Op: "fork/exec",
+                  Path: "/usr/local/kubebuilder/bin/etcd",
+                  Err: <syscall.Errno>0x2,
+              },
+          },
+      }
+  occurred[0m
+  [38;5;9mIn [1m[BeforeSuite][0m[38;5;9m at: [1m/home/ecs-user/.pr-debate/homes/codex/worktrees/pr571-r2-head/test/envtest/testutil/webhook_setup.go:73[0m [38;5;243m@ 11/14/26 05:43:31.703[0m
+[38;5;243m------------------------------[0m
+
+[38;5;9m[1mSummarizing 1 Failure:[0m
+  [38;5;9m[FAIL][0m [38;5;9m[1m[BeforeSuite] [0m
+  [38;5;243m/home/ecs-user/.pr-debate/homes/codex/worktrees/pr571-r2-head/test/envtest/testutil/webhook_setup.go:73[0m
+
+[38;5;9m[1mRan 0 of 11 Specs in 0.005 seconds[0m
+[38;5;9m[1mFAIL![0m -- [38;5;14m[1mA BeforeSuite node failed so all tests were skipped.[0m
+--- FAIL: TestWebhookDefaulting (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/envtest/testcase/webhook	0.028s
+FAIL
+UNIT_EXIT=0
