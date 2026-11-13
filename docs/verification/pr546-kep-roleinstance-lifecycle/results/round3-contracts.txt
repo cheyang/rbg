@@ -1,4 +1,4 @@
-== Round-3 contracts on /tmp/tmp.3sPP1YJ9tD/pr546-reverify ==
+== Round-3 contracts on /tmp/tmp.bBYIDYmSJQ/pr546-reverify ==
 PASS  F-SCOPE-PRECREATE [EN] (required present: Adding `preCreate` or `postDelete`\. `preCreate` has no established workload or executor to coordinate before Pod creation)
 PASS  F-SCOPE-PRECREATE [EN] (required present: concerns external cleanup after the live instance is gone and needs a separate protocol)
 PASS  F-SCOPE-PRECREATE [ZH] (required present: 不新增 preCreate 或 postDelete。preCreate 发生在 Pod 创建前，尚无已建立的)
@@ -66,6 +66,6 @@ PASS  CARRY-PHASE-STORAGE [EN] (required present: persisted in `RoleInstance\.st
 PASS  CARRY-NOPODFINALIZERS [EN] (required present: No member Pod requires a lifecycle finalizer|No per-Pod finalizer is used)
 PASS  CARRY-KEPYAML-NOISE [YAML] (forbidden absent: Segment is data-driven)
 PASS  CARRY-KEPYAML-NOISE [YAML] (forbidden absent: TBD)
-OPEN  F-SEEALSO-502 (see-also target /keps/502-workload-status-model still absent from repo)
+PASS  F-SEEALSO-502 (target /keps/502-workload-status-model now exists in repo)
 
 ROUND3 CONTRACTS: one or more fixed-finding contracts missing

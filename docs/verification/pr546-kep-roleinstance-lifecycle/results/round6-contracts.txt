@@ -113,5 +113,5 @@ FAIL  R5-FOREGROUND-WEBHOOK [ZH] (required MISSING: 通过 owner reference 和 i
 FAIL  CARRY-RBGSET-BOUNDARY [EN] (required MISSING: for RBGSet, RBG, RIS, or RI deletion requests that can reach an RI)
 FAIL  CARRY-RBGSET-BOUNDARY [ZH] (required MISSING: RBGSet、RBG、RIS 或 RI)
 FAIL  R6-CARRY-REGRESSION (a round-5 pin that is NOT in the disclosed round-6 supersession list failed — see above)
-OPEN  F-SEEALSO-502 (keps/502-workload-status-model still absent from this tree)
+OPEN->RESOLVED F-SEEALSO-502 (keps/502-* exists in this tree)
 ROUND6 CONTRACTS: one or more round-6 contracts missing

@@ -1,4 +1,4 @@
-== Round-5 contracts on /tmp/tmp.3sPP1YJ9tD/pr546-reverify ==
+== Round-5 contracts on /tmp/tmp.bBYIDYmSJQ/pr546-reverify ==
 PASS  R5-OLDNEW-COEXIST [EN] (required present: The new protocol coexists with the legacy RoleInstanceSet lifecycle protocol at the API level, but admission prevents both from being active on the same RIS)
 PASS  R5-OLDNEW-COEXIST [EN] (required present: Admission rejects a Role/RIS combination in which the new lifecycle protocol and a legacy user-configured RIS lifecycle are both non-empty)
 PASS  R5-OLDNEW-COEXIST [EN] (required present: the legacy protocol is executed by the RIS controller, while the new protocol is executed by the RI controller)
@@ -90,6 +90,6 @@ FAIL  CARRY-RBGSET-BOUNDARY [ZH] (required MISSING: RBGSet、RBG、RIS 或 RI)
 FAIL  CARRY-GATE-LIFETIME [EN] (required MISSING: remains until the RI object is deleted)
 FAIL  CARRY-GATE-LIFETIME [ZH] (required MISSING: 持续到 RI 对象删除)
 FAIL  R5-CARRY-REGRESSION (a round-4 pin that is NOT in the disclosed supersession list failed — see above)
-OPEN  F-SEEALSO-502 (see-also target /keps/502-workload-status-model still absent from repo)
+PASS  F-SEEALSO-502 (target /keps/502-workload-status-model now exists in repo)
 
 ROUND5 CONTRACTS: one or more contracts missing

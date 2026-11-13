@@ -5,17 +5,18 @@ Reproducible evidence for the findings raised while reviewing
 Lifecycle Hooks — a **documentation-only** PR: `keps/527-roleinstance-lifecycle/{README.md,README.zh-CN.md,kep.yaml}`).
 
 Harness branch: `verify/pr546-kep-roleinstance-lifecycle-claude`, rebased on the
-reviewed PR head `d038c23b` (round 1 reviewed `6e8419ab`, round 2 `71dd5e87`,
-round 3 `fb6c2b36`, round 4 `43dab57b`, round 5 `6c15cc92`, round 6 `c3ea6547`).
-**Production code is touched only by the PR itself** — the branch adds only test
-files and this harness on top of the PR head.
+reviewed PR head `e1116c79` (round 1 reviewed `6e8419ab`, round 2 `71dd5e87`,
+round 3 `fb6c2b36`, round 4 `43dab57b`, round 5 `6c15cc92`, round 6 `c3ea6547`,
+round 7 `d038c23b`). **Production code is touched only by the PR itself** — the
+branch adds only test files and this harness on top of the PR head.
 
-Layers run against the code under review (PR head `d038c23b`):
+Layers run against the code under review (PR head `e1116c79`):
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
 | 1. Unit (Go) | pins the KEP's factual claims about *existing* code (premise + readiness-gate helper behavior) | `go test ./pkg/inplace/instance/readiness/ ./pkg/inplace/instance/lifecycle/ -run 'TestKep527' -v` |
 | 2. Docs | markdownlint (CI config + default), whitespace, kep.yaml see-also resolution, en/zh parity | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_kep_docs.sh` |
+| 2a''. Round-8 contracts (**gating**) | pins the round-8 responses to the open round-7 items (blanket-Foreground scope acknowledged in the Goal and webhook paragraph EN+ZH, with the EN Upgrade/Downgrade + regression-baseline residue pinned as non-gating OPEN; the executor re-read / hook-state-match / RI-UID guard against delayed old-executor cleanup, EN+ZH prose + unit bullets; the preDelete integration bullet's "at every affected ancestor" stale wording replaced, forbidden in both languages; in-tree KEP-502 markPodNotReady drift re-check) and re-runs the round-7 script with NO new supersessions — the round-8 delta is purely additive wording | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round8_contracts.sh <repo-root>` |
 | 2a'. Round-7 contracts (**gating**) | pins the round-7 responses to every open round-6 item (cache-free blanket foreground rejection while the gate is enabled; KEP-502 "now merged" + disclosed markPodNotReady drift + follow-up-amendment gate; marker-key record in the field-ownership enumeration with the non-writer rule; "Mirrors are not authenticated" trust model; selector converse rule; cross-generation signal-key uniqueness; rollback precondition + preDelete finalizer; "Gate edges" paragraph; zh rollout-risk re-parity; scalability mirror fan-out; reserved-prefix unit bullet) and re-runs the round-6 script failing on any carry pin outside the 20 disclosed round-7 supersessions | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round7_contracts.sh <repo-root>` |
 | 2a. Round-6 contracts (reference) | pins the round-6 design change (markNotReady/RI-Ready gating REMOVED; every hook contains only `signalLabels`; no `markNotReady`/`RoleInstanceCustomReady` anywhere), the three NEW mechanisms (marker-key record annotation, signal-label propagation to member Pods, admission safeguards incl. RIS spec.selector collision + Pod template label collision, fail-closed foreground-deletion webhook), the reworded removal/disable/field-ownership contracts, and re-runs the round-5 script failing on any carry pin outside the 14 disclosed round-6 supersessions | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round6_contracts.sh <repo-root>` |
 | 2b. Round-5 contracts (**gating**) | pins the round-5 wording of the reworded round-4 contracts (mutual exclusion, snapshot ownership, removal semantics, enablement-during-deletion), the round-5 fixes (test-plan bullet, stale-label disposition, gate-off rule), the new round-5 normative content (foreground webhook mechanism, reserved prefix, field ownership, hook-state overlap), and re-runs the round-4 script failing on any carry pin outside the disclosed supersession list | `bash docs/verification/pr546-kep-roleinstance-lifecycle/scripts/check_round5_contracts.sh <repo-root>` |
@@ -50,6 +51,68 @@ proposes **four** (`preUpdate`, `preRecover`, `postReady`, `preDelete`),
 dropping `preCreate`/`postDelete` without an explicit rationale and adding
 `preRecover`. See finding F-SCOPE-PRECREATE.
 
+
+## Round 8 (head e1116c79) — delta reviewed: d038c23b..e1116c79 (1 docs commit, +41/−11) PLUS a rebase onto c2896cc0
+
+A **review-response round + rebase**. The PR branch was rebased from the old
+base `3612013e` onto `c2896cc0` (the KEP-502 merge), and one new commit
+(`e1116c79` "docs: address round-7 review findings in KEP-527") touches only
+the two READMEs. What the content delta does:
+
+1. **Acknowledges the blanket Foreground scope** (F-FOREGROUND-BLANKET-SCOPE,
+   **partial fix**): the Goal now reads "Preserve existing behavior for
+   workloads that do not configure lifecycle hooks, **except that Foreground
+   deletion is rejected cluster-wide while the feature gate is enabled**"
+   (EN :113-115 / ZH :87-88), and the webhook paragraph adds "This rejection is
+   cluster-wide while the gate is enabled: it also applies to workloads that
+   configure no hooks, which otherwise keep their existing behavior and regain
+   Foreground deletion when the gate is disabled" (EN :752-758 / ZH :584-588).
+   **The fix is asymmetric**: the zh README also qualifies the Upgrade/Downgrade
+   strategy (:849) and the regression baseline (:737-738), but the EN
+   counterparts do not (README.md:1155 "Workloads with no new hooks configured
+   retain their existing behavior."; :979-981 regression-baseline sentence) —
+   pinned as non-gating OPEN residue (R8-OPEN-UPGRADE-EN /
+   R8-OPEN-REGRESSIONBASE-EN). One-line EN edits at those two sites close both
+   the residue and the new EN/ZH divergence.
+2. **Adds the executor re-read guard** (Reviewer-C advisory F-C4554909778,
+   fixed at the specification level): "the executor re-reads the RI and removes
+   the marker only when the current `hook-state` still matches the hook it
+   executed and the RI UID is unchanged… An emptied marker-key record proves
+   only that the label was cleaned, not that a superseded execution has
+   stopped" (EN :349-356 / ZH :255-263), plus unit-test bullets in both
+   languages (EN :1017-1020 / ZH :763-765). The guard defeats the advisory's
+   scenario (key reassigned to `preDelete` after record cleanup → `hook-state`
+   mismatch → executor leaves the marker) and also covers same-name RI
+   recreation (UID check).
+3. **Replaces the stale "affected ancestor" wording**
+   (F-AFFECTED-ANCESTOR-WORDING, fixed): the preDelete integration bullet now
+   names the four deletion entries under the gate (EN :1096-1099 / ZH
+   :812-816); "at every affected ancestor" / "受影响祖先" is absent from both
+   languages.
+
+Rebase effects (disclosed Harness-updates, environment changes — never proof
+of a fix):
+
+- `keps/502-workload-status-model` now exists **in the PR tree**, so the
+  `kep.yaml` see-also entry resolves in-tree without the origin/main fallback
+  (`see-also: PASS`; the round-6 script's OPEN line flips to `OPEN->RESOLVED`,
+  and check_round7's carry filter was updated additively to tolerate that).
+- The in-tree KEP-502 README still references `markPodNotReady` at :413/:485,
+  so the KEP-527 drift disclosure remains accurate (R8-KEP502-INTREE-DRIFT
+  pin). The required amendment now has an **owner**: open PR #572 ("feat(status):
+  implement the KEP-502 workload status model", head `effc2f8e`) removes both
+  references — F-KEP502-AMENDMENT-TRACKER closed (unmerged at capture;
+  re-opens if #572 stalls).
+- All premise code-claim Go pins re-ran green on the rebased head (the new
+  base merges stateful selective scale-down #538, v1alpha1 admission-webhook
+  removal #556, roleinstance recovery #559 — none invalidates a KEP-527 code
+  claim; `results/gotest-rerun.txt`).
+
+Bites check (previous head `d038c23b`, results/round8-contracts-prevhead.txt):
+every R8 content pin FAILS there and both forbidden stale wordings are PRESENT —
+the pins bite. On the head all 20 R8 pins pass, the round-7 carry is fully
+green, and the two OPEN residue lines are present on both heads (the residue
+predates this round: those EN sites were unqualified in round 7 too).
 
 ## Round 7 (head d038c23b) — delta reviewed: c3ea6547..d038c23b (1 docs commit, +127/−60)
 

@@ -75,6 +75,6 @@ SUPERSEDED (round-7 rewording/design change, re-pinned above): FAIL  R5-FOREGROU
 SUPERSEDED (round-7 rewording/design change, re-pinned above): FAIL  CARRY-RBGSET-BOUNDARY [EN] (required MISSING: for RBGSet, RBG, RIS, or RI deletion requests that can reach an RI)
 SUPERSEDED (round-7 rewording/design change, re-pinned above): FAIL  CARRY-RBGSET-BOUNDARY [ZH] (required MISSING: RBGSet、RBG、RIS 或 RI)
 SUPERSEDED (round-7 rewording/design change, re-pinned above): FAIL  R6-CARRY-REGRESSION (a round-5 pin that is NOT in the disclosed round-6 supersession list failed — see above)
-SUPERSEDED (round-7 rewording/design change, re-pinned above): OPEN  F-SEEALSO-502 (keps/502-workload-status-model still absent from this tree)
+RESOLVED-IN-TREE (rebase brought keps/502-* into the ref): OPEN->RESOLVED F-SEEALSO-502 (keps/502-* exists in this tree)
 PASS  R7-CARRY (all non-superseded round-6 pins green on this ref; round-7 supersessions disclosed above)
 ROUND7 CONTRACTS: all green

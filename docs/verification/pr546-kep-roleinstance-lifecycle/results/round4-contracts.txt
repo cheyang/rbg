@@ -1,4 +1,4 @@
-== Round-4 contracts on /tmp/tmp.3sPP1YJ9tD/pr546-reverify ==
+== Round-4 contracts on /tmp/tmp.bBYIDYmSJQ/pr546-reverify ==
 FAIL  F-OLDNEW-COEXIST [EN] (required MISSING: The new protocol coexists with the legacy RoleInstanceSet lifecycle protocol, but the two are mutually exclusive on the same RIS)
 FAIL  F-OLDNEW-COEXIST [EN] (required MISSING: An admission webhook must reject a Role/RIS combination in which the new Role-level lifecycle and a legacy user-configured RIS lifecycle are both non-empty)
 PASS  F-OLDNEW-COEXIST [EN] (required present: the legacy protocol is executed by the RIS controller, while the new protocol is executed by the RI controller)
@@ -88,6 +88,6 @@ PASS  CARRY-WIRE-NAMES [EN] (forbidden absent: lifecycle-state=)
 PASS  CARRY-WIRE-NAMES [ZH] (forbidden absent: lifecycle-state=)
 PASS  CARRY-KEPYAML-NOISE [YAML] (forbidden absent: Segment is data-driven)
 PASS  CARRY-KEPYAML-NOISE [YAML] (forbidden absent: TBD)
-OPEN  F-SEEALSO-502 (see-also target /keps/502-workload-status-model still absent from repo)
+PASS  F-SEEALSO-502 (target /keps/502-workload-status-model now exists in repo)
 
 ROUND4 CONTRACTS: one or more fixed-finding contracts missing
