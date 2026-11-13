@@ -64,3 +64,23 @@ harness onto it, and prints Fixed/Still-broken per finding (F1 canary flips = se
 changed; F2 contract green = stale examples fixed). Advance
 docs/verification/kep-543-segment-codex/.last-reviewed to the new head after review.
 ```
+
+## Round 2 — incremental (head d8d53364, previous bd378ebd)
+
+Re-verified after the author pushed 3 doc commits addressing round-1 findings.
+
+| ID | Round-2 status | Evidence |
+| --- | --- | --- |
+| F1 (B=0 floor) | **Fixed by doc redesign** — B=0 now requires positive effective maxSurge (admission rejects explicit 0 without surge; reconciliation reports round-down-to-zero without surge); the doc explicitly acknowledges the RIS floor. Canary pair stays green (code unchanged) and now guards the doc's descriptive claims about the floor. | `results/reverify/unit.parsed` (pass=2) |
+| F2 (stale kv-cache-N) | **Fixed** — examples now use `e7652f82cdee-{0,1}`; SHA-256("kv-cache")[:12] independently recomputed. Contract test flipped green; kept as regression guard. | `results/reverify/unit.parsed` |
+| F3 **new** | **Reproduced at d8d53364** — test-plan bullet (README.md:1083 / zh-CN:1080) still requires *accepting* a zero-budget-without-surge config under paused-update semantics, contradicting the same revision's new reject/report rule. Revision regression (bullet predates the delta but was consistent with the old text). Bites-checked: rewriting the bullet flips the test green. | `results/reverify/unit.parsed` (contract FAIL) |
+| F4 **new** | **Reproduced at d8d53364** — the new discovery-owner paragraph claims enumeration derives "otherwise [from] the child RIS committed ordinals"; refuted for Segment members by ground-truth tests: the child-committed path requires excluded/committed-skip annotations Segment membership forbids, so the only reachable source is dense enumeration from RBG **spec** replicas. The misaligned-window guard is the new fail-fast ordering (validation before the ConfigMap update), which the doc *does* specify — the enumeration-source clause is the inaccurate part. | `results/reverify/unit.parsed` (doc contract FAIL; ground-truth pair PASS) |
+
+Round-1 F3 (B=0 admission state machine) stays reasoning-only and **open**: the B=0+surge
+candidate-scope/admission/partition-lowering relation is unchanged by the delta and, with B=0
+now requiring surge, is the only B=0 mode.
+
+Harness additions this round (additive, production code untouched):
+`pkg/discovery/verify_kep543_discovery_source_test.go` (F4 ground truth),
+two contract tests in `keps/543-segment/segment_doc_consistency_test.go` (F3, F4 doc side),
+and `scripts/check-doc-consistency.sh` extended to cover F2+F3+F4.
