@@ -1,0 +1,7 @@
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	(cached)
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	(cached)
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	(cached)

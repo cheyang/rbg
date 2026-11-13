@@ -1,0 +1,66 @@
+{
+  "topic": "restart-wave-guard",
+  "pr": "https://github.com/sgl-project/rbg/pull/573",
+  "harnessPaths": [
+    "docs/verification/restart-wave-guard",
+    "pkg/reconciler/roleinstance/sync/wave_guard_harness_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #563: \"no second recreation; Restarting stays True and the instance stays NotReady until the RoleInstance is deleted\" when a member of the rebuilt group fails again before the instance is Ready.",
+    "reportedComponent": "pkg/reconciler/roleinstance (RoleInstance controller restart-policy guard, shouldRecreateInstanceGuarded/isAlreadyRestarting)",
+    "patchedComponent": "pkg/reconciler/roleinstance/{instance_reconciler.go,instance_status.go,sync/instance_scale.go,sync/api.go} — same component",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "integration",
+    "verdict": "confirmed",
+    "evidence": "PR's own envtest spec 'Restart wave completion (#563)' grafted onto base ea5e82ae FAILS: 'the completed wave must persist Restarting=False / Expected True to equal False' (guard never releases). See results/envtest-563-base.txt. Same spec passes on head 145cbadd (results/envtest-563-head.txt).",
+    "match": ["Restart wave completion"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/roleinstance/sync/ -run 'TestHarness|TestReleaseCompletedRestartWave|TestIsAlreadyRestartingPersistedWaveFallback|TestRestartWaveGuardScopesCascadingRecreation' -v"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=$(ls -d $HOME/.local/share/kubebuilder-envtest/k8s/1.36.2-linux-amd64) go test ./test/envtest/testcase/restart_policy/... -ginkgo.focus 'Restart wave completion' -timeout 600s",
+      "report": "docs/verification/restart-wave-guard/results/envtest-563-head.txt"
+    }
+  },
+  "findings": [
+    {
+      "id": "FIX-563",
+      "polarity": "contract",
+      "layer": "integration",
+      "note": "The PR's fix contract: after the first recreation completes (pre-restart Pods gone), a pre-Ready failure of the rebuilt group must trigger a second recreation (RestartCount reaches 2). Red on base, green on head.",
+      "match": ["Restart wave completion"]
+    },
+    {
+      "id": "GUARD-INTACT",
+      "polarity": "contract",
+      "layer": "unit",
+      "note": "The guard's original cascading-deletion purpose and the controller-restart fallback both behave as documented: MemberTerminating triggers are absorbed while pre-restart Pods exist; the persisted fallback blocks before / releases after old-Pod removal.",
+      "match": [
+        "TestHarnessWaveGuardAbsorbsMemberTerminatingTrigger",
+        "TestHarnessControllerRestartFallbackBlocksWhilePreRestartPodTerminating",
+        "TestHarnessControllerRestartFallbackReleasesWhenOldPodsGone"
+      ]
+    },
+    {
+      "id": "W1",
+      "polarity": "canary",
+      "layer": "unit",
+      "note": "Residual limitation (minor, pre-existing shape): a pre-restart Pod stuck Terminating (finalizer / dead node) holds the wave guard armed, so a failed replacement cannot start a second recreation — the #563 symptom persists when pre-restart deletion never completes. Documents current behavior; flips red if a release-deadline is ever added.",
+      "match": ["TestHarnessStuckTerminatingPreRestartPodHoldsGuard"]
+    },
+    {
+      "id": "W2",
+      "polarity": "canary",
+      "layer": "unit",
+      "note": "Acknowledged limitation (minor): the controller-restart fallback counts a Pod created in the same second as LastRestartTime as a replacement (hasPreRestartPods uses strict Before), releasing the guard early for a same-second pre-restart Pod.",
+      "match": ["TestHarnessSameSecondPodCountsAsReplacement"]
+    }
+  ],
+  "liveNote": "L3 not run (no cluster authorized this round). If run later: recreate a 2-member group, kill one member, leave the replacement NotReady, crash a replacement member, and observe a second ReCreateInstance event within backoff; also check the Restarting condition flips to False/RestartCompleted while NotReady."
+}

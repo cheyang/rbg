@@ -1,0 +1,7 @@
+  [38;5;9m[FAILED][0m in [It] - /home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-13/pr-573/wt-base/test/envtest/testcase/restart_policy/restart_policy_test.go:1019 [38;5;243m@ 11/13/26 09:08:36.218[0m
+  [38;5;9m[FAILED] Timed out after 60.001s.
+  the completed wave must persist Restarting=False
+      <v1.ConditionStatus>: True
+  to equal
+      <v1.ConditionStatus>: False[0m
+[38;5;9m[1mRan 1 of 28 Specs in 70.618 seconds[0m

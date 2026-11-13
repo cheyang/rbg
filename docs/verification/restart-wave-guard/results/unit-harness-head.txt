@@ -1,0 +1,12 @@
+=== RUN   TestHarnessWaveGuardAbsorbsMemberTerminatingTrigger
+--- PASS: TestHarnessWaveGuardAbsorbsMemberTerminatingTrigger (0.00s)
+=== RUN   TestHarnessStuckTerminatingPreRestartPodHoldsGuard
+--- PASS: TestHarnessStuckTerminatingPreRestartPodHoldsGuard (0.00s)
+=== RUN   TestHarnessSameSecondPodCountsAsReplacement
+--- PASS: TestHarnessSameSecondPodCountsAsReplacement (0.00s)
+=== RUN   TestHarnessControllerRestartFallbackReleasesWhenOldPodsGone
+--- PASS: TestHarnessControllerRestartFallbackReleasesWhenOldPodsGone (0.00s)
+=== RUN   TestHarnessControllerRestartFallbackBlocksWhilePreRestartPodTerminating
+--- PASS: TestHarnessControllerRestartFallbackBlocksWhilePreRestartPodTerminating (0.04s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	(cached)
