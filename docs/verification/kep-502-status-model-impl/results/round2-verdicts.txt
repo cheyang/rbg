@@ -1,0 +1,35 @@
+Round 2 re-verify, head effc2f8ee983d6c5a95be12f07ec4a19d94aec14 (delta 95ddf06a..effc2f8e)
+=====================================================================================
+ID   LEDGER  VERDICT        EVIDENCE
+F1   F1      FIXED          pass=3/3 (fresh-loss control, persisted-loss contract, 2->5 boundary)
+F2   F2      FIXED          pass=2/2 (InvalidSpec surfaces at RBG; stale-generation control)
+F3   F3      FIXED          pass=3/3 (entry snapshot retained through recompute+unclassified err; fresh success clears)
+F4   F4      STILL-BROKEN   TestVerifyF4StaleProgressingConditionRemovedWhenNoLongerAllRIS fails
+F5   F5      FIXED          pass=2/2 (family precedence beats append order, both orders)
+F6   F6      STILL-BROKEN   TestVerifyF5UnconfirmableLegacyInstanceStaysAbsent fails (phase=Creating); control passes
+O3   O3      STILL-BROKEN   TestVerifyF3SubGroupPolicyBackendIsNotASchedulerCapability fails; control passes
+F11  F11-new REGRESSION     N1+N2 fail on head (reason=Creating); PASS on previous head 95ddf06a (reason=Recovering);
+                            NControl passes on head (author's pinned never-ready semantic), fails on previous head
+                            (ScalingUp) -- intended semantic change, kept as control.
+F12  F12-new REGRESSION     partition-complete rollout reports RoleInstanceUpdated on head, Converged on 95ddf06a;
+                            incomplete-scope control passes on both.
+
+Harness-bites (round 2, probes applied to head then reverted, production tree clean):
+- F11 probe: restore InstancesNotReady to setEstablishmentReasons -> N1/N2 flip green; NControl and the author's
+  pinned "never-ready set stays creating" case flip red (documents the design trade-off: the single condition
+  slot cannot distinguish never-established from established-then-flapped; a durable establishment marker is
+  the real fix shape).
+- F12 probe: updateActive first clause = revision inequality AND (UpdatedReplicas < ExpectedUpdatedReplicas
+  || observedReplicas > target) -> F12 tests green AND the author's full RIS suite stays green except the
+  never-ready pinned case (affected only by the F11 probe), i.e. surge-gap and RecreatePod-gap cases hold.
+
+Integration layer (head effc2f8, KUBEBUILDER_ASSETS=1.31.0):
+- go build ./... clean
+- PR-owned unit suites green: roleinstance, roleinstanceset (both modes), internal/controller/workloads, api
+- envtest testcase/rbg: ok (100.5s)
+- envtest testcase/stateful: ok (42.3s)
+
+CI (head effc2f8): all green except "E2E lifecycle" CANCELLED after 33min stuck in kind setup
+(node NotReady taint; rbgs-controller-manager deployment had reported Available at 07:24:59, hang was in the
+webhook-cert verify loop afterwards). Same job succeeded on previous head 95ddf06a. Attribution:
+infrastructure flake (kind node died), not PR code; no test executed before cancellation.

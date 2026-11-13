@@ -53,3 +53,53 @@ or `bash docs/verification/kep-502-status-model-impl/scripts/re-verify.sh` from 
 All five findings are contract tests: they FAIL on the reviewed head and must PASS when fixed
 (no canaries to invert). `scripts/re-verify.sh` fetches the current PR head, grafts this
 harness onto it, and reports Fixed / Still-broken per finding.
+
+## Round 2 (incremental) — head effc2f8ee983d6c5a95be12f07ec4a19d94aec14
+
+Delta reviewed: `95ddf06a..effc2f8e` (+1218/-166, 18 files). Manifest finding IDs are now the
+debate-ledger IDs (see `idMapping` in verify-manifest.json; test function names keep their
+round-1 codex-local numbering).
+
+### Round-2 verdicts (re-verify.sh, unit layer; integration = repo envtest suites)
+
+| Ledger ID | Verdict | Evidence |
+|-----------|---------|----------|
+| F1 | **Fixed** | 3/3 pass: persisted loss stays `Recovering` via the persisted-reason hold; fresh-loss and genuine-scale-up controls green |
+| F2 | **Fixed** | 2/2 pass: `risReasonToRBG` maps `InvalidSpec`; `rbgCurrentBlocker` collects it; stale-generation control green |
+| F3 | **Fixed** | 3/3 pass: entry snapshot carried through step-4 recompute; retained over unclassifiable step-8 error; fresh success (`finalizeRBGProgressingCondition`) clears |
+| F4 | **Still broken** | mixed-backend early return still never removes the stale `Progressing` condition |
+| F5 | **Fixed** | 2/2 pass: `instanceProgressingBlocker` selects by family precedence regardless of append order |
+| F6 | **Still broken** | `nextRoleInstancePhase("")` still defaults to `Creating` for the unconfirmable legacy instance |
+| F7, F8 | **Still open** | `roleinstanceset_controller.go` untouched by the delta; code-path findings stand |
+| F9 | **Fixed (code-path)** | `unreadyDependencies` reuses `CheckWorkloadReady` incl. the maxSkew carve-out; PR adds `TestUnreadyDependencies` |
+| F10 | **Fixed (cost half)** | `observeGangWaiting` gated on `GetGangStrategy` + controller-ref ownership; coverage half was refuted in round 1 |
+| T2 | **Fixed** | PR suite now pins "persisted recovering reason keeps replacement stable after counters decay" |
+| O3 | **Still broken** | `classifyGangIncompatibility` unchanged |
+
+### New findings this round (both revision regressions; contract passes on 95ddf06a, fails on effc2f8e)
+
+- **F11** (`pkg/reconciler/roleinstanceset/progressing_establishment_verify_test.go`): removing
+  `InstancesNotReady` from `setEstablishmentReasons` makes "established" depend on the single
+  persisted Progressing slot. Any established set whose last persisted reason is
+  `InstancesNotReady` (readiness flap, scale-up readiness window, post-recovery readiness window)
+  reports `Creating` on member loss — initial-establishment semantics for a long-established set.
+  Bites: restoring the reason flips N1/N2 green; it also flips the author's pinned never-ready
+  case red, proving the real fix needs durable establishment evidence (e.g. an establishment
+  generation marker), not a reason-list edit.
+- **F12** (`pkg/reconciler/roleinstanceset/progressing_partition_verify_test.go`): `updateActive`
+  dropped the `UpdatedReplicas < ExpectedUpdatedReplicas` conjunct, but `shouldAdvanceCurrentRevision`
+  never advances `CurrentRevision` while `partition > 0`, so a partition-scoped rollout whose scope
+  is complete reports `RoleInstanceUpdated` forever; via child-activity aggregation the RBG never
+  reaches `Converged`, contradicting the PR's own partition-aware completion
+  (`rbgOwnTargetComplete` finalPartition logic + PR body). Bites: revision-inequality AND
+  (`UpdatedReplicas < ExpectedUpdatedReplicas || observedReplicas > target`) flips F12 green while
+  keeping the author's surge-gap and RecreatePod-gap cases green.
+
+Also recorded (code-path only): an optimistic-lock Conflict from the resourceVersion-pinned SSA
+spec patch reaches the `else if entryBlocker != nil` finalize branch, clearing a confirmed blocker
+family without a successful observation (F13, minor); the admission ratchet compares error strings
+and therefore no longer rejects becoming-RBGSet-managed with a pre-existing excluded-ordinals
+annotation (F14, minor).
+
+Round-2 results: `results/round2-verdicts.txt`, `results/reverify/`, `results/unit-round2-head.jsonl`.
+Integration: envtest rbg (100.5s) + stateful (42.3s) green on head; see results/round2-verdicts.txt.
