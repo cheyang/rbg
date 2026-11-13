@@ -33,3 +33,12 @@ CI (head effc2f8): all green except "E2E lifecycle" CANCELLED after 33min stuck 
 (node NotReady taint; rbgs-controller-manager deployment had reported Available at 07:24:59, hang was in the
 webhook-cert verify loop afterwards). Same job succeeded on previous head 95ddf06a. Attribution:
 infrastructure flake (kind node died), not PR code; no test executed before cancellation.
+
+F14  F14-new REGRESSION     admission ratchet: becoming RBGSet-managed with pre-existing excluded ordinals
+                            admitted on head (ValidateUpdate returns nil), rejected on 95ddf06a (Invalid);
+                            unchanged-violation ratchet control passes on head (and fails on 95ddf06a, where
+                            no ratchet exists -- control pins the new intended behavior).
+F13  F13-new code-path      roleErr=Conflict (resourceVersion-pinned SSA spec patch) falls into the
+                            `else if entryBlocker != nil` finalize branch, clearing a confirmed blocker family
+                            without a successful observation of the RBG's own operation (KEP retention).
+                            Not harness-run; branch logic read at rolebasedgroup_controller.go:301-318.
