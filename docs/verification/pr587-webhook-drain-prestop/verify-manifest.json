@@ -1,0 +1,36 @@
+{
+  "topic": "pr587-webhook-drain-prestop",
+  "pr": "https://github.com/sgl-project/rbg/pull/587",
+  "harnessPaths": [
+    "docs/verification/pr587-webhook-drain-prestop",
+    "test/chart/manager_shutdown_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "A few RBG admission requests still fail right when an old manager pod is deleted during a rollout (1 of 2341 requests with the Helm install, 3 of 1445 with deploy/kubectl/manifests.yaml, measured on #575): on SIGTERM the manager stops the webhook server on :9443 at once, while the API server keeps routing requests until the webhook Service's endpoints drop the pod, and every RBG webhook has failurePolicy: Fail.",
+    "reportedComponent": "controller manager Deployment manifests / webhook serving lifecycle (Helm chart, config/manager, deploy/kubectl)",
+    "patchedComponent": "same: deploy/helm/rbgs/templates/manager/manager.yaml, config/manager/manager.yaml, deploy/kubectl/manifests.yaml",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "live",
+    "verdict": "confirmed",
+    "evidence": "Mechanism verified by reading (exec preStop delays SIGTERM while endpoints drain; standard K8s pattern) plus the author's quantitative kind repro on both install paths: main 1/2839 + 3/2692 failed, patched 0/2820 + 0/5662 over 15 rollouts (PR body table). Independent live repro NOT run: this machine has neither kind nor docker, and shared-cluster rules forbid installing a second RBG controller. See liveNote.",
+    "match": ["author's published measurements in PR body + issue #583"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/chart/ -run 'TestChartManagerDrainsBeforeShutdown|TestKustomizeManagerDrainsBeforeShutdown' -v"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestChartManagerDrainsBeforeShutdown", "TestKustomizeManagerDrainsBeforeShutdown"],
+      "note": "Manager Deployment must drain webhook traffic before shutdown: exec preStop /bin/sleep N (N>0) and terminationGracePeriodSeconds >= N+30, on BOTH the Helm-rendered Deployment and the kustomize base. Negative control captured in results/base-chart-test.txt: both tests FAIL at merge-base 1fc69f70 with 'want an exec preStop hook, got lifecycle nil'."
+    }
+  ],
+  "liveNote": "L3 (real rollout drain) needs a throwaway cluster: kind v1.36+ on a machine with docker. Run the #575 harness: install RBG via Helm and via deploy/kubectl/manifests.yaml, server-side dry-run RBG create every ~75ms in a loop, kubectl -n rbgs-system rollout restart deployment/rbgs-controller-manager, count 'failed calling webhook' errors. Expect 0 failures over >=5 rollouts per install path. Do NOT run against a shared cluster (cluster-scoped webhooks, second controller)."
+}

@@ -1,0 +1,7 @@
+## base (merge-base 1fc69f70) + grafted manager_shutdown_test.go — negative control
+$ go test ./test/chart/ -run TestChartManagerDrainsBeforeShutdown|TestKustomizeManagerDrainsBeforeShutdown -v
+--- FAIL: TestChartManagerDrainsBeforeShutdown (0.03s)
+    manager_shutdown_test.go:71: manager container: want an exec preStop hook, got lifecycle nil
+--- FAIL: TestKustomizeManagerDrainsBeforeShutdown (0.00s)
+    manager_shutdown_test.go:82: manager container: want an exec preStop hook, got lifecycle nil
+FAIL sigs.k8s.io/rbgs/test/chart  0.033s

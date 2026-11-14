@@ -1,0 +1,10 @@
+## head 1db0e04b — full chart suite
+$ go test ./test/chart/ -v
+--- PASS: TestManagerFlagReflectsToggle (0.09s)
+--- PASS: TestClusterRoleGrantsReflectToggle (0.08s)
+--- PASS: TestToggleDeltaIsScopedToDeprecatedRBACAndFlag (0.05s)
+--- PASS: TestChartManagerHasHealthProbes (0.03s)
+--- PASS: TestKustomizeManagerHasHealthProbes (0.00s)
+--- PASS: TestChartManagerDrainsBeforeShutdown (0.03s)
+--- PASS: TestKustomizeManagerDrainsBeforeShutdown (0.00s)
+ok  sigs.k8s.io/rbgs/test/chart 0.283s
