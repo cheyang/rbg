@@ -1,0 +1,19 @@
+=== RUN   TestVerifyClaude_ExclusiveTopologyPodMatchesItsOwnAffinity
+    verify_exclusive_topology_claude_test.go:111: 
+        	Error Trace:	/tmp/rbg-base-claude/pkg/reconciler/verify_exclusive_topology_claude_test.go:111
+        	Error:      	Not equal: 
+        	            	expected: "rbg.workloads.x-k8s.io/group-uid"
+        	            	actual  : "rbg.workloads.x-k8s.io/group-unique-hash"
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-rbg.workloads.x-k8s.io/group-uid
+        	            	+rbg.workloads.x-k8s.io/group-unique-hash
+        	Test:       	TestVerifyClaude_ExclusiveTopologyPodMatchesItsOwnAffinity
+        	Messages:   	affinity selector key must match the label carried by v1alpha2 Pods
+--- FAIL: TestVerifyClaude_ExclusiveTopologyPodMatchesItsOwnAffinity (0.04s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.056s
+FAIL

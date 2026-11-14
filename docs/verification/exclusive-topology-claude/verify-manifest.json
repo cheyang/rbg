@@ -1,0 +1,67 @@
+{
+  "topic": "exclusive-topology",
+  "pr": "https://github.com/sgl-project/rbg/pull/588",
+  "harnessPaths": [
+    "docs/verification/exclusive-topology-claude",
+    "pkg/reconciler/verify_exclusive_topology_claude_test.go",
+    "test/envtest/testcase/rbg/verify_exclusive_topology_claude_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "With rbg.workloads.x-k8s.io/group-exclusive-topology: kubernetes.io/hostname on a v1alpha2 RoleBasedGroup, the group's first Pod never schedules, even when free untainted nodes exist: '0/4 nodes are available: 2 node(s) didn't match pod affinity rules, 2 node(s) had untolerated taint(s).'",
+    "reportedComponent": "pkg/reconciler/pod_reconciler.go (ConstructPodTemplateSpecApplyConfiguration -> setExclusiveAffinities), v1alpha2 default RoleInstanceSet path",
+    "patchedComponent": "pkg/reconciler/pod_reconciler.go + internal/controller/workloads/rolebasedgroup_controller.go RBGPredicate",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "L1+L2 harness grafted onto base 1fc69f70: injected required podAffinity selects group-unique-hash while Pod labels carry group-uid; nothing on base sets group-unique-hash (git grep at base). results/L1-base-premise.log, results/L2-base-premise.log",
+    "match": [
+      "TestVerifyClaude_ExclusiveTopologyPodMatchesItsOwnAffinity",
+      "RoleBasedGroup exclusive topology (reviewer verify)"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler -run 'TestVerifyClaude' -count=1 -v"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=$(ls -d /home/ecs-user/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64 2>/dev/null || echo bin/k8s/1.31.0-linux-amd64) go test ./test/envtest/testcase/rbg/ -count=1 -timeout=8m -ginkgo.focus 'reviewer verify'"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyClaude_ExclusiveTopologyPodMatchesItsOwnAffinity", "TestVerifyClaude_ExclusiveTopologyAntiAffinitySemantics"]
+    },
+    {
+      "id": "F2",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["injects group-uid affinity that matches the Pod's own labels, and toggles with the annotation"]
+    },
+    {
+      "id": "F3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyClaude_ExclusiveTopologyLegacySelectorIsAugmented"]
+    },
+    {
+      "id": "F4",
+      "polarity": "canary",
+      "layer": "unit",
+      "match": ["TestVerifyClaude_ExclusiveTopologyConflictSelectorErrors"]
+    },
+    {
+      "id": "F5",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyClaude_ExclusiveTopologyOptOut"]
+    }
+  ],
+  "liveNote": "L3 (real scheduler on a real cluster) is out of scope for this round. Observable signal to check when run: the first Pod of a fresh exclusive group leaves Pending (FailedScheduling stops), same-group Pods co-locate, and another group pinned to that node stays Pending with an anti-affinity FailedScheduling event. The PR's own e2e (test/e2e/testcase/v1alpha2/rbg.go, ginkgo 'lifecycle' label) asserts all of these and runs in the CI lifecycle matrix."
+}

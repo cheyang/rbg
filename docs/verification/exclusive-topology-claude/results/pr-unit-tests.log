@@ -1,0 +1,2 @@
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.296s
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	5.394s
