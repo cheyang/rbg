@@ -1,0 +1,55 @@
+{
+  "topic": "pr-587-webhook-drain-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/587",
+  "headShaAtReview": "1db0e04b00835a5b41cfd62a539b1d97422d15a4",
+  "baseShaAtReview": "1fc69f703695bc9355f5730ee3fb3f75cd0331b6",
+  "harnessPaths": [
+    "docs/verification/pr-587-webhook-drain-codex"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "A few RoleBasedGroup admission requests still fail (connection refused / timeout) at the moment an old manager Pod is deleted, because on SIGTERM the manager stops the webhook server on :9443 at once while the API server keeps routing until the endpoints drop the Pod; every RBG webhook has failurePolicy: Fail (issue #583).",
+    "reportedComponent": "controller manager Deployment / webhook serving (deploy layer)",
+    "patchedComponent": "manager Deployment in config/manager, deploy/helm/rbgs, deploy/kubectl/manifests.yaml",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "Base manager Deployment has lifecycle=None and no terminationGracePeriodSeconds (results/base-absence.out); the PR's own drain tests FAIL on base with 'want an exec preStop hook, got lifecycle nil' (results/base-chart-drain-tests.out); vendored controller-runtime v0.22.1 calls srv.Shutdown on SIGTERM, closing the webhook listener immediately (results/shutdown-codepath.out). All 6 webhooks in both install paths are failurePolicy: Fail. The live frequency (1/2341 requests) is author-measured; the live layer was skipped per round instructions.",
+    "match": ["TestChartManagerDrainsBeforeShutdown", "TestKustomizeManagerDrainsBeforeShutdown"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/chart/ -run 'TestChartManagerDrainsBeforeShutdown|TestKustomizeManagerDrainsBeforeShutdown' -json"
+    },
+    "integration": {
+      "kind": "script",
+      "cmd": "bash docs/verification/pr-587-webhook-drain-codex/scripts/check-drain-manifests.sh && bash docs/verification/pr-587-webhook-drain-codex/scripts/check-kustomize-sync.sh"
+    }
+  },
+  "findings": [
+    {
+      "id": "C1",
+      "title": "Manager Deployment carries exec preStop /bin/sleep 5 and grace >= 35s in chart and kustomize base (PR's own tests)",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestChartManagerDrainsBeforeShutdown", "TestKustomizeManagerDrainsBeforeShutdown"]
+    },
+    {
+      "id": "C2",
+      "title": "All three shipped install surfaces (helm render incl. value variants, config/manager, deploy/kubectl/manifests.yaml) satisfy the drain contract",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["integration"]
+    },
+    {
+      "id": "C3",
+      "title": "deploy/kubectl/manifests.yaml is byte-identical to kustomize build config/default (regeneration claim)",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["integration"]
+    }
+  ],
+  "liveNote": "L3 (skipped this round per instructions): on kind, install via helm and via deploy/kubectl/manifests.yaml, send server-side dry-run RBG creates every ~75ms while running kubectl rollout restart deployment/rbgs-controller-manager, and count failed calling webhook errors; expect 0 over >=5 rollouts per path (author's measurements: 0/2820 helm, 0/5662 kubectl on the PR head)."
+}
