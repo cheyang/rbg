@@ -1,0 +1,38 @@
+=== RUN   TestVerifyExclusiveTopologyPodSelfMatch
+    exclusive_topology_verify_test.go:100: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-15/pr-588/work/base/pkg/reconciler/exclusive_topology_verify_test.go:100
+        	Error:      	Should be true
+        	Test:       	TestVerifyExclusiveTopologyPodSelfMatch
+        	Messages:   	first pod must carry the label its required affinity selects; selector=rbg.workloads.x-k8s.io/group-unique-hash in (053c35a2726d84f5c081d3014a5e3519444895c8) labels=map[rbg.workloads.x-k8s.io/group-name:group-a rbg.workloads.x-k8s.io/group-uid:053c35a2726d84f5c081d3014a5e3519444895c8 rbg.workloads.x-k8s.io/role-name:test-role]
+    exclusive_topology_verify_test.go:110: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-15/pr-588/work/base/pkg/reconciler/exclusive_topology_verify_test.go:110
+        	Error:      	Should be true
+        	Test:       	TestVerifyExclusiveTopologyPodSelfMatch
+        	Messages:   	another group's pods must match anti-affinity so the node stays exclusive
+--- FAIL: TestVerifyExclusiveTopologyPodSelfMatch (0.04s)
+=== RUN   TestVerifyExclusiveTopologyLegacySelectorGetsLabel
+    exclusive_topology_verify_test.go:133: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-15/pr-588/work/base/pkg/reconciler/exclusive_topology_verify_test.go:133
+        	Error:      	Not equal: 
+        	            	expected: "6d7d34bc737acc89079ced54b19082d503eb822a"
+        	            	actual  : ""
+        	            	
+        	            	Diff:
+        	            	--- Expected
+        	            	+++ Actual
+        	            	@@ -1 +1 @@
+        	            	-6d7d34bc737acc89079ced54b19082d503eb822a
+        	            	+
+        	Test:       	TestVerifyExclusiveTopologyLegacySelectorGetsLabel
+        	Messages:   	pod template must gain the group identity label when the selector lacks it
+--- FAIL: TestVerifyExclusiveTopologyLegacySelectorGetsLabel (0.00s)
+=== RUN   TestVerifyExclusiveTopologyConflictReported
+    exclusive_topology_verify_test.go:149: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-15/pr-588/work/base/pkg/reconciler/exclusive_topology_verify_test.go:149
+        	Error:      	An error is expected but got nil.
+        	Test:       	TestVerifyExclusiveTopologyConflictReported
+        	Messages:   	conflicting group-uid in the workload selector must be reported
+--- FAIL: TestVerifyExclusiveTopologyConflictReported (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.059s
+FAIL

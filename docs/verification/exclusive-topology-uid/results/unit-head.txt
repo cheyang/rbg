@@ -1,0 +1,8 @@
+=== RUN   TestVerifyExclusiveTopologyPodSelfMatch
+--- PASS: TestVerifyExclusiveTopologyPodSelfMatch (0.04s)
+=== RUN   TestVerifyExclusiveTopologyLegacySelectorGetsLabel
+--- PASS: TestVerifyExclusiveTopologyLegacySelectorGetsLabel (0.00s)
+=== RUN   TestVerifyExclusiveTopologyConflictReported
+--- PASS: TestVerifyExclusiveTopologyConflictReported (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.057s

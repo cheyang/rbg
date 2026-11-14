@@ -1,0 +1,40 @@
+{
+  "topic": "exclusive-topology-uid",
+  "pr": "https://github.com/sgl-project/rbg/pull/588",
+  "harnessPaths": [
+    "docs/verification/exclusive-topology-uid",
+    "pkg/reconciler/exclusive_topology_verify_test.go",
+    "test/envtest/testcase/rbg/exclusive_topology_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "With rbg.workloads.x-k8s.io/group-exclusive-topology on a v1alpha2 RoleBasedGroup, the group's first Pod never schedules: the injected required podAffinity selects rbg.workloads.x-k8s.io/group-unique-hash, a label no Pod carries (Pods carry the same hash under group-uid).",
+    "reportedComponent": "pkg/reconciler/pod_reconciler.go ConstructPodTemplateSpecApplyConfiguration -> setExclusiveAffinities",
+    "patchedComponent": "pkg/reconciler/pod_reconciler.go (same component)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "On base 1fc69f70 the rendered pod template's required affinity selects group-unique-hash while its labels carry only group-uid with the same value (selector mismatch -> self-match fails -> first Pod unschedulable). Bug introduced by the v1alpha2-storage migration 415f5869 (#188); the original v1alpha1 implementation 26df2e70 (#32) selected the label its Pods actually carried. See results/unit-base.txt and results/envtest-base.txt.",
+    "match": ["TestVerifyExclusiveTopologyPodSelfMatch"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/ -run 'TestVerifyExclusiveTopology' -count=1 -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64} go test ./test/envtest/testcase/rbg -count=1 -timeout=8m -args -ginkgo.focus='Exclusive topology verification' -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    { "id": "C1", "polarity": "contract", "layer": "unit",        "match": ["TestVerifyExclusiveTopologyPodSelfMatch"] },
+    { "id": "C2", "polarity": "contract", "layer": "unit",        "match": ["TestVerifyExclusiveTopologyLegacySelectorGetsLabel"] },
+    { "id": "C3", "polarity": "contract", "layer": "unit",        "match": ["TestVerifyExclusiveTopologyConflictReported"] },
+    { "id": "C4", "polarity": "contract", "layer": "integration", "match": ["renders a self-matching group-uid affinity on the RoleInstanceSet template"] },
+    { "id": "C5", "polarity": "contract", "layer": "integration", "match": ["reconciles the RoleInstanceSet template when the annotation is toggled"] }
+  ],
+  "liveNote": "L3 (real cluster scheduling) is covered upstream by the PR itself: the new e2e specs 'schedules exclusive groups together and blocks other groups on the same node', 'blocks an exclusive group from a node occupied by an ordinary group', 'uses a disabled role as a same-group affinity target' and 'reconciles exclusive topology annotation changes on an existing group' ran and passed in the PR's E2E lifecycle CI slice (kind) at head 3ae9d70b."
+}
