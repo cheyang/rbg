@@ -1,0 +1,1 @@
+HEAD: kustomize build == deploy/kubectl/manifests.yaml (byte-identical)

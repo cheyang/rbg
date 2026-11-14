@@ -1,0 +1,9 @@
+=== RUN   TestChartManagerDrainsBeforeShutdown
+    manager_shutdown_test.go:71: manager container: want an exec preStop hook, got lifecycle nil
+--- FAIL: TestChartManagerDrainsBeforeShutdown (0.03s)
+=== RUN   TestKustomizeManagerDrainsBeforeShutdown
+    manager_shutdown_test.go:82: manager container: want an exec preStop hook, got lifecycle nil
+--- FAIL: TestKustomizeManagerDrainsBeforeShutdown (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/chart	0.034s
+FAIL

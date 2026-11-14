@@ -1,0 +1,7 @@
+## base: helm template manager Deployment lifecycle/grace:
+0
+## base: config/manager + manifests.yaml:
+config/manager/manager.yaml:0
+deploy/kubectl/manifests.yaml:170
+base manager Deployment: terminationGracePeriodSeconds = None (None => default 30s)
+base manager container lifecycle = None

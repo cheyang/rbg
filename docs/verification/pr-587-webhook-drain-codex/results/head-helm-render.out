@@ -1,0 +1,26 @@
+## helm template (default values), manager Deployment lifecycle+grace:
+16-    spec:
+17-      serviceAccountName: rbgs-controller-sa
+18:      terminationGracePeriodSeconds: 35
+19-      securityContext:
+20-        {}
+21-      containers:
+22-        - name: rbgs
+23-          args:
+24-            - --metrics-bind-address=:8443
+--
+41-          image: "rolebasedgroup/rbgs-controller:v0.9.0-73e05db4"
+42-          imagePullPolicy: IfNotPresent
+43:          lifecycle:
+44-            preStop:
+45-              exec:
+46-                command: ["/bin/sleep", "5"]
+47-          livenessProbe:
+48-            httpGet:
+49-              path: /healthz
+
+## variant renders parse and keep the hook:
+OK with --set controller.pprof.enabled=true
+OK with --set controller.features.portAllocator.enabled=true
+OK with --set controller.replicaCount=3
+OK with --set controller.deprecatedWorkloadTypes.enabled=false

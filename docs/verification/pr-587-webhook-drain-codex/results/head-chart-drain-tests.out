@@ -1,0 +1,6 @@
+=== RUN   TestChartManagerDrainsBeforeShutdown
+--- PASS: TestChartManagerDrainsBeforeShutdown (0.03s)
+=== RUN   TestKustomizeManagerDrainsBeforeShutdown
+--- PASS: TestKustomizeManagerDrainsBeforeShutdown (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/chart	0.034s

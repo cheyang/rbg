@@ -1,0 +1,16 @@
+=== RUN   TestManagerFlagReflectsToggle
+--- PASS: TestManagerFlagReflectsToggle (0.09s)
+=== RUN   TestClusterRoleGrantsReflectToggle
+--- PASS: TestClusterRoleGrantsReflectToggle (0.08s)
+=== RUN   TestToggleDeltaIsScopedToDeprecatedRBACAndFlag
+--- PASS: TestToggleDeltaIsScopedToDeprecatedRBACAndFlag (0.06s)
+=== RUN   TestChartManagerHasHealthProbes
+--- PASS: TestChartManagerHasHealthProbes (0.03s)
+=== RUN   TestKustomizeManagerHasHealthProbes
+--- PASS: TestKustomizeManagerHasHealthProbes (0.00s)
+=== RUN   TestChartManagerDrainsBeforeShutdown
+--- PASS: TestChartManagerDrainsBeforeShutdown (0.03s)
+=== RUN   TestKustomizeManagerDrainsBeforeShutdown
+--- PASS: TestKustomizeManagerDrainsBeforeShutdown (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/chart	0.290s
