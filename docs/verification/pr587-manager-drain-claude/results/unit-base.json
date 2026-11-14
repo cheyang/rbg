@@ -1,0 +1,14 @@
+{"Time":"2026-11-15T00:49:35.91382868+08:00","Action":"start","Package":"sigs.k8s.io/rbgs/test/chart"}
+{"Time":"2026-11-15T00:49:35.916872028+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDrainsBeforeShutdown"}
+{"Time":"2026-11-15T00:49:35.91692132+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDrainsBeforeShutdown","Output":"=== RUN   TestChartManagerDrainsBeforeShutdown\n","OutputType":"frame"}
+{"Time":"2026-11-15T00:49:35.947396795+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDrainsBeforeShutdown","Output":"    manager_shutdown_test.go:71: manager container: want an exec preStop hook, got lifecycle nil\n","OutputType":"error"}
+{"Time":"2026-11-15T00:49:35.947426096+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDrainsBeforeShutdown","Output":"--- FAIL: TestChartManagerDrainsBeforeShutdown (0.03s)\n","OutputType":"frame"}
+{"Time":"2026-11-15T00:49:35.947432486+08:00","Action":"fail","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDrainsBeforeShutdown","Elapsed":0.03}
+{"Time":"2026-11-15T00:49:35.947441037+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKustomizeManagerDrainsBeforeShutdown"}
+{"Time":"2026-11-15T00:49:35.947442746+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKustomizeManagerDrainsBeforeShutdown","Output":"=== RUN   TestKustomizeManagerDrainsBeforeShutdown\n","OutputType":"frame"}
+{"Time":"2026-11-15T00:49:35.947985736+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKustomizeManagerDrainsBeforeShutdown","Output":"    manager_shutdown_test.go:82: manager container: want an exec preStop hook, got lifecycle nil\n","OutputType":"error"}
+{"Time":"2026-11-15T00:49:35.947988726+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKustomizeManagerDrainsBeforeShutdown","Output":"--- FAIL: TestKustomizeManagerDrainsBeforeShutdown (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-11-15T00:49:35.947991846+08:00","Action":"fail","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKustomizeManagerDrainsBeforeShutdown","Elapsed":0}
+{"Time":"2026-11-15T00:49:35.947996326+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Output":"FAIL\n","OutputType":"frame"}
+{"Time":"2026-11-15T00:49:35.948523815+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Output":"FAIL\tsigs.k8s.io/rbgs/test/chart\t0.034s\n","OutputType":"frame"}
+{"Time":"2026-11-15T00:49:35.948552826+08:00","Action":"fail","Package":"sigs.k8s.io/rbgs/test/chart","Elapsed":0.035}

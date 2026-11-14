@@ -1,0 +1,12 @@
+{"Time":"2026-11-15T00:49:16.803752552+08:00","Action":"start","Package":"sigs.k8s.io/rbgs/test/chart"}
+{"Time":"2026-11-15T00:49:16.807243846+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDrainsBeforeShutdown"}
+{"Time":"2026-11-15T00:49:16.807301888+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDrainsBeforeShutdown","Output":"=== RUN   TestChartManagerDrainsBeforeShutdown\n","OutputType":"frame"}
+{"Time":"2026-11-15T00:49:16.837369619+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDrainsBeforeShutdown","Output":"--- PASS: TestChartManagerDrainsBeforeShutdown (0.03s)\n","OutputType":"frame"}
+{"Time":"2026-11-15T00:49:16.83739502+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDrainsBeforeShutdown","Elapsed":0.03}
+{"Time":"2026-11-15T00:49:16.83740562+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKustomizeManagerDrainsBeforeShutdown"}
+{"Time":"2026-11-15T00:49:16.83740801+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKustomizeManagerDrainsBeforeShutdown","Output":"=== RUN   TestKustomizeManagerDrainsBeforeShutdown\n","OutputType":"frame"}
+{"Time":"2026-11-15T00:49:16.838655244+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKustomizeManagerDrainsBeforeShutdown","Output":"--- PASS: TestKustomizeManagerDrainsBeforeShutdown (0.00s)\n","OutputType":"frame"}
+{"Time":"2026-11-15T00:49:16.838669605+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKustomizeManagerDrainsBeforeShutdown","Elapsed":0}
+{"Time":"2026-11-15T00:49:16.838674045+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Output":"PASS\n","OutputType":"frame"}
+{"Time":"2026-11-15T00:49:16.839357649+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Output":"ok  \tsigs.k8s.io/rbgs/test/chart\t0.035s\n"}
+{"Time":"2026-11-15T00:49:16.840377616+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Elapsed":0.037}

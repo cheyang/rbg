@@ -1,0 +1,1 @@
+KUSTOMIZE-SYNC-BASE: identical

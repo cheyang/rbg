@@ -1,0 +1,58 @@
+{
+  "topic": "pr587-manager-drain",
+  "pr": "https://github.com/sgl-project/rbg/pull/587",
+  "reviewer": "claude",
+  "round": "initial",
+  "frozen": {
+    "headSha": "1db0e04b00835a5b41cfd62a539b1d97422d15a4",
+    "baseSha": "1fc69f703695bc9355f5730ee3fb3f75cd0331b6"
+  },
+  "harnessPaths": [
+    "docs/verification/pr587-manager-drain-claude",
+    "test/chart/manager_shutdown_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "RBG admission requests fail briefly (connection refused / timeout) at the moment an old controller-manager Pod is deleted, because on SIGTERM the manager stops the webhook server on :9443 at once while kube-proxy and the API server keep sending the Pod new connections until they observe it terminating; every RBG webhook has failurePolicy: Fail.",
+    "reportedComponent": "controller manager Deployment in deploy/helm/rbgs and deploy/kubectl/manifests.yaml (built from config/manager)",
+    "patchedComponent": "same: deploy/helm/rbgs/templates/manager/manager.yaml, config/manager/manager.yaml, deploy/kubectl/manifests.yaml",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "Mechanism verified on base code: no preStop hook in base manifests; controller-runtime v0.22.1 webhook server closes listeners immediately on ctx cancel (vendor/sigs.k8s.io/controller-runtime/pkg/webhook/server.go:243-256); all 6 webhooks failurePolicy: Fail in both install paths; GracefulShutdownTimeout unset in cmd/rbgs so default 30s applies (vendor .../pkg/manager/internal.go:55). Live kind reproduction not run this round (no KUBECONFIG); issue #583 carries measured base failures (1/2839 Helm, 3/2692 kubectl).",
+    "match": ["TestChartManagerDrainsBeforeShutdown", "TestKustomizeManagerDrainsBeforeShutdown"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/chart/ -run 'ManagerDrains' -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "C1",
+      "description": "Helm chart manager Deployment drains before shutdown: exec preStop /bin/sleep N (N>0) and terminationGracePeriodSeconds >= N+30.",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestChartManagerDrainsBeforeShutdown"]
+    },
+    {
+      "id": "C2",
+      "description": "Kustomize base config/manager/manager.yaml (source of deploy/kubectl/manifests.yaml) carries the same preStop drain and grace period.",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestKustomizeManagerDrainsBeforeShutdown"]
+    }
+  ],
+  "extraChecks": [
+    {
+      "id": "K1",
+      "description": "deploy/kubectl/manifests.yaml regenerates byte-identically from kustomize build config/default (kubectl kustomize used as kustomize CLI proxy; byte-fidelity itself verified on base first).",
+      "script": "scripts/check-kustomize-sync.sh",
+      "verdict": "pass",
+      "evidence": "results/kustomize-sync.txt, results/kustomize-sync-base.txt"
+    }
+  ],
+  "liveNote": "L3 (skipped this round, no KUBECONFIG): on a kind cluster, run the issue #583/#575 harness — server-side dry-run RoleBasedGroup creates at ~75ms intervals while `kubectl -n rbgs-system rollout restart deployment/rbgs-controller-manager` runs; expect 0 `failed calling webhook` errors over >=5 rollouts per install path (base shows 1/2839 and 3/2692)."
+}
