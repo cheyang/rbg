@@ -1,7 +1,16 @@
 # pr587-manager-drain — verification (Reviewer A, Claude)
 
 Reproducible evidence for the review of https://github.com/sgl-project/rbg/pull/587
-(head `1db0e04b00835a5b41cfd62a539b1d97422d15a4`, base `1fc69f703695bc9355f5730ee3fb3f75cd0331b6`).
+(round 2 head `011c0043a5569b693f867e5eab94738a313e048d`, round 1 head
+`1db0e04b00835a5b41cfd62a539b1d97422d15a4`, base `1fc69f703695bc9355f5730ee3fb3f75cd0331b6`).
+
+**Round 2 (2026-11-16, incremental `1db0e04b..011c0043`)** — single commit
+`011c0043 "test(deploy): pin the 30s shutdown budget behind the drain grace period"`:
+adds `TestManagerOptionsKeepDefaultGracefulShutdownTimeout` in `cmd/rbgs/main_test.go`
+(pins the assumption behind F3-shutdown-constant-drift), adds explanatory comments to
+both manager.yaml templates, and cross-references the chart test. All harness checks
+re-run green at the new head (see the Round 2 table below); harness-bites check for the
+new C3 test performed (fake 45 s timeout → test fails both modes, then reverted).
 
 The PR adds an exec `preStop: /bin/sleep 5` hook and `terminationGracePeriodSeconds: 35`
 to the controller-manager container in the Helm chart and `config/manager` (plus the
@@ -43,7 +52,23 @@ Run against the **base** branch, without the patch.
 | C2 | Kustomize base `config/manager/manager.yaml` carries the same drain | 1 | Confirmed-fixed on head | same artifacts |
 | K1 | `deploy/kubectl/manifests.yaml` == `kustomize build config/default` byte for byte | script | Pass on head and base | `results/kustomize-sync.txt`, `results/kustomize-sync-base.txt` |
 
-Harness-bites checks performed (Step 4):
+## Round 2 results (delta `1db0e04b..011c0043`)
+
+| ID | Claim | Layer | Verdict | Evidence |
+|----|-------|-------|---------|----------|
+| C1 | Chart drain contract (unchanged assertion) | 1 | Pass | `results/reverify/unit.parsed` |
+| C2 | Kustomize drain contract (unchanged assertion) | 1 | Pass | `results/reverify/unit.parsed` |
+| C3 | `newManagerOptions` leaves `GracefulShutdownTimeout` nil in all webhook modes (new round-2 guard) | 1b (unit-cmd) | Pass + bites | `results/reverify/unit-cmd.parsed`; bites: `results/c3-bites-check.out` (fake 45 s → FAIL, then reverted, `git diff` empty) |
+| K2 | New template comments change no rendered semantics: manifests.yaml still byte-identical; Helm render delta is only the 3 comment lines | script | Pass | `results/kustomize-sync-round2.txt`, `results/helm-render-r2-diff.txt` |
+
+Additional round-2 checks: `helm lint` clean; project-config `yamllint` clean on both changed
+YAML files; full `go test ./test/chart/ ./cmd/rbgs/` green; `ctrl.NewManager` gets its
+options **only** from `newManagerOptions` (cmd/rbgs/main.go:338-340), so the C3 pin covers
+the whole manager-options surface; PR OPEN/MERGEABLE; CI 22/22 checks success on
+`011c0043` (unit-test, lint, envtest, e2e suites, manifest-installation e2e, build,
+copyright-check, e2e-matrix-coverage).
+
+Harness-bites checks performed (Step 4, round 1; round 2 adds the C3 check above):
 
 1. Contract tests grafted onto the **base** commit fail:
    `TestChartManagerDrainsBeforeShutdown` / `TestKustomizeManagerDrainsBeforeShutdown` →
@@ -67,11 +92,10 @@ Harness-bites checks performed (Step 4):
 
 ## Findings raised (none blocking)
 
-No blocker or major findings. Non-blocking notes live in the debate document
-(`findings-claude.md`): N1 hard-coded 5 s / 35 s not tunable via `values.yaml`;
-N2 `managerGracefulShutdownSeconds = 30` duplicates controller-runtime's default and
-would silently drift if `cmd/rbgs` ever overrides it; Q1 maintainer preference on values
-exposure; R1 residual risk that 5 s is too short on large clusters (author acknowledged).
+No blocker or major findings in either round. Round-2 delta **remediates the prior
+non-blocking F3-shutdown-constant-drift** (Go-side pin test, comment cross-reference) and
+the comment half of F1-drain-window-fixed-5s (template comments explaining 5 + 30); the
+values.yaml knob remains a maintainer preference, still open as non-blocking.
 
 ## Live run notes
 

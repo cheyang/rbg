@@ -1,0 +1,6 @@
+# helm render diff 1db0e04b -> 011c0043 (Deployment only)
+17a18,20
+>       # The preStop sleep keeps the webhooks serving for 5s after SIGTERM while
+>       # the Pod leaves the webhook Service's endpoints. The grace period covers
+>       # that sleep plus the manager's 30s graceful shutdown (5 + 30).
+(exit 1 — only the 3 comment lines; comments pass through helm, stripped by kustomize)

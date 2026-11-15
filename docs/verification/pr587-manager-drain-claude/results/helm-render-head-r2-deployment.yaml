@@ -1,0 +1,69 @@
+kind: Deployment
+metadata:
+  name: rbgs-controller-manager
+  namespace: default
+  labels:
+    control-plane: rbgs-controller
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      control-plane: rbgs-controller
+  template:
+    metadata:
+      labels:
+        control-plane: rbgs-controller
+    spec:
+      serviceAccountName: rbgs-controller-sa
+      # The preStop sleep keeps the webhooks serving for 5s after SIGTERM while
+      # the Pod leaves the webhook Service's endpoints. The grace period covers
+      # that sleep plus the manager's 30s graceful shutdown (5 + 30).
+      terminationGracePeriodSeconds: 35
+      securityContext:
+        {}
+      containers:
+        - name: rbgs
+          args:
+            - --metrics-bind-address=:8443
+            - --leader-elect
+            - --health-probe-bind-address=:8081
+            - --max-concurrent-reconciles=10
+            - --kube-api-qps=20
+            - --kube-api-burst=30
+            - --scheduler-name=scheduler-plugins
+            - --enable-deprecated-workload-types=true
+          env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          command:
+            - /manager
+          securityContext:
+            {}
+          image: "rolebasedgroup/rbgs-controller:v0.9.0-73e05db4"
+          imagePullPolicy: IfNotPresent
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sleep", "5"]
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /readyz
+              port: 8081
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1536Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+---

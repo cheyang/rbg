@@ -78,7 +78,8 @@
       "id": "K2",
       "description": "Round-2 delta adds YAML comments to config/manager/manager.yaml and the Helm template; comments must not leak into rendered output: deploy/kubectl/manifests.yaml still byte-identical to kustomize build config/default, and helm render unchanged apart from nothing (comments are stripped).",
       "script": "scripts/check-kustomize-sync.sh",
-      "verdict": "pending"
+      "verdict": "pass",
+      "evidence": "results/kustomize-sync-round2.txt (KUSTOMIZE-SYNC: identical at 011c0043), results/helm-render-r2-diff.txt (rendered Deployment delta is only the 3 comment lines)"
     }
   ],
   "liveNote": "L3 (skipped this round, no KUBECONFIG): on a kind cluster, run the issue #583/#575 harness \u2014 server-side dry-run RoleBasedGroup creates at ~75ms intervals while `kubectl -n rbgs-system rollout restart deployment/rbgs-controller-manager` runs; expect 0 `failed calling webhook` errors over >=5 rollouts per install path (base shows 1/2839 and 3/2692)."
