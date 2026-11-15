@@ -2,9 +2,10 @@
   "topic": "pr587-manager-drain",
   "pr": "https://github.com/sgl-project/rbg/pull/587",
   "reviewer": "claude",
-  "round": "initial",
+  "round": "incremental",
   "frozen": {
-    "headSha": "1db0e04b00835a5b41cfd62a539b1d97422d15a4",
+    "headSha": "011c0043a5569b693f867e5eab94738a313e048d",
+    "previousHeadSha": "1db0e04b00835a5b41cfd62a539b1d97422d15a4",
     "baseSha": "1fc69f703695bc9355f5730ee3fb3f75cd0331b6"
   },
   "harnessPaths": [
@@ -21,12 +22,19 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "Mechanism verified on base code: no preStop hook in base manifests; controller-runtime v0.22.1 webhook server closes listeners immediately on ctx cancel (vendor/sigs.k8s.io/controller-runtime/pkg/webhook/server.go:243-256); all 6 webhooks failurePolicy: Fail in both install paths; GracefulShutdownTimeout unset in cmd/rbgs so default 30s applies (vendor .../pkg/manager/internal.go:55). Live kind reproduction not run this round (no KUBECONFIG); issue #583 carries measured base failures (1/2839 Helm, 3/2692 kubectl).",
-    "match": ["TestChartManagerDrainsBeforeShutdown", "TestKustomizeManagerDrainsBeforeShutdown"]
+    "match": [
+      "TestChartManagerDrainsBeforeShutdown",
+      "TestKustomizeManagerDrainsBeforeShutdown"
+    ]
   },
   "layers": {
     "unit": {
       "kind": "gotest",
       "cmd": "go test ./test/chart/ -run 'ManagerDrains' -json"
+    },
+    "unit-cmd": {
+      "kind": "gotest",
+      "cmd": "go test ./cmd/rbgs/ -run 'ManagerOptionsKeepDefaultGracefulShutdownTimeout' -json"
     }
   },
   "findings": [
@@ -35,14 +43,27 @@
       "description": "Helm chart manager Deployment drains before shutdown: exec preStop /bin/sleep N (N>0) and terminationGracePeriodSeconds >= N+30.",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestChartManagerDrainsBeforeShutdown"]
+      "match": [
+        "TestChartManagerDrainsBeforeShutdown"
+      ]
     },
     {
       "id": "C2",
       "description": "Kustomize base config/manager/manager.yaml (source of deploy/kubectl/manifests.yaml) carries the same preStop drain and grace period.",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestKustomizeManagerDrainsBeforeShutdown"]
+      "match": [
+        "TestKustomizeManagerDrainsBeforeShutdown"
+      ]
+    },
+    {
+      "id": "C3",
+      "description": "cmd/rbgs manager options leave GracefulShutdownTimeout nil in every webhook mode (round-2 delta 1db0e04b..011c0043, commit 011c0043 'pin the 30s shutdown budget'): so the 35 = 5 + 30 arithmetic asserted by the chart tests stays valid. Directly remediates prior finding F3-shutdown-constant-drift.",
+      "polarity": "contract",
+      "layer": "unit-cmd",
+      "match": [
+        "TestManagerOptionsKeepDefaultGracefulShutdownTimeout"
+      ]
     }
   ],
   "extraChecks": [
@@ -52,7 +73,13 @@
       "script": "scripts/check-kustomize-sync.sh",
       "verdict": "pass",
       "evidence": "results/kustomize-sync.txt, results/kustomize-sync-base.txt"
+    },
+    {
+      "id": "K2",
+      "description": "Round-2 delta adds YAML comments to config/manager/manager.yaml and the Helm template; comments must not leak into rendered output: deploy/kubectl/manifests.yaml still byte-identical to kustomize build config/default, and helm render unchanged apart from nothing (comments are stripped).",
+      "script": "scripts/check-kustomize-sync.sh",
+      "verdict": "pending"
     }
   ],
-  "liveNote": "L3 (skipped this round, no KUBECONFIG): on a kind cluster, run the issue #583/#575 harness — server-side dry-run RoleBasedGroup creates at ~75ms intervals while `kubectl -n rbgs-system rollout restart deployment/rbgs-controller-manager` runs; expect 0 `failed calling webhook` errors over >=5 rollouts per install path (base shows 1/2839 and 3/2692)."
+  "liveNote": "L3 (skipped this round, no KUBECONFIG): on a kind cluster, run the issue #583/#575 harness \u2014 server-side dry-run RoleBasedGroup creates at ~75ms intervals while `kubectl -n rbgs-system rollout restart deployment/rbgs-controller-manager` runs; expect 0 `failed calling webhook` errors over >=5 rollouts per install path (base shows 1/2839 and 3/2692)."
 }
