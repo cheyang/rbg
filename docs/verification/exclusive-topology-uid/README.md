@@ -24,7 +24,7 @@ SHA1 hash under `rbg.workloads.x-k8s.io/group-uid`).
 - Component match: report names `pkg/reconciler/pod_reconciler.go`; that is exactly what the
   PR patches. ComponentMatch = true.
 
-## Claims verified (all CONTRACT polarity — red on base, green at head 3ae9d70b)
+## Claims verified (all CONTRACT polarity — red on base, green at head 29fa5faa)
 
 | ID | Claim | Layer | Test | Base | Head |
 |----|-------|-------|------|------|------|
@@ -33,8 +33,19 @@ SHA1 hash under `rbg.workloads.x-k8s.io/group-uid`).
 | C3 | A workload selector pinning a conflicting `group-uid` is reported as an error | unit | `TestVerifyExclusiveTopologyConflictReported` | FAIL | PASS |
 | C4 | End-to-end through the real controller: RIS pod template carries `group-uid` + self-matching affinity + pod annotation | integration (envtest) | `renders a self-matching group-uid affinity on the RoleInstanceSet template` | FAIL | PASS |
 | C5 | Toggling the annotation (off, then on with a different key) reconciles the RIS template — exercises `RBGPredicate` through the real watch | integration (envtest) | `reconciles the RoleInstanceSet template when the annotation is toggled` | FAIL | PASS |
+| C6 | Round-2 (S1 fix): a stored pod template with the legacy `group-unique-hash` affinity is judged NOT equal so deploy/sts/lws reconciles repair it on upgrade; stable after repair; gate scoped to annotated templates | unit | `TestVerifyExclusiveTopologyAffinityGateRepairsLegacy` | FAIL (prev head 3ae9d70b) | PASS (29fa5faa) |
 
-Raw output: `results/unit-{head,base}.txt`, `results/envtest-{head,base}.txt`.
+Raw output: `results/unit-{head,base}.txt`, `results/envtest-{head,base}.txt`, `results/reverify/`.
+
+Round 2 (head 29fa5faa, delta 3ae9d70b..29fa5faa): all six contracts re-verified green via
+`scripts/re-verify.sh` (results under `results/reverify/`). C6 was confirmed differential
+(red on 3ae9d70b, green on 29fa5faa). The PR's own round-2 tests were also run at head:
+`TestDeploymentReconciler_RepairsLegacyExclusiveTopology` (unit, PASS) and the envtest spec
+`rewrites RoleInstanceSet affinity when only the exclusive topology annotation changes`
+(PASS, 11.7s). The new upgrade e2e specs (`test/e2e/upgrade/exclusive_topology.go`,
+specs.go phases 1/3/4) compile clean (`go vet`) but have NOT executed: the
+`e2e-test-upgrade` job is release-gated (`/release-test` comment) and was not run for this
+head — the live-layer guard for the S1 repair is therefore still pending.
 
 The PR's own new unit tests (`TestPodTemplateExclusiveTopology*`,
 `TestRBGPredicateExclusiveTopologyAnnotation`) also pass at head, and its four new e2e specs
