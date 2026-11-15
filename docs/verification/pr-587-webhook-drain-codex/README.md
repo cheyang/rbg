@@ -1,7 +1,7 @@
 # Verification — PR #587 "fix(deploy): drain webhook traffic before the controller manager shuts down"
 
 - PR: https://github.com/sgl-project/rbg/pull/587 (fixes #583)
-- Reviewed head: `1db0e04b00835a5b41cfd62a539b1d97422d15a4`
+- Reviewed head: `011c0043a5569b693f867e5eab94738a313e048d` (round 2; round 1 was `1db0e04b`)
 - Base: `1fc69f703695bc9355f5730ee3fb3f75cd0331b6`
 - Reviewer: Codex (stage ② harness; production code untouched — this branch adds only `docs/verification/**`)
 
@@ -83,3 +83,35 @@ Kickoff prompt for a fresh agent:
 > repo, `git fetch https://github.com/cheyang/rbg.git verify/pr-587-webhook-drain-codex`,
 > checkout that branch, then run
 > `bash docs/verification/pr-587-webhook-drain-codex/scripts/re-verify.sh`.
+
+## Round 2 — incremental (head `011c0043`, delta `1db0e04b..011c0043`)
+
+The delta is a single commit addressing round-1 finding F3-shutdown-constant-drift:
+comments explaining the 5 + 30 arithmetic next to `terminationGracePeriodSeconds`
+in both manager manifests, a cross-reference comment in the chart test, and a new
+Go-side pin `TestManagerOptionsKeepDefaultGracefulShutdownTimeout` in `cmd/rbgs`
+asserting `newManagerOptions` leaves `GracefulShutdownTimeout` nil for both
+webhook modes (`all`, `none` — the only two valid values).
+
+Re-verification at `011c0043` (results/round2-*):
+
+| id | claim | result |
+|----|-------|--------|
+| C1 | chart drain tests | **Pass** (`results/round2-head-chart-drain-tests.out`; full `./test/chart/` also green — `results/round2-head-chart-full.out`) |
+| C2 | drain contract on all three surfaces (incl. helm variants) | **Pass** (`results/round2-head-drain-manifests.out`) |
+| C3 | manifests.yaml byte-identical to `kustomize build config/default` | **Pass** (`results/round2-head-kustomize-sync.out`) — the new YAML comments do not desync the generated installer (kustomize drops comments) |
+| C4 (new) | pin test asserts GracefulShutdownTimeout stays nil | **Pass** at head (`results/round2-head-main-options-pin.out`); **bites**: injecting `opts.GracefulShutdownTimeout = &d` into `newManagerOptions` fails it for both modes (`results/round2-bite-check-main-options-pin.out`; scratch worktree, production diff discarded) |
+
+Residual on C4 (nit-level, folded into the F3 resolution, not a new finding): the
+pin covers edits to `newManagerOptions`; a future change that sets
+`GracefulShutdownTimeout` on the returned `ctrl.Options` at the `ctrl.NewManager`
+call site (cmd/rbgs/main.go:338) would bypass it. No code path does that today
+(`git grep GracefulShutdownTimeout cmd/rbgs` → only the test).
+
+CI at round-2 head: 22/22 checks pass (`results/round2-ci-checks.out`), observed
+via `gh pr checks`, not re-run by this reviewer.
+
+Prior findings carried: F1-drain-window-fixed-5s (open, pre-existing, unchanged
+by the delta), F2-no-e2e-drain-regression (open, waived per repo convention,
+unchanged), F4-bin-sleep-image-dependency (open nit, unchanged),
+F4-manifest-blob-mechanical (refuted; sync re-verified above).

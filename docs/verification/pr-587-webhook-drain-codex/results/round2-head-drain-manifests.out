@@ -1,0 +1,7 @@
+OK helm(default): preStop sleep 5s, grace 35s
+OK helm(--set controller.pprof.enabled=true): preStop sleep 5s, grace 35s
+OK helm(--set controller.features.portAllocator.enabled=true): preStop sleep 5s, grace 35s
+OK helm(--set controller.deprecatedWorkloadTypes.enabled=false): preStop sleep 5s, grace 35s
+OK config/manager/manager.yaml: preStop sleep 5s, grace 35s
+OK deploy/kubectl/manifests.yaml: preStop sleep 5s, grace 35s
+drain contract holds on all shipped install surfaces

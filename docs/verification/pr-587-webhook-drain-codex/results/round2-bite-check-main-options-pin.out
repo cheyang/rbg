@@ -1,0 +1,30 @@
+# bite-check: temporarily set opts.GracefulShutdownTimeout=&5s in newManagerOptions at 011c0043; expect the pin test to FAIL
+diff --git a/cmd/rbgs/main.go b/cmd/rbgs/main.go
+index c8a7d821..4dcebac3 100644
+--- a/cmd/rbgs/main.go
++++ b/cmd/rbgs/main.go
+@@ -529,6 +529,8 @@ func newManagerOptions(webhookMode string, webhookServer webhook.Server, metrics
+ 		LeaderElectionID:       constants.ControllerName,
+ 		Cache:                  cacheOptions(),
+ 	}
++	d := 5 * time.Second
++	opts.GracefulShutdownTimeout = &d // BITE-CHECK INJECTION (verification only, reverted)
+ 	if !webhooksEnabled(webhookMode) {
+ 		setupLog.Info("Webhooks disabled: forcing LeaderElection=false, Metrics.SecureServing=false")
+ 		opts.WebhookServer = nil
+# --- go test output ---
+--- FAIL: TestManagerOptionsKeepDefaultGracefulShutdownTimeout (0.00s)
+    main_test.go:93: 
+        	Error Trace:	/tmp/pr587-bite2/cmd/rbgs/main_test.go:93
+        	Error:      	Expected nil, but got: (*time.Duration)(0x2e54cb5143f0)
+        	Test:       	TestManagerOptionsKeepDefaultGracefulShutdownTimeout
+        	Messages:   	enable-webhooks=all
+    main_test.go:93: 
+        	Error Trace:	/tmp/pr587-bite2/cmd/rbgs/main_test.go:93
+        	Error:      	Expected nil, but got: (*time.Duration)(0x2e54cb514410)
+        	Test:       	TestManagerOptionsKeepDefaultGracefulShutdownTimeout
+        	Messages:   	enable-webhooks=none
+FAIL
+FAIL	sigs.k8s.io/rbgs/cmd/rbgs	0.015s
+FAIL
+# exit=1 (non-zero expected)

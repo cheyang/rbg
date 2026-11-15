@@ -1,0 +1,1 @@
+OK: kustomize build config/default == deploy/kubectl/manifests.yaml (byte-identical)

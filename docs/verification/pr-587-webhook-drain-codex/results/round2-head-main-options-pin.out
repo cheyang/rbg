@@ -1,0 +1,4 @@
+=== RUN   TestManagerOptionsKeepDefaultGracefulShutdownTimeout
+--- PASS: TestManagerOptionsKeepDefaultGracefulShutdownTimeout (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/cmd/rbgs	0.016s

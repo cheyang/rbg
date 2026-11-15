@@ -1,0 +1,22 @@
+Build E2E images	pass	3m10s	https://github.com/sgl-project/rbg/actions/runs/43640811200/job/132587803164	
+Deprecated workloads disabled e2e	pass	4m16s	https://github.com/sgl-project/rbg/actions/runs/43640811200/job/132588706004	
+E2E feature	pass	8m10s	https://github.com/sgl-project/rbg/actions/runs/43640811200/job/132588706170	
+E2E lifecycle	pass	5m37s	https://github.com/sgl-project/rbg/actions/runs/43640811200/job/132588706066	
+E2E rollout	pass	12m17s	https://github.com/sgl-project/rbg/actions/runs/43640811200/job/132588706107	
+E2E scheduler	pass	4m22s	https://github.com/sgl-project/rbg/actions/runs/43640811200/job/132588706099	
+E2E update	pass	13m49s	https://github.com/sgl-project/rbg/actions/runs/43640811200/job/132588706093	
+E2E v1alpha1	pass	7m39s	https://github.com/sgl-project/rbg/actions/runs/43640811200/job/132588706135	
+E2E webhook-rbac	pass	4m28s	https://github.com/sgl-project/rbg/actions/runs/43640811200/job/132588706117	
+E2E workload	pass	6m15s	https://github.com/sgl-project/rbg/actions/runs/43640811200/job/132588706092	
+Manifest installation e2e	pass	32m51s	https://github.com/sgl-project/rbg/actions/runs/43640811200/job/132588706044	
+Volcano gang scheduling e2e	pass	5m51s	https://github.com/sgl-project/rbg/actions/runs/43640811200/job/132588706127	
+build	pass	2m8s	https://github.com/sgl-project/rbg/actions/runs/43640811237/job/132587753062	
+check-changes	pass	6s	https://github.com/sgl-project/rbg/actions/runs/43640811198/job/132587752771	
+check-changes	pass	8s	https://github.com/sgl-project/rbg/actions/runs/43640811200/job/132587752941	
+copyright-check	pass	7s	https://github.com/sgl-project/rbg/actions/runs/43640811321/job/132587753169	
+e2e-matrix-coverage	pass	2m12s	https://github.com/sgl-project/rbg/actions/runs/43640811237/job/132587753008	
+envtest	pass	7m13s	https://github.com/sgl-project/rbg/actions/runs/43640811198/job/132587793864	
+lint	pass	4m22s	https://github.com/sgl-project/rbg/actions/runs/43640811237/job/132587752839	
+markdown-check	pass	22s	https://github.com/sgl-project/rbg/actions/runs/43640811293/job/132587752703	
+scheduler-plugins gang scheduling e2e	pass	5m22s	https://github.com/sgl-project/rbg/actions/runs/43640811200/job/132588706010	
+unit-test	pass	4m12s	https://github.com/sgl-project/rbg/actions/runs/43640811237/job/132587753180	
