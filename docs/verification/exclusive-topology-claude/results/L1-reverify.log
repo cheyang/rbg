@@ -1,0 +1,20 @@
+=== RUN   TestVerifyClaude_ExclusiveTopologyPodMatchesItsOwnAffinity
+--- PASS: TestVerifyClaude_ExclusiveTopologyPodMatchesItsOwnAffinity (0.05s)
+=== RUN   TestVerifyClaude_ExclusiveTopologyAntiAffinitySemantics
+--- PASS: TestVerifyClaude_ExclusiveTopologyAntiAffinitySemantics (0.00s)
+=== RUN   TestVerifyClaude_ExclusiveTopologyOptOut
+--- PASS: TestVerifyClaude_ExclusiveTopologyOptOut (0.00s)
+=== RUN   TestVerifyClaude_ExclusiveTopologyConflictSelectorErrors
+--- PASS: TestVerifyClaude_ExclusiveTopologyConflictSelectorErrors (0.00s)
+=== RUN   TestVerifyClaude_ExclusiveTopologyLegacySelectorIsAugmented
+--- PASS: TestVerifyClaude_ExclusiveTopologyLegacySelectorIsAugmented (0.00s)
+=== RUN   TestVerifyClaude_LegacyAffinityDeploymentRepair
+--- PASS: TestVerifyClaude_LegacyAffinityDeploymentRepair (0.01s)
+=== RUN   TestVerifyClaude_LegacyAffinityStatefulSetRepair
+--- PASS: TestVerifyClaude_LegacyAffinityStatefulSetRepair (0.02s)
+=== RUN   TestVerifyClaude_ExclusiveTopologyAnnotationRemovalDropsDeployAffinity
+--- PASS: TestVerifyClaude_ExclusiveTopologyAnnotationRemovalDropsDeployAffinity (0.00s)
+=== RUN   TestVerifyClaude_PodTemplateSpecEqualAffinityGuard
+--- PASS: TestVerifyClaude_PodTemplateSpecEqualAffinityGuard (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.094s
