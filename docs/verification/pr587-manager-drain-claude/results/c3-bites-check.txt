@@ -1,0 +1,17 @@
+# C3 harness-bites check: newManagerOptions temporarily set GracefulShutdownTimeout=45s
+# expected and observed: TestManagerOptionsKeepDefaultGracefulShutdownTimeout FAILS both modes;
+# patch then reverted, git diff empty, full ./cmd/rbgs suite passes
+--- FAIL: TestManagerOptionsKeepDefaultGracefulShutdownTimeout (0.00s)
+    main_test.go:93: 
+        	Error Trace:	/tmp/claude587-head/cmd/rbgs/main_test.go:93
+        	Error:      	Expected nil, but got: (*time.Duration)(0x5645f90a740)
+        	Test:       	TestManagerOptionsKeepDefaultGracefulShutdownTimeout
+        	Messages:   	enable-webhooks=all
+    main_test.go:93: 
+        	Error Trace:	/tmp/claude587-head/cmd/rbgs/main_test.go:93
+        	Error:      	Expected nil, but got: (*time.Duration)(0x5645f90a760)
+        	Test:       	TestManagerOptionsKeepDefaultGracefulShutdownTimeout
+        	Messages:   	enable-webhooks=none
+FAIL
+FAIL	sigs.k8s.io/rbgs/cmd/rbgs	0.017s
+FAIL
