@@ -150,3 +150,45 @@ func TestVerifyExclusiveTopologyConflictReported(t *testing.T) {
 	assert.Contains(t, err.Error(), constants.GroupUIDLabelKey)
 	assert.Nil(t, result)
 }
+
+// TestVerifyExclusiveTopologyAffinityGateRepairsLegacy is the contract for the
+// round-2 follow-up (S1): an existing Deployment/StatefulSet/LeaderWorkerSet
+// whose stored pod template still carries the broken group-unique-hash
+// exclusive affinity must be detected as "not equal" so its reconcile is not
+// skipped and the affinity is repaired to group-uid after upgrade. On the
+// previous head (3ae9d70b) podTemplateSpecEqual never compared Affinity, so
+// the first assertion FAILS there; on the current head it must PASS. The
+// idempotence and gate-scope assertions hold on every revision.
+func TestVerifyExclusiveTopologyAffinityGateRepairsLegacy(t *testing.T) {
+	const topologyKey = corev1.LabelHostname
+
+	templateWithAffinity := func(selectorKey string) corev1.PodTemplateSpec {
+		var tmpl corev1.PodTemplateSpec
+		tmpl.Annotations = map[string]string{constants.GroupExclusiveTopologyKey: topologyKey}
+		require.NoError(t, setExclusiveAffinities(&tmpl, "group-key", topologyKey, selectorKey))
+		return tmpl
+	}
+
+	storedLegacy := templateWithAffinity(constants.GroupUniqueHashLabelKey) // pre-fix render
+	desired := templateWithAffinity(constants.GroupUIDLabelKey)             // fixed render
+
+	// The legacy stored template must be judged NOT equal so the reconcile
+	// proceeds and rewrites the affinity. Red on 3ae9d70b, green at head.
+	equal, err := podTemplateSpecEqual(storedLegacy, desired)
+	assert.False(t, equal, "legacy group-unique-hash affinity must trigger repair, got equal=true (err=%v)", err)
+
+	// After the repair the same comparison must be equal again: no perpetual
+	// update loop.
+	equal, err = podTemplateSpecEqual(desired, templateWithAffinity(constants.GroupUIDLabelKey))
+	assert.True(t, equal, "repaired template must be stable, got err=%v", err)
+
+	// Gate scope: with no exclusive-topology annotation on either template, an
+	// affinity mismatch stays ignored (pre-existing podSpecEqual semantics for
+	// non-exclusive workloads) — the repair gate is deliberately narrow.
+	storedPlain := templateWithAffinity(constants.GroupUniqueHashLabelKey)
+	delete(storedPlain.Annotations, constants.GroupExclusiveTopologyKey)
+	desiredPlain := templateWithAffinity(constants.GroupUIDLabelKey)
+	delete(desiredPlain.Annotations, constants.GroupExclusiveTopologyKey)
+	equal, err = podTemplateSpecEqual(storedPlain, desiredPlain)
+	assert.True(t, equal, "affinity drift without the annotation must stay ignored, got err=%v", err)
+}

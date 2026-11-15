@@ -16,7 +16,9 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "On base 1fc69f70 the rendered pod template's required affinity selects group-unique-hash while its labels carry only group-uid with the same value (selector mismatch -> self-match fails -> first Pod unschedulable). Bug introduced by the v1alpha2-storage migration 415f5869 (#188); the original v1alpha1 implementation 26df2e70 (#32) selected the label its Pods actually carried. See results/unit-base.txt and results/envtest-base.txt.",
-    "match": ["TestVerifyExclusiveTopologyPodSelfMatch"]
+    "match": [
+      "TestVerifyExclusiveTopologyPodSelfMatch"
+    ]
   },
   "layers": {
     "unit": {
@@ -30,11 +32,55 @@
     }
   },
   "findings": [
-    { "id": "C1", "polarity": "contract", "layer": "unit",        "match": ["TestVerifyExclusiveTopologyPodSelfMatch"] },
-    { "id": "C2", "polarity": "contract", "layer": "unit",        "match": ["TestVerifyExclusiveTopologyLegacySelectorGetsLabel"] },
-    { "id": "C3", "polarity": "contract", "layer": "unit",        "match": ["TestVerifyExclusiveTopologyConflictReported"] },
-    { "id": "C4", "polarity": "contract", "layer": "integration", "match": ["renders a self-matching group-uid affinity on the RoleInstanceSet template"] },
-    { "id": "C5", "polarity": "contract", "layer": "integration", "match": ["reconciles the RoleInstanceSet template when the annotation is toggled"] }
+    {
+      "id": "C1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyExclusiveTopologyPodSelfMatch"
+      ]
+    },
+    {
+      "id": "C2",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyExclusiveTopologyLegacySelectorGetsLabel"
+      ]
+    },
+    {
+      "id": "C3",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyExclusiveTopologyConflictReported"
+      ]
+    },
+    {
+      "id": "C4",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "renders a self-matching group-uid affinity on the RoleInstanceSet template"
+      ]
+    },
+    {
+      "id": "C5",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "reconciles the RoleInstanceSet template when the annotation is toggled"
+      ]
+    },
+    {
+      "id": "C6",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyExclusiveTopologyAffinityGateRepairsLegacy"
+      ],
+      "note": "S1 follow-up: stored legacy group-unique-hash affinity must be judged not-equal so upgrade repairs deploy/sts/lws workloads; idempotent after repair; gate scoped to annotated templates."
+    }
   ],
   "liveNote": "L3 (real cluster scheduling) is covered upstream by the PR itself: the new e2e specs 'schedules exclusive groups together and blocks other groups on the same node', 'blocks an exclusive group from a node occupied by an ordinary group', 'uses a disabled role as a same-group affinity target' and 'reconciles exclusive topology annotation changes on an existing group' ran and passed in the PR's E2E lifecycle CI slice (kind) at head 3ae9d70b."
 }
