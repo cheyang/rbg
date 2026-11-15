@@ -3,11 +3,13 @@
 Reproducible evidence for the review of PR https://github.com/sgl-project/rbg/pull/588
 (fixes https://github.com/sgl-project/rbg/issues/518).
 
-Harness branch: `verify/exclusive-topology-claude`, based on the reviewed PR head
-`3ae9d70bf5e0dae747f0d8b512e6e9ba2349b5d1`. Production code is untouched — the diff is
-only these docs, the scripts, and additive test files.
+Harness branch: `verify/exclusive-topology-claude`. Round 1 reviewed head
+`3ae9d70bf5e0dae747f0d8b512e6e9ba2349b5d1`; **round 2** re-verified everything against the
+new head `29fa5faa87fd8eb89f6cb072e154c0d2c14307c2` ("fix: migrate exclusive topology
+affinity on upgrade") and added the S1 upgrade-repair claims below. Production code is
+untouched — the diff is only these docs, the scripts, and additive test files.
 
-Layers run against the **code under review** (`3ae9d70b`):
+Layers run against the **code under review** (`29fa5faa`):
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
@@ -42,6 +44,18 @@ term (mismatched label key), so `Filter` returns `UnschedulableAndUnresolvable` 
 
 ## Summary of results
 
+### Round 2 (head `29fa5faa`, delta = one commit addressing S1/S2/S4/S6/S7/S8 from round 1)
+
+| ID | Claim | Layer | Verdict | Evidence |
+|----|-------|-------|---------|----------|
+| S1-fix | A Deployment/StatefulSet (and by shared code path LWS) whose stored template carries the legacy `group-unique-hash` affinity is repaired to `group-uid` on the next reconcile, and the repair is idempotent | 1 | **Confirmed (fixed)** — RED on previous head `3ae9d70b`, GREEN on `29fa5faa` | `results/L1-round2-prev-head.log` (fail: actual `group-unique-hash`) vs `results/L1-round2-head.log` (`TestVerifyClaude_LegacyAffinityDeploymentRepair`, `TestVerifyClaude_LegacyAffinityStatefulSetRepair`) |
+| S1-guard | `podTemplateSpecEqual` reports legacy-vs-fixed affinity as a difference when the desired template carries the annotation; identical templates still compare equal (no churn) | 1 | **Confirmed (fixed)** — RED on `3ae9d70b` (guard absent, equality → skip), GREEN on `29fa5faa` | `TestVerifyClaude_PodTemplateSpecEqualAffinityGuard`, same two logs |
+| S1-asym | Removing the annotation still drops the injected affinity (the new guard only checks the desired template's annotation; `objectMetaEqual` catches removal) | 1 | Confirmed — GREEN on both `3ae9d70b` and `29fa5faa` | `TestVerifyClaude_ExclusiveTopologyAnnotationRemovalDropsDeployAffinity`, same two logs |
+| S6-fix | The PR now carries its own envtest toggle spec (annotation-only change reconciles the RIS template) | 2 | Confirmed | `results/L2-round2-head.log` — "rewrites RoleInstanceSet affinity when only the exclusive topology annotation changes" ran and passed alongside the harness spec (Ran 2 of 26, 2 passed) |
+| R1-regression | All round-1 claims (F1–F5) still hold at the new head | 1+2 | Confirmed | `results/L1-round2-head.log` (all `TestVerifyClaude*` green), `results/L2-round2-head.log` |
+
+### Round 1 (head `3ae9d70b`, unchanged)
+
 | ID | Claim | Layer | Verdict | Evidence |
 |----|-------|-------|---------|----------|
 | P0 | Base produces an affinity selector key no v1alpha2 Pod carries → first Pod Pending | 1+2 | Confirmed | `results/L1-base-premise.log`, `results/L2-base-premise.log` |
@@ -51,12 +65,27 @@ term (mismatched label key), so `Filter` returns `UnschedulableAndUnresolvable` 
 | F4 | Conflicting group-uid in the workload selector errors out (canary: current intended behavior) | 1 | Confirmed (canary) | `results/L1-head.log` (`TestVerifyClaude_ExclusiveTopologyConflictSelectorErrors`) |
 | F5 | Opt-out (`role-disable-exclusive`) skips injection but keeps the group-uid label | 1 | Confirmed | `results/L1-head.log` (`TestVerifyClaude_ExclusiveTopologyOptOut`) |
 
-Harness bites: with the fix temporarily un-applied (selector key reverted to
+Harness bites (round 1): with the fix temporarily un-applied (selector key reverted to
 `group-unique-hash`), L1 and L2 both go RED; production file restored afterwards.
 See `results/harness-bites.log` (and `git status` clean for `pkg/reconciler/pod_reconciler.go`).
 
-PR's own tests also pass at head: `results/pr-unit-tests.log`
-(`go test ./pkg/reconciler ./internal/controller/workloads`).
+Harness bites (round 2): the new S1-fix tests are their own bite proof — the identical
+test file grafted onto the previous head `3ae9d70b` FAILS (`L1-round2-prev-head.log`),
+and PASSES on `29fa5faa`. The unit test is in the round-2 `git checkout FETCH_HEAD`
+graft list of `scripts/re-verify.sh`.
+
+PR's own tests also pass at head: `results/pr-unit-tests.log` (round 1) and
+`results/pr-unit-tests-round2.log` (round 2: `go test ./pkg/reconciler
+./internal/controller/workloads`, plus the PR's new
+`TestDeploymentReconciler_RepairsLegacyExclusiveTopology`).
+
+Note on the round-2 delta's new upgrade e2e specs (`test/e2e/upgrade/exclusive_topology.go`,
+`[phase 1] records a running group using the legacy exclusive topology selector` /
+`[phase 3] migrates the generated exclusive topology selector`): they are wired into the
+upgrade suite, which CI runs **only** via the comment-triggered Release Test workflow
+(`make test-e2e-upgrade` in `release-test.yml`), not in the per-PR e2e matrix. No
+Release Test run exists at `29fa5faa`, so those two specs are compiled and lint-checked
+but have not executed in CI at this head (see findings, "SHOULD run /release-test").
 
 ## Per-finding detail
 
@@ -126,6 +155,7 @@ it grafts onto whatever the fixed code is.
    git checkout <fixed-branch>
    git checkout FETCH_HEAD -- docs/verification/exclusive-topology-claude \
      pkg/reconciler/verify_exclusive_topology_claude_test.go \
+     pkg/reconciler/verify_exclusive_topology_upgrade_claude_test.go \
      test/envtest/testcase/rbg/verify_exclusive_topology_claude_test.go
    ```
 2. Run the unit layer: `go test ./pkg/reconciler -run 'TestVerifyClaude' -count=1 -v`
@@ -139,6 +169,9 @@ Polarity table (what changes when the bug is fixed):
 - `TestVerifyClaude_ExclusiveTopologyLegacySelectorIsAugmented` — contract: same.
 - `TestVerifyClaude_ExclusiveTopologyOptOut` — contract: same.
 - `TestVerifyClaude_ExclusiveTopologyConflictSelectorErrors` — canary: green while erroring is the intended behavior; if the behavior changes to auto-correct, invert it.
+- `TestVerifyClaude_LegacyAffinityDeploymentRepair` / `TestVerifyClaude_LegacyAffinityStatefulSetRepair` — contract (round 2): red while `podTemplateSpecEqual` is affinity-blind (pre-29fa5faa), green with the affinity guard.
+- `TestVerifyClaude_PodTemplateSpecEqualAffinityGuard` — contract (round 2): same polarity, driven on the shared predicate.
+- `TestVerifyClaude_ExclusiveTopologyAnnotationRemovalDropsDeployAffinity` — contract (round 2): green on both heads; guards the removal direction that the new guard does not cover.
 - envtest "reviewer verify" It — contract: red on base, green when fixed.
 
 Kickoff prompt for a fresh agent:

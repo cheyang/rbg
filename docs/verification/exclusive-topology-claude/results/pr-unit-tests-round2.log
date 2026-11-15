@@ -1,0 +1,5 @@
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.303s
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	4.377s
+===ENvTEST FULL===
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	109.674s
+===VET===

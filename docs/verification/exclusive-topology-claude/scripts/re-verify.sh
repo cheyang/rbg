@@ -35,10 +35,16 @@ HEAD_SHA="$(git rev-parse HEAD)"
 echo "grafting harness onto $HEAD_SHA"
 
 git fetch -q https://github.com/cheyang/rbg.git verify/exclusive-topology-claude
+HARVEST_OK=1
 git checkout -q FETCH_HEAD -- \
   docs/verification/exclusive-topology-claude \
   pkg/reconciler/verify_exclusive_topology_claude_test.go \
-  test/envtest/testcase/rbg/verify_exclusive_topology_claude_test.go
+  pkg/reconciler/verify_exclusive_topology_upgrade_claude_test.go \
+  test/envtest/testcase/rbg/verify_exclusive_topology_claude_test.go || HARVEST_OK=0
+if [ "$HARVEST_OK" -ne 1 ]; then
+  echo "harness graft failed — the branch does not carry all harness files"
+  exit 2
+fi
 
 echo "delta since last reviewed: $([ -f "$LAST_REVIEWED" ] && cat "$LAST_REVIEWED" || echo '<none>')..$HEAD_SHA"
 
@@ -47,6 +53,12 @@ STATUS=0
 echo "=== L1 unit ==="
 if go test ./pkg/reconciler -count=1 -run 'TestVerifyClaude' -v 2>&1 | tee "$RESULTS/L1-reverify.log" | grep -E '^(--- FAIL|FAIL|ok )'; then :; fi
 if grep -q '^FAIL' "$RESULTS/L1-reverify.log"; then STATUS=1; fi
+# A graft failure or a renamed symbol silently yields "no tests to run", which
+# go test reports as success — treat it as a harness failure, not a pass.
+if grep -q 'no tests to run' "$RESULTS/L1-reverify.log"; then
+  echo "L1: no TestVerifyClaude tests matched — harness not grafted / needs update"
+  STATUS=1
+fi
 
 echo "=== L2 integration (envtest) ==="
 ENVTEST_ASSETS="${KUBEBUILDER_ASSETS:-}"
@@ -59,16 +71,22 @@ if [ -z "$ENVTEST_ASSETS" ]; then
 fi
 if [ -n "$ENVTEST_ASSETS" ] && [ -x "$ENVTEST_ASSETS/kube-apiserver" ]; then
   KUBEBUILDER_ASSETS="$ENVTEST_ASSETS" go test ./test/envtest/testcase/rbg/ \
-    -count=1 -timeout=8m -ginkgo.focus 'reviewer verify' 2>&1 \
+    -count=1 -timeout=8m -v -ginkgo.focus 'reviewer verify' 2>&1 \
     | tee "$RESULTS/L2-reverify.log" | grep -E 'Ran [0-9]+ of|FAIL|ok '
   grep -q 'FAIL' "$RESULTS/L2-reverify.log" && STATUS=1
+  # "Ran 0 of" means the focus matched nothing (harness not grafted / renamed).
+  if grep -qE 'Ran 0 of' "$RESULTS/L2-reverify.log"; then
+    echo "L2: the 'reviewer verify' spec did not run — harness not grafted / needs update"
+    STATUS=1
+  fi
 else
   echo "envtest assets not found (set KUBEBUILDER_ASSETS); L2 not run"
   STATUS=1
 fi
 
 if [ "$STATUS" -eq 0 ]; then
-  echo "ALL FINDINGS FIXED (L1+L2 green; canary F4 documents current conflict-guard behavior)"
+  echo "ALL FINDINGS FIXED (L1+L2 green; canary F4 documents current conflict-guard behavior;"
+  echo "round-2 S1 tests cover the legacy-affinity upgrade repair added at 29fa5faa)"
   echo "$HEAD_SHA" > "$LAST_REVIEWED"
   echo "advance .last-reviewed to $HEAD_SHA and commit it on the harness branch"
 else

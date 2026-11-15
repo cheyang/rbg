@@ -1,0 +1,16 @@
+=== RUN   TestVerifyClaude_LegacyAffinityDeploymentRepair
+        	            	expected: "rbg.workloads.x-k8s.io/group-uid"
+        	            	actual  : "rbg.workloads.x-k8s.io/group-unique-hash"
+--- FAIL: TestVerifyClaude_LegacyAffinityDeploymentRepair (0.05s)
+=== RUN   TestVerifyClaude_LegacyAffinityStatefulSetRepair
+        	            	expected: "rbg.workloads.x-k8s.io/group-uid"
+        	            	actual  : "rbg.workloads.x-k8s.io/group-unique-hash"
+--- FAIL: TestVerifyClaude_LegacyAffinityStatefulSetRepair (0.01s)
+=== RUN   TestVerifyClaude_ExclusiveTopologyAnnotationRemovalDropsDeployAffinity
+--- PASS: TestVerifyClaude_ExclusiveTopologyAnnotationRemovalDropsDeployAffinity (0.00s)
+=== RUN   TestVerifyClaude_PodTemplateSpecEqualAffinityGuard
+        	Error:      	An error is expected but got nil.
+--- FAIL: TestVerifyClaude_PodTemplateSpecEqualAffinityGuard (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	0.077s
+FAIL

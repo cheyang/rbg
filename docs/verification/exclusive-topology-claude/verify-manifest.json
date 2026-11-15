@@ -4,6 +4,7 @@
   "harnessPaths": [
     "docs/verification/exclusive-topology-claude",
     "pkg/reconciler/verify_exclusive_topology_claude_test.go",
+    "pkg/reconciler/verify_exclusive_topology_upgrade_claude_test.go",
     "test/envtest/testcase/rbg/verify_exclusive_topology_claude_test.go"
   ],
   "premise": {
@@ -61,6 +62,24 @@
       "polarity": "contract",
       "layer": "unit",
       "match": ["TestVerifyClaude_ExclusiveTopologyOptOut"]
+    },
+    {
+      "id": "S1-upgrade-affinity-migration",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyClaude_LegacyAffinityDeploymentRepair",
+        "TestVerifyClaude_LegacyAffinityStatefulSetRepair",
+        "TestVerifyClaude_PodTemplateSpecEqualAffinityGuard"
+      ],
+      "note": "Round 2 (head 29fa5faa). RED on previous head 3ae9d70b (affinity-blind podTemplateSpecEqual => deploy/sts/lws skip the repair, S1), GREEN on 29fa5faa (affinity guard added). results/L1-round2-prev-head.log vs results/L1-round2-head.log."
+    },
+    {
+      "id": "S1-annotation-removal-direction",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestVerifyClaude_ExclusiveTopologyAnnotationRemovalDropsDeployAffinity"],
+      "note": "Guards the asymmetry of the round-2 guard (only template2's annotation is checked): removal is caught by objectMetaEqual. GREEN on both 3ae9d70b and 29fa5faa."
     }
   ],
   "liveNote": "L3 (real scheduler on a real cluster) is out of scope for this round. Observable signal to check when run: the first Pod of a fresh exclusive group leaves Pending (FailedScheduling stops), same-group Pods co-locate, and another group pinned to that node stays Pending with an anti-affinity FailedScheduling event. The PR's own e2e (test/e2e/testcase/v1alpha2/rbg.go, ginkgo 'lifecycle' label) asserts all of these and runs in the CI lifecycle matrix."
