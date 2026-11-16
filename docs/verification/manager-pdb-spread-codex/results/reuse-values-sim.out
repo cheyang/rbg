@@ -1,0 +1,4 @@
+A plain upgrade (new chart defaults)           podDisruptionBudget=map[enabled:true] (present=true)  topologySpreadConstraints present=true
+B upgrade --reuse-values                       podDisruptionBudget=<nil> (present=false)  topologySpreadConstraints present=false
+C --reuse-values + enabled=true                podDisruptionBudget=map[enabled:true] (present=true)  topologySpreadConstraints present=false
+D fresh install / helm template                podDisruptionBudget=map[enabled:true] (present=true)  topologySpreadConstraints present=true

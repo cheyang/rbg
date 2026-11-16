@@ -1,0 +1,8 @@
+=== RUN   TestShippedManagerPDBEvictionSemantics
+    pdb_eviction_test.go:192: case 1: ready pod protected at disruptionsAllowed=0 (429), pod still present
+    pdb_eviction_test.go:208: case 2: ready pod evicted at disruptionsAllowed=1, budget decremented to 0
+    pdb_eviction_test.go:218: case 3: unready pod evicted at disruptionsAllowed=0 under AlwaysAllow
+    pdb_eviction_test.go:241: case 4: unready pod refused at disruptionsAllowed=0 under default policy (control)
+--- PASS: TestShippedManagerPDBEvictionSemantics (2.98s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/pdbeviction	(cached)

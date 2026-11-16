@@ -1,0 +1,47 @@
+{
+  "topic": "manager-pdb-spread-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/589",
+  "harnessPaths": [
+    "docs/verification/manager-pdb-spread-codex",
+    "test/envtest/testcase/pdbeviction"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Every RBG admission webhook has failurePolicy: Fail, so every RoleBasedGroup create or update depends on at least one of the two controller replicas being reachable; neither the Helm chart nor config/ ships a PodDisruptionBudget or replica spreading, so draining a node can evict both replicas at once.",
+    "reportedComponent": "deploy/helm/rbgs chart + config/ (controller manager Deployment)",
+    "patchedComponent": "deploy/helm/rbgs chart, config/manager, deploy/kubectl/manifests.yaml",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "All 6 webhook configurations carry failurePolicy: Fail (config/webhook/manifests.yaml and deploy/helm/rbgs/templates/webhook/manifests.yaml); the PR's three chart tests fail on base 1fc69f70 with 'PodDisruptionBudget rbgs-controller-manager not found' (results/chart-tests-base.out) and pass on the head (results/chart-tests-head.out).",
+    "match": ["TestChartManagerDisruptionDefaults", "TestChartManagerDisruptionOverrides", "TestKubectlManifestsManagerDisruption"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/chart/ -run 'TestChartManagerDisruption|TestKubectlManifestsManagerDisruption' -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=$(pwd)/bin/k8s/1.31.0-linux-amd64 go test ./test/envtest/testcase/pdbeviction/ -json"
+    }
+  },
+  "findings": [
+    {
+      "id": "A1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": ["TestChartManagerDisruptionDefaults", "TestChartManagerDisruptionOverrides", "TestKubectlManifestsManagerDisruption"],
+      "note": "Acceptance contract: both install paths ship the PDB (maxUnavailable: 1, AlwaysAllow, selector matches manager pods) and the hostname ScheduleAnyway spread; opt-outs (enabled=false, constraints=[]) work. PR's own tests; fail on base, pass on head."
+    },
+    {
+      "id": "A4",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["TestShippedManagerPDBEvictionSemantics"],
+      "note": "Eviction semantics of the shipped PDB object against a real API server: Ready pod refused at DisruptionsAllowed=0 (429), evicted at 1 (decremented), unready pod evicted at 0 only because of AlwaysAllow (IfHealthyBudget control refuses)."
+    }
+  ],
+  "liveNote": "L3 not run (no cluster in this round): a real kubectl drain of a node running one manager replica should evict exactly that one pod while the other keeps serving the webhooks; on a single-node cluster the drain is expected to block on the second replica until a replacement is Ready (standard PDB behavior)."
+}

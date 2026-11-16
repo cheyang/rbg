@@ -1,0 +1,6 @@
+default values: PDB rendered                                             PASS
+enabled=false: PDB absent                                                PASS
+podDisruptionBudget={} still renders PDB (defaults coalesce)             PASS
+topologySpreadConstraints=[] removes constraint                          PASS
+default render: hostname ScheduleAnyway constraint present               PASS
+default render: PDB has unhealthyPodEvictionPolicy=AlwaysAllow           PASS

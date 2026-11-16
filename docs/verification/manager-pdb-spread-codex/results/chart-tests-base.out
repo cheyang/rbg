@@ -1,0 +1,13 @@
+=== RUN   TestChartManagerDisruptionDefaults
+    manager_disruption_test.go:117: PodDisruptionBudget "rbgs-controller-manager" not found
+--- FAIL: TestChartManagerDisruptionDefaults (0.03s)
+=== RUN   TestChartManagerDisruptionOverrides
+    manager_disruption_test.go:149: topologySpreadConstraints = [], want only the zone constraint from values
+    manager_disruption_test.go:153: affinity = nil, want the nodeAffinity from values
+--- FAIL: TestChartManagerDisruptionOverrides (0.06s)
+=== RUN   TestKubectlManifestsManagerDisruption
+    manager_disruption_test.go:168: PodDisruptionBudget "rbgs-controller-manager" not found
+--- FAIL: TestKubectlManifestsManagerDisruption (1.13s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/chart	1.228s
+FAIL

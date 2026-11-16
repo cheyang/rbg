@@ -1,0 +1,8 @@
+=== RUN   TestChartManagerDisruptionDefaults
+--- PASS: TestChartManagerDisruptionDefaults (0.03s)
+=== RUN   TestChartManagerDisruptionOverrides
+--- PASS: TestChartManagerDisruptionOverrides (0.06s)
+=== RUN   TestKubectlManifestsManagerDisruption
+--- PASS: TestKubectlManifestsManagerDisruption (1.11s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/chart	1.209s
