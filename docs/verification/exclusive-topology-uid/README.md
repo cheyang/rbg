@@ -51,6 +51,23 @@ The PR's own new unit tests (`TestPodTemplateExclusiveTopology*`,
 `TestRBGPredicateExclusiveTopologyAnnotation`) also pass at head, and its four new e2e specs
 ran and passed in the PR's E2E lifecycle CI slice at head 3ae9d70b (kind cluster).
 
+Round 3 (head fc8cfc48, delta 29fa5faa..fc8cfc48): docs-only delta — one paragraph added to
+`doc/features/exclusive-topology.md` ("Before upgrading, verify that replacement Pods can satisfy
+both the same-group affinity and the cross-group anti-affinity ..."). All six contracts re-verified
+green via `scripts/re-verify.sh` (unit + integration; results under
+`results/reverify-round3-fc8cfc48/`). The paragraph's scheduler claims were verified against
+kube-scheduler source (`interpodaffinity/filtering.go` satisfyPodAffinity/satisfyPodAntiAffinity,
+identical logic in v1.29.15 and v1.34.2): the self-match escape requires
+`len(state.affinityCounts) == 0`, so while same-group Pods remain in a shared domain the required
+affinity pins replacements to that domain, and `antiAffinityCounts` blocks any domain holding
+other groups' `group-uid` Pods — the documented Pending/deadlock hazard is accurate. S10 update:
+`/release-test` ran on 29fa5faa (run 43791276444) and failed ONLY in the new exclusive-topology
+specs because the workflow deploys the chart-pinned pre-fix controller image
+(`v0.9.0-73e05db4`), never a build of the PR — maintainer cheyang diagnosed this on 2026-11-16
+and explicitly accepted that the upgrade specs first execute post-merge after the image bump
+(issue-comment, non-gating). Live-layer validation recipe documented by maintainer:
+build the head image, `RBGS_TO_TAG=<tag> make test-e2e-upgrade` on a dedicated cluster.
+
 ## How to run
 
 ```bash
