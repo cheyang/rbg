@@ -1,0 +1,33 @@
+{
+  "topic": "manager-disruption",
+  "pr": "https://github.com/sgl-project/rbg/pull/589",
+  "harnessPaths": [
+    "docs/verification/manager-disruption"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #584 / PR body: \"Neither the Helm chart nor config/ ships a PodDisruptionBudget for the controller\" and the chart has no affinity/topologySpreadConstraints knobs, so both replicas can land on one node and draining it evicts them together while every admission webhook has failurePolicy: Fail.",
+    "reportedComponent": "Controller manager Deployment as shipped by deploy/helm/rbgs (chart) and config/manager + deploy/kubectl/manifests.yaml (kustomize path)",
+    "patchedComponent": "Exactly those: deploy/helm/rbgs (values, manager template, new PDB template), config/manager (manager.yaml, new PDB, kustomization), deploy/kubectl/manifests.yaml (regenerated), test/chart.",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "PR's own contract tests grafted verbatim onto base 1fc69f70 (== origin/main) all FAIL: no PDB on either install path, no TSC, no affinity knob. failurePolicy: Fail verified in deploy/kubectl/manifests.yaml; readiness probe (from #575) present on base so PDB Ready-counting is meaningful. See results/base/chart-tests-grafted.out.",
+    "match": [
+      "TestChartManagerDisruptionDefaults",
+      "TestChartManagerDisruptionOverrides",
+      "TestKubectlManifestsManagerDisruption"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -count=1 ./test/chart/ -run 'TestChartManagerDisruption|TestKubectlManifestsManagerDisruption' -json"
+    }
+  },
+  "findings": [
+    { "id": "P0", "polarity": "contract", "layer": "unit", "match": ["TestChartManagerDisruptionDefaults", "TestChartManagerDisruptionOverrides", "TestKubectlManifestsManagerDisruption"] }
+  ],
+  "liveNote": "L3 (not run this round, per debate setup): on a kind cluster, drain the node hosting one manager pod — expect the PDB to allow exactly one Ready manager pod to evict (kubectl drain proceeds) and to block the second while admission (webhook failurePolicy: Fail) stays served by the survivor. This is finding F1's open verification gap."
+}
