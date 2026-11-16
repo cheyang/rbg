@@ -1,0 +1,51 @@
+{
+  "topic": "pr591-stale-cache",
+  "pr": "https://github.com/sgl-project/rbg/pull/591",
+  "harnessPaths": [
+    "pkg/reconciler/pr591_premise_test.go",
+    "pkg/reconciler/pr591_mechanism_test.go",
+    "docs/verification/pr591-stale-cache"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "On the merge-base, ServiceReconciler.reconcileHeadlessService re-reads the workload through the cached (informer-backed) client immediately after the same reconcile pass created/applied it. When the informer cache has not yet observed the write, the Get returns NotFound, the whole RoleBasedGroup role reconcile errors, and the headless Service is only created on a later retry. PR body: 'Reuse the workload object returned by the API server when reconciling the headless Service, instead of reading the workload from the informer cache immediately after creating or applying it.'",
+    "reportedComponent": "pkg/reconciler (RoleInstanceSetReconciler / StatefulSetReconciler -> ServiceReconciler.reconcileHeadlessService)",
+    "patchedComponent": "pkg/reconciler/svc_reconciler.go (reconcileHeadlessService now takes the workload; getObjectByKind deleted), pkg/reconciler/roleinstanceset_reconciler.go, pkg/reconciler/sts_reconciler.go, pkg/utils/utils.go (ApplyObjectConfiguration returns the server response)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "integration",
+    "verdict": "confirmed",
+    "evidence": "results/base-premise.out — the contract test grafted onto merge-base 1fc69f703 fails with 'roleinstancesets.workloads.x-k8s.io \"group-worker\" not found' from the lagging-cache Get inside reconcileHeadlessService; the identical test passes on the PR head (results/head-harness.out) with the headless Service created and the correct ownerRef UID.",
+    "match": ["contract: reconcile must not fail because the informer cache lags the workload write"]
+  },
+  "layers": {
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=\"${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64}\" go test ./pkg/reconciler/ ./test/envtest/testcase/selective_commit/ -run 'TestPR591|TestConditionalMembershipWithLegacyApplyOwnership|TestOrdinaryRISRemovesMetadataAfterManagedFieldsHandoff' -count=1 -json -timeout 15m"
+    }
+  },
+  "findings": [
+    {
+      "id": "pr591-stale-cache-read",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["TestPR591LaggingCacheHeadlessService"]
+    },
+    {
+      "id": "pr591-apply-response-identity",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": ["TestPR591ApplyResponseCarriesServerIdentity"]
+    },
+    {
+      "id": "pr591-ssa-wire-equivalence",
+      "polarity": "contract",
+      "layer": "integration",
+      "match": [
+        "TestConditionalMembershipWithLegacyApplyOwnership",
+        "TestOrdinaryRISRemovesMetadataAfterManagedFieldsHandoff"
+      ]
+    }
+  ],
+  "liveNote": "L3 (live cluster) not run this round: the claim is decided at the controller/client layer, which envtest exercises with a real API server. The informer-cache lag the PR fixes is deterministic in the harness's laggingCacheClient; a live run would only re-demonstrate the same NotFound retry. If a live check is wanted, deploy a controller built from the PR head and confirm the first reconcile of a fresh RBG creates the headless Service without a 'not found' Reconciler error in the logs."
+}
