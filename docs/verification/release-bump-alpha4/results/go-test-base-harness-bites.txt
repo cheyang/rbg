@@ -1,0 +1,20 @@
+=== RUN   TestC1_NoStaleOldTag
+    release_consistency_verify_test.go:44: ../../config/manager/kustomization.yaml still references old release tag v0.9.0-73e05db4
+    release_consistency_verify_test.go:44: ../../deploy/helm/rbgs/Chart.yaml still references old release tag v0.9.0-73e05db4
+    release_consistency_verify_test.go:44: ../../deploy/helm/rbgs/values.yaml still references old release tag v0.9.0-73e05db4
+    release_consistency_verify_test.go:44: ../../deploy/kubectl/manifests.yaml still references old release tag v0.9.0-73e05db4
+--- FAIL: TestC1_NoStaleOldTag (0.00s)
+=== RUN   TestC2_NewTagEverywhere
+    release_consistency_verify_test.go:65: ../../config/manager/kustomization.yaml missing "newTag: v0.9.0-1fc69f70"
+    release_consistency_verify_test.go:65: ../../deploy/helm/rbgs/values.yaml missing "tag: \"v0.9.0-1fc69f70\""
+    release_consistency_verify_test.go:65: ../../deploy/kubectl/manifests.yaml missing "image: rolebasedgroup/rbgs-controller:v0.9.0-1fc69f70"
+    release_consistency_verify_test.go:65: ../../deploy/helm/rbgs/Chart.yaml missing "version: 0.9.0-alpha.4"
+    release_consistency_verify_test.go:65: ../../deploy/helm/rbgs/Chart.yaml missing "appVersion: \"0.9.0-1fc69f70\""
+    release_consistency_verify_test.go:71: values.yaml: want 2 occurrences of v0.9.0-1fc69f70 (controller + crdUpgrade), got 0
+    release_consistency_verify_test.go:74: Chart.yaml still at old chart version 0.9.0-alpha.3
+--- FAIL: TestC2_NewTagEverywhere (0.00s)
+=== RUN   TestC3_TagMatchesReleaseSHA
+--- PASS: TestC3_TagMatchesReleaseSHA (0.00s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/test/releaseverify	0.007s
+FAIL

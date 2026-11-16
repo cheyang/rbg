@@ -1,0 +1,33 @@
+{
+  "topic": "release-bump-alpha4",
+  "pr": "https://github.com/sgl-project/rbg/pull/590",
+  "harnessPaths": [
+    "docs/verification/release-bump-alpha4",
+    "test/releaseverify/release_consistency_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Release-manifest bump for the 0.9.0-alpha.4 cut, based on main @ 1fc69f70. Only version strings change; the referenced controller and CRD-upgrader images must exist and every shipped install path must agree.",
+    "reportedComponent": "release plumbing (Helm chart, kustomize config, deploy/kubectl/manifests.yaml)",
+    "patchedComponent": "same: config/manager/kustomization.yaml, deploy/helm/rbgs/{Chart,values}.yaml, deploy/kubectl/manifests.yaml",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "Base main @ 1fc69f70 exists and short-sha matches the tag suffix; Docker Hub has rolebasedgroup/rbgs-controller:v0.9.0-1fc69f70 (amd64+arm64, pushed 2026-11-16T07:08Z) and rolebasedgroup/rbgs-upgrade-crd:v0.9.0-1fc69f70 (2026-11-16T07:12Z). See results/dockerhub-*.json.",
+    "match": ["TestC3_TagMatchesReleaseSHA"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./test/releaseverify/ -run 'TestC[123]_' -json"
+    }
+  },
+  "findings": [
+    { "id": "C1", "polarity": "contract", "layer": "unit", "match": ["TestC1_NoStaleOldTag"] },
+    { "id": "C2", "polarity": "contract", "layer": "unit", "match": ["TestC2_NewTagEverywhere"] },
+    { "id": "C3", "polarity": "contract", "layer": "unit", "match": ["TestC3_TagMatchesReleaseSHA"] }
+  ],
+  "liveNote": "L3 intentionally skipped (debate pipeline runs unit+integration only). CI already provides the live equivalent: Release Test e2e-test-helm / e2e-test-manifest / e2e-test-upgrade pull the published v0.9.0-1fc69f70 images and passed (actions run 43861788568).",
+  "supplementaryChecks": "docs/verification/release-bump-alpha4/scripts/check-release-consistency.sh adds kustomize-build == manifests.yaml byte-identity and helm-render checks that the go test cannot express; run it from the repo root with kustomize v5.5.0 and helm on PATH."
+}

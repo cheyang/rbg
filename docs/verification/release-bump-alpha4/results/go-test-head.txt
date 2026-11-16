@@ -1,0 +1,8 @@
+=== RUN   TestC1_NoStaleOldTag
+--- PASS: TestC1_NoStaleOldTag (0.00s)
+=== RUN   TestC2_NewTagEverywhere
+--- PASS: TestC2_NewTagEverywhere (0.00s)
+=== RUN   TestC3_TagMatchesReleaseSHA
+--- PASS: TestC3_TagMatchesReleaseSHA (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/releaseverify	(cached)

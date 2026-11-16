@@ -1,0 +1,7 @@
+PASS: C1 no stale v0.9.0-73e05db4 in release files
+PASS: C2a kustomization pins v0.9.0-1fc69f70
+PASS: C2b values.yaml pins v0.9.0-1fc69f70 twice (controller + crdUpgrade)
+PASS: C2c manifests.yaml pins controller v0.9.0-1fc69f70
+PASS: C2d Chart.yaml version=0.9.0-alpha.4 appVersion=0.9.0-1fc69f70
+PASS: C3 checked-in manifests.yaml == kustomize build config/default
+PASS: C4 helm template renders both images with v0.9.0-1fc69f70

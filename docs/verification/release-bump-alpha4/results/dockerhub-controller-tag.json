@@ -1,0 +1,25 @@
+{
+    "creator": 36679953,
+    "id": 1404746069,
+    "images": [
+        {
+            "architecture": "amd64",
+            "features": "",
+            "variant": null,
+            "digest": "sha256:4d6a3c91a81d5aafeb7734e2bbd962292db7f9f35cd41f47be33dc0ef619df4d",
+            "os": "linux",
+            "os_features": "",
+            "os_version": null,
+            "size": 22679733,
+            "status": "active",
+            "last_pulled": "2026-11-16T13:28:19.543170275Z",
+            "last_pushed": "2026-11-16T07:08:34.371478914Z"
+        },
+        {
+            "architecture": "arm64",
+            "features": "",
+            "variant": null,
+            "digest": "sha256:295fbf7f75372019c945d747dc4b5e25294177fd8a4d544892c1aa49b903da37",
+            "os": "linux",
+            "os_features": "",
+            "os_version": null,
