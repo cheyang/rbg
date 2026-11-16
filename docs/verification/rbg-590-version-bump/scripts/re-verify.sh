@@ -162,7 +162,7 @@ run_layer() {
     # custom harness kind: cmd prints "name<TAB>pass|fail" lines on stdout
     bash -c "$cmd" >"$out" 2>"$out.err" || true
     if grep -Eq '^[A-Za-z0-9_-]+[[:space:]]+pass$|^[A-Za-z0-9_-]+[[:space:]]+fail$' "$out"; then
-      grep -E '^[A-Za-z0-9_-]+[[:space:]]+(pass|fail)$' "$out" | tr -s '[:space:]' '\t'
+      sed -nE 's/^[[:space:]]*([A-Za-z0-9_-]+)[[:space:]]+(pass|fail)$/\1\t\2/p' "$out"
     else
       echo "__BUILD_OR_NO_TESTS__"
     fi

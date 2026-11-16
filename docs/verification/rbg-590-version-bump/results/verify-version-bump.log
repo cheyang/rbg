@@ -1,12 +1,12 @@
-head:        76963d62986242e496a8c63b41f4a916f06893cc
+head:        9336a76f85c5bd1c019bfd213773699e10366db3
 merge-base:  1fc69f703695bc9355f5730ee3fb3f75cd0331b6
 appVersion:  0.9.0-1fc69f70  (expected tag v0.9.0-1fc69f70)
 chart ver:   0.9.0-alpha.4 (previous 0.9.0-alpha.3, previous tag v0.9.0-73e05db4)
-[17:50:58] C1 pass: all of helm controller/crd-upgrade images, version-configmap, kustomize newTag, manifests.yaml == v0.9.0-1fc69f70 / 0.9.0-alpha.4 / 0.9.0-1fc69f70
-[17:50:58] C2 pass: no occurrence of v0.9.0-73e05db4 anywhere in HEAD tree
+[17:51:49] C1 pass: all of helm controller/crd-upgrade images, version-configmap, kustomize newTag, manifests.yaml == v0.9.0-1fc69f70 / 0.9.0-alpha.4 / 0.9.0-1fc69f70
+[17:51:49] C2 pass: no occurrence of v0.9.0-73e05db4 anywhere in HEAD tree
 registry: rolebasedgroup/rbgs-controller:v0.9.0-1fc69f70 -> HTTP 200
 registry: rolebasedgroup/rbgs-upgrade-crd:v0.9.0-1fc69f70 -> HTTP 200
-[17:50:59] C3 pass: both images exist in Docker Hub at v0.9.0-1fc69f70
-[17:51:00] C4 pass: kustomize build config/default == deploy/kubectl/manifests.yaml (byte-identical)
-[17:51:00] C5 pass: chart version 0.9.0-alpha.3 -> 0.9.0-alpha.4 is a valid semver increase
-[17:51:00] C6 pass: go test ./test/chart/ (make test-chart) passed
+[17:51:50] C3 pass: both images exist in Docker Hub at v0.9.0-1fc69f70
+[17:51:51] C4 pass: kustomize build config/default == deploy/kubectl/manifests.yaml (byte-identical)
+[17:51:51] C5 pass: chart version 0.9.0-alpha.3 -> 0.9.0-alpha.4 is a valid semver increase
+[17:51:51] C6 pass: go test ./test/chart/ (make test-chart) passed

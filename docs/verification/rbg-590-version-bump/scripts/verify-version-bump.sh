@@ -93,7 +93,9 @@ fi
 # ---- C2 previous defaults fully replaced ------------------------------------
 # check BOTH the committed tree and the working tree (after re-verify grafts the
 # harness onto a fixed ref, the working tree is the code actually under test)
-if git grep -q "$PREV_TAG" HEAD -- 2>>"$LOG" || git grep -q "$PREV_TAG" -- 2>>"$LOG"; then
+# (exclude the harness's own docs, which legitimately quote the old tag)
+if git grep -q "$PREV_TAG" HEAD -- ':(exclude)docs/verification' 2>>"$LOG" \
+   || git grep -q "$PREV_TAG" -- ':(exclude)docs/verification' 2>>"$LOG"; then
   emit C2 fail "stale reference to $PREV_TAG in HEAD or working tree"
 else
   emit C2 pass "no occurrence of $PREV_TAG anywhere in HEAD tree"
