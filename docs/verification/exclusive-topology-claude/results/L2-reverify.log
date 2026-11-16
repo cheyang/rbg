@@ -1,24 +1,23 @@
 === RUN   TestRBGController
-Running Suite: RoleBasedGroup Controller Suite - /tmp/rbg-verify-exclusive.dVfQ8o/repo/test/envtest/testcase/rbg
+Running Suite: RoleBasedGroup Controller Suite - /tmp/rbg-verify-exclusive.8vyj3b/repo/test/envtest/testcase/rbg
 ================================================================================================================
-Random Seed: [1m1794763495[0m
+Random Seed: [1m1794849601[0m
 
 Will run [1m1[0m of [1m26[0m specs
-[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0mI1116 01:25:02.240010 2029166 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-verify-excl-012459-000000000/verify-excl-worker" elapsedTime="20.399366ms"
-I1116 01:25:02.243033 2029166 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-verify-excl-012459-000000000/verify-excl-worker" elapsedTime="2.931595ms"
-I1116 01:25:02.245843 2029166 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-verify-excl-012459-000000000/verify-excl-worker" elapsedTime="2.742728ms"
-I1116 01:25:02.251294 2029166 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-verify-excl-012459-000000000/verify-excl-worker" elapsedTime="3.0994ms"
-I1116 01:25:02.254369 2029166 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-verify-excl-012459-000000000/verify-excl-worker" elapsedTime="2.976736ms"
-I1116 01:25:02.334572 2029166 stateful_instance_set_control.go:735] "Progress rolling update" instanceSet="test-verify-excl-012459-000000000/verify-excl-worker" targets=[0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
-I1116 01:25:02.334585 2029166 stateful_instance_set_control.go:766] "Rolling update budget exhausted" instanceSet="test-verify-excl-012459-000000000/verify-excl-worker" instance="test-verify-excl-012459-000000000/verify-excl-worker-0" initialBaseUnavail=1 newlyUnavail=0 effectiveBudget=1
-I1116 01:25:02.336434 2029166 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-verify-excl-012459-000000000/verify-excl-worker" elapsedTime="3.534856ms" result={"Requeue":false,"RequeueAfter":9906155988}
-I1116 01:25:02.337047 2029166 stateful_instance_set_control.go:735] "Progress rolling update" instanceSet="test-verify-excl-012459-000000000/verify-excl-worker" targets=[0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
-I1116 01:25:02.337060 2029166 stateful_instance_set_control.go:766] "Rolling update budget exhausted" instanceSet="test-verify-excl-012459-000000000/verify-excl-worker" instance="test-verify-excl-012459-000000000/verify-excl-worker-0" initialBaseUnavail=1 newlyUnavail=0 effectiveBudget=1
-I1116 01:25:02.339037 2029166 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-verify-excl-012459-000000000/verify-excl-worker" elapsedTime="2.460607ms" result={"Requeue":false,"RequeueAfter":9903680710}
-[38;5;10m•[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0mI1117 01:20:07.752182 3087305 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-verify-excl-012005-000000000/verify-excl-worker" elapsedTime="19.605008ms"
+I1117 01:20:07.766753 3087305 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-verify-excl-012005-000000000/verify-excl-worker" elapsedTime="14.468196ms"
+I1117 01:20:07.769495 3087305 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-verify-excl-012005-000000000/verify-excl-worker" elapsedTime="2.663765ms"
+I1117 01:20:07.772408 3087305 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-verify-excl-012005-000000000/verify-excl-worker" elapsedTime="2.832751ms"
+I1117 01:20:07.777635 3087305 stateful_instance_set_control.go:735] "Progress rolling update" instanceSet="test-verify-excl-012005-000000000/verify-excl-worker" targets=[0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1117 01:20:07.777646 3087305 stateful_instance_set_control.go:766] "Rolling update budget exhausted" instanceSet="test-verify-excl-012005-000000000/verify-excl-worker" instance="test-verify-excl-012005-000000000/verify-excl-worker-0" initialBaseUnavail=1 newlyUnavail=0 effectiveBudget=1
+I1117 01:20:07.779596 3087305 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-verify-excl-012005-000000000/verify-excl-worker" elapsedTime="3.750383ms" result={"Requeue":false,"RequeueAfter":9975129444}
+I1117 01:20:07.780285 3087305 stateful_instance_set_control.go:735] "Progress rolling update" instanceSet="test-verify-excl-012005-000000000/verify-excl-worker" targets=[0] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=1
+I1117 01:20:07.780296 3087305 stateful_instance_set_control.go:766] "Rolling update budget exhausted" instanceSet="test-verify-excl-012005-000000000/verify-excl-worker" instance="test-verify-excl-012005-000000000/verify-excl-worker-0" initialBaseUnavail=1 newlyUnavail=0 effectiveBudget=1
+I1117 01:20:07.782340 3087305 stateful_instance_set_controller.go:179] "Finished syncing InstanceSet" instanceSet="test-verify-excl-012005-000000000/verify-excl-worker" elapsedTime="2.53727ms" result={"Requeue":false,"RequeueAfter":9972479410}
+[38;5;10m•[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
 
-[38;5;10m[1mRan 1 of 26 Specs in 9.745 seconds[0m
+[38;5;10m[1mRan 1 of 26 Specs in 9.903 seconds[0m
 [38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m1 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m25 Skipped[0m
---- PASS: TestRBGController (9.75s)
+--- PASS: TestRBGController (9.90s)
 PASS
-ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	9.762s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	9.919s

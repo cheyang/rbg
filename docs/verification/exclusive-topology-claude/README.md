@@ -4,12 +4,14 @@ Reproducible evidence for the review of PR https://github.com/sgl-project/rbg/pu
 (fixes https://github.com/sgl-project/rbg/issues/518).
 
 Harness branch: `verify/exclusive-topology-claude`. Round 1 reviewed head
-`3ae9d70bf5e0dae747f0d8b512e6e9ba2349b5d1`; **round 2** re-verified everything against the
-new head `29fa5faa87fd8eb89f6cb072e154c0d2c14307c2` ("fix: migrate exclusive topology
-affinity on upgrade") and added the S1 upgrade-repair claims below. Production code is
-untouched — the diff is only these docs, the scripts, and additive test files.
+`3ae9d70bf5e0dae747f0d8b512e6e9ba2349b5d1`; round 2 re-verified everything against head
+`29fa5faa87fd8eb89f6cb072e154c0d2c14307c2` ("fix: migrate exclusive topology
+affinity on upgrade") and added the S1 upgrade-repair claims below; **round 3** re-verified
+against head `fc8cfc480232bdc6381d172af8df4f50dd73ce80` ("docs: clarify exclusive topology
+upgrade risks" — a docs-only delta; no code or test changes, merge-base unchanged). Production
+code is untouched — the diff is only these docs, the scripts, and additive test files.
 
-Layers run against the **code under review** (`29fa5faa`):
+Layers run against the **code under review** (`fc8cfc4`):
 
 | Layer | What it exercises | How to run |
 |-------|-------------------|------------|
@@ -43,6 +45,21 @@ matches its own terms … we allow the pod to pass"). On base the Pod never matc
 term (mismatched label key), so `Filter` returns `UnschedulableAndUnresolvable` forever.
 
 ## Summary of results
+
+### Round 3 (head `fc8cfc4`, delta = one docs-only commit)
+
+| ID | Claim | Layer | Verdict | Evidence |
+|----|-------|-------|---------|----------|
+| R2-regression | All round-1/2 harness claims still hold at the new head (code identical to `29fa5faa` except `doc/features/exclusive-topology.md`) | 1+2 | Confirmed | `results/L1-round3-head.log` (all `TestVerifyClaude*` green, incl. the S1 upgrade-repair set), `results/L2-round3-head.log` ("reviewer verify" spec green) |
+| Doc-accuracy | The new "Before upgrading…" paragraph in `doc/features/exclusive-topology.md` is technically accurate: (a) pre-upgrade (base `1fc69f70`) the affinity/anti-affinity selected `group-unique-hash`, so a workaround group's anti-affinity did NOT match ordinary RBG Pods (they carry only `group-uid`) and domains could be shared; (b) at head the anti-affinity is `Exists(group-uid) + NotIn(own key)`, so the other RBG's Pods now block the domain; (c) required affinity `In(own uid) + topologyKey` pins a replacement Pod to the domain of remaining same-group Pods, making a free domain elsewhere unusable | code reading (base + head) | Confirmed | base `pod_reconciler.go:127` passes `constants.GroupUniqueHashLabelKey`; head `pod_reconciler.go` builds `In`/`Exists`+`NotIn` terms on `GroupUIDLabelKey` (see round-1 traces); all three doc sentences map 1:1 onto those terms |
+| S10-update | The round-2 "run /release-test before merge" ask was infeasible: the Release Test workflow deploys the chart's **default pinned images** (`deploy/helm/rbgs/values.yaml:13` → `v0.9.0-73e05db4`, built pre-fix), never the PR's controller ("no locally built image", `release-test.yml:391-393`). The `/release-test` run 43791276444 at `29fa5faa` therefore failed *as expected*: `e2e-test-upgrade (v0.7.0/v0.8.0)` red in the phase-3 migration spec (deployed controller still renders `group-unique-hash` — the spec bites), `e2e-test-helm`/`e2e-test-manifest` red in the exclusive-topology lifecycle spec (exact #518 symptom against the pre-fix controller). Not a defect in this PR; maintainer accepted (PR comment 6905894202) | workflow + run inspection | Confirmed | `gh api …/runs/43791276444/jobs` (4 failures, all others green); `release-test.yml:124/247/391-393/505-535` (chart default images, `make test-e2e-upgrade`); `values.yaml:13` pin |
+
+PR's own tests re-run at head: `results/pr-unit-tests-round3.log`
+(`go test ./pkg/reconciler ./internal/controller/workloads`, exit 0) and
+`results/pr-envtest-toggle-round3.log` (the PR's envtest toggle spec, `ok 12.159s`).
+CI at `fc8cfc4`: all 22 checks green; the E2E lifecycle job log shows the four
+exclusive-topology v1alpha2 specs plus the rbgset spec executing — `SUCCESS! -- 17 Passed |
+0 Failed`.
 
 ### Round 2 (head `29fa5faa`, delta = one commit addressing S1/S2/S4/S6/S7/S8 from round 1)
 
@@ -83,9 +100,15 @@ Note on the round-2 delta's new upgrade e2e specs (`test/e2e/upgrade/exclusive_t
 `[phase 1] records a running group using the legacy exclusive topology selector` /
 `[phase 3] migrates the generated exclusive topology selector`): they are wired into the
 upgrade suite, which CI runs **only** via the comment-triggered Release Test workflow
-(`make test-e2e-upgrade` in `release-test.yml`), not in the per-PR e2e matrix. No
-Release Test run exists at `29fa5faa`, so those two specs are compiled and lint-checked
-but have not executed in CI at this head (see findings, "SHOULD run /release-test").
+(`make test-e2e-upgrade` in `release-test.yml`), not in the per-PR e2e matrix. A
+`/release-test` run (43791276444) was triggered at `29fa5faa` after round 2: it executed
+these specs and they failed **because the workflow installs the chart's default pinned
+controller image (`v0.9.0-73e05db4`, built pre-fix), not the PR's controller** — see the
+round-3 S10-update row. The migration spec correctly detected that no migration happened
+(it bites); its green direction against the *fixed* controller is proven at the unit layer
+(round-2 S1 differential + the PR's own Deployment repair test) and first runs live
+post-merge once the PR's image is published and pinned in the chart, or via the
+kind-based manual run documented in `test/e2e/upgrade/install.go`.
 
 ## Per-finding detail
 

@@ -1,0 +1,12 @@
+I1117 01:21:42.486995 3089846 stateful_instance_set_control.go:735] "Progress rolling update" instanceSet="test-rbg-1794849697808486272/exclusive-toggle-worker" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1117 01:21:42.489052 3089846 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-1794849697808486272/exclusive-toggle-worker" elapsedTime="4.156578ms"
+I1117 01:21:42.489823 3089846 stateful_instance_set_control.go:735] "Progress rolling update" instanceSet="test-rbg-1794849697808486272/exclusive-toggle-worker" targets=[] maxUnavailable=1 maxSurge=0 activeSurge=0 availableSurge=0 effectiveBudget=1 initialBaseUnavail=0
+I1117 01:21:42.491906 3089846 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-1794849697808486272/exclusive-toggle-worker" elapsedTime="2.782159ms"
+I1117 01:21:42.494671 3089846 stateful_instance_set_controller.go:181] "Finished syncing InstanceSet" instanceSet="test-rbg-1794849697808486272/exclusive-toggle-worker" elapsedTime="2.587133ms"
+[38;5;10m•[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m[38;5;14mS[0m
+
+[38;5;10m[1mRan 1 of 25 Specs in 12.135 seconds[0m
+[38;5;10m[1mSUCCESS![0m -- [38;5;10m[1m1 Passed[0m | [38;5;9m[1m0 Failed[0m | [38;5;11m[1m0 Pending[0m | [38;5;14m[1m24 Skipped[0m
+--- PASS: TestRBGController (12.14s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	12.151s

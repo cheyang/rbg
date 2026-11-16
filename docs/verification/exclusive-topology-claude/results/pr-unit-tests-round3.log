@@ -1,0 +1,4 @@
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.516s
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	5.331s
+
+[exited with code 0]

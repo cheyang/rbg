@@ -1,5 +1,5 @@
 === RUN   TestVerifyClaude_ExclusiveTopologyPodMatchesItsOwnAffinity
---- PASS: TestVerifyClaude_ExclusiveTopologyPodMatchesItsOwnAffinity (0.05s)
+--- PASS: TestVerifyClaude_ExclusiveTopologyPodMatchesItsOwnAffinity (0.04s)
 === RUN   TestVerifyClaude_ExclusiveTopologyAntiAffinitySemantics
 --- PASS: TestVerifyClaude_ExclusiveTopologyAntiAffinitySemantics (0.00s)
 === RUN   TestVerifyClaude_ExclusiveTopologyOptOut
@@ -17,4 +17,4 @@
 === RUN   TestVerifyClaude_PodTemplateSpecEqualAffinityGuard
 --- PASS: TestVerifyClaude_PodTemplateSpecEqualAffinityGuard (0.00s)
 PASS
-ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.094s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.089s
