@@ -7,19 +7,25 @@
     "pkg/reconciler/review_lws_compat_test.go",
     "pkg/discovery/zz_verify_pr571_grammar_test.go",
     "pkg/discovery/zz_verify_pr571_compat_test.go",
-    "api/workloads/v1alpha2/zz_verify_pr571_validation_test.go"
+    "api/workloads/v1alpha2/zz_verify_pr571_validation_test.go",
+    "api/workloads/v1alpha2/review_update_wedge_test.go",
+    "api/workloads/v1alpha2/review_scope_error_order_test.go",
+    "api/workloads/v1alpha1/review_conversion_rawcopy_test.go",
+    "pkg/discovery/review_event_dedupe_test.go"
   ],
   "premise": {
     "id": "P0",
     "claim": "KEP-531 motivation: \"Referencing a profile injects wherever the pattern happens to; a role cannot say 'this runtime belongs to the worker component.'\" / \"No way to touch role-declared containers. A profile author cannot add an env var or a volumeMount to the role's own engine container.\" / \"Role customization of profile containers is env/args-only.\" (issue #531 inventory)",
-    "reportedComponent": "RoleBasedGroup → workload render pipeline (sidecar_builder legacy engine-runtime injection)",
+    "reportedComponent": "RoleBasedGroup \u2192 workload render pipeline (sidecar_builder legacy engine-runtime injection)",
     "patchedComponent": "same: pkg/discovery render pipeline, v1alpha1/v1alpha2 API + CRDs, webhooks, CERP controller",
     "componentMatch": true,
     "runsAgainst": "base",
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "Base (ea5e82ae) pkg/discovery/sidecar_builder.go injectRuntime: the legacy containers override merges env/args only and ignores every other corev1.Container field; profileName is the sole targeting knob; results/base-differential-sidecar.out pins base injecting unconditionally whatever the role's pattern (differential for F2).",
-    "match": ["TestBase_InjectSidecarUnconditional"]
+    "match": [
+      "TestBase_InjectSidecarUnconditional"
+    ]
   },
   "layers": {
     "unit": {
@@ -37,39 +43,94 @@
       "id": "F-ENV-OWNERSHIP",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestReview_EnvOwnershipAfterDefault"]
+      "match": [
+        "TestReview_EnvOwnershipAfterDefault"
+      ]
     },
     {
       "id": "F-LWS-DROP",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestReview_LWSNonLWPFragmentRoutingVerify"]
+      "match": [
+        "TestReview_LWSNonLWPFragmentRoutingVerify"
+      ]
     },
     {
       "id": "F-COLLISION-EXTRAPATCHES",
       "polarity": "canary",
       "layer": "unit",
       "note": "Canary: PASSES while the cross-profile patch targeting gray zone is present; a fix must FLIP it to fail, then invert it.",
-      "match": ["TestVerifyPR571_CollisionSkipThenRolePatch"]
+      "match": [
+        "TestVerifyPR571_CollisionSkipThenRolePatch"
+      ]
     },
     {
       "id": "AC5-validation-contracts",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestVerifyPR571_PresenceRule", "TestVerifyPR571_ScopeOwnership", "TestVerifyPR571_ComponentVocabulary", "TestVerifyPR571_DeprecatedSurfaceRejection", "TestVerifyPR571_IntraListDuplicateEnvCreation"]
+      "match": [
+        "TestVerifyPR571_PresenceRule",
+        "TestVerifyPR571_ScopeOwnership",
+        "TestVerifyPR571_ComponentVocabulary",
+        "TestVerifyPR571_DeprecatedSurfaceRejection",
+        "TestVerifyPR571_IntraListDuplicateEnvCreation"
+      ]
     },
     {
       "id": "AC6-patch-grammar",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestVerifyPR571_ProfileSideRootAllowlist", "TestVerifyPR571_EntrypointMergeRule", "TestVerifyPR571_ProfileSideEnvDefaultOnly", "TestVerifyPR571_RBGPrefixReserved", "TestVerifyPR571_VolumeMountInvariants"]
+      "match": [
+        "TestVerifyPR571_ProfileSideRootAllowlist",
+        "TestVerifyPR571_EntrypointMergeRule",
+        "TestVerifyPR571_ProfileSideEnvDefaultOnly",
+        "TestVerifyPR571_RBGPrefixReserved",
+        "TestVerifyPR571_VolumeMountInvariants"
+      ]
     },
     {
       "id": "AC1-scenario1-byte-compat",
       "polarity": "contract",
       "layer": "unit",
-      "match": ["TestVerifyPR571_Scenario1ByteForByte"]
+      "match": [
+        "TestVerifyPR571_Scenario1ByteForByte"
+      ]
+    },
+    {
+      "id": "F-UPDATE-WEDGE",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestReview_UpdateWedgeExemption",
+        "TestReview_UpdateWedgeExemptionRBGSet"
+      ]
+    },
+    {
+      "id": "F-SCOPE-ERROR-ORDER",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestReview_ScopeOwnershipErrorOrderStable"
+      ]
+    },
+    {
+      "id": "F-EVENTS-REEMIT",
+      "polarity": "contract",
+      "layer": "unit",
+      "note": "Contract since 44e2e531: the intended behavior is dedupe-across-reconciles; TestReview_RenderFailureNotDeduped is the polarity-boundary control.",
+      "match": [
+        "TestReview_SuccessfulRenderWarningDedupe",
+        "TestReview_RenderFailureNotDeduped"
+      ]
+    },
+    {
+      "id": "F-CONVERSION-RAW-COPY",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestReview_ConversionRawCopyPreserved"
+      ]
     }
   ],
-  "liveNote": "L3 (not run this round, per review scope): the e2e drill suite (make test-e2e-drills, RBGS_DRILLS=1) against a real cluster; the PR claims 20/20. The L1 evidence for F1/F2 is deterministic and does not need a cluster."
+  "liveNote": "L3 (live): the KEP-531 drill suite now runs in PR CI as the 'Engine-runtime upgrade drills' job (e2e-test.yml, eb1d8740) \u2014 at c87a2e1e it ran green on the merged tree (run 43869593178, 20/20 specs, SuiteSucceeded, no skips; report artifact parsed by the reviewer), so the live layer is discharged by CI rather than by a reviewer-run cluster this round."
 }
