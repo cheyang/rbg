@@ -1,0 +1,24 @@
+re-verify: manifest = docs/verification/kep531-engine-runtime/verify-manifest.json
+re-verify: last-reviewed = f3d4849a3d3dc25232c8e1b70e61042f2f077bb9  (review delta = f3d4849a3d3dc25232c8e1b70e61042f2f077bb9..c87a2e1eff21dbdef1f8cc31153f67dff3537bd0)
+re-verify: fixed-ref=c87a2e1eff21dbdef1f8cc31153f67dff3537bd0  harness-from=1d000c07766aa7f02dcd30496098dff9329ad618
+re-verify: running layer 'unit' (gotest)
+re-verify: running layer 'integration' (ginkgo)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+F-ENV-OWNERSHIP contract  unit         FIXED          pass=1 fail=0 miss=0
+F-LWS-DROP contract  unit         FIXED          pass=1 fail=0 miss=0
+F-COLLISION-EXTRAPATCHES canary    unit         STILL-PRESENT  pass=1 fail=0 miss=0
+AC5-validation-contracts contract  unit         FIXED          pass=5 fail=0 miss=0
+AC6-patch-grammar contract  unit         FIXED          pass=5 fail=0 miss=0
+AC1-scenario1-byte-compat contract  unit         FIXED          pass=1 fail=0 miss=0
+
+Live layer (manual): L3 (not run this round, per review scope): the e2e drill suite (make test-e2e-drills, RBGS_DRILLS=1) against a real cluster; the PR claims 20/20. The L1 evidence for F1/F2 is deterministic and does not need a cluster.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/kep531-engine-runtime/results/reverify
+
+Review delta this round: f3d4849a3d3dc25232c8e1b70e61042f2f077bb9..c87a2e1eff21dbdef1f8cc31153f67dff3537bd0
+After reviewing that delta, advance the marker for the next round:
+  echo c87a2e1eff21dbdef1f8cc31153f67dff3537bd0 > docs/verification/kep531-engine-runtime/.last-reviewed && git add docs/verification/kep531-engine-runtime/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.

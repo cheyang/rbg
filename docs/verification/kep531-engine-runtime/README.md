@@ -1,11 +1,58 @@
 # KEP-531 Engine Runtime Profile Injection — verification harness (Reviewer A, Claude)
 
 - PR under review: https://github.com/sgl-project/rbg/pull/571
-- Head reviewed (round 2): `f3d4849a3d3dc25232c8e1b70e61042f2f077bb9` (base branch tip `3abe58a5`; the head still sits on merge-base `ea5e82ae` — GitHub reports MERGEABLE)
+- Head reviewed (round 3): `c87a2e1eff21dbdef1f8cc31153f67dff3537bd0` (base branch tip `1fc69f70`; the head still sits on merge-base `ea5e82ae` — GitHub reports MERGEABLE)
+- Head reviewed (round 2): `f3d4849a3d3dc25232c8e1b70e61042f2f077bb9` (base branch tip `3abe58a5`)
 - Head reviewed (round 1): `1810f5c6ed28a48addcc3e348699c3f4ae170a6c`
 - Harness branch: `verify/kep531-engine-runtime-claude` (reviewer fork `cheyang/rbg`)
 - Production code is untouched: the diff of this branch against the PR head is
   only the harness test files and this `docs/verification/` tree.
+
+## Round 3 (incremental, at c87a2e1e)
+
+Tree delta `f3d4849a..c87a2e1e`: 13 non-vendor files, +588/−97, plus a
+tree-identical rebase of the round-2 fix commits (the stale 62222c0e commit
+message is gone; all 18 head commits are DCO-signed). The delta addresses
+every round-2 SHOULD item except Q-SPLIT (a maintainer decision the author
+has explicitly left to them). Four new contract tests were added to this
+harness (one per fixed finding) and verified red-on-previous / green-on-head:
+
+| finding | round 2 | round 3 | fix | evidence |
+|---|---|---|---|---|
+| **F-UPDATE-WEDGE** UPDATE re-validates the whole object | open (minor) | **FIXED** | `8f9da58d` — `validateNoNewEngineRuntimeViolations(roles, oldRoles)` old-vs-new exemption in both webhooks; the `engineRuntimeRoleSurface` key was audited to cover every field `ValidateEngineRuntimes` reads (name, resolved workload type incl. the annotation, engineRuntimes, the three patterns — `engineRuntimeEffectiveComponents` reads nothing else), so an unchanged role cannot change validation outcome | `results/round3-diff-previous-red.out` / `results/round3-diff-head-green.out` (RBG + RBGSet twins, 4 subtests) |
+| **F-SCOPE-ERROR-ORDER** nondeterministic error order | open (nit) | **FIXED** | `7fe890a6` — sorted (profile, component) walk | same differential (30-run stability assertion) |
+| **F-EVENTS-REEMIT** warning events re-emit per reconcile | open (nit) | **FIXED** | `44e2e531` — bounded in-memory `renderWarningLedger` keyed (UID, generation, fingerprint); render failures excluded (control test) | same differential (+ `TestReview_RenderFailureNotDeduped` control green on both) |
+| **F-CONVERSION-RAW-COPY** conversion copies only Value.Raw | open (nit) | **FIXED** | `3dd34d72` — `Value: *in.Value.DeepCopy()` both directions, pinned by the PR's own Object-backed round-trip test | same differential |
+| **Q-KEP-TEXT** KEP prescribes the dropped CEL rule | open (minor) | **FIXED** | `1a8c6f9a` — Validation Model, the presence-rule sketch (kept as historical form), the scenario-4 row, the Graduation Criteria item and cross-references all amended; plus a new pass-window status-gap note | KEP README diff `f3d4849a..c87a2e1e` |
+| **Q-DRILLS-CI** drills not in PR CI | open (minor, carried AC10) | **FIXED (by CI)** | `eb1d8740` — new `e2e-drills` job (install_mode `none`, from-ref `origin/main`) runs `make test-e2e-drills` on every PR; on this head it ran green: run 43869593178, job "Engine-runtime upgrade drills", Ginkgo `SuiteSucceeded: true`, 20/20 specs ran, zero skips (the `e2e-drills-reports` artifact was downloaded and parsed by the reviewer) — the 20/20 claim is now CI-verified, not author-reported. Residual: branch-protection *requiredness* of the job is a repo setting outside the PR; `make test-e2e-upgrade` stays out of PR CI (author: from-tag matrix drifts per release) | CI run 43869593178 + artifact parse; `results/reverify-round3/` |
+| **F-COLLISION-EXTRAPATCHES** losing reference's extraPatches | open (minor, advisory) | **STILL-PRESENT** — `container_patch.go` untouched this round; the canary re-runs green (defect present), polarity intact | `results/reverify-round3/verdicts.log` |
+| **Q-SPLIT** oversized single-KEP landing | open (maintainer) | **open** — no split, no waiver; the PR comment thread (two author comments only) records no maintainer decision | PR thread inspection |
+
+re-verify verdicts at `c87a2e1e` (unit layer): all six carried findings FIXED
+/ pass, the four new contract findings FIXED, the collision canary
+STILL-PRESENT (exit 1 reflects exactly that canary — the correct polarity
+outcome, not a regression).
+
+Full-suite re-run at `c87a2e1e`:
+
+- `go build ./...`, `go vet ./...`: clean.
+- All 85 non-envtest/e2e unit packages: green
+  (`results/unit-full-green-round3.out`).
+- Full envtest tree against a real kube-apiserver 1.31: green
+  (`results/envtest-full-suite-green-round3.out`), plus the focused
+  'engine runtime' Ginkgo focus re-run inside re-verify (39 specs selected,
+  `SuiteSucceeded`, `results/reverify/ginkgo-report.json`).
+- `TestGeneratedCRDsAdmitNoRoleSpecCELPresenceRule`: green (0.35s) — AC11's
+  executable pin re-run.
+- CI at this head: every named check green with full attribution, now
+  including the drills job (above).
+
+Base-branch note: main advanced `3abe58a5 → 1fc69f70` (#567, #573, #585,
+…); none of it overlaps the KEP-531 surface. The one real interaction —
+main's #567 turning `utils.DefaultImage` into a var — broke the PR's e2e
+const block and is fixed by the head commit itself (`c87a2e1e`); the
+pull_request workflows run against the merged tree, so the combined tree is
+exercised by the green CI matrix (12 e2e jobs + drills).
 
 ## Round 2 (incremental, at f3d4849a)
 

@@ -1,0 +1,27 @@
+re-verify: manifest = docs/verification/kep531-engine-runtime/verify-manifest.json
+re-verify: last-reviewed = f3d4849a3d3dc25232c8e1b70e61042f2f077bb9  (review delta = f3d4849a3d3dc25232c8e1b70e61042f2f077bb9..c87a2e1eff21dbdef1f8cc31153f67dff3537bd0)
+re-verify: fixed-ref=c87a2e1eff21dbdef1f8cc31153f67dff3537bd0  harness-from=7cc1ea95ecc3a0b91150f7baab1fde40f3a7b7f5
+re-verify: running layer 'unit' (gotest)
+
+================  RE-VERIFY  ================
+ID     POLARITY  LAYER        VERDICT        DETAIL
+F-ENV-OWNERSHIP contract  unit         FIXED          pass=1 fail=0 miss=0
+F-LWS-DROP contract  unit         FIXED          pass=1 fail=0 miss=0
+F-COLLISION-EXTRAPATCHES canary    unit         STILL-PRESENT  pass=1 fail=0 miss=0
+AC5-validation-contracts contract  unit         FIXED          pass=5 fail=0 miss=0
+AC6-patch-grammar contract  unit         FIXED          pass=5 fail=0 miss=0
+AC1-scenario1-byte-compat contract  unit         FIXED          pass=1 fail=0 miss=0
+F-UPDATE-WEDGE contract  unit         FIXED          pass=2 fail=0 miss=0
+F-SCOPE-ERROR-ORDER contract  unit         FIXED          pass=1 fail=0 miss=0
+F-EVENTS-REEMIT contract  unit         FIXED          pass=2 fail=0 miss=0
+F-CONVERSION-RAW-COPY contract  unit         FIXED          pass=1 fail=0 miss=0
+
+Live layer (manual): L3 (live): the KEP-531 drill suite now runs in PR CI as the 'Engine-runtime upgrade drills' job (e2e-test.yml, eb1d8740) — at c87a2e1e it ran green on the merged tree (run 43869593178, 20/20 specs, SuiteSucceeded, no skips; report artifact parsed by the reviewer), so the live layer is discharged by CI rather than by a reviewer-run cluster this round.
+
+Reminder: a "canary" finding is FIXED only when it FLIPS to fail; then invert its
+assertion (or promote the new behavior to a contract test). Raw output: docs/verification/kep531-engine-runtime/results/reverify
+
+Review delta this round: f3d4849a3d3dc25232c8e1b70e61042f2f077bb9..c87a2e1eff21dbdef1f8cc31153f67dff3537bd0
+After reviewing that delta, advance the marker for the next round:
+  echo c87a2e1eff21dbdef1f8cc31153f67dff3537bd0 > docs/verification/kep531-engine-runtime/.last-reviewed && git add docs/verification/kep531-engine-runtime/.last-reviewed && git commit -m "review: advance last-reviewed"
+RESULT: not all findings fixed.
