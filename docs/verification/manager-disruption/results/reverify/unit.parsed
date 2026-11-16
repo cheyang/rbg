@@ -1,0 +1,3 @@
+TestChartManagerDisruptionDefaults	pass
+TestChartManagerDisruptionOverrides	pass
+TestKubectlManifestsManagerDisruption	pass
