@@ -1,0 +1,32 @@
+=== RUN   TestVerifyPR571R3_ConversionDeepCopiesObjectBackedValue
+--- PASS: TestVerifyPR571R3_ConversionDeepCopiesObjectBackedValue (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.010s
+=== RUN   TestVerifyPR571R3_UpdateWedgeExemptionRBG
+=== RUN   TestVerifyPR571R3_UpdateWedgeExemptionRBG/label-only_update_on_a_wedged_object_passes
+=== RUN   TestVerifyPR571R3_UpdateWedgeExemptionRBG/newly_introduced_violation_is_still_rejected
+=== RUN   TestVerifyPR571R3_UpdateWedgeExemptionRBG/surface_change_on_the_wedged_role_is_re-validated
+=== RUN   TestVerifyPR571R3_UpdateWedgeExemptionRBG/clean_role_added_alongside_the_wedged_one_passes
+--- PASS: TestVerifyPR571R3_UpdateWedgeExemptionRBG (0.04s)
+    --- PASS: TestVerifyPR571R3_UpdateWedgeExemptionRBG/label-only_update_on_a_wedged_object_passes (0.00s)
+    --- PASS: TestVerifyPR571R3_UpdateWedgeExemptionRBG/newly_introduced_violation_is_still_rejected (0.00s)
+    --- PASS: TestVerifyPR571R3_UpdateWedgeExemptionRBG/surface_change_on_the_wedged_role_is_re-validated (0.00s)
+    --- PASS: TestVerifyPR571R3_UpdateWedgeExemptionRBG/clean_role_added_alongside_the_wedged_one_passes (0.00s)
+=== RUN   TestVerifyPR571R3_UpdateWedgeExemptionRBGS
+--- PASS: TestVerifyPR571R3_UpdateWedgeExemptionRBGS (0.00s)
+=== RUN   TestVerifyPR571R3_ScopeOwnershipErrorOrder
+--- PASS: TestVerifyPR571R3_ScopeOwnershipErrorOrder (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.057s
+=== RUN   TestVerifyPR571R3_SuccessfulRenderWarningDedupe
+--- PASS: TestVerifyPR571R3_SuccessfulRenderWarningDedupe (0.04s)
+=== RUN   TestVerifyPR571R3_RenderFailureNotDeduped
+--- PASS: TestVerifyPR571R3_RenderFailureNotDeduped (0.00s)
+=== RUN   TestVerifyPR571R3_UIDlessFixtureAlwaysEmits
+--- PASS: TestVerifyPR571R3_UIDlessFixtureAlwaysEmits (0.00s)
+=== RUN   TestVerifyPR571R3_DedupeCollapsesIdenticalCrossRoleWarnings
+--- PASS: TestVerifyPR571R3_DedupeCollapsesIdenticalCrossRoleWarnings (0.00s)
+=== RUN   TestVerifyPR571R3_DedupeCoverageGap
+--- PASS: TestVerifyPR571R3_DedupeCoverageGap (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.062s

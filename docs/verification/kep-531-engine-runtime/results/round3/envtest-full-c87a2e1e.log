@@ -1,0 +1,18 @@
+Full envtest tree re-run at c87a2e1e (KUBEBUILDER_ASSETS=/home/ecs-user/envtest-assets/k8s/1.31.0-linux-amd64),
+2026-11-17, `go test -count=1 ./test/envtest/testcase/...` — package-level tail (full stdout not persisted; the
+eight package results below are the complete tail):
+
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/deprecation	6.754s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/immutability	92.501s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/rbg	322.074s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy	215.421s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/selective_commit	24.003s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/stateful	42.750s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/v1a1gate	5.991s
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/webhook	39.791s
+
+8/8 packages green. Unit-only sweep (all packages except test/envtest and test/e2e): 45/45 ok, exit 0.
+Raw `go test ./...` failures are confined to test/envtest (no KUBEBUILDER_ASSETS at the default path) and
+test/e2e (no cluster) — environmental, unchanged from rounds 1-2.
+Merged-tree check: c87a2e1e auto-merges clean into main@1fc69f70; the merge result builds and vets green
+(go build ./... && go vet ./api/... ./pkg/discovery/ ./test/e2e/...), incl. the test/e2e compile fix c87a2e1e.

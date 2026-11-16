@@ -1,0 +1,38 @@
+--- FAIL: TestVerifyPR571R3_ConversionDeepCopiesObjectBackedValue (0.00s)
+    zz_verify_pr571_r3_conversion_test.go:31: ConvertTo must preserve an Object-backed patch value, got nil Object
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.010s
+--- FAIL: TestVerifyPR571R3_UpdateWedgeExemptionRBG (0.04s)
+    --- FAIL: TestVerifyPR571R3_UpdateWedgeExemptionRBG/label-only_update_on_a_wedged_object_passes (0.00s)
+        zz_verify_pr571_r3_test.go:54: label-only update on a wedged object must pass, got: role "lg" reference "vllm-runtime" (engineRuntimes[0]): targetContainers requires component to be set, except under standalonePattern
+    --- FAIL: TestVerifyPR571R3_UpdateWedgeExemptionRBG/clean_role_added_alongside_the_wedged_one_passes (0.00s)
+        zz_verify_pr571_r3_test.go:85: adding a clean role alongside the wedged one must pass, got: role "lg" reference "vllm-runtime" (engineRuntimes[0]): targetContainers requires component to be set, except under standalonePattern
+--- FAIL: TestVerifyPR571R3_UpdateWedgeExemptionRBGS (0.00s)
+    zz_verify_pr571_r3_test.go:111: label-only update on a wedged RBGS must pass, got: role "lg" reference "vllm-runtime" (engineRuntimes[0]): targetContainers requires component to be set, except under standalonePattern
+--- FAIL: TestVerifyPR571R3_ScopeOwnershipErrorOrder (0.00s)
+    zz_verify_pr571_r3_test.go:156: run 0: scope-ownership errors must be reported in ascending order:
+        role "r" reference "zz-p-3": component "leader" is covered by both engineRuntimes[12] and engineRuntimes[13] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-3": component "worker" is covered by both engineRuntimes[14] and engineRuntimes[15] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-4": component "leader" is covered by both engineRuntimes[16] and engineRuntimes[17] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-4": component "worker" is covered by both engineRuntimes[18] and engineRuntimes[19] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-5": component "leader" is covered by both engineRuntimes[20] and engineRuntimes[21] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-5": component "worker" is covered by both engineRuntimes[22] and engineRuntimes[23] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-6": component "worker" is covered by both engineRuntimes[26] and engineRuntimes[27] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-6": component "leader" is covered by both engineRuntimes[24] and engineRuntimes[25] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-7": component "leader" is covered by both engineRuntimes[28] and engineRuntimes[29] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-7": component "worker" is covered by both engineRuntimes[30] and engineRuntimes[31] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-0": component "leader" is covered by both engineRuntimes[0] and engineRuntimes[1] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-0": component "worker" is covered by both engineRuntimes[2] and engineRuntimes[3] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-1": component "leader" is covered by both engineRuntimes[4] and engineRuntimes[5] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-1": component "worker" is covered by both engineRuntimes[6] and engineRuntimes[7] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-2": component "leader" is covered by both engineRuntimes[8] and engineRuntimes[9] — same-profile references must not have overlapping effective component sets
+        role "r" reference "zz-p-2": component "worker" is covered by both engineRuntimes[10] and engineRuntimes[11] — same-profile references must not have overlapping effective component sets
+FAIL
+FAIL	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.059s
+--- FAIL: TestVerifyPR571R3_SuccessfulRenderWarningDedupe (0.05s)
+    zz_verify_pr571_r3_test.go:59: re-reconcile of the unchanged object must not re-emit the warning, got 1
+--- FAIL: TestVerifyPR571R3_DedupeCollapsesIdenticalCrossRoleWarnings (0.00s)
+    zz_verify_pr571_r3_test.go:135: canary: identical warnings from two roles collapse to one event per generation, got 2
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/discovery	0.066s
+FAIL

@@ -81,3 +81,46 @@ carry DCO sign-off; the `[WIP]` marker is dropped; the shipped example is self-c
 
 Harness-bites for the new contract tests: `results/round2/bites-previous-head-1810f5c6.out`
 (every finding case red on the round-1 head, controls green).
+
+## Round 3 (2026-11-17) — incremental review, head c87a2e1e
+
+The PR moved `f3d4849a -> c87a2e1e`: the round-2 stack was rebased tree-identically
+(merge-base with main is still `ea5e82ae` — the PR is NOT rebased onto current main),
+plus 7 new commits addressing the round-2 debate ledger: RawExtension deep-copy
+(3dd34d72), UPDATE-wedge exemption (8f9da58d), deterministic scope-error order
+(7fe890a6), cross-reconcile warning dedupe (44e2e531), KEP text amendment
+(4a8c6f9a), drills wired into PR CI (eb1d8740), and a merge-with-main compile fix
+(c87a2e1e — the PR branch predates main's #567 `DefaultImage` var; the fix keeps
+the merged tree compiling). Main advanced `3abe58a5 -> 1fc69f70` (#567 e2e image
+registry picking, #552/#563/#568/#585); a local test-merge of c87a2e1e into
+1fc69f70 auto-merges clean and builds+vets green (incl. test/e2e).
+
+Re-verify at c87a2e1e (results/reverify/, integration.parsed copied to
+results/round3/reverify-integration-c87a2e1e.parsed): F1 canary still passes
+(F-COLLISION-EXTRAPATCHES unchanged — still a minor); AC-1/AC-2/AC-3 unit
+contracts green; AC-4 integration green (immutability + rbg envtest suites vs
+kube-apiserver 1.31); R2-F1/F2/F3 fix contracts green. CI at head: 23/23 checks
+SUCCESS, including the new "Engine-runtime upgrade drills" job.
+
+Round-3 verdicts for the round-2 findings the new commits address:
+
+| ID | finding | verdict at c87a2e1e | evidence |
+|----|---------|--------------------|----------|
+| R3-F3 | F-UPDATE-WEDGE (minor, round 2) | **Fixed** — UPDATE exempts roles whose engine-runtime surface is unchanged (both webhooks); the resolver stays the authoritative render-time gate for the stored violation | `TestVerifyPR571R3_UpdateWedgeExemptionRBG`/`RBGS` green on head, red on f3d4849a; surface-read completeness verified by grep (ValidateEngineRuntimes reads only the captured fields) |
+| R3-F4 | F-SCOPE-ERROR-ORDER (nit, round 2) | **Fixed** — sorted (profile, component) walk | `TestVerifyPR571R3_ScopeOwnershipErrorOrder` green on head (20 runs, sorted+stable), red on f3d4849a with visibly unsorted output |
+| R3-F1 | F-EVENTS-REEMIT (nit, round 2) | **Fixed** for the three named reasons — dedupe keyed by UID+generation+message; generation bump re-arms; render failures keep firing | `TestVerifyPR571R3_SuccessfulRenderWarningDedupe` green on head, red on f3d4849a; controls (`UIDlessFixtureAlwaysEmits`, `RenderFailureNotDeduped`) green on both |
+| R3-F5 | F-CONVERSION-RAW-COPY (nit, round 2) | **Fixed** — both conversion directions deep-copy the complete RawExtension | `TestVerifyPR571R3_ConversionDeepCopiesObjectBackedValue` green on head, red on f3d4849a (Object dropped pre-fix) |
+| — | Q-KEP-TEXT (round 2) | **Fixed** — KEP Validation Model, scenario table, Graduation Criteria and alternatives now record the webhook placement + >100x cost pin | doc audit of 4a8c6f9a against the enforced semantics |
+| — | Q-DRILLS-CI (round 2) | **Fixed for drills** — `make test-e2e-drills` now runs on every PR (e2e-test.yml e2e-drills job) and is green at head; `test-e2e-upgrade` deliberately stays in release-test paths (stated reason: from-end matrix pinned per release hop) | CI rollup at head; workflow read |
+
+New this round (both nit, both canaries on this branch):
+
+| ID | finding | evidence |
+|----|---------|----------|
+| R3-F2 | F-DEDUPE-ROLE-COLLAPSE — dedupe fingerprint is reason+message and the Unaimed/EnvCollision messages do not name the role, so identical warnings from two roles of one RBG collapse into one event per generation | `TestVerifyPR571R3_DedupeCollapsesIdenticalCrossRoleWarnings` (1 event at head; 2 at f3d4849a, so the collapse is delta-introduced) |
+| R3-F6 | F-DEDUPE-COVERAGE — CapabilityFormHazard and WrapShadowed keep the re-fire-per-reconcile property the dedupe removed for the other three | `TestVerifyPR571R3_DedupeCoverageGap`; pod_reconciler.go:306 bypasses emitEngineRuntimeWarning; container_patch.go:917's reason is not in successfulRenderWarningReasons |
+
+Harness-bites for the round-3 contract tests:
+`results/round3/bites-previous-head-f3d4849a.log` (all finding cases red on the
+round-2 head; controls green). Round-3 head run:
+`results/round3/r3-tests-head-c87a2e1e.log` (all green).
