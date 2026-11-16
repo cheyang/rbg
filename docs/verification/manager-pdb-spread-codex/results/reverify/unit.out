@@ -1,0 +1,16 @@
+{"Time":"2026-11-17T01:02:51.474301247+08:00","Action":"start","Package":"sigs.k8s.io/rbgs/test/chart"}
+{"Time":"2026-11-17T01:02:51.476942211+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDisruptionDefaults"}
+{"Time":"2026-11-17T01:02:51.476979922+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDisruptionDefaults","Output":"=== RUN   TestChartManagerDisruptionDefaults\n","OutputType":"frame"}
+{"Time":"2026-11-17T01:02:51.511589184+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDisruptionDefaults","Output":"--- PASS: TestChartManagerDisruptionDefaults (0.03s)\n","OutputType":"frame"}
+{"Time":"2026-11-17T01:02:51.511620636+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDisruptionDefaults","Elapsed":0.03}
+{"Time":"2026-11-17T01:02:51.511631266+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDisruptionOverrides"}
+{"Time":"2026-11-17T01:02:51.511633296+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDisruptionOverrides","Output":"=== RUN   TestChartManagerDisruptionOverrides\n","OutputType":"frame"}
+{"Time":"2026-11-17T01:02:51.572922228+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDisruptionOverrides","Output":"--- PASS: TestChartManagerDisruptionOverrides (0.06s)\n","OutputType":"frame"}
+{"Time":"2026-11-17T01:02:51.572947769+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestChartManagerDisruptionOverrides","Elapsed":0.06}
+{"Time":"2026-11-17T01:02:51.5729597+08:00","Action":"run","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKubectlManifestsManagerDisruption"}
+{"Time":"2026-11-17T01:02:51.57296184+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKubectlManifestsManagerDisruption","Output":"=== RUN   TestKubectlManifestsManagerDisruption\n","OutputType":"frame"}
+{"Time":"2026-11-17T01:02:52.679368989+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKubectlManifestsManagerDisruption","Output":"--- PASS: TestKubectlManifestsManagerDisruption (1.11s)\n","OutputType":"frame"}
+{"Time":"2026-11-17T01:02:52.67939531+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Test":"TestKubectlManifestsManagerDisruption","Elapsed":1.11}
+{"Time":"2026-11-17T01:02:52.67940757+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Output":"PASS\n","OutputType":"frame"}
+{"Time":"2026-11-17T01:02:52.681665291+08:00","Action":"output","Package":"sigs.k8s.io/rbgs/test/chart","Output":"ok  \tsigs.k8s.io/rbgs/test/chart\t1.207s\n"}
+{"Time":"2026-11-17T01:02:52.682991338+08:00","Action":"pass","Package":"sigs.k8s.io/rbgs/test/chart","Elapsed":1.209}
