@@ -1,0 +1,3 @@
+TestC1_NoStaleOldTag	pass
+TestC2_NewTagEverywhere	pass
+TestC3_TagMatchesReleaseSHA	pass
