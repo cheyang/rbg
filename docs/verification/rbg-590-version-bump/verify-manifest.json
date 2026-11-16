@@ -1,0 +1,34 @@
+{
+  "topic": "rbg-590-version-bump",
+  "pr": "https://github.com/sgl-project/rbg/pull/590",
+  "harnessPaths": [
+    "docs/verification/rbg-590-version-bump"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "PR #590 is a release-manifest bump for the 0.9.0-alpha.4 cut: at base the chart/manifest defaults still point at the previous nightly image v0.9.0-73e05db4 (main@73e05db4, the 0.9.0-alpha.3 cut), 13 commits have since landed on main (incl. fixes #573, #575, #553, #559), and nightly-built images for the new sha exist in the registry.",
+    "reportedComponent": "deploy/helm/rbgs chart defaults + config/manager kustomize + generated deploy/kubectl/manifests.yaml",
+    "patchedComponent": "the same three locations (plus the generated manifest)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "base Chart.yaml appVersion 0.9.0-73e05db4; Docker Hub returns HTTP 200 for rolebasedgroup/rbgs-controller:v0.9.0-1fc69f70 and rbgs-upgrade-crd:v0.9.0-1fc69f70 (results/verify-version-bump.log); .github/workflows/docker-build-push.yml builds VERSION-GITSHA tags from main nightly",
+    "match": ["C3"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "lines",
+      "cmd": "RESULTS_DIR=$RESULTS_DIR bash docs/verification/rbg-590-version-bump/scripts/verify-version-bump.sh"
+    }
+  },
+  "findings": [
+    { "id": "C1", "polarity": "contract", "layer": "unit", "match": ["C1"], "note": "all version strings consistent across helm values/render, kustomize, generated manifests" },
+    { "id": "C2", "polarity": "contract", "layer": "unit", "match": ["C2"], "note": "previous nightly tag fully replaced, no stale references" },
+    { "id": "C3", "polarity": "contract", "layer": "unit", "match": ["C3"], "note": "both images published to Docker Hub under the new tag" },
+    { "id": "C4", "polarity": "contract", "layer": "unit", "match": ["C4"], "note": "deploy/kubectl/manifests.yaml byte-identical to kustomize build output" },
+    { "id": "C5", "polarity": "contract", "layer": "unit", "match": ["C5"], "note": "chart version is a strict semver bump over the merge-base chart version" },
+    { "id": "C6", "polarity": "contract", "layer": "unit", "match": ["C6"], "note": "make test-chart / go test ./test/chart/ passes at head" }
+  ],
+  "liveNote": "L3 (live cluster) intentionally skipped per round policy: this PR changes version strings only; helm template + kustomize + chart go tests + registry checks cover the full behavioral surface. CI (project-check) additionally regenerates manifests.yaml and asserts a clean tree."
+}
