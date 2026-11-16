@@ -1,0 +1,6 @@
+=== RUN   TestPR591ApplyResponseCarriesServerIdentity
+--- PASS: TestPR591ApplyResponseCarriesServerIdentity (5.97s)
+=== RUN   TestPR591LaggingCacheHeadlessService
+--- PASS: TestPR591LaggingCacheHeadlessService (5.88s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	11.866s

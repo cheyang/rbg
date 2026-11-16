@@ -1,0 +1,11 @@
+=== RUN   TestPR591LaggingCacheHeadlessService
+    pr591_premise_test.go:210: 
+        	Error Trace:	/tmp/pr591-base/pkg/reconciler/pr591_premise_test.go:210
+        	Error:      	Received unexpected error:
+        	            	roleinstancesets.workloads.x-k8s.io "group-worker" not found
+        	Test:       	TestPR591LaggingCacheHeadlessService
+        	Messages:   	reconcile must not fail because the informer cache lags the workload create
+--- FAIL: TestPR591LaggingCacheHeadlessService (6.08s)
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler	6.097s
+FAIL
