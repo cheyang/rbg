@@ -1,0 +1,3 @@
+TestVerifyRoleInstanceSetReconcileToleratesStaleWorkloadCache	pass
+TestVerifyStatefulSetReconcileToleratesStaleWorkloadCache	pass
+TestVerifyReconcileNeverReturnsNilWorkloadOnSuccess	pass

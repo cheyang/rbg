@@ -1,0 +1,3 @@
+TestVerifyApplyReturnsServerPopulatedObject	pass
+TestVerifyApplyHonorsResourceVersionPrecondition	pass
+TestVerifyReconcileUsesServerIdentityForServiceOwnerRef	pass

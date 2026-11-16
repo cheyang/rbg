@@ -1,0 +1,5 @@
+=== RUN   TestVerifyPremiseStaleCacheBreaksServiceReconcileOnBase
+    verify_premise_base_test.go:94: P0 reproduced on base: Reconciler error = roleinstancesets.workloads.x-k8s.io "group-worker" not found
+--- PASS: TestVerifyPremiseStaleCacheBreaksServiceReconcileOnBase (0.05s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	(cached)

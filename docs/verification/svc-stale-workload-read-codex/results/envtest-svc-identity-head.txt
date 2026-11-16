@@ -1,0 +1,4 @@
+=== RUN   TestVerifyReconcileUsesServerIdentityForServiceOwnerRef
+--- PASS: TestVerifyReconcileUsesServerIdentityForServiceOwnerRef (5.87s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	5.886s

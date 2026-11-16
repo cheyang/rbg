@@ -1,0 +1,41 @@
+{
+  "topic": "svc-stale-workload-read-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/591",
+  "harnessPaths": [
+    "docs/verification/svc-stale-workload-read-codex",
+    "pkg/reconciler/verify_stale_cache_test.go",
+    "pkg/reconciler/verify_svc_identity_envtest_test.go",
+    "pkg/utils/verify_apply_envtest_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Reading the workload from the informer cache immediately after creating/applying it can miss or be stale, so the headless Service reconcile fails or uses a stale workload object.",
+    "reportedComponent": "pkg/reconciler ServiceReconciler.reconcileHeadlessService (workload re-read via cached client)",
+    "patchedComponent": "pkg/reconciler svc_reconciler.go + sts/roleinstanceset reconcilers + pkg/utils ApplyObjectConfiguration",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "results/unit-premise-base.txt — with a simulated stale informer cache the base Reconciler fails with roleinstancesets.workloads.x-k8s.io \"group-worker\" not found; the RoleInstanceSet exists in the store but no Service is written. Same scenario passes on head (results/unit-stale-cache-head.txt).",
+    "match": ["TestVerifyPremiseStaleCacheBreaksServiceReconcileOnBase"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test ./pkg/reconciler/ -run 'TestVerifyRoleInstanceSetReconcileToleratesStaleWorkloadCache|TestVerifyStatefulSetReconcileToleratesStaleWorkloadCache|TestVerifyReconcileNeverReturnsNilWorkloadOnSuccess' -count=1 -json"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=${KUBEBUILDER_ASSETS:-$HOME/.local/share/kubebuilder-envtest/k8s/1.31.0-linux-amd64} go test ./pkg/utils/ ./pkg/reconciler/ -run 'TestVerifyApplyReturnsServerPopulatedObject|TestVerifyApplyHonorsResourceVersionPrecondition|TestVerifyReconcileUsesServerIdentityForServiceOwnerRef' -count=1 -json"
+    }
+  },
+  "findings": [
+    { "id": "C1", "polarity": "contract", "layer": "unit", "match": ["TestVerifyRoleInstanceSetReconcileToleratesStaleWorkloadCache"] },
+    { "id": "C1", "polarity": "contract", "layer": "unit", "match": ["TestVerifyStatefulSetReconcileToleratesStaleWorkloadCache"] },
+    { "id": "C2", "polarity": "contract", "layer": "integration", "match": ["TestVerifyApplyReturnsServerPopulatedObject"] },
+    { "id": "C3", "polarity": "contract", "layer": "integration", "match": ["TestVerifyApplyHonorsResourceVersionPrecondition"] },
+    { "id": "C4", "polarity": "contract", "layer": "integration", "match": ["TestVerifyReconcileUsesServerIdentityForServiceOwnerRef"] },
+    { "id": "C5", "polarity": "contract", "layer": "unit", "match": ["TestVerifyReconcileNeverReturnsNilWorkloadOnSuccess"] }
+  ],
+  "liveNote": "L3 skipped per debate-round rules (no KUBECONFIG layer). In a live cluster the observable signal is: first reconcile of a fresh RBG role creates the headless Service in the same pass (no NotFound requeue loop), and the Service ownerReference UID equals the workload UID."
+}

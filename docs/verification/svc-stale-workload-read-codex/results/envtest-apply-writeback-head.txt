@@ -1,0 +1,6 @@
+=== RUN   TestVerifyApplyReturnsServerPopulatedObject
+--- PASS: TestVerifyApplyReturnsServerPopulatedObject (2.27s)
+=== RUN   TestVerifyApplyHonorsResourceVersionPrecondition
+--- PASS: TestVerifyApplyHonorsResourceVersionPrecondition (2.23s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/utils	4.520s

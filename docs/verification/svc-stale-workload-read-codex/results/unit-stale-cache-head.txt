@@ -1,0 +1,11 @@
+=== RUN   TestVerifyRoleInstanceSetReconcileToleratesStaleWorkloadCache
+--- PASS: TestVerifyRoleInstanceSetReconcileToleratesStaleWorkloadCache (0.05s)
+=== RUN   TestVerifyStatefulSetReconcileToleratesStaleWorkloadCache
+--- PASS: TestVerifyStatefulSetReconcileToleratesStaleWorkloadCache (0.01s)
+=== RUN   TestVerifyReconcileNeverReturnsNilWorkloadOnSuccess
+--- PASS: TestVerifyReconcileNeverReturnsNilWorkloadOnSuccess (0.00s)
+=== RUN   TestVerifyReconcileUsesServerIdentityForServiceOwnerRef
+    verify_svc_identity_envtest_test.go:50: KUBEBUILDER_ASSETS not set; skipping envtest layer
+--- SKIP: TestVerifyReconcileUsesServerIdentityForServiceOwnerRef (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.076s
