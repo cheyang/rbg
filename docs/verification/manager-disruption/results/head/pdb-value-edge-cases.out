@@ -1,0 +1,12 @@
+# Helm value coalescing edge cases for the new PDB template (reviewer probe)
+
+== --set-json controller.podDisruptionBudget={}  (map present, enabled missing)
+PDB rendered: 1
+
+== --set controller.podDisruptionBudget=null  (explicit opt-out)
+PDB rendered: 0
+
+== --set controller.podDisruptionBudget.enabled=false
+PDB rendered: 0
+
+Interpretation: {} keeps the chart default (coalesce preserves enabled: true) — sensible; null/false opt out.

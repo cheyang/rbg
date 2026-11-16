@@ -1,0 +1,13 @@
+# go test ./test/chart/ -run ManagerDisruption (PR head 24cdf951, branch verify/manager-disruption-claude)
+$ make test-chart equivalent, filtered to the PR's new tests
+
+=== RUN   TestChartManagerDisruptionDefaults
+--- PASS: TestChartManagerDisruptionDefaults (0.04s)
+=== RUN   TestChartManagerDisruptionOverrides
+--- PASS: TestChartManagerDisruptionOverrides (0.06s)
+=== RUN   TestKubectlManifestsManagerDisruption
+--- PASS: TestKubectlManifestsManagerDisruption (1.12s)
+PASS
+ok  	sigs.k8s.io/rbgs/test/chart	(cached)
+
+exit=0

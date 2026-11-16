@@ -1,0 +1,20 @@
+# Quality gates on PR head (mirrors CI: project-check.yml lint job)
+
+$ helm lint deploy/helm/rbgs
+==> Linting deploy/helm/rbgs
+[INFO] Chart.yaml: icon is recommended
+
+1 chart(s) linted, 0 chart(s) failed
+
+$ go vet ./test/chart/
+vet: OK
+
+$ gofmt -l test/chart/
+(no output above = formatted)
+
+$ yamllint -c .yamllint.yml config/ deploy/ examples/ (warnings pre-exist on base; exit code below)
+yamllint exit=0
+
+$ golangci-lint run ./test/chart/...
+0 issues.
+golangci-lint exit=0
