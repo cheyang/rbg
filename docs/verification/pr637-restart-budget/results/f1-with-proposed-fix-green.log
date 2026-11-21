@@ -1,0 +1,6 @@
+=== RUN   TestBudgetUpgradeFromOldRevisionFormatPreservesExhaustion
+--- PASS: TestBudgetUpgradeFromOldRevisionFormatPreservesExhaustion (0.05s)
+=== RUN   TestBudgetUpgradeFromOldRevisionFormatPreservesCount
+--- PASS: TestBudgetUpgradeFromOldRevisionFormatPreservesCount (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.062s

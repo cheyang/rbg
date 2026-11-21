@@ -1,0 +1,8 @@
+=== RUN   TestPremiseP0aHealthyBudgetedInstanceAcquiresCleanupFinalizerOnBase
+--- PASS: TestPremiseP0aHealthyBudgetedInstanceAcquiresCleanupFinalizerOnBase (0.04s)
+=== RUN   TestPremiseP0bRevisionMismatchReleasesExhaustedGroupOnBase
+--- PASS: TestPremiseP0bRevisionMismatchReleasesExhaustedGroupOnBase (0.00s)
+=== RUN   TestPremiseP0cPlainUpgradeKeepsExhaustionOnBase
+--- PASS: TestPremiseP0cPlainUpgradeKeepsExhaustionOnBase (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.063s

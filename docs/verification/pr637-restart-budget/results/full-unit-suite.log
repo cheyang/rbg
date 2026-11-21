@@ -1,0 +1,78 @@
+?   	sigs.k8s.io/rbgs/api/workloads/constants	[no test files]
+ok  	sigs.k8s.io/rbgs/api/workloads/ordinals	0.783s
+?   	sigs.k8s.io/rbgs/api/workloads/pub/inplace_update	[no test files]
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.035s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.253s
+ok  	sigs.k8s.io/rbgs/internal/controller/workloads	4.948s
+ok  	sigs.k8s.io/rbgs/pkg/component-discovery	0.026s
+ok  	sigs.k8s.io/rbgs/pkg/coordination/coordinationscaling	0.018s
+ok  	sigs.k8s.io/rbgs/pkg/dependency	0.095s
+ok  	sigs.k8s.io/rbgs/pkg/discovery	0.210s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance	0.018s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/clientdapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/inplaceupdate	0.024s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/lifecycle	0.084s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/instance/readiness	0.088s
+?   	sigs.k8s.io/rbgs/pkg/inplace/instance/specifieddelete	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod	0.022s
+?   	sigs.k8s.io/rbgs/pkg/inplace/pod/clientadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/inplaceupdate	0.099s
+ok  	sigs.k8s.io/rbgs/pkg/inplace/pod/readiness	0.021s
+ok  	sigs.k8s.io/rbgs/pkg/port-allocator	0.032s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler	0.338s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.593s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	0.023s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.026s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	0.026s
+W1121 23:37:41.754701  727804 instance_update.go:108] GetUpdatedContainerNames returned empty for pod default/test-pod; baselines will not be recorded
+I1121 23:37:41.757405  727804 node_binding.go:126] "in-place scheduling: evicted all node bindings for RBG" uid="uid-1"
+I1121 23:37:41.757447  727804 node_binding.go:126] "in-place scheduling: evicted all node bindings for RBG" uid="uid-1"
+I1121 23:37:41.757468  727804 node_binding.go:126] "in-place scheduling: evicted all node bindings for RBG" uid="uid-1"
+I1121 23:37:41.757475  727804 node_binding.go:126] "in-place scheduling: evicted all node bindings for RBG" uid="uid-2"
+I1121 23:37:41.757572  727804 node_binding.go:180] "in-place scheduling: unrecognized granularity, skipping injection" instance="" granularity="InvalidGranularity" validValues="\"Pod\" or \"Component\""
+I1121 23:37:41.757812  727804 node_binding.go:283] "in-place scheduling: unrecognized mode, skipping injection" instance="" mode="InvalidMode" validValues="\"Preferred\" or \"Required\""
+I1121 23:37:41.757845  727804 node_binding.go:335] "in-place scheduling: no node binding found, skip hostname affinity injection" pod="prefill-0" instance="" mode="Preferred" granularity="Pod" key="uid-1/prefill-0"
+I1121 23:37:41.757956  727804 node_binding.go:335] "in-place scheduling: no node binding found, skip hostname affinity injection" pod="prefill-0" instance="" mode="Preferred" granularity="Pod" key="uid-1/prefill-0"
+I1121 23:37:41.758019  727804 node_binding.go:335] "in-place scheduling: no node binding found, skip hostname affinity injection" pod="prefill-0" instance="" mode="Preferred" granularity="Pod" key="uid-1/prefill-0"
+I1121 23:37:41.758170  727804 node_binding.go:311] "in-place scheduling: invalid avoid label key, skipping" key="invalid key with spaces" instance="" errors=["name part must consist of alphanumeric characters, '-', '_' or '.', and must start and end with an alphanumeric character (e.g. 'MyName',  or 'my.name',  or '123-abc', regex used for validation is '([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]')"]
+I1121 23:37:41.758180  727804 node_binding.go:311] "in-place scheduling: invalid avoid label key, skipping" key="also/bad!" instance="" errors=["name part must consist of alphanumeric characters, '-', '_' or '.', and must start and end with an alphanumeric character (e.g. 'MyName',  or 'my.name',  or '123-abc', regex used for validation is '([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]')"]
+--- FAIL: TestBudgetUpgradeFromOldRevisionFormatPreservesExhaustion (0.00s)
+    restart_budget_upgrade_test.go:84: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/pkg/reconciler/roleinstance/sync/restart_budget_upgrade_test.go:84
+        	Error:      	Should be true
+        	Test:       	TestBudgetUpgradeFromOldRevisionFormatPreservesExhaustion
+        	Messages:   	F1: a controller upgrade (format-only revision change) must not release an exhausted group without recover=true
+--- FAIL: TestBudgetUpgradeFromOldRevisionFormatPreservesCount (0.00s)
+    restart_budget_upgrade_test.go:110: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/pkg/reconciler/roleinstance/sync/restart_budget_upgrade_test.go:110
+        	Error:      	Should be false
+        	Test:       	TestBudgetUpgradeFromOldRevisionFormatPreservesCount
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.434s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	0.030s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset	0.021s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statefulmode	0.150s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode	0.025s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/core	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/revision	0.028s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/sync	0.085s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstanceset/statelessmode/utils	[no test files]
+?   	sigs.k8s.io/rbgs/pkg/reconciler/utils/revisionadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/scale	0.022s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler	0.111s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/common	0.080s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/k8s-scheduler-plugin	0.079s
+ok  	sigs.k8s.io/rbgs/pkg/scheduler/volcano	0.096s
+ok  	sigs.k8s.io/rbgs/pkg/utils	0.108s
+?   	sigs.k8s.io/rbgs/pkg/utils/client	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/expectations	0.015s
+?   	sigs.k8s.io/rbgs/pkg/utils/fieldindex	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/history	0.027s
+?   	sigs.k8s.io/rbgs/pkg/utils/ratelimiter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/utils/requeueduration	0.003s
+?   	sigs.k8s.io/rbgs/pkg/utils/revisionadapter	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/webhook	0.093s
+?   	sigs.k8s.io/rbgs/pkg/webhook/cert/generator	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/webhook/cert/writer	1.115s
+FAIL

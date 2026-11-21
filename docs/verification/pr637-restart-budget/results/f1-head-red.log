@@ -1,0 +1,14 @@
+--- FAIL: TestBudgetUpgradeFromOldRevisionFormatPreservesExhaustion (0.05s)
+    restart_budget_upgrade_test.go:84: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/pkg/reconciler/roleinstance/sync/restart_budget_upgrade_test.go:84
+        	Error:      	Should be true
+        	Test:       	TestBudgetUpgradeFromOldRevisionFormatPreservesExhaustion
+        	Messages:   	F1: a controller upgrade (format-only revision change) must not release an exhausted group without recover=true
+--- FAIL: TestBudgetUpgradeFromOldRevisionFormatPreservesCount (0.00s)
+    restart_budget_upgrade_test.go:110: 
+        	Error Trace:	/home/ecs-user/.pr-debate/homes/claude/repos/sgl-project/rbg/pkg/reconciler/roleinstance/sync/restart_budget_upgrade_test.go:110
+        	Error:      	Should be false
+        	Test:       	TestBudgetUpgradeFromOldRevisionFormatPreservesCount
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.063s
+FAIL

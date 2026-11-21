@@ -1,0 +1,46 @@
+{
+  "topic": "pr637-restart-budget",
+  "pr": "https://github.com/sgl-project/rbg/pull/637",
+  "harnessPaths": [
+    "docs/verification/pr637-restart-budget",
+    "pkg/reconciler/roleinstance/sync/restart_budget_upgrade_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "Issue #617 items 1-2: budget revision identity depends on the controller's JSON encoding (a revision written by a different build releases exhausted groups without recover=true and resets the count), and every budgeted RoleInstance carries the cleanup finalizer even when healthy.",
+    "reportedComponent": "pkg/reconciler/roleinstance/sync/restart_budget.go (restart budget lifecycle)",
+    "patchedComponent": "pkg/reconciler/roleinstance/sync/restart_budget.go and callers (same component)",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "TestPremiseP0a/P0b pass on base 45e6e1c2 (they assert the bug is present); see results/base-premise-run.log",
+    "match": [
+      "TestPremiseP0aHealthyBudgetedInstanceAcquiresCleanupFinalizerOnBase",
+      "TestPremiseP0bRevisionMismatchReleasesExhaustedGroupOnBase"
+    ]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -mod=vendor -count=1 -run 'TestBudgetUpgradeFromOldRevisionFormat' ./pkg/reconciler/roleinstance/sync/ -json"
+    },
+    "integration": {
+      "kind": "ginkgo",
+      "cmd": "KUBEBUILDER_ASSETS=${KUBEBUILDER_ASSETS:-/tmp/envtest-bin/k8s/1.31.0-linux-amd64} go test -mod=vendor -count=1 -timeout 900s ./test/envtest/testcase/restart_policy/... -ginkgo.json-report=$GINKGO_REPORT",
+      "report": "$GINKGO_REPORT"
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestBudgetUpgradeFromOldRevisionFormatPreservesExhaustion",
+        "TestBudgetUpgradeFromOldRevisionFormatPreservesCount"
+      ]
+    }
+  ],
+  "liveNote": "L3 skipped this round (no cluster). If run later: upgrade a cluster running v0.9.0-alpha.5 with an exhausted budgeted RoleInstance to the fixed controller and check status.restartBudgetExhausted stays true until recover=true is annotated."
+}
