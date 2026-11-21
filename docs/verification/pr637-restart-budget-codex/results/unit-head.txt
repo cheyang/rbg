@@ -1,0 +1,42 @@
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.553s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	0.016s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.015s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	0.017s
+W1122 00:17:10.889503  815906 instance_update.go:108] GetUpdatedContainerNames returned empty for pod default/test-pod; baselines will not be recorded
+I1122 00:17:10.892408  815906 node_binding.go:126] "in-place scheduling: evicted all node bindings for RBG" uid="uid-1"
+I1122 00:17:10.892449  815906 node_binding.go:126] "in-place scheduling: evicted all node bindings for RBG" uid="uid-1"
+I1122 00:17:10.892468  815906 node_binding.go:126] "in-place scheduling: evicted all node bindings for RBG" uid="uid-1"
+I1122 00:17:10.892471  815906 node_binding.go:126] "in-place scheduling: evicted all node bindings for RBG" uid="uid-2"
+I1122 00:17:10.892556  815906 node_binding.go:180] "in-place scheduling: unrecognized granularity, skipping injection" instance="" granularity="InvalidGranularity" validValues="\"Pod\" or \"Component\""
+I1122 00:17:10.892741  815906 node_binding.go:283] "in-place scheduling: unrecognized mode, skipping injection" instance="" mode="InvalidMode" validValues="\"Preferred\" or \"Required\""
+I1122 00:17:10.892762  815906 node_binding.go:335] "in-place scheduling: no node binding found, skip hostname affinity injection" pod="prefill-0" instance="" mode="Preferred" granularity="Pod" key="uid-1/prefill-0"
+I1122 00:17:10.892848  815906 node_binding.go:335] "in-place scheduling: no node binding found, skip hostname affinity injection" pod="prefill-0" instance="" mode="Preferred" granularity="Pod" key="uid-1/prefill-0"
+I1122 00:17:10.892903  815906 node_binding.go:335] "in-place scheduling: no node binding found, skip hostname affinity injection" pod="prefill-0" instance="" mode="Preferred" granularity="Pod" key="uid-1/prefill-0"
+I1122 00:17:10.893011  815906 node_binding.go:311] "in-place scheduling: invalid avoid label key, skipping" key="invalid key with spaces" instance="" errors=["name part must consist of alphanumeric characters, '-', '_' or '.', and must start and end with an alphanumeric character (e.g. 'MyName',  or 'my.name',  or '123-abc', regex used for validation is '([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]')"]
+I1122 00:17:10.893023  815906 node_binding.go:311] "in-place scheduling: invalid avoid label key, skipping" key="also/bad!" instance="" errors=["name part must consist of alphanumeric characters, '-', '_' or '.', and must start and end with an alphanumeric character (e.g. 'MyName',  or 'my.name',  or '123-abc', regex used for validation is '([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]')"]
+--- FAIL: TestVerifyF1aUpgradeFromAlpha5MustNotResetConsumedBudget (0.00s)
+    restart_budget_upgrade_verify_test.go:96: after upgrade reconcile: blocked=true count=0 revision="budget-0-678ddd6f76/4fea6397de60160885f36d01e35efa5ea8b2c36b1b61581a623367cde4061ffd" (legacy was "e6121fcbc7bd6498e147197be74c020e1f2771adcac03a0fa6a01a9286d97051")
+    restart_budget_upgrade_verify_test.go:98: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-21/pr-637/work-verify/pkg/reconciler/roleinstance/sync/restart_budget_upgrade_verify_test.go:98
+        	Error:      	Not equal: 
+        	            	expected: int(1)
+        	            	actual  : int32(0)
+        	Test:       	TestVerifyF1aUpgradeFromAlpha5MustNotResetConsumedBudget
+        	Messages:   	F1a: upgrading from v0.9.0-alpha.5 must not silently replenish the consumed restart budget
+--- FAIL: TestVerifyF1bUpgradeFromAlpha5MustNotReleaseExhaustion (0.00s)
+    restart_budget_upgrade_verify_test.go:136: after upgrade reconcile: exhausted=false count=0 revision="budget-0-678ddd6f76/4fea6397de60160885f36d01e35efa5ea8b2c36b1b61581a623367cde4061ffd"
+    restart_budget_upgrade_verify_test.go:137: 
+        	Error Trace:	/home/ecs-user/.pr-debate/runs/sgl-project-rbg/2026-11-21/pr-637/work-verify/pkg/reconciler/roleinstance/sync/restart_budget_upgrade_verify_test.go:137
+        	Error:      	Should be true
+        	Test:       	TestVerifyF1bUpgradeFromAlpha5MustNotReleaseExhaustion
+        	Messages:   	F1b: a controller upgrade must not release exhaustion without recover=true
+FAIL
+FAIL	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.418s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	0.013s
+?   	sigs.k8s.io/rbgs/api/workloads/constants	[no test files]
+ok  	sigs.k8s.io/rbgs/api/workloads/ordinals	0.473s
+?   	sigs.k8s.io/rbgs/api/workloads/pub/inplace_update	[no test files]
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha1	0.017s
+ok  	sigs.k8s.io/rbgs/api/workloads/v1alpha2	0.198s
+FAIL

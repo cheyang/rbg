@@ -1,0 +1,2 @@
+ok  	sigs.k8s.io/rbgs/test/envtest/testcase/restart_policy	317.236s
+exit=0

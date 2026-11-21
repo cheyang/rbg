@@ -1,0 +1,6 @@
+=== RUN   TestVerifyP0BudgetRevisionIsRawEncodingHash
+--- PASS: TestVerifyP0BudgetRevisionIsRawEncodingHash (0.04s)
+=== RUN   TestVerifyP0BudgetRevisionMismatchReleasesExhaustedGroup
+--- PASS: TestVerifyP0BudgetRevisionMismatchReleasesExhaustedGroup (0.01s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.060s

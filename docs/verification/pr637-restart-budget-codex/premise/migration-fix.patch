@@ -1,0 +1,29 @@
+diff --git a/pkg/reconciler/roleinstance/sync/restart_budget.go b/pkg/reconciler/roleinstance/sync/restart_budget.go
+index 6cc7d228..cd8304d6 100644
+--- a/pkg/reconciler/roleinstance/sync/restart_budget.go
++++ b/pkg/reconciler/roleinstance/sync/restart_budget.go
+@@ -23,6 +23,7 @@ import (
+ 	"errors"
+ 	"fmt"
+ 	"slices"
++	"strings"
+ 	"time"
+ 
+ 	apps "k8s.io/api/apps/v1"
+@@ -319,6 +320,16 @@ func (c *realControl) reconcileRestartBudget(ctx context.Context, instance *work
+ 	if selectedRevision == "" {
+ 		return true, fmt.Errorf("restart budget requires a selected ControllerRevision")
+ 	}
++	// Legacy migration: v0.9.0-alpha.5 stored the bare component-hash budget
++	// revision. Re-stamp the new format in place without resetting the count
++	// or exhaustion, so upgrading does not trigger the mismatch release.
++	if fresh.Status.GroupRestartRevision != "" && !strings.Contains(fresh.Status.GroupRestartRevision, "/") {
++		base := fresh.DeepCopy()
++		fresh.Status.GroupRestartRevision = groupRestartRevision(fresh, selectedRevision)
++		if err := c.patchBudgetStatus(ctx, fresh, base); err != nil {
++			return true, err
++		}
++	}
+ 	revisionChanged := fresh.Status.GroupRestartRevision != "" && fresh.Status.GroupRestartRevision != groupRestartRevision(fresh, selectedRevision)
+ 	recovering := fresh.Status.RestartBudgetExhausted && fresh.Annotations[constants.RoleInstanceRecoverAnnotationKey] == recoveryAnnotationValue
+ 	if revisionChanged || recovering {

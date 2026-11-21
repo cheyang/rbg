@@ -1,0 +1,35 @@
+{
+  "topic": "pr637-restart-budget-codex",
+  "pr": "https://github.com/sgl-project/rbg/pull/637",
+  "harnessPaths": [
+    "docs/verification/pr637-restart-budget-codex",
+    "pkg/reconciler/roleinstance/sync/restart_budget_upgrade_verify_test.go"
+  ],
+  "premise": {
+    "id": "P0",
+    "claim": "groupRestartRevision hashes json.Marshal of the RoleInstance components, so the same spec can hash differently after a controller upgrade; a mismatch resets groupRestartCount and releases exhausted groups without rbg.workloads.x-k8s.io/recover=true (issue #617 item 1)",
+    "reportedComponent": "pkg/reconciler/roleinstance/sync/restart_budget.go (RoleInstance restart budget)",
+    "patchedComponent": "pkg/reconciler/roleinstance/sync/restart_budget.go",
+    "componentMatch": true,
+    "runsAgainst": "base",
+    "layer": "unit",
+    "verdict": "confirmed",
+    "evidence": "results/p0-premise-base.txt: on base 45e6e1c2, groupRestartRevision == sha256(json.Marshal(sorted components)) and a simulated previous-build hash releases an exhausted group without recover=true",
+    "match": ["TestVerifyP0BudgetRevisionIsRawEncodingHash", "TestVerifyP0BudgetRevisionMismatchReleasesExhaustedGroup"]
+  },
+  "layers": {
+    "unit": {
+      "kind": "gotest",
+      "cmd": "go test -mod=vendor ./pkg/reconciler/roleinstance/sync/ -run 'TestVerifyF1' -count=1 -v"
+    },
+    "integration": {
+      "kind": "gotest",
+      "cmd": "KUBEBUILDER_ASSETS=$KUBEBUILDER_ASSETS go test -mod=vendor ./test/envtest/testcase/restart_policy/ -count=1 -timeout 20m"
+    }
+  },
+  "findings": [
+    { "id": "F1a", "polarity": "contract", "layer": "unit", "match": ["TestVerifyF1aUpgradeFromAlpha5MustNotResetConsumedBudget"] },
+    { "id": "F1b", "polarity": "contract", "layer": "unit", "match": ["TestVerifyF1bUpgradeFromAlpha5MustNotReleaseExhaustion"] }
+  ],
+  "liveNote": "L3 skipped per debate-round instructions (unit + integration only). The F1 mechanism is deterministic controller logic and needs no cluster timing."
+}

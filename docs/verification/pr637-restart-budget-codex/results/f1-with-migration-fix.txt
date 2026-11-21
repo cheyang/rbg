@@ -1,0 +1,17 @@
+=== RUN   TestVerifyF1aUpgradeFromAlpha5MustNotResetConsumedBudget
+    restart_budget_upgrade_verify_test.go:96: after upgrade reconcile: blocked=false count=1 revision="budget-0-678ddd6f76/4fea6397de60160885f36d01e35efa5ea8b2c36b1b61581a623367cde4061ffd" (legacy was "e6121fcbc7bd6498e147197be74c020e1f2771adcac03a0fa6a01a9286d97051")
+--- PASS: TestVerifyF1aUpgradeFromAlpha5MustNotResetConsumedBudget (0.05s)
+=== RUN   TestVerifyF1bUpgradeFromAlpha5MustNotReleaseExhaustion
+    restart_budget_upgrade_verify_test.go:136: after upgrade reconcile: exhausted=true count=0 revision="budget-0-678ddd6f76/4fea6397de60160885f36d01e35efa5ea8b2c36b1b61581a623367cde4061ffd"
+--- PASS: TestVerifyF1bUpgradeFromAlpha5MustNotReleaseExhaustion (0.00s)
+=== RUN   TestVerifyF1ControlNeverRestartedBudgetIsUntouched
+--- PASS: TestVerifyF1ControlNeverRestartedBudgetIsUntouched (0.00s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.066s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance	0.553s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/core	0.013s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/inplaceupdate	0.013s
+?   	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/lifecycle	[no test files]
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/revision	0.014s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.405s
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/utils	0.012s
