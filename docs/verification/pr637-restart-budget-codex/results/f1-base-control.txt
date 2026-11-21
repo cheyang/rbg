@@ -1,0 +1,4 @@
+=== RUN   TestVerifyF1BaseControlNativeFormatIsStable
+--- PASS: TestVerifyF1BaseControlNativeFormatIsStable (0.05s)
+PASS
+ok  	sigs.k8s.io/rbgs/pkg/reconciler/roleinstance/sync	0.058s
