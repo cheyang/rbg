@@ -15,21 +15,38 @@
     "layer": "unit",
     "verdict": "confirmed",
     "evidence": "results/p0-premise-base.txt: on base 45e6e1c2, groupRestartRevision == sha256(json.Marshal(sorted components)) and a simulated previous-build hash releases an exhausted group without recover=true",
-    "match": ["TestVerifyP0BudgetRevisionIsRawEncodingHash", "TestVerifyP0BudgetRevisionMismatchReleasesExhaustedGroup"]
+    "match": [
+      "TestVerifyP0BudgetRevisionIsRawEncodingHash",
+      "TestVerifyP0BudgetRevisionMismatchReleasesExhaustedGroup"
+    ]
   },
   "layers": {
     "unit": {
       "kind": "gotest",
-      "cmd": "go test -mod=vendor ./pkg/reconciler/roleinstance/sync/ -run 'TestVerifyF1' -count=1 -v"
+      "cmd": "go test -mod=vendor ./pkg/reconciler/roleinstance/sync/ -run 'TestVerifyF1' -count=1 -json"
     },
     "integration": {
       "kind": "gotest",
-      "cmd": "KUBEBUILDER_ASSETS=$KUBEBUILDER_ASSETS go test -mod=vendor ./test/envtest/testcase/restart_policy/ -count=1 -timeout 20m"
+      "cmd": "KUBEBUILDER_ASSETS=$KUBEBUILDER_ASSETS go test -mod=vendor ./test/envtest/testcase/restart_policy/ -count=1 -timeout 20m -json"
     }
   },
   "findings": [
-    { "id": "F1a", "polarity": "contract", "layer": "unit", "match": ["TestVerifyF1aUpgradeFromAlpha5MustNotResetConsumedBudget"] },
-    { "id": "F1b", "polarity": "contract", "layer": "unit", "match": ["TestVerifyF1bUpgradeFromAlpha5MustNotReleaseExhaustion"] }
+    {
+      "id": "F1a",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyF1aUpgradeFromAlpha5MustNotResetConsumedBudget"
+      ]
+    },
+    {
+      "id": "F1b",
+      "polarity": "contract",
+      "layer": "unit",
+      "match": [
+        "TestVerifyF1bUpgradeFromAlpha5MustNotReleaseExhaustion"
+      ]
+    }
   ],
   "liveNote": "L3 skipped per debate-round instructions (unit + integration only). The F1 mechanism is deterministic controller logic and needs no cluster timing."
 }
