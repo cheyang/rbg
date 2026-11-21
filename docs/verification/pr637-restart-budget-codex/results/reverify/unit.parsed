@@ -1,0 +1,3 @@
+TestVerifyF1aUpgradeFromAlpha5MustNotResetConsumedBudget	fail
+TestVerifyF1bUpgradeFromAlpha5MustNotReleaseExhaustion	fail
+TestVerifyF1ControlNeverRestartedBudgetIsUntouched	pass
